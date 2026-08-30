@@ -18,14 +18,15 @@ fun isKeyboardVisible(): State<Boolean> {
     val keyboardVisible = remember { mutableStateOf(false) }
 
     DisposableEffect(rootView) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            val rect = Rect()
-            rootView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = rootView.rootView.height
-            val keypadHeight = screenHeight - rect.bottom
+        val listener =
+            ViewTreeObserver.OnGlobalLayoutListener {
+                val rect = Rect()
+                rootView.getWindowVisibleDisplayFrame(rect)
+                val screenHeight = rootView.rootView.height
+                val keypadHeight = screenHeight - rect.bottom
 
-            keyboardVisible.value = keypadHeight > screenHeight * 0.15
-        }
+                keyboardVisible.value = keypadHeight > screenHeight * 0.15
+            }
 
         rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
         onDispose {

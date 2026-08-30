@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui
 
-
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -109,7 +108,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningReminder
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
@@ -126,14 +124,13 @@ fun SettingsScreen(
 
     var isDebugModeEnabled by DebugSettingsStore.debugEnabled.asMutableState()
 
-
     var showLanguageSheet by remember { mutableStateOf(false) }
 
-
     val hideBetaVersionWarning by PrivateSettingsStore.hideBetaVersionWarning.asState(true)
-    val showBetaVersionWarning = remember(hideBetaVersionWarning) {
-        ctx.isBetaVersion() && !hideBetaVersionWarning
-    }
+    val showBetaVersionWarning =
+        remember(hideBetaVersionWarning) {
+            ctx.isBetaVersion() && !hideBetaVersionWarning
+        }
 
     val signatureMatched by securityViewModel.signatureMatched.asState()
 
@@ -177,9 +174,10 @@ fun SettingsScreen(
                 icon = R.drawable.web,
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
-                        val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-                            data = Uri.fromParts("package", ctx.packageName, null)
-                        }
+                        val intent =
+                            Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                                data = Uri.fromParts("package", ctx.packageName, null)
+                            }
                         ctx.startActivity(intent)
                     } else {
                         showLanguageSheet = true
@@ -191,7 +189,7 @@ fun SettingsScreen(
         DragonSettingsGroup(R.string.advanced) {
             RouteItem(
                 route = NavigationRoute.Extensions,
-                github(EXTENSIONS_GITHUB_REPO_LINK),
+                github(EXTENSIONS_GITHUB_REPO_LINK)
             )
 
             SettingsItem(
@@ -199,9 +197,10 @@ fun SettingsScreen(
                 icon = R.drawable.settings_alert
             ) {
                 val packageName = ctx.packageName
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", packageName, null)
-                }
+                val intent =
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", packageName, null)
+                    }
                 ctx.startActivity(intent)
             }
 
@@ -212,13 +211,13 @@ fun SettingsScreen(
 
         DragonSettingsGroup(R.string.about) {
             Row(
-                modifier = Modifier
-                    .height(60.dp)
-                    .dragonSettingGroup(),
+                modifier =
+                    Modifier
+                        .height(60.dp)
+                        .dragonSettingGroup(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 fun ButtonGroupScope.ic(
                     @DrawableRes ic: Int,
                     link: String,
@@ -227,13 +226,14 @@ fun SettingsScreen(
                     customItem(
                         buttonGroupContent = {
                             Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .animateWidth(`is`)
-                                    .fillMaxHeight()
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable(interactionSource = `is`) { uriHandler.openUri(link) }
-                                    .padding(vertical = 8.dp),
+                                modifier =
+                                    Modifier
+                                        .weight(1f)
+                                        .animateWidth(`is`)
+                                        .fillMaxHeight()
+                                        .clip(MaterialTheme.shapes.extraLarge)
+                                        .clickable(interactionSource = `is`) { uriHandler.openUri(link) }
+                                        .padding(vertical = 8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -247,11 +247,12 @@ fun SettingsScreen(
                     ) {}
                 }
 
-                val githubIcon = if (MaterialTheme.colorScheme.background.luminance() < 0.5) {
-                    R.drawable.github_invertocat_white
-                } else {
-                    R.drawable.github_invertocat_black
-                }
+                val githubIcon =
+                    if (MaterialTheme.colorScheme.background.luminance() < 0.5) {
+                        R.drawable.github_invertocat_white
+                    } else {
+                        R.drawable.github_invertocat_black
+                    }
 
                 val interactionSources = remember { List(6) { MutableInteractionSource() } }
                 ButtonGroup(
@@ -267,7 +268,6 @@ fun SettingsScreen(
                 }
             }
 
-
             SettingsItem(
                 title = stringResource(R.string.source_code),
                 icon = R.drawable.code,
@@ -277,12 +277,11 @@ fun SettingsScreen(
                 codeberg(CODEBERG_REPO_LINK)
             ) { uriHandler.openUri(GITHUB_REPO_LINK) }
 
-
             SettingsItem(
                 title = stringResource(R.string.changelogs),
                 icon = R.drawable.source_notes,
                 description = null,
-                openInNew("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt")
+                openInNew("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/$versionCode.txt")
             ) { navigator.navigate(NavigationRoute.Changelogs) }
 
             SettingsItem(
@@ -299,9 +298,6 @@ fun SettingsScreen(
                 openInNew(GITHUB_REPO_ISSUES_LINK)
             ) { uriHandler.openUri(GITHUB_REPO_ISSUES_LINK) }
         }
-
-
-
 
         DragonSettingsGroup(R.string.app_developer) {
             ContributorItem(
@@ -324,7 +320,6 @@ fun SettingsScreen(
                 buyMeACoffee("https://buymeacoffee.com/yoanndev90")
             )
 
-
             // TODO write script to fetch total lines added / removed and diaslay them per user
             ContributorItem(
                 name = "Lucky",
@@ -339,35 +334,38 @@ fun SettingsScreen(
                 shape = MaterialShapes.Pill,
                 imageRes = R.mipmap.federico,
                 description = stringResource(R.string.federico_desc),
-                github("https://github.com/federicobuttafuori"),
+                github("https://github.com/federicobuttafuori")
             )
         }
 
         DragonSettingsGroup(R.string.translators) {
-            val translators = listOf(
-                SocialLink("https://github.com/manmen2414", R.mipmap.mameeenn),
-                SocialLink("https://github.com/acress1", R.mipmap.acress1),
-                SocialLink("https://github.com/TamilNeram", R.mipmap.tamilneram),
-                SocialLink("https://github.com/sudo-py-dev", R.mipmap.sudopydev)
-            )
+            val translators =
+                listOf(
+                    SocialLink("https://github.com/manmen2414", R.mipmap.mameeenn),
+                    SocialLink("https://github.com/acress1", R.mipmap.acress1),
+                    SocialLink("https://github.com/TamilNeram", R.mipmap.tamilneram),
+                    SocialLink("https://github.com/sudo-py-dev", R.mipmap.sudopydev)
+                )
 
             Column(
                 modifier = Modifier.dragonSettingGroup(),
                 verticalArrangement = Arrangement.spacedBy(15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                translators.chunked(7).forEach { translatorRow -> // Magic number hehe (it simply fits the screen perfectly
+                translators.chunked(7).forEach { translatorRow ->
+                    // Magic number hehe (it simply fits the screen perfectly
                     Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                         translatorRow.forEach { translator ->
                             Image(
                                 painter = painterResource(id = translator.icon),
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .clickable {
-                                        uriHandler.openUri(translator.url)
-                                    },
+                                modifier =
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            uriHandler.openUri(translator.url)
+                                        },
                                 contentScale = ContentScale.Fit
                             )
                         }
@@ -378,24 +376,25 @@ fun SettingsScreen(
 
         Card(shape = MaterialTheme.shapes.extraLarge) {
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f)
-                            .size(140.dp)
-                            .background(MaterialTheme.colorScheme.background, MaterialShapes.Cookie9Sided.toShape())
-                            .padding(20.dp)
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .size(140.dp)
+                                .background(MaterialTheme.colorScheme.background, MaterialShapes.Cookie9Sided.toShape())
+                                .padding(20.dp)
                     ) {
                         Image(
                             painter = painterResource(R.mipmap.dragon_launcher_foreground),
@@ -406,62 +405,65 @@ fun SettingsScreen(
                     Spacer(16.dp)
 
                     Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-
                         var toast by remember { mutableStateOf<Toast?>(null) }
                         var timesClickedOnVersion by remember { mutableIntStateOf(0) }
 
                         TextRow(stringResource(R.string.version)) {
                             VersionNumberChip(
-                                modifier = Modifier
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = remember { MutableInteractionSource() }
-                                    ) {
-                                        toast?.cancel()
+                                modifier =
+                                    Modifier
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        ) {
+                                            toast?.cancel()
 
-                                        when {
-                                            timesClickedOnVersion == 0 -> {
-                                                timesClickedOnVersion += 1
+                                            when {
+                                                timesClickedOnVersion == 0 -> {
+                                                    timesClickedOnVersion += 1
 
-                                                ctx.copyToClipboard(versionName)
-                                                toast = Toast.makeText(
-                                                    ctx,
-                                                    ctx.getString(R.string.copied_to_clipboard),
-                                                    Toast.LENGTH_SHORT
-                                                )
-                                                toast?.show()
-                                            }
-
-                                            isDebugModeEnabled -> {
-                                                toast = Toast.makeText(
-                                                    ctx,
-                                                    ctx.getString(R.string.debug_mode_already_enabled),
-                                                    Toast.LENGTH_SHORT
-                                                )
-                                                toast?.show()
-                                            }
-
-
-                                            timesClickedOnVersion < 6 -> {
-                                                timesClickedOnVersion++
-                                                if (timesClickedOnVersion > 2) {
-                                                    toast = Toast.makeText(
-                                                        ctx,
-                                                        "${7 - timesClickedOnVersion} more times to enable Debug Mode",
-                                                        Toast.LENGTH_SHORT
-                                                    )
+                                                    ctx.copyToClipboard(versionName)
+                                                    toast =
+                                                        Toast.makeText(
+                                                            ctx,
+                                                            ctx.getString(R.string.copied_to_clipboard),
+                                                            Toast.LENGTH_SHORT
+                                                        )
+                                                    toast?.show()
                                                 }
-                                                toast?.show()
-                                            }
 
-                                            else -> isDebugModeEnabled = true
+                                                isDebugModeEnabled -> {
+                                                    toast =
+                                                        Toast.makeText(
+                                                            ctx,
+                                                            ctx.getString(R.string.debug_mode_already_enabled),
+                                                            Toast.LENGTH_SHORT
+                                                        )
+                                                    toast?.show()
+                                                }
+
+                                                timesClickedOnVersion < 6 -> {
+                                                    timesClickedOnVersion++
+                                                    if (timesClickedOnVersion > 2) {
+                                                        toast =
+                                                            Toast.makeText(
+                                                                ctx,
+                                                                "${7 - timesClickedOnVersion} more times to enable Debug Mode",
+                                                                Toast.LENGTH_SHORT
+                                                            )
+                                                    }
+                                                    toast?.show()
+                                                }
+
+                                                else -> isDebugModeEnabled = true
+                                            }
                                         }
-                                    }
                             )
                         }
 
@@ -491,7 +493,6 @@ fun SettingsScreen(
         LocalePickerSheet { showLanguageSheet = false }
     }
 }
-
 
 @Composable
 private fun ColumnScope.TextRow(

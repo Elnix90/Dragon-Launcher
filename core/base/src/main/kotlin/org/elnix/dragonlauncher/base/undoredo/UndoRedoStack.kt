@@ -21,7 +21,6 @@ public class UndoRedoStack<T>(
     private val snapshot: () -> T,
     private val restore: (T) -> Unit
 ) {
-
     internal val undoStack: SettingFlow<List<T>> = SettingFlow(emptyList())
     internal val redoStack: SettingFlow<List<T>> = SettingFlow(emptyList())
 

@@ -18,9 +18,10 @@ public data class PointSettingObject(
     override val backupable: Boolean,
     override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<Point, String>() {
-
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
+
     override fun encode(value: Point): String? = Point.Companion.DefaultPointJson.encode(value)
+
     override fun decode(raw: Any?): Point = Point.Companion.DefaultPointJson.decode(raw, default)
 }
 
@@ -32,13 +33,14 @@ public fun MapSettingsStore.point(
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
-): PointSettingObject = PointSettingObject(
-    key = key.isNotBlankKey,
-    title = title,
-    icon = icon,
-    description = description,
-    default = default,
-    onChanged = onChanged,
-    backupable = backupable,
-    settingsStore = this
-)
+): PointSettingObject =
+    PointSettingObject(
+        key = key.isNotBlankKey,
+        title = title,
+        icon = icon,
+        description = description,
+        default = default,
+        onChanged = onChanged,
+        backupable = backupable,
+        settingsStore = this
+    )

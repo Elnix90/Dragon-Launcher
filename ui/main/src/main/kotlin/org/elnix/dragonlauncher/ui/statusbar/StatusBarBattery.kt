@@ -24,27 +24,29 @@ fun StatusBarBattery(
     element: StatusBar.Battery
 ) {
     val ctx = LocalContext.current
-    
+
     // Get initial battery level from sticky intent
-    val initialLevel = remember {
-        val intent = ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-        val lvl = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-        val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
-        if (lvl >= 0 && scale > 0) (lvl * 100) / scale else 100
-    }
+    val initialLevel =
+        remember {
+            val intent = ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            val lvl = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+            val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+            if (lvl >= 0 && scale > 0) (lvl * 100) / scale else 100
+        }
 
     var level by remember { mutableIntStateOf(initialLevel) }
 
     DisposableEffect(ctx) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                val lvl = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-                val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-                if (lvl >= 0 && scale > 0) {
-                    level = (lvl * 100) / scale
+        val receiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    val lvl = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                    val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+                    if (lvl >= 0 && scale > 0) {
+                        level = (lvl * 100) / scale
+                    }
                 }
             }
-        }
 
         ctx.registerReceiver(
             receiver,

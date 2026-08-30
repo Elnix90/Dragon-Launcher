@@ -36,7 +36,6 @@ import kotlin.math.roundToInt
 private const val UPDATE_FPS_EVERY_MS = 60
 private const val GRAPH_Y_AXIS_FPS_LIMIT = 144
 
-
 // https://gist.github.com/miredirex/e7d47d6f85e91cb897032204f2273e3b
 
 @Composable
@@ -44,55 +43,58 @@ fun FpsCounterGraph(modifier: Modifier = Modifier) {
     val showFps by DebugSettingsStore.showFps.asState()
     if (!showFps) return
 
-
     var fps by remember { mutableIntStateOf(0) }
     var updateCount by remember { mutableIntStateOf(0) }
 
     Row(
-        modifier = modifier
-            .height(50.dp)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow.alphaMultiplier(0.5f))
-            .padding(5.dp)
+        modifier =
+            modifier
+                .height(50.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow.alphaMultiplier(0.5f))
+                .padding(5.dp)
     ) {
         Text(
-            modifier = Modifier
-                .weight(1 / 3f)
-                .align(Alignment.CenterVertically),
+            modifier =
+                Modifier
+                    .weight(1 / 3f)
+                    .align(Alignment.CenterVertically),
             text = "FPS: $fps",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(5.dp)
         FrameRateGraph(
-            modifier = Modifier
-                .weight(2 / 3f)
-                .fillMaxHeight()
-                .padding(4.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color.DarkGray.copy(alpha = 0.25f)),
+            modifier =
+                Modifier
+                    .weight(2 / 3f)
+                    .fillMaxHeight()
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.DarkGray.copy(alpha = 0.25f)),
             fps = fps,
             updateCount = updateCount
         )
     }
 
     DisposableEffect(Unit) {
-        val everyFrameCallback = object : Choreographer.FrameCallback {
-            var acc = 0.0
-            var latestFrameTime = 0.0
+        val everyFrameCallback =
+            object : Choreographer.FrameCallback {
+                var acc = 0.0
+                var latestFrameTime = 0.0
 
-            override fun doFrame(frameTimeNanos: Long) {
-                val frameTimeMillis: Double = frameTimeNanos / 1_000_000.0
-                val deltaMillis = frameTimeMillis - latestFrameTime
-                acc += deltaMillis
-                if (acc >= UPDATE_FPS_EVERY_MS) {
-                    fps = (1000.0 / deltaMillis).roundToInt()
-                    updateCount += 1
-                    acc = 0.0
+                override fun doFrame(frameTimeNanos: Long) {
+                    val frameTimeMillis: Double = frameTimeNanos / 1_000_000.0
+                    val deltaMillis = frameTimeMillis - latestFrameTime
+                    acc += deltaMillis
+                    if (acc >= UPDATE_FPS_EVERY_MS) {
+                        fps = (1000.0 / deltaMillis).roundToInt()
+                        updateCount += 1
+                        acc = 0.0
+                    }
+                    latestFrameTime = frameTimeMillis
+                    Choreographer.getInstance().postFrameCallback(this) // Enqueue again
                 }
-                latestFrameTime = frameTimeMillis
-                Choreographer.getInstance().postFrameCallback(this) // Enqueue again
             }
-        }
 
         Choreographer.getInstance().postFrameCallback(everyFrameCallback)
 
@@ -108,12 +110,14 @@ private fun FrameRateGraph(fps: Int, updateCount: Int, modifier: Modifier = Modi
 
     Canvas(modifier) {
         val canvasWidth = drawContext.size.width
-        if (graphPoints.capacity == 0)
+        if (graphPoints.capacity == 0) {
             graphPoints.ensureCapacity(canvasWidth.toInt())
+        }
 
         var firstPointX = 0f
-        if (graphPoints.size == graphPoints.capacity)
+        if (graphPoints.size == graphPoints.capacity) {
             firstPointX = unpackFloat1(graphPoints.removeAt(0))
+        }
 
         val x = updateCount.toFloat()
         val y = size.height - (fps / GRAPH_Y_AXIS_FPS_LIMIT.toFloat() * size.height)

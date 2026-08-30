@@ -22,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun WelcomePagerHeader(
@@ -35,9 +34,10 @@ fun WelcomePagerHeader(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

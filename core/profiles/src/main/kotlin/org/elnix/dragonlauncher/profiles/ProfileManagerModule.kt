@@ -9,17 +9,13 @@ import dagger.hilt.components.SingletonComponent
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object ProfileManagerModule {
-
     @Provides
     @Singleton
     fun provideProfileManager(
         @ApplicationContext ctx: Context,
         permissionsManager: PermissionsManager
-    ): ProfileManager  {
-        return ProfileManager(ctx, permissionsManager)
-    }
+    ): ProfileManager = ProfileManager(ctx, permissionsManager)
 }

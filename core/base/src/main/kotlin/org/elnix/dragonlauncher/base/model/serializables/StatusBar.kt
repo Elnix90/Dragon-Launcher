@@ -14,7 +14,6 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerialize
 @Serializable
 @SerialName("StatusBar")
 public sealed class StatusBar {
-
     @Stable
     @Serializable
     @SerialName("Time")
@@ -85,7 +84,6 @@ public sealed class StatusBar {
             public const val defaultShowUsb: Boolean = true
             public const val defaultUpdateFrequency: Int = 5
             public val defaultIconSize: Dp = 18.dp
-
         }
     }
 
@@ -98,7 +96,9 @@ public sealed class StatusBar {
         val mode: SpacerMode = defaultSpacerMode
     ) : StatusBar() {
         public enum class SpacerMode {
-            Width, Fill, Cutout
+            Width,
+            Fill,
+            Cutout
         }
 
         public companion object {
@@ -127,16 +127,16 @@ public sealed class StatusBar {
     ) : StatusBar()
 }
 
-
-public val allStatusBars: List<StatusBar> = listOf(
-    StatusBar.Time(),
-    StatusBar.Date(),
-    StatusBar.Bandwidth(),
-    StatusBar.Notifications(),
-    StatusBar.Connectivity(),
-    StatusBar.Battery(),
-    StatusBar.NextAlarm(),
-    StatusBar.Spacer()
-)
+public val allStatusBars: List<StatusBar> =
+    listOf(
+        StatusBar.Time(),
+        StatusBar.Date(),
+        StatusBar.Bandwidth(),
+        StatusBar.Notifications(),
+        StatusBar.Connectivity(),
+        StatusBar.Battery(),
+        StatusBar.NextAlarm(),
+        StatusBar.Spacer()
+    )
 
 public object StatusBarJson : DragonJson<List<StatusBar>>()

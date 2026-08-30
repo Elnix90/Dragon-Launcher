@@ -77,32 +77,35 @@ fun WidgetPickerDialog(
         widgets = appWidgetManager.installedProviders
     }
 
-    val filteredWidgets = remember(searchQuery, widgets) {
-        val pm = ctx.packageManager
-        if (searchQuery.isEmpty()) {
-            widgets
-        } else {
-            widgets.filter { provider ->
-                val widgetLabel = provider.loadLabel(pm)
-                val appLabel = try {
-                    apps.find { it.packageName == provider.provider.packageName }?.label ?: ""
-                } catch (_: Exception) {
-                    ""
-                }
-                widgetLabel.contains(searchQuery, ignoreCase = true) ||
+    val filteredWidgets =
+        remember(searchQuery, widgets) {
+            val pm = ctx.packageManager
+            if (searchQuery.isEmpty()) {
+                widgets
+            } else {
+                widgets.filter { provider ->
+                    val widgetLabel = provider.loadLabel(pm)
+                    val appLabel =
+                        try {
+                            apps.find { it.packageName == provider.provider.packageName }?.label ?: ""
+                        } catch (_: Exception) {
+                            ""
+                        }
+                    widgetLabel.contains(searchQuery, ignoreCase = true) ||
                         appLabel.contains(searchQuery, ignoreCase = true)
+                }
             }
         }
-    }
 
     Dialog(
-        onDismissRequest = {  onDismiss() },
+        onDismissRequest = { onDismiss() },
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.8f),
+            modifier =
+                Modifier
+                    .fillMaxWidth(0.9f)
+                    .fillMaxHeight(0.8f),
             shape = MaterialTheme.shapes.large
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -115,9 +118,10 @@ fun WidgetPickerDialog(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                     placeholder = { Text(stringResource(R.string.search_widgets)) },
                     leadingIcon = {
                         Icon(
@@ -182,21 +186,23 @@ private fun WidgetItem(
     val density = LocalDensity.current
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable {
-                val widgetId = launcherWidgetHolder.allocateAppWidgetId()
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .clickable {
+                    val widgetId = launcherWidgetHolder.allocateAppWidgetId()
 
-                onBindCustomWidget(widgetId, provider.provider)
-                onDismiss()
-            },
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    onBindCustomWidget(widgetId, provider.provider)
+                    onDismiss()
+                },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             WidgetPreviewImage(
@@ -206,11 +212,12 @@ private fun WidgetItem(
 
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                val appLabel = try {
-                    apps.find { it.packageName == provider.provider.packageName }?.label ?: ""
-                } catch (_: Exception) {
-                    ""
-                }
+                val appLabel =
+                    try {
+                        apps.find { it.packageName == provider.provider.packageName }?.label ?: ""
+                    } catch (_: Exception) {
+                        ""
+                    }
 
                 Text(
                     text = provider.loadLabel(ctx.packageManager),
@@ -277,14 +284,14 @@ fun loadWidgetPreview(
 ): Bitmap? {
     try {
         val widgetPackage = provider.provider.packageName
-        
+
         // CRITICAL: Block any system resources that might crash on certain ROMs (MIUI/HyperOS)
         // The log showscom.android.systemui:drawable/android15_patch_adaptive specifically failing.
-        if (widgetPackage == "com.android.systemui" || 
+        if (widgetPackage == "com.android.systemui" ||
             widgetPackage == "com.android.settings" ||
             widgetPackage == "android"
         ) {
-             return null
+            return null
         }
 
         if (provider.previewImage == 0) return null
@@ -296,7 +303,8 @@ fun loadWidgetPreview(
         try {
             val drawable = widgetResources.getDrawable(provider.previewImage, null)
             if (drawable is BitmapDrawable) return drawable.bitmap
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+        }
 
         // Fallback: Open stream directly if possible
         return widgetResources.openRawResource(provider.previewImage).use {
@@ -313,24 +321,30 @@ private fun AppIconFallback(
     ctx: Context,
     modifier: Modifier = Modifier
 ) {
-    val appIconBitmap = remember(provider.provider.packageName) {
-        try {
-            val pm = ctx.packageManager
-            val appInfo = pm.getApplicationInfo(provider.provider.packageName, 0)
-            val iconDrawable = pm.getApplicationIcon(appInfo)
-            (iconDrawable as? BitmapDrawable)?.bitmap
-        } catch (_: Exception) {
-            null
+    val appIconBitmap =
+        remember(provider.provider.packageName) {
+            try {
+                val pm = ctx.packageManager
+                val appInfo = pm.getApplicationInfo(provider.provider.packageName, 0)
+                val iconDrawable = pm.getApplicationIcon(appInfo)
+                (iconDrawable as? BitmapDrawable)?.bitmap
+            } catch (_: Exception) {
+                null
+            }
         }
-    }
 
-    val fallbackText = remember(provider) {
-        try {
-            provider.loadLabel(ctx.packageManager).toString().take(2).uppercase()
-        } catch (_: Exception) {
-            "?"
+    val fallbackText =
+        remember(provider) {
+            try {
+                provider
+                    .loadLabel(ctx.packageManager)
+                    .toString()
+                    .take(2)
+                    .uppercase()
+            } catch (_: Exception) {
+                "?"
+            }
         }
-    }
 
     if (appIconBitmap != null) {
         Image(
@@ -343,17 +357,16 @@ private fun AppIconFallback(
     }
 }
 
-
-
 @Composable
 private fun LetterFallback(
     text: String,
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.primary)
-            .clip(MaterialTheme.shapes.large),
+        modifier =
+            modifier
+                .background(MaterialTheme.colorScheme.primary)
+                .clip(MaterialTheme.shapes.large),
         contentAlignment = Alignment.Center
     ) {
         Text(

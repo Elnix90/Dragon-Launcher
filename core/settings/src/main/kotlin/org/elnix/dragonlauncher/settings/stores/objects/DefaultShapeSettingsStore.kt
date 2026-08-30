@@ -4,4 +4,4 @@ import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.stores.JsonObjectSettingsStore
 
 @SettingsStore
-public object DefaultShapeSettingsStore: JsonObjectSettingsStore()
+public object DefaultShapeSettingsStore : JsonObjectSettingsStore()

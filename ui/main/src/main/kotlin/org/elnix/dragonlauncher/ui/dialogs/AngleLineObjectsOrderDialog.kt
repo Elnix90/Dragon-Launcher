@@ -42,16 +42,17 @@ fun AngleLineObjectsOrderDialog(
     val swipeService = swipeViewModel.swipeService
     val angleLineObjects by swipeService.lineObjectOrder.asState()
 
-
     val lazyListState = rememberLazyListState()
-    val reorderState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        onMove = { from, to ->
-            swipeService.lineObjectOrder.value = angleLineObjects.toMutableList().apply {
-                add(to.index, removeAt(from.index))
+    val reorderState =
+        rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            onMove = { from, to ->
+                swipeService.lineObjectOrder.value =
+                    angleLineObjects.toMutableList().apply {
+                        add(to.index, removeAt(from.index))
+                    }
             }
-        }
-    )
+        )
 
     DragonModalBottomSheet(
         onDismissRequest = onDismiss
@@ -61,9 +62,8 @@ fun AngleLineObjectsOrderDialog(
         }
 
         LazyColumn(
-            state = lazyListState,
+            state = lazyListState
         ) {
-
             items(angleLineObjects, key = { it.name }) { item ->
 
                 ReorderableItem(
@@ -75,28 +75,30 @@ fun AngleLineObjectsOrderDialog(
                     val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
 
                     ElevatedCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .scale(scale)
-                            .draggableHandle()
-                            .longPressDraggableHandle(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .scale(scale)
+                                .draggableHandle()
+                                .longPressDraggableHandle(),
                         elevation = elevatedCardElevation(elevation),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = 12.dp,
-                                    vertical = 10.dp
-                                )
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = 12.dp,
+                                        vertical = 10.dp
+                                    )
                         ) {
-
                             Text(
                                 text = stringResource(item.resId),
                                 style = MaterialTheme.typography.bodyLarge,

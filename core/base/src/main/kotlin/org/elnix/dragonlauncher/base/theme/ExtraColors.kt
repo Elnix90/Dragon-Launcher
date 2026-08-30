@@ -23,30 +23,30 @@ public data class ExtraColors(
     val toggleWifi: Color,
     val toggleBluetooth: Color,
     val toggleData: Color,
-    val runAdbCommand: Color,
+    val runAdbCommand: Color
 )
 
-
-public val DefaultExtraColors: ExtraColors = ExtraColors(
-    holdToActivate = Color(0xFF59007A),
-    angleLine = Color(0xFFFF0000),
-    shapes = Color.White,
-    launchApp = Color(0xFF55AAFF),
-    openUrl = Color(0xFF66DD77),
-    notificationShade = Color(0xFFFFBB44),
-    controlPanel = Color(0xFFFF6688),
-    openAppDrawer = Color(0xFFDD55FF),
-    launcherSettings = Color(0xFFFF0000),
-    lock = Color(0xFF555555),
-    openFile = Color(0xFF00FFF7),
-    reload = Color(0xFF886300),
-    openRecentApps = Color(0xFF880081),
-    openCircleNest = Color(0xFF1BEE14),
-    goParentNest = Color(0xFF1BEE14),
-    toggleWifi = Color(0xFF0FFFFF),
-    toggleData = Color(0xFF806E00),
-    toggleBluetooth = Color(0xFF2196F3),
-    runAdbCommand = Color(0xFF1BEE14)
-)
+public val DefaultExtraColors: ExtraColors =
+    ExtraColors(
+        holdToActivate = Color(0xFF59007A),
+        angleLine = Color(0xFFFF0000),
+        shapes = Color.White,
+        launchApp = Color(0xFF55AAFF),
+        openUrl = Color(0xFF66DD77),
+        notificationShade = Color(0xFFFFBB44),
+        controlPanel = Color(0xFFFF6688),
+        openAppDrawer = Color(0xFFDD55FF),
+        launcherSettings = Color(0xFFFF0000),
+        lock = Color(0xFF555555),
+        openFile = Color(0xFF00FFF7),
+        reload = Color(0xFF886300),
+        openRecentApps = Color(0xFF880081),
+        openCircleNest = Color(0xFF1BEE14),
+        goParentNest = Color(0xFF1BEE14),
+        toggleWifi = Color(0xFF0FFFFF),
+        toggleData = Color(0xFF806E00),
+        toggleBluetooth = Color(0xFF2196F3),
+        runAdbCommand = Color(0xFF1BEE14)
+    )
 
 public val LocalExtraColors: ProvidableCompositionLocal<ExtraColors> = staticCompositionLocalOf { DefaultExtraColors }

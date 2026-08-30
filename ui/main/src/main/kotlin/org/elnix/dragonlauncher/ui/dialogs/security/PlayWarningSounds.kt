@@ -24,28 +24,32 @@ fun PlayWarningSounds(
 ) {
     val ctx = LocalContext.current
 
-    val soundPool = remember {
-        SoundPool.Builder()
-            .setMaxStreams(2)
-            .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build()
-            )
-            .build()
-    }
+    val soundPool =
+        remember {
+            SoundPool
+                .Builder()
+                .setMaxStreams(2)
+                .setAudioAttributes(
+                    AudioAttributes
+                        .Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build()
+                ).build()
+        }
 
     var alarmLoaded by remember { mutableStateOf(false) }
     var metalLoaded by remember { mutableStateOf(false) }
 
-    val alarmSoundId = remember {
-        soundPool.load(ctx, R.raw.warning, 1)
-    }
+    val alarmSoundId =
+        remember {
+            soundPool.load(ctx, R.raw.warning, 1)
+        }
 
-    val metalSoundId = remember {
-        soundPool.load(ctx, R.raw.metal_pipe, 1)
-    }
+    val metalSoundId =
+        remember {
+            soundPool.load(ctx, R.raw.metal_pipe, 1)
+        }
 
     DisposableEffect(Unit) {
         soundPool.setOnLoadCompleteListener { _, sampleId, status ->
@@ -60,7 +64,6 @@ fun PlayWarningSounds(
 
     LaunchedEffect(failedTries, superWarningMode) {
         if (failedTries > 0 && superWarningMode && superWarningModeSound > 0) {
-
             val audioManager =
                 ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 

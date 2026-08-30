@@ -12,15 +12,13 @@ import org.elnix.dragonlauncher.ktx.openDefaultLauncherSettings
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 
-
 @Composable
 fun SetDefaultLauncherBanner(onHide: () -> Unit) {
-
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     DragonRow(
-        onClick = { ctx.openDefaultLauncherSettings()}
+        onClick = { ctx.openDefaultLauncherSettings() }
     ) {
         Text(
             stringResource(R.string.set_default_launcher),

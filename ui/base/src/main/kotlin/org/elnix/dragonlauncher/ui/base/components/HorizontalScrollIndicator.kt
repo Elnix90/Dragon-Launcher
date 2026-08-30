@@ -64,20 +64,19 @@ fun <T> LazyRowWithScrollIndicator(
     }
 }
 
-
 @Composable
 fun RowWithScrollIndicator(
     scrollState: ScrollState = rememberScrollState(),
     content: @Composable RowScope.() -> Unit
 ) {
-
     Box {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(scrollState)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(scrollState)
         ) {
             content()
         }

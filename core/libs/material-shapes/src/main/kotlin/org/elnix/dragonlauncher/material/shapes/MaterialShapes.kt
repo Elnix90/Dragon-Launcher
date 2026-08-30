@@ -22,9 +22,11 @@ import androidx.graphics.shapes.RoundedPolygon
  *   default, it is set to 0 degrees, meaning the [Path] begins drawing at the 3 o'clock position.
  */
 @ExperimentalMaterial3ExpressiveApi
-public fun Morph.toPath(progress: Float, path: Path = Path(), startAngle: Int = 0): Path {
-    return this.toPath(path = path, progress = progress, startAngle = startAngle)
-}
+public fun Morph.toPath(
+    progress: Float,
+    path: Path = Path(),
+    startAngle: Int = 0
+): Path = this.toPath(path = path, progress = progress, startAngle = startAngle)
 
 /**
  * Returns a [Path] that is computed every time for this [RoundedPolygon].
@@ -35,10 +37,9 @@ public fun Morph.toPath(progress: Float, path: Path = Path(), startAngle: Int = 
  *   centerY).
  */
 @ExperimentalMaterial3ExpressiveApi
-public fun RoundedPolygon.toPath(startAngle: Int = 0): Path {
-    return this.toPath(path = Path(), startAngle = startAngle, repeatPath = false, closePath = true)
-
-}
+public fun RoundedPolygon.toPath(
+    startAngle: Int = 0
+): Path = this.toPath(path = Path(), startAngle = startAngle, repeatPath = false, closePath = true)
 
 /**
  * Returns a [Shape] that is computed every time for this [RoundedPolygon].
@@ -61,7 +62,7 @@ public fun RoundedPolygon.toShape(startAngle: Int = 0): Shape {
         override fun createOutline(
             size: Size,
             layoutDirection: LayoutDirection,
-            density: Density,
+            density: Density
         ): Outline {
             if (size != lastSize || workPath == null) {
                 lastSize = size

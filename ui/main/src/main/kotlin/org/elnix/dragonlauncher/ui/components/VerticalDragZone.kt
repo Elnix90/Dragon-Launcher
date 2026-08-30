@@ -23,19 +23,20 @@ import androidx.compose.ui.unit.dp
 fun VerticalDragZone(onDrag: (amount: Float) -> Unit) {
     var isDragging by remember { mutableStateOf(false) }
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp)
-            .pointerInput(Unit) {
-                detectVerticalDragGestures(
-                    onDragStart = { isDragging = true },
-                    onDragEnd = { isDragging = false },
-                    onDragCancel = { isDragging = false },
-                    onVerticalDrag = { _, dragAmount ->
-                       onDrag(dragAmount)
-                    }
-                )
-            },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+                .pointerInput(Unit) {
+                    detectVerticalDragGestures(
+                        onDragStart = { isDragging = true },
+                        onDragEnd = { isDragging = false },
+                        onDragCancel = { isDragging = false },
+                        onVerticalDrag = { _, dragAmount ->
+                            onDrag(dragAmount)
+                        }
+                    )
+                },
         contentAlignment = Alignment.Center
     ) {
         val animatedHeight by animateDpAsState(if (isDragging) 2.dp else 4.dp)

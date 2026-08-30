@@ -9,5 +9,5 @@ data class MoreOptions(
     val icon: Int,
     val tint: Color? = null,
     val enabled: Boolean = true,
-    val disabledText: (@Composable () -> String)? = null,
+    val disabledText: (@Composable () -> String)? = null
 )

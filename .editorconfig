@@ -13,12 +13,18 @@ trim_trailing_whitespace = true
 [*.{kt,kts}]
 # ktlint ships three presets: ktlint_official, intellij_idea, android_studio.
 # android_studio matches what the IDE does out of the box for Android projects.
-ktlint_code_style = android_studio
-max_line_length = 120
+ktlint_code_style = ktlint_official
+max_line_length = 150
 
 # Trailing commas keep diffs small when adding parameters/arguments.
-ij_kotlin_allow_trailing_comma = true
-ij_kotlin_allow_trailing_comma_on_call_site = true
+ij_kotlin_allow_trailing_comma = false
+ij_kotlin_allow_trailing_comma_on_call_site = false
+
+
+# Force multi-line for data classes and functions
+ij_kotlin_force_multiline = true
+ij_kotlin_force_multiline_parameters = true
+ij_kotlin_force_multiline_when_with_single_condition = true
 
 # @Composable functions are PascalCase by convention, which the naming rule
 # would otherwise flag. Test method names are free-form for readability.

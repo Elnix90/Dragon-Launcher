@@ -28,7 +28,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 @Composable
 fun StatusBarNotifications(
     element: StatusBar.Notifications,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
 
@@ -40,12 +40,15 @@ fun StatusBarNotifications(
         Icon(
             painter = painterResource(R.drawable.notification_important),
             contentDescription = "Notifications",
-            modifier = Modifier
-                .size(18.dp)
-                .clickable { openNotificationSettings(ctx) }
+            modifier =
+                Modifier
+                    .size(18.dp)
+                    .clickable { openNotificationSettings(ctx) }
         )
         return
-    } else if (notifications.isNullOrEmpty()) return
+    } else if (notifications.isNullOrEmpty()) {
+        return
+    }
 
     val maxIcons = element.maxIcons
     val showMoreNotificationsIcon = notifications.size > maxIcons
@@ -60,7 +63,6 @@ fun StatusBarNotifications(
             val action = Action.LaunchApp(pkg, Profile.fromUserHandle(ctx, user))
 
             val app by drawerViewModel.findOne(action).collectAsState(null)
-
 
             app?.let {
                 AppIcon(it, 10.dp)

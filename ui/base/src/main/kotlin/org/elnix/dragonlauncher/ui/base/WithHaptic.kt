@@ -8,7 +8,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 
-
 /**
  * Returns a stable `() -> Unit` lambda that performs haptic feedback before invoking [block].
  *
@@ -26,7 +25,7 @@ fun withHaptic(
     block: () -> Unit
 ): () -> Unit {
     val haptic = LocalHapticFeedback.current
-    val disableHapticFeedbackGlobally= LocalDisableHapticFeedbackGlobally.current
+    val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
     val latestBlock = rememberUpdatedState(block)
 
     return retain(type, haptic, disableHapticFeedbackGlobally) {
@@ -36,7 +35,6 @@ fun withHaptic(
         }
     }
 }
-
 
 /**
  * Returns a stable `(T) -> Unit` lambda that performs haptic feedback before invoking [block],

@@ -39,30 +39,32 @@ fun NestOverlay(
     hideShapes: Boolean = false,
     skipSelected: Boolean = false
 ) {
-    val drawParams = rememberDrawParams(
-        eraseColor = eraseColor,
-        isDefaultEditing = false,
-        allowShowPointCenter = allowShowPointCenter,
-        showCancelZone = showCancelZone,
-        pointSettingsDisplay = pointSettingsDisplay,
-        hideShapes = hideShapes,
-        skipSelected = skipSelected
-    )
+    val drawParams =
+        rememberDrawParams(
+            eraseColor = eraseColor,
+            isDefaultEditing = false,
+            allowShowPointCenter = allowShowPointCenter,
+            showCancelZone = showCancelZone,
+            pointSettingsDisplay = pointSettingsDisplay,
+            hideShapes = hideShapes,
+            skipSelected = skipSelected
+        )
     val iconTrigger by PointStableCache.cacheTrigger.asState()
 
     // The key is actually useful, I tried to remove it, but it messed up the drawing in the PointSettingScreen
     key(iconTrigger) {
         Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .then(modifier)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .then(modifier)
         ) {
             this.NestOverlay(
                 nest = nest,
                 depth = depth,
                 center = center,
                 drawParams = drawParams,
-                selectedAll = false,
+                selectedAll = false
             )
         }
     }
@@ -75,7 +77,7 @@ fun DrawScope.NestOverlay(
     center: Offset,
     drawParams: DrawParams,
     selectedAll: Boolean = false,
-    lockedPoint: Point? = null,
+    lockedPoint: Point? = null
 ) {
     require(depth > 0)
 
@@ -93,15 +95,21 @@ fun DrawScope.NestOverlay(
             interSectionShapes.forEach { shape ->
                 if (pass == 0 && depth == 1) return@forEach
 
-                val showShape = depth > 1 ||
+                val showShape =
+                    depth > 1 ||
                         isSettingDisplay ||
-                        (nest.getShowAllShapes(
-                            defaultNest,
-                            drawParams.showAllShapesInNest,
-                            drawParams.isDefaultEditing
-                        ) && selectedPointsIds.isNotEmpty()) ||
-                        (nest.getShowCurrentShape(defaultNest, drawParams.showShape, drawParams.isDefaultEditing) &&
-                                (shape.id in selectedShapes))
+                        (
+                            nest.getShowAllShapes(
+                                defaultNest,
+                                drawParams.showAllShapesInNest,
+                                drawParams.isDefaultEditing
+                            ) &&
+                                selectedPointsIds.isNotEmpty()
+                        ) ||
+                        (
+                            nest.getShowCurrentShape(defaultNest, drawParams.showShape, drawParams.isDefaultEditing) &&
+                                (shape.id in selectedShapes)
+                        )
 
                 if (showShape) {
                     val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
@@ -123,16 +131,18 @@ fun DrawScope.NestOverlay(
 
     if (drawParams.showCancelZone) {
         drawCircle(
-            brush = Brush.sweepGradient(
-                colors = listOf(
-                    Color.Red,
-                    Color.Yellow,
-                    Color.Green,
-                    Color.Cyan,
-                    Color.Blue,
-                    Color.Magenta
-                )
-            ),
+            brush =
+                Brush.sweepGradient(
+                    colors =
+                        listOf(
+                            Color.Red,
+                            Color.Yellow,
+                            Color.Green,
+                            Color.Cyan,
+                            Color.Blue,
+                            Color.Magenta
+                        )
+                ),
             radius = nest.getCancelZone(defaultNest, drawParams.isDefaultEditing).toPx(),
             center = center,
             style = Stroke(Stroke.HairlineWidth)
@@ -143,38 +153,43 @@ fun DrawScope.NestOverlay(
         centerOfNest(center)
     }
 
-    val filteredPoints = drawParams
-        .pointsService
-        .getPointsForNest(nestId = nest.id, skipSelected = drawParams.skipSelected && depth == 1)
-        .filter { (id, point) ->
-            when {
-                depth > 1 -> true
-                isSettingDisplay -> true
-                selectedPointsIds.isEmpty() -> false
-                nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest, drawParams.isDefaultEditing) -> true
-                else -> {
-                    (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
-                            (nest.getShowAllPointsInCurrentNest(
-                                defaultNest = defaultNest,
-                                showAllPointsInCurrentNestSettings = drawParams.showAllPointsInCurrentShape,
-                                isDefaultEditing = drawParams.isDefaultEditing
-                            ) && (point.shapeId in selectedShapes))
+    val filteredPoints =
+        drawParams
+            .pointsService
+            .getPointsForNest(nestId = nest.id, skipSelected = drawParams.skipSelected && depth == 1)
+            .filter { (id, point) ->
+                when {
+                    depth > 1 -> true
+                    isSettingDisplay -> true
+                    selectedPointsIds.isEmpty() -> false
+                    nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest, drawParams.isDefaultEditing) -> true
+                    else -> {
+                        (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
+                            (
+                                nest.getShowAllPointsInCurrentNest(
+                                    defaultNest = defaultNest,
+                                    showAllPointsInCurrentNestSettings = drawParams.showAllPointsInCurrentShape,
+                                    isDefaultEditing = drawParams.isDefaultEditing
+                                ) &&
+                                    (point.shapeId in selectedShapes)
+                            )
+                    }
                 }
             }
-        }
 
     filteredPoints.forEach { (id, p) ->
         val drawPoint: Point = filteredPoints[id] ?: p
         val pointOffset = center + p.getPos()
 
         if (drawParams.nestDebugOverlay) {
-            val endOffset: Offset = if (drawPoint.shapeId == null) {
-                center
-            } else {
-                interSectionShapes.firstOrNull { it.id == drawPoint.shapeId }?.let { shape ->
-                    center + shape.getOffset(defaultShape, drawParams.isDefaultEditing)
-                } ?: center
-            }
+            val endOffset: Offset =
+                if (drawPoint.shapeId == null) {
+                    center
+                } else {
+                    interSectionShapes.firstOrNull { it.id == drawPoint.shapeId }?.let { shape ->
+                        center + shape.getOffset(defaultShape, drawParams.isDefaultEditing)
+                    } ?: center
+                }
 
             drawLine(
                 color = Color.White,
@@ -191,7 +206,6 @@ fun DrawScope.NestOverlay(
             drawParams = drawParams
         )
     }
-
 
     if (drawParams.showPointPreviewCenterStartPosition && selectedPointsIds.size == 1) {
         val id = selectedPointsIds.firstOrNull() ?: return

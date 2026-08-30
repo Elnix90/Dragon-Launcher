@@ -20,7 +20,7 @@ internal class IconPackIconProvider(
     private val iconPack: IconPack,
     private val tint: Int?,
     private val iconPackManager: IconPackManager,
-    private val allowThemed: Boolean,
+    private val allowThemed: Boolean
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
         if (action !is Action.LaunchApp) return null
@@ -41,16 +41,17 @@ internal class IconPackIconProvider(
                     ctx = ctx,
                     iconPack = iconPack.packageName,
                     tint = tint,
-                    baseIcon = withContext(Dispatchers.IO) {
-                        val ai = ctx.getSystemService<LauncherApps>()?.resolveActivity(
-                            Intent().setComponent(componentName),
-                            application.user
-                        )
-                        ai?.getIcon(ctx.resources.displayMetrics.densityDpi)
-                    } ?: return null,
-                    size = size,
+                    baseIcon =
+                        withContext(Dispatchers.IO) {
+                            val ai =
+                                ctx.getSystemService<LauncherApps>()?.resolveActivity(
+                                    Intent().setComponent(componentName),
+                                    application.user
+                                )
+                            ai?.getIcon(ctx.resources.displayMetrics.densityDpi)
+                        } ?: return null,
+                    size = size
                 )
             }
     }
-
 }

@@ -18,8 +18,7 @@ import org.robolectric.RobolectricTestRunner
  */
 @RunWith(RobolectricTestRunner::class)
 class RectKtxTest {
-
-    //  translate 
+    //  translate
 
     @Test
     fun `translate shifts all edges by positive values`() {
@@ -70,7 +69,7 @@ class RectKtxTest {
         assertEquals(rect, returned)
     }
 
-    //  toRectF 
+    //  toRectF
 
     @Test
     fun `toRectF copies coordinates correctly`() {

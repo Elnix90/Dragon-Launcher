@@ -70,18 +70,19 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
                         checked = checked,
                         onCheckedChange = withHapticParam { onCheck(entry) },
                         interactionSource = interactionSources[idx],
-                        modifier = Modifier
-                            .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-                            .animateWidth(interactionSources[idx]),
+                        modifier =
+                            Modifier
+                                .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+                                .animateWidth(interactionSources[idx]),
                         enabled = enabled(entry),
                         colors = AppObjectsColors.iconToggleButtonColors(),
-                        shapes = when (idx) {
-                            0 -> connectedLeadingButtonShapes()
-                            entries.lastIndex -> connectedTrailingButtonShapes()
-                            else -> connectedMiddleButtonShapes()
-                        }
+                        shapes =
+                            when (idx) {
+                                0 -> connectedLeadingButtonShapes()
+                                entries.lastIndex -> connectedTrailingButtonShapes()
+                                else -> connectedMiddleButtonShapes()
+                            }
                     ) {
-
                         entry.iconEnabled?.let { iconEnabled ->
                             DragonTooltip(entry.resId ?: -1) {
                                 Crossfade(!checked) { notChecked ->
@@ -94,29 +95,27 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
                         }
                     }
                 },
-                menuContent = {  }
+                menuContent = { }
             )
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedLeadingButtonShapes(
     shape: Shape = connectedLeadingButtonShape,
     pressedShape: Shape = connectedLeadingButtonPressShape,
-    checkedShape: Shape = connectedButtonCheckedShape,
+    checkedShape: Shape = connectedButtonCheckedShape
 ): IconToggleButtonShapes =
     IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
-
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedMiddleButtonShapes(
     shape: Shape = ShapeDefaults.Small,
     pressedShape: Shape = connectedMiddleButtonPressShape,
-    checkedShape: Shape = connectedButtonCheckedShape,
+    checkedShape: Shape = connectedButtonCheckedShape
 ): IconToggleButtonShapes =
     IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
 
@@ -125,6 +124,6 @@ fun connectedMiddleButtonShapes(
 fun connectedTrailingButtonShapes(
     shape: Shape = connectedTrailingButtonShape,
     pressedShape: Shape = connectedTrailingButtonPressShape,
-    checkedShape: Shape = connectedButtonCheckedShape,
+    checkedShape: Shape = connectedButtonCheckedShape
 ): IconToggleButtonShapes =
     IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)

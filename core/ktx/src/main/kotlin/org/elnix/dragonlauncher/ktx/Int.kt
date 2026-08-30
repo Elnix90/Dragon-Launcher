@@ -10,7 +10,7 @@ public fun Int.isBrightColor(): Boolean {
     return darkness < 0.5
 }
 
-public val Int.sat : Float
+public val Int.sat: Float
     get() {
         FloatArray(3).also {
             RGBToHSL(red, green, blue, it)

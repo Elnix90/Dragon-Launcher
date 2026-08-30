@@ -68,32 +68,37 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HapticFeedbackEditor(
     initial: CustomHapticFeedback?,
     default: CustomHapticFeedback?,
-    onDismiss: (CustomHapticFeedback?) -> Unit,
+    onDismiss: (CustomHapticFeedback?) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
-    val entries = remember(initial) {
-        mutableStateListOf<HapticEntry>().apply { addAll(initial?.haptics ?: default?.haptics ?: emptyList()) }
-    }
-
-    val reorderState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        onMove = { from, to ->
-            entries.add(to.index, entries.removeAt(from.index))
+    val entries =
+        remember(initial) {
+            mutableStateListOf<HapticEntry>().apply { addAll(initial?.haptics ?: default?.haptics ?: emptyList()) }
         }
-    )
+
+    val reorderState =
+        rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            onMove = { from, to ->
+                entries.add(to.index, entries.removeAt(from.index))
+            }
+        )
 
     fun currentEditingSnapshot(): CustomHapticFeedback? {
-        val snapshot = if (entries.isEmpty()) null
-        else CustomHapticFeedback(entries.toList())
+        val snapshot =
+            if (entries.isEmpty()) {
+                null
+            } else {
+                CustomHapticFeedback(entries.toList())
+            }
         return snapshot
     }
 
@@ -132,7 +137,6 @@ fun HapticFeedbackEditor(
 
             selectPreset(decoded)
             ctx.showToast("✅ Successfully imported!")
-
         } catch (e: IllegalStateException) {
             logE(HAPTIC_TAG, e) { "Clipboard if empty" }
             ctx.showToast("❌  Clipboard if empty")
@@ -196,15 +200,15 @@ fun HapticFeedbackEditor(
 
         Spacer(5.dp)
 
-
         DragonSettingsGroup(R.string.presets) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 CustomHapticFeedback.allPresets.forEach { (name, preset) ->
                     DragonButton(
@@ -220,12 +224,12 @@ fun HapticFeedbackEditor(
             }
         }
 
-
         DragonSettingsGroup(R.string.steps) {
             Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 AddStepButton(
@@ -266,16 +270,16 @@ fun HapticFeedbackEditor(
 
                 RotatingPlayIcon(enabled = entries.isNotEmpty(), onClick = ::playTest)
             }
-
         }
 
         if (entries.isEmpty()) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
-                    .padding(24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
+                        .padding(24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -305,9 +309,10 @@ fun HapticFeedbackEditor(
                             if (isDragging) 16.dp else 0.dp
                         )
                         DragonSettingsGroup(
-                            modifier = Modifier
-                                .scale(scale)
-                                .shadow(elevation)
+                            modifier =
+                                Modifier
+                                    .scale(scale)
+                                    .shadow(elevation)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -318,23 +323,28 @@ fun HapticFeedbackEditor(
                                     onCheckedChange = { checked ->
                                         entries[index] = entry.copy(isVibration = checked)
                                     },
-                                    colors = CheckboxDefaults.colors(
-                                        checkedColor = MaterialTheme.colorScheme.primary
-                                    )
+                                    colors =
+                                        CheckboxDefaults.colors(
+                                            checkedColor = MaterialTheme.colorScheme.primary
+                                        )
                                 )
 
                                 Icon(
-                                    painter = painterResource(
-                                        if (entry.isVibration)
-                                            R.drawable.haptic
-                                        else
-                                            R.drawable.timer
-                                    ),
+                                    painter =
+                                        painterResource(
+                                            if (entry.isVibration) {
+                                                R.drawable.haptic
+                                            } else {
+                                                R.drawable.timer
+                                            }
+                                        ),
                                     contentDescription = null,
-                                    tint = if (entry.isVibration)
-                                        MaterialTheme.colorScheme.primary
-                                    else
-                                        MaterialTheme.colorScheme.secondary
+                                    tint =
+                                        if (entry.isVibration) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.secondary
+                                        }
                                 )
 
                                 Spacer(8.dp)
@@ -373,9 +383,10 @@ fun HapticFeedbackEditor(
                                 valueRange = 0..1000,
                                 resetEnabled = entry.resetEnabled,
                                 onReset = {
-                                    entries[index] = entry.copy(
-                                        durationMs = if (entry.isVibration) 50 else 100
-                                    )
+                                    entries[index] =
+                                        entry.copy(
+                                            durationMs = if (entry.isVibration) 50 else 100
+                                        )
                                 }
                             ) { newValue ->
                                 entries[index] = entry.copy(durationMs = newValue)
@@ -394,11 +405,12 @@ private fun RotatingPlayIcon(
     onClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val playIconRotation = remember {
-        Animatable(
-            initialValue = 0f
-        )
-    }
+    val playIconRotation =
+        remember {
+            Animatable(
+                initialValue = 0f
+            )
+        }
 
     DragonIconButton(
         modifier = Modifier.rotate(playIconRotation.value),
@@ -436,7 +448,6 @@ private fun AddStepButton(
         )
     }
 }
-
 
 @Composable
 fun DragonGroupScope.HapticFeedBackEditorButtonWithPlayTest(

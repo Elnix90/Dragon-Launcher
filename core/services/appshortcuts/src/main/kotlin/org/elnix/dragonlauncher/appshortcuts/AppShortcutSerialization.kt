@@ -8,7 +8,6 @@ import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.JSON_TAG
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
-
 @SuppressLint("InlinedApi")
 public fun deserialize(serialized: Action.LaunchShortcut, ctx: Context): ShortcutInfo? {
     try {
@@ -25,17 +24,18 @@ public fun deserialize(serialized: Action.LaunchShortcut, ctx: Context): Shortcu
             query.setPackage(packageName)
             query.setQueryFlags(
                 LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED or
-                        LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
-                        LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST or
-                        LauncherApps.ShortcutQuery.FLAG_MATCH_CACHED or
-                        LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED_BY_ANY_LAUNCHER
+                    LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
+                    LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST or
+                    LauncherApps.ShortcutQuery.FLAG_MATCH_CACHED or
+                    LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED_BY_ANY_LAUNCHER
             )
             query.setShortcutIds(mutableListOf(id))
-            val shortcuts = try {
-                launcherApps.getShortcuts(query, user)
-            } catch (_: IllegalStateException) {
-                return null
-            }
+            val shortcuts =
+                try {
+                    launcherApps.getShortcuts(query, user)
+                } catch (_: IllegalStateException) {
+                    return null
+                }
             return if (shortcuts.isNullOrEmpty()) {
                 null
             } else {

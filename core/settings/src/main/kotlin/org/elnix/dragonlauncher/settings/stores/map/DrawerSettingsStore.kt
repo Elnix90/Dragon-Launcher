@@ -31,279 +31,310 @@ import org.elnix.dragonlauncher.settings.specialObjects.shape
 
 @SettingsStore
 public object DrawerSettingsStore : MapSettingsStore() {
+    @SettingKey
+    public val autoOpenSingleMatch: BooleanSettingObject =
+        boolean(
+            title = R.string.auto_launch_single_match,
+            description = R.string.auto_launch_single_match_desc,
+            icon = R.drawable.open_in_new,
+            default = true
+        )
 
     @SettingKey
-    public val autoOpenSingleMatch: BooleanSettingObject = boolean(
-        title = R.string.auto_launch_single_match,
-        description = R.string.auto_launch_single_match_desc,
-        icon = R.drawable.open_in_new,
-        default = true
-    )
+    public val disableAutoLaunchWhenFirstCharIs: StringSettingObject =
+        string(
+            title = R.string.disable_auto_launch_when_first_char_is,
+            description = R.string.pick_a_character,
+            icon = R.drawable.motion_photos,
+            default = " "
+        )
 
     @SettingKey
-    public val disableAutoLaunchWhenFirstCharIs: StringSettingObject = string(
-        title = R.string.disable_auto_launch_when_first_char_is,
-        description = R.string.pick_a_character,
-        icon = R.drawable.motion_photos,
-        default = " "
-    )
+    public val searchAllWorkspacesOnlyWhenFirstCharIs: StringSettingObject =
+        string(
+            title = R.string.search_all_workspaces_when_first_char_is,
+            description = R.string.pick_a_character,
+            icon = R.drawable.workspaces,
+            default = "."
+        )
 
     @SettingKey
-    public val searchAllWorkspacesOnlyWhenFirstCharIs: StringSettingObject = string(
-        title = R.string.search_all_workspaces_when_first_char_is,
-        description = R.string.pick_a_character,
-        icon = R.drawable.workspaces,
-        default = "."
-    )
+    public val showAppIconsInDrawer: BooleanSettingObject =
+        boolean(
+            title = R.string.show_app_icons_in_drawer,
+            description = R.string.show_app_icons_in_drawer_desc,
+            icon = R.drawable.apps,
+            default = true
+        )
 
     @SettingKey
-    public val showAppIconsInDrawer: BooleanSettingObject = boolean(
-        title = R.string.show_app_icons_in_drawer,
-        description = R.string.show_app_icons_in_drawer_desc,
-        icon = R.drawable.apps,
-        default = true
-    )
+    public val showAppLabelsInDrawer: BooleanSettingObject =
+        boolean(
+            title = R.string.show_app_labels_in_drawer,
+            description = R.string.show_app_labels_in_drawer_desc,
+            icon = R.drawable.text_fields_alt,
+            default = true
+        )
 
     @SettingKey
-    public val showAppLabelsInDrawer: BooleanSettingObject = boolean(
-        title = R.string.show_app_labels_in_drawer,
-        description = R.string.show_app_labels_in_drawer_desc,
-        icon = R.drawable.text_fields_alt,
-        default = true
-    )
+    public val labelTextColor: ColorSettingObject =
+        color(
+            title = R.string.drawer_label_color,
+            description = R.string.drawer_label_color_desc,
+            icon = R.drawable.text_fields_alt,
+            default = Color.Unspecified
+        )
 
     @SettingKey
-    public val labelTextColor: ColorSettingObject = color(
-        title = R.string.drawer_label_color,
-        description = R.string.drawer_label_color_desc,
-        icon = R.drawable.text_fields_alt,
-        default = Color.Unspecified
-    )
+    public val autoShowKeyboardOnDrawer: BooleanSettingObject =
+        boolean(
+            title = R.string.auto_show_keyboard,
+            description = R.string.auto_show_keyboard_desc,
+            icon = R.drawable.keyboard,
+            default = true
+        )
 
     @SettingKey
-    public val autoShowKeyboardOnDrawer: BooleanSettingObject = boolean(
-        title = R.string.auto_show_keyboard,
-        description = R.string.auto_show_keyboard_desc,
-        icon = R.drawable.keyboard,
-        default = true
-    )
+    public val autoAskToUnlockProfile: BooleanSettingObject =
+        boolean(
+            title = R.string.auto_show_keyboard,
+            description = R.string.auto_show_keyboard_desc,
+            icon = R.drawable.lock_open,
+            default = true
+        )
 
     @SettingKey
-    public val autoAskToUnlockProfile: BooleanSettingObject = boolean(
-        title = R.string.auto_show_keyboard,
-        description = R.string.auto_show_keyboard_desc,
-        icon = R.drawable.lock_open,
-        default = true
-    )
+    public val gridSize: IntSettingObject =
+        int(
+            title = R.string.grid_size,
+            description = R.string.grid_size_desc,
+            icon = R.drawable.grid_on,
+            default = 5,
+            allowedRange = 1..15
+        )
 
     @SettingKey
-    public val gridSize: IntSettingObject = int(
-        title = R.string.grid_size,
-        description = R.string.grid_size_desc,
-        icon = R.drawable.grid_on,
-        default = 5,
-        allowedRange = 1..15
-    )
+    public val horizontalAlignment: EnumSettingObject<HorizontalAlignment> = enum(HorizontalAlignment.Start)
 
     @SettingKey
-    public val horizontalAlignment: EnumSettingObject<HorizontalAlignment> = enum(
-        HorizontalAlignment.Start)
+    public val lastWorkspaceUsed: StringSettingObject =
+        string(
+            default = "",
+            backupable = false
+        )
 
     @SettingKey
-    public val lastWorkspaceUsed: StringSettingObject = string(
-        default = "",
-        backupable = false
-    )
+    public val tapEmptySpaceAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.tap_empty_space_action,
+            default = DrawerActions.Close
+        )
 
     @SettingKey
-    public val tapEmptySpaceAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.tap_empty_space_action,
-        default = DrawerActions.Close
-    )
+    public val leftDrawerAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.left_drawer_action,
+            default = DrawerActions.defaultLeftDrawerAction
+        )
 
     @SettingKey
-    public val leftDrawerAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.left_drawer_action,
-        default = DrawerActions.defaultLeftDrawerAction
-    )
+    public val rightDrawerAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.right_drawer_action,
+            default = DrawerActions.defaultRightDrawerAction
+        )
 
     @SettingKey
-    public val rightDrawerAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.right_drawer_action,
-        default = DrawerActions.defaultRightDrawerAction
-    )
+    public val leftDrawerWidth: DpSettingObject =
+        dp(
+            title = R.string.left_drawer_width,
+            default = 0.dp,
+            allowedRange = 0.dp..300.dp
+        )
 
     @SettingKey
-    public val leftDrawerWidth: DpSettingObject = dp(
-        title = R.string.left_drawer_width,
-        default = 0.dp,
-        allowedRange = 0.dp..300.dp
-    )
+    public val rightDrawerWidth: DpSettingObject =
+        dp(
+            title = R.string.right_drawer_width,
+            default = 0.dp,
+            allowedRange = 0.dp..300.dp
+        )
 
     @SettingKey
-    public val rightDrawerWidth: DpSettingObject = dp(
-        title = R.string.right_drawer_width,
-        default = 0.dp,
-        allowedRange = 0.dp..300.dp
-    )
+    public val drawerEnterAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.drawer_enter_key_action,
+            default = DrawerActions.defaultEnterAction
+        )
 
     @SettingKey
-    public val drawerEnterAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.drawer_enter_key_action,
-        default = DrawerActions.defaultEnterAction
-    )
+    public val drawerHomeAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.home_action,
+            description = R.string.home_action_desc,
+            default = DrawerActions.defaultHomeAction
+        )
 
     @SettingKey
-    public val drawerHomeAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.home_action,
-        description = R.string.home_action_desc,
-        default = DrawerActions.defaultHomeAction
-    )
+    public val drawerScrollDownAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.scroll_down_action,
+            default = DrawerActions.defaultScrollDownAction
+        )
 
     @SettingKey
-    public val drawerScrollDownAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.scroll_down_action,
-        default = DrawerActions.defaultScrollDownAction
-    )
+    public val drawerScrollUpAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.scroll_up_action,
+            default = DrawerActions.defaultScrollUpAction
+        )
 
     @SettingKey
-    public val drawerScrollUpAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.scroll_up_action,
-        default = DrawerActions.defaultScrollUpAction
-    )
+    public val drawerBackAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.back_action,
+            default = DrawerActions.defaultBackAction
+        )
 
     @SettingKey
-    public val drawerBackAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.back_action,
-        default = DrawerActions.defaultBackAction
-    )
+    public val iconShape: IconShapeSettingObject =
+        shape(
+            title = R.string.edit_icons_shape,
+            description = R.string.edit_icons_shape_desc,
+            icon = R.drawable.shapes,
+            default = IconShape.PlatformDefault
+        )
 
     @SettingKey
-    public val iconShape: IconShapeSettingObject = shape(
-        title = R.string.edit_icons_shape,
-        description = R.string.edit_icons_shape_desc,
-        icon = R.drawable.shapes,
-        default = IconShape.PlatformDefault
-    )
+    public val iconsSpacingHorizontal: DpSettingObject =
+        dp(
+            title = R.string.icons_spacing_horizontal,
+            description = R.string.icons_spacing_horizontal_desc,
+            icon = R.drawable.more_horiz,
+            default = 0.dp,
+            allowedRange = 0.dp..50.dp
+        )
 
     @SettingKey
-    public val iconsSpacingHorizontal: DpSettingObject = dp(
-        title = R.string.icons_spacing_horizontal,
-        description = R.string.icons_spacing_horizontal_desc,
-        icon = R.drawable.more_horiz,
-        default = 0.dp,
-        allowedRange = 0.dp..50.dp
-    )
+    public val iconsSpacingVertical: DpSettingObject =
+        dp(
+            title = R.string.icons_spacing_vertical,
+            description = R.string.icons_spacing_vertical_desc,
+            icon = R.drawable.more_vert,
+            default = 8.dp,
+            allowedRange = 0.dp..50.dp
+        )
 
     @SettingKey
-    public val iconsSpacingVertical: DpSettingObject = dp(
-        title = R.string.icons_spacing_vertical,
-        description = R.string.icons_spacing_vertical_desc,
-        icon = R.drawable.more_vert,
-        default = 8.dp,
-        allowedRange = 0.dp..50.dp
-
-    )
-
-    @SettingKey
-    public val iconSize: DpSettingObject = dp(
-        description = R.string.icon_size_desc,
-        title = R.string.icon_size,
-        icon = R.drawable.format_size,
-        default = 48.dp,
-        allowedRange = 0.dp..200.dp
-    )
+    public val iconSize: DpSettingObject =
+        dp(
+            description = R.string.icon_size_desc,
+            title = R.string.icon_size,
+            icon = R.drawable.format_size,
+            default = 48.dp,
+            allowedRange = 0.dp..200.dp
+        )
 
     @SettingKey
-    public val useCategory: BooleanSettingObject = boolean(
-        title = R.string.use_categories,
-        description = R.string.use_categories_desc,
-        icon = R.drawable.fullscreen,
-        default = false
-    )
+    public val useCategory: BooleanSettingObject =
+        boolean(
+            title = R.string.use_categories,
+            description = R.string.use_categories_desc,
+            icon = R.drawable.fullscreen,
+            default = false
+        )
 
     @SettingKey
-    public val categoryGridCells: IntSettingObject = int(
-        title = R.string.category_cells,
-        description = R.string.category_cells,
-        icon = R.drawable.more_horiz,
-        default = 3,
-        allowedRange = 2..5
-    )
+    public val categoryGridCells: IntSettingObject =
+        int(
+            title = R.string.category_cells,
+            description = R.string.category_cells,
+            icon = R.drawable.more_horiz,
+            default = 3,
+            allowedRange = 2..5
+        )
 
     @SettingKey
-    public val showCategoryName: BooleanSettingObject = boolean(
-        title = R.string.show_category_name,
-        description = R.string.show_category_name_desc,
-        icon = R.drawable.text_fields_alt,
-        default = true
-    )
+    public val showCategoryName: BooleanSettingObject =
+        boolean(
+            title = R.string.show_category_name,
+            description = R.string.show_category_name_desc,
+            icon = R.drawable.text_fields_alt,
+            default = true
+        )
 
     @SettingKey
-    public val showSearchBar: BooleanSettingObject = boolean(
-        title = R.string.search_bar,
-        default = true
-    )
+    public val showSearchBar: BooleanSettingObject =
+        boolean(
+            title = R.string.search_bar,
+            default = true
+        )
 
     @SettingKey
-    public val showRecentlyUsedApps: BooleanSettingObject = boolean(
-        title = R.string.show_recently_used_apps,
-        description = R.string.show_recently_used_apps_desc,
-        icon = R.drawable.recent,
-        default = false
-    )
-
-
-    @SettingKey
-    public val recentlyUsedAppsCount: IntSettingObject = int(
-        default = 5,
-        title = R.string.recently_used_apps_count,
-        description = R.string.recently_used_apps_count_desc,
-        icon = R.drawable.recent,
-        allowedRange = 1..20
-    )
+    public val showRecentlyUsedApps: BooleanSettingObject =
+        boolean(
+            title = R.string.show_recently_used_apps,
+            description = R.string.show_recently_used_apps_desc,
+            icon = R.drawable.recent,
+            default = false
+        )
 
     @SettingKey
-    public val recentlyUsedPackages: StringListSettingObject = stringList(
-        default = emptyList(),
-        onChanged = {},
-        backupable = false
-    )
+    public val recentlyUsedAppsCount: IntSettingObject =
+        int(
+            default = 5,
+            title = R.string.recently_used_apps_count,
+            description = R.string.recently_used_apps_count_desc,
+            icon = R.drawable.recent,
+            allowedRange = 1..20
+        )
 
     @SettingKey
-    public val pullDownAnimations: BooleanSettingObject = boolean(
-        title = R.string.pull_down_animations,
-        description = R.string.pull_down_animations_desc,
-        icon = R.drawable.animation,
-        default = true
-    )
+    public val recentlyUsedPackages: StringListSettingObject =
+        stringList(
+            default = emptyList(),
+            onChanged = {},
+            backupable = false
+        )
 
     @SettingKey
-    public val pullDownWallPaperDim: BooleanSettingObject = boolean(
-        title = R.string.pull_down_wallpaper_dim,
-        description = R.string.pull_down_wallpaper_dim_desc,
-        icon = R.drawable.wallpaper,
-        default = true
-    )
+    public val pullDownAnimations: BooleanSettingObject =
+        boolean(
+            title = R.string.pull_down_animations,
+            description = R.string.pull_down_animations_desc,
+            icon = R.drawable.animation,
+            default = true
+        )
+
+    @SettingKey
+    public val pullDownWallPaperDim: BooleanSettingObject =
+        boolean(
+            title = R.string.pull_down_wallpaper_dim,
+            description = R.string.pull_down_wallpaper_dim_desc,
+            icon = R.drawable.wallpaper,
+            default = true
+        )
 
 //    @SettingKey
 //    val pullDownIconFade = boolean(true)
 
     @SettingKey
-    public val pullDownScaleIn: BooleanSettingObject = boolean(
-        title = R.string.pull_down_scale_in,
-        description = R.string.pull_down_scale_in_desc,
-        icon = R.drawable.format_size,
-        default = true
-    )
+    public val pullDownScaleIn: BooleanSettingObject =
+        boolean(
+            title = R.string.pull_down_scale_in,
+            description = R.string.pull_down_scale_in_desc,
+            icon = R.drawable.format_size,
+            default = true
+        )
 
     /**
      * The order of the search bar / recently used in drawer
      */
     @SettingKey
-    public val toolbarsOrder: EnumListSettingObject<DrawerToolbar> = enumList(
-        title = R.string.toolbars_order,
-        icon = R.drawable.drag_indicator,
-        default = DrawerToolbar.defaultToolbarOrder,
-    )
+    public val toolbarsOrder: EnumListSettingObject<DrawerToolbar> =
+        enumList(
+            title = R.string.toolbars_order,
+            icon = R.drawable.drag_indicator,
+            default = DrawerToolbar.defaultToolbarOrder
+        )
 }

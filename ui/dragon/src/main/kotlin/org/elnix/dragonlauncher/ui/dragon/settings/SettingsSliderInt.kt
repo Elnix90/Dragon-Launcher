@@ -16,12 +16,11 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-
 fun DragonGroupScope.Setting(
     setting: IntSettingObject,
     enabled: Boolean = true,
     customDesc: ((Int) -> String)? = null,
-    onChange: ((Int) -> Unit)? = null,
+    onChange: ((Int) -> Unit)? = null
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()

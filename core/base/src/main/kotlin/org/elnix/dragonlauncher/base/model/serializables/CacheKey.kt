@@ -43,7 +43,6 @@ public value class CacheKey private constructor(
         userId: Int
     ) : this(cacheKey = "$packageName#$userId")
 
-
     /**
      * Shortcut constructor
      */

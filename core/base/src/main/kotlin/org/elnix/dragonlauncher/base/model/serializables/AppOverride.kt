@@ -3,13 +3,11 @@ package org.elnix.dragonlauncher.base.model.serializables
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 @SerialName("AppOverride")
 public data class AppOverride(
     val customName: String? = null,
     val customIcon: CustomIcon? = null,
-
     /**
      * Properties applied to the default (null [customIcon]) icon.
      * When [customIcon] is set, its own [CustomIconProperties] are used instead.
@@ -19,7 +17,8 @@ public data class AppOverride(
     val aliases: Set<String>? = null
 ) {
     public val isNotNullOrEmpty: Boolean
-        get() = !customName.isNullOrEmpty() ||
+        get() =
+            !customName.isNullOrEmpty() ||
                 customIcon != null ||
                 iconProperties?.isNotEmpty == true ||
                 !customCategory.isNullOrEmpty() ||

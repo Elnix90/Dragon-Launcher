@@ -5,7 +5,6 @@ package org.elnix.dragonlauncher.ktx
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.IntSize
 
-
 /**
  * Quick ktx to create a [Size] whose [width][Size.width] and [height][Size.height] values are equals
  *
@@ -14,7 +13,6 @@ import androidx.compose.ui.unit.IntSize
  */
 public inline fun Size.Companion.rect(side: Float): Size =
     Size(side, side)
-
 
 /**
  * Quick ktx to create a [IntSize] whose [width][IntSize.width] and [height][IntSize.height] values are equals

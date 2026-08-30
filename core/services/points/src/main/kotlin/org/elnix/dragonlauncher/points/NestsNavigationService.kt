@@ -8,7 +8,9 @@ public interface NestsNavigationService {
     public val currentNestId: StateFlow<Int>
 
     public fun goBack()
+
     public fun goToNest(newNestId: Int)
+
     public fun clearStack()
 }
 
@@ -21,7 +23,8 @@ internal class NestsNavigationServiceImpl(
      */
     private val nestsStack: MutableList<Int> = mutableListOf()
 
-    private val _currentNestId = MutableStateFlow( 0)
+    private val _currentNestId = MutableStateFlow(0)
+
     /**
      * Current nest id derived from the navigation stack.
      *

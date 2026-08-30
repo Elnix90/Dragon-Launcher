@@ -4,19 +4,18 @@ import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.elnix90.logging.logD
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.NOTIFICATIONS_TAG
-import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import java.lang.ref.WeakReference
 
 @AndroidEntryPoint
 public class NotificationService : NotificationListenerService() {
-
     @Inject
     public lateinit var notificationRepository: NotificationRepository
 
@@ -25,9 +24,7 @@ public class NotificationService : NotificationListenerService() {
 
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_STICKY
-    }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 
     override fun onListenerConnected() {
         super.onListenerConnected()
@@ -41,10 +38,11 @@ public class NotificationService : NotificationListenerService() {
             val ranking = Ranking()
             val rankingMap = currentRanking
 
-            val notifications = statusBarNotifications.map {
-                rankingMap.getRanking(it.key, ranking)
-                Notification(it, ranking)
-            }
+            val notifications =
+                statusBarNotifications.map {
+                    rankingMap.getRanking(it.key, ranking)
+                    Notification(it, ranking)
+                }
 
             notificationRepository.setNotifications(notifications)
         }
@@ -56,22 +54,22 @@ public class NotificationService : NotificationListenerService() {
             val notifications = notificationRepository.getNotifications()
 
             val ranking = Ranking()
-            val updatedNotifications = notifications.map {
-                rankingMap?.getRanking(it.key, ranking)
-                Notification(it, ranking)
-            }
+            val updatedNotifications =
+                notifications.map {
+                    rankingMap?.getRanking(it.key, ranking)
+                    Notification(it, ranking)
+                }
 
             notificationRepository.setNotifications(updatedNotifications)
         }
     }
 
-    private fun getNotifications(): Array<StatusBarNotification> {
-        return try {
+    private fun getNotifications(): Array<StatusBarNotification> =
+        try {
             activeNotifications
         } catch (_: SecurityException) {
             emptyArray()
         }
-    }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
         super.onNotificationRemoved(sbn)
@@ -98,8 +96,7 @@ public class NotificationService : NotificationListenerService() {
 
     public companion object {
         private var instance: WeakReference<NotificationService>? = null
-        public fun getInstance(): NotificationService? {
-            return instance?.get()
-        }
+
+        public fun getInstance(): NotificationService? = instance?.get()
     }
 }

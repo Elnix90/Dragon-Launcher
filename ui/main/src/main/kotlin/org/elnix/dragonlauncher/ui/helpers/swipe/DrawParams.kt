@@ -21,7 +21,6 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 
-
 /**
  * Aggregated drawing parameters derived from [PointsViewModel] and other reactive sources.
  *
@@ -30,15 +29,12 @@ import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
  */
 data class DrawParams(
     val ctx: Context,
-
     val pointsService: PointsService,
     val extraColors: ExtraColors,
     val colorScheme: ColorScheme,
     val iconShape: IconShape,
-
     val maxNestsDepth: Int,
     val isDefaultEditing: Boolean,
-
     /** Settings Screen only */
     val eraseColor: Color,
     /** Settings Screen only */
@@ -48,12 +44,10 @@ data class DrawParams(
     /** Settings Screen only */
     val hideShapes: Boolean,
     val skipSelected: Boolean,
-
     val showCurrentPoint: Boolean,
     val showAllPointsInCurrentShape: Boolean,
     val showAllPointsInCurrentNest: Boolean,
     val showPointPreviewCenterStartPosition: Boolean,
-
     val nestDebugOverlay: Boolean,
     val showCancelZone: Boolean,
     val showShape: Boolean,

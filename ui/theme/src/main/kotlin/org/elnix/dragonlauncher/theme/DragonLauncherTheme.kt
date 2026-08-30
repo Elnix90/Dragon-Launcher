@@ -11,12 +11,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.DarkDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
 import org.elnix.dragonlauncher.base.theme.LightDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.models.ColorsViewModel
 import org.elnix.dragonlauncher.models.FontViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
@@ -27,7 +27,6 @@ import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 fun rememberCurrentColorScheme(
     colorsViewModel: ColorsViewModel = activityViewModel()
 ): State<ColorScheme> {
-
     val defaultTheme by ColorModesSettingsStore.defaultTheme.asState()
     val customScheme by colorsViewModel.colorscheme.collectAsState()
     val systemScheme = systemColorScheme()
@@ -63,7 +62,7 @@ fun DragonLauncherTheme(
 
     CompositionLocalProvider(
         LocalExtraColors provides extraColors,
-        LocalUseCustomColorChannels provides useCustomColorChannels,
+        LocalUseCustomColorChannels provides useCustomColorChannels
     ) {
         MaterialExpressiveTheme(
             colorScheme = colorScheme,

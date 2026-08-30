@@ -22,31 +22,34 @@ fun FullScreenOverlay(
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = true
-        )
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = true
+            )
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.4f))
-                .clickable(
-                    indication = null,
-                    interactionSource = null,
-                    onClick = onDismissRequest
-                ),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable(
+                        indication = null,
+                        interactionSource = null,
+                        onClick = onDismissRequest
+                    ),
             contentAlignment = alignment
         ) {
             Box(
-                modifier = modifier
-                    .then(if (imePadding) Modifier.imePadding() else Modifier)
-                    // Consume clicks so they don't reach the scrim
-                    // WTF
-                    .clickable(
-                        indication = null,
-                        interactionSource = null
-                    ) { }
+                modifier =
+                    modifier
+                        .then(if (imePadding) Modifier.imePadding() else Modifier)
+                        // Consume clicks so they don't reach the scrim
+                        // WTF
+                        .clickable(
+                            indication = null,
+                            interactionSource = null
+                        ) { }
             ) {
                 content()
             }

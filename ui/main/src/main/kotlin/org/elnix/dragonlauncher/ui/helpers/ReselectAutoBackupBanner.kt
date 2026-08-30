@@ -20,7 +20,6 @@ import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 
-
 /**
  * Reselect auto backup banner
  *
@@ -35,14 +34,14 @@ fun ReselectAutoBackupBanner(onHide: () -> Unit) {
     val autoBackupLauncher = rememberAutoBackupLauncher()
 
     Row(
-        modifier = Modifier
-            .shapedClickable { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(10.dp),
+        modifier =
+            Modifier
+                .shapedClickable { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(10.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
         Text(
             stringResource(R.string.reselect_auto_backup_file),
             color = MaterialTheme.colorScheme.onPrimary,

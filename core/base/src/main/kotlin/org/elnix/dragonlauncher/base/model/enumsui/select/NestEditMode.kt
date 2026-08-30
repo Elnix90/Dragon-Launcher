@@ -8,8 +8,8 @@ public enum class NestEditMode(
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
 ) : ToggleButtonOption {
-    Drag(R.string.dragging_distance_selection,R.drawable.drag_handle),
-    Haptic(R.string.haptic_feedback,R.drawable.haptic),
-    Radius(R.string.miscellaneous,R.drawable.radar),
-    Other(R.string.more,R.drawable.more_horiz)
+    Drag(R.string.dragging_distance_selection, R.drawable.drag_handle),
+    Haptic(R.string.haptic_feedback, R.drawable.haptic),
+    Radius(R.string.miscellaneous, R.drawable.radar),
+    Other(R.string.more, R.drawable.more_horiz)
 }

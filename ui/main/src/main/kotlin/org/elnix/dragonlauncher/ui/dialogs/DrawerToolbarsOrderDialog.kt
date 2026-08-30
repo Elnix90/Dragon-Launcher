@@ -66,20 +66,21 @@ fun ToolbarsOrderDialog(onDismiss: () -> Unit) {
     }
 
     val lazyListState = rememberLazyListState()
-    val reorderState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        onMove = { from, to ->
-            toolbarItems = toolbarItems.toMutableList().apply {
-                add(to.index, removeAt(from.index))
+    val reorderState =
+        rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            onMove = { from, to ->
+                toolbarItems =
+                    toolbarItems.toMutableList().apply {
+                        add(to.index, removeAt(from.index))
+                    }
             }
-        }
-    )
+        )
 
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
         confirmButton = {
-
             ValidateCancelButtons(
                 onCancel = onDismiss
             ) {
@@ -92,7 +93,7 @@ fun ToolbarsOrderDialog(onDismiss: () -> Unit) {
         title = { Text(stringResource(R.string.choose_action)) },
         text = {
             LazyColumn(
-                state = lazyListState,
+                state = lazyListState
             ) {
                 items(toolbarItems, key = { it.name }) { item ->
 
@@ -101,22 +102,23 @@ fun ToolbarsOrderDialog(onDismiss: () -> Unit) {
                         val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
 
                         ElevatedCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .scale(scale)
-                                .longPressDraggableHandle(),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .scale(scale)
+                                    .longPressDraggableHandle(),
                             elevation = elevatedCardElevation(elevation),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
                             ) {
-
                                 if (item == DrawerToolbar.Spacer) {
                                     @Suppress("DEPRECATION")
                                     TextDividerOld(
@@ -125,11 +127,12 @@ fun ToolbarsOrderDialog(onDismiss: () -> Unit) {
                                         modifier = Modifier.weight(1f)
                                     )
                                 } else {
-                                    val checked = if (item == DrawerToolbar.RecentlyUsed) {
-                                        showRecentlyUsedApps
-                                    } else {
-                                        showSearchBar
-                                    }
+                                    val checked =
+                                        if (item == DrawerToolbar.RecentlyUsed) {
+                                            showRecentlyUsedApps
+                                        } else {
+                                            showSearchBar
+                                        }
 
                                     Checkbox(
                                         checked = checked,

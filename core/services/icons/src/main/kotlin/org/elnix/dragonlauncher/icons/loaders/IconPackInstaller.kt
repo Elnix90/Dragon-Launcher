@@ -6,7 +6,7 @@ import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackComponent
 
 internal abstract class IconPackInstaller(
-    private val database: AppDatabase,
+    private val database: AppDatabase
 ) {
     suspend fun install(iconPack: IconPack) {
         var pack = iconPack
@@ -15,19 +15,20 @@ internal abstract class IconPackInstaller(
             dao.deleteIconPack(iconPack.toDatabaseEntity())
             dao.deleteIcons(iconPack.packageName)
             val icons = mutableListOf<IconPackComponent>()
-            val installerScope = object: IconPackInstallerScope {
-                override suspend fun addIcon(icon: IconPackComponent) {
-                    icons.add(icon)
-                    if (icons.size >= 100) {
-                        dao.insertAll(icons.map { it.toDatabaseEntity() })
-                        icons.clear()
+            val installerScope =
+                object : IconPackInstallerScope {
+                    override suspend fun addIcon(icon: IconPackComponent) {
+                        icons.add(icon)
+                        if (icons.size >= 100) {
+                            dao.insertAll(icons.map { it.toDatabaseEntity() })
+                            icons.clear()
+                        }
+                    }
+
+                    override suspend fun updatePackInfo(update: (IconPack) -> IconPack) {
+                        pack = update(iconPack)
                     }
                 }
-
-                override suspend fun updatePackInfo(update: (IconPack) -> IconPack) {
-                    pack = update(iconPack)
-                }
-            }
             installerScope.buildIconPack(iconPack)
             if (icons.isNotEmpty()) dao.insertAll(icons.map { it.toDatabaseEntity() })
             dao.installIconPack(pack.toDatabaseEntity())
@@ -47,5 +48,6 @@ internal abstract class IconPackInstaller(
 
 public interface IconPackInstallerScope {
     public suspend fun addIcon(icon: IconPackComponent)
+
     public suspend fun updatePackInfo(update: (IconPack) -> IconPack)
 }

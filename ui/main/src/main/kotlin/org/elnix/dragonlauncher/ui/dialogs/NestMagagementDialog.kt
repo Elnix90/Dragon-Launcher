@@ -92,7 +92,7 @@ fun NestManagementDialog(
         ) {
             Icon(
                 painter = painterResource(R.drawable.add_circle),
-                contentDescription = stringResource(R.string.create_new_nest),
+                contentDescription = stringResource(R.string.create_new_nest)
             )
             Spacer(15.dp)
             Text(stringResource(R.string.create_new_nest))
@@ -129,7 +129,6 @@ fun NestManagementDialog(
     }
 }
 
-
 @Composable
 private fun DragonGroupScope.NestManagementItem(
     nest: Nest,
@@ -146,34 +145,36 @@ private fun DragonGroupScope.NestManagementItem(
     var showPopup by remember { mutableStateOf(false) }
 
     Row(
-        modifier = modifier
-            .dragonSettingGroup {
-                height(120.dp)
-                    .clickable { onSelect?.invoke() }
-            },
+        modifier =
+            modifier
+                .dragonSettingGroup {
+                    height(120.dp)
+                        .clickable { onSelect?.invoke() }
+                },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
     ) {
-
         BoxWithConstraints(
-            modifier = Modifier
-                .weight(0.5f)
-                .size(100.dp)
+            modifier =
+                Modifier
+                    .weight(0.5f)
+                    .size(100.dp)
         ) {
             val center = constraints.getCenter()
             PointIcon(
                 selected = false,
-                point = Point(
-                    offset = Offset.Zero,
-                    action = Action.OpenNest(nest.id),
-                    id = -3
-                ),
+                point =
+                    Point(
+                        offset = Offset.Zero,
+                        action = Action.OpenNest(nest.id),
+                        id = -3
+                    ),
                 center = center,
                 eraseColor = bgColor
             )
         }
 
-        DragonSettingsGroup(modifier = Modifier.weight(1f)){
+        DragonSettingsGroup(modifier = Modifier.weight(1f)) {
             this@NestManagementItem.TextRow(
                 currentValue = nest.name,
                 defaultValue = null,
@@ -190,7 +191,6 @@ private fun DragonGroupScope.NestManagementItem(
                 expanded = showPopup,
                 onDismissRequest = { showPopup = false }
             ) {
-
                 DropdownMenuGroup(MenuDefaults.groupShapes()) {
                     DropdownMenuItem(
                         text = {

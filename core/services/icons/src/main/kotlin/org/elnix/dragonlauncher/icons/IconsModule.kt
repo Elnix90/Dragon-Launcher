@@ -14,14 +14,14 @@ import org.elnix.dragonlauncher.colors.ColorService
 import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.points.PointsService
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object IconsModule {
-
     @Provides
     @Singleton
-    fun provideIconSettingsRepository(@ApplicationContext ctx: Context): IconSettingsRepository = IconSettingsRepository(ctx)
+    fun provideIconSettingsRepository(
+        @ApplicationContext ctx: Context
+    ): IconSettingsRepository = IconSettingsRepository(ctx)
 
     @Provides
     @Singleton
@@ -42,8 +42,8 @@ internal object IconsModule {
         shortcutRepository: AppShortcutRepository,
         pointsService: PointsService,
         colorService: ColorService
-    ): IconService {
-        return IconService(
+    ): IconService =
+        IconService(
             ctx = ctx,
             iconPackManager = iconPackManager,
             iconSettingsRepository = iconSettingsRepository,
@@ -53,5 +53,4 @@ internal object IconsModule {
             pointService = pointsService,
             colorService = colorService
         )
-    }
 }

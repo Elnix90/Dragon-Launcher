@@ -11,9 +11,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object Module {
-
     @Provides
     @Singleton
-    fun providePackageManagerCompat(@ApplicationContext ctx: Context): PackageManagerCompat =
+    fun providePackageManagerCompat(
+        @ApplicationContext ctx: Context
+    ): PackageManagerCompat =
         PackageManagerCompatImpl(ctx)
 }

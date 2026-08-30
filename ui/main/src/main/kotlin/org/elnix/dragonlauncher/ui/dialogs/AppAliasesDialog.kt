@@ -65,9 +65,10 @@ fun AppAliasesDialog(
         },
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 700.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 700.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 FlowRow(
@@ -75,7 +76,6 @@ fun AppAliasesDialog(
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-
                     AnimatedFab(
                         icon = R.drawable.add,
                         containerColor = MaterialTheme.colorScheme.secondary
@@ -97,8 +97,11 @@ fun AppAliasesDialog(
                         }
 
                         val containerColor by animateColorAsState(
-                            if (canDelete) MaterialTheme.colorScheme.errorContainer
-                            else MaterialTheme.colorScheme.primaryContainer
+                            if (canDelete) {
+                                MaterialTheme.colorScheme.errorContainer
+                            } else {
+                                MaterialTheme.colorScheme.primaryContainer
+                            }
                         )
 
                         Button(
@@ -111,10 +114,11 @@ fun AppAliasesDialog(
                             },
                             interactionSource = interactionSource,
                             shapes = ButtonDefaults.shapes(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = containerColor,
-                                contentColor = contentColorFor(containerColor)
-                            )
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = containerColor,
+                                    contentColor = contentColorFor(containerColor)
+                                )
                         ) {
                             AnimatedContent(canDelete) {
                                 if (!it) {
@@ -143,19 +147,21 @@ fun AppAliasesDialog(
     )
 
     if (showAliasEditScreen != null) {
-
         val old = showAliasEditScreen!!
         val isCreateAlias = old == ""
 
         TextEditorDialog(
             title = {
-                if (isCreateAlias) stringResource(R.string.create_alias)
-                else stringResource(R.string.edit_alias)
+                if (isCreateAlias) {
+                    stringResource(R.string.create_alias)
+                } else {
+                    stringResource(R.string.edit_alias)
+                }
             },
             placeHolder = { stringResource(R.string.alias) },
             initialText = old,
             defaultText = old,
-            onDismiss = { showAliasEditScreen = null },
+            onDismiss = { showAliasEditScreen = null }
         ) { new ->
 
             when {

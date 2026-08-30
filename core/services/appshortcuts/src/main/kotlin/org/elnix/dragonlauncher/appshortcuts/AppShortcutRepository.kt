@@ -28,8 +28,7 @@ import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
 public interface AppShortcutRepository {
-
-//    public fun findMany(
+    //    public fun findMany(
 //        componentName: ComponentName? = null,
 //        user: UserHandle = Process.myUserHandle(),
 //        manifest: Boolean = false,
@@ -42,6 +41,7 @@ public interface AppShortcutRepository {
     public fun search(query: String): Flow<ImmutableList<ShortcutInfo>>
 
     public fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?>
+
     public suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo?
 
     public suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity>
@@ -51,7 +51,7 @@ internal class AppShortcutRepositoryImpl(
     private val ctx: Context,
     private val permissionsManager: PermissionsManager,
     private val profileManager: ProfileManager,
-    private val stringNormalizer: StringNormalizer,
+    private val stringNormalizer: StringNormalizer
 ) : AppShortcutRepository {
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -100,7 +100,6 @@ internal class AppShortcutRepositoryImpl(
         )
     }
 
-
 //    override fun findMany(
 //        componentName: ComponentName?,
 //        user: UserHandle,
@@ -144,7 +143,6 @@ internal class AppShortcutRepositoryImpl(
 //    }
 //
 
-
     @SuppressLint("InlinedApi")
     private fun refreshShortcuts() {
         scope.launch {
@@ -155,10 +153,10 @@ internal class AppShortcutRepositoryImpl(
                 val shortcutQuery = LauncherApps.ShortcutQuery()
                 shortcutQuery.setQueryFlags(
                     LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_CACHED or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED_BY_ANY_LAUNCHER
+                        LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
+                        LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST or
+                        LauncherApps.ShortcutQuery.FLAG_MATCH_CACHED or
+                        LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED_BY_ANY_LAUNCHER
                 )
                 val shortcuts = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle())?.mapNotNull { it } ?: return@launch
                 installedShortcuts.value = shortcuts
@@ -170,36 +168,36 @@ internal class AppShortcutRepositoryImpl(
     override fun search(query: String): Flow<ImmutableList<ShortcutInfo>> {
         val normalizedQuery = stringNormalizer.normalize(query)
 
-        return installedShortcuts.map { shortcuts ->
-            shortcuts
-                .sortedBy { shortcutInfo ->
-                    ResultScore.from(
-                        query = normalizedQuery,
-                        primaryFields = listOfNotNull(
-                            shortcutInfo.longLabel?.toString()
-                                ?.let { stringNormalizer.normalize(it) },
-                            shortcutInfo.shortLabel?.toString()
-                                ?.let { stringNormalizer.normalize(it) },
+        return installedShortcuts
+            .map { shortcuts ->
+                shortcuts
+                    .sortedBy { shortcutInfo ->
+                        ResultScore.from(
+                            query = normalizedQuery,
+                            primaryFields =
+                                listOfNotNull(
+                                    shortcutInfo.longLabel
+                                        ?.toString()
+                                        ?.let { stringNormalizer.normalize(it) },
+                                    shortcutInfo.shortLabel
+                                        ?.toString()
+                                        ?.let { stringNormalizer.normalize(it) }
+                                )
                         )
-                    )
-                }
-                .toImmutableList()
-        }.flowOn(Dispatchers.Default)
+                    }.toImmutableList()
+            }.flowOn(Dispatchers.Default)
     }
 
-    override fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?> {
-        return installedShortcuts.map { shortcuts ->
+    override fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?> =
+        installedShortcuts.map { shortcuts ->
             shortcuts.firstOrNull {
                 it.userHandle == action.user &&
-                        it.`package` == action.packageName &&
-                        it.id == action.shortcutId
+                    it.`package` == action.packageName &&
+                    it.id == action.shortcutId
             }
         }
-    }
 
-    override suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo? {
-        return findOne(action).first()
-    }
+    override suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo? = findOne(action).first()
 
     override suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity> {
         val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps

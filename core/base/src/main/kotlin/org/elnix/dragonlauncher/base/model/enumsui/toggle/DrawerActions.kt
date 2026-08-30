@@ -3,7 +3,6 @@ package org.elnix.dragonlauncher.base.model.enumsui.toggle
 import org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
-
 public enum class DrawerActions(
     override val resId: Int,
     override val iconEnabled: Int,
@@ -25,7 +24,8 @@ public enum class DrawerActions(
     /**
      * No action at all. For the width actions, the paddings aren't even showed
      */
-    Disabled(R.string.disabled, R.drawable.disabled_by_default);
+    Disabled(R.string.disabled, R.drawable.disabled_by_default)
+    ;
 
     public companion object {
         public val defaultLeftDrawerAction: DrawerActions = Disabled
@@ -35,7 +35,6 @@ public enum class DrawerActions(
         public val defaultScrollDownAction: DrawerActions = Close
         public val defaultScrollUpAction: DrawerActions = CloseKb
         public val defaultBackAction: DrawerActions = Close
-
 
         public inline val DrawerActions.isUsed: Boolean
             get() = notNone && notDisabled

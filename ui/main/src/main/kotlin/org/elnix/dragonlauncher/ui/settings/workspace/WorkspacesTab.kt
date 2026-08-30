@@ -16,10 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -32,7 +32,6 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-
 
 @Composable
 fun WorkspacesTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
@@ -50,14 +49,16 @@ fun WorkspacesTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     var objects by remember(workspaces) { mutableStateOf(workspaces) }
 
     val lazyListState = rememberLazyListState()
-    val reorderState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        onMove = { from, to ->
-            objects = objects.toMutableList().apply {
-                add(to.index, removeAt(from.index))
+    val reorderState =
+        rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            onMove = { from, to ->
+                objects =
+                    objects.toMutableList().apply {
+                        add(to.index, removeAt(from.index))
+                    }
             }
-        }
-    )
+        )
 
     // This function is really annoying, I can't really explain why it works here, but without the behavior ir really strange,
     // I remembered this function could be used, and by magic it nw works correctly!!
@@ -73,9 +74,10 @@ fun WorkspacesTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             lasyListState = lazyListState,
             bottomContent = {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(end = 16.dp)
                 ) {
                     Spacer()
                     AnimatedFab(

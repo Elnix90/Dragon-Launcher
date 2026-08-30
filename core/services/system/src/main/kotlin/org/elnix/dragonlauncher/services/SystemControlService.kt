@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.runtime.mutableStateOf
-import org.elnix.dragonlauncher.ACCESSIBILITY_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope
@@ -15,20 +14,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.ACCESSIBILITY_TAG
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
 @SuppressLint("AccessibilityPolicy")
 public class SystemControlService : AccessibilityService() {
-
     private var systemLauncher: String? = null
     private var autoRaiseEnabled = false
 
     // Service scope for Flows
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-
 //        val currentPkg = event?.packageName?.toString()
 
         if (!autoRaiseEnabled || systemLauncher == null) return
@@ -46,8 +43,7 @@ public class SystemControlService : AccessibilityService() {
 
         val now = System.currentTimeMillis()
         if (now - lastLaunchTime < DEBOUNCE_DELAY_MS) return
-        if (isSwitching.value) return  // Prevent recursive launch
-
+        if (isSwitching.value) return // Prevent recursive launch
 
 //        val root = rootInActiveWindow ?: return
 
@@ -57,7 +53,6 @@ public class SystemControlService : AccessibilityService() {
 //            logD(ACCESSIBILITY_TAG, "Blocked: structural recents screen")
 //            return
 //        }
-
 
         // This is so hacky lol, but it works (tested on 2 phones + 1 emulator)
         val eventText = event.text.joinToString(" ").lowercase()
@@ -70,7 +65,6 @@ public class SystemControlService : AccessibilityService() {
             logD(ACCESSIBILITY_TAG) { "Blocked recents by event text: $eventText" }
             return
         }
-
 
         // Doesn't work
 
@@ -126,18 +120,19 @@ public class SystemControlService : AccessibilityService() {
 
         listenToSettingsChanges()
 
-        val info = AccessibilityServiceInfo().apply {
-            eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+        val info =
+            AccessibilityServiceInfo().apply {
+                eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
                     AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
 
-            feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
+                feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
 
-            flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS or
+                flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS or
                     AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                     AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
                     AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE
-            notificationTimeout = 50
-        }
+                notificationTimeout = 50
+            }
         serviceInfo = info
 
         SystemControl.attachInstance(this)
@@ -155,7 +150,6 @@ public class SystemControlService : AccessibilityService() {
     public fun openRecentApps() {
         performGlobalAction(GLOBAL_ACTION_RECENTS)
     }
-
 
     private fun launchDragon() {
         isSwitching.value = true
@@ -175,7 +169,6 @@ public class SystemControlService : AccessibilityService() {
             val pkg = DebugSettingsStore.systemLauncherPackageName.get(this@SystemControlService)
             systemLauncher = pkg.ifBlank { null }
             logD(ACCESSIBILITY_TAG) { "Launcher setting updated: $pkg" }
-
         }
 
         serviceScope.launch {
@@ -183,12 +176,11 @@ public class SystemControlService : AccessibilityService() {
                 DebugSettingsStore.autoRaiseDragonOnSystemLauncher.get(this@SystemControlService)
             autoRaiseEnabled = enabled
             logD(ACCESSIBILITY_TAG) { "Auto-raise toggled: $enabled" }
-
         }
     }
 
     public companion object {
-        public var INSTANCE: SystemControlService? = null
+        public var instance: SystemControlService? = null
         private const val DEBOUNCE_DELAY_MS = 500L
         private var lastLaunchTime = 0L
         private val isSwitching = mutableStateOf(false)
@@ -196,7 +188,7 @@ public class SystemControlService : AccessibilityService() {
 
     override fun onCreate() {
         super.onCreate()
-        INSTANCE = this
+        instance = this
     }
 
     override fun onDestroy() {

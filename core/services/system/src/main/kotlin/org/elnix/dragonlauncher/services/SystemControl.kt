@@ -7,17 +7,16 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import io.github.elnix90.logging.logE
-import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.ACCESSIBILITY_TAG
+import org.elnix.dragonlauncher.ktx.showToast
 
 public object SystemControl {
-
-
     public fun isServiceEnabled(ctx: Context): Boolean {
-        val enabled = Settings.Secure.getString(
-            ctx.contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-        ) ?: return false
+        val enabled =
+            Settings.Secure.getString(
+                ctx.contentResolver,
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+            ) ?: return false
 
         return enabled.contains(ctx.packageName)
     }
@@ -33,13 +32,12 @@ public object SystemControl {
      * Called by SystemControlService.onCreate() to store a static instance.
      */
     public fun attachInstance(service: SystemControlService) {
-        SystemControlService.INSTANCE = service
+        SystemControlService.instance = service
     }
 
     public fun expandNotifications() {
-        SystemControlService.INSTANCE?.openNotificationShade()
+        SystemControlService.instance?.openNotificationShade()
     }
-
 
     public fun expandQuickSettings(ctx: Context) {
         try {
@@ -54,14 +52,13 @@ public object SystemControl {
         }
     }
 
-
     @RequiresApi(Build.VERSION_CODES.P)
     public fun lockScreen(ctx: Context) {
         if (!isServiceEnabled(ctx)) {
             openServiceSettings(ctx)
             return
         }
-        SystemControlService.INSTANCE?.performGlobalAction(
+        SystemControlService.instance?.performGlobalAction(
             AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN
         )
     }
@@ -72,16 +69,16 @@ public object SystemControl {
             openServiceSettings(ctx)
             return
         }
-        SystemControlService.INSTANCE?.openRecentApps()
+        SystemControlService.instance?.openRecentApps()
     }
 
-
     public fun launchDragon(ctx: Context) {
-        val intent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_HOME)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            setPackage(ctx.packageName)
-        }
+        val intent =
+            Intent(Intent.ACTION_MAIN).apply {
+                addCategory(Intent.CATEGORY_HOME)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                setPackage(ctx.packageName)
+            }
         try {
             ctx.startActivity(intent)
         } catch (e: Exception) {

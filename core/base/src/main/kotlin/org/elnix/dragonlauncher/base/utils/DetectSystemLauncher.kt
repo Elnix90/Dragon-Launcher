@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.systemLaunchers
 
-
 public fun Context.detectSystemLauncher(): String? {
     val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
@@ -18,10 +17,11 @@ public fun Context.detectSystemLauncher(): String? {
     }
 
     // Method 2: Query intent resolvers (default home)
-    val homeIntent = Intent(Intent.ACTION_MAIN).apply {
-        addCategory(Intent.CATEGORY_HOME)
-        addCategory(Intent.CATEGORY_DEFAULT)
-    }
+    val homeIntent =
+        Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_HOME)
+            addCategory(Intent.CATEGORY_DEFAULT)
+        }
 
     val resolveInfos = this.packageManager.queryIntentActivities(homeIntent, 0)
     for (resolveInfo in resolveInfos) {
@@ -36,13 +36,15 @@ public fun Context.detectSystemLauncher(): String? {
     for (sysPkg in systemLaunchers) {
         try {
             pm.getPackageInfo(sysPkg, 0)
-            val launcherActivity = pm.queryIntentActivities(homeIntent, 0)
-                .find { it.activityInfo.packageName == sysPkg }
+            val launcherActivity =
+                pm
+                    .queryIntentActivities(homeIntent, 0)
+                    .find { it.activityInfo.packageName == sysPkg }
             if (launcherActivity != null) return sysPkg
         } catch (_: Exception) {
             // Package not installed
         }
     }
 
-    return null  // No system launcher detected
+    return null // No system launcher detected
 }

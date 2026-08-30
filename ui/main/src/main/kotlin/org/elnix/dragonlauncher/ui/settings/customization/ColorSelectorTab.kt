@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
-
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -90,79 +89,86 @@ fun ColorSelectorTab() {
     val defaultTheme by ColorModesSettingsStore.defaultTheme.asStateNull()
     val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
 
-    val primarySectionState = rememberExpandableSection(
-        title = R.string.primary_colors_section,
-        description = R.string.primary_colors_section_desc,
-        customLeadingContent = {
-            with(MaterialTheme.colorScheme) {
-                PalettePreview(primary, onPrimary, primaryContainer, onPrimaryContainer)
-            }
-        },
-        icon = null
-    )
+    val primarySectionState =
+        rememberExpandableSection(
+            title = R.string.primary_colors_section,
+            description = R.string.primary_colors_section_desc,
+            customLeadingContent = {
+                with(MaterialTheme.colorScheme) {
+                    PalettePreview(primary, onPrimary, primaryContainer, onPrimaryContainer)
+                }
+            },
+            icon = null
+        )
 
-    val secondarySectionState = rememberExpandableSection(
-        title = R.string.secondary_colors_section,
-        description = R.string.secondary_colors_section_desc,
-        customLeadingContent = {
-            with(MaterialTheme.colorScheme) {
-                PalettePreview(secondary, onSecondary, secondaryContainer, onSecondaryContainer)
-            }
-        },
-        icon = null
-    )
+    val secondarySectionState =
+        rememberExpandableSection(
+            title = R.string.secondary_colors_section,
+            description = R.string.secondary_colors_section_desc,
+            customLeadingContent = {
+                with(MaterialTheme.colorScheme) {
+                    PalettePreview(secondary, onSecondary, secondaryContainer, onSecondaryContainer)
+                }
+            },
+            icon = null
+        )
 
-    val tertiarySectionState = rememberExpandableSection(
-        title = R.string.tertiary_colors_section,
-        description = R.string.tertiary_colors_section_desc,
-        customLeadingContent = {
-            with(MaterialTheme.colorScheme) {
-                PalettePreview(tertiary, onTertiary, tertiaryContainer, onTertiaryContainer)
-            }
-        },
-        icon = null
-    )
+    val tertiarySectionState =
+        rememberExpandableSection(
+            title = R.string.tertiary_colors_section,
+            description = R.string.tertiary_colors_section_desc,
+            customLeadingContent = {
+                with(MaterialTheme.colorScheme) {
+                    PalettePreview(tertiary, onTertiary, tertiaryContainer, onTertiaryContainer)
+                }
+            },
+            icon = null
+        )
 
-    val backgroundSectionState = rememberExpandableSection(
-        title = R.string.background_surface_colors_section,
-        description = R.string.background_surface_colors_section_desc,
-        customLeadingContent = {
-            with(MaterialTheme.colorScheme) {
-                PalettePreview(background, onBackground, surface, onSecondary)
-            }
-        },
-        icon = null
-    )
-    val errorSectionState = rememberExpandableSection(
-        title = R.string.error_colors_section,
-        description = R.string.error_colors_section_desc,
-        customLeadingContent = {
-            with(MaterialTheme.colorScheme) {
-                PalettePreview(error, onError, errorContainer, onErrorContainer)
-            }
-        },
-        icon = null
-    )
-    val outlineSectionState = rememberExpandableSection(
-        title = R.string.outline_colors_section,
-        description = R.string.outline_colors_section_desc,
-        customLeadingContent = {
-            with(MaterialTheme.colorScheme) {
-                PalettePreview(outline, outlineVariant, scrim, Color.Transparent)
-            }
-        },
-        icon = null
-    )
-    val surfaceContainerSectionState = rememberExpandableSection(
-        title = R.string.surface_container_colors_section,
-        description = R.string.surface_container_colors_section_desc,
-        customLeadingContent = {
-            with(MaterialTheme.colorScheme) {
-                PalettePreview(surfaceContainer, surfaceContainerHigh, surfaceContainerHighest, surfaceContainerLow)
-            }
-        },
-        icon = null
-    )
+    val backgroundSectionState =
+        rememberExpandableSection(
+            title = R.string.background_surface_colors_section,
+            description = R.string.background_surface_colors_section_desc,
+            customLeadingContent = {
+                with(MaterialTheme.colorScheme) {
+                    PalettePreview(background, onBackground, surface, onSecondary)
+                }
+            },
+            icon = null
+        )
+    val errorSectionState =
+        rememberExpandableSection(
+            title = R.string.error_colors_section,
+            description = R.string.error_colors_section_desc,
+            customLeadingContent = {
+                with(MaterialTheme.colorScheme) {
+                    PalettePreview(error, onError, errorContainer, onErrorContainer)
+                }
+            },
+            icon = null
+        )
+    val outlineSectionState =
+        rememberExpandableSection(
+            title = R.string.outline_colors_section,
+            description = R.string.outline_colors_section_desc,
+            customLeadingContent = {
+                with(MaterialTheme.colorScheme) {
+                    PalettePreview(outline, outlineVariant, scrim, Color.Transparent)
+                }
+            },
+            icon = null
+        )
+    val surfaceContainerSectionState =
+        rememberExpandableSection(
+            title = R.string.surface_container_colors_section,
+            description = R.string.surface_container_colors_section_desc,
+            customLeadingContent = {
+                with(MaterialTheme.colorScheme) {
+                    PalettePreview(surfaceContainer, surfaceContainerHigh, surfaceContainerHighest, surfaceContainerLow)
+                }
+            },
+            icon = null
+        )
 
     var showResetValidation by remember { mutableStateOf(false) }
     var showBurgerMenu by remember { mutableStateOf(false) }
@@ -184,39 +190,40 @@ fun ColorSelectorTab() {
         specialSettingsTitleContent = {
             Box {
                 AnimatedFab(
-                    icon = R.drawable.more_vert,
+                    icon = R.drawable.more_vert
                 ) { showBurgerMenu = true }
 
                 BurgerListAction(
-                    actions = listOf(
-                        MoreOptions(
-                            onClick = {
-                                showRandomColorsValidation = true
-                                showBurgerMenu = false
-                            },
-                            icon = R.drawable.shuffle,
-                            text = { stringResource(R.string.make_every_colors_random) }
+                    actions =
+                        listOf(
+                            MoreOptions(
+                                onClick = {
+                                    showRandomColorsValidation = true
+                                    showBurgerMenu = false
+                                },
+                                icon = R.drawable.shuffle,
+                                text = { stringResource(R.string.make_every_colors_random) }
+                            ),
+                            MoreOptions(
+                                onClick = {
+                                    showAllColorsValidation = true
+                                    showBurgerMenu = false
+                                },
+                                icon = R.drawable.select_all,
+                                text = { stringResource(R.string.make_all_colors_identical) }
+                            ),
+                            MoreOptions(
+                                onClick = {
+                                    scope.launch {
+                                        ColorSettingsStore.backupColors(ctx)
+                                        ColorModesSettingsStore.colorTestMode.set(ctx, true)
+                                        navigator.onBack()
+                                    }
+                                },
+                                icon = R.drawable.colorize,
+                                text = { stringResource(R.string.test_colors) }
+                            )
                         ),
-                        MoreOptions(
-                            onClick = {
-                                showAllColorsValidation = true
-                                showBurgerMenu = false
-                            },
-                            icon = R.drawable.select_all,
-                            text = { stringResource(R.string.make_all_colors_identical) }
-                        ),
-                        MoreOptions(
-                            onClick = {
-                                scope.launch {
-                                    ColorSettingsStore.backupColors(ctx)
-                                    ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                    navigator.onBack()
-                                }
-                            },
-                            icon = R.drawable.colorize,
-                            text = { stringResource(R.string.test_colors) }
-                        )
-                    ),
                     isExpanded = showBurgerMenu,
                     onDismissRequest = { showBurgerMenu = false }
                 )
@@ -224,59 +231,62 @@ fun ColorSelectorTab() {
         }
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max)
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = MaterialTheme.shapes.large
-                )
-                .padding(12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = MaterialTheme.shapes.large
+                    ).padding(12.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             DefaultThemes.entries.filter { it != Amoled }.forEach {
                 val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
 
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(MaterialTheme.shapes.large)
-                        .conditional(selected) {
-                            background(MaterialTheme.colorScheme.surfaceDim)
-                        }
-                        .clickable {
-                            scope.launch {
-                                ColorModesSettingsStore.defaultTheme.set(ctx, it)
-                            }
-                        }
-                        .padding(5.dp),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clip(MaterialTheme.shapes.large)
+                            .conditional(selected) {
+                                background(MaterialTheme.colorScheme.surfaceDim)
+                            }.clickable {
+                                scope.launch {
+                                    ColorModesSettingsStore.defaultTheme.set(ctx, it)
+                                }
+                            }.padding(5.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val background =
+                        when (it) {
+                            Amoled -> null
 
-                    val background = when (it) {
-                        Amoled -> null
+                            Dark -> Color.DarkGray
+                            Light -> Color.White
+                            System ->
+                                Brush.horizontalGradient(
+                                    colors =
+                                        listOf(
+                                            Color.White,
+                                            Color.Black
+                                        )
+                                )
 
-                        Dark -> Color.DarkGray
-                        Light -> Color.White
-                        System -> Brush.horizontalGradient(
-                            colors = listOf(
-                                Color.White,
-                                Color.Black
-                            )
-                        )
-
-                        Custom -> Brush.linearGradient(
-                            colors = listOf(
-                                Color.Red,
-                                Color.Yellow,
-                                Color.Green,
-                                Color.Cyan,
-                                Color.Blue,
-                                Color.Magenta
-                            )
-                        )
-                    }
+                            Custom ->
+                                Brush.linearGradient(
+                                    colors =
+                                        listOf(
+                                            Color.Red,
+                                            Color.Yellow,
+                                            Color.Green,
+                                            Color.Cyan,
+                                            Color.Blue,
+                                            Color.Magenta
+                                        )
+                                )
+                        }
 
                     // I like this simple animation I made, I think I've changed my mind about animations
                     val shapeCorners by animateIntAsState(
@@ -294,23 +304,24 @@ fun ColorSelectorTab() {
                     if (background != null) {
                         Box((Modifier.scale(scale))) {
                             Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(boxShape)
-                                    .then(
-                                        when (background) {
-                                            is Color -> Modifier.background(background)
-                                            is Brush -> Modifier.background(background)
-                                            else -> Modifier
-                                        }
-                                    )
-                                    .border(
-                                        1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), boxShape
-                                    )
+                                modifier =
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(boxShape)
+                                        .then(
+                                            when (background) {
+                                                is Color -> Modifier.background(background)
+                                                is Brush -> Modifier.background(background)
+                                                else -> Modifier
+                                            }
+                                        ).border(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                            boxShape
+                                        )
                             )
                         }
                     }
-
 
                     Spacer(5.dp)
 
@@ -357,13 +368,11 @@ fun ColorSelectorTab() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 SingleSelectConnectedButtonRow(
                     entries = ColorSelectorModes.entries,
                     modifier = Modifier.fillMaxWidth(),
                     checked = { it == selectedCustomView }
                 ) { selectedCustomView = it }
-
 
                 AnimatedContent(selectedCustomView) {
                     DragonSettingsGroup {
@@ -371,83 +380,88 @@ fun ColorSelectorTab() {
                             ColorSelectorModes.Normal -> {
                                 ColorsGroup(
                                     expandableSectionState = primarySectionState,
-                                    colors = listOf(
-                                        ColorSettingsStore.primaryColor,
-                                        ColorSettingsStore.onPrimaryColor,
-                                        ColorSettingsStore.primaryContainerColor,
-                                        ColorSettingsStore.onPrimaryContainerColor,
-                                        ColorSettingsStore.inversePrimaryColor
-                                    )
+                                    colors =
+                                        listOf(
+                                            ColorSettingsStore.primaryColor,
+                                            ColorSettingsStore.onPrimaryColor,
+                                            ColorSettingsStore.primaryContainerColor,
+                                            ColorSettingsStore.onPrimaryContainerColor,
+                                            ColorSettingsStore.inversePrimaryColor
+                                        )
                                 )
 
                                 ColorsGroup(
                                     expandableSectionState = secondarySectionState,
-                                    colors = listOf(
-                                        ColorSettingsStore.secondaryColor,
-                                        ColorSettingsStore.onSecondaryColor,
-                                        ColorSettingsStore.secondaryContainerColor,
-                                        ColorSettingsStore.onSecondaryContainerColor
-                                    )
+                                    colors =
+                                        listOf(
+                                            ColorSettingsStore.secondaryColor,
+                                            ColorSettingsStore.onSecondaryColor,
+                                            ColorSettingsStore.secondaryContainerColor,
+                                            ColorSettingsStore.onSecondaryContainerColor
+                                        )
                                 )
 
                                 ColorsGroup(
                                     expandableSectionState = tertiarySectionState,
-                                    colors = listOf(
-                                        ColorSettingsStore.tertiaryColor,
-                                        ColorSettingsStore.onTertiaryColor,
-                                        ColorSettingsStore.tertiaryContainerColor,
-                                        ColorSettingsStore.onTertiaryContainerColor
-                                    )
-
+                                    colors =
+                                        listOf(
+                                            ColorSettingsStore.tertiaryColor,
+                                            ColorSettingsStore.onTertiaryColor,
+                                            ColorSettingsStore.tertiaryContainerColor,
+                                            ColorSettingsStore.onTertiaryContainerColor
+                                        )
                                 )
 
                                 ColorsGroup(
                                     expandableSectionState = backgroundSectionState,
-                                    colors = listOf(
-                                        ColorSettingsStore.backgroundColor,
-                                        ColorSettingsStore.onBackgroundColor,
-                                        ColorSettingsStore.surfaceColor,
-                                        ColorSettingsStore.onSurfaceColor,
-                                        ColorSettingsStore.surfaceVariantColor,
-                                        ColorSettingsStore.onSurfaceVariantColor,
-                                        ColorSettingsStore.surfaceTintColor,
-                                        ColorSettingsStore.inverseSurfaceColor,
-                                        ColorSettingsStore.inverseOnSurfaceColor
-                                    )
+                                    colors =
+                                        listOf(
+                                            ColorSettingsStore.backgroundColor,
+                                            ColorSettingsStore.onBackgroundColor,
+                                            ColorSettingsStore.surfaceColor,
+                                            ColorSettingsStore.onSurfaceColor,
+                                            ColorSettingsStore.surfaceVariantColor,
+                                            ColorSettingsStore.onSurfaceVariantColor,
+                                            ColorSettingsStore.surfaceTintColor,
+                                            ColorSettingsStore.inverseSurfaceColor,
+                                            ColorSettingsStore.inverseOnSurfaceColor
+                                        )
                                 )
 
                                 ColorsGroup(
                                     expandableSectionState = errorSectionState,
-                                    colors = listOf(
-                                        ColorSettingsStore.errorColor,
-                                        ColorSettingsStore.onErrorColor,
-                                        ColorSettingsStore.errorContainerColor,
-                                        ColorSettingsStore.onErrorContainerColor
-                                    )
+                                    colors =
+                                        listOf(
+                                            ColorSettingsStore.errorColor,
+                                            ColorSettingsStore.onErrorColor,
+                                            ColorSettingsStore.errorContainerColor,
+                                            ColorSettingsStore.onErrorContainerColor
+                                        )
                                 )
 
                                 ColorsGroup(
                                     expandableSectionState = outlineSectionState,
-                                    colors = listOf(
-                                        ColorSettingsStore.outlineColor,
-                                        ColorSettingsStore.outlineVariantColor,
-                                        ColorSettingsStore.scrimColor
-                                    )
+                                    colors =
+                                        listOf(
+                                            ColorSettingsStore.outlineColor,
+                                            ColorSettingsStore.outlineVariantColor,
+                                            ColorSettingsStore.scrimColor
+                                        )
                                 )
 
                                 ColorsGroup(
                                     expandableSectionState = surfaceContainerSectionState,
-                                    colors = listOf(
-                                        ColorSettingsStore.surfaceBrightColor,
-                                        ColorSettingsStore.surfaceContainerColor,
-                                        ColorSettingsStore.surfaceContainerHighColor,
-                                        ColorSettingsStore.surfaceContainerHighestColor,
-                                        ColorSettingsStore.surfaceContainerLowColor,
-                                        ColorSettingsStore.surfaceContainerLowestColor,
-                                        ColorSettingsStore.surfaceDimColor
-                                    )
+                                    colors =
+                                        listOf(
+                                            ColorSettingsStore.surfaceBrightColor,
+                                            ColorSettingsStore.surfaceContainerColor,
+                                            ColorSettingsStore.surfaceContainerHighColor,
+                                            ColorSettingsStore.surfaceContainerHighestColor,
+                                            ColorSettingsStore.surfaceContainerLowColor,
+                                            ColorSettingsStore.surfaceContainerLowestColor,
+                                            ColorSettingsStore.surfaceDimColor
+                                        )
                                 )
-
 
                                 // Removed the fixed colors as I don't use them personally, but I may add them in the future
 //                                ColorsGroup(
@@ -497,7 +511,6 @@ fun ColorSelectorTab() {
         }
     }
 
-
     if (showResetValidation) {
         UserValidation(
             title = stringResource(R.string.reset_to_default_colors),
@@ -522,7 +535,6 @@ fun ColorSelectorTab() {
             }
         }
     }
-
 
     if (showAllColorsValidation) {
         var applyColor by remember { mutableStateOf(Color.Black) }
@@ -562,9 +574,10 @@ fun ColorSelectorTab() {
             message = stringResource(R.string.exit_test_mode_message),
             validateText = stringResource(R.string.test_mode_validate),
             cancelText = stringResource(R.string.test_mode_cancel),
-            properties = DialogProperties(
-                dismissOnClickOutside = false
-            ),
+            properties =
+                DialogProperties(
+                    dismissOnClickOutside = false
+                ),
             onDismiss = {
                 scope.launch {
                     ColorSettingsStore.restoreColors(ctx)
@@ -582,7 +595,6 @@ fun ColorSelectorTab() {
     }
 }
 
-
 @Composable
 private fun DragonGroupScope.ColorsGroup(
     expandableSectionState: ExpandableSectionState,
@@ -599,7 +611,6 @@ private fun DragonGroupScope.ColorsGroup(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PalettePreview(
@@ -609,9 +620,10 @@ private fun PalettePreview(
     color4: Color
 ) {
     Box(
-        modifier = Modifier
-            .size(50.dp)
-            .clip(MaterialShapes.Clover4Leaf.toShape())
+        modifier =
+            Modifier
+                .size(50.dp)
+                .clip(MaterialShapes.Clover4Leaf.toShape())
     ) {
         Column {
             Row(Modifier.weight(1f)) {
@@ -629,9 +641,10 @@ private fun PalettePreview(
 @Composable
 private fun RowScope.PaletteColor(color: Color) {
     Box(
-        modifier = Modifier
-            .weight(1f)
-            .fillMaxSize()
-            .background(color)
+        modifier =
+            Modifier
+                .weight(1f)
+                .fillMaxSize()
+                .background(color)
     )
 }

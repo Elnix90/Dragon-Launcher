@@ -33,15 +33,10 @@ public data class LauncherApp(
         launcherActivityInfo.label.toString()
     }
 
-
-    override fun overrideLabel(label: String): Application {
-        return this.copy(labelOverride = label)
-    }
-
+    override fun overrideLabel(label: String): Application = this.copy(labelOverride = label)
 
     override val componentName: ComponentName
         get() = launcherActivityInfo.componentName
-
 
     /**
      * Cached result of the normalized label.
@@ -53,55 +48,58 @@ public data class LauncherApp(
     override val packageName: String
         get() = componentName.packageName
 
-
     override suspend fun loadIcon(
         themed: Boolean,
         tint: Int?
     ): LauncherIcon? {
         return try {
-            val icon = withContext(Dispatchers.IO) {
-                launcherActivityInfo.getIcon(0)
-            } ?: return null
+            val icon =
+                withContext(Dispatchers.IO) {
+                    launcherActivityInfo.getIcon(0)
+                } ?: return null
 
             when (icon) {
                 is AdaptiveIconDrawable -> {
                     if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
                         StaticLauncherIcon(
-                            foregroundLayer = StaticIconLayer(
-                                icon = icon.monochrome!!,
-                                tint = tint,
-                                scale = 1.5f
-                            ),
+                            foregroundLayer =
+                                StaticIconLayer(
+                                    icon = icon.monochrome!!,
+                                    tint = tint,
+                                    scale = 1.5f
+                                ),
                             backgroundLayer = TransparentLayer
                         )
-
                     } else {
                         StaticLauncherIcon(
-                            foregroundLayer = icon.foreground?.let {
-                                StaticIconLayer(
-                                    icon = it,
-                                    scale = 1.5f,
-                                    tint = tint
-                                )
-                            } ?: TransparentLayer,
-                            backgroundLayer = icon.background?.let {
-                                StaticIconLayer(
-                                    icon = it,
-                                    scale = 1.5f,
-                                    tint = tint
-                                )
-                            } ?: TransparentLayer,
+                            foregroundLayer =
+                                icon.foreground?.let {
+                                    StaticIconLayer(
+                                        icon = it,
+                                        scale = 1.5f,
+                                        tint = tint
+                                    )
+                                } ?: TransparentLayer,
+                            backgroundLayer =
+                                icon.background?.let {
+                                    StaticIconLayer(
+                                        icon = it,
+                                        scale = 1.5f,
+                                        tint = tint
+                                    )
+                                } ?: TransparentLayer
                         )
                     }
                 }
 
                 else -> {
                     StaticLauncherIcon(
-                        foregroundLayer = StaticIconLayer(
-                            icon = icon,
-                            scale = 1f,
-                            tint = tint
-                        ),
+                        foregroundLayer =
+                            StaticIconLayer(
+                                icon = icon,
+                                scale = 1f,
+                                tint = tint
+                            ),
                         backgroundLayer = TransparentLayer
                     )
                 }
@@ -111,8 +109,8 @@ public data class LauncherApp(
         }
     }
 
-    override fun getStoreDetails(ctx: Context): StoreLink? {
-        return try {
+    override fun getStoreDetails(ctx: Context): StoreLink? =
+        try {
             val installSourceInfo = ctx.getInstallSource(packageName)
 
             getStoreLinkForInstaller(installSourceInfo.initiatingPackageName)
@@ -121,5 +119,4 @@ public data class LauncherApp(
         } catch (_: IllegalArgumentException) {
             null
         }
-    }
 }

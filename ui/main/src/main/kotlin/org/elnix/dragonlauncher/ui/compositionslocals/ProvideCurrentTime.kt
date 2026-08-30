@@ -19,34 +19,32 @@ import kotlinx.coroutines.awaitCancellation
 import java.time.Instant
 import java.time.ZoneId
 
-
 /**
  * Provide the current time (in millis) to the LocalTime composition local.
  * The time is updated every second.
  */
 @Composable
 fun ProvideCurrentTime(content: @Composable () -> Unit) {
-
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var time by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
     LaunchedEffect(null) {
         val handler = Handler(Looper.getMainLooper())
-        val runnable = object : Runnable {
-            override fun run() {
-                val dateTime = Instant.now().atZone(ZoneId.systemDefault())
+        val runnable =
+            object : Runnable {
+                override fun run() {
+                    val dateTime = Instant.now().atZone(ZoneId.systemDefault())
 
-                time = dateTime.toEpochSecond() * 1000
+                    time = dateTime.toEpochSecond() * 1000
 
-                val millis = dateTime.nano / 1000000L
-                var next = 1000L - millis
-                if (next <= 200L) next += 1000L
+                    val millis = dateTime.nano / 1000000L
+                    var next = 1000L - millis
+                    if (next <= 200L) next += 1000L
 
-                handler.postDelayed(this, 1000 - millis)
+                    handler.postDelayed(this, 1000 - millis)
+                }
             }
-
-        }
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             handler.post(runnable)
             try {

@@ -18,7 +18,5 @@ internal object ColorSerializer : KSerializer<Color> {
         encoder.encodeString(value.toHexWithAlpha)
     }
 
-    override fun deserialize(decoder: Decoder): Color {
-        return decoder.decodeString().toColor()
-    }
+    override fun deserialize(decoder: Decoder): Color = decoder.decodeString().toColor()
 }

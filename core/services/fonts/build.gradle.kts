@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.dragon.hilt)
 }
 
-
 android {
     namespace = "org.elnix.dragonlauncher.services.fonts"
 }

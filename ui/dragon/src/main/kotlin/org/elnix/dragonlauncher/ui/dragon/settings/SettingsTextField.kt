@@ -58,7 +58,6 @@ fun DragonGroupScope.Setting(
     }
 }
 
-
 @Composable
 fun DragonGroupScope.TextRow(
     currentValue: String?,
@@ -118,22 +117,25 @@ fun DragonGroupScope.TextRow(
             }
             tempState = it
         },
-        label = label?.let{ { Text(label) } },
+        label = label?.let { { Text(label) } },
         placeholder = placeHolder?.let { { Text(placeHolder) } },
-        colors = AppObjectsColors.outlinedTextFieldColors(
-            removeBorder = true
-        ),
+        colors =
+            AppObjectsColors.outlinedTextFieldColors(
+                removeBorder = true
+            ),
         shape = CircleShape,
         enabled = enabled,
         interactionSource = interactionSource,
         modifier = Modifier.dragonSettingGroup(enabled),
         singleLine = singleLine,
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = { onDone() }
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+        keyboardActions =
+            KeyboardActions(
+                onDone = { onDone() }
+            ),
         trailingIcon = {
             val showReset = !isEditing
 

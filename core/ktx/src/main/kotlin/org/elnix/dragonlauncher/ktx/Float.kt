@@ -8,7 +8,6 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-
 private const val TWO_PI_F = (2.0 * PI).toFloat()
 public val Float.Companion.TWO_PI: Float
     get() = TWO_PI_F
@@ -16,7 +15,6 @@ public val Float.Companion.TWO_PI: Float
 private const val PI_F = PI.toFloat()
 public val Float.Companion.PI: Float
     get() = PI_F
-
 
 public inline val Float.radians: Double
     get() = Math.toRadians(this.toDouble())
@@ -42,27 +40,23 @@ public fun Float.round(decimals: Int): Float {
     return (this * factor).roundToInt() / factor
 }
 
-
 public val Float.to255: Int
     get() = (this.coerceIn(0f, 1f) * 255).fastRoundToInt()
 
+/**
+ * Snaps the value to the nearest integer if it crosses the threshold.
+ * @param threshold The distance from an integer to trigger snapping
+ */
+public fun Int.snapToRound(snapTo: Int, threshold: Int): Int = if (abs(this - snapTo) <= threshold) snapTo else this
 
 /**
  * Snaps the value to the nearest integer if it crosses the threshold.
  * @param threshold The distance from an integer to trigger snapping
  */
-public fun Int.snapToRound(snapTo: Int, threshold: Int): Int {
-    return if (abs(this - snapTo) <= threshold) snapTo else this
-}
-
-/**
- * Snaps the value to the nearest integer if it crosses the threshold.
- * @param threshold The distance from an integer to trigger snapping
- */
-public fun Float.snapToRound(snapTo: Float, threshold: Float): Float {
-    return if (abs(this - snapTo) <= threshold) snapTo else this
-}
-
+public fun Float.snapToRound(
+    snapTo: Float,
+    threshold: Float
+): Float = if (abs(this - snapTo) <= threshold) snapTo else this
 
 /**
  * Rounds this value to the nearest multiple of [gridSize].
@@ -79,4 +73,3 @@ public fun Float.snapToGrid(gridSize: Float): Float {
     if (gridSize <= 0f) throw IllegalArgumentException("gridSize must be > 0")
     return (this / gridSize).fastRoundToInt() * gridSize
 }
-

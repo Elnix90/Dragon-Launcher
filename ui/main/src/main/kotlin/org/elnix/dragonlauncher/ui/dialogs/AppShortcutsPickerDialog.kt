@@ -34,10 +34,10 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.AppShortcutSearch
 private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): Boolean {
     if (q.isBlank()) return true
     return appName.contains(q, ignoreCase = true) ||
-            `package`.contains(q, ignoreCase = true) ||
-            (shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-            (longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-            id.contains(q, ignoreCase = true)
+        `package`.contains(q, ignoreCase = true) ||
+        (shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+        (longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+        id.contains(q, ignoreCase = true)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,18 +52,23 @@ fun AppShortcutPickerDialog(
     val appName = app.label
     var searchQuery by remember { mutableStateOf("") }
 
-    val filteredShortcuts = remember(searchQuery, shortcuts, appName) {
-        if (searchQuery.isBlank()) shortcuts
-        else shortcuts.filter { it.matchesAppShortcutSearch(appName, searchQuery) }
-    }
+    val filteredShortcuts =
+        remember(searchQuery, shortcuts, appName) {
+            if (searchQuery.isBlank()) {
+                shortcuts
+            } else {
+                shortcuts.filter { it.matchesAppShortcutSearch(appName, searchQuery) }
+            }
+        }
 
     DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
         DialogTitle(stringResource(R.string.select_shortcut_action_title, appName))
         Spacer(10.dp)
         Column(
-            modifier = Modifier
-                .heightIn(max = 600.dp)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .heightIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
         ) {
             AppShortcutSearch(searchQuery) { searchQuery = it }
 
@@ -77,9 +82,10 @@ fun AppShortcutPickerDialog(
 
                 filteredShortcuts.isEmpty() && searchQuery.isNotEmpty() -> {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -105,10 +111,11 @@ fun AppShortcutPickerDialog(
             DragonSettingsGroup {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .dragonSettingGroup {
-                            clickable(onClick = onAppSelected)
-                        }
+                    modifier =
+                        Modifier
+                            .dragonSettingGroup {
+                                clickable(onClick = onAppSelected)
+                            }
                 ) {
                     AppIcon(app, size = 30.dp)
                     Spacer(8.dp)

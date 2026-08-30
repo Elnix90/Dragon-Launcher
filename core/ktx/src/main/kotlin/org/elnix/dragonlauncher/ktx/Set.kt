@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ktx
 
-
 /**
  * Get the next minimal positive [Int] id among a list of existing ones.
  * Iterates through all ids and returns the first that isn't in the list

@@ -10,20 +10,17 @@ import kotlin.math.sqrt
 
 /**
  * Unit tests for Offset extension functions in [org.elnix.dragonlauncher.ktx].
- * 
+ *
  * NOTE: Floating-point tests use a tolerance (epsilon) because trigonometric
  * operations and coordinate math inherently produce tiny rounding errors.
  */
 class OffsetKtxTest {
-
     private companion object {
         const val EPSILON = 1e-3f
         const val DEG_EPSILON = 0.5f
     }
 
-
     //  distanceTo
-
 
     @Test
     fun `distanceTo same point is 0`() {
@@ -66,9 +63,7 @@ class OffsetKtxTest {
         assertEquals(5f, a distanceTo b, EPSILON)
     }
 
-
     //  distanceSquaredTo
-
 
     @Test
     fun `distanceSquaredTo same point is 0`() {
@@ -90,9 +85,7 @@ class OffsetKtxTest {
         assertEquals(a distanceSquaredTo b, b distanceSquaredTo a, EPSILON)
     }
 
-
     //  angleDeg
-
 
     @Test
     fun `angleDeg right (positive x) is 0`() {
@@ -120,9 +113,7 @@ class OffsetKtxTest {
         assertEquals(0f, Offset(0f, 0f).angleDeg(), DEG_EPSILON)
     }
 
-
     //  angle360FromOffset
-
 
     @Test
     fun `angle360FromOffset north is 0`() {
@@ -158,9 +149,7 @@ class OffsetKtxTest {
         assertEquals(0f, angle360FromOffset(center, center), DEG_EPSILON)
     }
 
-
     //  rotateBy
-
 
     @Test
     fun `rotateBy 0 returns same offset`() {
@@ -213,9 +202,7 @@ class OffsetKtxTest {
         assertEquals(expectedMagnitude, actualMagnitude, EPSILON)
     }
 
-
     //  applyTransformations & undoTransformations
-
 
     @Test
     fun `applyTransformations then undoTransformations is identity`() {
@@ -248,9 +235,7 @@ class OffsetKtxTest {
         assertEquals(10f, transformed.y, EPSILON)
     }
 
-
     //  snapToRound (Float extension)
-
 
     @Test
     fun `snapToGrid snaps positive coordinates`() {
@@ -318,7 +303,6 @@ class OffsetKtxTest {
 
     //  snapToRound (Offset extension)
 
-
     @Test
     fun `Offset snapToRound snaps both axes`() {
         val result = Offset(4.9f, 3.1f).snapToRound(Offset(5f, 3f), 0.2f)
@@ -333,9 +317,7 @@ class OffsetKtxTest {
         assertEquals(10f, result.y, EPSILON)
     }
 
-
     //  isInsideActiveZone
-
 
     @Test
     fun `isInsideActiveZone center of screen is inside`() {
@@ -424,9 +406,7 @@ class OffsetKtxTest {
         assertFalse(offset.isInsideActiveZone(size, left = 1, right = 1, top = 1, bottom = 1))
     }
 
-
     //  cleanString
-
 
     @Test
     fun `cleanString formats integer coordinates`() {

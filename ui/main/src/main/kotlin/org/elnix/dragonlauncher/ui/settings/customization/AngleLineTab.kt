@@ -129,8 +129,11 @@ fun AngleLineTab(
          * This prevents the [org.elnix.dragonlauncher.ui.helpers.customobjects.PaintCache] to be made useless by too much different [android.graphics.Paint] requests
          */
         val lineColor: Color =
-            if (rgbLine) Color.hsv(sweepState.sweepAngle().angle360().toFloat(), 1f, 1f)
-            else extraColors.angleLine
+            if (rgbLine) {
+                Color.hsv(sweepState.sweepAngle().angle360().toFloat(), 1f, 1f)
+            } else {
+                extraColors.angleLine
+            }
 
         actionLine(
             start = startOffset.value,
@@ -181,82 +184,83 @@ fun AngleLineTab(
             var isFirstPositioning by remember { mutableStateOf(true) }
 
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(height.toDp)
-                    .onGloballyPositioned { layoutCoordinates ->
-                        if (isFirstPositioning) {
-                            height = layoutCoordinates.size.width
-                            isFirstPositioning = false
-                        }
-                    }
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { position: Offset ->
-                                val distanceToStart = startOffset.value distanceSquaredTo position
-                                val distanceToEnd = endOffset.value distanceSquaredTo position
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(height.toDp)
+                        .onGloballyPositioned { layoutCoordinates ->
+                            if (isFirstPositioning) {
+                                height = layoutCoordinates.size.width
+                                isFirstPositioning = false
+                            }
+                        }.pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = { position: Offset ->
+                                    val distanceToStart = startOffset.value distanceSquaredTo position
+                                    val distanceToEnd = endOffset.value distanceSquaredTo position
 
-                                moveStartOrEnd = if (distanceToEnd < distanceToStart) {
-                                    false
-                                } else {
-                                    true
-                                }
-                            },
-                            onDrag = { change, _ ->
-                                scope.launch {
-                                    if (moveStartOrEnd) {
-                                        startOffset.animateTo(
-                                            targetValue = change.position,
-                                            animationSpec = bouncySpec()
-                                        )
-                                    } else {
-                                        endOffset.animateTo(
-                                            targetValue = change.position,
-                                            animationSpec = bouncySpec()
-                                        )
+                                    moveStartOrEnd =
+                                        if (distanceToEnd < distanceToStart) {
+                                            false
+                                        } else {
+                                            true
+                                        }
+                                },
+                                onDrag = { change, _ ->
+                                    scope.launch {
+                                        if (moveStartOrEnd) {
+                                            startOffset.animateTo(
+                                                targetValue = change.position,
+                                                animationSpec = bouncySpec()
+                                            )
+                                        } else {
+                                            endOffset.animateTo(
+                                                targetValue = change.position,
+                                                animationSpec = bouncySpec()
+                                            )
+                                        }
                                     }
                                 }
+                            )
+                        }.onGloballyPositioned { coordinates ->
+                            val rect = coordinates.boundsInRoot()
+                            val rectHeight = (rect.height / 2.5f).toInt()
+                            val rectWidth = (rect.width / 2.5f).toInt()
+
+                            fun randomPosition(): Offset =
+                                Offset(
+                                    rect.center.x + (-rectWidth..rectWidth).random(),
+                                    rect.center.y + (-rectHeight..rectHeight).random()
+                                )
+
+                            scope.launch {
+                                startOffset.animateTo(
+                                    targetValue = randomPosition(),
+                                    animationSpec = bouncySpec()
+                                )
                             }
-                        )
-                    }
-                    .onGloballyPositioned { coordinates ->
-                        val rect = coordinates.boundsInRoot()
-                        val rectHeight = (rect.height / 2.5f).toInt()
-                        val rectWidth = (rect.width / 2.5f).toInt()
 
-                        fun randomPosition(): Offset = Offset(
-                            rect.center.x + (-rectWidth..rectWidth).random(),
-                            rect.center.y + (-rectHeight..rectHeight).random()
-                        )
-
-                        scope.launch {
-                            startOffset.animateTo(
-                                targetValue = randomPosition(),
-                                animationSpec = bouncySpec()
-                            )
+                            scope.launch {
+                                endOffset.animateTo(
+                                    targetValue = randomPosition(),
+                                    animationSpec = bouncySpec()
+                                )
+                            }
                         }
-
-                        scope.launch {
-                            endOffset.animateTo(
-                                targetValue = randomPosition(),
-                                animationSpec = bouncySpec()
-                            )
-                        }
-                    }
             )
 
             VerticalDragZone { height += it.toInt() }
         }
     ) {
-
         SingleSelectConnectedButtonRow(
             entries = AngleObject.entries,
             checked = { currentEditObject == it }
         ) { currentEditObject = it }
 
         Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             AnimatedContent(currentEditObject) { currentEditObject ->
@@ -272,18 +276,18 @@ fun AngleLineTab(
                                     title = R.string.line_object,
                                     editObject = lineObject,
                                     default = defaultLineCustomObject,
-                                    properties = CustomObjectBlockProperties(
-                                        allowSizeCustomization = false,
-                                        allowShapeCustomization = false,
-                                        allowRotationCustomization = false,
-                                        allowAlignCustomization = false
-                                    )
+                                    properties =
+                                        CustomObjectBlockProperties(
+                                            allowSizeCustomization = false,
+                                            allowShapeCustomization = false,
+                                            allowRotationCustomization = false,
+                                            allowAlignCustomization = false
+                                        )
                                 ) { swipeService.lineObject.value = it }
                             }
                         }
 
                         AngleObject.Angle -> {
-
                             DragonSettingsGroup { Setting(AngleLineSettingsStore.showAngleLineObjectPreview) }
 
                             AnimatedVisibility(showAngleLineObjectPreview) {
@@ -296,7 +300,6 @@ fun AngleLineTab(
                         }
 
                         AngleObject.Start -> {
-
                             DragonSettingsGroup { Setting(AngleLineSettingsStore.showStartObjectPreview) }
 
                             AnimatedVisibility(showStartObjectPreview) {
@@ -309,7 +312,6 @@ fun AngleLineTab(
                         }
 
                         AngleObject.End -> {
-
                             DragonSettingsGroup { Setting(AngleLineSettingsStore.showEndObjectPreview) }
 
                             AnimatedVisibility(showEndObjectPreview) {

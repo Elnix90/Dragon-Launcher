@@ -25,7 +25,6 @@ import org.junit.Test
  *   (Requires a connected device or emulator)
  */
 class LabelTextTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

@@ -104,7 +104,7 @@ fun SettingsDebugTab() {
     if (showStoresDialog) {
         DebugJsonStoresDialog(
             onDismiss = { showStoresDialog = false },
-            defaultStores = selectedStores,
+            defaultStores = selectedStores
         ) {
             selectedStores = it
             showStoresDialog = false

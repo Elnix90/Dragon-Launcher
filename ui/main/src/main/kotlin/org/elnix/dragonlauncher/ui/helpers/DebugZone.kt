@@ -30,10 +30,11 @@ fun DebugZone(
         LocalTextStyle provides MaterialTheme.typography.labelSmall
     ) {
         Column(
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
-                .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.8f))
-            .padding(10.dp),
+            modifier =
+                Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.8f))
+                    .padding(10.dp),
             content = content
         )
     }
@@ -47,4 +48,3 @@ fun DebugZone(
     val isVisible by setting.asState()
     DebugZone(isVisible, content)
 }
-

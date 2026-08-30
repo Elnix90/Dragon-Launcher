@@ -14,9 +14,8 @@ public data class Profile(
     val type: Type,
     @Serializable(with = UserHandleSerializer::class)
     val userHandle: UserHandle,
-    val serial: Long,
+    val serial: Long
 ) {
-
     override fun equals(other: Any?): Boolean {
         if (other is Profile) {
             return userHandle == other.userHandle
@@ -24,9 +23,7 @@ public data class Profile(
         return super.equals(other)
     }
 
-    override fun hashCode(): Int {
-        return userHandle.hashCode()
-    }
+    override fun hashCode(): Int = userHandle.hashCode()
 
     public enum class Type {
         /**
@@ -42,16 +39,14 @@ public data class Profile(
         /**
          * The private space profile (Android 15+)
          */
-        Private,
+        Private
     }
 
     public data class State(
-        val locked: Boolean = false,
+        val locked: Boolean = false
     )
 
-    override fun toString(): String {
-        return "Profile(type = $type, userHandle = $userHandle, serial = $serial)"
-    }
+    override fun toString(): String = "Profile(type = $type, userHandle = $userHandle, serial = $serial)"
 
     public companion object {
         public fun fromUserHandle(ctx: Context, userHandle: UserHandle): Profile {

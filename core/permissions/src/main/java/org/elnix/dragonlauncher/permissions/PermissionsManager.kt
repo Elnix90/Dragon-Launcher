@@ -14,11 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.PERMISSIONS_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import org.elnix.dragonlauncher.PERMISSIONS_TAG
 import org.elnix.dragonlauncher.ktx.checkPermission
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.tryStartActivity
@@ -40,10 +40,10 @@ public interface PermissionsManager {
     )
 
     public fun onResume() {
-
     }
 
     public fun hasPermission(permissionGroup: PermissionGroup): Flow<Boolean>
+
     public suspend fun hasPermissionBlocking(permissionGroup: PermissionGroup): Boolean
 
     /**
@@ -59,43 +59,42 @@ public interface PermissionsManager {
     public fun reportAccessibilityServiceState(running: Boolean)
 }
 
-
-
 @Suppress("KotlinConstantConditions")
 internal class PermissionsManagerImpl(
     private val ctx: Context
 ) : PermissionsManager {
     private val pendingPermissionRequests = mutableSetOf<PermissionGroup>()
 
+    private val tasksPermissionState =
+        MutableStateFlow(
+            checkPermissionOnce(PermissionGroup.Tasks)
+        )
 
-    private val tasksPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.Tasks)
-    )
+    private val externalStoragePermissionState =
+        MutableStateFlow(
+            checkPermissionOnce(PermissionGroup.ExternalStorage)
+        )
 
-    private val externalStoragePermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.ExternalStorage)
-    )
-
-    private val usageStatPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.UsageStat)
-    )
+    private val usageStatPermissionState =
+        MutableStateFlow(
+            checkPermissionOnce(PermissionGroup.UsageStat)
+        )
 
     private val notificationsPermissionState = MutableStateFlow(false)
 
     private val accessibilityPermissionState = MutableStateFlow(false)
 
-    private val appShortcutsPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.AppShortcuts)
-    )
-    private val manageProfilesPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.ManageProfiles)
-    )
-
+    private val appShortcutsPermissionState =
+        MutableStateFlow(
+            checkPermissionOnce(PermissionGroup.AppShortcuts)
+        )
+    private val manageProfilesPermissionState =
+        MutableStateFlow(
+            checkPermissionOnce(PermissionGroup.ManageProfiles)
+        )
 
     override fun requestPermission(ctx: AppCompatActivity, permissionGroup: PermissionGroup) {
         when (permissionGroup) {
-
-
             PermissionGroup.Tasks -> {
                 ActivityCompat.requestPermissions(
                     ctx,
@@ -130,7 +129,8 @@ internal class PermissionsManagerImpl(
             }
 
             PermissionGroup.ManageProfiles,
-            PermissionGroup.AppShortcuts -> {
+            PermissionGroup.AppShortcuts
+            -> {
                 // TODO open default launcher settings
                 if (isAtLeastApiLevel(29)) {
                     val roleManager = ctx.getSystemService<RoleManager>()
@@ -160,8 +160,8 @@ internal class PermissionsManagerImpl(
         }
     }
 
-    override fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean {
-        return when (permissionGroup) {
+    override fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean =
+        when (permissionGroup) {
             PermissionGroup.Tasks -> {
                 taskPermissions.all { ctx.checkPermission(it) }
             }
@@ -185,7 +185,9 @@ internal class PermissionsManagerImpl(
             PermissionGroup.ManageProfiles -> {
                 if (isAtLeastApiLevel(29)) {
                     ctx.getSystemService<RoleManager>()?.isRoleHeld(RoleManager.ROLE_HOME) == true
-                } else false
+                } else {
+                    false
+                }
             }
 
             PermissionGroup.Accessibility -> {
@@ -196,10 +198,9 @@ internal class PermissionsManagerImpl(
                 hasUsageStatsPermission(ctx)
             }
         }
-    }
 
-    override fun hasPermission(permissionGroup: PermissionGroup): Flow<Boolean> {
-        return when (permissionGroup) {
+    override fun hasPermission(permissionGroup: PermissionGroup): Flow<Boolean> =
+        when (permissionGroup) {
             PermissionGroup.Tasks -> tasksPermissionState
             PermissionGroup.ExternalStorage -> externalStoragePermissionState
             PermissionGroup.Notifications -> notificationsPermissionState
@@ -208,11 +209,11 @@ internal class PermissionsManagerImpl(
             PermissionGroup.ManageProfiles -> manageProfilesPermissionState
             PermissionGroup.UsageStat -> usageStatPermissionState
         }
-    }
 
-    override suspend fun hasPermissionBlocking(permissionGroup: PermissionGroup): Boolean {
-        return hasPermission(permissionGroup).first()
-    }
+    override suspend fun hasPermissionBlocking(permissionGroup: PermissionGroup): Boolean =
+        hasPermission(
+            permissionGroup
+        ).first()
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -237,7 +238,6 @@ internal class PermissionsManagerImpl(
         appShortcutsPermissionState.value = checkPermissionOnce(PermissionGroup.AppShortcuts)
         manageProfilesPermissionState.value = checkPermissionOnce(PermissionGroup.ManageProfiles)
         usageStatPermissionState.value = checkPermissionOnce(PermissionGroup.UsageStat)
-
     }
 
     override fun reportNotificationListenerState(running: Boolean) {
@@ -250,30 +250,32 @@ internal class PermissionsManagerImpl(
 
     companion object {
         private val taskPermissions = arrayOf("org.tasks.permission.READ_TASKS")
-        private val externalStoragePermissions = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        private val externalStoragePermissions =
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
 
         private fun hasUsageStatsPermission(ctx: Context): Boolean {
             val appOps = ctx.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
             val uid = android.os.Process.myUid()
             val pkg = ctx.packageName
 
-            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                appOps.unsafeCheckOpNoThrow(
-                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-                    uid,
-                    pkg
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                appOps.checkOpNoThrow(
-                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-                    uid,
-                    pkg
-                )
-            }
+            val mode =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    appOps.unsafeCheckOpNoThrow(
+                        android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                        uid,
+                        pkg
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    appOps.checkOpNoThrow(
+                        android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                        uid,
+                        pkg
+                    )
+                }
 
             return mode == android.app.AppOpsManager.MODE_ALLOWED
         }

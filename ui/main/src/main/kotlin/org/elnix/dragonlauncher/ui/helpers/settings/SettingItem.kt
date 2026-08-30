@@ -27,15 +27,16 @@ fun DragonGroupScope.SettingsItem(
 ) {
     val uriHandler = LocalUriHandler.current
     Row(
-        modifier = Modifier
-            .dragonSettingGroup(enabled) {
-                clickable(
-                    enabled = enabled,
-                    onClick = onClick
-                )
-            },
+        modifier =
+            Modifier
+                .dragonSettingGroup(enabled) {
+                    clickable(
+                        enabled = enabled,
+                        onClick = onClick
+                    )
+                },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         BoxedIcon(icon, enabled)
 
@@ -58,7 +59,7 @@ fun DragonGroupScope.SettingsItem(
 fun DragonGroupScope.RouteItem(
     route: NavigationRoute,
     vararg trailingIcons: SocialLink,
-    enabled: Boolean = true,
+    enabled: Boolean = true
 ) {
     val navigator = LocalNavigator.current
     SettingsItem(
@@ -70,4 +71,3 @@ fun DragonGroupScope.RouteItem(
         navigator.navigate(route)
     }
 }
-

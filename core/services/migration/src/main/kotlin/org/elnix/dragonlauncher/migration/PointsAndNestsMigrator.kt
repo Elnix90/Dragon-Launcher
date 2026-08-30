@@ -17,7 +17,6 @@ import kotlin.math.sin
  * when it encounters a `new_actions` store in the old backup JSON.
  */
 internal object PointsAndNestsMigrator {
-
     /**
      * Migrates all points, nests, and the default point from a single
      * `new_actions` JSON object.
@@ -38,9 +37,12 @@ internal object PointsAndNestsMigrator {
 
         val newNests = migrateNests(oldNests, density)
         val newPoints = migratePoints(oldPoints, idMap, density)
-        val newDefaultPoint = if (oldDefaultPoint != null) {
-            migrateSinglePoint(oldDefaultPoint, emptyMap(), density)
-        } else null
+        val newDefaultPoint =
+            if (oldDefaultPoint != null) {
+                migrateSinglePoint(oldDefaultPoint, emptyMap(), density)
+            } else {
+                null
+            }
 
         return MigrationOutput(
             newPoints = newPoints,
@@ -71,7 +73,7 @@ internal object PointsAndNestsMigrator {
      * @return Map from UUID -> new integer ID.
      */
     private fun buildIdMap(
-        oldPoints: JSONArray,
+        oldPoints: JSONArray
     ): Map<String, Int> {
         val map = mutableMapOf<String, Int>()
         var nextId = 0
@@ -148,11 +150,14 @@ internal object PointsAndNestsMigrator {
             newNest.put("cancelZone", pixelsToDpValue(cancelZonePx.toFloat(), density).roundToInt())
         }
 
-        val circleKeys = dragDistances.keys().asSequence()
-            .filter { it != "-1" }
-            .mapNotNull { it.toIntOrNull() }
-            .sorted()
-            .toList()
+        val circleKeys =
+            dragDistances
+                .keys()
+                .asSequence()
+                .filter { it != "-1" }
+                .mapNotNull { it.toIntOrNull() }
+                .sorted()
+                .toList()
 
         if (circleKeys.isEmpty()) return
 
@@ -214,7 +219,7 @@ internal object PointsAndNestsMigrator {
     private fun migrateSinglePoint(
         oldPoint: JSONObject,
         idMap: Map<String, Int>,
-        density: Density,
+        density: Density
     ): JSONObject {
         val newPoint = JSONObject()
 
@@ -259,10 +264,11 @@ internal object PointsAndNestsMigrator {
         copyIntColor(oldPoint, newPoint, "customActionColor")
 
         if (oldPoint.has("liveNestGraceDistancePx")) {
-            val px = when (val raw = oldPoint.get("liveNestGraceDistancePx")) {
-                is Number -> raw.toFloat()
-                else -> null
-            }
+            val px =
+                when (val raw = oldPoint.get("liveNestGraceDistancePx")) {
+                    is Number -> raw.toFloat()
+                    else -> null
+                }
             if (px != null) {
                 newPoint.put("liveNestGraceDistance", pixelsToDpValue(px, density))
             }
@@ -280,8 +286,9 @@ internal object PointsAndNestsMigrator {
             newPoint.put("borderShapeSelected", migrateIconShape(borderShapeSelected))
         }
 
-        val haptic = oldPoint.optJSONObject("haptic")
-            ?: oldPoint.optJSONObject("hapticFeedback")
+        val haptic =
+            oldPoint.optJSONObject("haptic")
+                ?: oldPoint.optJSONObject("hapticFeedback")
         if (haptic != null) {
             newPoint.put("haptic", migrateHaptic(haptic))
         }
@@ -464,7 +471,6 @@ internal object PointsAndNestsMigrator {
         return newHaptic
     }
 
-
     /**
      * Migrates the cycle actions array by converting each stage.
      *
@@ -498,9 +504,7 @@ internal object PointsAndNestsMigrator {
      * @param color The integer color.
      * @return Upper-case hex string.
      */
-    private fun intToHexColor(color: Int): String {
-        return "%08X".format(color.toLong() and 0xFFFFFFFFL)
-    }
+    private fun intToHexColor(color: Int): String = "%08X".format(color.toLong() and 0xFFFFFFFFL)
 
     /**
      * Copies a field from source to target, optionally converting pixel values to DP.
@@ -546,11 +550,16 @@ internal object PointsAndNestsMigrator {
         if (value !is JSONObject) return
         if (value.length() == 0) return
         val type = value.optString("type", "")
-        if (type != "CustomIconPackIcon" && type != "AdaptifiedLegacyIcon" &&
-            type != "CustomThemedIcon" && type != "ForceThemedIcon" &&
-            type != "UnmodifiedSystemDefaultIcon" && type != "CustomTextIcon" &&
+        if (type != "CustomIconPackIcon" &&
+            type != "AdaptifiedLegacyIcon" &&
+            type != "CustomThemedIcon" &&
+            type != "ForceThemedIcon" &&
+            type != "UnmodifiedSystemDefaultIcon" &&
+            type != "CustomTextIcon" &&
             type != "DefaultPlaceholderIcon"
-        ) return
+        ) {
+            return
+        }
         target.put("customIcon", value)
     }
 
@@ -564,14 +573,14 @@ internal object PointsAndNestsMigrator {
      */
     private fun copyIntColor(source: JSONObject, target: JSONObject, key: String) {
         if (!source.has(key)) return
-        val intValue = when (val raw = source.get(key)) {
-            is Int -> raw
-            is Number -> raw.toInt()
-            else -> return
-        }
+        val intValue =
+            when (val raw = source.get(key)) {
+                is Int -> raw
+                is Number -> raw.toInt()
+                else -> return
+            }
         target.put(key, intToHexColor(intValue))
     }
-
 
     /**
      * Converts a pixel value to density-independent pixels (DP).
@@ -580,7 +589,5 @@ internal object PointsAndNestsMigrator {
      * @param density The screen density (from [Density.density]).
      * @return The equivalent value in DP.
      */
-    private fun pixelsToDpValue(pixels: Float, density: Density): Float {
-        return pixels / density.density
-    }
+    private fun pixelsToDpValue(pixels: Float, density: Density): Float = pixels / density.density
 }

@@ -44,8 +44,7 @@ import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 
-
-private const val pageNumber = 6
+private const val PAGES_NUMBER = 6
 
 @SuppressLint("LocalContextGetResourceValueCall", "FrequentlyChangingValue")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -55,24 +54,25 @@ fun WelcomeScreen(
 ) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
-    val pagerState = rememberPagerState(pageCount = { pageNumber })
+    val pagerState = rememberPagerState(pageCount = { PAGES_NUMBER })
     val scope = rememberCoroutineScope()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                scope.launch {
-                    val pagerPage = PrivateSettingsStore.welcomeScreenTempPage.getOrNull(ctx)
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    scope.launch {
+                        val pagerPage = PrivateSettingsStore.welcomeScreenTempPage.getOrNull(ctx)
 
-                    if (pagerPage != null) {
-                        scope.launch {
-                            pagerState.animateScrollToPage(pagerPage)
+                        if (pagerPage != null) {
+                            scope.launch {
+                                pagerState.animateScrollToPage(pagerPage)
+                            }
                         }
                     }
                 }
             }
-        }
 
         // Add the observer to the lifecycle
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -81,7 +81,6 @@ fun WelcomeScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-
 
     LaunchedEffect(pagerState.currentPage) {
         val pageId = pagerState.currentPage
@@ -105,10 +104,11 @@ fun WelcomeScreen(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(WindowInsets.systemBars.asPaddingValues())
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(WindowInsets.systemBars.asPaddingValues())
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -118,9 +118,10 @@ fun WelcomeScreen(
 
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
             ) { page ->
                 when (page) {
                     0 -> WelcomePageIntro(pagerState.currentPage < 2, ::setHasSeen)
@@ -128,24 +129,25 @@ fun WelcomeScreen(
                     2 -> WelcomePageTutorial()
                     3 -> WelcomePageLauncher()
                     4 -> WelcomePageBackup()
-                    5 -> WelcomePageFinish(
-                        onEnterSettings = {
-                            setHasSeen()
+                    5 ->
+                        WelcomePageFinish(
+                            onEnterSettings = {
+                                setHasSeen()
 
-                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
-                            initializationViewModel.checkLauncherInitialization()
-                            navigator.popBackMainScreen()
-                            navigator.go(NavigationRoute.PointsSettings)
-                        },
-                        onEnterApp = {
-                            setHasSeen()
+                                // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+                                initializationViewModel.checkLauncherInitialization()
+                                navigator.popBackMainScreen()
+                                navigator.go(NavigationRoute.PointsSettings)
+                            },
+                            onEnterApp = {
+                                setHasSeen()
 
-                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
-                            initializationViewModel.checkLauncherInitialization()
+                                // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+                                initializationViewModel.checkLauncherInitialization()
 
-                            navigator.onBack()
-                        }
-                    )
+                                navigator.onBack()
+                            }
+                        )
                 }
             }
 
@@ -155,23 +157,24 @@ fun WelcomeScreen(
                 pagerState = pagerState,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 shuffleShapes = true,
-                overflow = ShapeIndicatorDefaults.overflow(maxVisibleItems = pageNumber)
+                overflow = ShapeIndicatorDefaults.overflow(maxVisibleItems = PAGES_NUMBER)
             )
         }
 
         val fabScale by animateFloatAsState(
-            if (pagerState.currentPage < pageNumber - 1) 1f else -(pagerState.currentPageOffsetFraction * 2)
+            if (pagerState.currentPage < PAGES_NUMBER - 1) 1f else -(pagerState.currentPageOffsetFraction * 2)
         )
         AnimatedFab(
             icon = R.drawable.arrow_forward,
-            modifier = Modifier
-                .padding(10.dp)
-                .align(Alignment.BottomEnd)
-                .scale(fabScale),
+            modifier =
+                Modifier
+                    .padding(10.dp)
+                    .align(Alignment.BottomEnd)
+                    .scale(fabScale),
             minSize = 80.dp
         ) {
             val next = pagerState.currentPage + 1
-            if (next < pageNumber) {
+            if (next < PAGES_NUMBER) {
                 scope.launch { pagerState.animateScrollToPage(next) }
             }
         }

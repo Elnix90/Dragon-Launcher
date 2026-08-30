@@ -27,32 +27,33 @@ fun PointIcon(
     modifier: Modifier = Modifier,
     depth: Int = 1,
     selected: Boolean = false,
-
     pointSettingsDisplay: Boolean = false,
     hideShapes: Boolean = false
 ) {
-    val drawParams = rememberDrawParams(
-        eraseColor = eraseColor,
-        isDefaultEditing = false,
-        pointSettingsDisplay = pointSettingsDisplay,
-        showCancelZone = false,
-        allowShowPointCenter = false,
-        hideShapes = hideShapes,
-        skipSelected = false
-    )
+    val drawParams =
+        rememberDrawParams(
+            eraseColor = eraseColor,
+            isDefaultEditing = false,
+            pointSettingsDisplay = pointSettingsDisplay,
+            showCancelZone = false,
+            allowShowPointCenter = false,
+            hideShapes = hideShapes,
+            skipSelected = false
+        )
 
     Canvas(
-        modifier = modifier
-            .graphicsLayer {
-                compositingStrategy = CompositingStrategy.Offscreen
-            }
+        modifier =
+            modifier
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
+                }
     ) {
         this.PointIcon(
             point = point,
             depth = depth,
             center = center,
             selected = selected,
-            drawParams = drawParams,
+            drawParams = drawParams
         )
     }
 }
@@ -63,7 +64,6 @@ fun DrawScope.PointIcon(
     depth: Int,
     center: Offset,
     selected: Boolean,
-
     drawParams: DrawParams
 ) {
     require(depth > 0)

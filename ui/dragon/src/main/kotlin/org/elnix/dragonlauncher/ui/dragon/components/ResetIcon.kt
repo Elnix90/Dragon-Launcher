@@ -22,6 +22,7 @@ fun MoreIcon(enabled: Boolean = true, onReset: () -> Unit) {
         onClick = onReset
     )
 }
+
 @Composable
 fun CopyIcon(enabled: Boolean = true, onCopy: () -> Unit) {
     DragonIconButton(

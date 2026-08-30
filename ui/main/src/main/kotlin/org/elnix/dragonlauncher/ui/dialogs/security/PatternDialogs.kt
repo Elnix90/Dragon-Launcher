@@ -94,7 +94,6 @@ fun PatternUnlock(
     }
 }
 
-
 /**
  * Dialog for setting up a new PIN (enter + confirm).
  */
@@ -107,7 +106,6 @@ fun PatternSetup(
 
     val patternSize by BehaviorSettingsStore.patternSize.asState()
     val doNotRemindMeWarningDialog by UiSettingsStore.doNotRemindMeAgainPinLockWarning.asState()
-
 
     var firstPattern by remember { mutableStateOf("") }
     var isConfirmStep by remember { mutableStateOf(false) }
@@ -122,7 +120,6 @@ fun PatternSetup(
         errorMessage = null
         firstPattern = ""
     }
-
 
     PatternPrompt(
         title = stringResource(R.string.set_pattern),
@@ -203,23 +200,29 @@ private fun PatternPrompt(
     val patternSensitivity by BehaviorSettingsStore.patternSensitivity.asState()
     var showSensitivity by remember { mutableStateOf(false) }
 
-    val horizontalOffsetError = remember {
-        Animatable(
-            initialValue = 0f
-        )
-    }
+    val horizontalOffsetError =
+        remember {
+            Animatable(
+                initialValue = 0f
+            )
+        }
 
     LaunchedEffect(failedTries) {
         if (failedTries > 0) {
             var left = true
             repeat(5) {
                 horizontalOffsetError.animateTo(
-                    animationSpec = tween(
-                        durationMillis = 100,
-                        easing = LinearEasing
-                    ),
-                    targetValue = if (left) -5f
-                    else 5f
+                    animationSpec =
+                        tween(
+                            durationMillis = 100,
+                            easing = LinearEasing
+                        ),
+                    targetValue =
+                        if (left) {
+                            -5f
+                        } else {
+                            5f
+                        }
                 )
                 left = !left
             }
@@ -241,11 +244,12 @@ private fun PatternPrompt(
         metalPipesSoundEnabled = metalPipesSound
     )
 
-    val backgroundOverlayColor = remember {
-        Animatable(
-            Color.Transparent
-        )
-    }
+    val backgroundOverlayColor =
+        remember {
+            Animatable(
+                Color.Transparent
+            )
+        }
 
     LaunchedEffect(failedTries) {
         if (failedTries > 0 && superWarningMode) {
@@ -285,11 +289,12 @@ private fun PatternPrompt(
 
     LockScreenScaffold { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(backgroundOverlayColor.value)
-                .padding(20.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(backgroundOverlayColor.value)
+                    .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -297,9 +302,10 @@ private fun PatternPrompt(
                 painter = painterResource(R.drawable.lock),
                 contentDescription = null,
                 tint = lockColor.value,
-                modifier = Modifier
-                    .offset(x = horizontalOffsetError.value.dp)
-                    .size(50.dp)
+                modifier =
+                    Modifier
+                        .offset(x = horizontalOffsetError.value.dp)
+                        .size(50.dp)
             )
             Spacer(8.dp)
 
@@ -329,7 +335,6 @@ private fun PatternPrompt(
                 }
             }
 
-
             if (showOptionSlider) {
                 DragonSettingsGroup {
                     Setting(BehaviorSettingsStore.patternSize)
@@ -344,12 +349,13 @@ private fun PatternPrompt(
 
             PatternLock(
                 modifier = Modifier.padding(bottom = 80.dp),
-                patternLockOptions = PatternLockOptions.defaultPatternLockOptions.copy(
-                    dimension = patternSize,
-                    sensitivity = patternSensitivity,
-                    showSensibility = showSensitivity
-                ),
-                onFinished = onDrawEnd,
+                patternLockOptions =
+                    PatternLockOptions.defaultPatternLockOptions.copy(
+                        dimension = patternSize,
+                        sensitivity = patternSensitivity,
+                        showSensibility = showSensitivity
+                    ),
+                onFinished = onDrawEnd
             )
         }
     }

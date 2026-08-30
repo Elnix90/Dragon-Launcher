@@ -24,8 +24,7 @@ import org.robolectric.RobolectricTestRunner
  */
 @RunWith(RobolectricTestRunner::class)
 class IntColorKtxTest {
-
-    //  isBrightColor 
+    //  isBrightColor
 
     @Test
     fun `white is bright`() {
@@ -104,7 +103,7 @@ class IntColorKtxTest {
         assertTrue(white.isBrightColor())
     }
 
-    //  sat (saturation) 
+    //  sat (saturation)
 
     @Test
     fun `sat of pure red is 1`() {

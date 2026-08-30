@@ -9,17 +9,17 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
 public data class PointApp(
     private val point: Point
 ) : Application() {
-
     override val isSystem: Boolean = false
     override val isLaunchable: Boolean = true
 
     override val packageName: String
-        get() = when (val action = point.action) {
+        get() =
+            when (val action = point.action) {
 
-            is Action.LaunchApp -> action.packageName
-            is Action.LaunchShortcut -> action.packageName
-            else -> ""
-        }
+                is Action.LaunchApp -> action.packageName
+                is Action.LaunchShortcut -> action.packageName
+                else -> ""
+            }
 
     // TODO
     override val isSuspended: Boolean = false
@@ -41,7 +41,6 @@ public data class PointApp(
      * Second string is the normalized label
      */
     override var cachedNormalizerResult: Pair<String, String>? = null
-
 
     override suspend fun loadIcon(themed: Boolean, tint: Int?): Nothing? = null
 

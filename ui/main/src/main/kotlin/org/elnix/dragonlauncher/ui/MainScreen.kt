@@ -56,7 +56,6 @@ import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.time.Duration.Companion.milliseconds
 
-
 @SuppressLint("LocalContextResourcesRead")
 @Composable
 fun MainScreen(
@@ -83,7 +82,6 @@ fun MainScreen(
     val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
     val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
 
-
     val start by swipeService.start.asState()
     val current by swipeService.current.asState()
 
@@ -98,7 +96,6 @@ fun MainScreen(
         }
     }
 
-
     fun launchAction(point: Point) {
         // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
@@ -111,37 +108,36 @@ fun MainScreen(
         }
     }
 
-
     val holdMenuEntries by swipeService.holdMenuEntriesString.asState()
 
-    val hold = rememberHoldToOpenSettings(
-        onSettings = { offset ->
+    val hold =
+        rememberHoldToOpenSettings(
+            onSettings = { offset ->
 
-            // When the list only has 1 element, directly go to that screen, otherwise, open the menu
-            // If the list is empty, do nothing
-            when {
-                holdMenuEntries.size > 1 -> {
-                    showDropDownMenuSettings = true
-                    holdOffset = offset
+                // When the list only has 1 element, directly go to that screen, otherwise, open the menu
+                // If the list is empty, do nothing
+                when {
+                    holdMenuEntries.size > 1 -> {
+                        showDropDownMenuSettings = true
+                        holdOffset = offset
+                    }
+
+                    holdMenuEntries.size == 1 -> {
+                        val routeToGo = holdMenuEntries.first()
+                        val action = Action.OpenDragonLauncherSettings(routeToGo)
+                        launchAction(dummySwipePoint(action))
+                    }
+
+                    else -> {
+                        // If list is empty, directly navigate to settings root. Never block the user out of settings
+                        val action = Action.OpenDragonLauncherSettings(NavigationRoute.PointsSettings)
+                        launchAction(dummySwipePoint(action))
+                    }
                 }
-
-                holdMenuEntries.size == 1 -> {
-                    val routeToGo = holdMenuEntries.first()
-                    val action = Action.OpenDragonLauncherSettings(routeToGo)
-                    launchAction(dummySwipePoint(action))
-                }
-
-                else -> {
-                    // If list is empty, directly navigate to settings root. Never block the user out of settings
-                    val action = Action.OpenDragonLauncherSettings(NavigationRoute.PointsSettings)
-                    launchAction(dummySwipePoint(action))
-                }
-            }
-        },
-        holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
-        loadDuration = longCLickSettingsDuration.toLong()
-    )
-
+            },
+            holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
+            loadDuration = longCLickSettingsDuration.toLong()
+        )
 
     /**
      * 1. Tests if the current nest is the main, if not, go back one nest
@@ -161,13 +157,13 @@ fun MainScreen(
     WallpaperDim(mainDimAmount)
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent)
-            .pointerInput(Unit, nestId) {
-                with(swipeService) { mainDragGesture() }
-            }
-            .then(hold.pointerModifier)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Transparent)
+                .pointerInput(Unit, nestId) {
+                    with(swipeService) { mainDragGesture() }
+                }.then(hold.pointerModifier)
     ) {
         mainScreenLayers.filter { it.enabled }.forEach { layer ->
             when (layer) {
@@ -206,27 +202,29 @@ fun MainScreen(
                     HoldToActivateArc(
                         center = hold.center,
                         progress = hold.progress,
-                        customObject = holdObject,
+                        customObject = holdObject
                     )
 
                     if (holdOffset != null) {
-                        val actions = holdMenuEntries.map { route ->
-                            MoreOptions(
-                                onClick = {
-                                    showDropDownMenuSettings = false
-                                    navigator.navigate(route)
-                                },
-                                icon = route.icon,
-                                text = { stringResource(route.resId) }
-                            )
-                        }
+                        val actions =
+                            holdMenuEntries.map { route ->
+                                MoreOptions(
+                                    onClick = {
+                                        showDropDownMenuSettings = false
+                                        navigator.navigate(route)
+                                    },
+                                    icon = route.icon,
+                                    text = { stringResource(route.resId) }
+                                )
+                            }
 
-                        val dpOffset = with(density) {
-                            DpOffset(
-                                x = holdOffset!!.x.toDp(),
-                                y = holdOffset!!.y.toDp()
-                            )
-                        }
+                        val dpOffset =
+                            with(density) {
+                                DpOffset(
+                                    x = holdOffset!!.x.toDp(),
+                                    y = holdOffset!!.y.toDp()
+                                )
+                            }
 
                         Box(
                             modifier = Modifier.offset(dpOffset.x, dpOffset.y)
@@ -255,21 +253,20 @@ fun MainScreen(
                             WidgetHostView(
                                 widget = widget,
                                 cellSizePx = cellSizePx,
-                                modifier = Modifier
-                                    .offset {
-                                        IntOffset(
-                                            x = (widget.x * dm.widthPixels).toInt(),
-                                            y = (widget.y * dm.heightPixels).toInt()
-                                        )
-                                    }
-                                    .size(
-                                        width = (widget.spanX * cellSizePx).toDp,
-                                        height = (widget.spanY * cellSizePx).toDp
-                                    )
-                                    .graphicsLayer {
-                                        rotationZ = widget.angle
-                                        transformOrigin = TransformOrigin.Center
-                                    },
+                                modifier =
+                                    Modifier
+                                        .offset {
+                                            IntOffset(
+                                                x = (widget.x * dm.widthPixels).toInt(),
+                                                y = (widget.y * dm.heightPixels).toInt()
+                                            )
+                                        }.size(
+                                            width = (widget.spanX * cellSizePx).toDp,
+                                            height = (widget.spanY * cellSizePx).toDp
+                                        ).graphicsLayer {
+                                            rotationZ = widget.angle
+                                            transformOrigin = TransformOrigin.Center
+                                        },
                                 onLaunchAction = {
                                     launchAction(
                                         dummySwipePoint(

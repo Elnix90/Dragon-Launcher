@@ -71,9 +71,10 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 private object PointIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
 private object ActionIconCache : DragonCache<CacheKey, LauncherIcon>(Action.actionsNumber)
-private object ShortcutIconCache : DragonCache<CacheKey, LauncherIcon>(Action.actionsNumber)
-private object DrawerIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
+private object ShortcutIconCache : DragonCache<CacheKey, LauncherIcon>(Action.actionsNumber)
+
+private object DrawerIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
 public class IconService internal constructor(
     private val ctx: Context,
@@ -87,11 +88,12 @@ public class IconService internal constructor(
 ) {
     private val density = Density(ctx.dp)
 
-    private val appReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            requestIconPackListUpdate()
+    private val appReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                requestIconPackListUpdate()
+            }
         }
-    }
 
     private val iconSettings = iconSettingsRepository.settings
     private val extraColors = colorService.extraColors
@@ -116,17 +118,19 @@ public class IconService internal constructor(
 
     init {
         requestIconPackListUpdate()
-        ctx.registerReceiver(appReceiver, IntentFilter().apply {
-            addAction(Intent.ACTION_PACKAGE_REPLACED)
-            addAction(Intent.ACTION_PACKAGE_ADDED)
-            addAction(Intent.ACTION_PACKAGE_REMOVED)
-            addAction(Intent.ACTION_MY_PACKAGE_REPLACED)
-            addAction(Intent.ACTION_PACKAGE_CHANGED)
-            addDataScheme("package")
-        })
+        ctx.registerReceiver(
+            appReceiver,
+            IntentFilter().apply {
+                addAction(Intent.ACTION_PACKAGE_REPLACED)
+                addAction(Intent.ACTION_PACKAGE_ADDED)
+                addAction(Intent.ACTION_PACKAGE_REMOVED)
+                addAction(Intent.ACTION_MY_PACKAGE_REPLACED)
+                addAction(Intent.ACTION_PACKAGE_CHANGED)
+                addDataScheme("package")
+            }
+        )
 
         iconPacksUpdated.tryEmit(Unit)
-
 
         /**
          * Icon Settings reactive update to keep providers up-to-date
@@ -154,9 +158,10 @@ public class IconService internal constructor(
 
                     providers.add(
                         ShortcutIconProvider(
-                            ctx, shortcutRepository,
+                            ctx,
+                            shortcutRepository,
                             themed = settings.themedIcons,
-                            tint = tint(),
+                            tint = tint()
                         )
                     )
 
@@ -170,7 +175,7 @@ public class IconService internal constructor(
                                     iconPack = pack,
                                     tint = settings.iconsTint,
                                     iconPackManager = iconPackManager,
-                                    allowThemed = settings.themedIcons,
+                                    allowThemed = settings.themedIcons
                                 )
                             )
                         } else {
@@ -183,7 +188,7 @@ public class IconService internal constructor(
                             ctx = ctx,
                             appRepository = appRepository,
                             themed = settings.themedIcons,
-                            tint = tint(),
+                            tint = tint()
                         )
                     )
 
@@ -192,7 +197,7 @@ public class IconService internal constructor(
                             ctx = ctx,
                             appRepository = appRepository,
                             themed = settings.themedIcons,
-                            tint = tint(),
+                            tint = tint()
                         )
                     )
                     if (!isAtLeastApiLevel(33)) {
@@ -201,7 +206,7 @@ public class IconService internal constructor(
                                 appRepository = appRepository,
                                 ctx = ctx,
                                 themed = settings.themedIcons,
-                                tint = tint(),
+                                tint = tint()
                             )
                         )
                     }
@@ -209,29 +214,32 @@ public class IconService internal constructor(
                         SystemIconProvider(
                             appRepository = appRepository,
                             themedIcons = settings.themedIcons,
-                            tint = tint(),
+                            tint = tint()
                         )
                     )
 
-                    val fallbackProvider = if (settings.themedIcons) {
-                        ThemedPlaceholderIconProvider(
-                            appRepository = appRepository,
-                            ctx = ctx
-                        )
-                    } else {
-                        PlaceholderIconProvider(
-                            ctx = ctx,
-                            appRepository = appRepository
-                        )
-                    }
+                    val fallbackProvider =
+                        if (settings.themedIcons) {
+                            ThemedPlaceholderIconProvider(
+                                appRepository = appRepository,
+                                ctx = ctx
+                            )
+                        } else {
+                            PlaceholderIconProvider(
+                                ctx = ctx,
+                                appRepository = appRepository
+                            )
+                        }
                     providers.add(fallbackProvider)
 
                     val transformations = mutableListOf<LauncherIconTransformation>()
 
                     if (settings.adaptify) transformations.add(LegacyToAdaptiveTransformation())
-                    if (settings.themedIcons && settings.forceThemed) transformations.add(
-                        ForceThemedIconTransformation()
-                    )
+                    if (settings.themedIcons && settings.forceThemed) {
+                        transformations.add(
+                            ForceThemedIconTransformation()
+                        )
+                    }
 
                     this@IconService.iconProviders.value = providers
                     this@IconService.transformations.value = transformations
@@ -242,17 +250,15 @@ public class IconService internal constructor(
 
 //    public fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
 
-    public fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
-        return appOverrideManager.appOverrides.flow.map {
+    public fun getCustomAppIcon(application: Application): Flow<CustomIcon?> =
+        appOverrideManager.appOverrides.flow.map {
             it[application.key]?.customIcon
         }
-    }
 
-    public fun getCustomIconProperties(application: Application): Flow<CustomIconProperties?> {
-        return appOverrideManager.appOverrides.flow.map {
+    public fun getCustomIconProperties(application: Application): Flow<CustomIconProperties?> =
+        appOverrideManager.appOverrides.flow.map {
             it[application.key]?.iconProperties
         }
-    }
 
 //    public fun reloadAppIcon(application: Application) {
 //        scope.launch {
@@ -272,7 +278,6 @@ public class IconService internal constructor(
         PointIconCache.updateMaxCacheSize(newSize)
     }
 
-
     @OptIn(ExperimentalCoroutinesApi::class)
     public fun getAppIcon(
         application: Application,
@@ -291,26 +296,28 @@ public class IconService internal constructor(
         }
     }
 
-
     @OptIn(ExperimentalCoroutinesApi::class)
     public fun getActionIcon(
         action: Action,
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
-
         return combine(iconSize, iconProviders, transformations) { iconSize, providers, transformations ->
             val size = (iconSize * density.density).value.toInt()
 
-            val cacheKey = CacheKey(
-                data = action::class,
-                customIconHashCode = 0,
-                providersHashCode = providers.hashCode(),
-                transformationsHashcode = transformations.hashCode()
-            )
+            val cacheKey =
+                CacheKey(
+                    data = action::class,
+                    customIconHashCode = 0,
+                    providersHashCode = providers.hashCode(),
+                    transformationsHashcode = transformations.hashCode()
+                )
 
-            var icon = if (!reload) {
-                ActionIconCache[cacheKey]
-            } else null
+            var icon =
+                if (!reload) {
+                    ActionIconCache[cacheKey]
+                } else {
+                    null
+                }
 
             if (!reload && icon != null) {
                 return@combine icon
@@ -325,7 +332,6 @@ public class IconService internal constructor(
             return@combine icon
         }
     }
-
 
 //    public fun reloadPointIcon(point: Point) {
 //        scope.launch {
@@ -342,13 +348,11 @@ public class IconService internal constructor(
     public fun getPointIcon(
         point: Point,
         reload: Boolean = false
-    ): Flow<LauncherIcon?> {
-        return defaultPoint.flow.flatMapLatest { defaultPoint ->
+    ): Flow<LauncherIcon?> =
+        defaultPoint.flow.flatMapLatest { defaultPoint ->
             val size = point.getSize(defaultPoint, false)
             resolveCustomPointIcon(point, size, reload)
         }
-    }
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     public fun getShortcutIcon(
@@ -357,16 +361,20 @@ public class IconService internal constructor(
     ): Flow<LauncherIcon?> {
         return combine(iconProviders, transformations) { providers, transformations ->
 
-            val cacheKey = CacheKey(
-                data = shortcut,
-                customIconHashCode = 0,
-                providersHashCode = providers.hashCode(),
-                transformationsHashcode = transformations.hashCode()
-            )
+            val cacheKey =
+                CacheKey(
+                    data = shortcut,
+                    customIconHashCode = 0,
+                    providersHashCode = providers.hashCode(),
+                    transformationsHashcode = transformations.hashCode()
+                )
 
-            var icon = if (!reload) {
-                ShortcutIconCache[cacheKey]
-            } else null
+            var icon =
+                if (!reload) {
+                    ShortcutIconCache[cacheKey]
+                } else {
+                    null
+                }
 
             if (!reload && icon != null) {
                 return@combine icon
@@ -391,19 +399,26 @@ public class IconService internal constructor(
     ): Flow<LauncherIcon?> {
         return combine(iconProviders, transformations) { providers, transformations ->
 
-            val effectiveProperties = (customIcon?.getProperties()?.takeIf { it.isNotEmpty }
-                ?: iconProperties).takeIf { it?.isNotEmpty == true }
+            val effectiveProperties =
+                (
+                    customIcon?.getProperties()?.takeIf { it.isNotEmpty }
+                        ?: iconProperties
+                ).takeIf { it?.isNotEmpty == true }
 
-            val cacheKey = CacheKey(
-                data = application.key,
-                customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
-                providersHashCode = providers.hashCode(),
-                transformationsHashcode = transformations.hashCode()
-            )
+            val cacheKey =
+                CacheKey(
+                    data = application.key,
+                    customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
+                    providersHashCode = providers.hashCode(),
+                    transformationsHashcode = transformations.hashCode()
+                )
 
-            var icon = if (!reload) {
-                DrawerIconCache[cacheKey]
-            } else null
+            var icon =
+                if (!reload) {
+                    DrawerIconCache[cacheKey]
+                } else {
+                    null
+                }
 
             if (!reload && icon != null) {
                 return@combine icon
@@ -428,40 +443,46 @@ public class IconService internal constructor(
     private fun resolveCustomPointIcon(
         point: Point,
         size: Dp,
-        reload: Boolean,
+        reload: Boolean
     ): Flow<LauncherIcon?> {
         return combine(iconProviders, transformations, extraColors) { providers, transformations, _ ->
             val customIcon = point.customIcon
-            val effectiveProperties = (customIcon?.getProperties()?.takeIf { it.isNotEmpty }
-                ?: point.iconProperties).takeIf { it?.isNotEmpty == true }
+            val effectiveProperties =
+                (
+                    customIcon?.getProperties()?.takeIf { it.isNotEmpty }
+                        ?: point.iconProperties
+                ).takeIf { it?.isNotEmpty == true }
 
-            val cacheKey = CacheKey(
-                data = point.key,
-                customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
-                providersHashCode = providers.hashCode(),
-                transformationsHashcode = transformations.hashCode()
-            )
+            val cacheKey =
+                CacheKey(
+                    data = point.key,
+                    customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
+                    providersHashCode = providers.hashCode(),
+                    transformationsHashcode = transformations.hashCode()
+                )
 
             /**
              * Tries to find the icon in the point cache, and if not found, create a new one, by searching in the
              */
-            var icon = if (!reload) {
-                PointIconCache[cacheKey] ?: run {
-                    when (point.action) {
-                        is Action.LaunchApp -> {
-                            DrawerIconCache[cacheKey]
+            var icon =
+                if (!reload) {
+                    PointIconCache[cacheKey] ?: run {
+                        when (point.action) {
+                            is Action.LaunchApp -> {
+                                DrawerIconCache[cacheKey]
+                            }
+
+                            // TODO
+                            is Action.LaunchShortcut -> {
+                                ShortcutIconCache[cacheKey]
+                            }
+
+                            else -> null
                         }
-
-
-                        // TODO
-                        is Action.LaunchShortcut -> {
-                            ShortcutIconCache[cacheKey]
-                        }
-
-                        else -> null
                     }
+                } else {
+                    null
                 }
-            } else null
 
             if (icon != null) {
                 return@combine icon
@@ -493,9 +514,7 @@ public class IconService internal constructor(
         size: Int,
         customIcon: CustomIcon?,
         properties: CustomIconProperties?
-    ): LauncherIcon? {
-        return resolveIconOnce(Action.LaunchApp(application), size, customIcon, properties)
-    }
+    ): LauncherIcon? = resolveIconOnce(Action.LaunchApp(application), size, customIcon, properties)
 
     /**
      * One-shot resolution of a single point icon with [customIcon] and [properties] applied,
@@ -507,9 +526,7 @@ public class IconService internal constructor(
         size: Int,
         customIcon: CustomIcon?,
         properties: CustomIconProperties?
-    ): LauncherIcon? {
-        return resolveIconOnce(point.action, size, customIcon, properties)
-    }
+    ): LauncherIcon? = resolveIconOnce(point.action, size, customIcon, properties)
 
     private suspend fun resolveIconOnce(
         action: Action,
@@ -526,8 +543,11 @@ public class IconService internal constructor(
         val icon = provs.getFirstIcon(action, size) ?: return null
         val transformed = icon.transform(effectiveTransforms)
 
-        val effectiveProperties = (properties.takeIf { it?.isNotEmpty == true }
-            ?: customIcon?.getProperties()).takeIf { it?.isNotEmpty == true }
+        val effectiveProperties =
+            (
+                properties.takeIf { it?.isNotEmpty == true }
+                    ?: customIcon?.getProperties()
+            ).takeIf { it?.isNotEmpty == true }
 
         return if (effectiveProperties != null && transformed is StaticLauncherIcon) {
             transformed.copy(properties = effectiveProperties)
@@ -585,7 +605,6 @@ public class IconService internal constructor(
         return null
     }
 
-
     public fun requestIconPackListUpdate() {
         scope.launch {
             iconPackManager.updateIconPacks().also {
@@ -601,9 +620,7 @@ public class IconService internal constructor(
         }
     }
 
-    public fun getInstalledIconPacks(): Flow<List<IconPack>> {
-        return iconPackManager.getInstalledIconPacks()
-    }
+    public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
 
     public suspend fun getCustomIconSuggestions(
         action: Action,
@@ -653,7 +670,7 @@ public class IconService internal constructor(
             transformationOptions.add(
                 AdaptifiedLegacyIcon(
                     fgScale = 0.7f,
-                    bgColor = Color.White.toArgb(),
+                    bgColor = Color.White.toArgb()
                 )
             )
         }
@@ -695,9 +712,8 @@ public class IconService internal constructor(
 
                 CustomIconWithPreview(
                     preview = icon.transform(transformations),
-                    customIcon = it,
+                    customIcon = it
                 )
-
             }
         )
 
@@ -709,9 +725,8 @@ public class IconService internal constructor(
 
                 CustomIconWithPreview(
                     preview = icon.transform(defaultTransformations),
-                    customIcon = it,
+                    customIcon = it
                 )
-
             }
         )
 
@@ -722,8 +737,10 @@ public class IconService internal constructor(
         action: Action,
         size: Int
     ): CustomIconWithPreview? {
-        val icon = iconProviders.value.getFirstIcon(action, size)
-            ?.transform(transformations.value) ?: return null
+        val icon =
+            iconProviders.value
+                .getFirstIcon(action, size)
+                ?.transform(transformations.value) ?: return null
         return CustomIconWithPreview(
             customIcon = null,
             preview = icon
@@ -734,27 +751,34 @@ public class IconService internal constructor(
         val transformations = this.transformations.first()
         val tint = iconSettings.first().iconsTint
         return iconPackManager.searchIconPackIcon(query, iconPack).flatMap {
-            val themedIcon = if (it.themed) {
-                iconPackManager.getIcon(it.iconPack, it, tint, true)
+            val themedIcon =
+                if (it.themed) {
+                    iconPackManager
+                        .getIcon(it.iconPack, it, tint, true)
+                        ?.transform(transformations)
+                } else {
+                    null
+                }
+            val unthemedIcon =
+                iconPackManager
+                    .getIcon(it.iconPack, it, tint, false)
                     ?.transform(transformations)
-            } else null
-            val unthemedIcon = iconPackManager.getIcon(it.iconPack, it, tint, false)
-                ?.transform(transformations)
 
             buildList {
                 val ent = it.toDatabaseEntity()
                 if (unthemedIcon != null) {
                     add(
                         CustomIconWithPreview(
-                            customIcon = CustomIconPackIcon(
-                                iconPackPackage = it.iconPack,
-                                packType = ent.type,
-                                drawable = ent.drawable,
-                                extras = ent.extras,
-                                allowThemed = false,
-                                tint = tint,
-                                properties = CustomIconProperties()
-                            ),
+                            customIcon =
+                                CustomIconPackIcon(
+                                    iconPackPackage = it.iconPack,
+                                    packType = ent.type,
+                                    drawable = ent.drawable,
+                                    extras = ent.extras,
+                                    allowThemed = false,
+                                    tint = tint,
+                                    properties = CustomIconProperties()
+                                ),
                             preview = unthemedIcon
                         )
                     )
@@ -762,15 +786,16 @@ public class IconService internal constructor(
                 if (themedIcon != null) {
                     add(
                         CustomIconWithPreview(
-                            customIcon = CustomIconPackIcon(
-                                iconPackPackage = it.iconPack,
-                                packType = ent.type,
-                                drawable = ent.drawable,
-                                extras = ent.extras,
-                                allowThemed = true,
-                                tint = tint,
-                                properties = CustomIconProperties()
-                            ),
+                            customIcon =
+                                CustomIconPackIcon(
+                                    iconPackPackage = it.iconPack,
+                                    packType = ent.type,
+                                    drawable = ent.drawable,
+                                    extras = ent.extras,
+                                    allowThemed = true,
+                                    tint = tint,
+                                    properties = CustomIconProperties()
+                                ),
                             preview = themedIcon
                         )
                     )
@@ -782,5 +807,5 @@ public class IconService internal constructor(
 
 public data class CustomIconWithPreview(
     val preview: LauncherIcon,
-    val customIcon: CustomIcon?,
+    val customIcon: CustomIcon?
 )

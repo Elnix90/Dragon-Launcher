@@ -8,10 +8,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
-internal object ColorServiceModule {
+internal object ColorsModule {
     @Provides
     @Singleton
     fun provideColorService(

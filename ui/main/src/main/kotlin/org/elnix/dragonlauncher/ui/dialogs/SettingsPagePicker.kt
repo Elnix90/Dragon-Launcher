@@ -41,9 +41,10 @@ fun SettingsPagePicker(
             ) { route ->
 
                 Row(
-                    modifier = Modifier.dragonSettingGroup {
-                        clickable { onSelect(route) }
-                    },
+                    modifier =
+                        Modifier.dragonSettingGroup {
+                            clickable { onSelect(route) }
+                        },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {

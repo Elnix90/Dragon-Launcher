@@ -6,14 +6,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object NotificationsModule {
-
     @Provides
     @Singleton
-    fun provideNotificationRepository(): NotificationRepository {
-        return NotificationRepository()
-    }
+    fun provideNotificationRepository(): NotificationRepository = NotificationRepository()
 }

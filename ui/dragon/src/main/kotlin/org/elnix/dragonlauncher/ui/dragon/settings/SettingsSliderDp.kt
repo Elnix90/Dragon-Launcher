@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 fun DragonGroupScope.Setting(
     setting: DpSettingObject,
     enabled: Boolean = true,
-    customDesc: (@Composable (Dp) -> String?) = { null },
+    customDesc: (@Composable (Dp) -> String?) = { null }
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()

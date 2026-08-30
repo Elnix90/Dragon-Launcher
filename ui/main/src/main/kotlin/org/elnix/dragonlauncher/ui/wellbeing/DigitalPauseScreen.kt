@@ -92,14 +92,12 @@ import java.util.Calendar
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
-
 private val ZenPurple = Color(0xFF6C5CE7)
 private val ZenTeal = Color(0xFF00CEC9)
 private val DeepBgTop = Color(0xFF0F2027)
 private val DeepBgBottom = Color(0xFF203A43)
 private val TextWhite = Color(0xFFEEEEEE)
 private val TextSecondary = Color(0xFFB2BEC3)
-
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -124,17 +122,19 @@ fun DigitalPauseScreen(
     val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
     // List of sentence to make user feel bad
-    val breathingPhrases = listOf(
-        stringResource(R.string.pause_breathe_1),
-        stringResource(R.string.pause_breathe_2),
-        stringResource(R.string.pause_breathe_3),
-        stringResource(R.string.pause_breathe_4),
-        stringResource(R.string.pause_breathe_5)
-    )
+    val breathingPhrases =
+        listOf(
+            stringResource(R.string.pause_breathe_1),
+            stringResource(R.string.pause_breathe_2),
+            stringResource(R.string.pause_breathe_3),
+            stringResource(R.string.pause_breathe_4),
+            stringResource(R.string.pause_breathe_5)
+        )
 
-    val usageStats = remember(packageName, guiltModeEnabled)  {
-        if (guiltModeEnabled && hasUsageStatsPermission) getUsageStats(ctx, packageName) else null
-    }
+    val usageStats =
+        remember(packageName, guiltModeEnabled) {
+            if (guiltModeEnabled && hasUsageStatsPermission) getUsageStats(ctx, packageName) else null
+        }
 
     LaunchedEffect(pauseDurationSeconds) {
         while (countdown > 0) {
@@ -162,12 +162,12 @@ fun DigitalPauseScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .systemBarsPadding()
-                    .padding(24.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding()
+                        .padding(24.dp)
             ) {
-
                 AnimatedLotus(
                     modifier = Modifier.size(220.dp),
                     isPulsing = !countdownFinished
@@ -229,9 +229,10 @@ fun DigitalPauseScreen(
                         // Cancel Button
                         Button(
                             onClick = onCancel,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(60.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp),
                             shape = RoundedCornerShape(30.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = ZenTeal),
                             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
@@ -255,7 +256,7 @@ fun DigitalPauseScreen(
                                     showTimePicker = true
                                 } else {
                                     appLaunchViewModel.onAppTimerServiceStarted(null)
-                                   onCancel()
+                                    onCancel()
                                 }
                             },
                             colors = ButtonDefaults.textButtonColors(contentColor = TextSecondary)
@@ -286,7 +287,6 @@ fun DigitalPauseScreen(
     }
 }
 
-
 @Composable
 private fun TimeLimitPickerUI(
     onConfirm: (Int) -> Unit,
@@ -295,19 +295,21 @@ private fun TimeLimitPickerUI(
     val timeOptions = listOf(5, 10, 15, 20, 30, 45, 60)
     var selectedMinutes by remember { mutableIntStateOf(10) }
 
-    val encouragementText = when {
-        selectedMinutes <= 10 -> stringResource(R.string.time_limit_encourage_short)
-        selectedMinutes <= 20 -> stringResource(R.string.time_limit_encourage_medium)
-        selectedMinutes <= 30 -> stringResource(R.string.time_limit_encourage_long)
-        else -> stringResource(R.string.time_limit_encourage_very_long)
-    }
+    val encouragementText =
+        when {
+            selectedMinutes <= 10 -> stringResource(R.string.time_limit_encourage_short)
+            selectedMinutes <= 20 -> stringResource(R.string.time_limit_encourage_medium)
+            selectedMinutes <= 30 -> stringResource(R.string.time_limit_encourage_long)
+            else -> stringResource(R.string.time_limit_encourage_very_long)
+        }
 
-    val encourageColor = when {
-        selectedMinutes <= 10 -> ZenTeal
-        selectedMinutes <= 20 -> Color(0xFFFDCB6E)
-        selectedMinutes <= 30 -> Color(0xFFFAB1A0)
-        else -> Color(0xFFFF7675)
-    }
+    val encourageColor =
+        when {
+            selectedMinutes <= 10 -> ZenTeal
+            selectedMinutes <= 20 -> Color(0xFFFDCB6E)
+            selectedMinutes <= 30 -> Color(0xFFFAB1A0)
+            else -> Color(0xFFFF7675)
+        }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -344,12 +346,13 @@ private fun TimeLimitPickerUI(
 
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .clickable { selectedMinutes = minutes }
-                        .background(chipColor)
-                        .border(1.dp, borderColor, RoundedCornerShape(20.dp))
-                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .clickable { selectedMinutes = minutes }
+                            .background(chipColor)
+                            .border(1.dp, borderColor, RoundedCornerShape(20.dp))
+                            .padding(horizontal = 20.dp, vertical = 12.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.time_limit_minutes, minutes),
@@ -384,15 +387,17 @@ private fun TimeLimitPickerUI(
 
         Button(
             onClick = { onConfirm(selectedMinutes) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(containerColor = ZenTeal),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
         ) {
             Text(
-                text = stringResource(R.string.time_limit_start) + " · " +
+                text =
+                    stringResource(R.string.time_limit_start) + " · " +
                         stringResource(R.string.time_limit_minutes, selectedMinutes),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
@@ -426,10 +431,11 @@ private fun AnimatedLotus(
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(60000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(60000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
         label = "rotation"
     )
 
@@ -437,29 +443,34 @@ private fun AnimatedLotus(
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = if (isPulsing) 1.1f else 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(4000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(4000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
         label = "pulse"
     )
 
-    Canvas(modifier = modifier.graphicsLayer {
-        scaleX = pulseScale
-        scaleY = pulseScale
-        rotationZ = rotation
-    }) {
+    Canvas(
+        modifier =
+            modifier.graphicsLayer {
+                scaleX = pulseScale
+                scaleY = pulseScale
+                rotationZ = rotation
+            }
+    ) {
         val centerX = size.width / 2
         val centerY = size.height / 2
         val radius = size.minDimension / 2.2f
 
         // 1. Glow global behind
         drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(ZenPurple.copy(alpha = 0.4f), Color.Transparent),
-                center = center,
-                radius = radius * 1.5f
-            ),
+            brush =
+                Brush.radialGradient(
+                    colors = listOf(ZenPurple.copy(alpha = 0.4f), Color.Transparent),
+                    center = center,
+                    radius = radius * 1.5f
+                ),
             radius = radius * 1.5f
         )
 
@@ -471,35 +482,44 @@ private fun AnimatedLotus(
                 val baseColor = if ((i + colorOffset) % 2 == 0) Color(0xFFE056FD) else Color(0xFF686DE0)
 
                 rotate(angle, pivot = center) {
-                    val path = Path().apply {
-                        val r = radius * scale
-                        moveTo(centerX, centerY)
-                        // Petal larger at root (cubicTo adjusted)
-                        // Left
-                        cubicTo(
-                            centerX + r * 0.35f, centerY - r * 0.4f, // Control 1 (larger)
-                            centerX + r * 0.15f, centerY - r * 0.95f, // Control 2 (tip)
-                            centerX, centerY - r                      // Summit
-                        )
-                        // Right
-                        cubicTo(
-                            centerX - r * 0.15f, centerY - r * 0.95f,
-                            centerX - r * 0.35f, centerY - r * 0.4f,
-                            centerX, centerY
-                        )
-                        close()
-                    }
+                    val path =
+                        Path().apply {
+                            val r = radius * scale
+                            moveTo(centerX, centerY)
+                            // Petal larger at root (cubicTo adjusted)
+                            // Left
+                            cubicTo(
+                                centerX + r * 0.35f,
+                                centerY - r * 0.4f, // Control 1 (larger)
+                                centerX + r * 0.15f,
+                                centerY - r * 0.95f, // Control 2 (tip)
+                                centerX,
+                                centerY - r // Summit
+                            )
+                            // Right
+                            cubicTo(
+                                centerX - r * 0.15f,
+                                centerY - r * 0.95f,
+                                centerX - r * 0.35f,
+                                centerY - r * 0.4f,
+                                centerX,
+                                centerY
+                            )
+                            close()
+                        }
 
                     drawPath(
                         path = path,
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                baseColor.copy(alpha = 0.9f * alphaMult),
-                                baseColor.copy(alpha = 0.3f * alphaMult)
-                            ),
-                            start = Offset(centerX, centerY),
-                            end = Offset(centerX, centerY - radius * scale)
-                        )
+                        brush =
+                            Brush.linearGradient(
+                                colors =
+                                    listOf(
+                                        baseColor.copy(alpha = 0.9f * alphaMult),
+                                        baseColor.copy(alpha = 0.3f * alphaMult)
+                                    ),
+                                start = Offset(centerX, centerY),
+                                end = Offset(centerX, centerY - radius * scale)
+                            )
                     )
                     // Thin outline
                     Stroke(
@@ -516,17 +536,19 @@ private fun AnimatedLotus(
         drawPetalLayer(count = 12, scale = 1.0f, alphaMult = 0.7f, colorOffset = 0)
 
         // Layer 2, a little offset, fewer petals
-        rotate(15f, pivot = center) { // angular offset to fill gaps
+        rotate(15f, pivot = center) {
+            // angular offset to fill gaps
             drawPetalLayer(count = 8, scale = 0.75f, alphaMult = 1.0f, colorOffset = 1)
         }
 
         // LOTUS HEART (light)
         drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(Color.White, Color(0xFFFFD700).copy(alpha = 0.5f), Color.Transparent),
-                center = center,
-                radius = radius * 0.2f
-            ),
+            brush =
+                Brush.radialGradient(
+                    colors = listOf(Color.White, Color(0xFFFFD700).copy(alpha = 0.5f), Color.Transparent),
+                    center = center,
+                    radius = radius * 0.2f
+                ),
             radius = radius * 0.2f
         )
     }
@@ -538,37 +560,41 @@ private fun AuroraBackground() {
     val colorShift by infiniteTransition.animateColor(
         initialValue = DeepBgTop,
         targetValue = Color(0xFF1A1A2E),
-        animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(10000, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
         label = "bg_color"
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(colorShift, DeepBgBottom)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    brush =
+                        Brush.verticalGradient(
+                            colors = listOf(colorShift, DeepBgBottom)
+                        )
                 )
-            )
     )
 }
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 private fun FloatingParticles(modifier: Modifier = Modifier) {
-    val particles = remember {
-        List(15) {
-            ParticleData(
-                x = Random.nextFloat(),
-                y = Random.nextFloat(),
-                size = Random.nextInt(2, 5).dp,
-                speed = Random.nextLong(4000, 9000)
-            )
+    val particles =
+        remember {
+            List(15) {
+                ParticleData(
+                    x = Random.nextFloat(),
+                    y = Random.nextFloat(),
+                    size = Random.nextInt(2, 5).dp,
+                    speed = Random.nextLong(4000, 9000)
+                )
+            }
         }
-    }
 
     Box(modifier = modifier) {
         particles.forEach { particle ->
@@ -576,36 +602,39 @@ private fun FloatingParticles(modifier: Modifier = Modifier) {
             val yOffset by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -150f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(particle.speed.toInt(), easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                ),
+                animationSpec =
+                    infiniteRepeatable(
+                        animation = tween(particle.speed.toInt(), easing = LinearEasing),
+                        repeatMode = RepeatMode.Restart
+                    ),
                 label = "y"
             )
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = 0.5f,
-                animationSpec = infiniteRepeatable(
-                    animation = keyframes {
-                        durationMillis = particle.speed.toInt()
-                        0f at 0
-                        0.5f at durationMillis / 2
-                        0f at durationMillis
-                    },
-                    repeatMode = RepeatMode.Restart
-                ),
+                animationSpec =
+                    infiniteRepeatable(
+                        animation =
+                            keyframes {
+                                durationMillis = particle.speed.toInt()
+                                0f at 0
+                                0.5f at durationMillis / 2
+                                0f at durationMillis
+                            },
+                        repeatMode = RepeatMode.Restart
+                    ),
                 label = "alpha"
             )
 
             Box(
-                modifier = Modifier
-                    .offset(
-                        x = (particle.x * 1000).dp,
-                        y = (particle.y * 2000).dp + yOffset.dp
-                    )
-                    .size(particle.size)
-                    .alpha(alpha)
-                    .background(Color.White, CircleShape)
+                modifier =
+                    Modifier
+                        .offset(
+                            x = (particle.x * 1000).dp,
+                            y = (particle.y * 2000).dp + yOffset.dp
+                        ).size(particle.size)
+                        .alpha(alpha)
+                        .background(Color.White, CircleShape)
             )
         }
     }
@@ -624,11 +653,12 @@ private fun GlassCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(24.dp))
-            .background(Color.White.copy(alpha = 0.08f))
-            .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(24.dp))
-            .padding(24.dp),
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color.White.copy(alpha = 0.08f))
+                .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(24.dp))
+                .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         content = content
     )
@@ -640,7 +670,8 @@ private fun BreathingText(text: String) {
         targetState = text,
         transitionSpec = {
             fadeIn(tween(1000)) togetherWith fadeOut(tween(500))
-        }, label = "text_fade"
+        },
+        label = "text_fade"
     ) { targetText ->
         Text(
             text = targetText,
@@ -655,7 +686,6 @@ private fun BreathingText(text: String) {
         )
     }
 }
-
 
 @Composable
 private fun UsageStatsDisplay(stats: AppUsageStats) {
@@ -682,12 +712,15 @@ private fun UsageStatsDisplay(stats: AppUsageStats) {
             }
         }
 
-        HorizontalDivider(color = Color.White.copy(alpha=0.1f), thickness = 1.dp)
+        HorizontalDivider(color = Color.White.copy(alpha = 0.1f), thickness = 1.dp)
 
         Text(
-            text = if (stats.todayMinutes > 0)
-                stringResource(R.string.usage_today, stats.todayMinutes.formatDuration())
-            else stringResource(R.string.not_used_yet),
+            text =
+                if (stats.todayMinutes > 0) {
+                    stringResource(R.string.usage_today, stats.todayMinutes.formatDuration())
+                } else {
+                    stringResource(R.string.not_used_yet)
+                },
             fontSize = 14.sp,
             color = TextWhite.copy(alpha = 0.8f)
         )
@@ -724,26 +757,30 @@ data class AppUsageStats(
 )
 
 @RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-private fun getUsageStats(ctx: Context, packageName: String): AppUsageStats? {
-    return try {
+private fun getUsageStats(ctx: Context, packageName: String): AppUsageStats? =
+    try {
         val usageStatsManager = ctx.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         val calendar = Calendar.getInstance()
-        val todayStart = calendar.apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-        }.timeInMillis
+        val todayStart =
+            calendar
+                .apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                }.timeInMillis
         val now = System.currentTimeMillis()
         val todayStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, todayStart, now)
         val todayMinutes = todayStats.filter { it.packageName == packageName }.sumOf { it.totalTimeInForeground } / 60000
         val yesterdayStart = calendar.apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
-        val yesterdayStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, yesterdayStart,
-            todayStart
-        )
+        val yesterdayStats =
+            usageStatsManager.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY,
+                yesterdayStart,
+                todayStart
+            )
         val yesterdayMinutes = yesterdayStats.filter { it.packageName == packageName }.sumOf { it.totalTimeInForeground } / 60000
         AppUsageStats(yesterdayMinutes, todayMinutes)
     } catch (e: Exception) {
         e.printStackTrace()
         null
     }
-}

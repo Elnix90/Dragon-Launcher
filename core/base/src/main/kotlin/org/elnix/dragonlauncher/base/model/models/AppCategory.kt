@@ -12,11 +12,12 @@ public enum class AppCategory {
     Maps,
     Productivity,
     Accessibility,
-    Other;
+    Other
+    ;
 
     public companion object {
-        public fun mapSystemCategoryToSection(category: Int): AppCategory {
-            return when (category) {
+        public fun mapSystemCategoryToSection(category: Int): AppCategory =
+            when (category) {
                 ApplicationInfo.CATEGORY_GAME -> Games
 
                 ApplicationInfo.CATEGORY_AUDIO -> Audio
@@ -34,7 +35,6 @@ public enum class AppCategory {
 
                 else -> Other
             }
-        }
 
         public fun mapAppToSection(app: ApplicationInfo): AppCategory =
             mapSystemCategoryToSection(app.category)

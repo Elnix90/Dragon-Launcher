@@ -1,8 +1,8 @@
 package org.elnix.dragonlauncher.base.model
 
-import org.elnix.dragonlauncher.JSON_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.serialization.json.Json
+import org.elnix.dragonlauncher.JSON_TAG
 
 /**
  * A singleton [Json] instance configured with project-wide settings for JSON serialization/deserialization.
@@ -11,14 +11,15 @@ import kotlinx.serialization.json.Json
  * access via the inline functions in [DragonJson]. Always prefer using [DragonJson.encode] and
  * [DragonJson.decode] for type-safe and logged operations.
  */
-public val json: Json = Json {
-    explicitNulls = false
-    ignoreUnknownKeys = true
-    prettyPrint = true
+public val json: Json =
+    Json {
+        explicitNulls = false
+        ignoreUnknownKeys = true
+        prettyPrint = true
 
-    decodeEnumsCaseInsensitive = true
-    allowTrailingComma = true
-}
+        decodeEnumsCaseInsensitive = true
+        allowTrailingComma = true
+    }
 
 /**
  * Abstract utility class for JSON serialization and deserialization using Kotlin's
@@ -34,7 +35,6 @@ public val json: Json = Json {
  * @constructor Creates an empty [DragonJson] instance. Subclasses can extend this for custom logic.
  */
 public abstract class DragonJson<T> {
-
     /**
      * Encodes a Kotlin object to a JSON string.
      *
@@ -45,13 +45,12 @@ public abstract class DragonJson<T> {
      * @return The JSON string representation of [value], or `null` if encoding fails.
      * @see json
      */
-    public inline fun <reified T : Any> encode(value: T): String? {
-        return runCatching {
+    public inline fun <reified T : Any> encode(value: T): String? =
+        runCatching {
             json.encodeToString(value)
         }.onFailure { e ->
             logE(JSON_TAG, e) { "Failed to encode ${T::class.simpleName}" }
         }.getOrNull()
-    }
 
     /**
      * Decodes a JSON string to a Kotlin object.

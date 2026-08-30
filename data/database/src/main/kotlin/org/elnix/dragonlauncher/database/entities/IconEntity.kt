@@ -5,13 +5,13 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Icons")
 public data class IconEntity(
-        val type: String,
-        val packageName: String? = null,
-        val activityName: String? = null,
-        val drawable: String?,
-        val extras: String? = null,
-        val iconPack: String,
-        val name: String? = null,
-        val themed: Boolean = false,
-        @PrimaryKey(autoGenerate = true) val id : Long? = null
+    val type: String,
+    val packageName: String? = null,
+    val activityName: String? = null,
+    val drawable: String?,
+    val extras: String? = null,
+    val iconPack: String,
+    val name: String? = null,
+    val themed: Boolean = false,
+    @PrimaryKey(autoGenerate = true) val id: Long? = null
 )

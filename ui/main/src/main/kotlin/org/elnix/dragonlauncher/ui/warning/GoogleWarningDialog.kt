@@ -44,22 +44,22 @@ fun GoogleWarningDialog(
         onDismissRequest = onDismissRequest
     ) {
         Card(shape = MaterialTheme.shapes.extraLarge) {
-
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = MaterialShapes.Pill.toShape()
-                        )
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.errorContainer,
+                                shape = MaterialShapes.Pill.toShape()
+                            )
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.warning),
@@ -83,7 +83,6 @@ fun GoogleWarningDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-
                     Text(
                         text = GoogleWarningManager.getDaysLeft().toString(),
                         style = MaterialTheme.typography.displayLarge,
@@ -103,10 +102,11 @@ fun GoogleWarningDialog(
 
                 Text(
                     text = stringResource(R.string.warning_worldwide),
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error
-                    ),
+                    style =
+                        MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.error
+                        )
                 )
 
                 val uriHandler = LocalUriHandler.current

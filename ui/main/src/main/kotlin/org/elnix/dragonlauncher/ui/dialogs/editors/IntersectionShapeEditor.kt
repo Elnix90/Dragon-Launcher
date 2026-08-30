@@ -79,7 +79,6 @@ fun IntersectionShapeEditor(
 
     var showHapticFeedbackEditor by remember { mutableStateOf(false) }
 
-
     DragonModalBottomSheet(onDismiss) {
         DialogTitle(
             text = stringResource(if (!isDefaultEditing) R.string.edit_shape else R.string.edit_default_shape),
@@ -93,18 +92,20 @@ fun IntersectionShapeEditor(
                 fontSize = 10.sp,
                 lineHeight = 15.sp,
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(5.dp)
+                modifier =
+                    Modifier
+                        .padding(10.dp)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(5.dp)
             )
         }
 
         Column(
-            modifier = Modifier
-                .heightIn(max = 600.dp)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .heightIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
         ) {
             DragonSettingsGroup(R.string.position) {
                 if (!isDefaultEditing) { // Too annoying to handle movement when moving the default shape so you can't
@@ -125,12 +126,13 @@ fun IntersectionShapeEditor(
                     ) { newValue ->
 
                         val offset = shape.offset?.copy(x = newValue) ?: Offset(x = newValue, y = defaultOffset.y)
-                        val newSnappedOffset = when {
-                            snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-                            snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-                            snapShapesOffset -> offset.snapToGrid(cellSizePx)
-                            else -> offset
-                        }
+                        val newSnappedOffset =
+                            when {
+                                snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+                                snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+                                snapShapesOffset -> offset.snapToGrid(cellSizePx)
+                                else -> offset
+                            }
 
                         val finalNew = newSnappedOffset.takeIf { it.x.round(2) != defaultOffset.x }
                         if (finalNew == shape.offset) return@SliderWithLabel
@@ -152,13 +154,13 @@ fun IntersectionShapeEditor(
                     ) { newValue ->
 
                         val offset = shape.offset?.copy(y = newValue) ?: Offset(x = defaultOffset.x, y = newValue)
-                        val newSnappedOffset = when {
-                            snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-                            snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-                            snapShapesOffset -> offset.snapToGrid(cellSizePx)
-                            else -> offset
-                        }
-
+                        val newSnappedOffset =
+                            when {
+                                snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+                                snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+                                snapShapesOffset -> offset.snapToGrid(cellSizePx)
+                                else -> offset
+                            }
 
                         val finalNew = newSnappedOffset.takeIf { it.y.round(2) != defaultOffset.y }
                         if (finalNew == shape.offset) return@SliderWithLabel
@@ -198,53 +200,59 @@ fun IntersectionShapeEditor(
                 }
             }
 
+            val dummyCustomObject =
+                CustomObject(
+                    stroke = stroke,
+                    color = color,
+                    glow = shape.glow,
+                    shape = iconShape,
+                    size = Dp.Unspecified, // Not used
+                    rotation = 0, // Not used
+                    eraseBackground = true, // Not used
+                    alignsWithDragAngle = false // Not used
+                )
 
-            val dummyCustomObject = CustomObject(
-                stroke = stroke,
-                color = color,
-                glow = shape.glow,
-                shape = iconShape,
-                size = Dp.Unspecified, // Not used
-                rotation = 0, // Not used
-                eraseBackground = true,// Not used
-                alignsWithDragAngle = false // Not used
-            )
-
-            val defaultCustomObject = CustomObject(
-                stroke = emptyIntersectionShape.getBorderStroke(defaultShape, isDefaultEditing),
-                color = emptyIntersectionShape.getColor(defaultShape, extraColors, isDefaultEditing),
-                glow = emptyIntersectionShape.getGlow(defaultShape, isDefaultEditing),
-                shape = emptyIntersectionShape.getShape(defaultShape, isDefaultEditing),
-                size = Dp.Unspecified, // Not used
-                rotation = 0, // Not used
-                eraseBackground = true, // Not used
-                alignsWithDragAngle = false // Not used
-            )
+            val defaultCustomObject =
+                CustomObject(
+                    stroke = emptyIntersectionShape.getBorderStroke(defaultShape, isDefaultEditing),
+                    color = emptyIntersectionShape.getColor(defaultShape, extraColors, isDefaultEditing),
+                    glow = emptyIntersectionShape.getGlow(defaultShape, isDefaultEditing),
+                    shape = emptyIntersectionShape.getShape(defaultShape, isDefaultEditing),
+                    size = Dp.Unspecified, // Not used
+                    rotation = 0, // Not used
+                    eraseBackground = true, // Not used
+                    alignsWithDragAngle = false // Not used
+                )
 
             EditCustomObjectBlock(
                 title = R.string.custom_object,
                 editObject = dummyCustomObject,
-                properties = CustomObjectBlockProperties(
-                    allowSizeCustomization = false,
-                    allowMirrorCustomization = false,
-                    allowAlignCustomization = false,
-                    allowEraseBackgroundCustomization = false,
-                    allowRotationCustomization = false,
-                    allowedShapes = IconShape.allowedNestShapes
-                ),
+                properties =
+                    CustomObjectBlockProperties(
+                        allowSizeCustomization = false,
+                        allowMirrorCustomization = false,
+                        allowAlignCustomization = false,
+                        allowEraseBackgroundCustomization = false,
+                        allowRotationCustomization = false,
+                        allowedShapes = IconShape.allowedNestShapes
+                    ),
                 default = defaultCustomObject
             ) { newObject ->
                 onChangeShape(
                     shape.copy(
                         shape = newObject.shape.takeIf { it != emptyIntersectionShape.getShape(defaultShape, isDefaultEditing) },
-                        borderStroke = newObject.stroke.takeIf {
-                            it.value.round(2) != emptyIntersectionShape.getBorderStroke(
-                                defaultShape,
-                                isDefaultEditing
-                            ).value.round(2)
-                        },
+                        borderStroke =
+                            newObject.stroke.takeIf {
+                                it.value.round(2) !=
+                                    emptyIntersectionShape
+                                        .getBorderStroke(
+                                            defaultShape,
+                                            isDefaultEditing
+                                        ).value
+                                        .round(2)
+                            },
                         color = newObject.color.takeIf { it != emptyIntersectionShape.getColor(defaultShape, extraColors, isDefaultEditing) },
-                        glow = newObject.glow.takeIf { it != emptyIntersectionShape.getGlow(defaultShape, isDefaultEditing) },
+                        glow = newObject.glow.takeIf { it != emptyIntersectionShape.getGlow(defaultShape, isDefaultEditing) }
                     )
                 )
             }
@@ -254,7 +262,6 @@ fun IntersectionShapeEditor(
                     showHapticFeedbackEditor = true
                 }
             }
-
 
             // Not implemented for now TODO
 //            DragonSettingsGroup(R.string.advanced) {

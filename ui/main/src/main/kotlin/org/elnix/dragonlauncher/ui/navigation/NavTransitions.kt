@@ -16,9 +16,10 @@ import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import org.elnix.dragonlauncher.ui.base.animation.navigationBouncySpec
 
-val verticalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
-    slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
-}
+val verticalMetadata: Map<String, Any> =
+    NavDisplay.transitionSpec {
+        slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
+    }
 
 val horizontalMetadata: Map<String, Any> =
     metadata {
@@ -47,17 +48,17 @@ val drawerMetadata: Map<String, Any> =
         put(NavDisplay.PopTransitionKey) {
             // Slide old content down, revealing the new content in place underneath
             EnterTransition.None togetherWith
-                    slideOutVertically(
-                        targetOffsetY = { it },
-                        animationSpec = tween(250)
-                    )
+                slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(250)
+                )
         }
         put(NavDisplay.PredictivePopTransitionKey) {
             // Slide old content down, revealing the new content in place underneath
             EnterTransition.None togetherWith
-                    slideOutVertically(
-                        targetOffsetY = { it },
-                        animationSpec = tween(250)
-                    )
+                slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(250)
+                )
         }
     }

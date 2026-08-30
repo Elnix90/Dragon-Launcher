@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ktx
 
-
 /**
  * Returns `true` if this string represents empty JSON.
  *
@@ -22,7 +21,6 @@ public inline val String?.isBlankJson: Boolean
         return trimmed.matches(Regex("""^\{\s*\}$|^\[\s*\]$"""))
     }
 
-
 /**
  * Returns `true` if this string represents a non-empty JSON object.
  *
@@ -35,4 +33,3 @@ public inline val String?.isBlankJson: Boolean
  */
 public inline val String?.isNotBlankJson: Boolean
     get() = !isBlankJson
-

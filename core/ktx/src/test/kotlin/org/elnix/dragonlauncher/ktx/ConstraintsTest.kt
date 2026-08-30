@@ -12,7 +12,6 @@ import org.junit.Test
  * computed from [Constraints.maxWidth] and [Constraints.maxHeight].
  */
 class ConstraintsTest {
-
     private companion object {
         const val EPSILON = 1e-3f
     }

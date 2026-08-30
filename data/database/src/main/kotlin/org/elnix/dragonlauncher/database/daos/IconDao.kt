@@ -14,16 +14,22 @@ public interface IconDao {
     @Insert
     public suspend fun insertAll(icons: List<IconEntity>)
 
-    @Query("SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND iconPack = :iconPack AND type IN ('app', 'calendar', 'clock') ORDER BY type DESC LIMIT 1")
+    @Query(
+        "SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND iconPack = :iconPack AND type IN ('app', 'calendar', 'clock') ORDER BY type DESC LIMIT 1"
+    )
     public suspend fun getIcon(packageName: String, activityName: String?, iconPack: String): IconEntity?
 
     @Query("SELECT * FROM Icons WHERE drawable = :iconName AND iconPack = :iconPack ORDER BY type DESC LIMIT 1")
     public suspend fun getIcon(iconName: String, iconPack: String): IconEntity?
 
-    @Query("SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND type IN ('app', 'calendar', 'clock')")
+    @Query(
+        "SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND type IN ('app', 'calendar', 'clock')"
+    )
     public suspend fun getIconsFromAllPacks(packageName: String, activityName: String): List<IconEntity>
 
-    @Query("SELECT * FROM Icons WHERE type IN ('app', 'calendar', 'clock') AND (drawable LIKE :drawableQuery OR name LIKE :nameQuery) AND (:iconPack IS NULL OR iconPack = :iconPack) GROUP BY drawable, iconPack, type ORDER BY type DESC, iconPack, drawable LIMIT :limit")
+    @Query(
+        "SELECT * FROM Icons WHERE type IN ('app', 'calendar', 'clock') AND (drawable LIKE :drawableQuery OR name LIKE :nameQuery) AND (:iconPack IS NULL OR iconPack = :iconPack) GROUP BY drawable, iconPack, type ORDER BY type DESC, iconPack, drawable LIMIT :limit"
+    )
     public suspend fun searchIconPackIcons(
         nameQuery: String,
         drawableQuery: String,

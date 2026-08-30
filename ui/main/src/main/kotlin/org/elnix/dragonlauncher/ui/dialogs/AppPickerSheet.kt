@@ -90,10 +90,11 @@ fun AppPickerSheet(
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
 
     val initialIndex = workspaces.indexOfFirst { it.id == selectedWorkspaceId }
-    val pagerState = rememberPagerState(
-        initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
-        pageCount = { workspaces.size }
-    )
+    val pagerState =
+        rememberPagerState(
+            initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
+            pageCount = { workspaces.size }
+        )
 
     // Multi-select state
     var isMultiSelectMode by remember { mutableStateOf(false) }
@@ -111,7 +112,6 @@ fun AppPickerSheet(
         },
         skipPartiallyExpanded = true
     ) {
-
         AnimatedContent(
             targetState = isSearchBarEnabled
         ) { searchBarDisplayed ->
@@ -121,19 +121,20 @@ fun AppPickerSheet(
                     horizontalArrangement = Arrangement.spacedBy(5.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     DialogTitle(
-                        text = if (isMultiSelectMode)
-                            stringResource(R.string.multi_select_count, selectedApps.size)
-                        else
-                            stringResource(R.string.select_app),
+                        text =
+                            if (isMultiSelectMode) {
+                                stringResource(R.string.multi_select_count, selectedApps.size)
+                            } else {
+                                stringResource(R.string.select_app)
+                            },
                         modifier = Modifier.weight(1f)
                     )
 
                     AnimatedVisibility(isMultiSelectMode) {
                         DragonIconButton(
                             icon = R.drawable.deselect,
-                            contentDescription = R.string.deselect_all,
+                            contentDescription = R.string.deselect_all
                         ) {
                             isMultiSelectMode = false
                             selectedApps.clear()
@@ -184,8 +185,12 @@ fun AppPickerSheet(
                 val selected = pagerState.currentPage == index
 
                 val animatedColor by animateColorAsState(
-                    targetValue = if (selected) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.surfaceVariant
+                    targetValue =
+                        if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceVariant
+                        }
                 )
 
                 TextButton(
@@ -196,10 +201,11 @@ fun AppPickerSheet(
                     },
                     modifier = Modifier.padding(5.dp),
                     shapes = ButtonDefaults.shapes(),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = animatedColor,
-                        contentColor = contentColorFor(animatedColor)
-                    )
+                    colors =
+                        ButtonDefaults.textButtonColors(
+                            containerColor = animatedColor,
+                            contentColor = contentColorFor(animatedColor)
+                        )
                 ) {
                     Icon(
                         painter = painterResource(workspace.type.icon),
@@ -245,7 +251,6 @@ fun AppPickerSheet(
             }
         }
 
-
         val profiles by profilesViewModel.profiles.collectAsState(emptyList())
         val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
 
@@ -253,19 +258,21 @@ fun AppPickerSheet(
 
             val workspace = workspaces[pageIndex]
 
-            val workspaceProfileType = when (workspace.type) {
-                WorkspaceType.Work -> Profile.Type.Work
-                WorkspaceType.Private -> Profile.Type.Private
-                else -> Profile.Type.Personal
-            }
+            val workspaceProfileType =
+                when (workspace.type) {
+                    WorkspaceType.Work -> Profile.Type.Work
+                    WorkspaceType.Private -> Profile.Type.Private
+                    else -> Profile.Type.Personal
+                }
 
             val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
-            val workspaceLocked = when (workspaceProfileType) {
-                Profile.Type.Personal -> false
-                Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
-                Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
-            }
+            val workspaceLocked =
+                when (workspaceProfileType) {
+                    Profile.Type.Personal -> false
+                    Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+                    Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
+                }
 
             val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
 

@@ -48,7 +48,7 @@ fun LogsViewerScreen(
                 },
                 icon = R.drawable.copy
             )
-        },
+        }
     ) {
         MonospaceScrollableText(lines, useDragonLogsColoration = true)
     }

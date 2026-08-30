@@ -20,7 +20,6 @@ import org.junit.Test
  * verifies the migrated output decodes with the new 4.0.0 models.
  */
 class StoreMappingMigrationTest {
-
     companion object {
         private val fixtures: MutableMap<String, JSONObject> = mutableMapOf()
 
@@ -28,9 +27,11 @@ class StoreMappingMigrationTest {
         @JvmStatic
         fun loadFixtures() {
             for (name in listOf("alyon", "polaris", "sandsalamand", "red_velvet", "witness-1", "witness-2")) {
-                val json = StoreMappingMigrationTest::class.java.classLoader
-                    ?.getResourceAsStream("backup-3.2.2-$name.json")
-                    ?.bufferedReader()?.readText()
+                val json =
+                    StoreMappingMigrationTest::class.java.classLoader
+                        ?.getResourceAsStream("backup-3.2.2-$name.json")
+                        ?.bufferedReader()
+                        ?.readText()
                 if (json != null) {
                     fixtures[name] = JSONObject(json)
                 }
@@ -41,9 +42,10 @@ class StoreMappingMigrationTest {
     @Test
     fun `widgets actions and shapes are migrated and decode`() {
         val polaris = fixtures["polaris"] ?: return
-        val widgets = OldToNewStoreMapping.migrateWidgetsArray(
-            polaris.optJSONArray("widgets") ?: return
-        )
+        val widgets =
+            OldToNewStoreMapping.migrateWidgetsArray(
+                polaris.optJSONArray("widgets") ?: return
+            )
         assertTrue(widgets.length() > 0)
         for (i in 0 until widgets.length()) {
             val widget = widgets.getJSONObject(i)
@@ -62,12 +64,13 @@ class StoreMappingMigrationTest {
 
     @Test
     fun `embedded LaunchApp action gets a profile`() {
-        val oldAction = JSONObject(
-            """{"type":"org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp","packageName":"com.example.app","isPrivateSpace":false,"userId":0}"""
-        )
+        val oldAction =
+            JSONObject(
+                """{"type":"org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp","packageName":"com.example.app","isPrivateSpace":false,"userId":0}"""
+            )
         val migrated = PointsAndNestsMigrator.migrateAction(oldAction)
         assertEquals("LaunchApp", migrated.getString("type"))
-        val profile = migrated.optJSONObject("profile") ?:  throw AssertionError("LaunchApp must have a profile")
+        val profile = migrated.optJSONObject("profile") ?: throw AssertionError("LaunchApp must have a profile")
         assertEquals("Personal", profile.getString("type"))
         assertTrue(profile.has("userHandle"))
         assertTrue(profile.has("serial"))
@@ -76,9 +79,10 @@ class StoreMappingMigrationTest {
     @Test
     fun `workspaces removedAppIds and types are migrated and decode`() {
         val witness = fixtures["witness-1"] ?: return
-        val migrated = OldToNewStoreMapping.migrateWorkspacesArray(
-            witness.optJSONObject("workspaces")!!.optJSONArray("workspaces")!!
-        )
+        val migrated =
+            OldToNewStoreMapping.migrateWorkspacesArray(
+                witness.optJSONObject("workspaces")!!.optJSONArray("workspaces")!!
+            )
         val decoded: List<Workspace> = json.decodeFromString(migrated.toString())
         assertEquals(5, decoded.size)
         val user = decoded.first { it.id == "user" }
@@ -95,9 +99,10 @@ class StoreMappingMigrationTest {
     @Test
     fun `old appOverrides become a cache-key object and drop un-migratable icons`() {
         val witness = fixtures["witness-1"] ?: return
-        val migrated = OldToNewStoreMapping.migrateAppOverrides(
-            witness.optJSONObject("workspaces")!!.opt("appOverrides")
-        ) ?: return
+        val migrated =
+            OldToNewStoreMapping.migrateAppOverrides(
+                witness.optJSONObject("workspaces")!!.opt("appOverrides")
+            ) ?: return
         // witness-1 only contains old-style ICON_PACK customIcons, which are dropped,
         // so no overrides should survive.
         assertNull(
@@ -106,15 +111,22 @@ class StoreMappingMigrationTest {
         )
 
         // A mixed entry with a customName must survive, keyed by cache key.
-        val mixed = OldToNewStoreMapping.migrateAppOverrides(
-            JSONObject(
-                """[{"cacheKey":"app.morphe.android.youtube#0"},{"customName":"YouTube"},{"cacheKey":"com.example.app#0"},{"customIcon":{"type":"ICON_PACK","source":"x,com.y"}}]"""
+        val mixed =
+            OldToNewStoreMapping.migrateAppOverrides(
+                JSONObject(
+                    """[{"cacheKey":"app.morphe.android.youtube#0"},{"customName":"YouTube"},{"cacheKey":"com.example.app#0"},{"customIcon":{"type":"ICON_PACK","source":"x,com.y"}}]"""
+                )
             )
-        )
         assertNotNull(mixed)
         val decoded: AppOverrideState = json.decodeFromString(mixed.toString())
         assertEquals(1, decoded.size)
-        assertEquals("YouTube", decoded[org.elnix.dragonlauncher.base.model.serializables.CacheKey("app.morphe.android.youtube", 0)]?.customName)
+        assertEquals(
+            "YouTube",
+            decoded[
+                org.elnix.dragonlauncher.base.model.serializables
+                    .CacheKey("app.morphe.android.youtube", 0)
+            ]?.customName
+        )
     }
 
     @Test

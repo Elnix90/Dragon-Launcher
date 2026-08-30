@@ -68,7 +68,6 @@ fun SettingsScaffold(
     lazyContent: (LazyListScope.() -> Unit)? = null,
     content: @Composable (ColumnScope.() -> Unit)? = null
 ) {
-
     var showHelpDialog by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
 
@@ -76,31 +75,33 @@ fun SettingsScaffold(
         content ?: lazyContent
     ) { "Must provide exactly one of content or lazyContent, not both or neither" }
 
-
     val navigator = LocalNavigator.current
     val handleBack = onBack ?: { navigator.onBack() }
     BackHandler(onBack = handleBack)
 
     Scaffold(
         containerColor = Color.Transparent,
-        modifier = Modifier
-            .fillMaxSize()
-            .conditional(imePadding) {
-                imePadding()
-            },
-        contentWindowInsets = WindowInsets.safeDrawing.add(
-            WindowInsets(
-                top = 8.dp,
-                left = horizontalPadding,
-                right = horizontalPadding
-            )
-        ),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .conditional(imePadding) {
+                    imePadding()
+                },
+        contentWindowInsets =
+            WindowInsets.safeDrawing.add(
+                WindowInsets(
+                    top = 8.dp,
+                    left = horizontalPadding,
+                    right = horizontalPadding
+                )
+            ),
         bottomBar = {
             val insets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsPadding(insets)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .windowInsetsPadding(insets)
             ) {
                 if (bottomContent != null) {
                     bottomContent()
@@ -131,11 +132,12 @@ fun SettingsScaffold(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier
-                .conditional(applyPadding) {
-                    padding(paddingValues)
-                        .fillMaxSize()
-                }
+            modifier =
+                Modifier
+                    .conditional(applyPadding) {
+                        padding(paddingValues)
+                            .fillMaxSize()
+                    }
         ) {
             if (topContent != null) {
                 topContent()
@@ -148,16 +150,16 @@ fun SettingsScaffold(
                     modifier = Modifier.fillMaxSize(),
                     state = lasyListState ?: rememberLazyListState()
                 ) { lazyContent() }
-
             } else {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .conditional(scrollableContent) {
-                            verticalScroll(scrollState ?: rememberScrollState())
-                        }
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .conditional(scrollableContent) {
+                                verticalScroll(scrollState ?: rememberScrollState())
+                            }
                 ) { content!!() }
             }
         }
@@ -170,7 +172,7 @@ fun SettingsScaffold(
             validateText = stringResource(R.string.close),
             titleIcon = R.drawable.help,
             titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            titleBgColor = MaterialTheme.colorScheme.surfaceVariant,
+            titleBgColor = MaterialTheme.colorScheme.surfaceVariant
         ) {
             showHelpDialog = false
         }

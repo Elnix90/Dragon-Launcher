@@ -23,7 +23,6 @@ fun WelcomePageBackup() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-
     val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
     val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
     val autoBackupUri = autoBackupUriString?.toUri()
@@ -48,11 +47,12 @@ fun WelcomePageBackup() {
         Spacer(5.dp)
 
         GradientBigButton(
-            text = if (autoBackupUri != null) {
-                stringResource(R.string.choose_a_auto_backup_file)
-            } else {
-                stringResource(R.string.open_default_launcher_settings)
-            },
+            text =
+                if (autoBackupUri != null) {
+                    stringResource(R.string.choose_a_auto_backup_file)
+                } else {
+                    stringResource(R.string.open_default_launcher_settings)
+                },
             enabled = autoBackupEnabled,
             onClick = {
                 autoBackupLauncher.launch("dragonlauncher-auto-backup.json")

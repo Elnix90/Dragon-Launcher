@@ -33,7 +33,6 @@ import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.elnix.dragonlauncher.ui.remembers.rememberSafeSettingsExportLauncher
 
-
 @Composable
 fun CrashScreen(
     stackTrace: String,
@@ -46,10 +45,11 @@ fun CrashScreen(
     Column(
         verticalArrangement = Arrangement.spacedBy(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .windowInsetsPadding(WindowInsets.safeContent)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .windowInsetsPadding(WindowInsets.safeContent)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -74,7 +74,7 @@ fun CrashScreen(
             }
 
             IconButton(
-                onClick = { ctx.copyToClipboard(stackTrace) },
+                onClick = { ctx.copyToClipboard(stackTrace) }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.copy),
@@ -90,7 +90,6 @@ fun CrashScreen(
             Box(Modifier.weight(1f)) {
                 MonospaceScrollableText(lines)
             }
-
 
             // These 2 buttons are here because I want to avoid loading anything
             Button(

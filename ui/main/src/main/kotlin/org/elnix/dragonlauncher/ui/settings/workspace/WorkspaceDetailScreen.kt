@@ -46,7 +46,7 @@ import kotlin.time.Duration.Companion.seconds
 fun WorkspaceDetailScreen(
     workspaceId: String,
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    profilesViewModel: ProfilesViewModel = activityViewModel(),
+    profilesViewModel: ProfilesViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val workspaceManager = drawerViewModel.workspaceManager
@@ -66,7 +66,6 @@ fun WorkspaceDetailScreen(
     val apps by drawerViewModel
         .search(workspace, workspaceViewMode)
         .collectAsState(initial = emptyList())
-
 
     LaunchedEffect(Unit) {
         delay(1.seconds)
@@ -98,19 +97,21 @@ fun WorkspaceDetailScreen(
 
                     val workspace = workspaces.first { it.id == workspaceId }
 
-                    val workspaceProfileType = when (workspace.type) {
-                        WorkspaceType.Work -> Profile.Type.Work
-                        WorkspaceType.Private -> Profile.Type.Private
-                        else -> Profile.Type.Personal
-                    }
+                    val workspaceProfileType =
+                        when (workspace.type) {
+                            WorkspaceType.Work -> Profile.Type.Work
+                            WorkspaceType.Private -> Profile.Type.Private
+                            else -> Profile.Type.Personal
+                        }
 
                     val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
-                    val workspaceLocked = when (workspaceProfileType) {
-                        Profile.Type.Personal -> false
-                        Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
-                        Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
-                    }
+                    val workspaceLocked =
+                        when (workspaceProfileType) {
+                            Profile.Type.Personal -> false
+                            Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+                            Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
+                        }
 
                     when {
                         workspaceProfile == null -> {
@@ -137,9 +138,10 @@ fun WorkspaceDetailScreen(
                     icon = R.drawable.add,
                     onClick = { showAppPicker = true },
                     minSize = 70.dp,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp),
                     containerColor = MaterialTheme.colorScheme.primary
                 )
                 DebugZone(DebugSettingsStore.workspacesDebugInfo) {

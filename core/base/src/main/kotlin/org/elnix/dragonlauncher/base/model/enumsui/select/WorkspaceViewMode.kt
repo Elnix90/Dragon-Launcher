@@ -14,4 +14,5 @@ public enum class WorkspaceViewMode(
     Removed(R.string.workspace_removed)
 }
 
-public val LocalWorkspaceViewMode: ProvidableCompositionLocal<WorkspaceViewMode> = compositionLocalOf { WorkspaceViewMode.Default }
+public val LocalWorkspaceViewMode: ProvidableCompositionLocal<WorkspaceViewMode> =
+    compositionLocalOf { WorkspaceViewMode.Default }

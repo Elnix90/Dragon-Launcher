@@ -18,8 +18,7 @@ import org.robolectric.RobolectricTestRunner
  */
 @RunWith(RobolectricTestRunner::class)
 class RectFKtxTest {
-
-    //  scale 
+    //  scale
 
     @Test
     fun `scale by 1x does not change rect`() {
@@ -72,11 +71,11 @@ class RectFKtxTest {
 
         assertEquals(100f, rect.left, 0f)
         assertEquals(200f, rect.top, 0f)
-        assertEquals(200f, rect.right, 0f)   // 100 + 50*2
-        assertEquals(260f, rect.bottom, 0f)  // 200 + 30*2
+        assertEquals(200f, rect.right, 0f) // 100 + 50*2
+        assertEquals(260f, rect.bottom, 0f) // 200 + 30*2
     }
 
-    //  translate 
+    //  translate
 
     @Test
     fun `translate moves all edges`() {
@@ -116,7 +115,7 @@ class RectFKtxTest {
         assertEquals(rect, returned)
     }
 
-    //  copyTo 
+    //  copyTo
 
     @Test
     fun `copyTo copies all coordinates`() {

@@ -49,7 +49,6 @@ fun PointPreviewTitle(
 
     val label = point.customName ?: actionLabel(point.action)
 
-
     val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
     val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
@@ -84,9 +83,8 @@ fun PointPreviewTitle(
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
                 if (showIcon) {
                     FinalPointIcon(point, size = appIconOverlaySize)
                 }
@@ -94,16 +92,18 @@ fun PointPreviewTitle(
                 if (showLabel) {
                     Text(
                         text = label,
-                        style = TextStyle(
-                            color = action.actionColor(extraColors, point.customActionColor),
-                            fontSize = appLabelOverlaySize.sp,
-                            fontWeight = FontWeight.Bold,
-                            shadow = Shadow(
-                                color = Color.Black.copy(alpha = 0.48f),
-                                offset = Offset(0f, 1f),
-                                blurRadius = 5f
+                        style =
+                            TextStyle(
+                                color = action.actionColor(extraColors, point.customActionColor),
+                                fontSize = appLabelOverlaySize.sp,
+                                fontWeight = FontWeight.Bold,
+                                shadow =
+                                    Shadow(
+                                        color = Color.Black.copy(alpha = 0.48f),
+                                        offset = Offset(0f, 1f),
+                                        blurRadius = 5f
+                                    )
                             )
-                        )
                     )
                 }
             }

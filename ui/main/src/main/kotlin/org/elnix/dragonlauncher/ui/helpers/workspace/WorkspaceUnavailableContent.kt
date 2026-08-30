@@ -29,12 +29,12 @@ fun WorkspaceUnavailableContent(
     workspaceType: WorkspaceType
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ) {
-
         CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally

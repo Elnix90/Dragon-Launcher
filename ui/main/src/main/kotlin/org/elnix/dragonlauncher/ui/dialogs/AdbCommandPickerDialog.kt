@@ -30,7 +30,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : ADBCommands> AdbCommandPickerDialog(
@@ -38,9 +37,8 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
     options: List<T>,
     selected: () -> T,
     onDismiss: () -> Unit,
-    onSelected: (T, Boolean) -> Unit,
+    onSelected: (T, Boolean) -> Unit
 ) {
-
     var selected by remember { mutableStateOf(selected()) }
     var toast by remember { mutableStateOf(false) }
 
@@ -54,12 +52,13 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
             options.forEach { option ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .dragonSettingGroup {
-                            clickable {
-                                onSelected(selected, toast)
-                            }
-                        },
+                    modifier =
+                        Modifier
+                            .dragonSettingGroup {
+                                clickable {
+                                    onSelected(selected, toast)
+                                }
+                            },
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     Column(
@@ -70,15 +69,16 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
                             text = option.commandEnable,
                             style = MaterialTheme.typography.bodyMedium,
                             fontFamily = FontFamily.Monospace,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.medium)
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium)
-                                .padding(5.dp)
+                            modifier =
+                                Modifier
+                                    .clip(MaterialTheme.shapes.medium)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium)
+                                    .padding(5.dp)
                         )
                         Text(
                             text = stringResource(option.resId),
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }
@@ -91,10 +91,11 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
 
         DragonSettingsGroup {
             Row(
-                modifier = Modifier
-                    .dragonSettingGroup {
-                        clickable(interactionSource = interactionSource) { toast = !toast }
-                    },
+                modifier =
+                    Modifier
+                        .dragonSettingGroup {
+                            clickable(interactionSource = interactionSource) { toast = !toast }
+                        },
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(stringResource(R.string.show_toast))

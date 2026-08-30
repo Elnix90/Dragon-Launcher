@@ -27,7 +27,6 @@ fun EditCustomObjectBlock(
     properties: CustomObjectBlockProperties = CustomObjectBlockProperties(),
     onEdit: (CustomObject) -> Unit
 ) {
-
     var showSelectedShapePickerDialog by remember { mutableStateOf(false) }
 
     DragonSettingsGroup(title) {
@@ -90,14 +89,15 @@ fun EditCustomObjectBlock(
             ) { newColor ->
                 onEdit(
                     editObject.copy(
-                        glow = (editObject.glow
-                            ?.copy(color = newColor)
-                            ?: CustomGlow(color = newColor))
-                            .takeIf { it.isSpecified }
+                        glow =
+                            (
+                                editObject.glow
+                                    ?.copy(color = newColor)
+                                    ?: CustomGlow(color = newColor)
+                            ).takeIf { it.isSpecified }
                     )
                 )
             }
-
 
             SliderWithLabel(
                 label = stringResource(R.string.glow_radius),
@@ -112,10 +112,12 @@ fun EditCustomObjectBlock(
             ) { newGlowRadius ->
                 onEdit(
                     editObject.copy(
-                        glow = (editObject.glow
-                            ?.copy(radius = newGlowRadius)
-                            ?: CustomGlow(radius = newGlowRadius))
-                            .takeIf { it.isSpecified }
+                        glow =
+                            (
+                                editObject.glow
+                                    ?.copy(radius = newGlowRadius)
+                                    ?: CustomGlow(radius = newGlowRadius)
+                            ).takeIf { it.isSpecified }
                     )
                 )
             }

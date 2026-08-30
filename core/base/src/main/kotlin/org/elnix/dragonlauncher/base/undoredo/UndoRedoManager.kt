@@ -16,39 +16,47 @@ public class UndoRedoManager(
     public val stacks: Array<out UndoRedoStack<*>>,
     scope: CoroutineScope
 ) {
+    public val canUndo: StateFlow<Boolean> =
+        combine(stacks.map { it.canUndo }) { booleans ->
+            booleans.any { it }
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
 
-    public val canUndo: StateFlow<Boolean> = combine(stacks.map { it.canUndo }) { booleans ->
-        booleans.any { it }
-    }.stateIn(
-        scope = scope,
-        started = SharingStarted.Eagerly,
-        initialValue = false
-    )
+    public val canRedo: StateFlow<Boolean> =
+        combine(stacks.map { it.canRedo }) { booleans ->
+            booleans.any { it }
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
 
-    public val canRedo: StateFlow<Boolean> = combine(stacks.map { it.canRedo }) { booleans ->
-        booleans.any { it }
-    }.stateIn(
-        scope = scope,
-        started = SharingStarted.Eagerly,
-        initialValue = false
-    )
+    public val undoSize: StateFlow<Int> =
+        stacks
+            .first()
+            .undoStack.flow
+            .map {
+                it.size
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = 0
+            )
 
-    public val undoSize: StateFlow<Int> = stacks.first().undoStack.flow.map {
-        it.size
-    }.stateIn(
-        scope = scope,
-        started = SharingStarted.Eagerly,
-        initialValue = 0
-    )
-
-    public val redoSize: StateFlow<Int> = stacks.first().redoStack.flow.map {
-        it.size
-    }.stateIn(
-        scope = scope,
-        started = SharingStarted.Eagerly,
-        initialValue = 0
-    )
-
+    public val redoSize: StateFlow<Int> =
+        stacks
+            .first()
+            .redoStack.flow
+            .map {
+                it.size
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = 0
+            )
 
     /** Snapshot all stacks, then run the mutation. Clears all redo histories. */
     public inline fun applyChange(mutator: () -> Unit) {

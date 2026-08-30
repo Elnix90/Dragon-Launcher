@@ -14,14 +14,11 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import java.security.MessageDigest
 
-
 public interface SecurityService {
-
     /**
      * Hashes a PIN using SHA-256.
      */
     public fun hash(pin: String): String
-
 
     /**
      * Verifies a PIN against the stored hash
@@ -32,7 +29,6 @@ public interface SecurityService {
      * Checks if device unlock (biometric or device credentials) is available.
      */
     public fun isDeviceUnlockAvailable(ctx: Context): Boolean
-
 
     /**
      * Shows a device unlock prompt that supports biometric (fingerprint/face)
@@ -61,9 +57,7 @@ internal class SecurityServiceImpl(
         return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
-    override suspend fun verify(pin: String): Boolean {
-        return hash(pin) == storedHash.first()
-    }
+    override suspend fun verify(pin: String): Boolean = hash(pin) == storedHash.first()
 
     override fun isDeviceUnlockAvailable(ctx: Context): Boolean {
         val biometricManager = BiometricManager.from(ctx)
@@ -72,20 +66,22 @@ internal class SecurityServiceImpl(
 
         // On API 30+ we can safely use BIOMETRIC_STRONG | DEVICE_CREDENTIAL
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val canAuth = biometricManager.canAuthenticate(
-                BiometricManager.Authenticators.BIOMETRIC_STRONG or
+            val canAuth =
+                biometricManager.canAuthenticate(
+                    BiometricManager.Authenticators.BIOMETRIC_STRONG or
                         BiometricManager.Authenticators.DEVICE_CREDENTIAL
-            )
+                )
             logD(SECURITY_SERVICE) { "API 30+: canAuthenticate(STRONG|DEVICE_CREDENTIAL) = $canAuth" }
             if (canAuth == BiometricManager.BIOMETRIC_SUCCESS) return true
         }
 
         // On API 28-29, BIOMETRIC_STRONG | DEVICE_CREDENTIAL is not supported.
         // Use BIOMETRIC_WEAK | DEVICE_CREDENTIAL instead.
-        val canAuthWeak = biometricManager.canAuthenticate(
-            BiometricManager.Authenticators.BIOMETRIC_WEAK or
+        val canAuthWeak =
+            biometricManager.canAuthenticate(
+                BiometricManager.Authenticators.BIOMETRIC_WEAK or
                     BiometricManager.Authenticators.DEVICE_CREDENTIAL
-        )
+            )
         logD(SECURITY_SERVICE) { "canAuthenticate(WEAK|DEVICE_CREDENTIAL) = $canAuthWeak" }
         if (canAuthWeak == BiometricManager.BIOMETRIC_SUCCESS) return true
 
@@ -104,45 +100,47 @@ internal class SecurityServiceImpl(
     ) {
         val executor = ContextCompat.getMainExecutor(activity)
 
-        val callback = object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                super.onAuthenticationSucceeded(result)
-                onSuccess()
-            }
+        val callback =
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    onSuccess()
+                }
 
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                super.onAuthenticationError(errorCode, errString)
-                if (errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
-                    errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
-                    errorCode == BiometricPrompt.ERROR_CANCELED
-                ) {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    if (errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
+                        errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
+                        errorCode == BiometricPrompt.ERROR_CANCELED
+                    ) {
+                        onFailed()
+                    } else {
+                        onError(errString.toString())
+                    }
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
                     onFailed()
-                } else {
-                    onError(errString.toString())
                 }
             }
-
-            override fun onAuthenticationFailed() {
-                super.onAuthenticationFailed()
-                onFailed()
-            }
-        }
 
         val biometricPrompt = BiometricPrompt(activity, executor, callback)
 
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(activity.getString(R.string.biometric_prompt_title))
-            .setSubtitle(activity.getString(R.string.biometric_prompt_subtitle))
-            .setAllowedAuthenticators(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    BiometricManager.Authenticators.BIOMETRIC_STRONG or
+        val promptInfo =
+            BiometricPrompt.PromptInfo
+                .Builder()
+                .setTitle(activity.getString(R.string.biometric_prompt_title))
+                .setSubtitle(activity.getString(R.string.biometric_prompt_subtitle))
+                .setAllowedAuthenticators(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
                             BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                } else {
-                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                    } else {
+                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
                             BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                }
-            )
-            .build()
+                    }
+                ).build()
 
         biometricPrompt.authenticate(promptInfo)
     }

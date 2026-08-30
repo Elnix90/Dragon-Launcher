@@ -2,8 +2,6 @@ package org.elnix.dragonlauncher.icons.transformations
 
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-
-
 import org.elnix.dragonlauncher.icons.TransformableDynamicLauncherIcon
 
 internal interface LauncherIconTransformation {

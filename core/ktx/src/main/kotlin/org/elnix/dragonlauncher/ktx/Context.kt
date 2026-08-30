@@ -29,7 +29,6 @@ import org.elnix.dragonlauncher.SECURITY_SERVICE
 import org.elnix.dragonlauncher.TAG
 import java.security.MessageDigest
 
-
 /**
  * Show a toast message with flexible input types
  * @param message Can be a String, StringRes Int, or null
@@ -64,7 +63,6 @@ public fun Context.showToast(
     }
 }
 
-
 @Deprecated("Use Uri Handler instead")
 public fun Context.openUrl(url: String) {
     if (url.isEmpty()) return
@@ -72,7 +70,6 @@ public fun Context.openUrl(url: String) {
     intent.data = url.toUri()
     startActivity(intent)
 }
-
 
 public fun Context.openSearch(query: String) {
     val intent = Intent(Intent.ACTION_WEB_SEARCH)
@@ -105,7 +102,6 @@ public fun Context.expandQuickActionsDrawer() {
     }
 }
 
-
 public fun Context.getFilePathFromUri(uri: Uri): String {
     // 1. Try SAF document path reconstruction
     if (DocumentsContract.isDocumentUri(this, uri)) {
@@ -130,19 +126,19 @@ public fun Context.getFilePathFromUri(uri: Uri): String {
     return uri.lastPathSegment ?: "Unknown file"
 }
 
-private fun Context.getUriDisplayName(uri: Uri): String? {
-    return try {
+private fun Context.getUriDisplayName(uri: Uri): String? =
+    try {
         this.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
             if (nameIndex != -1 && cursor.moveToFirst()) {
                 cursor.getString(nameIndex)
-            } else null
+            } else {
+                null
+            }
         }
     } catch (_: Exception) {
         null
     }
-}
-
 
 public fun Context.hasUriReadPermission(uri: Uri): Boolean {
     val perms = contentResolver.persistedUriPermissions
@@ -153,12 +149,12 @@ public fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
     val perms = contentResolver.persistedUriPermissions
     return perms.any { perm ->
         perm.uri == uri &&
-                perm.isReadPermission &&
-                perm.isWritePermission
+            perm.isReadPermission &&
+            perm.isWritePermission
     }
 }
 
-//fun Context.hasUsageStatsPermission(): Boolean {
+// fun Context.hasUsageStatsPermission(): Boolean {
 //    val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
 //    val uid = Process.myUid()
 //    val pkg = this.packageName
@@ -179,19 +175,19 @@ public fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
 //    }
 //
 //    return mode == AppOpsManager.MODE_ALLOWED
-//}
+// }
 
 public val Context.dp: Float
     get() = resources.displayMetrics.density
 
+public fun Context.checkPermission(permission: String): Boolean =
+    ContextCompat.checkSelfPermission(
+        this,
+        permission
+    ) == PackageManager.PERMISSION_GRANTED
 
-public fun Context.checkPermission(permission: String): Boolean {
-    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-}
-
-
-public fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean {
-    return try {
+public fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean =
+    try {
         startActivity(intent, bundle)
         true
     } catch (_: ActivityNotFoundException) {
@@ -199,8 +195,6 @@ public fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boo
     } catch (_: SecurityException) {
         false
     }
-}
-
 
 public fun Context.getInstallSource(
     packageName: String
@@ -211,7 +205,7 @@ public fun Context.getInstallSource(
         return InstallSourceInfoCompat(
             originatingPackageName = installSourceInfo.originatingPackageName,
             initiatingPackageName = installSourceInfo.initiatingPackageName,
-            installingPackageName = installSourceInfo.installingPackageName,
+            installingPackageName = installSourceInfo.installingPackageName
         )
     } else {
         val installerPackageName = pm.getInstallerPackageName(packageName)
@@ -260,7 +254,6 @@ public data class InstallSourceInfoCompat(
     val installingPackageName: String?
 )
 
-
 /**
  * Vibrates the device for the given duration using the appropriate API for the current SDK level.
  *
@@ -268,43 +261,46 @@ public data class InstallSourceInfoCompat(
  * @param milliseconds Duration of the vibration in milliseconds.
  */
 @RequiresPermission(Manifest.permission.VIBRATE)
-@Deprecated("Prefer using LocalHapticFeedback instead of this low level api that doesn't account for the user preferences about haptic feedback")
+@Deprecated(
+    "Prefer using LocalHapticFeedback instead of this low level api that doesn't account for the user preferences about haptic feedback"
+)
 public fun Context.vibrate(milliseconds: Long) {
-    val vibrator = if (Build.VERSION.SDK_INT >= 31) {
-        val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-        manager.defaultVibrator
-    } else {
-        @Suppress("DEPRECATION")
-        getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    }
+    val vibrator =
+        if (Build.VERSION.SDK_INT >= 31) {
+            val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            manager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
 
     vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
 }
 
-
-
 public fun Context.checkSignature(expectedHash: String): Boolean {
     return try {
-        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            this.packageManager.getPackageInfo(
-                this.packageName,
-                PackageManager.GET_SIGNING_CERTIFICATES
-            )
-        } else {
-            // Fallback for older versions (pre-API 28)
-            @Suppress("DEPRECATION")
-            this.packageManager.getPackageInfo(
-                this.packageName,
-                PackageManager.GET_SIGNATURES
-            )
-        }
+        val packageInfo =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                this.packageManager.getPackageInfo(
+                    this.packageName,
+                    PackageManager.GET_SIGNING_CERTIFICATES
+                )
+            } else {
+                // Fallback for older versions (pre-API 28)
+                @Suppress("DEPRECATION")
+                this.packageManager.getPackageInfo(
+                    this.packageName,
+                    PackageManager.GET_SIGNATURES
+                )
+            }
 
-        val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageInfo.signingInfo?.signingCertificateHistory ?: return false
-        } else {
-            @Suppress("DEPRECATION")
-            packageInfo.signatures ?: return false
-        }
+        val signatures =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageInfo.signingInfo?.signingCertificateHistory ?: return false
+            } else {
+                @Suppress("DEPRECATION")
+                packageInfo.signatures ?: return false
+            }
 
         signatures.any { signature ->
             val hash = hashSignature(signature.toByteArray())
@@ -315,7 +311,6 @@ public fun Context.checkSignature(expectedHash: String): Boolean {
         false
     }
 }
-
 
 private fun hashSignature(signatureBytes: ByteArray): String {
     val digest = MessageDigest.getInstance("SHA-256")

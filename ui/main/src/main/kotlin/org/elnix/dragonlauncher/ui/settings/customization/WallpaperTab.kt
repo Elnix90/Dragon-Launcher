@@ -56,10 +56,8 @@ fun WallpaperTab() {
     val bgColor = MaterialTheme.colorScheme.background
     var plainColor by remember { mutableStateOf(bgColor) }
 
-
     val wallpaperDimMainScreen by UiSettingsStore.wallpaperDimMainScreen.asState()
     val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
-
 
     fun applyWallpaper(target: WallpaperTarget) {
         val bitmap = wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
@@ -71,23 +69,25 @@ fun WallpaperTab() {
         }
     }
 
-    val mainTriangle = remember(screenHeightPx, screenWidthPx) {
-        Path().apply {
-            lineTo(screenWidthPx, 0f)
-            lineTo(0f, screenHeightPx)
-            close()
+    val mainTriangle =
+        remember(screenHeightPx, screenWidthPx) {
+            Path().apply {
+                lineTo(screenWidthPx, 0f)
+                lineTo(0f, screenHeightPx)
+                close()
+            }
         }
-    }
     val mainColor = MaterialTheme.colorScheme.background.alphaMultiplier(wallpaperDimMainScreen)
 
-    val drawerTriangle = remember(screenHeightPx, screenWidthPx) {
-        Path().apply {
-            moveTo(screenWidthPx, 0f)
-            lineTo(screenWidthPx, screenHeightPx)
-            lineTo(0f, screenHeightPx)
-            close()
+    val drawerTriangle =
+        remember(screenHeightPx, screenWidthPx) {
+            Path().apply {
+                moveTo(screenWidthPx, 0f)
+                lineTo(screenWidthPx, screenHeightPx)
+                lineTo(0f, screenHeightPx)
+                close()
+            }
         }
-    }
     val drawerColor = MaterialTheme.colorScheme.background.alphaMultiplier(wallpaperDimDrawerScreen)
 
     Canvas(Modifier.fillMaxSize()) {
@@ -146,7 +146,7 @@ fun WallpaperTab() {
                 title = stringResource(R.string.plain_wallpaper_color),
                 description = null,
                 currentColor = plainColor,
-                defaultColor = null,
+                defaultColor = null
             ) {
                 if (it != null) plainColor = it
             }
@@ -162,7 +162,6 @@ fun WallpaperTab() {
         }
     }
     StatusBar(null)
-
 
     if (showTargetDialog && originalBitmap != null) {
         ActionSelector(

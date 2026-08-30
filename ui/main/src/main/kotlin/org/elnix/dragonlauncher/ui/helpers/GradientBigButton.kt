@@ -30,43 +30,47 @@ fun GradientBigButton(
     trailingIcon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit
 ) {
+    val colors =
+        if (enabled) {
+            listOf(Color(0xFFF62FEA), Color(0xFFDC0000))
+        } else {
+            listOf(
+                Color(0xFFF62FEA).copy(alpha = 0.4f),
+                Color(0xFFDC0000).copy(alpha = 0.4f)
+            )
+        }
 
-    val colors = if (enabled) {
-        listOf(Color(0xFFF62FEA), Color(0xFFDC0000))
-    } else {
-        listOf(
-            Color(0xFFF62FEA).copy(alpha = 0.4f),
-            Color(0xFFDC0000).copy(alpha = 0.4f)
+    val gradient =
+        Brush.sweepGradient(
+            colors = colors,
+            center = Offset.Infinite
         )
-    }
-
-    val gradient = Brush.sweepGradient(
-        colors = colors,
-        center = Offset.Infinite
-    )
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .height(70.dp)
-            .clip(MaterialTheme.shapes.large)
-            .border(
-                width = 3.dp,
-                brush = gradient,
-                shape = MaterialTheme.shapes.large
-            )
-            .background(
-                if (enabled) MaterialTheme.colorScheme.background
-                else MaterialTheme.colorScheme.background.copy(alpha = 0.3f)
-            )
-            .clickable(enabled, onClick = onClick),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .height(70.dp)
+                .clip(MaterialTheme.shapes.large)
+                .border(
+                    width = 3.dp,
+                    brush = gradient,
+                    shape = MaterialTheme.shapes.large
+                ).background(
+                    if (enabled) {
+                        MaterialTheme.colorScheme.background
+                    } else {
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.3f)
+                    }
+                ).clickable(enabled, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (leadingIcon != null) {

@@ -9,17 +9,13 @@ import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
 import org.elnix.dragonlauncher.applications.AppRepository
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object RecentsModule {
-
     @Provides
     @Singleton
     fun provideRecentsService(
         @ApplicationContext ctx: Context,
         applicationRepository: AppRepository
-    ): RecentsService {
-        return RecentsServiceImpl(ctx, applicationRepository)
-    }
+    ): RecentsService = RecentsServiceImpl(ctx, applicationRepository)
 }

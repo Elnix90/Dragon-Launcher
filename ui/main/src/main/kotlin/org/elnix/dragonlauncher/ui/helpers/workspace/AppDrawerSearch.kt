@@ -47,19 +47,20 @@ fun AppDrawerSearch(
     TextField(
         value = searchQuery,
         onValueChange = { searchQuery = it },
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(5.dp)
-            .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .onFocusChanged { focusState ->
-                val focused = focusState.isFocused
-                onFocusStateChanged?.invoke(focused) // Notify parent of focus change
-                if (focused) {
-                    keyboardController?.show() // Show keyboard when TextField gains focus
-                }
-                // Keyboard hiding on focus loss is handled by system, IME actions, or explicit calls elsewhere (e.g., scroll logic)
-            },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+                .clip(MaterialTheme.shapes.large)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .onFocusChanged { focusState ->
+                    val focused = focusState.isFocused
+                    onFocusStateChanged?.invoke(focused) // Notify parent of focus change
+                    if (focused) {
+                        keyboardController?.show() // Show keyboard when TextField gains focus
+                    }
+                    // Keyboard hiding on focus loss is handled by system, IME actions, or explicit calls elsewhere (e.g., scroll logic)
+                },
         leadingIcon = {
             Icon(
                 painter = painterResource(R.drawable.search),
@@ -76,19 +77,18 @@ fun AppDrawerSearch(
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(
-            onSearch = onEnterPressed?.let { { it() } }
-        ),
+        keyboardActions =
+            KeyboardActions(
+                onSearch = onEnterPressed?.let { { it() } }
+            ),
         colors = AppObjectsColors.outlinedTextFieldColors()
     )
 }
 
-
-
 @Composable
 fun AppShortcutSearch(
     searchQuery: String,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -96,13 +96,14 @@ fun AppShortcutSearch(
     TextField(
         value = searchQuery,
         onValueChange = onValueChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .focusRequester(focusRequester),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
         leadingIcon = {
             Icon(
                 painter = painterResource(R.drawable.search),
-                contentDescription = stringResource(R.string.search_shortcuts),
+                contentDescription = stringResource(R.string.search_shortcuts)
             )
         },
         trailingIcon = {
@@ -122,9 +123,10 @@ fun AppShortcutSearch(
         shape = CircleShape,
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(
-            onSearch = { focusManager.clearFocus(true) }
-        ),
+        keyboardActions =
+            KeyboardActions(
+                onSearch = { focusManager.clearFocus(true) }
+            ),
         colors = AppObjectsColors.outlinedTextFieldColors()
     )
 }

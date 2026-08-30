@@ -20,9 +20,10 @@ public data class ActionSettingObject(
     override val backupable: Boolean,
     override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<Action, String>() {
-
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
+
     override fun encode(value: Action): String? = Action.Companion.ActionJson.encode(value)
+
     override fun decode(raw: Any?): Action = Action.Companion.ActionJson.decode(raw, default)
 }
 
@@ -34,13 +35,14 @@ public fun MapSettingsStore.action(
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
-): ActionSettingObject = ActionSettingObject(
-    key = key.isNotBlankKey,
-    title = title,
-    description = description,
-    icon = icon,
-    default = default,
-    onChanged = onChanged,
-    backupable = backupable,
-    settingsStore = this
-)
+): ActionSettingObject =
+    ActionSettingObject(
+        key = key.isNotBlankKey,
+        title = title,
+        description = description,
+        icon = icon,
+        default = default,
+        onChanged = onChanged,
+        backupable = backupable,
+        settingsStore = this
+    )

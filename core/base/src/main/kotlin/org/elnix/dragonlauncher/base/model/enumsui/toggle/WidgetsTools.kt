@@ -12,7 +12,6 @@ public enum class WidgetsToolsAddNestRemove(
     Remove(R.string.delete_widget, R.drawable.remove_circle)
 }
 
-
 public enum class WidgetsToolsCenterReset(
     override val resId: Int?,
     override val iconEnabled: Int,
@@ -31,7 +30,6 @@ public enum class WidgetsToolsUpDown(
     Down(R.string.select_next_widget, R.drawable.arrow_drop_down)
 }
 
-
 public enum class WidgetsToolsMoveUpDown(
     override val resId: Int?,
     override val iconEnabled: Int,
@@ -48,5 +46,5 @@ public enum class WidgetsToolsSnapping(
 ) : ToggleButtonOption {
     SnapGrid(R.string.enable_snap_move, R.drawable.grid_on, R.drawable.grid_off),
     SnapResize(R.string.enable_scale_snap, R.drawable.format_size, R.drawable.format_clear),
-    SnapRotation(R.string.snap_rotation, R.drawable.rotate_90_degrees_cw, R.drawable.rotate_90_degrees_ccw),
+    SnapRotation(R.string.snap_rotation, R.drawable.rotate_90_degrees_cw, R.drawable.rotate_90_degrees_ccw)
 }

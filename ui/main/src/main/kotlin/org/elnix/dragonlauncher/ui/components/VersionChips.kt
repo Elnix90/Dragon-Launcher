@@ -18,7 +18,6 @@ import org.elnix.dragonlauncher.base.utils.VersionsUtils.getCodeName
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionNumber
 
-
 @Composable
 fun BaseVersionChip(
     text: String,
@@ -30,12 +29,13 @@ fun BaseVersionChip(
         color = contentColorFor(color),
         style = MaterialTheme.typography.labelMediumEmphasized,
         fontFamily = FontFamily.Monospace,
-        modifier = Modifier
-            .wrapContentSize()
-            .clip(MaterialTheme.shapes.small)
-            .background(color)
-            .then(modifier)
-            .padding(6.dp)
+        modifier =
+            Modifier
+                .wrapContentSize()
+                .clip(MaterialTheme.shapes.small)
+                .background(color)
+                .then(modifier)
+                .padding(6.dp)
     )
 }
 
@@ -59,7 +59,6 @@ fun CodeNameChip(modifier: Modifier = Modifier) {
     )
 }
 
-
 @Composable
 fun VersionCodeChip(modifier: Modifier = Modifier) {
     val versionCode = LocalContext.current.getVersionCode()
@@ -69,7 +68,6 @@ fun VersionCodeChip(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
 
 @Composable
 fun BuildTypeChip(modifier: Modifier = Modifier) {

@@ -70,258 +70,267 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 @Stable
 @OptIn(ExperimentalAtomicApi::class)
 @HiltViewModel
-public class PointsViewModel @Inject constructor(
-    application: Application,
-    private val colorService: ColorService,
-    private val iconService: IconService,
-    private val badgeService: BadgeService,
-    private val appRepository: AppRepository,
-    private val iconSettingsRepository: IconSettingsRepository,
-    public val pointsService: PointsService,
-    public val nestsNavigationService: NestsNavigationService
-) : AndroidViewModel(application) {
+public class PointsViewModel
+    @Inject
+    constructor(
+        application: Application,
+        private val colorService: ColorService,
+        private val iconService: IconService,
+        private val badgeService: BadgeService,
+        private val appRepository: AppRepository,
+        private val iconSettingsRepository: IconSettingsRepository,
+        public val pointsService: PointsService,
+        public val nestsNavigationService: NestsNavigationService
+    ) : AndroidViewModel(application) {
+        private val density: Density = Density(application.resources.displayMetrics.density)
 
-    private val density: Density = Density(application.resources.displayMetrics.density)
+        private var isInitPhase = true
 
-    private var isInitPhase = true
+        init {
+            viewModelScope.launch(Dispatchers.Default) {
+                pointsService.recomposeTrigger.flow
+                    .collect {
+                        if (isInitPhase) {
+                            isInitPhase = false
+                        } else {
 
-    init {
-        viewModelScope.launch(Dispatchers.Default) {
-            pointsService.recomposeTrigger.flow
-                .collect {
-                    if (isInitPhase) {
-                        isInitPhase = false
-                    } else {
+                            val nests = pointsService.nests.value
 
-                        val nests = pointsService.nests.value
+                            val uniqueShapes =
+                                nests.values.flatMap {
+                                    it.getInterSectionShapes(pointsService.defaultNest.value, false)
+                                }
+                            NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
 
-                        val uniqueShapes = nests.values.flatMap { it.getInterSectionShapes(pointsService.defaultNest.value, false) }
-                        NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
-
-                        for (shape in uniqueShapes) {
-                            NestIntersectionShapesPathCache.compute(shape) {
-                                shape.getShape(pointsService.defaultIntersectionShape.value, false)
-                                    .resolveShape()
-                                    .toPath(
-                                        shape.getSize(density.density, pointsService.defaultIntersectionShape.value, false),
-                                        density
-                                    )
+                            for (shape in uniqueShapes) {
+                                NestIntersectionShapesPathCache.compute(shape) {
+                                    shape
+                                        .getShape(pointsService.defaultIntersectionShape.value, false)
+                                        .resolveShape()
+                                        .toPath(
+                                            shape.getSize(
+                                                density.density,
+                                                pointsService.defaultIntersectionShape.value,
+                                                false
+                                            ),
+                                            density
+                                        )
+                                }
                             }
+
+                            val points = pointsService.points.value
+
+                            PointStableCache.updateMaxCacheSize(points.size)
+                            synchronizePointTracking(points)
+                        }
+                    }
+            }
+
+            viewModelInitialized()
+        }
+
+        /**
+         * Last known snapshot of each point, used to detect data changes via
+         * structural equality without requiring the [PointsService.points] StateFlow
+         * to emit on in-place mutations.
+         */
+        private val lastKnownPoints by lazy { ConcurrentHashMap<Int, Point>() }
+
+        /** Per-point cache observation jobs, keyed by point id. */
+        private val pointTrackingJobs by lazy { ConcurrentHashMap<Int, Job>() }
+
+        /**
+         * Compares the current points with [lastKnownPoints] and starts, restarts, or
+         * cancels per-point cache observation as needed.
+         *
+         * Uses structural equality on [Point] (a data class) to detect additions,
+         * edits, and removals without relying on [org.elnix.dragonlauncher.base.SettingFlow]
+         * emission semantics.
+         *
+         * @param points the current points map read from [PointsService.points]
+         */
+        private fun synchronizePointTracking(points: Map<Int, Point>?) {
+            if (points == null) return
+
+            val currentIds = points.keys
+
+            // Cancel and evict tracking for points that no longer exist
+            val iterator = pointTrackingJobs.iterator()
+            while (iterator.hasNext()) {
+                val (id, job) = iterator.next()
+                if (id !in currentIds) {
+                    job.cancel()
+                    iterator.remove()
+                    lastKnownPoints.remove(id)
+                    PointStableCache.evict(id)
+                }
+            }
+
+            // Start or restart tracking for each current point whose data changed
+            for ((id, point) in points) {
+                val lastKnown = lastKnownPoints[id]
+                if (lastKnown == point) continue
+
+                lastKnownPoints[id] = point
+                pointTrackingJobs[id]?.cancel()
+                pointTrackingJobs[id] =
+                    viewModelScope.launch {
+                        observePoint(id)
+                    }
+            }
+        }
+
+        /**
+         * Observes a single point's dependencies and keeps [PointStableCache] up-to-date.
+         *
+         * The outer flow uses [PointsService.recomposeTrigger] to detect point-data changes
+         * (since [PointsService.points] does not emit on in-place mutations), combined with
+         * [distinctUntilChanged] to skip unchanged points. The inner [combine] tracks
+         * default configuration, icon settings, and per-point icon changes.
+         *
+         * @param pointId the id of the point to observe
+         */
+        private suspend fun observePoint(pointId: Int) {
+            pointsService.recomposeTrigger.flow
+                .mapNotNull { pointsService.findPointById(pointId) }
+                .distinctUntilChanged()
+                .collectLatest { currentPoint ->
+
+                    val badgeFlow =
+                        if (currentPoint.action is Action.LaunchApp) {
+                            val app = appRepository.fromAction(currentPoint.action as Action.LaunchApp)
+                            app?.let {
+                                badgeService.getBadge(app)
+                            } ?: flowOf(null)
+                        } else {
+                            flowOf(null)
                         }
 
-                        val points = pointsService.points.value
+                    combine(
+                        iconSettingsRepository.settings,
+                        pointsService.defaultPoint.flow,
+                        iconService.getPointIcon(currentPoint).distinctUntilChanged(),
+                        badgeFlow
+                    ) { flows ->
+                        val settings = flows[0] as IconSettings
+                        val defaultPoint = flows[1] as Point
+                        val icon = flows[2] as LauncherIcon?
+                        val badge = flows[3] as Badge?
 
-                        PointStableCache.updateMaxCacheSize(points.size)
-                        synchronizePointTracking(points)
+                        computeStableValues(
+                            point = currentPoint,
+                            defaultPoint = defaultPoint,
+                            icon = icon,
+                            badge = badge,
+                            settings = settings
+                        )
+                    }.collect { values ->
+                        PointStableCache.compute(pointId) { values }
                     }
                 }
         }
 
-        viewModelInitialized()
-    }
+        /**
+         * Computes [StablePointValues] for a single point on [Dispatchers.Default].
+         *
+         * @param point the point to compute values for
+         * @param defaultPoint the default point configuration used for fallback sizes
+         * @param icon the resolved [LauncherIcon] for this point, or null
+         * @return the computed stable values ready for caching
+         */
+        private suspend fun computeStableValues(
+            point: Point,
+            defaultPoint: Point,
+            icon: LauncherIcon?,
+            badge: Badge?,
+            settings: IconSettings
+        ): StablePointValues =
+            withContext(Dispatchers.Default) {
+                val sizePx = with(density) { point.getSize(defaultPoint, false).toPx() }
+                val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint, false).toPx() }
+                val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
 
-    /**
-     * Last known snapshot of each point, used to detect data changes via
-     * structural equality without requiring the [PointsService.points] StateFlow
-     * to emit on in-place mutations.
-     */
-    private val lastKnownPoints by lazy { ConcurrentHashMap<Int, Point>() }
+                val imageBitmap = renderPointIcon(icon, point, defaultPoint, settings)
+                val badgeBitmap = renderBadgeIcon(badge, point, defaultPoint)
 
-
-    /** Per-point cache observation jobs, keyed by point id. */
-    private val pointTrackingJobs by lazy { ConcurrentHashMap<Int, Job>() }
-
-
-    /**
-     * Compares the current points with [lastKnownPoints] and starts, restarts, or
-     * cancels per-point cache observation as needed.
-     *
-     * Uses structural equality on [Point] (a data class) to detect additions,
-     * edits, and removals without relying on [org.elnix.dragonlauncher.base.SettingFlow]
-     * emission semantics.
-     *
-     * @param points the current points map read from [PointsService.points]
-     */
-    private fun synchronizePointTracking(points: Map<Int, Point>?) {
-        if (points == null) return
-
-        val currentIds = points.keys
-
-        // Cancel and evict tracking for points that no longer exist
-        val iterator = pointTrackingJobs.iterator()
-        while (iterator.hasNext()) {
-            val (id, job) = iterator.next()
-            if (id !in currentIds) {
-                job.cancel()
-                iterator.remove()
-                lastKnownPoints.remove(id)
-                PointStableCache.evict(id)
+                StablePointValues(
+                    sizePx = sizePx.coerceAtLeast(1f),
+                    innerPaddingPx = innerPaddingPx,
+                    borderRadii = borderRadii,
+                    iconSize = Size(borderRadii * 2f, borderRadii * 2f),
+                    imageBitmap = imageBitmap,
+                    badgeBitmap = badgeBitmap
+                )
             }
-        }
 
-        // Start or restart tracking for each current point whose data changed
-        for ((id, point) in points) {
-            val lastKnown = lastKnownPoints[id]
-            if (lastKnown == point) continue
+        /**
+         * Renders a [LauncherIcon] into an [ImageBitmap]
+         * using the current theme colors.
+         *
+         * Delegates to [StaticLauncherIcon.render] or resolves [DynamicLauncherIcon]
+         * to its current frame before rendering.
+         *
+         * @param icon the launcher icon to render, or null
+         * @param defaultPoint the default point configuration (used for icon size)
+         * @return the rendered bitmap, or null if [icon] is null
+         */
+        private suspend fun renderPointIcon(
+            icon: LauncherIcon?,
+            point: Point,
+            defaultPoint: Point,
+            settings: IconSettings
+        ): ImageBitmap? {
+            val size = (point.getSize(defaultPoint, false).value * density.density).toInt() * 2
+            if (size <= 0) return null
 
-            lastKnownPoints[id] = point
-            pointTrackingJobs[id]?.cancel()
-            pointTrackingJobs[id] = viewModelScope.launch {
-                observePoint(id)
-            }
-        }
-    }
-
-    /**
-     * Observes a single point's dependencies and keeps [PointStableCache] up-to-date.
-     *
-     * The outer flow uses [PointsService.recomposeTrigger] to detect point-data changes
-     * (since [PointsService.points] does not emit on in-place mutations), combined with
-     * [distinctUntilChanged] to skip unchanged points. The inner [combine] tracks
-     * default configuration, icon settings, and per-point icon changes.
-     *
-     * @param pointId the id of the point to observe
-     */
-    private suspend fun observePoint(pointId: Int) {
-        pointsService.recomposeTrigger.flow
-            .mapNotNull { pointsService.findPointById(pointId) }
-            .distinctUntilChanged()
-            .collectLatest { currentPoint ->
-
-                val badgeFlow = if (currentPoint.action is Action.LaunchApp) {
-                    val app = appRepository.fromAction(currentPoint.action as Action.LaunchApp)
-                    app?.let {
-                        badgeService.getBadge(app)
-                    } ?: flowOf(null)
-                } else {
-                    flowOf(null)
+            return when (icon) {
+                is DynamicLauncherIcon -> {
+                    val staticIcon = icon.getIcon(System.currentTimeMillis())
+                    staticIcon.render(size, settings).asImageBitmap()
                 }
 
-                combine(
-                    iconSettingsRepository.settings,
-                    pointsService.defaultPoint.flow,
-                    iconService.getPointIcon(currentPoint).distinctUntilChanged(),
-                    badgeFlow
-                ) { flows ->
-                    val settings = flows[0] as IconSettings
-                    val defaultPoint = flows[1] as Point
-                    val icon = flows[2] as LauncherIcon?
-                    val badge = flows[3] as Badge?
+                is StaticLauncherIcon -> icon.render(size, settings).asImageBitmap()
 
-                    computeStableValues(
-                        point = currentPoint,
-                        defaultPoint = defaultPoint,
-                        icon = icon,
-                        badge = badge,
-                        settings = settings
-                    )
-                }.collect { values ->
-                    PointStableCache.compute(pointId) { values }
+                null -> null
+            }
+        }
+
+        /**
+         * Renders a [Badge] into an [ImageBitmap]
+         * using the current theme colors.
+         *
+         * The function only take the [badge icon][Badge.icon] in account, it ignores [badge number][Badge.number] and [badge progress][Badge.progress]. Both ignored values comes from [Kvaesitso](https://github.com/MM2-0/Kvaesitso) but are now dead code I don't want to remove
+         *
+         * @param badge the launcher icon to render, or null
+         * @param defaultPoint the default point configuration (used for badge size)
+         * @return the rendered bitmap, or null if [badge] is null
+         */
+        private fun renderBadgeIcon(
+            badge: Badge?,
+            point: Point,
+            defaultPoint: Point
+        ): ImageBitmap? {
+            if (badge?.icon == null) return null
+
+            // The same size as the point icon but divided by 3 (... * 2 * 0.33) -> (... * 0.66)
+            val size = (point.getSize(defaultPoint, false).value * density.density * 0.66f).toInt()
+
+            return when (val badgeIcon = badge.icon) {
+                is BadgeIcon.Vector -> {
+                    application.loadDrawableResAsImageBitmap(badgeIcon.iconRes, size, size)
                 }
+
+                is BadgeIcon.Drawable -> {
+                    ImageUtils.loadDrawableAsBitmap(badgeIcon.drawable, size, size).asImageBitmap()
+                }
+
+                else -> null
             }
-    }
+        }
 
-    /**
-     * Computes [StablePointValues] for a single point on [Dispatchers.Default].
-     *
-     * @param point the point to compute values for
-     * @param defaultPoint the default point configuration used for fallback sizes
-     * @param icon the resolved [LauncherIcon] for this point, or null
-     * @return the computed stable values ready for caching
-     */
-    private suspend fun computeStableValues(
-        point: Point,
-        defaultPoint: Point,
-        icon: LauncherIcon?,
-        badge: Badge?,
-        settings: IconSettings
-    ): StablePointValues = withContext(Dispatchers.Default) {
-        val sizePx = with(density) { point.getSize(defaultPoint, false).toPx() }
-        val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint, false).toPx() }
-        val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
-
-        val imageBitmap = renderPointIcon(icon, point, defaultPoint, settings)
-        val badgeBitmap = renderBadgeIcon(badge, point, defaultPoint)
-
-        StablePointValues(
-            sizePx = sizePx.coerceAtLeast(1f),
-            innerPaddingPx = innerPaddingPx,
-            borderRadii = borderRadii,
-            iconSize = Size(borderRadii * 2f, borderRadii * 2f),
-            imageBitmap = imageBitmap,
-            badgeBitmap = badgeBitmap
-        )
-    }
-
-    /**
-     * Renders a [LauncherIcon] into an [ImageBitmap]
-     * using the current theme colors.
-     *
-     * Delegates to [StaticLauncherIcon.render] or resolves [DynamicLauncherIcon]
-     * to its current frame before rendering.
-     *
-     * @param icon the launcher icon to render, or null
-     * @param defaultPoint the default point configuration (used for icon size)
-     * @return the rendered bitmap, or null if [icon] is null
-     */
-    private suspend fun renderPointIcon(
-        icon: LauncherIcon?,
-        point: Point,
-        defaultPoint: Point,
-        settings: IconSettings
-    ): ImageBitmap? {
-        val size = (point.getSize(defaultPoint, false).value * density.density).toInt() * 2
-        if (size <= 0) return null
-
-        return when (icon) {
-            is DynamicLauncherIcon -> {
-                val staticIcon = icon.getIcon(System.currentTimeMillis())
-                staticIcon.render(size, settings).asImageBitmap()
-            }
-
-            is StaticLauncherIcon -> icon.render(size, settings).asImageBitmap()
-
-            null -> null
+        override fun onCleared() {
+            pointTrackingJobs.values.forEach { it.cancel() }
+            pointTrackingJobs.clear()
+            lastKnownPoints.clear()
         }
     }
-
-
-    /**
-     * Renders a [Badge] into an [ImageBitmap]
-     * using the current theme colors.
-     *
-     * The function only take the [badge icon][Badge.icon] in account, it ignores [badge number][Badge.number] and [badge progress][Badge.progress]. Both ignored values comes from [Kvaesitso](https://github.com/MM2-0/Kvaesitso) but are now dead code I don't want to remove
-     *
-     * @param badge the launcher icon to render, or null
-     * @param defaultPoint the default point configuration (used for badge size)
-     * @return the rendered bitmap, or null if [badge] is null
-     */
-    private fun renderBadgeIcon(
-        badge: Badge?,
-        point: Point,
-        defaultPoint: Point
-    ): ImageBitmap? {
-        if (badge?.icon == null) return null
-
-        // The same size as the point icon but divided by 3 (... * 2 * 0.33) -> (... * 0.66)
-        val size = (point.getSize(defaultPoint, false).value * density.density * 0.66f).toInt()
-
-        return when (val badgeIcon = badge.icon) {
-            is BadgeIcon.Vector -> {
-                application.loadDrawableResAsImageBitmap(badgeIcon.iconRes, size, size)
-            }
-
-            is BadgeIcon.Drawable -> {
-                ImageUtils.loadDrawableAsBitmap(badgeIcon.drawable, size, size).asImageBitmap()
-            }
-
-            else -> null
-        }
-    }
-
-    override fun onCleared() {
-        pointTrackingJobs.values.forEach { it.cancel() }
-        pointTrackingJobs.clear()
-        lastKnownPoints.clear()
-    }
-}

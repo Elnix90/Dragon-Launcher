@@ -21,7 +21,6 @@ import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.i18n.R
 
-
 /**
  * Swipe Actions Serializable, the core of the main gesture idea
  * Holds all the different actions the user can do
@@ -85,7 +84,9 @@ public sealed class Action {
     @Immutable
     @Serializable
     @SerialName("OpenUrl")
-    public data class OpenUrl(val url: String) : Action() {
+    public data class OpenUrl(
+        val url: String
+    ) : Action() {
         override val drawableId: Int = R.drawable.web
         override val resId: Int = R.string.open_url
 
@@ -108,7 +109,6 @@ public sealed class Action {
             public val dummy: OpenFile = OpenFile("")
         }
     }
-
 
     @Immutable
     @Serializable
@@ -234,7 +234,6 @@ public sealed class Action {
     public object Lock : Action() {
         override val drawableId: Int = R.drawable.lock
         override val resId: Int = R.string.lock
-
     }
 
     @Immutable
@@ -243,7 +242,6 @@ public sealed class Action {
     public object ReloadApps : Action() {
         override val drawableId: Int = R.drawable.reload
         override val resId: Int = R.string.reload_apps
-
     }
 
     @Immutable
@@ -252,7 +250,6 @@ public sealed class Action {
     public object OpenRecentApps : Action() {
         override val drawableId: Int = R.drawable.recent
         override val resId: Int = R.string.recent_apps
-
     }
 
     @Immutable
@@ -261,7 +258,6 @@ public sealed class Action {
     public object NotificationShade : Action() {
         override val drawableId: Int = R.drawable.notification
         override val resId: Int = R.string.notifications
-
     }
 
     @Immutable
@@ -270,7 +266,6 @@ public sealed class Action {
     public object ControlPanel : Action() {
         override val drawableId: Int = R.drawable.ic_action_grid
         override val resId: Int = R.string.control_panel
-
     }
 
     @Immutable
@@ -279,7 +274,6 @@ public sealed class Action {
     public object GoParentNest : Action() {
         override val drawableId: Int = R.drawable.fullscreen_exit
         override val resId: Int = R.string.go_parent_nest
-
     }
 
     @Immutable
@@ -288,7 +282,6 @@ public sealed class Action {
     public data object KillLauncher : Action() {
         override val drawableId: Int = R.drawable.ic_action_kill
         override val resId: Int = R.string.kill_launcher
-
     }
 
     @Immutable
@@ -297,7 +290,6 @@ public sealed class Action {
     public object None : Action() {
         override val drawableId: Int = R.drawable.remove
         override val resId: Int = R.string.none
-
     }
 
     public companion object {
@@ -328,27 +320,28 @@ public sealed class Action {
                     None, null -> Color.Unspecified
                 }
 
-        public val allActions: List<Action> = listOf(
-            OpenWidget.dummy,
-            LaunchApp.dummy,
-            OpenNest.dummy,
-            GoParentNest,
-            LaunchShortcut.dummy,
-            OpenUrl.dummy,
-            OpenFile.dummy,
-            NotificationShade,
-            ControlPanel,
-            OpenAppDrawer.dummy,
-            Lock,
-            ReloadApps,
-            OpenRecentApps,
-            OpenDragonLauncherSettings.dummy,
-            RunAdbCommand.dummy,
-            ToggleBluetooth.dummy,
-            ToggleWifi.dummy,
-            ToggleData.dummy,
-            KillLauncher
-        )
+        public val allActions: List<Action> =
+            listOf(
+                OpenWidget.dummy,
+                LaunchApp.dummy,
+                OpenNest.dummy,
+                GoParentNest,
+                LaunchShortcut.dummy,
+                OpenUrl.dummy,
+                OpenFile.dummy,
+                NotificationShade,
+                ControlPanel,
+                OpenAppDrawer.dummy,
+                Lock,
+                ReloadApps,
+                OpenRecentApps,
+                OpenDragonLauncherSettings.dummy,
+                RunAdbCommand.dummy,
+                ToggleBluetooth.dummy,
+                ToggleWifi.dummy,
+                ToggleData.dummy,
+                KillLauncher
+            )
 
         public object ActionJson : DragonJson<Action>()
 

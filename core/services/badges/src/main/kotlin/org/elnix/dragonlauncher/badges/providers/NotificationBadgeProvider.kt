@@ -10,32 +10,38 @@ import org.elnix.dragonlauncher.notifications.NotificationRepository
 internal class NotificationBadgeProvider(
     private val notificationRepository: NotificationRepository
 ) : BadgeProvider {
-
     override fun getBadge(application: Application): Flow<Badge?> {
         val packageName = application.componentName.packageName
-        return notificationRepository.notifications.map { notifs ->
-            notifs.filter { it.packageName == packageName && it.canShowBadge }
-        }.map { notifs ->
-            if (notifs.isEmpty()) {
-                return@map null
-            } else {
-                val badge = MutableBadge(
-                    number = notifs.sumOf {
-                        if (it.canShowBadge && !it.isGroupSummary) it.number
-                        else 0
-                    },
-                    progress = notifs.mapNotNull {
-                        val progress = it.progress ?: return@mapNotNull null
-                        val progressMax = it.progressMax ?: return@mapNotNull null
-                        return@mapNotNull progress.toFloat() / progressMax.toFloat()
-                    }
-                        .takeIf { it.isNotEmpty() }
-                        ?.let { notif ->
-                            notif.sumOf { it.toDouble() }.toFloat() / notif.size
-                        }
-                )
-                return@map badge
+        return notificationRepository.notifications
+            .map { notifs ->
+                notifs.filter { it.packageName == packageName && it.canShowBadge }
+            }.map { notifs ->
+                if (notifs.isEmpty()) {
+                    return@map null
+                } else {
+                    val badge =
+                        MutableBadge(
+                            number =
+                                notifs.sumOf {
+                                    if (it.canShowBadge && !it.isGroupSummary) {
+                                        it.number
+                                    } else {
+                                        0
+                                    }
+                                },
+                            progress =
+                                notifs
+                                    .mapNotNull {
+                                        val progress = it.progress ?: return@mapNotNull null
+                                        val progressMax = it.progressMax ?: return@mapNotNull null
+                                        return@mapNotNull progress.toFloat() / progressMax.toFloat()
+                                    }.takeIf { it.isNotEmpty() }
+                                    ?.let { notif ->
+                                        notif.sumOf { it.toDouble() }.toFloat() / notif.size
+                                    }
+                        )
+                    return@map badge
+                }
             }
-        }
     }
 }

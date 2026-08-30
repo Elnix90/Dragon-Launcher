@@ -33,7 +33,6 @@ fun WelcomePageFinish(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Spacer(Modifier.weight(1f))
 
         Row(
@@ -60,9 +59,7 @@ fun WelcomePageFinish(
             onClick = onEnterSettings
         )
 
-
         Spacer(Modifier.weight(1f))
-
 
         TextButton(onClick = onEnterApp) {
             Text(

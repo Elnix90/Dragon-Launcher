@@ -41,19 +41,19 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.DialogDescription
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
-
-private val useLessicons = setOf(
-    R.drawable.shapes,
-    R.drawable.casino,
-    R.drawable.shape_line,
-    R.drawable.visibility,
-    R.drawable.account_circle,
-    R.drawable.android,
-    R.drawable.alternate_email,
-    R.drawable.crop_free,
-    R.drawable.discord_symbol_blurple,
-    R.drawable.check
-)
+private val useLessicons =
+    setOf(
+        R.drawable.shapes,
+        R.drawable.casino,
+        R.drawable.shape_line,
+        R.drawable.visibility,
+        R.drawable.account_circle,
+        R.drawable.android,
+        R.drawable.alternate_email,
+        R.drawable.crop_free,
+        R.drawable.discord_symbol_blurple,
+        R.drawable.check
+    )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -90,12 +90,13 @@ fun UserValidation(
         icon = {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(
-                        color = titleBgColor,
-                        shape = MaterialShapes.Pill.toShape()
-                    )
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .background(
+                            color = titleBgColor,
+                            shape = MaterialShapes.Pill.toShape()
+                        )
             ) {
                 var recompose by remember { mutableIntStateOf(0) }
                 val successIcon = remember(recompose) { useLessicons.random() }
@@ -115,12 +116,13 @@ fun UserValidation(
             if (title != null) {
                 DialogTitle(
                     text = title,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 4.dp)
-                        .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(8.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp)
+                            .clip(MaterialTheme.shapes.large)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(8.dp)
                 )
             }
         },

@@ -24,7 +24,6 @@ import org.junit.Test
  */
 @Suppress("DEPRECATION")
 class TextDividerTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

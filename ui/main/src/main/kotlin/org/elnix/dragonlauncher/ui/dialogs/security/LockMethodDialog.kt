@@ -58,35 +58,38 @@ fun LockMethodDialog(
             LockMethod.entries.forEach { method ->
                 val selected = method == currentLockMethod
 
-                val unavailableText = if (method == Device && !securityViewModel.isDeviceUnlockAvailable()) {
-                    stringResource(R.string.device_credentials_not_available)
-                } else null
+                val unavailableText =
+                    if (method == Device && !securityViewModel.isDeviceUnlockAvailable()) {
+                        stringResource(R.string.device_credentials_not_available)
+                    } else {
+                        null
+                    }
 
                 val interactionSource = rememberInteractionSource()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier
-                        .dragonSettingGroup(selected = selected) {
-                            clickable(
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    onDismiss()
-                                    navigator.go(NavigationRoute.LockScreenSetup(method))
-                                }
-                            )
-                        }
-                        .padding(10.dp)
-                        .selectableGroup()
+                    modifier =
+                        Modifier
+                            .dragonSettingGroup(selected = selected) {
+                                clickable(
+                                    interactionSource = interactionSource,
+                                    onClick = {
+                                        onDismiss()
+                                        navigator.go(NavigationRoute.LockScreenSetup(method))
+                                    }
+                                )
+                            }.padding(10.dp)
+                            .selectableGroup()
                 ) {
                     RadioButton(
                         selected = selected,
                         onClick = null,
-                        interactionSource = interactionSource,
+                        interactionSource = interactionSource
                     )
                     TextWithDescription(
                         text = stringResource(method.resId),
-                        description = unavailableText,
+                        description = unavailableText
                     )
                 }
             }

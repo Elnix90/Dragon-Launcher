@@ -31,10 +31,11 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
-
 sealed class BetaVersionType {
     data object App : BetaVersionType()
+
     data object Feature : BetaVersionType()
+
     data class Custom(
         @StringRes
         val customText: Int
@@ -51,29 +52,30 @@ fun BetaVersionWarning(
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer
+            )
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.error,
-                            shape = MaterialShapes.Arrow.toShape()
-                        )
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.error,
+                                shape = MaterialShapes.Arrow.toShape()
+                            )
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.warning),
@@ -97,19 +99,19 @@ fun BetaVersionWarning(
                         },
                         icon = R.drawable.close,
                         contentDescription = R.string.close,
-                        isCancel = true,
+                        isCancel = true
                     )
                 }
             }
 
-
-            val warningText = stringResource(
-                when (betaVersionType) {
-                    BetaVersionType.App -> R.string.this_is_a_beta_version
-                    BetaVersionType.Feature -> R.string.this_feature_is_in_beta
-                    is BetaVersionType.Custom -> betaVersionType.customText
-                }
-            )
+            val warningText =
+                stringResource(
+                    when (betaVersionType) {
+                        BetaVersionType.App -> R.string.this_is_a_beta_version
+                        BetaVersionType.Feature -> R.string.this_feature_is_in_beta
+                        is BetaVersionType.Custom -> betaVersionType.customText
+                    }
+                )
 
             Text(
                 text = warningText,

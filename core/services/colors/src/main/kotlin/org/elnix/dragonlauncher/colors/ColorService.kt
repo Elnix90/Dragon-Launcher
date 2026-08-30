@@ -15,7 +15,6 @@ public interface ColorService {
 internal class ColorServiceImpl(
     ctx: Context
 ) : ColorService {
-
     private val angleLineColor = ColorSettingsStore.angleLineColor.flow(ctx)
     private val shapesColor = ColorSettingsStore.shapesColor.flow(ctx)
     private val launchAppColor = ColorSettingsStore.launchAppColor.flow(ctx)
@@ -36,51 +35,50 @@ internal class ColorServiceImpl(
     private val runAdbCommand = ColorSettingsStore.runAdbCommand.flow(ctx)
     private val holdToActivateColor = ColorSettingsStore.holdToActivateColor.flow(ctx)
 
-    override val extraColors: Flow<ExtraColors> = combine(
-        angleLineColor,
-        shapesColor,
-        launchAppColor,
-        openUrlColor,
-        notificationShadeColor,
-        controlPanelColor,
-        openAppDrawerColor,
-        launcherSettingsColor,
-        lockColor,
-        openFileColor,
-        reloadAppsColor,
-        openRecentAppsColor,
-        openCircleNestColor,
-        goParentNestColor,
-        toggleBluetooth,
-        toggleData,
-        toggleWifi,
-        runAdbCommand,
-        holdToActivateColor
-    ) { extraColors ->
-        ExtraColors(
-            angleLine = extraColors[0],
-            shapes = extraColors[1],
-            launchApp = extraColors[2],
-            openUrl = extraColors[3],
-            notificationShade = extraColors[4],
-            controlPanel = extraColors[5],
-            openAppDrawer = extraColors[6],
-            launcherSettings = extraColors[7],
-            lock = extraColors[8],
-            openFile = extraColors[9],
-            reload = extraColors[10],
-            openRecentApps = extraColors[11],
-            openCircleNest = extraColors[12],
-            goParentNest = extraColors[13],
-            toggleBluetooth = extraColors[14],
-            toggleData = extraColors[15],
-            toggleWifi = extraColors[16],
-
-            runAdbCommand = extraColors[17],
-            holdToActivate = extraColors[18]
-        )
-    }
-
+    override val extraColors: Flow<ExtraColors> =
+        combine(
+            angleLineColor,
+            shapesColor,
+            launchAppColor,
+            openUrlColor,
+            notificationShadeColor,
+            controlPanelColor,
+            openAppDrawerColor,
+            launcherSettingsColor,
+            lockColor,
+            openFileColor,
+            reloadAppsColor,
+            openRecentAppsColor,
+            openCircleNestColor,
+            goParentNestColor,
+            toggleBluetooth,
+            toggleData,
+            toggleWifi,
+            runAdbCommand,
+            holdToActivateColor
+        ) { extraColors ->
+            ExtraColors(
+                angleLine = extraColors[0],
+                shapes = extraColors[1],
+                launchApp = extraColors[2],
+                openUrl = extraColors[3],
+                notificationShade = extraColors[4],
+                controlPanel = extraColors[5],
+                openAppDrawer = extraColors[6],
+                launcherSettings = extraColors[7],
+                lock = extraColors[8],
+                openFile = extraColors[9],
+                reload = extraColors[10],
+                openRecentApps = extraColors[11],
+                openCircleNest = extraColors[12],
+                goParentNest = extraColors[13],
+                toggleBluetooth = extraColors[14],
+                toggleData = extraColors[15],
+                toggleWifi = extraColors[16],
+                runAdbCommand = extraColors[17],
+                holdToActivate = extraColors[18]
+            )
+        }
 
     private val primary = ColorSettingsStore.primaryColor.flow(ctx)
     private val onPrimary = ColorSettingsStore.onPrimaryColor.flow(ctx)
@@ -137,117 +135,106 @@ internal class ColorServiceImpl(
     private val outlineVariant = ColorSettingsStore.outlineVariantColor.flow(ctx)
     private val scrim = ColorSettingsStore.scrimColor.flow(ctx)
 
-    override val colors: Flow<ColorScheme> = combine(
-        primary,
-        onPrimary,
-        primaryContainer,
-        onPrimaryContainer,
-        inversePrimary,
-        primaryFixed,
-        primaryFixedDim,
-        onPrimaryFixed,
-        onPrimaryFixedVariant,
-
-        secondary,
-        onSecondary,
-        secondaryContainer,
-        onSecondaryContainer,
-        secondaryFixed,
-        secondaryFixedDim,
-        onSecondaryFixed,
-        onSecondaryFixedVariant,
-
-        tertiary,
-        onTertiary,
-        tertiaryContainer,
-        onTertiaryContainer,
-        tertiaryFixed,
-        tertiaryFixedDim,
-        onTertiaryFixed,
-        onTertiaryFixedVariant,
-
-        background,
-        onBackground,
-        surface,
-        onSurface,
-        surfaceVariant,
-        onSurfaceVariant,
-        surfaceTint,
-        inverseSurface,
-        inverseOnSurface,
-
-        surfaceBright,
-        surfaceDim,
-        surfaceContainer,
-        surfaceContainerLow,
-        surfaceContainerLowest,
-        surfaceContainerHigh,
-        surfaceContainerHighest,
-
-        error,
-        onError,
-        errorContainer,
-        onErrorContainer,
-
-        outline,
-        outlineVariant,
-        scrim
-    ) { colors ->
-        ColorScheme(
-            primary = colors[0],
-            onPrimary = colors[1],
-            primaryContainer = colors[2],
-            onPrimaryContainer = colors[3],
-            inversePrimary = colors[4],
-            primaryFixed = colors[5],
-            primaryFixedDim = colors[6],
-            onPrimaryFixed = colors[7],
-            onPrimaryFixedVariant = colors[8],
-
-            secondary = colors[9],
-            onSecondary = colors[10],
-            secondaryContainer = colors[11],
-            onSecondaryContainer = colors[12],
-            secondaryFixed = colors[13],
-            secondaryFixedDim = colors[14],
-            onSecondaryFixed = colors[15],
-            onSecondaryFixedVariant = colors[16],
-
-            tertiary = colors[17],
-            onTertiary = colors[18],
-            tertiaryContainer = colors[19],
-            onTertiaryContainer = colors[20],
-            tertiaryFixed = colors[21],
-            tertiaryFixedDim = colors[22],
-            onTertiaryFixed = colors[23],
-            onTertiaryFixedVariant = colors[24],
-
-            background = colors[25],
-            onBackground = colors[26],
-            surface = colors[27],
-            onSurface = colors[28],
-            surfaceVariant = colors[29],
-            onSurfaceVariant = colors[30],
-            surfaceTint = colors[31],
-            inverseSurface = colors[32],
-            inverseOnSurface = colors[33],
-
-            surfaceBright = colors[34],
-            surfaceDim = colors[35],
-            surfaceContainer = colors[36],
-            surfaceContainerLow = colors[37],
-            surfaceContainerLowest = colors[38],
-            surfaceContainerHigh = colors[39],
-            surfaceContainerHighest = colors[40],
-
-            error = colors[41],
-            onError = colors[42],
-            errorContainer = colors[43],
-            onErrorContainer = colors[44],
-
-            outline = colors[45],
-            outlineVariant = colors[46],
-            scrim = colors[47]
-        )
-    }
+    override val colors: Flow<ColorScheme> =
+        combine(
+            primary,
+            onPrimary,
+            primaryContainer,
+            onPrimaryContainer,
+            inversePrimary,
+            primaryFixed,
+            primaryFixedDim,
+            onPrimaryFixed,
+            onPrimaryFixedVariant,
+            secondary,
+            onSecondary,
+            secondaryContainer,
+            onSecondaryContainer,
+            secondaryFixed,
+            secondaryFixedDim,
+            onSecondaryFixed,
+            onSecondaryFixedVariant,
+            tertiary,
+            onTertiary,
+            tertiaryContainer,
+            onTertiaryContainer,
+            tertiaryFixed,
+            tertiaryFixedDim,
+            onTertiaryFixed,
+            onTertiaryFixedVariant,
+            background,
+            onBackground,
+            surface,
+            onSurface,
+            surfaceVariant,
+            onSurfaceVariant,
+            surfaceTint,
+            inverseSurface,
+            inverseOnSurface,
+            surfaceBright,
+            surfaceDim,
+            surfaceContainer,
+            surfaceContainerLow,
+            surfaceContainerLowest,
+            surfaceContainerHigh,
+            surfaceContainerHighest,
+            error,
+            onError,
+            errorContainer,
+            onErrorContainer,
+            outline,
+            outlineVariant,
+            scrim
+        ) { colors ->
+            ColorScheme(
+                primary = colors[0],
+                onPrimary = colors[1],
+                primaryContainer = colors[2],
+                onPrimaryContainer = colors[3],
+                inversePrimary = colors[4],
+                primaryFixed = colors[5],
+                primaryFixedDim = colors[6],
+                onPrimaryFixed = colors[7],
+                onPrimaryFixedVariant = colors[8],
+                secondary = colors[9],
+                onSecondary = colors[10],
+                secondaryContainer = colors[11],
+                onSecondaryContainer = colors[12],
+                secondaryFixed = colors[13],
+                secondaryFixedDim = colors[14],
+                onSecondaryFixed = colors[15],
+                onSecondaryFixedVariant = colors[16],
+                tertiary = colors[17],
+                onTertiary = colors[18],
+                tertiaryContainer = colors[19],
+                onTertiaryContainer = colors[20],
+                tertiaryFixed = colors[21],
+                tertiaryFixedDim = colors[22],
+                onTertiaryFixed = colors[23],
+                onTertiaryFixedVariant = colors[24],
+                background = colors[25],
+                onBackground = colors[26],
+                surface = colors[27],
+                onSurface = colors[28],
+                surfaceVariant = colors[29],
+                onSurfaceVariant = colors[30],
+                surfaceTint = colors[31],
+                inverseSurface = colors[32],
+                inverseOnSurface = colors[33],
+                surfaceBright = colors[34],
+                surfaceDim = colors[35],
+                surfaceContainer = colors[36],
+                surfaceContainerLow = colors[37],
+                surfaceContainerLowest = colors[38],
+                surfaceContainerHigh = colors[39],
+                surfaceContainerHighest = colors[40],
+                error = colors[41],
+                onError = colors[42],
+                errorContainer = colors[43],
+                onErrorContainer = colors[44],
+                outline = colors[45],
+                outlineVariant = colors[46],
+                scrim = colors[47]
+            )
+        }
 }

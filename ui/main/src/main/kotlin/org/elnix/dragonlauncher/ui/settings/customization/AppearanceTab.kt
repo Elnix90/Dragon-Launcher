@@ -8,7 +8,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
-
 @Composable
 fun AppearanceTab() {
     SettingsScaffold(

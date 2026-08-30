@@ -30,7 +30,6 @@ import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressPopup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 
-
 @Composable
 fun AppItemHorizontal(
     app: Application,
@@ -47,33 +46,34 @@ fun AppItemHorizontal(
 
     var showLongPressPopup by remember { mutableStateOf(false) }
 
-
-    val alignment = when (drawerSettings.horizontalAlignment) {
-        HorizontalAlignment.Start -> Arrangement.Start
-        HorizontalAlignment.Center -> Arrangement.Center
-        HorizontalAlignment.End -> Arrangement.End
-    }
+    val alignment =
+        when (drawerSettings.horizontalAlignment) {
+            HorizontalAlignment.Start -> Arrangement.Start
+            HorizontalAlignment.Center -> Arrangement.Center
+            HorizontalAlignment.End -> Arrangement.End
+        }
 
     Box {
         Row(
             horizontalArrangement = alignment,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.large)
-                .conditional(selected) {
-                    background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-                }
-                .combinedClickable(
-                    onLongClick = {
-                        if (longPressPopup) showLongPressPopup = true
-                        else onLongClick?.invoke()
-                    },
-                    onClick = { onClick?.invoke() }
-                )
-                .padding(5.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.large)
+                    .conditional(selected) {
+                        background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                    }.combinedClickable(
+                        onLongClick = {
+                            if (longPressPopup) {
+                                showLongPressPopup = true
+                            } else {
+                                onLongClick?.invoke()
+                            }
+                        },
+                        onClick = { onClick?.invoke() }
+                    ).padding(5.dp)
         ) {
-
             if (drawerSettings.showAppIconsInDrawer) {
                 AppIcon(app, drawerSettings.iconSize)
             }
@@ -117,25 +117,26 @@ fun AppItemGrid(
 
     var showLongPressPopup by remember { mutableStateOf(false) }
 
-
     Box {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.large)
-                .conditional(selected) {
-                    background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-                }
-                .combinedClickable(
-                    onLongClick = {
-                        if (longPressPopup) showLongPressPopup = true
-                        else onLongClick?.invoke()
-                    },
-                    onClick = { onClick?.invoke() }
-                )
-                .padding(5.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.large)
+                    .conditional(selected) {
+                        background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                    }.combinedClickable(
+                        onLongClick = {
+                            if (longPressPopup) {
+                                showLongPressPopup = true
+                            } else {
+                                onLongClick?.invoke()
+                            }
+                        },
+                        onClick = { onClick?.invoke() }
+                    ).padding(5.dp)
         ) {
             if (drawerSettings.showAppIconsInDrawer) {
                 AppIcon(app, drawerSettings.iconSize)

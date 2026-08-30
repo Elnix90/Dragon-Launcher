@@ -33,31 +33,29 @@ import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PrivateSpaceLoadingOverlay(
-    onCancel: () -> Unit,
+    onCancel: () -> Unit
 ) {
     // TODO make this down scrollable to dismiss
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
-            .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime)),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
+                .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime)),
         contentAlignment = Alignment.Center
     ) {
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(32.dp)
         ) {
-
             Icon(
                 painter = painterResource(R.drawable.lock),
                 contentDescription = stringResource(R.string.private_space_locked),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
-
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -88,11 +86,12 @@ fun PrivateSpaceLoadingOverlay(
         Icon(
             painter = painterResource(R.drawable.close),
             contentDescription = stringResource(R.string.close),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 50.dp)
-                .shapedClickable(onClick = onCancel)
-                .padding(30.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 50.dp)
+                    .shapedClickable(onClick = onCancel)
+                    .padding(30.dp),
             tint = MaterialTheme.colorScheme.error
         )
     }

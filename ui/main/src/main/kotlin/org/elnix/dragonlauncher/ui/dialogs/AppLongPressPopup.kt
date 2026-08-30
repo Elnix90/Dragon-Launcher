@@ -71,97 +71,98 @@ fun AppLongPressPopup(
 
     val installerStoreLink = remember { app.getStoreDetails(ctx) }
 
-    val entries = buildList {
-        add(
-            MoreOptions(
-                text = { stringResource(R.string.rename) },
-                icon = R.drawable.edit_rounded,
-                onClick = { showRenameDialog = true }
-            )
-        )
-        add(
-            MoreOptions(
-                text = { stringResource(R.string.change_app_icon) },
-                icon = R.drawable.image,
-                onClick = { showIconDialog = true }
-            )
-        )
-        add(
-            MoreOptions(
-                text = { stringResource(R.string.app_aliases) },
-                icon = R.drawable.alternate_email,
-                onClick = { showAliasDialog = true }
-            )
-        )
-
-        if (workspaceViewMode == WorkspaceViewMode.Removed) {
+    val entries =
+        buildList {
             add(
                 MoreOptions(
-                    text = { stringResource(R.string.add_to_workspace) },
-                    icon = R.drawable.add_circle,
-                    onClick = {
-                        workspacesManager.addAppToWorkspace(
-                            id = selectedWorkspaceId,
-                            cacheKey = app.key
-                        )
-                        close()
-                    }
+                    text = { stringResource(R.string.rename) },
+                    icon = R.drawable.edit_rounded,
+                    onClick = { showRenameDialog = true }
                 )
             )
-        } else {
             add(
                 MoreOptions(
-                    text = { stringResource(R.string.remove_from_workspace) },
-                    icon = R.drawable.remove_circle,
-                    onClick = {
-                        workspacesManager.removeAppFromWorkspace(
-                            id = selectedWorkspaceId,
-                            cacheKey = app.key
-                        )
-                        close()
-                    }
+                    text = { stringResource(R.string.change_app_icon) },
+                    icon = R.drawable.image,
+                    onClick = { showIconDialog = true }
                 )
             )
-        }
-
-        add(
-            MoreOptions(
-                text = { stringResource(R.string.export_apk) },
-                icon = R.drawable.share,
-                onClick = {
-                    scope.launch {
-                        app.shareApkFile(ctx)
-                        close()
-                    }
-                }
-            )
-        )
-
-        installerStoreLink?.let { link ->
             add(
                 MoreOptions(
-                    text = { link.label },
-                    icon = link.icon,
+                    text = { stringResource(R.string.app_aliases) },
+                    icon = R.drawable.alternate_email,
+                    onClick = { showAliasDialog = true }
+                )
+            )
+
+            if (workspaceViewMode == WorkspaceViewMode.Removed) {
+                add(
+                    MoreOptions(
+                        text = { stringResource(R.string.add_to_workspace) },
+                        icon = R.drawable.add_circle,
+                        onClick = {
+                            workspacesManager.addAppToWorkspace(
+                                id = selectedWorkspaceId,
+                                cacheKey = app.key
+                            )
+                            close()
+                        }
+                    )
+                )
+            } else {
+                add(
+                    MoreOptions(
+                        text = { stringResource(R.string.remove_from_workspace) },
+                        icon = R.drawable.remove_circle,
+                        onClick = {
+                            workspacesManager.removeAppFromWorkspace(
+                                id = selectedWorkspaceId,
+                                cacheKey = app.key
+                            )
+                            close()
+                        }
+                    )
+                )
+            }
+
+            add(
+                MoreOptions(
+                    text = { stringResource(R.string.export_apk) },
+                    icon = R.drawable.share,
                     onClick = {
                         scope.launch {
-                            uriHandler.openUri(link.url)
+                            app.shareApkFile(ctx)
                             close()
                         }
                     }
                 )
             )
-        }
 
-        add(
-            MoreOptions(
-                text = { stringResource(R.string.detailed_info) },
-                icon = R.drawable.info,
-                onClick = {
-                    showDetailedAppInfoDialog = true
-                }
+            installerStoreLink?.let { link ->
+                add(
+                    MoreOptions(
+                        text = { link.label },
+                        icon = link.icon,
+                        onClick = {
+                            scope.launch {
+                                uriHandler.openUri(link.url)
+                                close()
+                            }
+                        }
+                    )
+                )
+            }
+
+            add(
+                MoreOptions(
+                    text = { stringResource(R.string.detailed_info) },
+                    icon = R.drawable.info,
+                    onClick = {
+                        showDetailedAppInfoDialog = true
+                    }
+                )
             )
-        )
-    }
+        }
 
     val cannotMessage = stringResource(R.string.cannot_directly_uninstall_from_other_profiles)
 
@@ -169,9 +170,8 @@ fun AppLongPressPopup(
         ButtonGroup(
             overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(MenuDefaults.GroupSpacing, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(MenuDefaults.GroupSpacing, Alignment.CenterHorizontally)
         ) {
-
             customItem(
                 buttonGroupContent = {
                     Button(
@@ -210,7 +210,6 @@ fun AppLongPressPopup(
 
         Spacer(MenuDefaults.GroupSpacing)
 
-
         DropdownMenuGroup(
             shapes = MenuDefaults.groupShapes()
         ) {
@@ -225,11 +224,12 @@ fun AppLongPressPopup(
                 DropdownMenuItem(
                     onClick = option.onClick,
                     enabled = option.enabled,
-                    shape = if (index == entries.lastIndex && installerStoreLink == null) {
-                        MenuDefaults.trailingItemShape
-                    } else {
-                        MenuDefaults.middleItemShape
-                    },
+                    shape =
+                        if (index == entries.lastIndex && installerStoreLink == null) {
+                            MenuDefaults.trailingItemShape
+                        } else {
+                            MenuDefaults.middleItemShape
+                        },
                     text = { Text(option.text()) },
                     leadingIcon = {
                         Icon(
@@ -242,13 +242,10 @@ fun AppLongPressPopup(
             }
         }
 
-
         if (showDetailedAppInfoDialog) {
             ApplicationInfoDialog(app) { showDetailedAppInfoDialog = false }
         }
     }
-
-
 
     if (showRenameDialog) {
         val cacheKey = app.key
@@ -276,7 +273,6 @@ fun AppLongPressPopup(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ButtonGroupScope.Button(
@@ -289,13 +285,14 @@ private fun ButtonGroupScope.Button(
         onClick = onClick,
         interactionSource = interactionSource,
         shapes = ButtonDefaults.shapes(),
-        modifier = Modifier
-            .weight(1f)
-            .animateWidth(interactionSource),
+        modifier =
+            Modifier
+                .weight(1f)
+                .animateWidth(interactionSource)
     ) {
         Icon(
             painter = painterResource(icon),
-            contentDescription = null,
+            contentDescription = null
         )
     }
 }

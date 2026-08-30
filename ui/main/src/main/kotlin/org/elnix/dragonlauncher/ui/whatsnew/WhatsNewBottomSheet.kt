@@ -57,15 +57,16 @@ fun WhatsNewBottomSheet() {
                 Spacer(12.dp)
             }
 
-           items(updates) { update ->
+            items(updates) { update ->
                 val updateRegex: Regex = "[\\d-.]+".toRegex()
                 val matchResult = updateRegex.find(update.versionName)
 
-                val link = if (matchResult != null) {
-                    "$GITHUB_REPO_LINK/releases/tag/v${matchResult.value}"
-                } else {
-                    "$GITHUB_REPO_LINK/releases/latest"
-                }
+                val link =
+                    if (matchResult != null) {
+                        "$GITHUB_REPO_LINK/releases/tag/v${matchResult.value}"
+                    } else {
+                        "$GITHUB_REPO_LINK/releases/latest"
+                    }
 
                 UpdateCard(
                     update,

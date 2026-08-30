@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.base.SettingFlow
 
-
 @Composable
 fun <T> SettingFlow<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()
 
@@ -20,11 +19,13 @@ fun <T> SettingFlow<T>.asMutableState(): MutableState<T> {
         object : MutableState<T> {
             override var value: T
                 get() = state
-                set(value) { this@asMutableState.value = value }
+                set(value) {
+                    this@asMutableState.value = value
+                }
 
             override fun component1() = value
+
             override fun component2(): (T) -> Unit = { value = it }
         }
     }
 }
-

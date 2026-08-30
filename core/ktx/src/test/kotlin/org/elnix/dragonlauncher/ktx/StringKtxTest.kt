@@ -11,8 +11,7 @@ import org.junit.Test
  * - [isBlankJson] / [isNotBlankJson]: lightweight JSON emptiness checks
  */
 class StringKtxTest {
-
-    //  isBlankJson 
+    //  isBlankJson
 
     @Test
     fun `isBlankJson returns true for null`() {
@@ -71,7 +70,7 @@ class StringKtxTest {
         assertFalse("a".isBlankJson)
     }
 
-    //  isNotBlankJson 
+    //  isNotBlankJson
 
     @Test
     fun `isNotBlankJson is inverse of isBlankJson for null`() {

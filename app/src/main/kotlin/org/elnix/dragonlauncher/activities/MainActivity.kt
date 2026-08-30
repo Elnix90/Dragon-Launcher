@@ -65,29 +65,27 @@ import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
-class MainActivity : FragmentActivity(), WidgetHostProvider {
-
-
+class MainActivity :
+    FragmentActivity(),
+    WidgetHostProvider {
     // Loads the logging system, do not remove, or you won't have any logs!
     @Suppress("unused")
-    val dragonLogViewModel: DragonLogViewModel  by viewModels()
-
+    val dragonLogViewModel: DragonLogViewModel by viewModels()
 
     val widgetsViewModel: WidgetsViewModel by viewModels()
 
     val appLifecycleViewModel: AppLifecycleViewModel by viewModels()
 
     companion object {
-        private var GLOBAL_APPWIDGET_HOST: AppWidgetHost? = null
+        private var appWidgetsHost: AppWidgetHost? = null
         private const val REQUEST_WIDGET_CONFIG = 1001
 
         private var offScreenTimeout: Int? = null
     }
 
-
     val appWidgetHost: AppWidgetHost by lazy {
-        GLOBAL_APPWIDGET_HOST ?: AppWidgetHost(this, R.id.appwidget_host_id).also {
-            GLOBAL_APPWIDGET_HOST = it
+        appWidgetsHost ?: AppWidgetHost(this, R.id.appwidget_host_id).also {
+            appWidgetsHost = it
         }
     }
 
@@ -98,20 +96,16 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         return widgetHolder.createView(widgetId, info)
     }
 
-    override fun getAppWidgetInfo(widgetId: Int): AppWidgetProviderInfo? {
-        return widgetHolder.getAppWidgetInfo(widgetId)
-    }
+    override fun getAppWidgetInfo(widgetId: Int): AppWidgetProviderInfo? = widgetHolder.getAppWidgetInfo(widgetId)
 
     private val appWidgetManager by lazy {
         AppWidgetManager.getInstance(this)
     }
 
-
     private var pendingBindWidgetId: Int? = null
     private var pendingAddNestId: Int? = null
     private var pendingBindProvider: ComponentName? = null
     private var pendingConfigWidgetId: Int = -1
-
 
     fun bindWidgetFromCustomPicker(
         widgetId: Int,
@@ -121,21 +115,23 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         lifecycleScope.launch {
             pendingBindWidgetId = widgetId
             pendingBindProvider = provider
-            val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND).apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, provider)
-            }
+            val intent =
+                Intent(AppWidgetManager.ACTION_APPWIDGET_BIND).apply {
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, provider)
+                }
             widgetBindLauncher.launch(intent)
         }
     }
-
 
     private val widgetBindLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val widgetId = pendingBindWidgetId
             val provider = pendingBindProvider
 
-            logD(WIDGET_TAG) { "DRAGON_FLOW: ActionBind finished with resultCode=${result.resultCode} for ID $widgetId" }
+            logD(WIDGET_TAG) {
+                "DRAGON_FLOW: ActionBind finished with resultCode=${result.resultCode} for ID $widgetId"
+            }
 
             if (widgetId == null || provider == null) {
                 logW(WIDGET_TAG) { "DRAGON_FLOW: Pending data lost during activity transition!" }
@@ -150,14 +146,15 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                 // Wait a short time for system to finish binding
                 var bound = false
                 repeat(5) { attempt ->
-                    val info = try {
-                        widgetHolder.getAppWidgetInfo(widgetId)
-                    } catch (e: SecurityException) {
-                        logE(WIDGET_TAG, e) {
-                            "DRAGON_FLOW: SecurityException on attempt $attempt for ID $widgetId"
+                    val info =
+                        try {
+                            widgetHolder.getAppWidgetInfo(widgetId)
+                        } catch (e: SecurityException) {
+                            logE(WIDGET_TAG, e) {
+                                "DRAGON_FLOW: SecurityException on attempt $attempt for ID $widgetId"
+                            }
+                            null
                         }
-                        null
-                    }
 
                     if (info != null) {
                         logD(WIDGET_TAG) { "DRAGON_FLOW: Sync successful on attempt $attempt! Info found." }
@@ -177,13 +174,14 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         widgetHolder.deleteAppWidgetId(widgetId)
                     }
                 } else {
-                    logW(WIDGET_TAG) { "DRAGON_FLOW: Bind FAILED after consent. ID $widgetId was not blessed by system." }
+                    logW(WIDGET_TAG) {
+                        "DRAGON_FLOW: Bind FAILED after consent. ID $widgetId was not blessed by system."
+                    }
                     showToast("Binding failed. Check Xiaomi 'Add Shortcut' permission.")
                     widgetHolder.deleteAppWidgetId(widgetId)
                 }
             }
         }
-
 
     /**
      * I struggled so much to achieve to something that works in most cases I don't want to change that
@@ -209,11 +207,12 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                 showToast("Failed to launch configuration")
                 // Add it anyway if config fails to launch
                 widgetsViewModel.widgetsService.addWidget(
-                    action = Action.OpenWidget(
-                        widgetId,
-                        info.provider.packageName,
-                        info.provider.className
-                    ),
+                    action =
+                        Action.OpenWidget(
+                            widgetId,
+                            info.provider.packageName,
+                            info.provider.className
+                        ),
                     info = info,
                     nestId = pendingAddNestId ?: 0
                 )
@@ -222,11 +221,12 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         } else {
             logD(WIDGET_TAG) { "DRAGON_FLOW: No configuration needed, adding widget" }
             widgetsViewModel.widgetsService.addWidget(
-                action = Action.OpenWidget(
-                    widgetId,
-                    info.provider.packageName,
-                    info.provider.className
-                ),
+                action =
+                    Action.OpenWidget(
+                        widgetId,
+                        info.provider.packageName,
+                        info.provider.className
+                    ),
                 info = info,
                 nestId = pendingAddNestId ?: 0
             )
@@ -246,11 +246,12 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                 val info = widgetHolder.getAppWidgetInfo(widgetId)
                 if (info != null) {
                     widgetsViewModel.widgetsService.addWidget(
-                        action = Action.OpenWidget(
-                            widgetId,
-                            info.provider.packageName,
-                            info.provider.className
-                        ),
+                        action =
+                            Action.OpenWidget(
+                                widgetId,
+                                info.provider.packageName,
+                                info.provider.className
+                            ),
                         info = info,
                         nestId = pendingAddNestId ?: 0
                     )
@@ -329,12 +330,10 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         }
 
         setContent {
-
             val ctx = LocalContext.current
             val scope = rememberCoroutineScope()
 
             if (lastStackTrace.isNullOrBlank()) {
-
                 val backupViewModel: BackupViewModel = activityViewModel()
 
                 var isMigrationNeeded by remember { mutableStateOf(false) }
@@ -356,7 +355,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                 }
 
                 DragonLauncherTheme {
-
                     // Force launch of full viewmodel after first frame for performance
                     // This avoids layout & loading overlap
                     LaunchedEffect(Unit) {
@@ -434,12 +432,11 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         }
     }
 
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
 
-        /* Detects if the new Intent is the launcher one, and set the pending value to true */
+        // Detects if the new Intent is the launcher one, and set the pending value to true
         if (
             intent.action == Intent.ACTION_MAIN &&
             intent.hasCategory(Intent.CATEGORY_HOME)
@@ -472,6 +469,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         // Widgets
-        GLOBAL_APPWIDGET_HOST = null
+        appWidgetsHost = null
     }
 }

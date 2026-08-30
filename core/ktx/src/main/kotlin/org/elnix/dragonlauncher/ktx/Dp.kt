@@ -18,7 +18,6 @@ public inline val Dp.px: Float
     @ReadOnlyComposable
     get() = value * LocalDensity.current.density
 
-
 /** Create a [Dp] using an [Float], using local density for consistent results across different density devices */
 @Stable
 public inline val Float.toDp: Dp

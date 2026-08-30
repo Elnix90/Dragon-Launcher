@@ -39,26 +39,31 @@ fun StatusBarConnectivity(
     val ctx = LocalContext.current
     var connectivityState by remember {
         mutableStateOf(
-            if (previewMode) ConnectivityState(
-                isWifiEnabled = true,
-                isBluetoothEnabled = true,
-                isMobileDataEnabled = true,
-                isUsbConnected = true
-            ) else ConnectivityState()
+            if (previewMode) {
+                ConnectivityState(
+                    isWifiEnabled = true,
+                    isBluetoothEnabled = true,
+                    isMobileDataEnabled = true,
+                    isUsbConnected = true
+                )
+            } else {
+                ConnectivityState()
+            }
         )
     }
 
     // USB Detection via BroadcastReceiver
     if (!previewMode) {
         DisposableEffect(Unit) {
-            val receiver = object : android.content.BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    if (intent.action == "android.hardware.usb.action.USB_STATE") {
-                        val connected = intent.extras?.getBoolean("connected") ?: false
-                        connectivityState = connectivityState.copy(isUsbConnected = connected)
+            val receiver =
+                object : android.content.BroadcastReceiver() {
+                    override fun onReceive(context: Context, intent: Intent) {
+                        if (intent.action == "android.hardware.usb.action.USB_STATE") {
+                            val connected = intent.extras?.getBoolean("connected") ?: false
+                            connectivityState = connectivityState.copy(isUsbConnected = connected)
+                        }
                     }
                 }
-            }
             ctx.registerReceiver(receiver, IntentFilter("android.hardware.usb.action.USB_STATE"))
             onDispose {
                 ctx.unregisterReceiver(receiver)

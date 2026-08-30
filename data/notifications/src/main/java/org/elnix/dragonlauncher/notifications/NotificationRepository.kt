@@ -3,12 +3,11 @@ package org.elnix.dragonlauncher.notifications
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-
 public class NotificationRepository {
-
-    private val _notifications: MutableStateFlow<List<Notification>> = MutableStateFlow(
-        emptyList()
-    )
+    private val _notifications: MutableStateFlow<List<Notification>> =
+        MutableStateFlow(
+            emptyList()
+        )
 
     public val notifications: Flow<List<Notification>> = _notifications
 
@@ -29,9 +28,7 @@ public class NotificationRepository {
     private fun isEqual(
         notification1: Notification,
         notification2: Notification
-    ): Boolean {
-        return notification1.key == notification2.key
-    }
+    ): Boolean = notification1.key == notification2.key
 
     public fun cancelNotification(notification: Notification) {
         NotificationService.getInstance()?.cancelNotification(notification.key)

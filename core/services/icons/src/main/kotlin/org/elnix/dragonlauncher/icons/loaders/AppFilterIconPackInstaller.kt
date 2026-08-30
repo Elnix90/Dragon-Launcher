@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.XmlResourceParser
-import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.icons.AppIcon
 import org.elnix.dragonlauncher.icons.CalendarIcon
@@ -27,7 +27,7 @@ import java.io.Reader
 
 internal class AppFilterIconPackInstaller(
     private val ctx: Context,
-    database: AppDatabase,
+    database: AppDatabase
 ) : IconPackInstaller(database) {
     override suspend fun IconPackInstallerScope.buildIconPack(iconPack: IconPack) {
         withContext(Dispatchers.IO) {
@@ -57,68 +57,74 @@ internal class AppFilterIconPackInstaller(
             if (parser.eventType != XmlPullParser.START_TAG) continue
             when (parser.name) {
                 "item" -> {
-                    val component = parser.getAttributeValue(null, "component")
-                        ?: continue@loop
-                    val drawable = parser.getAttributeValue(null, "drawable")
-                        ?: continue@loop
+                    val component =
+                        parser.getAttributeValue(null, "component")
+                            ?: continue@loop
+                    val drawable =
+                        parser.getAttributeValue(null, "drawable")
+                            ?: continue@loop
                     if (component.length <= 14) continue@loop
-                    val componentName = ComponentName.unflattenFromString(
-                        component.substring(
-                            14,
-                            component.lastIndex
+                    val componentName =
+                        ComponentName.unflattenFromString(
+                            component.substring(
+                                14,
+                                component.lastIndex
+                            )
                         )
-                    )
-                        ?: continue@loop
+                            ?: continue@loop
 
                     val name = parser.getAttributeValue(null, "name")
 
-
-                    val icon = if (dynamicClocks.containsKey(drawable)) {
-                        ClockIcon(
-                            packageName = componentName.packageName,
-                            activityName = componentName.shortClassName,
-                            iconPack = pkgName,
-                            themed = iconPack.themed,
-                            name = name,
-                            drawable = drawable,
-                            config = dynamicClocks[drawable]!!,
-                        )
-                    } else {
-                        AppIcon(
-                            packageName = componentName.packageName,
-                            activityName = componentName.shortClassName,
-                            drawable = drawable,
-                            iconPack = pkgName,
-                            name = name,
-                            themed = iconPack.themed,
-                        )
-                    }
+                    val icon =
+                        if (dynamicClocks.containsKey(drawable)) {
+                            ClockIcon(
+                                packageName = componentName.packageName,
+                                activityName = componentName.shortClassName,
+                                iconPack = pkgName,
+                                themed = iconPack.themed,
+                                name = name,
+                                drawable = drawable,
+                                config = dynamicClocks[drawable]!!
+                            )
+                        } else {
+                            AppIcon(
+                                packageName = componentName.packageName,
+                                activityName = componentName.shortClassName,
+                                drawable = drawable,
+                                iconPack = pkgName,
+                                name = name,
+                                themed = iconPack.themed
+                            )
+                        }
                     addIcon(icon)
                 }
 
                 "calendar" -> {
-                    val component = parser.getAttributeValue(null, "component")
-                        ?: continue@loop
+                    val component =
+                        parser.getAttributeValue(null, "component")
+                            ?: continue@loop
                     val drawable = parser.getAttributeValue(null, "prefix") ?: continue@loop
                     if (component.length < 14) continue@loop
-                    val componentName = ComponentName.unflattenFromString(
-                        component.substring(
-                            14,
-                            component.lastIndex
+                    val componentName =
+                        ComponentName.unflattenFromString(
+                            component.substring(
+                                14,
+                                component.lastIndex
+                            )
                         )
-                    )
-                        ?: continue@loop
+                            ?: continue@loop
 
                     val name = parser.getAttributeValue(null, "name")
 
-                    val icon = CalendarIcon(
-                        packageName = componentName.packageName,
-                        activityName = componentName.shortClassName,
-                        drawables = (1..31).map { "$drawable$it" },
-                        iconPack = pkgName,
-                        themed = iconPack.themed,
-                        name = name,
-                    )
+                    val icon =
+                        CalendarIcon(
+                            packageName = componentName.packageName,
+                            activityName = componentName.shortClassName,
+                            drawables = (1..31).map { "$drawable$it" },
+                            iconPack = pkgName,
+                            themed = iconPack.themed,
+                            name = name
+                        )
                     addIcon(icon)
                 }
 
@@ -126,10 +132,11 @@ internal class AppFilterIconPackInstaller(
                     for (i in 0 until parser.attributeCount) {
                         if (parser.getAttributeName(i).startsWith("img")) {
                             val drawable = parser.getAttributeValue(i)
-                            val icon = IconBack(
-                                drawable = drawable,
-                                iconPack = pkgName,
-                            )
+                            val icon =
+                                IconBack(
+                                    drawable = drawable,
+                                    iconPack = pkgName
+                                )
                             addIcon(icon)
                         }
                     }
@@ -139,10 +146,11 @@ internal class AppFilterIconPackInstaller(
                     for (i in 0 until parser.attributeCount) {
                         if (parser.getAttributeName(i).startsWith("img")) {
                             val drawable = parser.getAttributeValue(i)
-                            val icon = IconUpon(
-                                drawable = drawable,
-                                iconPack = pkgName,
-                            )
+                            val icon =
+                                IconUpon(
+                                    drawable = drawable,
+                                    iconPack = pkgName
+                                )
                             addIcon(icon)
                         }
                     }
@@ -152,18 +160,20 @@ internal class AppFilterIconPackInstaller(
                     for (i in 0 until parser.attributeCount) {
                         if (parser.getAttributeName(i).startsWith("img")) {
                             val drawable = parser.getAttributeValue(i)
-                            val icon = IconMask(
-                                drawable = drawable,
-                                iconPack = pkgName,
-                            )
+                            val icon =
+                                IconMask(
+                                    drawable = drawable,
+                                    iconPack = pkgName
+                                )
                             addIcon(icon)
                         }
                     }
                 }
 
                 "scale" -> {
-                    val scale = parser.getAttributeValue(null, "factor")?.toFloatOrNull()
-                        ?: continue@loop
+                    val scale =
+                        parser.getAttributeValue(null, "factor")?.toFloatOrNull()
+                            ?: continue@loop
                     updatePackInfo { it.copy(scale = scale) }
                 }
             }
@@ -183,20 +193,21 @@ internal class AppFilterIconPackInstaller(
             if (parser.eventType != XmlPullParser.START_TAG) continue
             if (parser.name == "item") {
                 val drawable = parser.getAttributeValue(null, "drawable") ?: continue@loop
-                val icon = if (dynamicClocks.containsKey(drawable)) {
-                    ClockIcon(
-                        iconPack = iconPack.packageName,
-                        themed = iconPack.themed,
-                        drawable = drawable,
-                        config = dynamicClocks[drawable]!!,
-                    )
-                } else {
-                    AppIcon(
-                        drawable = drawable,
-                        iconPack = iconPack.packageName,
-                        themed = iconPack.themed,
-                    )
-                }
+                val icon =
+                    if (dynamicClocks.containsKey(drawable)) {
+                        ClockIcon(
+                            iconPack = iconPack.packageName,
+                            themed = iconPack.themed,
+                            drawable = drawable,
+                            config = dynamicClocks[drawable]!!
+                        )
+                    } else {
+                        AppIcon(
+                            drawable = drawable,
+                            iconPack = iconPack.packageName,
+                            themed = iconPack.themed
+                        )
+                    }
                 addIcon(icon)
             }
         }
@@ -221,14 +232,15 @@ internal class AppFilterIconPackInstaller(
                     parser.getAttributeValue(null, "minuteLayerIndex")?.toIntOrNull() ?: -1
                 val secondLayerIndex =
                     parser.getAttributeValue(null, "secondLayerIndex")?.toIntOrNull() ?: -1
-                map[drawable] = ClockIconConfig(
-                    defaultHour = defaultHour,
-                    defaultMinute = defaultMinute,
-                    defaultSecond = defaultSecond,
-                    hourLayer = hourLayerIndex,
-                    minuteLayer = minuteLayerIndex,
-                    secondLayer = secondLayerIndex,
-                )
+                map[drawable] =
+                    ClockIconConfig(
+                        defaultHour = defaultHour,
+                        defaultMinute = defaultMinute,
+                        defaultSecond = defaultSecond,
+                        hourLayer = hourLayerIndex,
+                        minuteLayer = minuteLayerIndex,
+                        secondLayer = secondLayerIndex
+                    )
             }
         }
         parser.close()
@@ -243,28 +255,32 @@ internal class AppFilterIconPackInstaller(
             xmlId != 0 -> ClosableXmlResourceParser(res.getXml(xmlId))
             rawId != 0 -> {
                 val inStream = res.openRawResource(rawId).reader()
-                val parser = XmlPullParserFactory.newInstance().newPullParser().apply {
-                    setInput(inStream)
-                }
+                val parser =
+                    XmlPullParserFactory.newInstance().newPullParser().apply {
+                        setInput(inStream)
+                    }
                 ClosableXmlPullParser(parser, inStream)
             }
 
             else -> {
-                val iconPackContext = ctx.createPackageContext(
-                    packageName,
-                    Context.CONTEXT_IGNORE_SECURITY
-                )
-                val inStream = try {
-                    iconPackContext.assets.open("appfilter.xml").reader()
-                } catch (e: IOException) {
-                    logE(ICONS_TAG, e) {
-                        "appfilter.xml not found in $packageName. Searched locations: res/xml/appfilter.xml, res/raw/appfilter.xml, assets/appfilter.xml"
+                val iconPackContext =
+                    ctx.createPackageContext(
+                        packageName,
+                        Context.CONTEXT_IGNORE_SECURITY
+                    )
+                val inStream =
+                    try {
+                        iconPackContext.assets.open("appfilter.xml").reader()
+                    } catch (e: IOException) {
+                        logE(ICONS_TAG, e) {
+                            "appfilter.xml not found in $packageName. Searched locations: res/xml/appfilter.xml, res/raw/appfilter.xml, assets/appfilter.xml"
+                        }
+                        return null
                     }
-                    return null
-                }
-                val parser = XmlPullParserFactory.newInstance().newPullParser().apply {
-                    setInput(inStream)
-                }
+                val parser =
+                    XmlPullParserFactory.newInstance().newPullParser().apply {
+                        setInput(inStream)
+                    }
                 ClosableXmlPullParser(parser, inStream)
             }
         }
@@ -274,12 +290,13 @@ internal class AppFilterIconPackInstaller(
         val packs = mutableListOf<IconPack>()
         val pm = ctx.packageManager
 
-        val intents = listOf(
-            Intent("app.lawnchair.icons.THEMED_ICON"),
-            Intent("org.adw.ActivityStarter.THEMES"),
-            Intent("com.novalauncher.THEME"),
-            Intent("org.adw.launcher.THEMES")
-        )
+        val intents =
+            listOf(
+                Intent("app.lawnchair.icons.THEMED_ICON"),
+                Intent("org.adw.ActivityStarter.THEMES"),
+                Intent("com.novalauncher.THEME"),
+                Intent("org.adw.launcher.THEMES")
+            )
 
         for (intent in intents) {
             packs.addAll(
@@ -294,7 +311,9 @@ internal interface ClosableXmlParser : XmlPullParser {
     fun close()
 }
 
-internal class ClosableXmlResourceParser(private val parser: XmlResourceParser) : ClosableXmlParser,
+internal class ClosableXmlResourceParser(
+    private val parser: XmlResourceParser
+) : ClosableXmlParser,
     XmlPullParser by parser {
     override fun close() {
         parser.close()

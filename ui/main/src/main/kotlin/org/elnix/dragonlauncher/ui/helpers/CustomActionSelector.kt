@@ -68,16 +68,18 @@ fun DragonGroupScope.ActionSelector(
     val actionColor = currentAction.actionColor(extraColors).semiTransparentIfDisabled(enabled)
 
     Row(
-        modifier = Modifier
-            .dragonSettingGroup(enabled) {
-                clickable(enabled = enabled) { showDialog = true }
-            },
-        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            Modifier
+                .dragonSettingGroup(enabled) {
+                    clickable(enabled = enabled) { showDialog = true }
+                },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier
-                .weight(1f)
+            modifier =
+                Modifier
+                    .weight(1f)
         ) {
             Text(
                 text = label,
@@ -142,9 +144,10 @@ fun DragonGroupScope.ActionSelector(
         }
 
         VerticalDivider(
-            modifier = Modifier
-                .height(50.dp)
-                .padding(horizontal = 8.dp),
+            modifier =
+                Modifier
+                    .height(50.dp)
+                    .padding(horizontal = 8.dp),
             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
             thickness = 1.dp
         )
@@ -153,8 +156,11 @@ fun DragonGroupScope.ActionSelector(
             checked = toggled,
             enabled = switchEnabled,
             onCheckedChange = {
-                if (it) showDialog = true
-                else onToggle()
+                if (it) {
+                    showDialog = true
+                } else {
+                    onToggle()
+                }
             },
             colors = AppObjectsColors.switchColors()
         )
@@ -175,6 +181,7 @@ fun DragonGroupScope.ActionSelector(
         )
     }
 }
+
 @Composable
 fun DragonGroupScope.SettingActionSelector(setting: ActionSettingObject) {
     val ctx = LocalContext.current

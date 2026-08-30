@@ -39,7 +39,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import kotlin.time.Duration.Companion.seconds
 
-
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun BehaviorTab() {
@@ -54,12 +53,13 @@ fun BehaviorTab() {
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
     val superWarningModeEnabled = lockMethod != None
 
-    val superWarningState = rememberExpandableSection(
-        title = R.string.super_warning_mode,
-        description = R.string.super_warning_mode_desc,
-        icon = R.drawable.lock,
-        enabled = superWarningModeEnabled
-    )
+    val superWarningState =
+        rememberExpandableSection(
+            title = R.string.super_warning_mode,
+            description = R.string.super_warning_mode_desc,
+            icon = R.drawable.lock,
+            enabled = superWarningModeEnabled
+        )
 
     var showPaddingBox by remember { mutableStateOf(false) }
     var showLockMethodPicker by remember { mutableStateOf(false) }
@@ -81,7 +81,6 @@ fun BehaviorTab() {
                 }
             }
         ) {
-
             DragonSettingsGroup(R.string.action_settings) {
                 SettingActionSelector(BehaviorSettingsStore.backAction)
                 SettingActionSelector(BehaviorSettingsStore.doubleClickAction)
@@ -101,7 +100,7 @@ fun BehaviorTab() {
                 SwitchRow(
                     state = showPaddingBox,
                     title = R.string.show_padding_box,
-                    icon = R.drawable.visibility,
+                    icon = R.drawable.visibility
                 ) { showPaddingBox = it }
 
                 Setting(BehaviorSettingsStore.rightPadding)
@@ -113,12 +112,13 @@ fun BehaviorTab() {
             DragonSettingsGroup(R.string.security) {
                 SettingsItem(
                     title = stringResource(R.string.lock_method),
-                    description = when (lockMethod) {
-                        None -> stringResource(R.string.lock_none)
-                        Pin -> stringResource(R.string.lock_pin)
-                        Device -> stringResource(R.string.lock_device_unlock)
-                        Pattern -> stringResource(R.string.pattern)
-                    },
+                    description =
+                        when (lockMethod) {
+                            None -> stringResource(R.string.lock_none)
+                            Pin -> stringResource(R.string.lock_pin)
+                            Device -> stringResource(R.string.lock_device_unlock)
+                            Pattern -> stringResource(R.string.pattern)
+                        },
                     icon = R.drawable.lock
                 ) { showLockMethodPicker = true }
 
@@ -162,14 +162,16 @@ fun BehaviorTab() {
         Canvas(Modifier.fillMaxSize()) {
             drawRect(
                 color = Color(0x40FF0000),
-                topLeft = Offset(
-                    leftPadding.toFloat(),
-                    topPadding.toFloat()
-                ),
-                size = Size(
-                    size.width - leftPadding - rightPadding.toFloat(),
-                    size.height - topPadding - bottomPadding.toFloat()
-                )
+                topLeft =
+                    Offset(
+                        leftPadding.toFloat(),
+                        topPadding.toFloat()
+                    ),
+                size =
+                    Size(
+                        size.width - leftPadding - rightPadding.toFloat(),
+                        size.height - topPadding - bottomPadding.toFloat()
+                    )
             )
         }
     }

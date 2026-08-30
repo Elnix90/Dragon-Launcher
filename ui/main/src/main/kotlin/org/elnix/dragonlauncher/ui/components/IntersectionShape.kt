@@ -37,7 +37,6 @@ fun DrawScope.IntersectionShape(
     isDefaultEditing: Boolean,
     eraseColor: Color?
 ) {
-
     val position = center + shape.getOffset(defaultShape, isDefaultEditing)
     val rotation = shape.getRotation(defaultShape, isDefaultEditing)
     val size = shape.getSize(this.density, defaultShape, isDefaultEditing)
@@ -84,15 +83,15 @@ fun IntersectionShapePreview(
 ) {
     val resolvedShape = shape.getShape(defaultShape, isDefaultEditing).resolveShape()
     Box(
-        modifier = modifier
-            .size(size)
-            .rotate(shape.getRotation(defaultShape, isDefaultEditing).toFloat())
-            .clip(MaterialTheme.shapes.medium)
-            .conditional(onClick) {
-                clickable(onClick = it)
-            }
-            .clip(resolvedShape)
-            .border(1.dp, shape.color ?: LocalExtraColors.current.shapes, resolvedShape),
+        modifier =
+            modifier
+                .size(size)
+                .rotate(shape.getRotation(defaultShape, isDefaultEditing).toFloat())
+                .clip(MaterialTheme.shapes.medium)
+                .conditional(onClick) {
+                    clickable(onClick = it)
+                }.clip(resolvedShape)
+                .border(1.dp, shape.color ?: LocalExtraColors.current.shapes, resolvedShape),
         contentAlignment = Alignment.Center
     ) {
         Text(

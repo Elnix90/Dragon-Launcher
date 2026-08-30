@@ -42,7 +42,7 @@ fun CreateOrEditWorkspaceDialog(
             textAlign = TextAlign.Center
         )
 
-        DragonSettingsGroup  {
+        DragonSettingsGroup {
             TextField(
                 value = name,
                 onValueChange = onNameChange,
@@ -50,7 +50,7 @@ fun CreateOrEditWorkspaceDialog(
                 placeholder = {
                     Text(stringResource(R.string.workspace_name))
                 },
-                modifier = Modifier.dragonSettingGroup(),
+                modifier = Modifier.dragonSettingGroup()
             )
 
             ActionSelectorRow(

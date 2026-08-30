@@ -38,11 +38,12 @@ fun WorkspacePickerDialog(
     onActionPicked: (Action.OpenAppDrawer) -> Unit
 ) {
     val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsState()
-    val workspacesDisplayed = remember(activeWorkspaces) {
-        mutableListOf<Workspace?>(null).apply {
-            addAll(activeWorkspaces)
+    val workspacesDisplayed =
+        remember(activeWorkspaces) {
+            mutableListOf<Workspace?>(null).apply {
+                addAll(activeWorkspaces)
+            }
         }
-    }
 
     DragonModalBottomSheet(onDismissRequest = onDismiss) {
         DialogTitle(stringResource(R.string.select_default_workspace))
@@ -66,13 +67,14 @@ fun WorkspacePickerDialog(
 @Composable
 private fun DragonGroupScope.WorkspaceCard(
     workspace: Workspace?,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .dragonSettingGroup {
-                clickable(onClick = onClick)
-            },
+        modifier =
+            Modifier
+                .dragonSettingGroup {
+                    clickable(onClick = onClick)
+                },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {

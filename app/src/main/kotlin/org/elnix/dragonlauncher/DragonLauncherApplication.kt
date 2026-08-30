@@ -83,6 +83,8 @@ class DragonLauncherApplication : Application() {
             }
         }
 
-        logI(SETTINGS_TAG) { "Finished initializing settings;${AllStores.size} total stores, with: $totalSettings different settings and $totalJsonObject JsonObject and $totalJsonArray JsonArray stores" }
+        logI(SETTINGS_TAG) {
+            "Finished initializing settings;${AllStores.size} total stores, with: $totalSettings different settings and $totalJsonObject JsonObject and $totalJsonArray JsonArray stores"
+        }
     }
 }

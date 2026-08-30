@@ -83,18 +83,18 @@ fun ActionPickerDialog(
     val showKillLauncherActionInActionPicker by DebugSettingsStore.showKillLauncherActionInActionPicker.asState()
     val promptForShortcuts by BehaviorSettingsStore.promptForShortcutsWhenAddingApp.asState()
 
-    val actualActions = allActions.filter {
-        when (it) {
-            Action.KillLauncher -> showKillLauncherActionInActionPicker
-            is Action.OpenWidget -> allowWidgets
-            else -> true
+    val actualActions =
+        allActions.filter {
+            when (it) {
+                Action.KillLauncher -> showKillLauncherActionInActionPicker
+                is Action.OpenWidget -> allowWidgets
+                else -> true
+            }
         }
-    }
 
     var selectedApp by remember { mutableStateOf<Application?>(null) }
     var shortcutDialogVisible by remember { mutableStateOf(false) }
     var shortcuts by remember { mutableStateOf<List<ShortcutInfo>>(emptyList()) }
-
 
     fun onActionPicked(action: Action) {
         if (onMultipleActionsSelected != null) {
@@ -117,7 +117,6 @@ fun ActionPickerDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.heightIn(max = 600.dp)
         ) {
-
             val gridState = rememberLazyGridState()
 
             Box {
@@ -189,7 +188,6 @@ fun ActionPickerDialog(
         }
     }
 
-
     if (showAppPicker) {
         AppPickerSheet(
             multiSelectEnabled = onMultipleActionsSelected != null,
@@ -199,21 +197,22 @@ fun ActionPickerDialog(
                 logD(APP_LAUNCH_TAG) { "Selected App: $app" }
 
                 // Try to query shortcuts, but handle crashes gracefully
-                val list = if (promptForShortcuts) {
-                    try {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            drawerViewModel.queryAppShortcuts(app.packageName)
-                        } else {
+                val list =
+                    if (promptForShortcuts) {
+                        try {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                drawerViewModel.queryAppShortcuts(app.packageName)
+                            } else {
+                                emptyList()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            // Some apps (Contacts, Gmail) may throw SecurityException or other errors
                             emptyList()
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        // Some apps (Contacts, Gmail) may throw SecurityException or other errors
-                        emptyList()
+                    } else {
+                        emptyList() // Skip shortcut query if disabled
                     }
-                } else {
-                    emptyList() // Skip shortcut query if disabled
-                }
 
                 if (list.isNotEmpty()) {
                     selectedApp = app
@@ -223,15 +222,19 @@ fun ActionPickerDialog(
                     onActionPicked(app.toLaunchApp())
                 }
             },
-            onMultipleAppsSelected = if (onMultipleActionsSelected != null) {
-                { apps ->
-                    val actions = apps.map {
-                        Action.LaunchApp(it.packageName, it.profile)
+            onMultipleAppsSelected =
+                if (onMultipleActionsSelected != null) {
+                    { apps ->
+                        val actions =
+                            apps.map {
+                                Action.LaunchApp(it.packageName, it.profile)
+                            }
+                        onMultipleActionsSelected(actions)
+                        showAppPicker = false
                     }
-                    onMultipleActionsSelected(actions)
-                    showAppPicker = false
+                } else {
+                    null
                 }
-            } else null
         )
     }
 
@@ -261,33 +264,31 @@ fun ActionPickerDialog(
             label = "${stringResource(R.string.pick_a)} WIFI ${stringResource(R.string.command)}",
             options = WifiADBCommands.entries,
             selected = { WifiADBCommands.Svc },
-            onDismiss = { showWifiCommandInput = false },
+            onDismiss = { showWifiCommandInput = false }
         ) { command, toast ->
             onActionPicked(Action.ToggleWifi(command, toast))
             showWifiCommandInput = false
         }
     }
 
-
     if (showBluetoothCommandInput) {
         AdbCommandPickerDialog(
             label = "${stringResource(R.string.pick_a)} BLUETOOTH ${stringResource(R.string.command)}",
             options = BluetoothADBCommands.entries,
             selected = { BluetoothADBCommands.Cmd },
-            onDismiss = { showBluetoothCommandInput = false },
+            onDismiss = { showBluetoothCommandInput = false }
         ) { command, toast ->
             onActionPicked(Action.ToggleBluetooth(command, toast))
             showBluetoothCommandInput = false
         }
     }
 
-
     if (showDataCommandInput) {
         AdbCommandPickerDialog(
             label = "${stringResource(R.string.pick_a)} DATA ${stringResource(R.string.command)}",
             options = DataADBCommands.entries,
             selected = { DataADBCommands.Svc },
-            onDismiss = { showDataCommandInput = false },
+            onDismiss = { showDataCommandInput = false }
         ) { command, toast ->
             onActionPicked(Action.ToggleData(command, toast))
             showDataCommandInput = false
@@ -362,7 +363,6 @@ fun ActionPickerDialog(
     }
 }
 
-
 @Composable
 private fun ActionItem(
     action: Action,
@@ -370,24 +370,26 @@ private fun ActionItem(
 ) {
     val extraColors = LocalExtraColors.current
 
-    val name = when (action) {
-        is Action.LaunchApp -> stringResource(R.string.open_app)
-        is Action.LaunchShortcut -> stringResource(R.string.pinned_shortcuts)
-        is Action.OpenUrl -> stringResource(R.string.open_url)
-        is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
-        is Action.OpenFile -> stringResource(R.string.open_file)
-        is Action.OpenNest -> stringResource(R.string.open_nest)
-        else -> actionLabel(action)
-    }
+    val name =
+        when (action) {
+            is Action.LaunchApp -> stringResource(R.string.open_app)
+            is Action.LaunchShortcut -> stringResource(R.string.pinned_shortcuts)
+            is Action.OpenUrl -> stringResource(R.string.open_url)
+            is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
+            is Action.OpenFile -> stringResource(R.string.open_file)
+            is Action.OpenNest -> stringResource(R.string.open_nest)
+            else -> actionLabel(action)
+        }
 
     val color = action.actionColor(extraColors)
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(color.alphaMultiplier(0.5f))
-            .clickable(onClick = onSelected)
-            .padding(12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.large)
+                .background(color.alphaMultiplier(0.5f))
+                .clickable(onClick = onSelected)
+                .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

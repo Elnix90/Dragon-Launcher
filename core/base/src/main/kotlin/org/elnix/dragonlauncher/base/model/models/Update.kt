@@ -13,5 +13,5 @@ public data class Update(
     val knownIssues: List<String>?,
     val whatsNew: List<String>?,
     val fixed: List<String>?,
-    val improved: List<String>?,
+    val improved: List<String>?
 )

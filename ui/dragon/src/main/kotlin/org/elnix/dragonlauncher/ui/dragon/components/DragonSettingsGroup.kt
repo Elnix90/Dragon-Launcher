@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,30 +21,28 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.core.objects.SettingObject
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
-//sealed class DragonSettingGroupItems {
+// sealed class DragonSettingGroupItems {
 //    data class Setting(val setting: SettingObject<*, *>) : DragonSettingGroupItems()
 //    data class Item(val title: String) : DragonSettingGroupItems()
-//}
+// }
 //
 //
-//private val bigRounding = 24.dp
-//private val smallRounding = 6.dp
+// private val bigRounding = 24.dp
+// private val smallRounding = 6.dp
 //
-//private val firstShape = RoundedCornerShape(topStart = bigRounding, topEnd = bigRounding, bottomStart = smallRounding, bottomEnd = smallRounding)
-//private val lastShape = RoundedCornerShape(topStart = smallRounding, topEnd = smallRounding, bottomStart = bigRounding, bottomEnd = bigRounding)
-//private val middleShape = RoundedCornerShape(smallRounding)
-//private val singleShape = RoundedCornerShape(bigRounding)
-
+// private val firstShape = RoundedCornerShape(topStart = bigRounding, topEnd = bigRounding, bottomStart = smallRounding, bottomEnd = smallRounding)
+// private val lastShape = RoundedCornerShape(topStart = smallRounding, topEnd = smallRounding, bottomStart = bigRounding, bottomEnd = bigRounding)
+// private val middleShape = RoundedCornerShape(smallRounding)
+// private val singleShape = RoundedCornerShape(bigRounding)
 
 class DragonGroupScope
-internal constructor(
-    columnScope: ColumnScope
-) : ColumnScope by columnScope { // OMG I DISCOVERED THIS SYNTAX TODAY AND ITS WAY TOO COOOOL
+    internal constructor(
+        columnScope: ColumnScope
+    ) : ColumnScope by columnScope { // OMG I DISCOVERED THIS SYNTAX TODAY AND ITS WAY TOO COOOOL
 
 //    private val itemList: MutableList<DragonSettingGroupItems> = mutableListOf()
 
@@ -112,24 +109,25 @@ internal constructor(
 //        return getShapeFromIndex(index)
 //    }
 
-    @SuppressLint("UnnecessaryComposedModifier")
-    fun Modifier.dragonSettingGroup(
-        enabled: Boolean = true,
-        selected: Boolean = false,
-        clickModifier: (Modifier.() -> Modifier)? = null
-    ): Modifier = composed {
+        @SuppressLint("UnnecessaryComposedModifier")
+        fun Modifier.dragonSettingGroup(
+            enabled: Boolean = true,
+            selected: Boolean = false,
+            clickModifier: (Modifier.() -> Modifier)? = null
+        ): Modifier =
+            composed {
+                val animatedBgColor by animateColorAsState(
+                    if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
+                )
 
-        val animatedBgColor by animateColorAsState(if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh)
-
-        this
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.extraSmall)
-            .background(animatedBgColor.semiTransparentIfDisabled(enabled))
-            .conditional(clickModifier) { it() }
-            .padding(10.dp)
+                this
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.extraSmall)
+                    .background(animatedBgColor.semiTransparentIfDisabled(enabled))
+                    .conditional(clickModifier) { it() }
+                    .padding(10.dp)
+            }
     }
-}
-
 
 @Composable
 fun DragonSettingsGroup(
@@ -146,7 +144,6 @@ fun DragonSettingsGroup(
     )
 }
 
-
 @Composable
 fun DragonSettingsGroup(
     title: String? = null,
@@ -156,19 +153,21 @@ fun DragonSettingsGroup(
     content: @Composable DragonGroupScope.() -> Unit
 ) {
     CompositionLocalProvider(
-        LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
+        LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
     ) {
         SettingsWithTitle(title, modifier, trailingIcon) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.largeIncreased)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.largeIncreased)
             ) {
-                val dragonGroupScope = remember {
-                    DragonGroupScope(this)
-                }
+                val dragonGroupScope =
+                    remember {
+                        DragonGroupScope(this)
+                    }
                 content(dragonGroupScope)
             }
         }

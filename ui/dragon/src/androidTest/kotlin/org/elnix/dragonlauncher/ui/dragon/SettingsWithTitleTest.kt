@@ -28,7 +28,6 @@ import org.junit.Test
  * which are app-specific.
  */
 class SettingsWithTitleTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

@@ -26,9 +26,9 @@ internal fun Project.configureKotlinAndroid(
             explicitApi()
         }
         if (enablePropertyParamAnnotationFlag) {
-            compilerOptions {
-                freeCompilerArgs.value(listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"))
-            }
+//            compilerOptions {
+//                freeCompilerArgs.value(listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"))
+//            }
         }
     }
 }

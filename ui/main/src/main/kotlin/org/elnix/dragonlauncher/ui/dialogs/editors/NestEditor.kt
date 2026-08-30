@@ -45,7 +45,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.settings.TextRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
-
 /**
  * Nest editor, provides [DragonModalBottomSheet] to edit the selected [currentNest].
  * It managed internally a variable state of the [currentNest], linked to any changes made to it that mutates internally.
@@ -80,18 +79,20 @@ fun NestEditor(
     val shapes = editNest.getInterSectionShapes(defaultNest, isDefaultEditing)
     val defaultShapes = emptyNest.getInterSectionShapes(defaultNest, isDefaultEditing)
 
-    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> = remember {
-        mutableStateMapOf<Int, IntersectionShape>().apply {
-            shapes.forEach {
-                this[it.id] = it
+    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> =
+        remember {
+            mutableStateMapOf<Int, IntersectionShape>().apply {
+                shapes.forEach {
+                    this[it.id] = it
+                }
             }
         }
-    }
 
-    fun getChangedShapes(): Map<IntersectionShape, Offset> = shapesInternal.values.toSet().associateWith { shapeInternal ->
-        val witnessShape = shapes.find { shapeInternal.id == it.id } ?: return@associateWith Offset.Zero
-        shapeInternal.getOffset(defaultShape, isDefaultEditing) - witnessShape.getOffset(defaultShape, isDefaultEditing)
-    }
+    fun getChangedShapes(): Map<IntersectionShape, Offset> =
+        shapesInternal.values.toSet().associateWith { shapeInternal ->
+            val witnessShape = shapes.find { shapeInternal.id == it.id } ?: return@associateWith Offset.Zero
+            shapeInternal.getOffset(defaultShape, isDefaultEditing) - witnessShape.getOffset(defaultShape, isDefaultEditing)
+        }
 
     fun triggerUpdate() {
         onUpdateShapes(getChangedShapes())
@@ -108,26 +109,27 @@ fun NestEditor(
         ) { editNest = emptyNest }
 
         Column(
-            modifier = Modifier
-                .heightIn(max = 700.dp)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .heightIn(max = 700.dp)
+                    .verticalScroll(rememberScrollState())
         ) {
-
             if (nestDebugInfo) {
                 Text(
                     text = editNest.toString(),
                     fontSize = 10.sp,
                     lineHeight = 15.sp,
                     fontFamily = FontFamily.Monospace,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(5.dp)
+                    modifier =
+                        Modifier
+                            .padding(10.dp)
+                            .clip(MaterialTheme.shapes.large)
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(5.dp)
                 )
             }
 
-            DragonButton(onClick = { showNestShapesManagementDialog = true },) {
+            DragonButton(onClick = { showNestShapesManagementDialog = true }) {
                 Text(
                     text = stringResource(R.string.edit_shapes),
                     style = MaterialTheme.typography.labelMediumEmphasized
@@ -156,7 +158,7 @@ fun NestEditor(
                         currentValue = editNest.name,
                         defaultValue = null,
                         label = null,
-                        placeHolder = stringResource(R.string.custom_name),
+                        placeHolder = stringResource(R.string.custom_name)
                     ) {
                         editNest = editNest.copy(name = it)
                     }
@@ -219,7 +221,6 @@ fun NestEditor(
                     editNest = editNest.copy(showAllShapes = value)
                 }
 
-
                 SliderWithLabel(
                     label = stringResource(R.string.preview_scale_factor),
                     description = stringResource(R.string.preview_scale_factor_desc),
@@ -241,7 +242,7 @@ fun NestEditor(
             triggerUpdate = ::triggerUpdate,
             isDefaultEditing = isDefaultEditing,
             defaultShape = defaultShape,
-            defaultShapes = defaultShapes,
+            defaultShapes = defaultShapes
         ) { newShapes ->
             editNest = editNest.copy(intersectionShapes = newShapes.takeIf { it != defaultShapes })
             showNestShapesManagementDialog = false

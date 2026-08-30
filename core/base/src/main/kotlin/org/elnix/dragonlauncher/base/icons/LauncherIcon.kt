@@ -24,13 +24,11 @@ import java.lang.ref.WeakReference
 
 public sealed interface LauncherIcon
 
-
 public data class StaticLauncherIcon(
     val foregroundLayer: LauncherIconLayer,
     val backgroundLayer: LauncherIconLayer,
-
     /** Customization properties applied at render time. Defaults to empty (no-op). */
-    val properties: CustomIconProperties = CustomIconProperties(),
+    val properties: CustomIconProperties = CustomIconProperties()
 ) : LauncherIcon {
     private var cachedBitmap: WeakReference<Bitmap>? = null
     private var cachedSize: Int? = null
@@ -38,11 +36,15 @@ public data class StaticLauncherIcon(
     private var cachedProperties: CustomIconProperties? = null
     private var renderSemaphore = Semaphore(1)
 
-    public fun getCachedBitmap(size: Int, settings: IconSettings): Bitmap? {
-        return if (cachedSettings == settings && cachedSize == size && cachedProperties == properties) {
+    public fun getCachedBitmap(size: Int, settings: IconSettings): Bitmap? =
+        if (cachedSettings == settings &&
+            cachedSize == size &&
+            cachedProperties == properties
+        ) {
             cachedBitmap?.get()
-        } else null
-    }
+        } else {
+            null
+        }
 
     /**
      * Render this icon to a bitmap.
@@ -55,51 +57,60 @@ public data class StaticLauncherIcon(
         if (cachedSettings == settings && cachedSize == size && cachedProperties == properties && cachedBmp != null) {
             return cachedBmp
         }
-        val bmp = withContext(Dispatchers.Default) {
-            renderSemaphore.withPermit {
-                if (settings.renderForeground || settings.renderBackground) {
-                    val bmp =
-                        if (cachedBmp == null || cachedBmp.width != size || cachedBmp.height != size) {
-                            createBitmap(size, size)
-                        } else cachedBmp
-                    val canvas = Canvas(bmp)
-                    canvas.drawRect(
-                        Rect(0, 0, canvas.width, canvas.height), Paint().apply {
-                            xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-                        })
+        val bmp =
+            withContext(Dispatchers.Default) {
+                renderSemaphore.withPermit {
+                    if (settings.renderForeground || settings.renderBackground) {
+                        val bmp =
+                            if (cachedBmp == null || cachedBmp.width != size || cachedBmp.height != size) {
+                                createBitmap(size, size)
+                            } else {
+                                cachedBmp
+                            }
+                        val canvas = Canvas(bmp)
+                        canvas.drawRect(
+                            Rect(0, 0, canvas.width, canvas.height),
+                            Paint().apply {
+                                xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+                            }
+                        )
 
-                    val hasProperties = properties.isNotEmpty
-                    val saved = if (hasProperties) {
-                        applyPropertyCanvasState(canvas, size)
-                    } else false
+                        val hasProperties = properties.isNotEmpty
+                        val saved =
+                            if (hasProperties) {
+                                applyPropertyCanvasState(canvas, size)
+                            } else {
+                                false
+                            }
 
-                    val propertyPaint = properties.tint?.let {
-                        Paint().apply {
-                            colorFilter = PorterDuffColorFilter(it.toArgb(), PorterDuff.Mode.SRC_IN)
+                        val propertyPaint =
+                            properties.tint?.let {
+                                Paint().apply {
+                                    colorFilter = PorterDuffColorFilter(it.toArgb(), PorterDuff.Mode.SRC_IN)
+                                }
+                            }
+
+                        if (settings.renderBackground) {
+                            renderLayer(canvas, backgroundLayer, propertyPaint)
                         }
-                    }
+                        if (settings.renderForeground) {
+                            renderLayer(canvas, foregroundLayer, propertyPaint)
+                        }
 
-                    if (settings.renderBackground) {
-                        renderLayer(canvas, backgroundLayer, propertyPaint)
-                    }
-                    if (settings.renderForeground) {
-                        renderLayer(canvas, foregroundLayer, propertyPaint)
-                    }
+                        if (saved) {
+                            canvas.restore()
+                        }
 
-                    if (saved) {
-                        canvas.restore()
+                        cachedBitmap = WeakReference(bmp)
+                        cachedSettings = settings
+                        cachedSize = size
+                        cachedProperties = properties
+                        bmp
+                    } else {
+                        createBitmap(1, 1)
                     }
-
-                    cachedBitmap = WeakReference(bmp)
-                    cachedSettings = settings
-                    cachedSize = size
-                    cachedProperties = properties
-                    bmp
-                } else {
-                    createBitmap(1, 1)
                 }
             }
-        }
         return bmp
     }
 
@@ -111,20 +122,22 @@ public data class StaticLauncherIcon(
      */
     private fun applyPropertyCanvasState(canvas: Canvas, size: Int): Boolean {
         val opacity = properties.opacity?.coerceIn(0f, 1f) ?: 1f
-        val needsTransform = properties.rotationDeg != null ||
+        val needsTransform =
+            properties.rotationDeg != null ||
                 properties.scaleX != null ||
                 properties.scaleY != null
         val needsClip = properties.shape != null
 
-        val saved = if (opacity < 1f) {
-            canvas.saveLayerAlpha(0f, 0f, size.toFloat(), size.toFloat(), (opacity * 255).toInt())
-            true
-        } else if (needsTransform || needsClip) {
-            canvas.save()
-            true
-        } else {
-            false
-        }
+        val saved =
+            if (opacity < 1f) {
+                canvas.saveLayerAlpha(0f, 0f, size.toFloat(), size.toFloat(), (opacity * 255).toInt())
+                true
+            } else if (needsTransform || needsClip) {
+                canvas.save()
+                true
+            } else {
+                false
+            }
 
         if (needsTransform) {
             val half = size / 2f
@@ -155,11 +168,12 @@ public data class StaticLauncherIcon(
                     layer.scale,
                     layer.scale,
                     canvas.width / 2f,
-                    canvas.height / 2f,
+                    canvas.height / 2f
                 ) {
                     layer.icon.bounds = Rect(0, 0, canvas.width, canvas.height)
-                    val filter = propertyPaint?.colorFilter
-                        ?: layer.tint?.let { PorterDuffColorFilter(it, PorterDuff.Mode.SRC_IN) }
+                    val filter =
+                        propertyPaint?.colorFilter
+                            ?: layer.tint?.let { PorterDuffColorFilter(it, PorterDuff.Mode.SRC_IN) }
                     if (filter != null) {
                         layer.icon.drawWithColorFilter(canvas, filter)
                     } else {

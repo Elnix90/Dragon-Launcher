@@ -19,10 +19,12 @@ fun WelcomePageLauncher() {
         icon = R.drawable.rocket_launch
     ) {
         GradientBigButton(
-            text = if (isDefaultLauncher)
-                stringResource(R.string.already_default_launcher)
-            else
-                stringResource(R.string.open_default_launcher_settings),
+            text =
+                if (isDefaultLauncher) {
+                    stringResource(R.string.already_default_launcher)
+                } else {
+                    stringResource(R.string.open_default_launcher_settings)
+                },
             enabled = !isDefaultLauncher,
             onClick = {
                 ctx.openDefaultLauncherSettings()

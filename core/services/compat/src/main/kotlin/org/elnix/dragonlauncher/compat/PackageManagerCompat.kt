@@ -14,14 +14,13 @@ import android.os.Process.myUserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.APPS_TAG
 import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.PM_COMPAT_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.i18n.R
-
 
 public interface PackageManagerCompat {
     /**
@@ -37,16 +36,19 @@ public interface PackageManagerCompat {
     public fun isSystemApp(appInfo: ApplicationInfo): Boolean
 
     public fun getAppIcon(packageName: String, userId: Int, isPrivate: Boolean = false): Drawable
+
     public fun getResourcesForApplication(packageName: String): Resources
+
     public fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
+
     public fun launchShortcut(packageName: String, id: String)
+
     public fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int): Bitmap?
 }
 
 internal class PackageManagerCompatImpl(
     private val ctx: Context
 ) : PackageManagerCompat {
-
     private val pm = ctx.packageManager
     private val launcherApps = ctx.getSystemService(LauncherApps::class.java)!!
     private val userManager = ctx.getSystemService(UserManager::class.java)!!
@@ -54,8 +56,9 @@ internal class PackageManagerCompatImpl(
     override fun isSystemApp(appInfo: ApplicationInfo): Boolean {
         val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
         val isUpdatedSystem = (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
-        return isSystem && !isUpdatedSystem &&
-                (appInfo.packageName.startsWith("com.android.") || appInfo.packageName.startsWith("android"))
+        return isSystem &&
+            !isUpdatedSystem &&
+            (appInfo.packageName.startsWith("com.android.") || appInfo.packageName.startsWith("android"))
     }
 
     /**
@@ -69,8 +72,10 @@ internal class PackageManagerCompatImpl(
         userManager.userProfiles.forEach { userHandle ->
             try {
                 // Get all apps including hidden ones
-                val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-                    .filter { it.enabled || (it.flags and ApplicationInfo.FLAG_SYSTEM) != 0 }
+                val apps =
+                    pm
+                        .getInstalledApplications(PackageManager.GET_META_DATA)
+                        .filter { it.enabled || (it.flags and ApplicationInfo.FLAG_SYSTEM) != 0 }
 
                 apps.forEach { appInfo ->
                     if (!seenPackages.contains(appInfo.packageName)) {
@@ -113,9 +118,10 @@ internal class PackageManagerCompatImpl(
         val launcherApps = ctx.getSystemService(LauncherApps::class.java)
         val userManager = ctx.getSystemService(UserManager::class.java)
 
-        val userHandle = userManager.userProfiles
-            .firstOrNull { it.hashCode() == userId }
-            ?: myUserHandle()
+        val userHandle =
+            userManager.userProfiles
+                .firstOrNull { it.hashCode() == userId }
+                ?: myUserHandle()
 
         return try {
             val isMainProfile = userHandle == myUserHandle()
@@ -142,42 +148,39 @@ internal class PackageManagerCompatImpl(
 
             val appInfo = pm.getApplicationInfo(packageName, 0)
             appInfo.loadIcon(pm)
-
         } catch (e: Exception) {
             logE(ICONS_TAG, e) { "Error getting the app icon for $packageName, userId=$userId" }
             ContextCompat.getDrawable(ctx, R.drawable.ic_app_default)!!
         }
     }
 
-    override fun getResourcesForApplication(packageName: String): Resources {
-        return pm.getResourcesForApplication(packageName)
-    }
+    override fun getResourcesForApplication(packageName: String): Resources = pm.getResourcesForApplication(packageName)
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun queryAppShortcuts(packageName: String): List<ShortcutInfo> {
         try {
             val launcherApps = ctx.getSystemService(LauncherApps::class.java) ?: return emptyList()
 
-            val query = LauncherApps.ShortcutQuery()
-                .setPackage(packageName)
-                .setQueryFlags(
-                    LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
+            val query =
+                LauncherApps
+                    .ShortcutQuery()
+                    .setPackage(packageName)
+                    .setQueryFlags(
+                        LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
                             LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST or
                             LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED or
                             LauncherApps.ShortcutQuery.FLAG_MATCH_CACHED
-                )
+                    )
 
             val userHandle = myUserHandle()
             val shortcuts = launcherApps.getShortcuts(query, userHandle)
 
             return shortcuts ?: emptyList()
-
         } catch (e: Exception) {
             logD(APPS_TAG) { e.toString() }
             return emptyList()
         }
     }
-
 
     override fun launchShortcut(packageName: String, id: String) {
         val launcherApps = ctx.getSystemService(LauncherApps::class.java) ?: return
@@ -202,12 +205,11 @@ internal class PackageManagerCompatImpl(
 //        return true
 //    }
 
-
     @RequiresApi(Build.VERSION_CODES.R)
     override fun loadShortcutIcon(
         packageName: String,
         shortcutId: String,
-        sizePx: Int,
+        sizePx: Int
     ): Bitmap? {
         require(sizePx >= 1) {
             "Size must be >= 1"

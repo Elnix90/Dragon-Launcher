@@ -37,7 +37,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
-
 /**
  * Nest shapes management editor.
  * Only used by the [NestEditor], serves as a proxy to avoid writing a 500 lines file.
@@ -58,7 +57,6 @@ fun NestShapesManagementEditor(
     modifier: Modifier = Modifier,
     onDismiss: (newShapes: Set<IntersectionShape>) -> Unit
 ) {
-
     fun updateShape(id: Int, newShape: (IntersectionShape) -> IntersectionShape) {
         val oldShape = shapesInternal[id] ?: return
         shapesInternal[id] = newShape(oldShape)

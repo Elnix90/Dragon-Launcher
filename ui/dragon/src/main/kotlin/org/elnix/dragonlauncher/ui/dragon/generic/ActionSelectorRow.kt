@@ -31,7 +31,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
-
 @Composable
 fun <T> DragonGroupScope.ActionSelectorRow(
     options: List<T>,
@@ -51,13 +50,14 @@ fun <T> DragonGroupScope.ActionSelectorRow(
     val globalInteractionSource = rememberInteractionSource()
 
     Row(
-        modifier = Modifier
-            .dragonSettingGroup(enabled) {
-                clickable(
-                    enabled = enabled,
-                    interactionSource = if (toggled == true) globalInteractionSource else switchInteractionSource
-                ) { showSheet = true }
-            },
+        modifier =
+            Modifier
+                .dragonSettingGroup(enabled) {
+                    clickable(
+                        enabled = enabled,
+                        interactionSource = if (toggled == true) globalInteractionSource else switchInteractionSource
+                    ) { showSheet = true }
+                },
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextWithDescription(
@@ -69,10 +69,14 @@ fun <T> DragonGroupScope.ActionSelectorRow(
 
         if (toggled != null) {
             VerticalDivider(
-                modifier = Modifier
-                    .height(50.dp)
-                    .padding(horizontal = 8.dp),
-                color = MaterialTheme.colorScheme.outline.alphaMultiplier(0.7f).semiTransparentIfDisabled(enabled),
+                modifier =
+                    Modifier
+                        .height(50.dp)
+                        .padding(horizontal = 8.dp),
+                color =
+                    MaterialTheme.colorScheme.outline
+                        .alphaMultiplier(0.7f)
+                        .semiTransparentIfDisabled(enabled),
                 thickness = 1.dp
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -80,10 +84,13 @@ fun <T> DragonGroupScope.ActionSelectorRow(
                 checked = toggled,
                 interactionSource = switchInteractionSource,
                 enabled = enabled && switchEnabled,
-                onCheckedChange = if (toggled) {
-                    { onSelected(null) }
-                } else null,
-                colors = AppObjectsColors.switchColors(),
+                onCheckedChange =
+                    if (toggled) {
+                        { onSelected(null) }
+                    } else {
+                        null
+                    },
+                colors = AppObjectsColors.switchColors()
             )
         }
         ResetIcon(enabled && resetEnabled, onReset)
@@ -102,7 +109,6 @@ fun <T> DragonGroupScope.ActionSelectorRow(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> ActionSelector(
@@ -111,7 +117,7 @@ fun <T> ActionSelector(
     optionLabel: @Composable (T) -> String = { it.toString() },
     selected: T?,
     onSelected: (T) -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
 
@@ -126,16 +132,16 @@ fun <T> ActionSelector(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier
-                        .dragonSettingGroup(selected = isSelected) {
-                            clickable(
-                                interactionSource = interactionSource
-                            ) {
-                                onSelected(option)
-                                onDismiss()
-                            }
-                        }
-                        .padding(10.dp)
+                    modifier =
+                        Modifier
+                            .dragonSettingGroup(selected = isSelected) {
+                                clickable(
+                                    interactionSource = interactionSource
+                                ) {
+                                    onSelected(option)
+                                    onDismiss()
+                                }
+                            }.padding(10.dp)
                 ) {
                     RadioButton(
                         selected = (isSelected),

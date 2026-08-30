@@ -5,125 +5,100 @@ import androidx.compose.ui.unit.dp
 
 public object Constants {
     public object PackageNameLists {
-        public val systemLaunchers: List<String> = listOf(
-            // Xiaomi/RedMagic/HyperOS/MIUI
-            "com.miui.home",
-            "com.miui.home.launcher",
-            "com.zui.launcher",
-            "com.redmagic.launcher",
-
-            // Samsung OneUI
-            "com.sec.android.app.launcher",
-            "com.samsung.android.app.launcher",
-
-            // ZTE/Nubia
-            "com.zte.mifavor.launcher",
-            "com.android.nubialauncher",
-
-            // OnePlus OxygenOS/ColorOS
-            "com.oneplus.launcher",
-            "com.oplus.launcher",
-
-            // OPPO/Realme
-            "com.oppo.launcher",
-            "com.coloros.safecenter.launcher",
-
-            // Huawei EMUI/HarmonyOS
-            "com.huawei.android.launcher",
-            "com.huawei.android.home",
-
-            // Google Pixel/Stock Android
-            "com.google.android.apps.nexuslauncher",
-            "com.android.launcher3",
-
-            // Sony
-            "com.sonymobile.home",
-
-            // LG
-            "com.lge.launcher2",
-            "com.lge.launcher3",
-
-            // HTC
-            "com.htc.launcher",
-
-            // Motorola
-            "com.motorola.blur.launcher",
-
-            // Vivo FuntouchOS
-            "com.iuni.launcher",
-
-            // Nothing OS
-            "com.nothing.launcher",
-
-            // Fairphone
-            "ch.fairphone.launcher"
-        )
-
+        public val systemLaunchers: List<String> =
+            listOf(
+                // Xiaomi/RedMagic/HyperOS/MIUI
+                "com.miui.home",
+                "com.miui.home.launcher",
+                "com.zui.launcher",
+                "com.redmagic.launcher",
+                // Samsung OneUI
+                "com.sec.android.app.launcher",
+                "com.samsung.android.app.launcher",
+                // ZTE/Nubia
+                "com.zte.mifavor.launcher",
+                "com.android.nubialauncher",
+                // OnePlus OxygenOS/ColorOS
+                "com.oneplus.launcher",
+                "com.oplus.launcher",
+                // OPPO/Realme
+                "com.oppo.launcher",
+                "com.coloros.safecenter.launcher",
+                // Huawei EMUI/HarmonyOS
+                "com.huawei.android.launcher",
+                "com.huawei.android.home",
+                // Google Pixel/Stock Android
+                "com.google.android.apps.nexuslauncher",
+                "com.android.launcher3",
+                // Sony
+                "com.sonymobile.home",
+                // LG
+                "com.lge.launcher2",
+                "com.lge.launcher3",
+                // HTC
+                "com.htc.launcher",
+                // Motorola
+                "com.motorola.blur.launcher",
+                // Vivo FuntouchOS
+                "com.iuni.launcher",
+                // Nothing OS
+                "com.nothing.launcher",
+                // Fairphone
+                "ch.fairphone.launcher"
+            )
 
         /**
          * Known social media package names for auto-detection
          */
-        public val knownSocialMediaApps: Set<String> = setOf(
-            // Meta
-            "com.instagram.android",
-            "com.facebook.katana",
-            "com.facebook.orca", // Messenger
-            "com.whatsapp",
-            "com.facebook.lite",
+        public val knownSocialMediaApps: Set<String> =
+            setOf(
+                // Meta
+                "com.instagram.android",
+                "com.facebook.katana",
+                "com.facebook.orca", // Messenger
+                "com.whatsapp",
+                "com.facebook.lite",
+                // ByteDance
+                "com.zhiliaoapp.musically", // TikTok
+                "com.ss.android.ugc.trill", // TikTok (alternate)
+                // Snap
+                "com.snapchat.android",
+                // Twitter/X
+                "com.twitter.android",
+                "com.twitter.android.lite",
+                // Reddit
+                "com.reddit.frontpage",
+                // Pinterest
+                "com.pinterest",
+                // LinkedIn
+                "com.linkedin.android",
+                // Telegram
+                "org.telegram.messenger",
+                "org.telegram.messenger.web",
+                // Discord
+                "com.discord",
+                "com.aliucord",
+                // BeReal
+                "com.bereal.ft",
+                // Threads
+                "com.instagram.barcelona",
+                // YouTube (can be considered social)
+                "com.google.android.youtube",
+                // Twitch
+                "tv.twitch.android.app",
+                // Tumblr
+                "com.tumblr",
+                // WeChat
+                "com.tencent.mm"
+            )
 
-            // ByteDance
-            "com.zhiliaoapp.musically", // TikTok
-            "com.ss.android.ugc.trill", // TikTok (alternate)
-
-            // Snap
-            "com.snapchat.android",
-
-            // Twitter/X
-            "com.twitter.android",
-            "com.twitter.android.lite",
-
-            // Reddit
-            "com.reddit.frontpage",
-
-            // Pinterest
-            "com.pinterest",
-
-            // LinkedIn
-            "com.linkedin.android",
-
-            // Telegram
-            "org.telegram.messenger",
-            "org.telegram.messenger.web",
-
-            // Discord
-            "com.discord",
-            "com.aliucord",
-
-            // BeReal
-            "com.bereal.ft",
-
-            // Threads
-            "com.instagram.barcelona",
-
-            // YouTube (can be considered social)
-            "com.google.android.youtube",
-
-            // Twitch
-            "tv.twitch.android.app",
-
-            // Tumblr
-            "com.tumblr",
-
-            // WeChat
-            "com.tencent.mm"
-        )
-
-        public val knownClockPackages: List<String> = listOf(
-            "com.google.android.deskclock",
-            "com.android.deskclock",
-            "com.samsung.android.clockpackage",
-            "com.htc.android.worldclock"
-        )
+        public val knownClockPackages: List<String> =
+            listOf(
+                "com.google.android.deskclock",
+                "com.android.deskclock",
+                "com.samsung.android.clockpackage",
+                "com.htc.android.worldclock"
+            )
     }
 
     public object Signatures {

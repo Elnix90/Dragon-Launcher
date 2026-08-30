@@ -30,7 +30,6 @@ import org.junit.Test
  * and TextWithDescription from :core:ui:dragon. These must be on the classpath.
  */
 class SwitchRowTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

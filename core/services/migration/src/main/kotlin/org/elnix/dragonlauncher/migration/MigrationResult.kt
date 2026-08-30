@@ -17,7 +17,6 @@ public data class MigrationResult(
     public val message: String = ""
 ) {
     public companion object {
-
         /**
          * Creates a successful [MigrationResult] with the given migrated and skipped stores.
          *

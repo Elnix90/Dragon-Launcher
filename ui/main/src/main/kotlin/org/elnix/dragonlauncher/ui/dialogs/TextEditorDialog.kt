@@ -32,7 +32,6 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
-
 @Composable
 fun TextEditorDialog(
     title: @Composable () -> String,
@@ -85,15 +84,18 @@ fun TextEditorDialog(
                     Text(placeHolder())
                 },
                 colors = AppObjectsColors.outlinedTextFieldColors(),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { onValidate(textFieldValue.text.trim()) }
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(CircleShape),
+                keyboardOptions =
+                    KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = { onValidate(textFieldValue.text.trim()) }
+                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(CircleShape),
                 maxLines = 1
             )
         },

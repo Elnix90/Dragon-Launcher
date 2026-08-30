@@ -61,42 +61,45 @@ fun WorkspaceLockedContent(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-                .border(
-                    1.dp,
-                    MaterialTheme.colorScheme.outlineVariant,
-                    MaterialTheme.shapes.small
-                )
-                .background(
-                    MaterialTheme.colorScheme.surfaceContainer,
-                    MaterialTheme.shapes.small
-                )
-                .padding(vertical = 64.dp),
+            modifier =
+                Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+                    .border(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                        MaterialTheme.shapes.small
+                    ).background(
+                        MaterialTheme.colorScheme.surfaceContainer,
+                        MaterialTheme.shapes.small
+                    ).padding(vertical = 64.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 painterResource(if (workspaceProfileType == Profile.Type.Work) R.drawable.enterprise_off else R.drawable.lock),
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.secondary,
+                tint = MaterialTheme.colorScheme.secondary
             )
             Text(
                 stringResource(
-                    if (workspaceProfileType == Profile.Type.Work) R.string.profile_work_profile_state_locked
-                    else R.string.profile_private_profile_state_locked
+                    if (workspaceProfileType == Profile.Type.Work) {
+                        R.string.profile_work_profile_state_locked
+                    } else {
+                        R.string.profile_private_profile_state_locked
+                    }
                 ),
                 modifier = Modifier.padding(top = 8.dp),
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleSmall
             )
             if (hasProfilesPermission) {
                 AnimatedContent(
@@ -111,24 +114,27 @@ fun WorkspaceLockedContent(
                                 hasAsked = true
                             }
                         ) {
-                            val iconRes = when(workspaceProfileType) {
-                                Profile.Type.Personal -> error("Personal profile is never locked")
-                                Profile.Type.Work -> R.drawable.enterprise
-                                Profile.Type.Private -> R.drawable.lock_open
-                            }
+                            val iconRes =
+                                when (workspaceProfileType) {
+                                    Profile.Type.Personal -> error("Personal profile is never locked")
+                                    Profile.Type.Work -> R.drawable.enterprise
+                                    Profile.Type.Private -> R.drawable.lock_open
+                                }
 
-                            val stringRes = when(workspaceProfileType) {
-                                Profile.Type.Personal -> error("Personal profile is never locked")
-                                Profile.Type.Work ->R.string.profile_work_profile_action_unlock
-                                Profile.Type.Private ->  R.string.profile_private_profile_action_unlock
-                            }
+                            val stringRes =
+                                when (workspaceProfileType) {
+                                    Profile.Type.Personal -> error("Personal profile is never locked")
+                                    Profile.Type.Work -> R.string.profile_work_profile_action_unlock
+                                    Profile.Type.Private -> R.string.profile_private_profile_action_unlock
+                                }
 
                             Icon(
                                 painterResource(iconRes),
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .padding(end = ButtonDefaults.IconSpacing)
-                                    .size(ButtonDefaults.IconSize)
+                                modifier =
+                                    Modifier
+                                        .padding(end = ButtonDefaults.IconSpacing)
+                                        .size(ButtonDefaults.IconSize)
                             )
                             Text(stringResource(stringRes))
                         }

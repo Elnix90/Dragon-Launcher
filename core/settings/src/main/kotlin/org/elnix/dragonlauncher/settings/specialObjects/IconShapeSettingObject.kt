@@ -18,9 +18,10 @@ public data class IconShapeSettingObject(
     override val backupable: Boolean,
     override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<IconShape, String>() {
-
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
+
     override fun encode(value: IconShape): String? = IconShape.Companion.IconShapeJson.encode(value)
+
     override fun decode(raw: Any?): IconShape = IconShape.Companion.IconShapeJson.decode(raw, default)
 }
 
@@ -32,14 +33,14 @@ public fun MapSettingsStore.shape(
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
-): IconShapeSettingObject = IconShapeSettingObject(
-    key = key.isNotBlankKey,
-    title = title,
-    description = description,
-    icon = icon,
-    default = default,
-    onChanged = onChanged,
-    backupable = backupable,
-    settingsStore = this
-)
-
+): IconShapeSettingObject =
+    IconShapeSettingObject(
+        key = key.isNotBlankKey,
+        title = title,
+        description = description,
+        icon = icon,
+        default = default,
+        onChanged = onChanged,
+        backupable = backupable,
+        settingsStore = this
+    )

@@ -24,59 +24,65 @@ import org.elnix.dragonlauncher.icons.IconSettingsRepository
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
 
-
 @Stable
 @HiltViewModel
-public class IconsViewModel @Inject constructor(
-    private val iconsService: IconService,
-    private val badgeService: BadgeService,
-    iconSettingsRepository: IconSettingsRepository
-) : ViewModel() {
+public class IconsViewModel
+    @Inject
+    constructor(
+        private val iconsService: IconService,
+        private val badgeService: BadgeService,
+        iconSettingsRepository: IconSettingsRepository
+    ) : ViewModel() {
+        public val iconSettings: StateFlow<IconSettings> =
+            iconSettingsRepository.settings.stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                IconSettings()
+            )
 
+        public fun getIconPickerVM(application: Application): IconPickerVM =
+            IconPickerVM(application, iconsService)
 
-    public val iconSettings: StateFlow<IconSettings> = iconSettingsRepository.settings.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        IconSettings()
-    )
+        public fun getIcon(application: Application): StateFlow<LauncherIcon?> =
+            iconsService
+                .getAppIcon(
+                    application
+                ).stateIn(
+                    viewModelScope,
+                    SharingStarted.Eagerly,
+                    null
+                )
 
+        public fun getBadge(application: Application): StateFlow<Badge?> =
+            badgeService.getBadge(application).stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                null
+            )
 
-    public fun getIconPickerVM(application: Application): IconPickerVM =
-        IconPickerVM(application, iconsService)
+        public fun getIcon(point: Point): StateFlow<LauncherIcon?> =
+            iconsService.getPointIcon(point).stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                null
+            )
 
+        public fun getIcon(shortcut: Action.LaunchShortcut): StateFlow<LauncherIcon?> =
+            iconsService
+                .getShortcutIcon(
+                    shortcut
+                ).stateIn(
+                    viewModelScope,
+                    SharingStarted.Eagerly,
+                    null
+                )
 
-    public fun getIcon(application: Application): StateFlow<LauncherIcon?> = iconsService.getAppIcon(application).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-    public fun getBadge(application: Application): StateFlow<Badge?> = badgeService.getBadge(application).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-
-
-    public fun getIcon(point: Point): StateFlow<LauncherIcon?> = iconsService.getPointIcon(point).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-    public fun getIcon(shortcut: Action.LaunchShortcut): StateFlow<LauncherIcon?> = iconsService.getShortcutIcon(shortcut).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-    public fun getIcon(action: Action): StateFlow<LauncherIcon?> = iconsService.getActionIcon(action).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
+        public fun getIcon(action: Action): StateFlow<LauncherIcon?> =
+            iconsService.getActionIcon(action).stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                null
+            )
 
 //    /**
 //     * One-shot icon load that does NOT create a permanent [StateFlow] subscription.
@@ -95,43 +101,43 @@ public class IconsViewModel @Inject constructor(
 //    public fun reloadIcon(point: Point): Unit = iconsService.reloadPointIcon(point)
 //    public fun reloadIcon(shortcut: Action.LaunchShortcut): Unit = iconsService.reloadShortcutIcon(shortcut)
 
-    /**
-     * One-shot preview of a single app icon with the given [customIcon] and [properties],
-     * bypassing the store and the override manager. Used by the icon editor to render
-     * live previews while editing.
-     */
-    public suspend fun getAppIconOnce(
-        application: Application,
-        size: Int,
-        customIcon: CustomIcon?,
-        properties: CustomIconProperties?
-    ): LauncherIcon? =
-        iconsService.getAppIconOnce(application, size, customIcon, properties)
+        /**
+         * One-shot preview of a single app icon with the given [customIcon] and [properties],
+         * bypassing the store and the override manager. Used by the icon editor to render
+         * live previews while editing.
+         */
+        public suspend fun getAppIconOnce(
+            application: Application,
+            size: Int,
+            customIcon: CustomIcon?,
+            properties: CustomIconProperties?
+        ): LauncherIcon? =
+            iconsService.getAppIconOnce(application, size, customIcon, properties)
 
-    /**
-     * One-shot preview of a single point icon with the given [customIcon] and [properties],
-     * bypassing the store and the override manager. Used by the icon editor to render
-     * live previews while editing.
-     */
-    public suspend fun getPointIconOnce(
-        point: Point,
-        size: Int,
-        customIcon: CustomIcon?,
-        properties: CustomIconProperties?
-    ): LauncherIcon? =
-        iconsService.getPointIconOnce(point, size, customIcon, properties)
+        /**
+         * One-shot preview of a single point icon with the given [customIcon] and [properties],
+         * bypassing the store and the override manager. Used by the icon editor to render
+         * live previews while editing.
+         */
+        public suspend fun getPointIconOnce(
+            point: Point,
+            size: Int,
+            customIcon: CustomIcon?,
+            properties: CustomIconProperties?
+        ): LauncherIcon? =
+            iconsService.getPointIconOnce(point, size, customIcon, properties)
 
+        public fun updateMaxCacheSize(newSize: Int): Unit = iconsService.updateMaxCacheSize(newSize)
 
+        public fun reloadAllPointsIcons(): Unit = iconsService.reloadAllPointIcons()
 
-    public fun updateMaxCacheSize(newSize: Int): Unit = iconsService.updateMaxCacheSize(newSize)
-    public fun reloadAllPointsIcons(): Unit = iconsService.reloadAllPointIcons()
-    public fun incrementPointCacheSize(): Unit = iconsService.incrementPointCacheSize()
+        public fun incrementPointCacheSize(): Unit = iconsService.incrementPointCacheSize()
 
-    public fun reinstallAllIconPacks(): Unit = iconsService.reinstallAllIconPacks()
-    public fun updateIconPacks(): Unit = iconsService.requestIconPackListUpdate()
+        public fun reinstallAllIconPacks(): Unit = iconsService.reinstallAllIconPacks()
 
+        public fun updateIconPacks(): Unit = iconsService.requestIconPackListUpdate()
 
-    init {
-        viewModelInitialized()
+        init {
+            viewModelInitialized()
+        }
     }
-}

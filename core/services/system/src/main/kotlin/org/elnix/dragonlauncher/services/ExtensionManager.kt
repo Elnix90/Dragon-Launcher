@@ -8,38 +8,38 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Process
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
-import org.elnix.dragonlauncher.ktx.openUrl
-import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.EXTENSION_MANAGER_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logW
+import org.elnix.dragonlauncher.EXTENSION_MANAGER_TAG
+import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
+import org.elnix.dragonlauncher.ktx.openUrl
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
 public object ExtensionManager {
-
     public fun installExtension(ctx: Context, extension: ExtensionModel) {
         ctx.openUrl(extension.downloadUrl)
     }
 
-
     public fun installApk(ctx: Context, uri: Uri) {
         try {
             if (!ctx.packageManager.canRequestPackageInstalls()) {
-                val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                    data = "package:${ctx.packageName}".toUri()
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+                val intent =
+                    Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                        data = "package:${ctx.packageName}".toUri()
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
                 ctx.startActivity(intent)
                 ctx.showToast("Please allow unknown app installs first")
                 return
             }
 
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "application/vnd.android.package-archive")
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
-            }
+            val intent =
+                Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/vnd.android.package-archive")
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
             ctx.startActivity(intent)
         } catch (e: Exception) {
             logE(EXTENSION_MANAGER_TAG, e) { "Failed to install APK" }
@@ -50,12 +50,12 @@ public object ExtensionManager {
     public fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
         logD(EXTENSION_MANAGER_TAG) { "Checking extension installed for: $packageNameOrId" }
 
-        val disableSigCheck = kotlinx.coroutines.runBlocking {
-            DebugSettingsStore.disableExtensionSignatureCheck.get(ctx)
-        }
+        val disableSigCheck =
+            kotlinx.coroutines.runBlocking {
+                DebugSettingsStore.disableExtensionSignatureCheck.get(ctx)
+            }
 
         try {
-
             // Signature check
             if (!disableSigCheck) {
                 @Suppress("DEPRECATION")
@@ -71,7 +71,9 @@ public object ExtensionManager {
                 val targetSig = targetSignatures?.firstOrNull()?.toCharsString()
 
                 if (mySig == null || mySig != targetSig) {
-                    logW(EXTENSION_MANAGER_TAG) { "Signature mismatch for $packageNameOrId! Blocking detection. Enable 'Disable extension signature check' in debug to bypass." }
+                    logW(EXTENSION_MANAGER_TAG) {
+                        "Signature mismatch for $packageNameOrId! Blocking detection. Enable 'Disable extension signature check' in debug to bypass."
+                    }
                     return false
                 }
                 return true
@@ -91,7 +93,6 @@ public object ExtensionManager {
 
                 return isInstalled
             }
-
         } catch (_: Exception) {
             return false
         }

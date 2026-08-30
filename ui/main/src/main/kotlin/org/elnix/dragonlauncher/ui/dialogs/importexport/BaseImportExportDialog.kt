@@ -21,13 +21,14 @@ internal fun BaseImportExportDialog(
     onDismiss: () -> Unit,
     onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
-    val snapshotStateMapStores = remember(availableStores, defaultStores) {
-        mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
-            availableStores.forEach { store ->
-                put(store, store in defaultStores)
+    val snapshotStateMapStores =
+        remember(availableStores, defaultStores) {
+            mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
+                availableStores.forEach { store ->
+                    put(store, store in defaultStores)
+                }
             }
         }
-    }
 
     var hasClickedConfirm by remember { mutableStateOf(false) }
 
