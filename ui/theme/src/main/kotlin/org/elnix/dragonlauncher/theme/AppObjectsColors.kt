@@ -243,7 +243,7 @@ object AppObjectsColors {
     fun toggleButtonColors(): ToggleButtonColors =
         if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
-                ToggleButtonDefaults.toggleButtonColors(
+                ToggleButtonDefaults.colors(
                     containerColor = primary,
                     contentColor = onPrimary,
                     disabledContainerColor = surfaceVariant,
@@ -253,6 +253,6 @@ object AppObjectsColors {
                 )
             }
         } else {
-            ToggleButtonDefaults.toggleButtonColors()
+            ToggleButtonDefaults.colors()
         }
 }

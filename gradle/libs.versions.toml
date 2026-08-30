@@ -20,7 +20,7 @@ jakartaInject = "2.0.1"
 
 kotlin = "2.4.10"
 kotlinx-coroutines = "1.11.0"
-kotlinx-immutable = "0.5.1"
+kotlinx-immutable = "0.5.2"
 
 androidx-core = "1.19.0"
 kotlinxCoroutinesCore  = "1.11.0"
@@ -31,7 +31,7 @@ lifecycleRuntimeKtx = "2.11.0"
 lifecycleViewmodelNav3 = "2.11.0"
 activityCompose = "1.13.0"
 composeBom = "2026.08.00"
-material3 = "1.5.0-alpha26"
+material3 = "1.5.0-alpha27"
 reorderable = "3.1.0"
 runtimeAnnotation = "1.12.0"
 runtimeRetain = "1.12.0"
@@ -47,21 +47,25 @@ kotlinx-serialization = "1.11.0"
 shapeindicators = "2.1.1"
 #noinspection NewerVersionAvailable - Don't touch that working version, the next one is a mess to configure
 shizuku = "13.1.0"
-ksp = "2.3.7"
+ksp = "2.3.10"
 coil = "2.7.0"
-nav3Core = "1.1.6"
+nav3Core = "1.1.7"
 androidx-palette = "1.0.0"
+androidx-room = "2.8.4"
+
 ktlintGradle = "14.2.0"
+
+# Used by the root build.gradle
+#noinspection UnusedVersionCatalogEntry
 ktlint = "1.6.0"
 
-androidx-room = "2.8.4"
 junit = "4.13.2"
 junitExt = "1.3.0"
 androidx-test = "1.7.0"
 robolectric = "4.16.1"
 json = "20260814"
 
-dependency-analysis = "3.18.0"
+dependency-analysis = "3.19.1"
 
 
 # Those are my libraries, you can find them on my GitHub

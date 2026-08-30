@@ -102,7 +102,9 @@ fun IconPicker(
     val columns by DrawerSettingsStore.gridSize.asState()
 
     LazyVerticalGrid(
-        modifier = Modifier.fillMaxSize().heightIn(max = 9999.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .heightIn(max = 9999.dp),
         columns = GridCells.Fixed(columns),
         contentPadding = contentPadding
     ) {
@@ -213,12 +215,6 @@ fun IconPicker(
                             shapes = MenuDefaults.groupShapes()
                         ) {
                             DropdownMenuItem(
-                                selected = filterIconPack == null,
-                                shapes =
-                                    MenuDefaults.itemShape(
-                                        0,
-                                        installedIconPacks?.size?.plus(1) ?: 1
-                                    ),
                                 text = { Text(stringResource(id = R.string.icon_picker_filter_all_packs)) },
                                 onClick = {
                                     showIconPackFilter = false
@@ -227,18 +223,14 @@ fun IconPicker(
                                         viewModel.searchIcon(query, filterIconPack)
                                     }
                                 },
-                                selectedLeadingIcon = {
-                                    Icon(painterResource(R.drawable.check), null)
+                                leadingIcon = {
+                                    if (filterIconPack == null) {
+                                        Icon(painterResource(R.drawable.check), null)
+                                    }
                                 }
                             )
                             installedIconPacks?.forEachIndexed { i, iconPack ->
                                 DropdownMenuItem(
-                                    selected = filterIconPack == iconPack,
-                                    shapes =
-                                        MenuDefaults.itemShape(
-                                            i + 1,
-                                            installedIconPacks!!.size + 1
-                                        ),
                                     onClick = {
                                         showIconPackFilter = false
                                         filterIconPack = iconPack
@@ -246,11 +238,11 @@ fun IconPicker(
                                             viewModel.searchIcon(query, filterIconPack)
                                         }
                                     },
-                                    text = {
-                                        Text(iconPack.name)
-                                    },
-                                    selectedLeadingIcon = {
-                                        Icon(painterResource(R.drawable.check), null)
+                                    text = { Text(iconPack.name) },
+                                    leadingIcon = {
+                                        if (filterIconPack == iconPack) {
+                                            Icon(painterResource(R.drawable.check), null)
+                                        }
                                     }
                                 )
                             }
