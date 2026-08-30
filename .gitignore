@@ -13,3 +13,4 @@ local.properties
 .kotlin
 crash.txt
 extensions-registry.json
+mise.local.toml

@@ -1,0 +1,54 @@
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  # Generic hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: ['--markdown-linebreak-ext=md']
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-xml
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # Security: secret detection
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+
+  # Kotlin lint/format
+  - repo: local
+    hooks:
+      - id: ktlint
+        name: ktlint
+        entry: mise exec -- ktlint
+        language: system
+        files: '\.kt$'
+
+  # Markdown lint (wiki)
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.2
+    hooks:
+      - id: markdownlint-cli2
+
+  # Android string resource references validation
+  - repo: local
+    hooks:
+      - id: check-string-refs
+        name: Check string resource references
+        entry: scripts/check-string-refs.sh
+        language: script
+        files: '\.(kt|xml)$'
+
+  # Commit messages (Conventional Commits)
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, chore, refactor, perf, style, docs, test, ci, build]

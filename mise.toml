@@ -1,0 +1,93 @@
+# mise.toml — Dragon Launcher dev environment
+#
+# IDE integration:
+#   Emacs:     https://github.com/eki3z/mise.el
+#   IntelliJ:  https://github.com/134130/intellij-mise
+#   VSCode:    https://github.com/hverlin/mise-vscode
+
+[tools]
+java = "21"
+gradle = "9.7.0"
+kotlin = "2.4.10"
+ktlint = "1.5.0"
+"vfox:mise-plugins/vfox-android-sdk" = "latest"
+pre-commit = "latest"
+
+ffmpeg = { version = "latest", optional = true }
+"aqua:yashikota/exiftool-go" = { version = "latest", optional = true }
+github-cli = { version = "latest", optional = true }
+
+[env]
+ANDROID_HOME = "~/.android/sdk"
+
+[tasks.build]
+run = "./gradlew assembleDebug"
+description = "Build debug APK"
+
+[tasks.build-beta]
+run = "./gradlew assembleBeta"
+description = "Build beta APK"
+
+[tasks.build-release]
+run = "./gradlew assembleRelease"
+description = "Build release APK"
+
+[tasks.build-all]
+run = "./gradlew assembleDebug assembleBeta assembleRelease"
+description = "Build all variants"
+
+[tasks.install]
+run = "./gradlew installDebug"
+description = "Build + install debug on device"
+
+[tasks.install-beta]
+run = "./gradlew installBeta"
+description = "Build + install beta on device"
+
+[tasks.install-release]
+run = "./gradlew installRelease"
+description = "Build + install release on device"
+
+[tasks.test]
+run = "./gradlew testDebugUnitTest"
+description = "Run unit tests"
+
+[tasks.test-connected]
+run = "./gradlew connectedDebugAndroidTest"
+description = "Run instrumentation tests"
+
+[tasks.lint]
+run = "./gradlew lint"
+description = "Run Android Lint"
+
+[tasks.clean]
+run = "./gradlew clean"
+description = "Clean build artifacts"
+
+[tasks.deps]
+run = "./gradlew :app:dependencies"
+description = "Show dependency tree"
+
+[tasks.build-health]
+run = "./gradlew buildHealth"
+description = "Dependency analysis"
+
+[tasks.dev]
+run = "./gradlew installDebug"
+description = "Quick dev cycle: build + install"
+
+[tasks.release]
+run = "./gradlew installRelease && adb install -r app/build/outputs/apk/release/*.apk"
+description = "Build release + transfer + install"
+
+[tasks.check]
+depends = ["lint", "test"]
+description = "Full check: lint + tests"
+
+[tasks.full-clean]
+run = "./gradlew clean && rm -rf .gradle"
+description = "Clean everything"
+
+[tasks.setup-hooks]
+run = "pre-commit install && pre-commit install --hook-type commit-msg"
+description = "Install git hooks (pre-commit + commit-msg)"
