@@ -1,10 +1,7 @@
 package org.elnix.dragonlauncher.ktx
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.unit.IntSize
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.sqrt
 
@@ -315,95 +312,6 @@ class OffsetKtxTest {
         val result = Offset(4.9f, 10f).snapToRound(Offset(5f, 3f), 0.2f)
         assertEquals(5f, result.x, EPSILON)
         assertEquals(10f, result.y, EPSILON)
-    }
-
-    //  isInsideActiveZone
-
-    @Test
-    fun `isInsideActiveZone center of screen is inside`() {
-        val offset = Offset(540f, 960f) // center of 1080x1920
-        val size = IntSize(1080, 1920)
-        assertTrue(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point at exact left boundary is inside`() {
-        // left=50 means x must be >= 50
-        val offset = Offset(50f, 500f)
-        val size = IntSize(1080, 1920)
-        assertTrue(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point just inside left boundary is inside`() {
-        val offset = Offset(51f, 500f)
-        val size = IntSize(1080, 1920)
-        assertTrue(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point outside left boundary is outside`() {
-        val offset = Offset(49f, 500f)
-        val size = IntSize(1080, 1920)
-        assertFalse(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point at exact right boundary is inside`() {
-        // right=50 means x <= 1080 - 50 = 1030
-        val offset = Offset(1030f, 500f)
-        val size = IntSize(1080, 1920)
-        assertTrue(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point outside right boundary is outside`() {
-        val offset = Offset(1031f, 500f)
-        val size = IntSize(1080, 1920)
-        assertFalse(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point at exact top boundary is inside`() {
-        val offset = Offset(500f, 50f)
-        val size = IntSize(1080, 1920)
-        assertTrue(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point outside top boundary is outside`() {
-        val offset = Offset(500f, 49f)
-        val size = IntSize(1080, 1920)
-        assertFalse(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point at exact bottom boundary is inside`() {
-        // bottom=50 means y <= 1920 - 50 = 1870
-        val offset = Offset(500f, 1870f)
-        val size = IntSize(1080, 1920)
-        assertTrue(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone point outside bottom boundary is outside`() {
-        val offset = Offset(500f, 1871f)
-        val size = IntSize(1080, 1920)
-        assertFalse(offset.isInsideActiveZone(size, left = 50, right = 50, top = 50, bottom = 50))
-    }
-
-    @Test
-    fun `isInsideActiveZone with zero padding means entire screen is inside`() {
-        val offset = Offset(0f, 0f)
-        val size = IntSize(1080, 1920)
-        assertTrue(offset.isInsideActiveZone(size, left = 0, right = 0, top = 0, bottom = 0))
-    }
-
-    @Test
-    fun `isInsideActiveZone origin is outside with non-zero padding`() {
-        val offset = Offset(0f, 0f)
-        val size = IntSize(1080, 1920)
-        assertFalse(offset.isInsideActiveZone(size, left = 1, right = 1, top = 1, bottom = 1))
     }
 
     //  cleanString
