@@ -54,7 +54,7 @@ public class AppLifecycleViewModel @Inject constructor(
         }
 
         // HOME pressed while launcher already visible
-        if (delta in 1..HOME_REENTER_WINDOW_MS) {
+        if (delta in 0..HOME_REENTER_WINDOW_MS) {
             logD(TAG) { "HOME intent validated, sending to collector!" }
             _homeEvents.trySend(Unit)
         } else {

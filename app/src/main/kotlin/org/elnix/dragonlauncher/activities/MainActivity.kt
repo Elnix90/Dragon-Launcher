@@ -68,7 +68,14 @@ import kotlin.time.Duration.Companion.milliseconds
 class MainActivity : FragmentActivity(), WidgetHostProvider {
 
 
+    // Loads the logging system, do not remove, or you won't have any logs!
+    @Suppress("unused")
+    val dragonLogViewModel: DragonLogViewModel  by viewModels()
+
+
     val widgetsViewModel: WidgetsViewModel by viewModels()
+
+    val appLifecycleViewModel: AppLifecycleViewModel by viewModels()
 
     companion object {
         private var GLOBAL_APPWIDGET_HOST: AppWidgetHost? = null
@@ -348,13 +355,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                     return@setContent
                 }
 
-                // Loads the logging system, do not remove or you won't have any logs!
-                @Suppress("UnusedVariable", "unused")
-                val dragonLogViewModel: DragonLogViewModel = activityViewModel()
-
-                val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
-
-
                 DragonLauncherTheme {
 
                     // Force launch of full viewmodel after first frame for performance
@@ -402,14 +402,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         }
                     }
 
-                    LaunchedEffect(pendingHomeAction) {
-                        if (pendingHomeAction) {
-                            logD(TAG) { "HOME intent transferred to viewModel" }
-                            appLifecycleViewModel.onHomeAction()
-                            pendingHomeAction = false
-                        }
-                    }
-
                     MainAppUi(
                         onBindCustomWidget = { widgetId, provider, nestId ->
                             pendingAddNestId = nestId
@@ -443,19 +435,16 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
     }
 
 
-    private var pendingHomeAction by mutableStateOf(false)
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-
 
         /* Detects if the new Intent is the launcher one, and set the pending value to true */
         if (
             intent.action == Intent.ACTION_MAIN &&
             intent.hasCategory(Intent.CATEGORY_HOME)
         ) {
-            pendingHomeAction = true
+            appLifecycleViewModel.onHomeAction()
             logD(TAG) { "HOME intent received (pending)" }
         }
     }
@@ -467,7 +456,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
     override fun onPause() {
         super.onPause()
-        pendingHomeAction = false
     }
 
     override fun onStop() {
