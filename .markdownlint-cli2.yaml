@@ -1,0 +1,11 @@
+config:
+  # MD013 - line length: no limit for the wiki
+  MD013: false
+  # MD033 - HTML inline: allowed in the wiki
+  MD033: false
+  # MD041 - first line heading: wiki files start with descriptions
+  MD041: false
+
+globs:
+  - "wiki/**/*.md"
+  - "*.md"
