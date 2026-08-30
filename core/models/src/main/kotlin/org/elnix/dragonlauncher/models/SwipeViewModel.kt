@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ANGLE_LINE_TAG
+import org.elnix.dragonlauncher.base.Constants.Settings.DOUBLE_CLICK_ACTION_DELAY
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.json
@@ -117,7 +118,8 @@ public class SwipeViewModel @Inject constructor(
 
                 val currentTime = System.currentTimeMillis()
                 val diff = currentTime - lastClickTime
-                if (diff < 500) {
+                if (diff < DOUBLE_CLICK_ACTION_DELAY) {
+                    clearAfterLaunch()
                     _doubleClicActionChannel.trySend(Unit)
                     continue
                 }

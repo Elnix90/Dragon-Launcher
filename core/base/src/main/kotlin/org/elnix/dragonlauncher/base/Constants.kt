@@ -171,6 +171,8 @@ public object Constants {
          * For now, I'll only increase it a bit. from 5 to
          */
         public const val MAX_ITEMS_ALLOWED: Int = 8
+
+        public const val DOUBLE_CLICK_ACTION_DELAY: Int = 500
     }
 
     public object Drawer {
