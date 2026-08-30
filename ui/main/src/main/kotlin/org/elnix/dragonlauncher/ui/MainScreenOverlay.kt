@@ -122,7 +122,7 @@ fun MainScreenOverlay(
     val animatedCurrent = remember {
         Animatable(Offset.Zero, Offset.VectorConverter)
     }
-    
+
     /**
      * 1. selects the hovered point in the point service
      * 2. animates the offset whenever the hovered point changes to this new point offset using [Point.getPos]
@@ -226,7 +226,6 @@ fun MainScreenOverlay(
 
     LaunchedEffect(isDragging) {
         if (!isDragging) {
-            logI(SWIPE_TAG) { "Resolving app launch: isAliveNestActive: $isAnyLiveNestActive ($liveNestControllersStack)" }
             when {
                 liveNestControllersStack[0].suppressMainLaunch -> {
                     logI(SWIPE_TAG) { "Aborted because suppressMainLaunch was true" }
