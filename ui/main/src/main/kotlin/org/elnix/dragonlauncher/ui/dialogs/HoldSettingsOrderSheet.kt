@@ -59,7 +59,9 @@ fun HoldSettingsOrderSheet(
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val holdMenuEntries by swipeViewModel.holdMenuEntriesString.asState()
+    val swipeService = swipeViewModel.swipeService
+
+    val holdMenuEntries by swipeService.holdMenuEntriesString.asState()
 
     // I don't want to put this in the viewmodel as it might be a lot of boilerplate, so I fall back to retain API
     var menuItems: List<MenuItem> by retain { mutableStateOf(emptyList()) }
@@ -95,12 +97,12 @@ fun HoldSettingsOrderSheet(
     DragonModalBottomSheet(
         onDismissRequest = {
             // Save in the reordered state, but only selected items
-            swipeViewModel.holdMenuEntriesString.value =
+            swipeService.holdMenuEntriesString.value =
                 menuItems
                     .filter { it.isSelected.value }
                     .map { it.route }
 
-            swipeViewModel.saveHoldMenuEntries()
+            swipeService.saveHoldMenuEntries()
             onDismiss()
         },
         skipPartiallyExpanded = true

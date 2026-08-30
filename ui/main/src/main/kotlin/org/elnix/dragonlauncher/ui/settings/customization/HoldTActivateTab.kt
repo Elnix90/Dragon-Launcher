@@ -66,7 +66,8 @@ fun HoldToActivateTab(
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
-    val holdObject by swipeViewModel.holdObject.asState()
+    val swipeService = swipeViewModel.swipeService
+    val holdObject by swipeService.holdObject.asState()
 
     val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
     val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
@@ -87,7 +88,7 @@ fun HoldToActivateTab(
         title = stringResource(R.string.hold_settings),
         onBack = {
             scope.launch {
-                swipeViewModel.saveHoldObject()
+                swipeService.saveHoldObject()
                 navigator.onBack()
             }
         },
@@ -96,7 +97,7 @@ fun HoldToActivateTab(
         onReset = {
             scope.launch {
                 HoldToActivateArcSettingsStore.resetAll(ctx)
-                swipeViewModel.resetHoldObject()
+                    swipeService.resetHoldObject()
             }
         },
         topContent = {
@@ -212,7 +213,7 @@ fun HoldToActivateTab(
                 allowAlignCustomization = false,
                 allowEraseBackgroundCustomization = false
             )
-        ) { swipeViewModel.holdObject.value = it }
+        ) { swipeService.holdObject.value = it }
 
 
         DragonSettingsGroup(R.string.configuration) {

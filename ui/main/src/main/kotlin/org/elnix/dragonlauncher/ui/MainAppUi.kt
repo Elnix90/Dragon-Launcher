@@ -159,6 +159,8 @@ fun MainAppUi(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val scope = rememberCoroutineScope()
+
+    val swipeService = swipeViewModel.swipeService
     val pointsService = pointsViewModel.pointsService
 
     var showFilePicker: Point? by remember { mutableStateOf(null) }
@@ -296,7 +298,7 @@ fun MainAppUi(
     fun launchAction(point: Point) {
         val action = point.action
 
-        swipeViewModel.clearAfterLaunch()
+        swipeService.clearAfterLaunch()
         appLifecycleViewModel.blockHomeActionsTemporarily()
 
         try {
@@ -360,7 +362,7 @@ fun MainAppUi(
         }
     }
     LaunchedEffect(Unit) {
-        swipeViewModel.doubleClicActionChannel.collect {
+        swipeService.doubleClicActionChannel.collect {
             if (doubleClickAction != null) {
                 launchAction(doubleClickAction!!)
             }

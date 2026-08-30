@@ -70,16 +70,17 @@ fun MainScreenOverlay(
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
     val pointsService = pointsViewModel.pointsService
+    val swipeService = swipeViewModel.swipeService
 
     val defaultPoint by pointsService.defaultPoint.asState()
     val defaultNest by pointsService.defaultNest.asState()
 
 
-    val lineObject by swipeViewModel.lineObject.asState()
-    val angleObject by swipeViewModel.angleObject.asState()
-    val startObject by swipeViewModel.startObject.asState()
-    val endObject by swipeViewModel.endObject.asState()
-    val order by swipeViewModel.lineObjectOrder.asState()
+    val lineObject by swipeService.lineObject.asState()
+    val angleObject by swipeService.angleObject.asState()
+    val startObject by swipeService.startObject.asState()
+    val endObject by swipeService.endObject.asState()
+    val order by swipeService.lineObjectOrder.asState()
 
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 

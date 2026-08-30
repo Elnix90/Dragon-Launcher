@@ -68,10 +68,13 @@ fun MainScreen(
     val navigator = LocalNavigator.current
     val density = LocalDensity.current
 
-    val mainScreenLayers by swipeViewModel.mainScreenLayerOrder.asState()
-    val holdObject by swipeViewModel.holdObject.asState()
-
+    val swipeService = swipeViewModel.swipeService
     val widgetsService = widgetsViewModel.widgetsService
+    val nestNavigationService = pointsViewModel.nestsNavigationService
+
+    val mainScreenLayers by swipeService.mainScreenLayerOrder.asState()
+    val holdObject by swipeService.holdObject.asState()
+
     val dm = widgetsService.dm
     val widgetsObjects by widgetsService.widgets.asState()
 
@@ -81,14 +84,13 @@ fun MainScreen(
     val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
 
 
-    val start by swipeViewModel.start.asState()
-    val current by swipeViewModel.current.asState()
+    val start by swipeService.start.asState()
+    val current by swipeService.current.asState()
 
     var holdOffset by remember { mutableStateOf<Offset?>(null) }
     var showDropDownMenuSettings by remember { mutableStateOf(false) }
 
-    val nestNavigation = pointsViewModel.nestsNavigationService
-    val nestId by nestNavigation.currentNestId.collectAsState()
+    val nestId by nestNavigationService.currentNestId.collectAsState()
 
     val filteredWidgetObjects by remember(widgetsObjects, nestId) {
         derivedStateOf {
@@ -100,17 +102,17 @@ fun MainScreen(
     fun launchAction(point: Point) {
         // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
-            Action.GoParentNest -> nestNavigation.goBack()
-            is Action.OpenNest -> nestNavigation.goToNest(action.nestId)
+            Action.GoParentNest -> nestNavigationService.goBack()
+            is Action.OpenNest -> nestNavigationService.goToNest(action.nestId)
             else -> {
-                nestNavigation.clearStack()
+                nestNavigationService.clearStack()
                 onLaunchAction(point)
             }
         }
     }
 
 
-    val holdMenuEntries by swipeViewModel.holdMenuEntriesString.asState()
+    val holdMenuEntries by swipeService.holdMenuEntriesString.asState()
 
     val hold = rememberHoldToOpenSettings(
         onSettings = { offset ->
@@ -147,7 +149,7 @@ fun MainScreen(
      */
     BackHandler {
         if (nestId != 0) {
-            nestNavigation.goBack()
+            nestNavigationService.goBack()
         } else if (backAction != null) {
             launchAction(
                 dummySwipePoint(backAction)
@@ -163,7 +165,7 @@ fun MainScreen(
             .fillMaxSize()
             .background(Color.Transparent)
             .pointerInput(Unit, nestId) {
-                with(swipeViewModel) { mainDragGesture() }
+                with(swipeService) { mainDragGesture() }
             }
             .then(hold.pointerModifier)
     ) {

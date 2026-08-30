@@ -52,6 +52,7 @@ dependencies {
 
     api(project(":core:services:icons"))
     api(project(":core:services:fonts"))
+    api(project(":core:services:swipe"))
     api(project(":core:services:colors"))
     api(project(":core:services:points"))
     api(project(":core:services:compat"))

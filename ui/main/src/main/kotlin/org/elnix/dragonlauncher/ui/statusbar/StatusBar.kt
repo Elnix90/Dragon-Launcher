@@ -689,7 +689,7 @@ fun StatusBarItem(
 
 @Composable
 private inline fun <reified T: MainScreenLayer> showX(swipeViewModel: SwipeViewModel = activityViewModel()): MutableState<Boolean> {
-    val mainScreenLayers by swipeViewModel.mainScreenLayerOrder.asState()
+    val mainScreenLayers by swipeViewModel.swipeService.mainScreenLayerOrder.asState()
 
     return remember(mainScreenLayers) {
         object : MutableState<Boolean> {
@@ -698,7 +698,7 @@ private inline fun <reified T: MainScreenLayer> showX(swipeViewModel: SwipeViewM
                     .find { it is T }
                     ?: error("No ${T::class.simpleName} provided in the list")) as T).enabled
                 set(value) {
-                    swipeViewModel.mainScreenLayerOrder.value = mainScreenLayers.map { currentLayer ->
+                    swipeViewModel.swipeService.mainScreenLayerOrder.value = mainScreenLayers.map { currentLayer ->
                         when (currentLayer) {
                             is MainScreenLayer.ChargingAnimation -> currentLayer.copy(enabled = value) as MainScreenLayer
                             is MainScreenLayer.CustomDim -> currentLayer.copy(enabled = value) as MainScreenLayer
@@ -708,7 +708,7 @@ private inline fun <reified T: MainScreenLayer> showX(swipeViewModel: SwipeViewM
                             is MainScreenLayer.Widgets -> currentLayer.copy(enabled = value) as MainScreenLayer
                         }
                     }
-                    swipeViewModel.saveMainScreenLayers()
+                    swipeViewModel.swipeService.saveMainScreenLayers()
                 }
 
             override fun component1(): Boolean = value

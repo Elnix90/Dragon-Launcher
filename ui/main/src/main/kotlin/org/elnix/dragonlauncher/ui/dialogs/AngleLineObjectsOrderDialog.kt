@@ -17,19 +17,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.SwipeViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import sh.calvin.reorderable.ReorderableItem
@@ -38,22 +36,18 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AngleLineObjectsOrderDialog(
-    order: List<AngleLineObjects>,
-    onChange: (newOrder: List<AngleLineObjects>) -> Unit,
+    swipeViewModel: SwipeViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {
-    var objects by remember(order) { mutableStateOf(order) }
-    LaunchedEffect(objects) {
-        onChange(objects)
-    }
+    val swipeService = swipeViewModel.swipeService
+    val angleLineObjects by swipeService.lineObjectOrder.asState()
 
 
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
         onMove = { from, to ->
-            // TODO use onChange here and not another state
-            objects = objects.toMutableList().apply {
+            swipeService.lineObjectOrder.value = angleLineObjects.toMutableList().apply {
                 add(to.index, removeAt(from.index))
             }
         }
@@ -63,14 +57,14 @@ fun AngleLineObjectsOrderDialog(
         onDismissRequest = onDismiss
     ) {
         DialogTitle(stringResource(R.string.configure_draw_order)) {
-            objects = AngleLineObjects.entries
+            swipeService.resetAngleLineOrder()
         }
 
         LazyColumn(
             state = lazyListState,
         ) {
 
-            items(objects, key = { it.name }) { item ->
+            items(angleLineObjects, key = { it.name }) { item ->
 
                 ReorderableItem(
                     state = reorderState,

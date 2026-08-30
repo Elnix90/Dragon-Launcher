@@ -86,10 +86,12 @@ fun AngleLineTab(
 
     var currentEditObject by remember { mutableStateOf(AngleObject.Line) }
 
-    val lineObject by swipeViewModel.lineObject.asState()
-    val angleObject by swipeViewModel.angleObject.asState()
-    val startObject by swipeViewModel.startObject.asState()
-    val endObject by swipeViewModel.endObject.asState()
+    val swipeService = swipeViewModel.swipeService
+
+    val lineObject by swipeService.lineObject.asState()
+    val angleObject by swipeService.angleObject.asState()
+    val startObject by swipeService.startObject.asState()
+    val endObject by swipeService.endObject.asState()
 
     val startOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val endOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
@@ -97,7 +99,7 @@ fun AngleLineTab(
 
     var moveStartOrEnd by remember { mutableStateOf(false) }
 
-    val order by swipeViewModel.lineObjectOrder.asState()
+    val order by swipeService.lineObjectOrder.asState()
     var showOrderDialog by remember { mutableStateOf(false) }
 
     val sweepState = rememberSweepAngle()
@@ -157,15 +159,15 @@ fun AngleLineTab(
     SettingsScaffold(
         title = stringResource(R.string.angle_line),
         onBack = {
-            swipeViewModel.saveLineObjects()
-            swipeViewModel.saveOrder()
+            swipeService.saveLineObjects()
+            swipeService.saveAngleLineOrder()
             navigator.onBack()
         },
         helpText = stringResource(R.string.angle_line_help),
         resetText = stringResource(R.string.reset_angle_tab),
         onReset = {
-            swipeViewModel.resetLineObjects()
-            swipeViewModel.resetOrder()
+            swipeService.resetLineObjects()
+            swipeService.resetAngleLineOrder()
         },
         specialSettingsTitleContent = {
             AnimatedFab(
@@ -276,7 +278,7 @@ fun AngleLineTab(
                                         allowRotationCustomization = false,
                                         allowAlignCustomization = false
                                     )
-                                ) { swipeViewModel.lineObject.value = it }
+                                ) { swipeService.lineObject.value = it }
                             }
                         }
 
@@ -289,7 +291,7 @@ fun AngleLineTab(
                                     title = R.string.angle_object,
                                     editObject = angleObject,
                                     default = defaultAngleCustomObject
-                                ) { swipeViewModel.angleObject.value = it }
+                                ) { swipeService.angleObject.value = it }
                             }
                         }
 
@@ -302,7 +304,7 @@ fun AngleLineTab(
                                     title = R.string.start_object,
                                     editObject = startObject,
                                     default = defaultStartCustomObject
-                                ) { swipeViewModel.startObject.value = it }
+                                ) { swipeService.startObject.value = it }
                             }
                         }
 
@@ -315,7 +317,7 @@ fun AngleLineTab(
                                     title = R.string.end_object,
                                     editObject = endObject,
                                     default = defaultEndCustomObject
-                                ) { swipeViewModel.endObject.value = it }
+                                ) { swipeService.endObject.value = it }
                             }
                         }
                     }
@@ -341,9 +343,6 @@ fun AngleLineTab(
     }
 
     if (showOrderDialog) {
-        AngleLineObjectsOrderDialog(
-            order = order,
-            onChange = { swipeViewModel.lineObjectOrder.value = it }
-        ) { swipeViewModel.saveOrder() }
+        AngleLineObjectsOrderDialog { showOrderDialog = false }
     }
 }

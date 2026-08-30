@@ -49,14 +49,15 @@ fun MainScreeLayersTab(
     swipeViewModel: SwipeViewModel = activityViewModel()
 ) {
     val navigator = LocalNavigator.current
+    val swipeService = swipeViewModel.swipeService
 
-    val order by swipeViewModel.mainScreenLayerOrder.asState()
+    val order by swipeService.mainScreenLayerOrder.asState()
 
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
         onMove = { from, to ->
-            swipeViewModel.mainScreenLayerOrder.value = order.toMutableList().apply {
+            swipeService.mainScreenLayerOrder.value = order.toMutableList().apply {
                 add(to.index, removeAt(from.index))
             }
         }
@@ -66,10 +67,10 @@ fun MainScreeLayersTab(
         title = stringResource(R.string.main_screen_layers),
         helpText = stringResource(R.string.main_screen_layers_help),
         onReset = {
-            swipeViewModel.resetMainScreenLayers()
+            swipeService.resetMainScreenLayers()
         },
         onBack = {
-            swipeViewModel.saveMainScreenLayers()
+            swipeService.saveMainScreenLayers()
             navigator.onBack()
         },
         lasyListState = lazyListState,
@@ -113,7 +114,7 @@ fun MainScreeLayersTab(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
                                     onCheckedChange = {
-                                        swipeViewModel.mainScreenLayerOrder.value = order.map {
+                                        swipeService.mainScreenLayerOrder.value = order.map {
                                             if (it == item) it.copyWithEnabled(!it.enabled) else it
                                         }
                                     },
@@ -149,13 +150,13 @@ fun MainScreeLayersTab(
                                                 description = stringResource(R.string.show_after_help),
                                                 resetEnabled = tempShowAfter != MainScreenLayer.CustomDim.defaultShowAfterMs,
                                                 onReset = {
-                                                    swipeViewModel.mainScreenLayerOrder.value = order.map {
+                                                    swipeService.mainScreenLayerOrder.value = order.map {
                                                         if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs) else it
                                                     }
                                                 },
                                                 onDragStateChange = { isDragging ->
                                                     if (!isDragging) {
-                                                        swipeViewModel.mainScreenLayerOrder.value = order.map {
+                                                        swipeService.mainScreenLayerOrder.value = order.map {
                                                             if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
                                                         }
                                                     }
@@ -171,13 +172,13 @@ fun MainScreeLayersTab(
                                                 description = stringResource(R.string.dim_amount_help),
                                                 resetEnabled = tempDimAmount != MainScreenLayer.CustomDim.defaultDimAmount,
                                                 onReset = {
-                                                    swipeViewModel.mainScreenLayerOrder.value = order.map {
+                                                    swipeService.mainScreenLayerOrder.value = order.map {
                                                         if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = MainScreenLayer.CustomDim.defaultDimAmount) else it
                                                     }
                                                 },
                                                 onDragStateChange = { isDragging ->
                                                     if (!isDragging) {
-                                                        swipeViewModel.mainScreenLayerOrder.value = order.map {
+                                                        swipeService.mainScreenLayerOrder.value = order.map {
                                                             if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
                                                         }
                                                     }
@@ -198,12 +199,12 @@ fun MainScreeLayersTab(
                                                 title = R.string.line_before_nests,
                                                 resetEnabled = item.lineBeforeNests != MainScreenLayer.DragOverlay.defaultLineBeforeNests,
                                                 onReset = {
-                                                    swipeViewModel.mainScreenLayerOrder.value = order.map {
+                                                    swipeService.mainScreenLayerOrder.value = order.map {
                                                         if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests) else it
                                                     }
                                                 }
                                             ) { newValue ->
-                                                swipeViewModel.mainScreenLayerOrder.value = order.map {
+                                                swipeService.mainScreenLayerOrder.value = order.map {
                                                     if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
                                                 }
                                             }
