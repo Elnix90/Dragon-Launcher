@@ -102,9 +102,10 @@ fun IconPicker(
     val columns by DrawerSettingsStore.gridSize.asState()
 
     LazyVerticalGrid(
-        modifier = Modifier
-            .fillMaxSize()
-            .heightIn(max = 9999.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .heightIn(max = 9999.dp),
         columns = GridCells.Fixed(columns),
         contentPadding = contentPadding
     ) {
