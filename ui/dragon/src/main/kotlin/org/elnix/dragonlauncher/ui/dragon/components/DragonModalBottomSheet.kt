@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.dragon.components
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
@@ -14,8 +15,14 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalFullscreen
 
 /**
  * Used in modal sheets to give padding to the content to avoid it being directly on the edges
@@ -58,7 +65,7 @@ fun DragonModalBottomSheet(
     val containerColor = BottomSheetDefaults.ContainerColor
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        modifier = modifier.navigationBarsPadding(),
         sheetState = sheetState,
         sheetMaxWidth = BottomSheetDefaults.SheetMaxWidth,
         sheetGesturesEnabled = true,
@@ -70,8 +77,29 @@ fun DragonModalBottomSheet(
         dragHandle = ::DragHandle,
         contentWindowInsets = modalWindowInsets,
         properties = properties,
-        content = content
-    )
+    ) {
+
+        // AHAHAHAHAHAHAHAHA FUCK ITTT
+        // FUUUUUUUUUUUCK ANDROID AND YOUR WINDOWS VIEWS!!!!
+        // I FINALLY MANAGED TO MAKE IT!!!!!!!!!!
+        // THE SHEET IS NOT FULLSCREEN WHEN IT APPEARS NOWWWWWW
+
+        val view = LocalView.current
+        val fullscreen = LocalFullscreen.current
+        val dialogWindow = (view.parent as? DialogWindowProvider)?.window
+
+        if (fullscreen) {
+            SideEffect {
+                dialogWindow?.let { window ->
+                    val controller = WindowInsetsControllerCompat(window, window.decorView)
+                    controller.hide(WindowInsetsCompat.Type.systemBars())
+                    controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
+            }
+        }
+
+        content()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

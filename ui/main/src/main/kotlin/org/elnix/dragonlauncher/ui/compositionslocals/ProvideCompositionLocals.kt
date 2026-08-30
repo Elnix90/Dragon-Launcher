@@ -13,7 +13,9 @@ import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalFullscreen
 import org.elnix.dragonlauncher.ui.composition.LocalColorPickerMode
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
@@ -24,6 +26,8 @@ fun ProvideGlobalCompositionLocals(
     content: @Composable () -> Unit
 ) {
     val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
+    val fullscreen by UiSettingsStore.fullScreen.asState()
+
     val elementsJson by StatusBarJsonSettingsStore.jsonSetting.asState()
 
     val elements by remember(elementsJson) {
@@ -46,6 +50,7 @@ fun ProvideGlobalCompositionLocals(
 
         LocalStatusBarElements provides elements,
         LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
+        LocalFullscreen provides fullscreen,
         LocalNestDebugOverlay provides nestDebugOverlay,
         LocalColorPickerMode provides colorPickerMode
     ) {
