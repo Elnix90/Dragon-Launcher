@@ -8,9 +8,7 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.elnix90.logging.logD
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.SECURITY_SERVICE
 import org.elnix.dragonlauncher.base.Constants.Signatures.DRAGON_LAUNCHER_SIGNATURE_HASH
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Device
@@ -81,12 +79,10 @@ public class SecurityViewModel @Inject constructor(
 
 
     public fun lock() {
-        logD(SECURITY_SERVICE) { "User asked to lock!" }
         isLocked.value = true
     }
 
     public fun unlock() {
-        logD(SECURITY_SERVICE) { "User asked to unlock!" }
         isLocked.value = false
     }
 
