@@ -10,18 +10,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.core.SettingsBackupManager
 import io.github.elnix90.core.stores.SettingsStore
-import org.elnix.dragonlauncher.BACKUP_TAG
-import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.BACKUP_TAG
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.dialogs.importexport.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.MigrationDialog
+import org.elnix.dragonlauncher.ui.dialogs.importexport.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
 import org.json.JSONObject
 
@@ -42,7 +41,6 @@ fun ImportBackupButton(
 
     val settingsImportLauncher = rememberSettingsImportLauncher(
         onJsonReady = { json ->
-            logD(BACKUP_TAG) { "Json ready: $json" }
             if (backupViewModel.isLegacyBackup(json.toString())) {
                 legacyJsonString = json.toString()
             } else {
