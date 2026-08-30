@@ -1,0 +1,8 @@
+4.1.2 (Labyrinth)
+2026-08-30
+[NEW]
+[IMPROVED]
+* Optimized glow drawing for more FPS
+* Modal bottom sheets do not force status bar when in fullscreen anymore
+ [FIXED]
+* Bizarre animated offsets in the ain screen and fixed hsv color computation

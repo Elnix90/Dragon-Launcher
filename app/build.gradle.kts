@@ -25,8 +25,8 @@ extensions.configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "org.elnix.dragonlauncher"
-        versionName = "4.1.1"
-        versionCode = 61
+        versionName = "4.1.2"
+        versionCode = 62
     }
 
     val hasSigningConfig = env("KEYSTORE_FILE") != null &&
