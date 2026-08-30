@@ -24,10 +24,25 @@ data class SweepAngleState(
     /** Resets all state, typically called on gesture end or cancel. */
     val reset: () -> Unit
 ) {
-    fun angle360(): Float {
-        val wrapped = sweepAngle() % 360f
-        return if (wrapped < 0f) wrapped + 360f else wrapped
-    }
+
+}
+
+/**
+ * Angle360 on the receiver [Float] that is an angle but not wrapped.
+ * The receiver could be an angle of 720° and this function converts it to the 0..360 range
+ */
+fun Float.angle360(): Int {
+    val wrapped = this % 360f
+    return (if (wrapped < 0f) wrapped + 360f else wrapped).toInt()
+}
+
+/**
+ * Angle360 on the receiver [Int] that is an angle but not wrapped.
+ * The receiver could be an angle of 720° and this function converts it to the 0..360 range
+ */
+fun Int.angle360(): Int {
+    val wrapped = this % 360
+    return if (wrapped < 0f) wrapped + 360 else wrapped
 }
 
 @Composable

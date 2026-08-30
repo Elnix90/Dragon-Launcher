@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -24,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.SWIPE_TAG
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -52,6 +49,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
+import org.elnix.dragonlauncher.ui.remembers.angle360
 import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 import org.elnix.dragonlauncher.ui.remembers.rememberCycleActionsController
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldAndRunController
@@ -70,7 +68,6 @@ fun MainScreenOverlay(
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
-    val scope = rememberCoroutineScope()
 
     val pointsService = pointsViewModel.pointsService
 
@@ -104,61 +101,57 @@ fun MainScreenOverlay(
         rootNestId = currentNestId
     )
 
-    // Find which level is currently active (deepest active one)
+    /** Find which level is currently active (highest active one) */
     val activeLevelIndex = liveNestControllersStack.indexOfLast { it.isActive }
-    assert(activeLevelIndex > -1)
-
-    val deepestController = liveNestControllersStack[activeLevelIndex]
+    val highestController = liveNestControllersStack[activeLevelIndex]
 
     val isAnyLiveNestActive = activeLevelIndex > 0
 
-    val selectedPointsPerLevel: List<Point?> =
-        buildList {
-            for (i in 0..activeLevelIndex) {
-                add(liveNestControllersStack[i].nestedHit?.selectedPoint)
-            }
-        }
+    val hoveredPoint = liveNestControllersStack.findLast { liveNestState ->
+        liveNestState.nestedHitResult?.selectedPoint != null
+    }?.nestedHitResult?.selectedPoint
 
-    val hoveredPoint = selectedPointsPerLevel.findLast { it != null }
-
-    val animatedCurrent: Animatable<Offset, AnimationVector2D> = remember(start) { Animatable(start ?: Offset.Unspecified, Offset.VectorConverter) }
-
-    // Uses to avoid the strange animation where the end block comes from half a universe away because it wasn't ever initialized (Offset.Unspecified)
-    LaunchedEffect(start) {
-        scope.launch {
-            animatedCurrent.snapTo(Offset.Zero)
-        }
+    /**
+     * The offset that is used to provide an animated offset to current selected points, when user uses animation when snapping.
+     * It has to have checked both in order to use this.
+     *
+     * The offset is animated when the [hoveredPoint] changes in order to respond to their offset
+     *
+     * [Offset.Zero] is considered the center of the nest, or in other words, [start]
+     */
+    val animatedCurrent = remember {
+        Animatable(Offset.Zero, Offset.VectorConverter)
     }
-
+    
+    /**
+     * 1. selects the hovered point in the point service
+     * 2. animates the offset whenever the hovered point changes to this new point offset using [Point.getPos]
+     */
     LaunchedEffect(hoveredPoint) {
         val hoveredPointId = hoveredPoint?.id
         pointsService.selectOnyOne(hoveredPointId)
 
-        if (hoveredPointId != null && animationWhenSnapping) {
-            pointsService.findPointById(hoveredPointId)?.let { p ->
-                if (current != null) {
-                    scope.launch {
-                        animatedCurrent.animateTo(
-                            targetValue = p.getPos(),
-                            animationSpec = bouncySpec()
-                        )
-                    }
-                }
-            }
-        }
+        if (!animationWhenSnapping || hoveredPoint == null || (isAnyLiveNestActive && hoveredPoint == highestController.hostPoint)) return@LaunchedEffect
+
+        animatedCurrent.animateTo(
+            targetValue = hoveredPoint.getPos(),
+            animationSpec = bouncySpec()
+        )
     }
 
+    /**
+     * This prevents the animated offset to always coming from the center, but start animating from the current pos
+     * Which should be always non-null id a point is selected.
+     *
+     * it snaps either when the root nest is on no point, or when the highest live lest is at its center (the hovered point is the host)
+     */
     LaunchedEffect(current) {
-        if (hoveredPoint == null && current != null) {
-            val liveNestCenter = if (isAnyLiveNestActive) {
-                deepestController.liveNestCenter
-            } else {
-                start
-            } ?: return@LaunchedEffect
+        if (!animationWhenSnapping) return@LaunchedEffect
+        if (!isDragging) return@LaunchedEffect
 
-            scope.launch {
-                animatedCurrent.snapTo(current - liveNestCenter)
-            }
+        if (hoveredPoint == null || (isAnyLiveNestActive && hoveredPoint == highestController.hostPoint)) {
+            // The highest controller canter may be null when the user is not dragging
+            animatedCurrent.snapTo(current - (highestController.liveNestCenter ?: start))
         }
     }
 
@@ -167,10 +160,12 @@ fun MainScreenOverlay(
         isDragging = isDragging
     )
 
-    // When a non-base cycle stage is active, substitute the stage's action in the preview point
-    // so actionsInCircle and AppPreviewTitle reflect the action that will fire on release.
-    // Loop Over reuses the last stage's action with a temporary label; customIcon is cleared
-    // whenever either the base or staged action is OpenCircleNest (mini-nest rings need null icon).
+    /**
+     * When a non-base cycle stage is active, substitute the stage's action in the preview point
+     * so actionsInCircle and AppPreviewTitle reflect the action that will fire on release.
+     * Loop Over reuses the last stage's action with a temporary label; customIcon is cleared
+     * whenever either the base or staged action is OpenCircleNest (mini-nest rings need null icon).
+     */
     val displayPoint: Point? = hoveredPoint?.let { hp ->
         val ca = hp.cycleActions
         if (ca.isNullOrEmpty()) return@let hp
@@ -209,11 +204,11 @@ fun MainScreenOverlay(
     LaunchedEffect(hoveredPoint?.id, liveNestControllersStack.count { it.isActive }) {
         hoveredPoint?.let { point ->
             if (!disableHapticFeedbackGlobally) {
-                val hitNestId = deepestController.nestedNestId ?: return@let
+                val hitNestId = highestController.nestedNestId ?: return@let
                 val hitNest = pointsService.findNestById(hitNestId)
 
                 val targetShape =
-                    hitNest.getInterSectionShapes(defaultNest, false).find { deepestController.nestedHit?.selectedPoint?.shapeId == it.id }
+                    hitNest.getInterSectionShapes(defaultNest, false).find { highestController.nestedHitResult?.selectedPoint?.shapeId == it.id }
 
                 val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: defaultHapticFeedback())
                 hapticToPerform.perform(ctx)
@@ -222,8 +217,8 @@ fun MainScreenOverlay(
     }
 
     val haptic = LocalHapticFeedback.current
-    LaunchedEffect(deepestController.nestedHit?.isInCancelZone) {
-        if (isAnyLiveNestActive && deepestController.isActive && deepestController.nestedHit?.isInCancelZone == true && !disableHapticFeedbackGlobally) {
+    LaunchedEffect(highestController.nestedHitResult?.isInCancelZone) {
+        if (isAnyLiveNestActive && highestController.isActive && highestController.nestedHitResult?.isInCancelZone == true && !disableHapticFeedbackGlobally) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         }
     }
@@ -242,7 +237,7 @@ fun MainScreenOverlay(
                 }
 
                 else -> {
-                    val nestedPoint = deepestController.resolveOnRelease()
+                    val nestedPoint = highestController.resolveOnRelease()
                     if (nestedPoint != null) {
                         val stageAction = cycleActionsController.resolveOnRelease()
                         if (stageAction != null) {
@@ -269,7 +264,7 @@ fun MainScreenOverlay(
     val multiplyOrSubtractOpacityInLiveNests by UiSettingsStore.multiplyOrSubtractOpacityInLiveNests.asState()
 
     /**
-     * Alpha value for each layer: main nest, then each active Live Nest overlay (from deepest to shallowest).
+     * Alpha value for each layer: main nest, then each active Live Nest overlay (from highest to shallowest).
      * The more the user go deeper, the more transparent first layers get
      * */
     val liveNestLayersAlphas: List<Float> = buildList {
@@ -308,60 +303,91 @@ fun MainScreenOverlay(
         DebugZone(debugInfo) {
             Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
             Text("current = ${current?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
-            Text("sweep raw = %.1f°".format(deepestController.sweepAngleState.sweepAngle()))
-            Text("angle 0–360 = %.1f°".format(deepestController.sweepAngleState.angle360()))
+            Text("sweep raw = %.1f°".format(highestController.sweepAngleState.sweepAngle()))
             Text("drag = $isDragging")
             Text("activeLevel = $activeLevelIndex")
             Text("isAliveNestActive = $isAnyLiveNestActive")
-            Text("selectedPointPerLevel = ${selectedPointsPerLevel.map { it?.id }}")
             Text("current nest = $currentNestId")
             Text("current point = $hoveredPoint")
         }
 
         if (debugInfo) {
-            DebugPointer(animatedCurrent, deepestController.liveNestCenter)
+            val drawScopeText = rememberCustomText(animatedCurrent.value.cleanString(), 0f)
+
+            Canvas(Modifier.fillMaxSize()) {
+                PointerLocation(
+                    offset = animatedCurrent.value + (highestController.liveNestCenter ?: start ?: Offset.Zero),
+                    centerText = drawScopeText
+                )
+            }
         }
 
         if (isDragging) {
             for ((idx, controller) in liveNestControllersStack.withIndex()) {
                 if (controller.isActive) {
-
                     val liveNestOpacity = liveNestLayersAlphas.getOrNull(idx) ?: continue
-                    val nestedNestForDraw = pointsService.findNestById(controller.nestedNestId!!)
 
-                    val isDeepestController = idx == activeLevelIndex
+                    /**
+                     * Whether if this controller is the one above all, which mean the currently active one.
+                     * All the controllers below are active, but frozen, only this one has an angle line that moves and points that selects.
+                     * Until this one gets dismissed by the controller system
+                     */
+                    val isHighestController = idx == activeLevelIndex
 
-                    val liveNestCenterForDraw = controller.liveNestCenter!!
-                    val hitResult = controller.nestedHit
-                    val outerSelectedPoint = hitResult?.selectedPoint
+                    val nest = pointsService.findNestById(controller.nestedNestId!!)
 
+                    val liveNestCenter = controller.liveNestCenter!!
+                    val liveNestHitResult = controller.nestedHitResult
+                    val liveNestSelectedPoint = liveNestHitResult?.selectedPoint
+
+                    /**
+                     * The final drawn offset of the pointer.
+                     * The `end` pos of the [org.elnix.dragonlauncher.base.model.models.AngleLineObjects]
+                     *
+                     * The computation is quite a mess, but here's a breakdown. wow, I'm speaking like an AI
+                     *
+                     *
+                     * - If the current controller (from the `for` loop above) is **NOT** the highest (which means its is currently active and moves), it uses the center of the live nest as a `end`
+                     * - If both snap points and animated are checked, it uses the animated current + the center of the live nest
+                     * - If only the snap to action is checked, it uses [Point.getPos] to... get its [pos][Point.pos] + the center of the live nest
+                     * - Finally, if nothing worked, it defaults to the computed current pos
+                     */
                     val effectiveCurrentPos: Offset =
-                        remember(animatedCurrent.value, isDeepestController, current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
-                            when {
-                                // Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest
-                                !isDeepestController -> {
-                                    liveNestControllersStack[idx + 1].liveNestCenter!!
-                                }
+                        when {
+                            // Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest
+                            !isHighestController ->
+                                liveNestControllersStack[idx + 1].liveNestCenter!!
 
-                                linePreviewSnapToAction && outerSelectedPoint != null -> {
-                                    if (animationWhenSnapping && animatedCurrent.value != Offset.Unspecified) {
-                                        animatedCurrent.value + liveNestCenterForDraw
-                                    } else {
-                                        outerSelectedPoint.getPos() + liveNestCenterForDraw
-                                    }
-                                }
+                            linePreviewSnapToAction && animationWhenSnapping && liveNestSelectedPoint != null ->
+                                animatedCurrent.value + liveNestCenter
 
-                                else -> current
-                            }
+                            linePreviewSnapToAction && liveNestSelectedPoint != null ->
+                                liveNestSelectedPoint.getPos() + liveNestCenter
+
+                            else -> current
                         }
 
 
-                    val sweepAngle = controller.sweepAngleState.sweepAngle()
-                    val angle360 = controller.sweepAngleState.angle360()
+                    val sweepAngle: Float = controller.sweepAngleState.sweepAngle()
 
-                    val effectiveSweepAngle = if (useSnappedAngleOrRealAngle) {
-                        (hoveredPoint?.offset?.angleDeg() ?: sweepAngle).toInt()
-                    } else sweepAngle.toInt()
+                    /**
+                     * The final used angle in the colors
+                     * Shorter breakdown here:
+                     *
+                     *  - If not the highest controller, use the angle of the host point
+                     *  - If snaps to the points and a point is selected in that controller
+                     *  - else use the sweepAngle but convert to int to lose the decimals
+                     */
+                    val effectiveSweepAngle: Int =
+                        when {
+                            !isHighestController ->
+                                liveNestControllersStack[idx + 1].hostPoint!!.getPos().angleDeg().toInt()
+
+                            useSnappedAngleOrRealAngle && liveNestSelectedPoint != null ->
+                                liveNestSelectedPoint.getPos().angleDeg().toInt()
+
+                            else -> sweepAngle.toInt()
+                        }
 
                     val pickedRememberShapeAngle = remember(angleObject.shape) { angleObject.shape.resolveShape() }
                     val pickedRememberRotationAngle = angleObject.resolveRotation(true, effectiveSweepAngle)
@@ -383,15 +409,11 @@ fun MainScreenOverlay(
                          */
                         val lineColor: Color =
                             if (rgbLine) {
-                                val effectiveAngle360 = if (useSnappedAngleOrRealAngle) {
-                                    (hoveredPoint?.offset?.angleDeg() ?: angle360).toInt()
-                                } else angle360.toInt()
-
-                                Color.hsv(effectiveAngle360.toFloat(), 1f, 1f)
+                                Color.hsv(effectiveSweepAngle.angle360().toFloat(), 1f, 1f)
                             } else extraColors.angleLine
 
                         actionLine(
-                            start = liveNestCenterForDraw,
+                            start = liveNestCenter,
                             end = effectiveCurrentPos,
                             sweepAngle = sweepAngle,
                             lineColor = lineColor,
@@ -440,12 +462,12 @@ fun MainScreenOverlay(
                                     iconsTrigger
 
                                     NestOverlay(
-                                        center = liveNestCenterForDraw,
-                                        nest = nestedNestForDraw,
+                                        center = liveNestCenter,
+                                        nest = nest,
                                         depth = 1,
                                         drawParams = drawParams,
                                         selectedAll = false,
-                                        lockedPoint = if (isDeepestController) null else controller.hostPoint
+                                        lockedPoint = if (isHighestController) null else controller.hostPoint
                                     )
                                 }
                             }
@@ -494,8 +516,6 @@ fun MainScreenOverlay(
         }
     }
 
-    // Label on top of the screen.
-    // Priority: inner Live Nest selection -> outer Live Nest selection (with cycle stage) -> main nest.
     if (showLaunchingAppLabel || showLaunchingAppIcon) {
         PointPreviewTitle(
             point = displayPoint,
@@ -509,20 +529,4 @@ fun MainScreenOverlay(
 
 fun defaultHapticFeedback(): CustomHapticFeedback = CustomHapticFeedback.build {
     haptic(20)
-}
-
-
-@Composable
-private fun DebugPointer(
-    animatedCurrent: Animatable<Offset, AnimationVector2D>,
-    start: Offset?
-) {
-    val drawScopeText = rememberCustomText(animatedCurrent.value.cleanString(), 0f)
-
-    Canvas(Modifier.fillMaxSize()) {
-        PointerLocation(
-            offset = animatedCurrent.value + (start ?: Offset.Zero),
-            centerText = drawScopeText
-        )
-    }
 }

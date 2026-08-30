@@ -64,6 +64,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.remembers.angle360
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 
 @Composable
@@ -126,7 +127,7 @@ fun AngleLineTab(
          * This prevents the [org.elnix.dragonlauncher.ui.helpers.customobjects.PaintCache] to be made useless by too much different [android.graphics.Paint] requests
          */
         val lineColor: Color =
-            if (rgbLine) Color.hsv(sweepState.angle360().toInt().toFloat(), 1f, 1f)
+            if (rgbLine) Color.hsv(sweepState.sweepAngle().angle360().toFloat(), 1f, 1f)
             else extraColors.angleLine
 
         actionLine(

@@ -10,11 +10,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import org.elnix.dragonlauncher.SWIPE_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import org.elnix.dragonlauncher.SWIPE_TAG
 import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -42,7 +42,7 @@ import kotlin.time.Duration.Companion.milliseconds
  *   drawing center and hit-test origin so the overlay appears around the host point
  *   rather than at the gesture-start origin.
 // * @property scaledIntersectionShapes Pre-computed scaled shapes list, ready for drawing.
- * @property nestedHit Real-time hit result while [isActive]; null otherwise.
+ * @property nestedHitResult Real-time hit result while [isActive]; null otherwise.
  * @property suppressMainLaunch True after an abort - blocks main-nest action on release.
  */
 data class LiveNestState(
@@ -52,7 +52,7 @@ data class LiveNestState(
     val liveNestScale: Float,
     val liveNestCenter: Offset?,
 //    val scaledIntersectionShapes: Set<IntersectionShape>,
-    val nestedHit: HitResult?,
+    val nestedHitResult: HitResult?,
     val suppressMainLaunch: Boolean,
     val sweepAngleState: SweepAngleState,
 
@@ -91,8 +91,8 @@ private data class NestLevelState(
 fun rememberLiveNestControllerStack(
     pointsViewModel: PointsViewModel = activityViewModel(),
     isDragging: Boolean,
-    rootStartPos: Offset?,
     rootNestId: Int,
+    rootStartPos: Offset?,
     current: Offset?,
 ): List<LiveNestState> {
     val pointsService = pointsViewModel.pointsService
@@ -307,15 +307,11 @@ fun rememberLiveNestControllerStack(
 
             val targetNestId = currentPoint.liveNestTargetNestId ?: return@LaunchedEffect
 
-            val delayMs = (
-                    currentPoint.liveNestPreviewDelayMs
-                        ?: defaultPoint.liveNestPreviewDelayMs
-                        ?: Point.defaultLiveNestPreviewDelayMs
-                    ).toLong()
+            val delayMs = currentPoint.getLiveNestPreviewDelayMs(defaultPoint, false)
 
-            val scale = currentPoint.liveNestScale ?: defaultPoint.liveNestScale ?: Point.defaultLiveNestScale
-
+//            val scale = currentPoint.liveNestScale ?: defaultPoint.liveNestScale ?: Point.defaultLiveNestScale
 //            val previousLiveNestCircles = scaledCircles[idx -1]
+
             val previousLiveNestCenter = nestStack[idx - 1].liveNestCenter ?: return@LaunchedEffect
 
             val pointFastActivation = currentPoint.getFastActivation(defaultPoint, false)
@@ -330,9 +326,6 @@ fun rememberLiveNestControllerStack(
 
             val currentPointOffset = currentPoint.getPos() + previousLiveNestCenter
 
-//            delay(delayMs.milliseconds)
-
-
             val snapToCenterPos = currentPoint.liveNestSnapsToFingerPosition ?: defaultPoint.liveNestSnapsToFingerPosition
             ?: Point.defaultLiveNestSnapsToFingerPosition
             val center = if (snapToCenterPos) {
@@ -344,7 +337,7 @@ fun rememberLiveNestControllerStack(
 
             level.hostPoint = currentPoint
             level.nestedNestId = targetNestId
-            level.liveNestScale = scale
+//            level.liveNestScale = scale
             level.liveNestCenter = center
             level.liveNestActive = true
         }
@@ -374,7 +367,7 @@ fun rememberLiveNestControllerStack(
             liveNestScale = level.liveNestScale,
             liveNestCenter = if (isRoot) rootStartPos else level.liveNestCenter,
 //            scaledIntersectionShapes = scaledCircles[idx],
-            nestedHit = level.releaseHitRef,
+            nestedHitResult = level.releaseHitRef,
             suppressMainLaunch = level.suppressMainLaunch,
             sweepAngleState = sweepAngleStateStack[idx],
             resolveOnRelease = {
