@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
-
 // Copied from Kvastisto
 // https://github.com/MM2-0/Kvaesitso/blob/07e3e9669f8990e76d9d4062492dc741793e49a5/app/ui/src/main/java/de/mm20/launcher2/ui/component/NavBarEffects.kt
 
@@ -41,7 +40,6 @@ fun ChargingAnimation() {
     var intensity by remember { mutableIntStateOf(0) }
 
     DisposableEffect(null) {
-
         suspend fun update(intent: Intent?, retryOnZeroCurrent: Boolean = false) {
             if (intent == null) return
             val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
@@ -52,7 +50,7 @@ fun ChargingAnimation() {
                 val current = bm.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
                 if (current <= 0) {
                     intensity = 5
-                    //Workaround for delayed current updates
+                    // Workaround for delayed current updates
                     if (retryOnZeroCurrent) {
                         delay(1000.milliseconds)
                         update(intent)
@@ -65,13 +63,14 @@ fun ChargingAnimation() {
             }
         }
 
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(ctx: Context?, intent: Intent?) {
-                scope.launch {
-                    update(intent, false)
+        val receiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(ctx: Context?, intent: Intent?) {
+                    scope.launch {
+                        update(intent, false)
+                    }
                 }
             }
-        }
 
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
 
@@ -87,11 +86,11 @@ fun ChargingAnimation() {
 
     var bubbles by remember { mutableStateOf(arrayOf<Bubble>()) }
 
-
     LaunchedEffect(intensity) {
-        bubbles = Array(intensity) {
-            FloatArray(6)
-        }
+        bubbles =
+            Array(intensity) {
+                FloatArray(6)
+            }
         if (intensity == 0) return@LaunchedEffect
         while (isActive) {
             val currentIntensity = intensity

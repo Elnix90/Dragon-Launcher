@@ -50,7 +50,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 
-
 @Composable
 fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val ctx = LocalContext.current
@@ -66,7 +65,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
     val useCategory by DrawerSettingsStore.useCategory.asState()
-
 
     var leftWidth by remember { mutableStateOf(leftDrawerWidth) }
     var rightWidth by remember { mutableStateOf(rightDrawerWidth) }
@@ -88,7 +86,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             }
         }
     ) {
-
         DragonSettingsGroup(R.string.workspaces) {
             RouteItem(NavigationRoute.Workspace)
             RouteItem(NavigationRoute.Icons)
@@ -138,7 +135,9 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             Setting(DrawerSettingsStore.iconSize) { value ->
                 if (value == 0.dp) {
                     stringResource(R.string.not_showed)
-                } else null
+                } else {
+                    null
+                }
             }
             Setting(DrawerSettingsStore.iconsSpacingHorizontal)
             Setting(DrawerSettingsStore.iconsSpacingVertical)
@@ -156,12 +155,13 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             }
 
             Box(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+                modifier =
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(MaterialTheme.shapes.large)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
             ) {
                 AppGrid(
                     apps = apps.shuffled().take(if (gridSize == 1) 3 else gridSize * 2),
@@ -185,35 +185,37 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             DrawerActionSelector(DrawerSettingsStore.rightDrawerAction, allowNone = true)
         }
 
-
         AnimatedVisibility(leftDrawerAction.notDisabled || rightDrawerAction.notDisabled) {
             DragonSettingsGroup(
                 R.string.drawer_actions_width,
                 trailingIcon = {
-                    ResetIcon(leftWidth != DrawerSettingsStore.leftDrawerWidth.default || rightWidth != DrawerSettingsStore.rightDrawerWidth.default) {
+                    ResetIcon(
+                        leftWidth != DrawerSettingsStore.leftDrawerWidth.default || rightWidth != DrawerSettingsStore.rightDrawerWidth.default
+                    ) {
                         scope.launch {
                             DrawerSettingsStore.leftDrawerWidth.reset(ctx)
                             DrawerSettingsStore.rightDrawerWidth.reset(ctx)
                         }
                     }
-                }) {
-
+                }
+            ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
                 ) {
                     if (leftDrawerAction.notDisabled) {
-
                         Row(
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .width(leftWidth)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .semiTransparentIfDisabled(leftDrawerAction.notNone),
+                                modifier =
+                                    Modifier
+                                        .fillMaxHeight()
+                                        .width(leftWidth)
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .semiTransparentIfDisabled(leftDrawerAction.notNone),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (leftDrawerAction.notNone) {
@@ -229,17 +231,17 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
                     }
 
                     if (rightDrawerAction.notDisabled) {
-
                         Row(
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) {
                             DragHandle()
                             Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .width(rightWidth)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .semiTransparentIfDisabled(rightDrawerAction.notNone),
+                                modifier =
+                                    Modifier
+                                        .fillMaxHeight()
+                                        .width(rightWidth)
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .semiTransparentIfDisabled(rightDrawerAction.notNone),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (rightDrawerAction.notNone) {
@@ -297,7 +299,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
                 ) { rightWidth = it }
             }
         }
-
     }
 
     if (showToolbarsOrderDialog) {
@@ -308,9 +309,10 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 @Composable
 private fun DragHandle() {
     Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(6.dp)
-            .background(MaterialTheme.colorScheme.outline)
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .width(6.dp)
+                .background(MaterialTheme.colorScheme.outline)
     )
 }

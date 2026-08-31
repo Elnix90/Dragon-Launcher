@@ -42,9 +42,10 @@ fun WelcomePageIntro(
 
     val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
 
-    val headlinesAlpha = remember(isVisible) {
-        List(3) { Animatable(initialValue = 0f) }
-    }
+    val headlinesAlpha =
+        remember(isVisible) {
+            List(3) { Animatable(initialValue = 0f) }
+        }
 
     LaunchedEffect(isVisible) {
         delay(500.milliseconds)
@@ -57,9 +58,10 @@ fun WelcomePageIntro(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -88,19 +90,20 @@ fun WelcomePageIntro(
             stringResource(id = R.string.app_tagline),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyLargeEmphasized,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         Spacer(15.dp)
 
         repeat(3) { i ->
-            val text = stringResource(
-                when (i) {
-                    0 -> R.string.fast
-                    1 -> R.string.powerful_gestures
-                    else -> R.string.infinite_custom
-                }
-            )
+            val text =
+                stringResource(
+                    when (i) {
+                        0 -> R.string.fast
+                        1 -> R.string.powerful_gestures
+                        else -> R.string.infinite_custom
+                    }
+                )
 
             Text(
                 text = text,

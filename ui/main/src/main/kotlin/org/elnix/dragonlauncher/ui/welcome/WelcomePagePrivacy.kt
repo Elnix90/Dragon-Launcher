@@ -17,14 +17,14 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Composable
 fun WelcomePagePrivacy() {
-
-    val items = listOf(
-        "Works fully offline (No internet access)",
-        "No data collection",
-        "No tracking",
-        "No ads",
-        "Fully open source"
-    )
+    val items =
+        listOf(
+            "Works fully offline (No internet access)",
+            "No data collection",
+            "No tracking",
+            "No ads",
+            "Fully open source"
+        )
 
     WelcomePagerHeader(
         title = stringResource(R.string.privacy_first),
@@ -47,7 +47,7 @@ fun WelcomePagePrivacy() {
                     Text(
                         text = it,
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
+                        fontSize = 20.sp
                     )
                 }
             }

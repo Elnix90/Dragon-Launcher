@@ -3,17 +3,19 @@ package org.elnix.dragonlauncher.base.model.models
 import com.aallam.similarity.JaroWinkler
 
 @JvmInline
-public value class ResultScore private constructor(private val packed: Long) : Comparable<ResultScore> {
+public value class ResultScore private constructor(
+    private val packed: Long
+) : Comparable<ResultScore> {
     public constructor(
         isPrefix: Boolean,
         isSubstring: Boolean,
         isPrimary: Boolean,
-        similarity: Float,
+        similarity: Float
     ) : this(
         (similarity.toRawBits().toLong()) or
-                (if (isPrefix) (1L shl 32) else 0) or
-                (if (isSubstring) (1L shl 33) else 0) or
-                (if (isPrimary) (1L shl 34) else 0)
+            (if (isPrefix) (1L shl 32) else 0) or
+            (if (isSubstring) (1L shl 33) else 0) or
+            (if (isPrimary) (1L shl 34) else 0)
     )
 
     /**
@@ -45,56 +47,60 @@ public value class ResultScore private constructor(private val packed: Long) : C
      * The score is normalized to be between 0 and 1.
      */
     public val score: Float
-        get() = (similarity + (if (isPrefix) 0.2f else 0f) + (if (isSubstring) 0.8f else 0f)).coerceIn(0f, 1f) * (if (isPrimary) 1f else 0.8f)
+        get() =
+            (similarity + (if (isPrefix) 0.2f else 0f) + (if (isSubstring) 0.8f else 0f)).coerceIn(0f, 1f) *
+                (if (isPrimary) 1f else 0.8f)
 
-    override fun compareTo(other: ResultScore): Int {
-        return score.compareTo(other.score)
-    }
+    override fun compareTo(other: ResultScore): Int = score.compareTo(other.score)
 
     public companion object {
         public fun from(
             query: String,
             primaryFields: Iterable<String> = emptyList(),
-            secondaryFields: Iterable<String> = emptyList(),
+            secondaryFields: Iterable<String> = emptyList()
         ): ResultScore {
             val jaroWinkler = JaroWinkler()
-            val bestPrimaryScore = primaryFields.maxOfOrNull { term ->
-                val sim = jaroWinkler.similarity(query, term).toFloat()
-                ResultScore(
-                    isPrefix = term.startsWith(query),
-                    isSubstring = query in term,
-                    isPrimary = true,
-                    similarity = sim
-                )
-            } ?: Zero
-            val bestSecondaryScore = secondaryFields.maxOfOrNull { term ->
-                val sim = jaroWinkler.similarity(query, term).toFloat()
-                ResultScore(
-                    isPrefix = term.startsWith(query),
-                    isSubstring = query in term,
-                    isPrimary = false,
-                    similarity = sim
-                )
-            } ?: Zero
+            val bestPrimaryScore =
+                primaryFields.maxOfOrNull { term ->
+                    val sim = jaroWinkler.similarity(query, term).toFloat()
+                    ResultScore(
+                        isPrefix = term.startsWith(query),
+                        isSubstring = query in term,
+                        isPrimary = true,
+                        similarity = sim
+                    )
+                } ?: Zero
+            val bestSecondaryScore =
+                secondaryFields.maxOfOrNull { term ->
+                    val sim = jaroWinkler.similarity(query, term).toFloat()
+                    ResultScore(
+                        isPrefix = term.startsWith(query),
+                        isSubstring = query in term,
+                        isPrimary = false,
+                        similarity = sim
+                    )
+                } ?: Zero
 
             return maxOf(bestPrimaryScore, bestSecondaryScore)
         }
 
-        public val Zero: ResultScore = ResultScore(
-            isPrefix = false,
-            isSubstring = false,
-            isPrimary = false,
-            similarity = 0f
-        )
+        public val Zero: ResultScore =
+            ResultScore(
+                isPrefix = false,
+                isSubstring = false,
+                isPrimary = false,
+                similarity = 0f
+            )
 
-        public val Unspecified: ResultScore = ResultScore(
-            isPrefix = false,
-            isSubstring = false,
-            isPrimary = false,
-            similarity = Float.NaN,
-        )
+        public val Unspecified: ResultScore =
+            ResultScore(
+                isPrefix = false,
+                isSubstring = false,
+                isPrimary = false,
+                similarity = Float.NaN
+            )
     }
 }
 
-public inline val ResultScore.isUnspecified : Boolean
+public inline val ResultScore.isUnspecified: Boolean
     get() = this == ResultScore.Unspecified

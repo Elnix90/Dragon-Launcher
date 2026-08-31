@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
  * Settings > Apps > Special App Access > Notification Access.
  */
 public class DragonNotificationListenerService : NotificationListenerService() {
-
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         refreshNotifications()
     }
@@ -33,16 +32,17 @@ public class DragonNotificationListenerService : NotificationListenerService() {
     }
 
     private fun refreshNotifications() {
-        val packages = try {
-            activeNotifications
-                ?.filter { !it.isOngoing }
-                ?.map { it.packageName }
-                ?.distinct()
-                ?: emptyList()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
+        val packages =
+            try {
+                activeNotifications
+                    ?.filter { !it.isOngoing }
+                    ?.map { it.packageName }
+                    ?.distinct()
+                    ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
+            }
         _notifications.value = packages
     }
 
@@ -56,16 +56,15 @@ public class DragonNotificationListenerService : NotificationListenerService() {
          * Returns true if the notification listener permission has been granted for this app.
          */
         public fun isPermissionGranted(ctx: Context): Boolean {
-            val flat = Settings.Secure.getString(
-                ctx.contentResolver,
-                "enabled_notification_listeners"
-            ) ?: return false
+            val flat =
+                Settings.Secure.getString(
+                    ctx.contentResolver,
+                    "enabled_notification_listeners"
+                ) ?: return false
             val cn = ComponentName(ctx, DragonNotificationListenerService::class.java)
             return flat.split(":").any { ComponentName.unflattenFromString(it) == cn }
         }
-
     }
-
 }
 
 /**

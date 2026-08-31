@@ -45,7 +45,6 @@ import java.text.ParseException
 import java.util.Locale.getDefault
 import kotlin.math.roundToInt
 
-
 /**
  * Internal slider implementation shared by all SliderWithLabel overloads.
  *
@@ -117,7 +116,6 @@ private fun DragonGroupScope.SliderWithLabelInternal(
             currentOnDragStateChange?.invoke(true)
             currentOnChange(newValue)
             currentOnDragStateChange?.invoke(false)
-
         } catch (_: ParseException) {
             isError = true
             ctx.showToast("Failed to parse number")
@@ -131,7 +129,6 @@ private fun DragonGroupScope.SliderWithLabelInternal(
 
         focusManager.clearFocus()
     }
-
 
     BackHandler(isEditing, onBack = ::onDone)
 
@@ -159,13 +156,13 @@ private fun DragonGroupScope.SliderWithLabelInternal(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             TextWithDescription(
                 text = label,
                 description = description,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 5.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(start = 5.dp),
                 enabled = enabled
             )
 
@@ -177,10 +174,11 @@ private fun DragonGroupScope.SliderWithLabelInternal(
                     editingText = newValue
                     isError = false
                 },
-                textStyle = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 13.sp
-                ),
+                textStyle =
+                    TextStyle(
+                        textAlign = TextAlign.Center,
+                        fontSize = 13.sp
+                    ),
                 isError = isError,
                 trailingIcon = {
                     AnimatedContent(
@@ -206,27 +204,31 @@ private fun DragonGroupScope.SliderWithLabelInternal(
                                         isError = false
                                         onReset()
                                     },
-                                    enabled = enabled && resetEnabled,
+                                    enabled = enabled && resetEnabled
                                 )
                             }
                         }
                     }
                 },
-                colors = AppObjectsColors.outlinedTextFieldColors(
-                    backgroundColor = backgroundColor,
-                    removeBorder = true
-                ),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.DecimalSigned,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                ),
+                colors =
+                    AppObjectsColors.outlinedTextFieldColors(
+                        backgroundColor = backgroundColor,
+                        removeBorder = true
+                    ),
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.DecimalSigned,
+                        imeAction = ImeAction.Done
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
                 shape = CircleShape,
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(50.dp)
+                modifier =
+                    Modifier
+                        .width(120.dp)
+                        .height(50.dp)
             )
         }
 
@@ -280,14 +282,16 @@ fun DragonGroupScope.SliderWithLabel(
     onReset: () -> Unit,
     onChange: (Int) -> Unit
 ) {
-    val floatRange = remember(valueRange) {
-        valueRange.first.toFloat()..valueRange.last.toFloat()
-    }
+    val floatRange =
+        remember(valueRange) {
+            valueRange.first.toFloat()..valueRange.last.toFloat()
+        }
 
-    val steps = remember(valueRange) {
-        // Number of discrete selectable values minus endpoints
-        (valueRange.last - valueRange.first - 1).coerceAtLeast(0)
-    }
+    val steps =
+        remember(valueRange) {
+            // Number of discrete selectable values minus endpoints
+            (valueRange.last - valueRange.first - 1).coerceAtLeast(0)
+        }
 
     SliderWithLabelInternal(
         label = label,
@@ -337,9 +341,10 @@ fun DragonGroupScope.SliderWithLabel(
     onReset: () -> Unit,
     onChange: (Float) -> Unit
 ) {
-    val valueText = remember(value, decimals) {
-        "%.${decimals}f".format(value)
-    }
+    val valueText =
+        remember(value, decimals) {
+            "%.${decimals}f".format(value)
+        }
 
     SliderWithLabelInternal(
         label = label,
@@ -382,9 +387,10 @@ fun DragonGroupScope.SliderWithLabel(
     onReset: () -> Unit,
     onChange: (Dp) -> Unit
 ) {
-    val valueText = remember(value, decimals) {
-        "%.${decimals}f".format(value.value)
-    }
+    val valueText =
+        remember(value, decimals) {
+            "%.${decimals}f".format(value.value)
+        }
 
     val floatValueRange = valueRange.start.value..valueRange.endInclusive.value
 

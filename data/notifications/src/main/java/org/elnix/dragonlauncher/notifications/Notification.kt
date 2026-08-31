@@ -20,7 +20,7 @@ public data class Notification(
     val smallIcon: Icon?,
     val extras: Bundle,
     val flags: Int = 0,
-    val contentIntent: PendingIntent?,
+    val contentIntent: PendingIntent?
 ) {
     public constructor(
         sbn: StatusBarNotification,
@@ -37,12 +37,12 @@ public data class Notification(
         smallIcon = sbn.notification.smallIcon,
         extras = sbn.notification.extras,
         flags = sbn.notification.flags,
-        contentIntent = sbn.notification.contentIntent,
+        contentIntent = sbn.notification.contentIntent
     )
 
     public constructor(
         notification: Notification,
-        ranking: Ranking,
+        ranking: Ranking
     ) : this(
         id = notification.id,
         key = notification.key,
@@ -61,10 +61,12 @@ public data class Notification(
         get() = extras.getParcelable(NotificationCompat.EXTRA_MEDIA_SESSION) as? MediaSession.Token
 
     val progress: Int?
-        get() = if (extras.containsKey(android.app.Notification.EXTRA_PROGRESS))
-            extras.getInt(NotificationCompat.EXTRA_PROGRESS)
-        else null
-
+        get() =
+            if (extras.containsKey(android.app.Notification.EXTRA_PROGRESS)) {
+                extras.getInt(NotificationCompat.EXTRA_PROGRESS)
+            } else {
+                null
+            }
 
     val progressMax: Int?
         get() = extras.getInt(NotificationCompat.EXTRA_PROGRESS_MAX).takeIf { it > 0 }

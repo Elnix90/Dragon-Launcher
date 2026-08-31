@@ -53,7 +53,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @Composable
 fun WellbeingTab(
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
+    appLaunchViewModel: AppLaunchViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -63,11 +63,9 @@ fun WellbeingTab(
     val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
     val reminderMode by WellbeingSettingsStore.reminderMode.asState()
 
-
     var showAppPicker by remember { mutableStateOf(false) }
     var showPermissionDialog by remember { mutableStateOf(false) }
     var showOverlayPermissionDialog by remember { mutableStateOf(false) }
-
 
     val allApps by drawerViewModel.allApps.collectAsState()
     val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
@@ -90,12 +88,11 @@ fun WellbeingTab(
             }
         }
     ) {
-
         DragonSettingsGroup(R.string.social_media_pause) {
             Setting(WellbeingSettingsStore.socialMediaPauseEnabled)
             Setting(
                 WellbeingSettingsStore.guiltModeEnabled,
-                enabled = socialMediaPauseEnabled,
+                enabled = socialMediaPauseEnabled
             ) { newValue ->
                 if (newValue && hasUsageStatsPermission) {
                     showPermissionDialog = true
@@ -111,7 +108,7 @@ fun WellbeingTab(
         DragonSettingsGroup(R.string.reminder_mode_title) {
             Setting(
                 setting = WellbeingSettingsStore.reminderEnabled,
-                enabled = socialMediaPauseEnabled,
+                enabled = socialMediaPauseEnabled
             ) { newValue ->
                 if (newValue && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
                     showOverlayPermissionDialog = true
@@ -139,17 +136,17 @@ fun WellbeingTab(
 
             ButtonGroup(
                 overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
-                modifier = Modifier.dragonSettingGroup(),
+                modifier = Modifier.dragonSettingGroup()
             ) {
-
                 customItem(
                     buttonGroupContent = {
                         DragonButton(
                             onClick = { showAppPicker = true },
                             interactionSource = interactionSources[0],
-                            modifier = Modifier
-                                .weight(1f)
-                                .animateWidth(interactionSources[0])
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .animateWidth(interactionSources[0])
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.add),
@@ -168,16 +165,18 @@ fun WellbeingTab(
                             onClick = {
                                 scope.launch {
                                     val installedPackages = allApps.map { it.packageName }.toSet()
-                                    val socialApps = knownSocialMediaApps.filter {
-                                        it in installedPackages
-                                    }
+                                    val socialApps =
+                                        knownSocialMediaApps.filter {
+                                            it in installedPackages
+                                        }
                                     WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + socialApps)
                                 }
                             },
                             interactionSource = interactionSources[1],
-                            modifier = Modifier
-                                .weight(1f)
-                                .animateWidth(interactionSources[1])
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .animateWidth(interactionSources[1])
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.apps),
@@ -217,7 +216,6 @@ fun WellbeingTab(
             }
         }
     }
-
 
     if (showAppPicker) {
         AppPickerSheet(

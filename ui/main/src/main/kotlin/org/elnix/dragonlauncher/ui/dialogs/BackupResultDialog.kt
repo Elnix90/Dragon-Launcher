@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,7 +13,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
 fun BackupResultDialog(
-    backupViewModel: BackupViewModel = activityViewModel(),
+    backupViewModel: BackupViewModel = activityViewModel()
 ) {
     val result by backupViewModel.result.asState()
 
@@ -25,11 +24,12 @@ fun BackupResultDialog(
 
         UserValidation(
             title = res.title,
-            message = when {
-                isError -> errorMessage.ifBlank { stringResource(R.string.unknown_error) }
-                isExport -> stringResource(R.string.export_successful)
-                else -> null
-            },
+            message =
+                when {
+                    isError -> errorMessage.ifBlank { stringResource(R.string.unknown_error) }
+                    isExport -> stringResource(R.string.export_successful)
+                    else -> null
+                },
             titleIcon = if (isError) R.drawable.warning else R.drawable.check,
             titleColor = if (isError) MaterialTheme.colorScheme.onErrorContainer else Color.Green,
             titleBgColor = if (isError) MaterialTheme.colorScheme.errorContainer else Color(0xFF167E16),

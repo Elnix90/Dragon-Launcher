@@ -37,7 +37,6 @@ fun ValidateCancelButtons(
     onCancel: (() -> Unit)? = null,
     onConfirm: () -> Unit
 ) {
-
     val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
     ButtonGroup(
@@ -48,13 +47,15 @@ fun ValidateCancelButtons(
             customItem(
                 buttonGroupContent = {
                     OutlinedButton(
-                        onClick = withHaptic(HapticFeedbackType.Reject) {
-                            onCancel()
-                        },
+                        onClick =
+                            withHaptic(HapticFeedbackType.Reject) {
+                                onCancel()
+                            },
                         shapes = ButtonDefaults.shapes(),
-                        modifier = Modifier
-                            .weight(1f)
-                            .animateWidth(interactionSources[0]),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSources[0]),
                         interactionSource = interactionSources[0],
                         colors = AppObjectsColors.cancelButtonColors(),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
@@ -72,15 +73,17 @@ fun ValidateCancelButtons(
         customItem(
             buttonGroupContent = {
                 Button(
-                    onClick = withHaptic(HapticFeedbackType.Confirm) {
-                        onConfirm()
-                    },
+                    onClick =
+                        withHaptic(HapticFeedbackType.Confirm) {
+                            onConfirm()
+                        },
                     enabled = validateEnabled,
-                    modifier = Modifier
-                        .weight(1f)
-                        .animateWidth(interactionSources[1]),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .animateWidth(interactionSources[1]),
                     interactionSource = interactionSources[1],
-                    shapes = ButtonDefaults.shapes(),
+                    shapes = ButtonDefaults.shapes()
                 ) {
                     AutoResizeableText(
                         text = validateText,
@@ -93,7 +96,6 @@ fun ValidateCancelButtons(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ValidateCancelButtonsWithLoading(
@@ -104,7 +106,6 @@ fun ValidateCancelButtonsWithLoading(
     hasClickedValidate: Boolean,
     onConfirm: () -> Unit
 ) {
-
     val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
     ButtonGroup(
@@ -115,14 +116,16 @@ fun ValidateCancelButtonsWithLoading(
             customItem(
                 buttonGroupContent = {
                     OutlinedButton(
-                        onClick = withHaptic(HapticFeedbackType.Reject) {
-                            onCancel()
-                        },
+                        onClick =
+                            withHaptic(HapticFeedbackType.Reject) {
+                                onCancel()
+                            },
                         enabled = !hasClickedValidate,
                         shapes = ButtonDefaults.shapes(),
-                        modifier = Modifier
-                            .weight(1f)
-                            .animateWidth(interactionSources[0]),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSources[0]),
                         interactionSource = interactionSources[0],
                         colors = AppObjectsColors.cancelButtonColors(),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
@@ -141,19 +144,20 @@ fun ValidateCancelButtonsWithLoading(
             buttonGroupContent = {
                 AnimatedContent(
                     targetState = !hasClickedValidate,
-                    modifier = Modifier
-                        .weight(1f)
-                        .animateWidth(interactionSources[1]),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .animateWidth(interactionSources[1])
                 ) { hasClickedImport ->
                     if (hasClickedImport) {
                         Button(
-                            onClick = withHaptic(HapticFeedbackType.Confirm) {
-                                onConfirm()
-                            },
+                            onClick =
+                                withHaptic(HapticFeedbackType.Confirm) {
+                                    onConfirm()
+                                },
                             enabled = validateEnabled,
-
                             interactionSource = interactionSources[1],
-                            shapes = ButtonDefaults.shapes(),
+                            shapes = ButtonDefaults.shapes()
                         ) {
                             AutoResizeableText(
                                 text = validateText,

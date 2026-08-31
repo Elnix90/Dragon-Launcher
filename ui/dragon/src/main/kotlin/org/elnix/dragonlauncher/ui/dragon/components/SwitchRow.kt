@@ -31,14 +31,15 @@ fun DragonGroupScope.SwitchRow(
     val interactionSource = rememberInteractionSource()
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .dragonSettingGroup(enabled = enabled) {
-                clickable(
-                    enabled = enabled,
-                    onClick = { onCheck(!checked) },
-                    interactionSource = interactionSource
-                )
-            }
+        modifier =
+            Modifier
+                .dragonSettingGroup(enabled = enabled) {
+                    clickable(
+                        enabled = enabled,
+                        onClick = { onCheck(!checked) },
+                        interactionSource = interactionSource
+                    )
+                }
     ) {
         if (icon != null) {
             BoxedIcon(icon, enabled)

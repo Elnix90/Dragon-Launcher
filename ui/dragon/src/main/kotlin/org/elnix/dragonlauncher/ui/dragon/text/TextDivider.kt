@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 
-
 @Deprecated("use DragonSettingGroup instead")
 @Composable
 fun TextDividerOld(
@@ -31,9 +30,10 @@ fun TextDividerOld(
     padding: Dp = 8.dp
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color.Transparent),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(Color.Transparent),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {

@@ -38,10 +38,11 @@ fun UrlInputDialog(
                     },
                     singleLine = true,
                     label = { Text("https://example.com") },
-                    colors = AppObjectsColors.outlinedTextFieldColors(
-                        removeBorder = true,
-                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
+                    colors =
+                        AppObjectsColors.outlinedTextFieldColors(
+                            removeBorder = true,
+                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
                 )
                 if (error) {
                     Text(stringResource(R.string.invalid_url), color = Color.Red)

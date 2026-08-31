@@ -29,7 +29,6 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.base.withHapticParam
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnimatedFab(
@@ -42,32 +41,33 @@ fun AnimatedFab(
 ) {
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val fabAnimation = rememberFancyAnimations(
-        isPressed = isPressed,
-        normalShape = MaterialShapes.Cookie9Sided,
-        pressedShape = MaterialShapes.Cookie7Sided
-    )
-
+    val fabAnimation =
+        rememberFancyAnimations(
+            isPressed = isPressed,
+            normalShape = MaterialShapes.Cookie9Sided,
+            pressedShape = MaterialShapes.Cookie7Sided
+        )
 
     Box(
-        modifier = modifier
-            .graphicsLayer {
-                scaleX = fabAnimation.scale
-                scaleY = fabAnimation.scale
-                rotationZ = fabAnimation.outerRotation
-            }
-            .defaultMinSize(minWidth = minSize, minHeight = minSize)
-            .clip(fabAnimation.shape)
-            .background(containerColor)
-            .clickable(interactionSource = interactionSource, indication = null, onClick = withHaptic(block = onClick))
+        modifier =
+            modifier
+                .graphicsLayer {
+                    scaleX = fabAnimation.scale
+                    scaleY = fabAnimation.scale
+                    rotationZ = fabAnimation.outerRotation
+                }.defaultMinSize(minWidth = minSize, minHeight = minSize)
+                .clip(fabAnimation.shape)
+                .background(containerColor)
+                .clickable(interactionSource = interactionSource, indication = null, onClick = withHaptic(block = onClick))
     ) {
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
             tint = contentColorFor(containerColor),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .rotate(fabAnimation.rotation - fabAnimation.outerRotation)
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .rotate(fabAnimation.rotation - fabAnimation.outerRotation)
         )
     }
 }
@@ -82,53 +82,55 @@ fun ToggleAnimatedFab(
     containerColor: Color = FloatingActionButtonDefaults.containerColor,
     icon: (isPressed: Boolean) -> Int
 ) {
-
     val interactionSource = rememberInteractionSource()
     val buttonPressed by interactionSource.collectIsPressedAsState()
 
-    val isActivated = if (buttonPressed) {
-        !checked
-    } else checked
+    val isActivated =
+        if (buttonPressed) {
+            !checked
+        } else {
+            checked
+        }
 
-    val fabAnimation = rememberFancyAnimations(
-        isPressed = buttonPressed,
-        normalShape = MaterialShapes.Cookie9Sided,
-        pressedShape = MaterialShapes.Cookie7Sided
-    )
+    val fabAnimation =
+        rememberFancyAnimations(
+            isPressed = buttonPressed,
+            normalShape = MaterialShapes.Cookie9Sided,
+            pressedShape = MaterialShapes.Cookie7Sided
+        )
 
     Box(
-        modifier = modifier
-            .graphicsLayer {
-                scaleX = fabAnimation.scale
-                scaleY = fabAnimation.scale
+        modifier =
+            modifier
+                .graphicsLayer {
+                    scaleX = fabAnimation.scale
+                    scaleY = fabAnimation.scale
 
-                if (buttonPressed) {
-                    rotationZ = fabAnimation.outerRotation
-                }
-            }
-            .defaultMinSize(minWidth = minSize, minHeight = minSize)
-            .clip(fabAnimation.shape)
-            .background(containerColor)
-            .toggleable(
-                value = checked,
-                onValueChange = withHapticParam { onCheckedChange(!checked) },
-                interactionSource = interactionSource,
-                indication = null
-            )
+                    if (buttonPressed) {
+                        rotationZ = fabAnimation.outerRotation
+                    }
+                }.defaultMinSize(minWidth = minSize, minHeight = minSize)
+                .clip(fabAnimation.shape)
+                .background(containerColor)
+                .toggleable(
+                    value = checked,
+                    onValueChange = withHapticParam { onCheckedChange(!checked) },
+                    interactionSource = interactionSource,
+                    indication = null
+                )
     ) {
         Icon(
             painter = painterResource(icon(isActivated)),
             contentDescription = null,
             tint = contentColorFor(containerColor),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .graphicsLayer {
-
-                    if (buttonPressed) {
-                        rotationZ = fabAnimation.rotation - fabAnimation.outerRotation
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .graphicsLayer {
+                        if (buttonPressed) {
+                            rotationZ = fabAnimation.rotation - fabAnimation.outerRotation
+                        }
                     }
-                }
         )
     }
 }
-

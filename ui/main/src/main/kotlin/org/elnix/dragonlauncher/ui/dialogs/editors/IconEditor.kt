@@ -47,7 +47,6 @@ import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 
-
 @Composable
 fun PointIconEditor(
     point: Point,
@@ -74,7 +73,6 @@ fun AppIconEditor(
     iconViewModel: IconsViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {
-
     val appOverrideManager = drawerViewModel.appOverrideManager
     val appOverrides by appOverrideManager.appOverrides.asState()
     val initialCustomIcon = appOverrides[app.key]?.customIcon
@@ -164,11 +162,12 @@ private fun IconEditorImpl(
     )
 
     if (showAdvancedSettings) {
-        DragonModalBottomSheet({showAdvancedSettings = false}) {
+        DragonModalBottomSheet({ showAdvancedSettings = false }) {
             Column(
-                modifier = Modifier
-                    .heightIn(max = 800.dp)
-                    .verticalScroll(rememberScrollState())
+                modifier =
+                    Modifier
+                        .heightIn(max = 800.dp)
+                        .verticalScroll(rememberScrollState())
             ) {
                 DragonSettingsGroup(R.string.appearance) {
                     SliderWithLabel(
@@ -219,7 +218,6 @@ private fun IconEditorImpl(
                         editProperties = editProperties.copy(scaleY = it)
                     }
                 }
-
 
                 var showShapePickerDialog by remember { mutableStateOf(false) }
 

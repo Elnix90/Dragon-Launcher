@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.utils.DateUtils.openAlarmApp
@@ -34,14 +34,15 @@ fun StatusBarDate(
     val ctx = LocalContext.current
     val formatterPattern = element.formatter
 
-    val dateFormat = remember(formatterPattern) {
-        try {
-            DateTimeFormatter.ofPattern(formatterPattern)
-        } catch (e: Exception) {
-            logE(STATUS_BAR_TAG, e) { "Invalid date format '$formatterPattern'" }
-            DateTimeFormatter.ofPattern("MMM dd")
+    val dateFormat =
+        remember(formatterPattern) {
+            try {
+                DateTimeFormatter.ofPattern(formatterPattern)
+            } catch (e: Exception) {
+                logE(STATUS_BAR_TAG, e) { "Invalid date format '$formatterPattern'" }
+                DateTimeFormatter.ofPattern("MMM dd")
+            }
         }
-    }
 
     var date by remember { mutableStateOf(LocalDate.now()) }
 
@@ -54,7 +55,10 @@ fun StatusBarDate(
             }
             // Wait until the next day starts
             val nextDay = now.plusDays(1).atStartOfDay()
-            val delayMillis = java.time.Duration.between(java.time.LocalDateTime.now(), nextDay).toMillis()
+            val delayMillis =
+                java.time.Duration
+                    .between(java.time.LocalDateTime.now(), nextDay)
+                    .toMillis()
             delay(delayMillis.coerceAtLeast(60_000L).milliseconds) // Check at least every minute to be safe
         }
     }
@@ -74,15 +78,15 @@ fun StatusBarDate(
         Text(
             text = dateText,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.conditional(onAction) { onAction ->
-                clickable {
-                    element.action?.let { onAction(it) } ?: ctx.openCalendar()
+            modifier =
+                Modifier.conditional(onAction) { onAction ->
+                    clickable {
+                        element.action?.let { onAction(it) } ?: ctx.openCalendar()
+                    }
                 }
-            }
         )
     }
 }
-
 
 @Composable
 fun StatusBarTime(
@@ -94,21 +98,23 @@ fun StatusBarTime(
     val action = element.action
     val formatter = element.formatter
 
-    val timeFormat = remember(formatter) {
-        try {
-            DateTimeFormatter.ofPattern(formatter)
-        } catch (e: Exception) {
-            logE(STATUS_BAR_TAG, e) { "Invalid time format '$formatter'" }
-            DateTimeFormatter.ofPattern("HH:mm")
+    val timeFormat =
+        remember(formatter) {
+            try {
+                DateTimeFormatter.ofPattern(formatter)
+            } catch (e: Exception) {
+                logE(STATUS_BAR_TAG, e) { "Invalid time format '$formatter'" }
+                DateTimeFormatter.ofPattern("HH:mm")
+            }
         }
-    }
 
     var time by remember { mutableStateOf(LocalTime.now()) }
 
     // Update every second if formatter contains 'ss', else every 30 seconds
-    val updateInterval = remember(formatter) {
-        if ("ss" in formatter) 1_000L else 30_000L
-    }
+    val updateInterval =
+        remember(formatter) {
+            if ("ss" in formatter) 1_000L else 30_000L
+        }
 
     LaunchedEffect(updateInterval) {
         while (true) {
@@ -132,11 +138,12 @@ fun StatusBarTime(
         Text(
             text = timeText,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.conditional(onAction) { onAction ->
-                clickable {
-                    action?.let { onAction(it) } ?: ctx.openAlarmApp()
+            modifier =
+                Modifier.conditional(onAction) { onAction ->
+                    clickable {
+                        action?.let { onAction(it) } ?: ctx.openAlarmApp()
+                    }
                 }
-            }
         )
     }
 }

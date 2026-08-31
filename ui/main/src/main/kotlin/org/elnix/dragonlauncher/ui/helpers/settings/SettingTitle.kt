@@ -45,14 +45,14 @@ fun SettingsTitle(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .weight(1f)
-                .clickable(
-                    indication = null,
-                    interactionSource = interactionSource,
-                    onClick = onBack
-                )
-                .padding(horizontal = 10.dp, vertical = 20.dp)
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .clickable(
+                        indication = null,
+                        interactionSource = interactionSource,
+                        onClick = onBack
+                    ).padding(horizontal = 10.dp, vertical = 20.dp)
         ) {
             AnimatedFab(
                 onClick = onBack,
@@ -64,9 +64,10 @@ fun SettingsTitle(
                 text = title,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .weight(1f)
-                    .basicMarquee(iterations = 2)
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .basicMarquee(iterations = 2)
             )
         }
 

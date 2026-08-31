@@ -8,14 +8,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object PermissionModule {
-
     @Provides
     @Singleton
-    fun providePermissionManager(@ApplicationContext ctx: Context): PermissionsManager {
-        return PermissionsManagerImpl(ctx)
-    }
+    fun providePermissionManager(
+        @ApplicationContext ctx: Context
+    ): PermissionsManager = PermissionsManagerImpl(ctx)
 }

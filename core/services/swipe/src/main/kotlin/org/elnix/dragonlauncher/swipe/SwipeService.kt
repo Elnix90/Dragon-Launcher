@@ -55,13 +55,10 @@ public interface SwipeService {
     public val lineObjectOrder: SettingFlow<List<AngleLineObjects>>
     public val mainScreenLayerOrder: SettingFlow<List<MainScreenLayer>>
 
-
     public val start: SettingFlow<Offset?>
     public val current: SettingFlow<Offset?>
 
-
     public fun clearAfterLaunch()
-
 
     public val doubleClicActionChannel: Flow<Unit>
 
@@ -69,20 +66,24 @@ public interface SwipeService {
 
     public fun loadAllFromDisk()
 
-
     public fun saveLineObjects()
+
     public fun resetLineObjects()
 
     public fun saveHoldObject()
+
     public fun resetHoldObject()
 
     public fun saveAngleLineOrder()
+
     public fun resetAngleLineOrder()
 
     public fun saveMainScreenLayers()
+
     public fun resetMainScreenLayers()
 
     public fun saveHoldMenuEntries()
+
     public fun resetHoldMenuEntries()
 }
 
@@ -90,9 +91,8 @@ internal class SwipeServiceImpl(
     private val ctx: Context,
     private val widgetsService: WidgetsService
 ) : SwipeService {
-    
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    
+
     override val lineObject: SettingFlow<CustomObject> = SettingFlow(defaultLineCustomObject)
     override val angleObject: SettingFlow<CustomObject> = SettingFlow(defaultAngleCustomObject)
     override val startObject: SettingFlow<CustomObject> = SettingFlow(defaultStartCustomObject)
@@ -104,11 +104,9 @@ internal class SwipeServiceImpl(
     override val lineObjectOrder: SettingFlow<List<AngleLineObjects>> = SettingFlow(AngleLineObjects.entries)
     override val mainScreenLayerOrder: SettingFlow<List<MainScreenLayer>> = SettingFlow(defaultMainScreenLayers)
 
-
     override val start: SettingFlow<Offset?> = SettingFlow(null)
     override val current: SettingFlow<Offset?> = SettingFlow(null)
     private var lastClickTime = 0L
-
 
     override fun clearAfterLaunch() {
         start.value = null
@@ -116,12 +114,10 @@ internal class SwipeServiceImpl(
         lastClickTime = 0L
     }
 
-
     private var leftPadding = 0
     private var rightPadding = 0
     private var topPadding = 0
     private var bottomPadding = 0
-
 
     private val _doubleClicActionChannel = Channel<Unit>(Channel.CONFLATED)
     override val doubleClicActionChannel: Flow<Unit> = _doubleClicActionChannel.receiveAsFlow()
@@ -134,13 +130,14 @@ internal class SwipeServiceImpl(
                 val down = event.changes.firstOrNull { it.changedToDown() } ?: continue
                 val pos = down.position
 
-                val allowed = pos.isInsideActiveZone(
-                    size = size,
-                    left = leftPadding,
-                    right = rightPadding,
-                    top = topPadding,
-                    bottom = bottomPadding
-                )
+                val allowed =
+                    pos.isInsideActiveZone(
+                        size = size,
+                        left = leftPadding,
+                        right = rightPadding,
+                        top = topPadding,
+                        bottom = bottomPadding
+                    )
 
                 if (!allowed) {
                     continue
@@ -216,8 +213,6 @@ internal class SwipeServiceImpl(
         }
     }
 
-
-
     private fun loadAngleLineObjects() {
         scope.launch {
             val lineJsonString = LineObjectSettingStore.jsonSetting.get(ctx)
@@ -266,8 +261,6 @@ internal class SwipeServiceImpl(
         }
     }
 
-
-
     private fun loadHoldObject() {
         scope.launch {
             val holdJsonString = HoldToActivateObject.jsonSetting.get(ctx)
@@ -288,8 +281,6 @@ internal class SwipeServiceImpl(
             HoldToActivateObject.jsonSetting.reset(ctx)
         }
     }
-
-
 
     private fun loadAngleLineOrder() {
         scope.launch {
@@ -321,25 +312,25 @@ internal class SwipeServiceImpl(
         }
     }
 
-
     private fun loadMainScreenLayers() {
         scope.launch {
             val mainScreenLayerString = MainScreenLayersSettingsStore.jsonSetting.getOrNull(ctx)
-            mainScreenLayerOrder.value = mainScreenLayerString?.let { MainScreenLayerJson.decode<List<MainScreenLayer>>(it) }
+            mainScreenLayerOrder.value = mainScreenLayerString
+                ?.let { MainScreenLayerJson.decode<List<MainScreenLayer>>(it) }
                 ?.takeIf { layers ->
-                    val expectedTypes = setOf(
-                        MainScreenLayer.ChargingAnimation::class,
-                        MainScreenLayer.StatusBar::class,
-                        MainScreenLayer.Widgets::class,
-                        MainScreenLayer.CustomDim::class,
-                        MainScreenLayer.DragOverlay::class,
-                        MainScreenLayer.HoldToActivate::class
-                    )
+                    val expectedTypes =
+                        setOf(
+                            MainScreenLayer.ChargingAnimation::class,
+                            MainScreenLayer.StatusBar::class,
+                            MainScreenLayer.Widgets::class,
+                            MainScreenLayer.CustomDim::class,
+                            MainScreenLayer.DragOverlay::class,
+                            MainScreenLayer.HoldToActivate::class
+                        )
 
                     layers.map { it::class }.toSet() == expectedTypes
                 }
                 ?: defaultMainScreenLayers
-
         }
     }
 
@@ -356,8 +347,6 @@ internal class SwipeServiceImpl(
             MainScreenLayersSettingsStore.jsonSetting.reset(ctx)
         }
     }
-
-
 
     private fun loadHoldMenuEntries() {
         scope.launch {
@@ -386,13 +375,12 @@ internal class SwipeServiceImpl(
      */
     private object HoldMenuEntriesJson : DragonJson<List<NavigationRoute>>()
 
-
     private inline fun <reified T> loadCustomObject(
         jsonString: String,
         default: T,
         crossinline onError: (Exception) -> Unit = {}
-    ): T {
-        return if (jsonString.isNotBlankJson) {
+    ): T =
+        if (jsonString.isNotBlankJson) {
             try {
                 json.decodeFromString<T>(jsonString)
             } catch (e: Exception) {
@@ -402,8 +390,6 @@ internal class SwipeServiceImpl(
         } else {
             default
         }
-    }
-
 
     /**
      * Determines whether a pointer position lies within the allowed interaction zone.
@@ -428,29 +414,29 @@ internal class SwipeServiceImpl(
         right: Int,
         top: Int,
         bottom: Int
-    ): Boolean = x >= left &&
+    ): Boolean =
+        x >= left &&
             x <= size.width - right &&
             y >= top &&
             y <= size.height - bottom
 
-
     /**
      * Checks if pointer position is inside any foreground widget bounds.
      */
-    private fun Offset.isInsideForegroundWidget(
-    ): Boolean = widgetsService.widgets.value.any { widget ->
-        if (widget.foreground == false) return@any false
+    private fun Offset.isInsideForegroundWidget(): Boolean =
+        widgetsService.widgets.value.any { widget ->
+            if (widget.foreground == false) return@any false
 
-        val dm = widgetsService.dm
-        val left = widget.x * dm.widthPixels
-        val top = widget.y * dm.heightPixels
+            val dm = widgetsService.dm
+            val left = widget.x * dm.widthPixels
+            val top = widget.y * dm.heightPixels
 
-        val width = widget.spanX * widgetsService.cellSizePx.value
-        val height = widget.spanY * widgetsService.cellSizePx.value
+            val width = widget.spanX * widgetsService.cellSizePx.value
+            val height = widget.spanY * widgetsService.cellSizePx.value
 
-        val right = left + width
-        val bottom = top + height
+            val right = left + width
+            val bottom = top + height
 
-        (x in left..right) && (y in top..bottom)
-    }
+            (x in left..right) && (y in top..bottom)
+        }
 }

@@ -19,7 +19,6 @@ import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import kotlin.math.roundToInt
 
-
 @Suppress("FunctionName")
 fun DrawScope.PointBg(
     point: Point,
@@ -30,10 +29,11 @@ fun DrawScope.PointBg(
     val extraColors = drawParams.extraColors
     val colorScheme = drawParams.colorScheme
     val defaultPoint = drawParams.pointsService.defaultPoint.value
-    val cached = PointStableCache[point.id] ?: run {
-        missingPoint(drawParams, center)
-        return
-    }
+    val cached =
+        PointStableCache[point.id] ?: run {
+            missingPoint(drawParams, center)
+            return
+        }
 
     val iconBitmap = cached.imageBitmap
     val badgeBitmap = cached.badgeBitmap
@@ -48,9 +48,10 @@ fun DrawScope.PointBg(
     val borderShape = borderIconShape.resolveShape()
     val borderStroke = point.getBorderStroke(selected, defaultPoint, drawParams.isDefaultEditing)
 
-    val path = DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
-        toPath(borderShape, iconSize)
-    }
+    val path =
+        DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
+            toPath(borderShape, iconSize)
+        }
 
     withTransform(
         {
@@ -60,7 +61,6 @@ fun DrawScope.PointBg(
             )
         }
     ) {
-
         drawPathGlow(
             path = path,
             color = borderColor,
@@ -79,11 +79,12 @@ fun DrawScope.PointBg(
 
     if (iconBitmap != null) {
         val size = Size.rect(sizePx)
-        val iconPath = DrawPathCache.getOrCompute(
-            Pair(drawParams.iconShape, size)
-        ) {
-            toPath(drawParams.iconShape.resolveShape(), size)
-        }
+        val iconPath =
+            DrawPathCache.getOrCompute(
+                Pair(drawParams.iconShape, size)
+            ) {
+                toPath(drawParams.iconShape.resolveShape(), size)
+            }
 
         translate(
             left = center.x + sizePx / -2f,
@@ -114,14 +115,16 @@ fun DrawScope.PointBg(
 
                 drawImage(
                     image = badgeBitmap,
-                    dstOffset = IntOffset(
-                        x = (badgeCenter.x - scaledWidth / 2f).roundToInt(),
-                        y = (badgeCenter.y - scaledHeight / 2f).roundToInt()
-                    ),
-                    dstSize = IntSize(
-                        width = scaledWidth.roundToInt(),
-                        height = scaledHeight.roundToInt()
-                    ),
+                    dstOffset =
+                        IntOffset(
+                            x = (badgeCenter.x - scaledWidth / 2f).roundToInt(),
+                            y = (badgeCenter.y - scaledHeight / 2f).roundToInt()
+                        ),
+                    dstSize =
+                        IntSize(
+                            width = scaledWidth.roundToInt(),
+                            height = scaledHeight.roundToInt()
+                        ),
                     colorFilter = ColorFilter.tint(colorScheme.onTertiary)
                 )
             }

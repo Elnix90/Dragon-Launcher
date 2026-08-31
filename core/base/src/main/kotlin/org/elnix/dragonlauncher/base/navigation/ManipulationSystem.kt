@@ -9,12 +9,11 @@ import org.elnix.dragonlauncher.ktx.applyTransformations
 import org.elnix.dragonlauncher.ktx.undoTransformations
 
 public class ManipulationSystem(
-    public var center: Offset,
+    public var center: Offset
 ) {
     public val offset: Animatable<Offset, AnimationVector2D> = Animatable(Offset.Zero, Offset.VectorConverter)
     public val zoom: Animatable<Float, AnimationVector1D> = Animatable(1f)
     public val angle: Animatable<Float, AnimationVector1D> = Animatable(0f)
-
 
     /**
      * Normalize a [org.elnix.dragonlauncher.base.model.serializables.Point.offset]
@@ -30,16 +29,16 @@ public class ManipulationSystem(
      */
     public fun undoNormalization(offset: Offset): Offset = offset + center
 
-
     /**
      * Transform a pointer position [Offset] into its coordinated, after applying [offset], [zoom] and [angle] transformations.
      * The resulted [Offset] is meant to be used within the [androidx.compose.ui.graphics.graphicsLayer] block in the Main drawing block
      */
-    public fun transform(offset: Offset): Offset = offset.applyTransformations(
-        zoom = this.zoom.value,
-        offset = this.offset.value,
-        angle = this.angle.value
-    )
+    public fun transform(offset: Offset): Offset =
+        offset.applyTransformations(
+            zoom = this.zoom.value,
+            offset = this.offset.value,
+            angle = this.angle.value
+        )
 
     /**
      * Undo transformation of the above [transform] function, basically applying the same calculation in the opposite direction.
@@ -48,12 +47,12 @@ public class ManipulationSystem(
      *
      * May be removed in the future
      */
-    public fun undoTransformation(offset: Offset): Offset = offset.undoTransformations(
-        zoom = this.zoom.value,
-        offset = this.offset.value,
-        angle = this.angle.value
-    )
-
+    public fun undoTransformation(offset: Offset): Offset =
+        offset.undoTransformations(
+            zoom = this.zoom.value,
+            offset = this.offset.value,
+            angle = this.angle.value
+        )
 
     /** [undoNormalization] then [undoTransformation] */
     public fun undoBoth(offset: Offset): Offset = undoTransformation(undoNormalization(offset))

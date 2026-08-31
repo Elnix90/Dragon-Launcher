@@ -24,7 +24,6 @@ import org.junit.Test
  * provided via resource ID) renders alongside the content.
  */
 class DragonSettingsGroupTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

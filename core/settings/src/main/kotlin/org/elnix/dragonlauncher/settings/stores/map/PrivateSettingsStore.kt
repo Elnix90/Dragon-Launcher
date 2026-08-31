@@ -16,51 +16,56 @@ import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
 public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
-
     @SettingKey
     public val hasSeenWelcome: BooleanSettingObject = boolean(false)
 
     @SettingKey
-    public val hasInitialized: BooleanSettingObject = boolean(
-        title = R.string.has_initialized,
-        default = false
-    )
+    public val hasInitialized: BooleanSettingObject =
+        boolean(
+            title = R.string.has_initialized,
+            default = false
+        )
 
     @SettingKey
-    public val showSetDefaultLauncherBanner: BooleanSettingObject = boolean(
-        title = R.string.show_set_default_launcher_banner,
-        description = R.string.show_set_default_launcher_banner_desc,
-        icon = R.drawable.question_mark,
-        default = true
-    )
+    public val showSetDefaultLauncherBanner: BooleanSettingObject =
+        boolean(
+            title = R.string.show_set_default_launcher_banner,
+            description = R.string.show_set_default_launcher_banner_desc,
+            icon = R.drawable.question_mark,
+            default = true
+        )
 
     @SettingKey
-    public val showReselectBackupBanner: BooleanSettingObject = boolean(
-        title = R.string.show_reselect_backup_banner,
-        description = R.string.show_set_default_launcher_banner_desc,
-        icon = R.drawable.question_mark,
-        default = true
-    )
+    public val showReselectBackupBanner: BooleanSettingObject =
+        boolean(
+            title = R.string.show_reselect_backup_banner,
+            description = R.string.show_set_default_launcher_banner_desc,
+            icon = R.drawable.question_mark,
+            default = true
+        )
 
     @SettingKey
-    public val hideBetaVersionWarning: BooleanSettingObject = boolean(
-        title = R.string.hide_beta_version_warning,
-        description = R.string.hide_beta_version_warning_desc,
-        icon = R.drawable.warning,
-        default = false
-    )
+    public val hideBetaVersionWarning: BooleanSettingObject =
+        boolean(
+            title = R.string.hide_beta_version_warning,
+            description = R.string.hide_beta_version_warning_desc,
+            icon = R.drawable.warning,
+            default = false
+        )
 
     @SettingKey
-    public val lastSeenVersionCodeWhatsNew: IntSettingObject = int(
-        default = 0,
-        allowedRange = 0..Int.MAX_VALUE
-    )
+    public val lastSeenVersionCodeWhatsNew: IntSettingObject =
+        int(
+            default = 0,
+            allowedRange = 0..Int.MAX_VALUE
+        )
 
     @SettingKey
-    public val lastSeenVersionCodeGoogleLockdownWarning: IntSettingObject = int(
-        default = 0,
-        allowedRange = 0..Int.MAX_VALUE
-    )
+    public val lastSeenVersionCodeGoogleLockdownWarning: IntSettingObject =
+        int(
+            default = 0,
+            allowedRange = 0..Int.MAX_VALUE
+        )
 
     /**
      *  Hashed code for settings lock (SHA-256).
@@ -78,7 +83,6 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     @SettingKey
     public val actionsHash: StringSettingObject = string("")
 
-
     @SettingKey
     public val lockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)
 
@@ -88,15 +92,15 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     @SettingKey
     public val actionsLockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)
 
-
     /**
      * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection
      */
     @SettingKey
-    public val welcomeScreenTempPage: IntSettingObject = int(
-        default = 0,
-        allowedRange = 0..6,
-    )
+    public val welcomeScreenTempPage: IntSettingObject =
+        int(
+            default = 0,
+            allowedRange = 0..6
+        )
 
     @SettingKey
     public val lastCrashStackTrace: StringSettingObject = string("")

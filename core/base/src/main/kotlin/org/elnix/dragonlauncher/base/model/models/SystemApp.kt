@@ -21,20 +21,17 @@ public data class SystemApp(
     override val profile: Profile,
     override val isSuspended: Boolean
 ) : Application() {
-
     override val isSystem: Boolean = true
     override val isLaunchable: Boolean = false
 
     override val label: String
-        get() = labelOverride ?:  defaultLabel
+        get() = labelOverride ?: defaultLabel
 
     override val defaultLabel: String by lazy {
         applicationInfo.loadLabel(ctx.packageManager).toString()
     }
 
-    override fun overrideLabel(label: String): Application {
-        return this.copy(labelOverride = label)
-    }
+    override fun overrideLabel(label: String): Application = this.copy(labelOverride = label)
 
     override val componentName: ComponentName
         get() = buildFakeComponentName(applicationInfo.packageName)
@@ -46,57 +43,60 @@ public data class SystemApp(
      */
     override var cachedNormalizerResult: Pair<String, String>? = null
 
-
     override val packageName: String
         get() = applicationInfo.packageName
 
     override val category: AppCategory = AppCategory.Other
 
-
     override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? {
         return try {
-            val icon = withContext(Dispatchers.IO) {
-                applicationInfo.loadIcon(ctx.packageManager)
-            } ?: return null
+            val icon =
+                withContext(Dispatchers.IO) {
+                    applicationInfo.loadIcon(ctx.packageManager)
+                } ?: return null
 
             when (icon) {
                 is AdaptiveIconDrawable -> {
                     if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
                         StaticLauncherIcon(
-                            foregroundLayer = StaticIconLayer(
-                                scale = 1.5f,
-                                icon = icon.monochrome!!,
-                                tint = tint
-                            ),
+                            foregroundLayer =
+                                StaticIconLayer(
+                                    scale = 1.5f,
+                                    icon = icon.monochrome!!,
+                                    tint = tint
+                                ),
                             backgroundLayer = TransparentLayer
                         )
                     } else {
                         StaticLauncherIcon(
-                            foregroundLayer = icon.foreground?.let {
-                                StaticIconLayer(
-                                    icon = it,
-                                    scale = 1.5f,
-                                    tint = tint
-                                )
-                            } ?: TransparentLayer,
-                            backgroundLayer = icon.background?.let {
-                                StaticIconLayer(
-                                    icon = it,
-                                    scale = 1.5f,
-                                    tint = tint
-                                )
-                            } ?: TransparentLayer,
+                            foregroundLayer =
+                                icon.foreground?.let {
+                                    StaticIconLayer(
+                                        icon = it,
+                                        scale = 1.5f,
+                                        tint = tint
+                                    )
+                                } ?: TransparentLayer,
+                            backgroundLayer =
+                                icon.background?.let {
+                                    StaticIconLayer(
+                                        icon = it,
+                                        scale = 1.5f,
+                                        tint = tint
+                                    )
+                                } ?: TransparentLayer
                         )
                     }
                 }
 
                 else -> {
                     StaticLauncherIcon(
-                        foregroundLayer = StaticIconLayer(
-                            icon = icon,
-                            scale = 1f,
-                            tint = tint
-                        ),
+                        foregroundLayer =
+                            StaticIconLayer(
+                                icon = icon,
+                                scale = 1f,
+                                tint = tint
+                            ),
                         backgroundLayer = TransparentLayer
                     )
                 }

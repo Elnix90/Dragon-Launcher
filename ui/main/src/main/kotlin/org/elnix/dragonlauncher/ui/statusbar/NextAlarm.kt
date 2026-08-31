@@ -36,16 +36,16 @@ fun StatusBarNextAlarm(
     val ctx = LocalContext.current
     var nextAlarm by remember { mutableStateOf<NextAlarmInfo?>(null) }
 
-
     val formatter = element.formatter
-    val dateFormat = remember(formatter) {
-        try {
-            DateTimeFormatter.ofPattern(formatter)
-        } catch (_: Exception) {
-            println("⚠️ Invalid time format '$formatter'")
-            DateTimeFormatter.ofPattern("HH:mm")
+    val dateFormat =
+        remember(formatter) {
+            try {
+                DateTimeFormatter.ofPattern(formatter)
+            } catch (_: Exception) {
+                println("⚠️ Invalid time format '$formatter'")
+                DateTimeFormatter.ofPattern("HH:mm")
+            }
         }
-    }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -67,7 +67,7 @@ fun StatusBarNextAlarm(
             nextAlarm?.let { alarm ->
                 Text(
                     text = alarm.formattedTime,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
@@ -84,9 +84,11 @@ private fun getNextAlarm(ctx: Context, formatter: DateTimeFormatter): NextAlarmI
         val alarmManager = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val nextAlarm = alarmManager.nextAlarmClock?.triggerTime ?: return null
 
-        val time = Instant.ofEpochMilli(nextAlarm)
-            .atZone(ZoneId.systemDefault())
-            .toLocalTime()
+        val time =
+            Instant
+                .ofEpochMilli(nextAlarm)
+                .atZone(ZoneId.systemDefault())
+                .toLocalTime()
 
         val formatted = time.format(formatter)
 
@@ -94,7 +96,6 @@ private fun getNextAlarm(ctx: Context, formatter: DateTimeFormatter): NextAlarmI
             formattedTime = formatted,
             label = ctx.getString(R.string.next_alarm_at, formatted)
         )
-
     } catch (_: Exception) {
         println("Alarm read failed")
         null

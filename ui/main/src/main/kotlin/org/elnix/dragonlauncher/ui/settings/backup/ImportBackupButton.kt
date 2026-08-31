@@ -35,19 +35,19 @@ fun ImportBackupButton(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
     var legacyJsonString by remember { mutableStateOf<String?>(null) }
 
-    val settingsImportLauncher = rememberSettingsImportLauncher(
-        onJsonReady = { json ->
-            if (backupViewModel.isLegacyBackup(json.toString())) {
-                legacyJsonString = json.toString()
-            } else {
-                importJson = json
+    val settingsImportLauncher =
+        rememberSettingsImportLauncher(
+            onJsonReady = { json ->
+                if (backupViewModel.isLegacyBackup(json.toString())) {
+                    legacyJsonString = json.toString()
+                } else {
+                    importJson = json
+                }
             }
-        }
-    )
+        )
 
     legacyJsonString?.let { json ->
         MigrationDialog(
@@ -75,11 +75,12 @@ fun ImportBackupButton(
                             json = json,
                             requestedStores = selectedStoresForImport
                         )
-                        backupViewModel.result.value = BackupResult(
-                            export = false,
-                            error = false,
-                            title = ctx.getString(R.string.import_successful)
-                        )
+                        backupViewModel.result.value =
+                            BackupResult(
+                                export = false,
+                                error = false,
+                                title = ctx.getString(R.string.import_successful)
+                            )
 
                         onConfirm?.invoke()
                         PrivateSettingsStore.hasInitialized.set(ctx, true)
@@ -87,12 +88,13 @@ fun ImportBackupButton(
                         importJson = null
                     } catch (e: Exception) {
                         logE(BACKUP_TAG, e) { "Import failed" }
-                        backupViewModel.result.value = BackupResult(
-                            export = false,
-                            error = true,
-                            title = ctx.getString(R.string.import_failed),
-                            message = e.message ?: ""
-                        )
+                        backupViewModel.result.value =
+                            BackupResult(
+                                export = false,
+                                error = true,
+                                title = ctx.getString(R.string.import_failed),
+                                message = e.message ?: ""
+                            )
                     }
                 }
             }

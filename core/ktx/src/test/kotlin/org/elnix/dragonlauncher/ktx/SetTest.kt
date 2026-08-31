@@ -11,8 +11,7 @@ import org.junit.Test
  * may be removed, creating gaps in the ID sequence.
  */
 class SetTest {
-
-    //  Empty set 
+    //  Empty set
 
     @Test
     fun `getNextId on empty set returns 0`() {
@@ -20,7 +19,7 @@ class SetTest {
         assertEquals(0, ids.getNextId())
     }
 
-    //  Contiguous sequences starting from 0 
+    //  Contiguous sequences starting from 0
 
     @Test
     fun `getNextId on set containing only 0 returns 1`() {
@@ -40,7 +39,7 @@ class SetTest {
         assertEquals(4, ids.getNextId())
     }
 
-    //  Gaps in the sequence 
+    //  Gaps in the sequence
 
     @Test
     fun `getNextId fills gap when 0 is missing`() {
@@ -66,7 +65,7 @@ class SetTest {
         assertEquals(0, ids.getNextId())
     }
 
-    //  Non-contiguous / scattered values 
+    //  Non-contiguous / scattered values
 
     @Test
     fun `getNextId with only large numbers returns 0`() {
@@ -80,7 +79,7 @@ class SetTest {
         assertEquals(1, ids.getNextId())
     }
 
-    //  Negative IDs (edge case) 
+    //  Negative IDs (edge case)
 
     @Test
     fun `getNextId ignores negative IDs and returns 0`() {
@@ -96,7 +95,7 @@ class SetTest {
         assertEquals(1, ids.getNextId())
     }
 
-    //  Large sets 
+    //  Large sets
 
     @Test
     fun `getNextId with 1000 contiguous IDs returns 1000`() {

@@ -24,15 +24,14 @@ public data class CustomGlow(
     }
 }
 
-public fun CustomGlow?.takeDefaults(default: CustomGlow?, constant: CustomGlow): CustomGlow {
-    return CustomGlow(
+public fun CustomGlow?.takeDefaults(default: CustomGlow?, constant: CustomGlow): CustomGlow =
+    CustomGlow(
         radius = this?.radius ?: default?.radius ?: constant.radius,
-        color = this?.color ?: default?.color ?: constant.color,
+        color = this?.color ?: default?.color ?: constant.color
     )
-}
 
 public val CustomGlow?.isUnSpecified: Boolean
-    get() =  this == null || this == CustomGlow.Unspecified
+    get() = this == null || this == CustomGlow.Unspecified
 
 public val CustomGlow?.isSpecified: Boolean
     get() = !this.isUnSpecified

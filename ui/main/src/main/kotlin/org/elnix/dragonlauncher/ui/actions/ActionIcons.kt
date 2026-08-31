@@ -30,7 +30,6 @@ fun FinalPointIcon(
     val pointSize = size ?: point.getSize(defaultPoint, false)
 
     when (val action = point.action) {
-
         is Action.LaunchApp -> {
             val app by drawerViewModel.findOne(action).collectAsState(null)
             if (app != null) {
@@ -61,7 +60,7 @@ fun AppIcon(
     app: Application,
     size: Dp,
     modifier: Modifier = Modifier,
-    iconsViewModel: IconsViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel()
 ) {
     val badge by iconsViewModel.getBadge(app).collectAsStateWithLifecycle()
     val icon by iconsViewModel.getIcon(app).collectAsStateWithLifecycle()
@@ -79,7 +78,7 @@ fun ShortcutIcon(
     shortcut: Action.LaunchShortcut,
     size: Dp,
     modifier: Modifier = Modifier,
-    iconsViewModel: IconsViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel()
 ) {
     val icon by iconsViewModel.getIcon(shortcut).collectAsStateWithLifecycle()
 

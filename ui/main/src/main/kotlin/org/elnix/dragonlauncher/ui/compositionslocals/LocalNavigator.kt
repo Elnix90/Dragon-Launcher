@@ -4,9 +4,7 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 
-
 interface Navigator {
-
     /**
      * Navigates directly to the given screen, bypasses any lockscreen in place. Used by... well the lock screen to navigate when unlocked
      *
@@ -20,7 +18,6 @@ interface Navigator {
      * @param route Which screen is requested to navigate to
      */
     fun navigate(route: NavigationRoute)
-
 
     /**
      * On backNavigates back the backstack

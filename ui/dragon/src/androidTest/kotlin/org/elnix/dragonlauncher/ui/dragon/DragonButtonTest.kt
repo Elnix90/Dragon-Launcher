@@ -32,7 +32,6 @@ import org.junit.Test
  * Focus on the basic interaction pattern.
  */
 class DragonButtonTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

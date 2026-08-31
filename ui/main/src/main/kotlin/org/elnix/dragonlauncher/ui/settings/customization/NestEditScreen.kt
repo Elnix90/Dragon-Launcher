@@ -51,17 +51,17 @@ import androidx.compose.ui.util.fastCoerceAtMost
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.EnterNest
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.GoParentNest
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.NestManagement
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.ShapesEditTools
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.highlightedIfSelected
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.navigation.ManipulationSystem
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.EnterNest
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.GoParentNest
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.NestManagement
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.ShapesEditTools
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.px
@@ -100,7 +100,6 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.backgroundCenteredSquareGrid
 import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 
-
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -117,10 +116,8 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     val defaultShape by pointsService.defaultIntersectionShape.asState()
     val defaultNest by pointsService.defaultNest.asState()
 
-
     val nestId by nestNavigation.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
-
 
     var snapShapesOffset by UiSettingsStore.snapShapesOffset.asMutableState()
     var snapShapesCenter by UiSettingsStore.snapShapesCenter.asMutableState()
@@ -136,12 +133,13 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     fun IntersectionShape.snap(): IntersectionShape {
         val offset = this.getOffset(defaultShape, false)
 
-        val newOffset = when {
-            snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-            snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-            snapShapesOffset -> offset.snapToGrid(cellSizePx)
-            else -> offset
-        }
+        val newOffset =
+            when {
+                snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+                snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+                snapShapesOffset -> offset.snapToGrid(cellSizePx)
+                else -> offset
+            }
 //        val newScale = if (snapShapesScale) {
 //            val oldScale = this.scale
 //            val newScale = oldScale.snapToRound(1f, 0.5f)
@@ -164,7 +162,6 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
         )
     }
 
-
     var showEditCurrentNestSheet by remember { mutableStateOf(false) }
     var showMoreSheet by remember { mutableStateOf(false) }
     var showEditDefaultNestSheet by remember { mutableStateOf(false) }
@@ -181,6 +178,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     var tempCancelZone by remember { mutableStateOf(currentNest.getCancelZone(defaultNest, false)) }
 
     val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
+
     fun addPath(shape: IntersectionShape) {
         paths[shape] = shape.getShape(defaultShape, false).resolveShape().toPath(shape.getSize(density.density, defaultShape, false), density)
     }
@@ -194,16 +192,16 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
         selectedShapeId = paths.keys.find { it.id == selectedShapeId }?.id
     }
 
-
     var witnessShape: IntersectionShape? by remember { mutableStateOf(null) }
     var netOffsetChange by remember { mutableStateOf(Offset.Zero) }
 
     fun saveCurrentNest() {
         pointsService.updateNest(nestId) { old ->
             old.copy(
-                intersectionShapes = paths.keys
-                    .mapTo(mutableSetOf()) { it.snap() }
-                    .takeIf { it != (defaultNest.intersectionShapes ?: Nest.defaultIntersectionShapes) }
+                intersectionShapes =
+                    paths.keys
+                        .mapTo(mutableSetOf()) { it.snap() }
+                        .takeIf { it != (defaultNest.intersectionShapes ?: Nest.defaultIntersectionShapes) }
             )
         }
     }
@@ -227,20 +225,23 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     /**
      * I am soooooooooooooo proud of this thing actually
      */
-    val cellNumber = remember(cellSizePx, zoom.value, offset.value) {
-        val dist = offset.value.getDistance()
-        val screenMaxDimension = with(density) {
-            maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
-        }
+    val cellNumber =
+        remember(cellSizePx, zoom.value, offset.value) {
+            val dist = offset.value.getDistance()
+            val screenMaxDimension =
+                with(density) {
+                    maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
+                }
 
-        (((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
-    }
+            (((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
+        }
 
     SettingsScaffold(
         title = stringResource(R.string.edit_nest_arg, nestId),
         onBack = {
-            if (selectedShapeId != null) selectedShapeId = null
-            else {
+            if (selectedShapeId != null) {
+                selectedShapeId = null
+            } else {
                 saveCurrentNest()
                 pointsService.persist()
                 navigator.onBack()
@@ -260,7 +261,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                         showEditDefaultNestSheet = true
                         dismiss()
                     },
-                    icon = R.drawable.edit_rounded,
+                    icon = R.drawable.edit_rounded
                 ),
                 MoreOptions(
                     text = { stringResource(R.string.edit_default_shape) },
@@ -268,7 +269,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                         showEditDefaultShapeDialog = true
                         dismiss()
                     },
-                    icon = R.drawable.edit_rounded,
+                    icon = R.drawable.edit_rounded
                 ),
                 MoreOptions(
                     text = { stringResource(R.string.more) },
@@ -276,7 +277,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                         showMoreSheet = true
                         dismiss()
                     },
-                    icon = R.drawable.add_circle,
+                    icon = R.drawable.add_circle
                 )
             )
         },
@@ -346,7 +347,6 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                 UndoRedoBlock(pointsService.undoRedo)
             }
 
-
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -354,7 +354,6 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 AnimatedFab(
                     onClick = { showEditCurrentNestSheet = true },
                     icon = R.drawable.edit_rounded,
@@ -366,11 +365,14 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 
                 Box {
                     AnimatedContent(isInDragAroundMode) {
-                        val selectedShape = if (it) null else {
-                            selectedShapeId?.let { shapeId ->
-                                paths.keys.firstOrNull { shape -> shape.id == shapeId }
+                        val selectedShape =
+                            if (it) {
+                                null
+                            } else {
+                                selectedShapeId?.let { shapeId ->
+                                    paths.keys.firstOrNull { shape -> shape.id == shapeId }
+                                }
                             }
-                        }
 
                         if (selectedShape == null) {
                             DragonRow(
@@ -435,11 +437,12 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                             selectedShapeId = shape.id
                                             showDropDownMenu = false
                                         },
-                                        shape = when (idx) {
-                                            0 -> MenuDefaults.leadingItemShape
-                                            filteredShapes.size if selectedShapeId != null -> MenuDefaults.trailingItemShape
-                                            else -> MenuDefaults.middleItemShape
-                                        }
+                                        shape =
+                                            when (idx) {
+                                                0 -> MenuDefaults.leadingItemShape
+                                                filteredShapes.size if selectedShapeId != null -> MenuDefaults.trailingItemShape
+                                                else -> MenuDefaults.middleItemShape
+                                            }
                                     )
                                 }
 
@@ -472,19 +475,20 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
         }
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onSizeChanged { size ->
-                    // Updates the center and available width variables, that depends on the phone size and orientation.
-                    // Computes the larger size between width and height to ensure all points belongs to the hittable zone
-                    // The visual points and hitboxes are separated due to the need of a precise pointer input.
-                    // Should be synchronized using the [computePointPosition] function that relies on common
-                    // center to output the points position on screen
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .onSizeChanged { size ->
+                        // Updates the center and available width variables, that depends on the phone size and orientation.
+                        // Computes the larger size between width and height to ensure all points belongs to the hittable zone
+                        // The visual points and hitboxes are separated due to the need of a precise pointer input.
+                        // Should be synchronized using the [computePointPosition] function that relies on common
+                        // center to output the points position on screen
 
-                    val w = size.width.toFloat()
-                    val h = size.height.toFloat()
-                    center = Offset(w / 2f, h / 2f)
-                }
+                        val w = size.width.toFloat()
+                        val h = size.height.toFloat()
+                        center = Offset(w / 2f, h / 2f)
+                    }
         ) {
             key(currentNest, recomposeTrigger, tempCancelZone) {
                 Box(
@@ -526,10 +530,11 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 
                     NestOverlay(
                         center = center,
-                        nest = currentNest.copy(
-                            intersectionShapes = paths.keys.mapTo(mutableSetOf()) { it.snap() },
-                            cancelZone = tempCancelZone
-                        ),
+                        nest =
+                            currentNest.copy(
+                                intersectionShapes = paths.keys.mapTo(mutableSetOf()) { it.snap() },
+                                cancelZone = tempCancelZone
+                            ),
                         depth = Int.MAX_VALUE,
                         eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f),
                         pointSettingsDisplay = true,
@@ -571,7 +576,6 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                             }
                         ) { centroid, pan, gestureZoom, gestureRotate ->
                             if (isInDragAroundMode) {
-
                                 val oldScale = zoom.value
                                 val newScale = zoom.value * gestureZoom
                                 val newAngle = angle.value + gestureRotate
@@ -623,14 +627,15 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                 //       - R(Δθ) * (C - center - O) * (newScale / oldScale)
                                 val newOffset =
                                     canvasPan + canvasCentroid -
-                                            (canvasCentroid - shape.getOffset(defaultShape, false)).rotateBy(gestureRotate) *
-                                            (newScale / oldScale)
+                                        (canvasCentroid - shape.getOffset(defaultShape, false)).rotateBy(gestureRotate) *
+                                        (newScale / oldScale)
 
-                                val newShape = shape.copy(
-                                    offset = newOffset,
-                                    scale = newScale,
-                                    rotation = newAngle.toInt()
-                                )
+                                val newShape =
+                                    shape.copy(
+                                        offset = newOffset,
+                                        scale = newScale,
+                                        rotation = newAngle.toInt()
+                                    )
 
                                 val newSnappedShape = newShape.snap()
 
@@ -642,10 +647,11 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                 points
                                     .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
                                     .forEach { (_, point) ->
-                                        point.pos = pointsService.computePointOffsetRealTime(
-                                            point = point.copy(offset = point.offset + netOffsetChange),
-                                            shape = newSnappedShape
-                                        )
+                                        point.pos =
+                                            pointsService.computePointOffsetRealTime(
+                                                point = point.copy(offset = point.offset + netOffsetChange),
+                                                shape = newSnappedShape
+                                            )
                                     }
                             }
                         }
@@ -656,7 +662,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 
     if (showMoreSheet) {
         DragonModalBottomSheet(
-            onDismissRequest = { showMoreSheet = false },
+            onDismissRequest = { showMoreSheet = false }
         ) {
             DragonSettingsGroup(R.string.nest_info) {
                 Column(

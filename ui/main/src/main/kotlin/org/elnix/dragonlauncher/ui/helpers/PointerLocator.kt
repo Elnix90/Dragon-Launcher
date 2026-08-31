@@ -24,14 +24,14 @@ fun DrawScope.PointerLocation(
             color = color,
             start = offset.copy(x = 0f),
             end = offset.copy(x = size.width),
-            strokeWidth = stroke,
+            strokeWidth = stroke
         )
 
         drawLine(
             color = color,
             start = offset.copy(y = 0f),
             end = offset.copy(y = size.height),
-            strokeWidth = stroke,
+            strokeWidth = stroke
         )
 
         if (circleCenter) {
@@ -39,7 +39,7 @@ fun DrawScope.PointerLocation(
                 color = color,
                 radius = 100f,
                 center = offset,
-                blendMode = BlendMode.Clear,
+                blendMode = BlendMode.Clear
             )
 
             drawCircle(

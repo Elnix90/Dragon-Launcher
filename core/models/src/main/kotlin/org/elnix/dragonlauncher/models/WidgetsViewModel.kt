@@ -14,17 +14,20 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class WidgetsViewModel @Inject constructor(
-    application: Application,
-    public val widgetsService: WidgetsService,
-    private val appsRepository: AppRepository,
-    private val shortcutRepository: AppShortcutRepository,
-) : AndroidViewModel(application) {
+public class WidgetsViewModel
+    @Inject
+    constructor(
+        application: Application,
+        public val widgetsService: WidgetsService,
+        private val appsRepository: AppRepository,
+        private val shortcutRepository: AppShortcutRepository
+    ) : AndroidViewModel(application) {
+        init {
+            viewModelInitialized()
+        }
 
-    init {
-        viewModelInitialized()
+        public fun findOne(action: Action.LaunchApp): Flow<org.elnix.dragonlauncher.base.model.models.Application?> =
+            appsRepository.findOne(
+                action
+            )
     }
-
-    public fun findOne(action: Action.LaunchApp): Flow<org.elnix.dragonlauncher.base.model.models.Application?> = appsRepository.findOne(action)
-
-}

@@ -87,7 +87,6 @@ fun PinUnlock(
     }
 }
 
-
 /**
  * Dialog for setting up a new PIN (enter + confirm).
  */
@@ -173,23 +172,29 @@ private fun PinPrompt(
     onValidate: (pin: String) -> Unit
 ) {
     val ctx = LocalContext.current
-    val horizontalOffsetError = remember {
-        Animatable(
-            initialValue = 0f
-        )
-    }
+    val horizontalOffsetError =
+        remember {
+            Animatable(
+                initialValue = 0f
+            )
+        }
 
     LaunchedEffect(failedTries) {
         if (failedTries > 0) {
             var left = true
             repeat(5) {
                 horizontalOffsetError.animateTo(
-                    animationSpec = tween(
-                        durationMillis = 100,
-                        easing = LinearEasing
-                    ),
-                    targetValue = if (left) -5f
-                    else 5f
+                    animationSpec =
+                        tween(
+                            durationMillis = 100,
+                            easing = LinearEasing
+                        ),
+                    targetValue =
+                        if (left) {
+                            -5f
+                        } else {
+                            5f
+                        }
                 )
                 left = !left
             }
@@ -235,11 +240,12 @@ private fun PinPrompt(
     val defaultLockColor = MaterialTheme.colorScheme.primary
     val errorColor = MaterialTheme.colorScheme.error
 
-    val lockColor = remember {
-        Animatable(
-            initialValue = defaultLockColor
-        )
-    }
+    val lockColor =
+        remember {
+            Animatable(
+                initialValue = defaultLockColor
+            )
+        }
 
     LaunchedEffect(failedTries) {
         if (failedTries > 0) {
@@ -257,11 +263,12 @@ private fun PinPrompt(
 
     LockScreenScaffold { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(backgroundOverlayColor.value)
-                .padding(20.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(backgroundOverlayColor.value)
+                    .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -269,9 +276,10 @@ private fun PinPrompt(
                 painter = painterResource(R.drawable.lock),
                 contentDescription = null,
                 tint = lockColor.value,
-                modifier = Modifier
-                    .offset(x = horizontalOffsetError.value.dp)
-                    .size(50.dp)
+                modifier =
+                    Modifier
+                        .offset(x = horizontalOffsetError.value.dp)
+                        .size(50.dp)
             )
             Spacer(8.dp)
 

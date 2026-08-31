@@ -57,7 +57,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import kotlin.time.Duration.Companion.milliseconds
 
-
 @Composable
 fun HoldToActivateTab(
     swipeViewModel: SwipeViewModel = activityViewModel()
@@ -78,11 +77,12 @@ fun HoldToActivateTab(
 
     val progress = remember { Animatable(0f) }
 
-    val hold = rememberHoldToOpenSettings(
-        onSettings = { },
-        holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
-        loadDuration = longCLickSettingsDuration.toLong()
-    )
+    val hold =
+        rememberHoldToOpenSettings(
+            onSettings = { },
+            holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
+            loadDuration = longCLickSettingsDuration.toLong()
+        )
 
     SettingsScaffold(
         title = stringResource(R.string.hold_settings),
@@ -97,7 +97,7 @@ fun HoldToActivateTab(
         onReset = {
             scope.launch {
                 HoldToActivateArcSettingsStore.resetAll(ctx)
-                    swipeService.resetHoldObject()
+                swipeService.resetHoldObject()
             }
         },
         topContent = {
@@ -145,30 +145,35 @@ fun HoldToActivateTab(
                 }
             }
 
-
             Column {
                 var height by remember { mutableIntStateOf(0) }
                 var isFirstPositioning by remember { mutableStateOf(true) }
 
                 BoxWithConstraints(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(height.toDp)
-                        .onGloballyPositioned { layoutCoordinates ->
-                            if (isFirstPositioning) {
-                                height = layoutCoordinates.size.width
-                                isFirstPositioning = false
-                            }
-                        }
-                        .then(hold.pointerModifier)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(height.toDp)
+                            .onGloballyPositioned { layoutCoordinates ->
+                                if (isFirstPositioning) {
+                                    height = layoutCoordinates.size.width
+                                    isFirstPositioning = false
+                                }
+                            }.then(hold.pointerModifier)
                 ) {
-                    val center = if (!manualMode) {
-                        this.constraints.getCenter()
-                    } else hold.center
+                    val center =
+                        if (!manualMode) {
+                            this.constraints.getCenter()
+                        } else {
+                            hold.center
+                        }
 
-                    val progress = if (!manualMode) {
-                        progress.value
-                    } else hold.progress
+                    val progress =
+                        if (!manualMode) {
+                            progress.value
+                        } else {
+                            hold.progress
+                        }
 
                     HoldToActivateArc(
                         center = center,
@@ -195,26 +200,26 @@ fun HoldToActivateTab(
 
                     progress.animateTo(
                         targetValue = 1f,
-                        animationSpec = tween(
-                            durationMillis = longCLickSettingsDuration,
-                            easing = LinearEasing
-                        )
+                        animationSpec =
+                            tween(
+                                durationMillis = longCLickSettingsDuration,
+                                easing = LinearEasing
+                            )
                     )
                 }
             }
         }
 
-
         EditCustomObjectBlock(
             title = R.string.object_properties,
             editObject = holdObject,
             default = defaultAngleCustomObject,
-            properties = CustomObjectBlockProperties(
-                allowAlignCustomization = false,
-                allowEraseBackgroundCustomization = false
-            )
+            properties =
+                CustomObjectBlockProperties(
+                    allowAlignCustomization = false,
+                    allowEraseBackgroundCustomization = false
+                )
         ) { swipeService.holdObject.value = it }
-
 
         DragonSettingsGroup(R.string.configuration) {
             Setting(HoldToActivateArcSettingsStore.longCLickSettingsDuration)

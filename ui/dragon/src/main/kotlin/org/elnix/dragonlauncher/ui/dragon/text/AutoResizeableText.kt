@@ -109,9 +109,10 @@ fun AutoResizeableText(
         minLines = minLines,
         onTextLayout = onTextLayout,
         style = style,
-        autoSize = TextAutoSize.StepBased(
-            maxFontSize = style.fontSize,
-            minFontSize = minFontSize,
-        )
+        autoSize =
+            TextAutoSize.StepBased(
+                maxFontSize = style.fontSize,
+                minFontSize = minFontSize
+            )
     )
 }

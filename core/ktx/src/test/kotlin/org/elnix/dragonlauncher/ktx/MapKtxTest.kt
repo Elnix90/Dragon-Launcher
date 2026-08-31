@@ -19,8 +19,7 @@ import org.robolectric.RobolectricTestRunner
  */
 @RunWith(RobolectricTestRunner::class)
 class MapKtxTest {
-
-    //  Basic grouping 
+    //  Basic grouping
 
     @Test
     fun `groupByTo groups elements by key`() {
@@ -45,7 +44,7 @@ class MapKtxTest {
         assertEquals(setOf(1, 2, 3, 4, 5), destination[42])
     }
 
-    //  Empty input 
+    //  Empty input
 
     @Test
     fun `groupByTo on empty list returns empty destination`() {
@@ -57,7 +56,7 @@ class MapKtxTest {
         assertTrue(destination.isEmpty())
     }
 
-    //  Uses ArraySet (Android-specific behavior) 
+    //  Uses ArraySet (Android-specific behavior)
 
     @Test
     fun `groupByTo creates sets that are ArraySet instances`() {
@@ -74,7 +73,7 @@ class MapKtxTest {
         )
     }
 
-    //  Duplicates within same key group 
+    //  Duplicates within same key group
 
     @Test
     fun `groupByTo deduplicates within sets`() {
@@ -88,7 +87,7 @@ class MapKtxTest {
         assertEquals(setOf(2, 3), destination["big"])
     }
 
-    //  Returns destination map 
+    //  Returns destination map
 
     @Test
     fun `groupByTo returns the destination map`() {

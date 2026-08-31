@@ -32,13 +32,14 @@ fun UpdateCard(
     val dateFormatter = rememberDateFormatter()
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick
+                ),
         shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(3.dp)
     ) {
@@ -64,7 +65,7 @@ fun UpdateCard(
                 Spacer()
                 Text(
                     text = dateFormatter.format(update.date),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
 
@@ -117,7 +118,7 @@ private fun ColumnScope.UpdateSection(
 
     Text(
         text = title,
-        style = MaterialTheme.typography.titleSmallEmphasized,
+        style = MaterialTheme.typography.titleSmallEmphasized
     )
 
     Spacer(4.dp)

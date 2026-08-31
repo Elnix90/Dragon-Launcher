@@ -3,7 +3,9 @@ package org.elnix.dragonlauncher.base
 import java.util.Collections
 import java.util.UUID
 
-public abstract class DragonCache <K,V> (initialMaxSize: Int) {
+public abstract class DragonCache<K, V>(
+    initialMaxSize: Int
+) {
     private var maxSize = initialMaxSize
     public val cacheUUID: UUID = UUID.randomUUID()
 
@@ -23,19 +25,20 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
         maxSize += increment
     }
 
-    private val items = Collections.synchronizedMap(
-        object : LinkedHashMap<K, V>(
-            maxSize, 0.75f, true
-        ) {
-            override fun removeEldestEntry(
-                eldest: MutableMap.MutableEntry<K, V>
-            ) = size > maxSize
-        }
-    )
-
+    private val items =
+        Collections.synchronizedMap(
+            object : LinkedHashMap<K, V>(
+                maxSize,
+                0.75f,
+                true
+            ) {
+                override fun removeEldestEntry(
+                    eldest: MutableMap.MutableEntry<K, V>
+                ) = size > maxSize
+            }
+        )
 
     public operator fun get(key: K): V? = items[key]
-
 
     /**
      * Get or compute, used in the [org.elnix.dragonlauncher.base.util.ImageUtils] object, to directly compute [V] when it is not in the cache.
@@ -60,9 +63,12 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
         items[key] = compute()
     }
 
-    public fun getRandom(): K? = if (items.isNotEmpty()) {
-        items.keys.random()
-    } else null
+    public fun getRandom(): K? =
+        if (items.isNotEmpty()) {
+            items.keys.random()
+        } else {
+            null
+        }
 
     public fun evict(key: K) {
         items.remove(key)

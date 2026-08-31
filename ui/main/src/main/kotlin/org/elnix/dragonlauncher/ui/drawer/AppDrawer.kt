@@ -127,13 +127,12 @@ fun AppDrawerScreen(
     val density = LocalDensity.current
     val focusRequester = remember { FocusRequester() }
 
-    val autoShowKeyboard  = drawerSettings.autoShowKeyboard
-    val showSearchBar  = drawerSettings.showSearchBar
-    val showRecentlyUsedApps  = drawerSettings.showRecentlyUsedApps
-    val toolbarsOrder  = drawerSettings.toolbarsOrder
+    val autoShowKeyboard = drawerSettings.autoShowKeyboard
+    val showSearchBar = drawerSettings.showSearchBar
+    val showRecentlyUsedApps = drawerSettings.showRecentlyUsedApps
+    val toolbarsOrder = drawerSettings.toolbarsOrder
 
     val recentApps by drawerViewModel.getRecentApps(drawerSettings.recentlyUsedAppsCount).collectAsStateWithLifecycle(emptyList())
-
 
     var haveToLaunchFirstApp by remember { mutableStateOf(false) }
     var searchQuery by drawerViewModel.searchQuery
@@ -146,15 +145,15 @@ fun AppDrawerScreen(
         }
     }
 
-
     val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsStateWithLifecycle()
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsStateWithLifecycle()
 
     val initialIndex = activeWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
-    val pagerState = rememberPagerState(
-        initialPage = initialIndex.coerceIn(0, (activeWorkspaces.size - 1).coerceAtLeast(0)),
-        pageCount = { activeWorkspaces.size }
-    )
+    val pagerState =
+        rememberPagerState(
+            initialPage = initialIndex.coerceIn(0, (activeWorkspaces.size - 1).coerceAtLeast(0)),
+            pageCount = { activeWorkspaces.size }
+        )
 
     /**
      * Updates the visible workspace
@@ -214,7 +213,6 @@ fun AppDrawerScreen(
 
     // Used to correctly handle the home action when in drawer (otherwise the action is consumed by the nav host and not made here)
     DisposableEffect(Unit) {
-
         val handler = {
             launchDrawerAction(drawerSettings.drawerHomeAction)
         }
@@ -230,7 +228,6 @@ fun AppDrawerScreen(
         launchDrawerAction(drawerSettings.drawerBackAction)
     }
 
-
     val filteredToolbarsOrder by remember(toolbarsOrder, showSearchBar, showRecentlyUsedApps) {
         derivedStateOf {
             toolbarsOrder.filter { item ->
@@ -243,54 +240,57 @@ fun AppDrawerScreen(
         }
     }
 
-
     // Computes the position of the spacer in the toolbars list, and deduce 2 lists:
     // one with the elements that come before, and one with those that come after
-    val spacerIndex = remember(filteredToolbarsOrder) {
-        filteredToolbarsOrder.indexOf(Spacer).takeIf { it != -1 } ?: 0
-    }
-    val beforeSpacer = remember(filteredToolbarsOrder, spacerIndex) {
-        filteredToolbarsOrder.subList(0, spacerIndex)
-    }
-    val afterSpacer = remember(filteredToolbarsOrder, spacerIndex) {
-        filteredToolbarsOrder.subList(spacerIndex + 1, filteredToolbarsOrder.size)
-    }
+    val spacerIndex =
+        remember(filteredToolbarsOrder) {
+            filteredToolbarsOrder.indexOf(Spacer).takeIf { it != -1 } ?: 0
+        }
+    val beforeSpacer =
+        remember(filteredToolbarsOrder, spacerIndex) {
+            filteredToolbarsOrder.subList(0, spacerIndex)
+        }
+    val afterSpacer =
+        remember(filteredToolbarsOrder, spacerIndex) {
+            filteredToolbarsOrder.subList(spacerIndex + 1, filteredToolbarsOrder.size)
+        }
 
     var searchBarHeightPx by remember { mutableIntStateOf(0) }
     var recentAppsHeightPx by remember { mutableIntStateOf(0) }
 
-
-
-    val appsContentPadding = remember(filteredToolbarsOrder, searchBarHeightPx, recentAppsHeightPx) {
-        PaddingValues(
-            top = with(density) {
-                beforeSpacer.sumOf {
-                    when (it) {
-                        Spacer -> 0
-                        RecentlyUsed -> recentAppsHeightPx
-                        SearchBar -> searchBarHeightPx
+    val appsContentPadding =
+        remember(filteredToolbarsOrder, searchBarHeightPx, recentAppsHeightPx) {
+            PaddingValues(
+                top =
+                    with(density) {
+                        beforeSpacer
+                            .sumOf {
+                                when (it) {
+                                    Spacer -> 0
+                                    RecentlyUsed -> recentAppsHeightPx
+                                    SearchBar -> searchBarHeightPx
+                                }
+                            }.toDp() + 5.dp
+                    },
+                bottom =
+                    with(density) {
+                        afterSpacer
+                            .sumOf {
+                                when (it) {
+                                    Spacer -> 0
+                                    RecentlyUsed -> recentAppsHeightPx
+                                    SearchBar -> searchBarHeightPx
+                                }
+                            }.toDp() + 5.dp
                     }
-                }.toDp() + 5.dp
-            },
-            bottom = with(density) {
-                afterSpacer.sumOf {
-                    when (it) {
-                        Spacer -> 0
-                        RecentlyUsed -> recentAppsHeightPx
-                        SearchBar -> searchBarHeightPx
-                    }
-                }.toDp() + 5.dp
-            }
-        )
-    }
-
+            )
+        }
 
     val pullDownAnimations by DrawerSettingsStore.pullDownAnimations.asState()
     val pullDownScaleIn by DrawerSettingsStore.pullDownScaleIn.asState()
 //    val pullDownIconFade by DrawerSettingsStore.pullDownIconFade.asState()
 
     var atTop by remember { mutableStateOf(true) }
-
 
     val thresholdPx = Constants.Drawer.DRAWER_DRAG_DOWN_THRESHOLD.dp.px
     val maxDragDownOffset = Constants.Drawer.DRAWER_MAX_DRAG_DOWN.dp.px
@@ -312,84 +312,81 @@ fun AppDrawerScreen(
      * The scroll state basically, defines what happen on vertical scrolls, the horizontal being handled by the pager
      * Responsible for the drag up/down actions, and the top padding of the drawer on down drag
      */
-    val nestedConnection = remember {
-
-        object : NestedScrollConnection {
-
-            override fun onPreScroll(
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-
-                if (source != NestedScrollSource.UserInput)
-                    return Offset.Zero
-
-                // ignore horizontal gestures
-                if (abs(available.y) <= abs(available.x))
-                    return Offset.Zero
-
-                // Down Drag (pull-to-trigger)
-                if (available.y > 0f && atTop) {
-
-                    // Linear curve for clean output
-                    val newPullOffset = pullOffset + available.y * (1f - (pullOffset / thresholdPx))
-                        .coerceAtLeast(0.2f)
-
-                    // Block when max offset is reached (constant)
-                    pullOffset = newPullOffset.coerceAtMost(maxDragDownOffset)
-
-                    val thresholdReachedNow = pullOffset > thresholdPx
-
-                    // Haptic feedback
-                    if (thresholdReachedNow && !hasHapticed) {
-                        hasHapticed = true
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    val nestedConnection =
+        remember {
+            object : NestedScrollConnection {
+                override fun onPreScroll(
+                    available: Offset,
+                    source: NestedScrollSource
+                ): Offset {
+                    if (source != NestedScrollSource.UserInput) {
+                        return Offset.Zero
                     }
-                    if (!thresholdReachedNow && hasHapticed) hasHapticed = false
 
-                    // consume only what we used
-                    return Offset(0f, available.y)
+                    // ignore horizontal gestures
+                    if (abs(available.y) <= abs(available.x)) {
+                        return Offset.Zero
+                    }
+
+                    // Down Drag (pull-to-trigger)
+                    if (available.y > 0f && atTop) {
+                        // Linear curve for clean output
+                        val newPullOffset =
+                            pullOffset + available.y *
+                                (1f - (pullOffset / thresholdPx))
+                                    .coerceAtLeast(0.2f)
+
+                        // Block when max offset is reached (constant)
+                        pullOffset = newPullOffset.coerceAtMost(maxDragDownOffset)
+
+                        val thresholdReachedNow = pullOffset > thresholdPx
+
+                        // Haptic feedback
+                        if (thresholdReachedNow && !hasHapticed) {
+                            hasHapticed = true
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        }
+                        if (!thresholdReachedNow && hasHapticed) hasHapticed = false
+
+                        // consume only what we used
+                        return Offset(0f, available.y)
+                    }
+
+                    // UP DRAG while stretching (reversible)
+                    if (available.y < 0f && pullOffset > 0f) {
+                        pullOffset = (pullOffset + available.y).coerceAtLeast(0f)
+
+                        if (!(pullOffset > thresholdPx) && hasHapticed) hasHapticed = false
+                        return Offset(0f, available.y)
+                    }
+
+                    // Launch Up action on any up scroll large enough
+                    if (available.y < -15) {
+                        launchDrawerAction(drawerSettings.drawerScrollUpAction)
+                    }
+
+                    return Offset.Zero
                 }
 
-                // UP DRAG while stretching (reversible)
-                if (available.y < 0f && pullOffset > 0f) {
+                override suspend fun onPostFling(
+                    consumed: Velocity,
+                    available: Velocity
+                ): Velocity {
+                    // No need to enclave in if statement as values aren't changing if !pullDownAnimations
 
-                    pullOffset = (pullOffset + available.y).coerceAtLeast(0f)
+                    // DOWN action
+                    if (pullOffset > thresholdPx) {
+                        launchDrawerAction(drawerSettings.drawerScrollDownAction)
+                    }
 
+                    // reset
+                    pullOffset = 0f
+                    hasHapticed = false
 
-                    if (!(pullOffset > thresholdPx) && hasHapticed) hasHapticed = false
-                    return Offset(0f, available.y)
+                    return Velocity.Zero
                 }
-
-
-                // Launch Up action on any up scroll large enough
-                if (available.y < -15) {
-                    launchDrawerAction(drawerSettings.drawerScrollUpAction)
-                }
-
-                return Offset.Zero
-            }
-
-            override suspend fun onPostFling(
-                consumed: Velocity,
-                available: Velocity
-            ): Velocity {
-
-                // No need to enclave in if statement as values aren't changing if !pullDownAnimations
-
-                // DOWN action
-                if (pullOffset > thresholdPx) {
-                    launchDrawerAction(drawerSettings.drawerScrollDownAction)
-                }
-
-                // reset
-                pullOffset = 0f
-                hasHapticed = false
-
-                return Velocity.Zero
             }
         }
-    }
 
     val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
     val wallpaperDimMainScreen by UiSettingsStore.wallpaperDimMainScreen.asState()
@@ -404,64 +401,68 @@ fun AppDrawerScreen(
     val profiles by profilesViewModel.profiles.collectAsState(emptyList())
     val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
 
-
     val animatedScale by animateFloatAsState(if (pullDownScaleIn) (pullProgress.pow(0.9f)).coerceIn(0.95f, 1f) else 1f)
     val animatedPadding by animateDpAsState((if (pullDownAnimations) pullOffset else 0f).toDp)
 
-    val dim = remember(pullProgress, pullDownWallPaperDimFadeEnabled, wallpaperDimDrawerScreen, wallpaperDimMainScreen) {
-       if (pullDownWallPaperDimFadeEnabled) {
-           wallpaperDimDrawerScreen + pullProgress * (wallpaperDimDrawerScreen - wallpaperDimMainScreen)
-       } else wallpaperDimDrawerScreen
-    }
+    val dim =
+        remember(pullProgress, pullDownWallPaperDimFadeEnabled, wallpaperDimDrawerScreen, wallpaperDimMainScreen) {
+            if (pullDownWallPaperDimFadeEnabled) {
+                wallpaperDimDrawerScreen + pullProgress * (wallpaperDimDrawerScreen - wallpaperDimMainScreen)
+            } else {
+                wallpaperDimDrawerScreen
+            }
+        }
 
     // Dims the wallpaper, when the user starts pulling down,
     // the dim amount is reduced proportionally to the drag amount
     WallpaperDim(dim)
 
-
     Box(
-        modifier = Modifier
-            .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
-            .fillMaxSize()
-            .nestedScroll(nestedConnection)
-            .padding(top = animatedPadding)
-            .conditional(pullDownScaleIn) {
-                graphicsLayer {
-                    scaleX = animatedScale
-                    scaleY = animatedScale
+        modifier =
+            Modifier
+                .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
+                .fillMaxSize()
+                .nestedScroll(nestedConnection)
+                .padding(top = animatedPadding)
+                .conditional(pullDownScaleIn) {
+                    graphicsLayer {
+                        scaleX = animatedScale
+                        scaleY = animatedScale
+                    }
+                }.clickable(
+                    enabled = drawerSettings.tapEmptySpaceAction.isUsed,
+                    indication = null,
+                    interactionSource = null
+                ) {
+                    toggleKeyboard()
                 }
-            }
-            .clickable(
-                enabled = drawerSettings.tapEmptySpaceAction.isUsed,
-                indication = null,
-                interactionSource = null
-            ) {
-                toggleKeyboard()
-            }
     ) {
         DrawerActions(leftDrawerAction, leftDrawerWidth, rightDrawerAction, rightDrawerWidth, ::launchDrawerAction)
         HorizontalPager(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = leftDrawerWidth, end = rightDrawerWidth),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(start = leftDrawerWidth, end = rightDrawerWidth),
             state = pagerState
         ) { pageIndex ->
 
             val workspace = activeWorkspaces[pageIndex]
 
-            val workspaceProfileType = when (workspace.type) {
-                WorkspaceType.Work -> Profile.Type.Work
-                WorkspaceType.Private -> Profile.Type.Private
-                else -> Profile.Type.Personal
-            }
+            val workspaceProfileType =
+                when (workspace.type) {
+                    WorkspaceType.Work -> Profile.Type.Work
+                    WorkspaceType.Private -> Profile.Type.Private
+                    else -> Profile.Type.Personal
+                }
 
             val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
-            val workspaceLocked = when (workspaceProfileType) {
-                Profile.Type.Personal -> false
-                Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
-                Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
-            }
+            val workspaceLocked =
+                when (workspaceProfileType) {
+                    Profile.Type.Personal -> false
+                    Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+                    Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
+                }
 
             val gridState = remember(workspace.id) { LazyGridState() }
             val listState = remember(workspace.id) { LazyListState() }
@@ -469,14 +470,15 @@ fun AppDrawerScreen(
 
             val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
 
-
             LaunchedEffect(haveToLaunchFirstApp, apps) {
-
                 val autoLaunch =
                     drawerSettings.autoOpenSingleMatch &&
-                            apps.size == 1 &&
-                            searchQuery.isNotEmpty() &&
-                            !(drawerSettings.disableAutoLaunchWhenFirstCharIs.isNotEmpty() && searchQuery.first() == drawerSettings.disableAutoLaunchWhenFirstCharIs.first())
+                        apps.size == 1 &&
+                        searchQuery.isNotEmpty() &&
+                        !(
+                            drawerSettings.disableAutoLaunchWhenFirstCharIs.isNotEmpty() &&
+                                searchQuery.first() == drawerSettings.disableAutoLaunchWhenFirstCharIs.first()
+                        )
 
                 if (haveToLaunchFirstApp || autoLaunch && apps.isNotEmpty()) {
                     onLaunchAction(apps.first().action)
@@ -512,16 +514,15 @@ fun AppDrawerScreen(
         }
     }
 
-
     /**
      * Toolbars column, fills the whole size and sits over the apps boxes
      */
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .imePadding()
     ) {
-
         var showMoreMenu by remember { mutableStateOf(false) }
 
         toolbarsOrder.forEach { toolbar ->
@@ -531,17 +532,18 @@ fun AppDrawerScreen(
                 RecentlyUsed -> {
                     AnimatedVisibility(
                         visible = showRecentlyUsedApps && searchQuery.isBlank() && recentApps.isNotEmpty(),
-                        modifier = Modifier.onGloballyPositioned {
-                            recentAppsHeightPx = it.size.height
-                        }
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                recentAppsHeightPx = it.size.height
+                            }
                     ) {
-
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(5.dp)
-                                .clip(MaterialTheme.shapes.large)
-                                .background(MaterialTheme.colorScheme.surface)
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp)
+                                    .clip(MaterialTheme.shapes.large)
+                                    .background(MaterialTheme.colorScheme.surface)
                         ) {
                             AppGrid(
                                 apps = recentApps,
@@ -558,9 +560,10 @@ fun AppDrawerScreen(
                 SearchBar -> {
                     AnimatedVisibility(
                         visible = showSearchBar,
-                        modifier = Modifier.onGloballyPositioned {
-                            searchBarHeightPx = it.size.height
-                        }
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                searchBarHeightPx = it.size.height
+                            }
                     ) {
                         AppDrawerSearch(
                             trailingIcon = {
@@ -574,13 +577,14 @@ fun AppDrawerScreen(
 
                                     val navigator = LocalNavigator.current
                                     BurgerListAction(
-                                        actions = listOf(
-                                            MoreOptions(
-                                                onClick = { navigator.navigate(NavigationRoute.DrawerSettings) },
-                                                icon = R.drawable.workspaces,
-                                                text = { stringResource(R.string.drawer_settings) }
-                                            )
-                                        ),
+                                        actions =
+                                            listOf(
+                                                MoreOptions(
+                                                    onClick = { navigator.navigate(NavigationRoute.DrawerSettings) },
+                                                    icon = R.drawable.workspaces,
+                                                    text = { stringResource(R.string.drawer_settings) }
+                                                )
+                                            ),
                                         isExpanded = showMoreMenu,
                                         onDismissRequest = { showMoreMenu = false }
                                     )
@@ -597,7 +601,6 @@ fun AppDrawerScreen(
     }
 }
 
-
 /**
  * Drawer actions, creates left and right clickable buttons that can activate the selected [org.elnix.dragonlauncher.enumsui.toggle.DrawerActions]
  */
@@ -611,26 +614,28 @@ fun BoxScope.DrawerActions(
 ) {
     if (leftDrawerAction != Disabled) {
         Box(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .fillMaxHeight()
-                .width(leftDrawerWidth)
-                .clickable(
-                    indication = null,
-                    interactionSource = null
-                ) { launchDrawerAction(leftDrawerAction) }
+            modifier =
+                Modifier
+                    .align(Alignment.CenterStart)
+                    .fillMaxHeight()
+                    .width(leftDrawerWidth)
+                    .clickable(
+                        indication = null,
+                        interactionSource = null
+                    ) { launchDrawerAction(leftDrawerAction) }
         )
     }
 
     if (rightDrawerAction != Disabled) {
         Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(rightDrawerWidth)
-                .clickable(
-                    indication = null,
-                    interactionSource = null
-                ) { launchDrawerAction(rightDrawerAction) }
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .width(rightDrawerWidth)
+                    .clickable(
+                        indication = null,
+                        interactionSource = null
+                    ) { launchDrawerAction(rightDrawerAction) }
         )
     }
 }

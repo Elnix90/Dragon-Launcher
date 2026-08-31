@@ -28,54 +28,59 @@ internal class ShortcutIconProvider(
         val shortcutInfo = shortcutRepository.fromAction(action) ?: return null
 
         val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-        val icon = withContext(Dispatchers.IO) {
-            try {
-                launcherApps.getShortcutIconDrawable(
-                    shortcutInfo,
-                    ctx.resources.displayMetrics.densityDpi
-                )
-            } catch (e: SecurityException) {
-                logE(ICONS_TAG, e) { "Security Exception when getting shortcut icon; Dragon is probably not the default launcher" }
-                null
-            } catch (e: NullPointerException) {
-                logE(ICONS_TAG, e) { "Failed to get shortcut icon for ${shortcutInfo.`package`}" }
-                null
-            }
-        } ?: return null
+        val icon =
+            withContext(Dispatchers.IO) {
+                try {
+                    launcherApps.getShortcutIconDrawable(
+                        shortcutInfo,
+                        ctx.resources.displayMetrics.densityDpi
+                    )
+                } catch (e: SecurityException) {
+                    logE(ICONS_TAG, e) { "Security Exception when getting shortcut icon; Dragon is probably not the default launcher" }
+                    null
+                } catch (e: NullPointerException) {
+                    logE(ICONS_TAG, e) { "Failed to get shortcut icon for ${shortcutInfo.`package`}" }
+                    null
+                }
+            } ?: return null
         if (icon is AdaptiveIconDrawable) {
             if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
                 return StaticLauncherIcon(
-                    foregroundLayer = StaticIconLayer(
-                        scale = 1f,
-                        icon = icon.monochrome!!,
-                        tint = tint
-                    ),
+                    foregroundLayer =
+                        StaticIconLayer(
+                            scale = 1f,
+                            icon = icon.monochrome!!,
+                            tint = tint
+                        ),
                     backgroundLayer = ColorLayer()
                 )
             }
             return StaticLauncherIcon(
-                foregroundLayer = icon.foreground?.let {
-                    StaticIconLayer(
-                        icon = it,
-                        scale = 1.5f,
-                        tint = tint
-                    )
-                } ?: TransparentLayer,
-                backgroundLayer = icon.background?.let {
-                    StaticIconLayer(
-                        icon = it,
-                        scale = 1.5f,
-                        tint = tint
-                    )
-                } ?: TransparentLayer,
+                foregroundLayer =
+                    icon.foreground?.let {
+                        StaticIconLayer(
+                            icon = it,
+                            scale = 1.5f,
+                            tint = tint
+                        )
+                    } ?: TransparentLayer,
+                backgroundLayer =
+                    icon.background?.let {
+                        StaticIconLayer(
+                            icon = it,
+                            scale = 1.5f,
+                            tint = tint
+                        )
+                    } ?: TransparentLayer
             )
         }
         return StaticLauncherIcon(
-            foregroundLayer = StaticIconLayer(
-                icon = icon,
-                scale = 1f,
-                tint = tint
-            ),
+            foregroundLayer =
+                StaticIconLayer(
+                    icon = icon,
+                    scale = 1f,
+                    tint = tint
+                ),
             backgroundLayer = TransparentLayer
         )
     }

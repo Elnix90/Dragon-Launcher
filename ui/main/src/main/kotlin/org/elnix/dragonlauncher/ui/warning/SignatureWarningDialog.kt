@@ -32,7 +32,6 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
-
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalMaterial3Api::class
@@ -51,22 +50,22 @@ fun SignatureWarningDialog(
         onDismissRequest = {}
     ) {
         Card(shape = MaterialTheme.shapes.extraLarge) {
-
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = MaterialShapes.Pill.toShape()
-                        )
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.errorContainer,
+                                shape = MaterialShapes.Pill.toShape()
+                            )
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.warning),
@@ -80,7 +79,6 @@ fun SignatureWarningDialog(
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.error
                 )
-
 
                 ValidateCancelButtons(
                     cancelText = stringResource(R.string.use_anyways),

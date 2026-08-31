@@ -8,12 +8,10 @@ import kotlin.math.PI
  * Unit tests for Float extension functions and properties in [org.elnix.dragonlauncher.ktx]
  */
 class FloatKtxTest {
-
     private companion object {
         /** Tolerance for floating-point comparisons. */
         const val EPSILON: Double = 1e-5
         const val EPSILON_FLOAT: Float = 1e-5f
-
     }
 
     @Test
@@ -45,7 +43,6 @@ class FloatKtxTest {
     fun `270 degrees converts to 3 PI over 2`() {
         assertEquals((3.0 * PI / 2.0), 270f.radians, EPSILON)
     }
-
 
     @Test
     fun `0 radians converts to 0 degrees`() {
@@ -222,9 +219,6 @@ class FloatKtxTest {
         assertEquals(expected, testValue.to255)
     }
 
-
-
-
     @Test
     fun `snapToRound snaps when within threshold`() {
         assertEquals(5f, 4.9f.snapToRound(5f, 0.2f), EPSILON_FLOAT)
@@ -249,7 +243,6 @@ class FloatKtxTest {
     fun `snapToRound snaps at upper boundary`() {
         assertEquals(5f, 5.2f.snapToRound(5f, 0.2f), EPSILON_FLOAT)
     }
-
 
     @Test
     fun `snapToGrid rounds positive value up`() {

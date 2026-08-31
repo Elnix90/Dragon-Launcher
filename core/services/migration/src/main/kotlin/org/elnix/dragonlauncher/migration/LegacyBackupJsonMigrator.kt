@@ -6,11 +6,11 @@ import io.github.elnix90.core.stores.JsonArraySettingsStore
 import io.github.elnix90.core.stores.JsonObjectSettingsStore
 import io.github.elnix90.core.stores.MapSettingsStore
 import io.github.elnix90.core.stores.SettingsStore
-import org.elnix.dragonlauncher.BACKUP_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.BACKUP_TAG
 import org.elnix.dragonlauncher.settings.AllStores
 import org.json.JSONArray
 import org.json.JSONObject
@@ -34,7 +34,6 @@ import java.io.InputStreamReader
  *    applies key renames, value transformations, and store splits.
  */
 public class LegacyBackupJsonMigrator {
-
     /**
      * Migrates settings from a legacy backup JSON string.
      *
@@ -47,14 +46,15 @@ public class LegacyBackupJsonMigrator {
     public suspend fun migrateFromJson(
         ctx: Context,
         legacyJson: String
-    ): MigrationResult = withContext(Dispatchers.IO) {
-        try {
-            val json = JSONObject(legacyJson)
-            migrateFromJsonObject(ctx, json)
-        } catch (e: Exception) {
-            MigrationResult.failure("Failed to parse legacy JSON: ${e.message}", listOfNotNull(e.message))
+    ): MigrationResult =
+        withContext(Dispatchers.IO) {
+            try {
+                val json = JSONObject(legacyJson)
+                migrateFromJsonObject(ctx, json)
+            } catch (e: Exception) {
+                MigrationResult.failure("Failed to parse legacy JSON: ${e.message}", listOfNotNull(e.message))
+            }
         }
-    }
 
     /**
      * Migrates settings from a parsed legacy backup JSON object.
@@ -71,104 +71,113 @@ public class LegacyBackupJsonMigrator {
     public suspend fun migrateFromJsonObject(
         ctx: Context,
         json: JSONObject
-    ): MigrationResult = withContext(Dispatchers.IO) {
-        val migrated = mutableSetOf<String>()
-        val skipped = mutableSetOf<String>()
-        val errors = mutableListOf<String>()
+    ): MigrationResult =
+        withContext(Dispatchers.IO) {
+            val migrated = mutableSetOf<String>()
+            val skipped = mutableSetOf<String>()
+            val errors = mutableListOf<String>()
 
-        val density = Density(ctx.resources.displayMetrics.density)
-        val configuration = ctx.resources.configuration
-        val migrationCtx = MigrationContext(
-            density = density,
-            screenWidthDp = configuration.screenWidthDp,
-            screenHeightDp = configuration.screenHeightDp
-        )
+            val density = Density(ctx.resources.displayMetrics.density)
+            val configuration = ctx.resources.configuration
+            val migrationCtx =
+                MigrationContext(
+                    density = density,
+                    screenWidthDp = configuration.screenWidthDp,
+                    screenHeightDp = configuration.screenHeightDp
+                )
 
-        val newStores = AllStores.associateBy { it.name }
+            val newStores = AllStores.associateBy { it.name }
 
-        val oldNewActions = json.optJSONObject("new_actions")
-        if (oldNewActions != null) {
-            try {
-                val migratedData = PointsAndNestsMigrator.migrate(oldNewActions, density)
-                newStores["nests"]?.let { writeToStore(ctx, it, migratedData.newNests) }
-                newStores["points"]?.let { writeToStore(ctx, it, migratedData.newPoints) }
-                migratedData.newDefaultPoint?.let { dp ->
-                    newStores["default_point"]?.let { writeToStore(ctx, it, dp) }
+            val oldNewActions = json.optJSONObject("new_actions")
+            if (oldNewActions != null) {
+                try {
+                    val migratedData = PointsAndNestsMigrator.migrate(oldNewActions, density)
+                    newStores["nests"]?.let { writeToStore(ctx, it, migratedData.newNests) }
+                    newStores["points"]?.let { writeToStore(ctx, it, migratedData.newPoints) }
+                    migratedData.newDefaultPoint?.let { dp ->
+                        newStores["default_point"]?.let { writeToStore(ctx, it, dp) }
+                    }
+                    migrated.add("new_actions")
+                } catch (e: Exception) {
+                    errors.add("[new_actions] Points/Nests migration failed: ${e.message}")
                 }
-                migrated.add("new_actions")
-            } catch (e: Exception) {
-                errors.add("[new_actions] Points/Nests migration failed: ${e.message}")
             }
-        }
 
-        for (mapping in OldToNewStoreMapping.mappings.values) {
-            try {
-                if (mapping.handledExternally) continue
+            for (mapping in OldToNewStoreMapping.mappings.values) {
+                try {
+                    if (mapping.handledExternally) continue
 
-                val oldData = json.opt(mapping.oldBackupKey)
+                    val oldData = json.opt(mapping.oldBackupKey)
 
-                if (oldData == null || oldData == JSONObject.NULL) {
-                    skipped.add(mapping.oldBackupKey)
-                    logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (empty json)"}
-                    continue
-                }
+                    if (oldData == null || oldData == JSONObject.NULL) {
+                        skipped.add(mapping.oldBackupKey)
+                        logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (empty json)" }
+                        continue
+                    }
 
-                if (mapping.splitInto.isNotEmpty()) {
-                    for ((newKey, extractor) in mapping.splitInto) {
-                        val extractedValue = extractor(oldData)
-                        if (extractedValue != null) {
-                            val targetStore = newStores[newKey]
-                            if (targetStore != null) {
-                                writeToStore(ctx, targetStore, extractedValue)
-                                migrated.add("${mapping.oldBackupKey} -> $newKey")
+                    if (mapping.splitInto.isNotEmpty()) {
+                        for ((newKey, extractor) in mapping.splitInto) {
+                            val extractedValue = extractor(oldData)
+                            if (extractedValue != null) {
+                                val targetStore = newStores[newKey]
+                                if (targetStore != null) {
+                                    writeToStore(ctx, targetStore, extractedValue)
+                                    migrated.add("${mapping.oldBackupKey} -> $newKey")
+                                }
                             }
                         }
+                        continue
                     }
-                    continue
+
+                    val newBackupKey =
+                        mapping.newBackupKey ?: run {
+                            skipped.add(mapping.oldBackupKey)
+                            logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (no new backup key)" }
+                            continue
+                        }
+
+                    val targetStore = newStores[newBackupKey]
+                    if (targetStore == null) {
+                        skipped.add(mapping.oldBackupKey)
+                        logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (no target store for '$newBackupKey')" }
+                        continue
+                    }
+
+                    val transformedData =
+                        when (oldData) {
+                            is JSONObject ->
+                                applyKeyMapping(
+                                    ctx,
+                                    oldData,
+                                    mapping,
+                                    migrationCtx,
+                                    newStores,
+                                    migrated
+                                )
+
+                            is JSONArray -> oldData
+                            else -> oldData
+                        }
+
+                    writeToStore(ctx, targetStore, transformedData)
+                    migrated.add(mapping.oldBackupKey)
+                } catch (e: Exception) {
+                    errors.add("[${mapping.oldBackupKey}] ${e.message}")
                 }
+            }
 
-                val newBackupKey = mapping.newBackupKey ?: run {
-                    skipped.add(mapping.oldBackupKey)
-                    logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (no new backup key)"}
-                    continue
-                }
-
-                val targetStore = newStores[newBackupKey]
-                if (targetStore == null) {
-                    skipped.add(mapping.oldBackupKey)
-                    logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (no target store for '$newBackupKey')"}
-                    continue
-                }
-
-                val transformedData = when (oldData) {
-                    is JSONObject -> applyKeyMapping(
-                        ctx, oldData, mapping, migrationCtx, newStores, migrated
-                    )
-
-                    is JSONArray -> oldData
-                    else -> oldData
-                }
-
-                writeToStore(ctx, targetStore, transformedData)
-                migrated.add(mapping.oldBackupKey)
-
-            } catch (e: Exception) {
-                errors.add("[${mapping.oldBackupKey}] ${e.message}")
+            if (errors.isEmpty()) {
+                MigrationResult.success(migrated, skipped)
+            } else {
+                MigrationResult(
+                    success = migrated.isNotEmpty(),
+                    migratedStores = migrated,
+                    skippedStores = skipped,
+                    errors = errors,
+                    message = "Migrated ${migrated.size} stores with ${errors.size} errors"
+                )
             }
         }
-
-        if (errors.isEmpty()) {
-            MigrationResult.success(migrated, skipped)
-        } else {
-            MigrationResult(
-                success = migrated.isNotEmpty(),
-                migratedStores = migrated,
-                skippedStores = skipped,
-                errors = errors,
-                message = "Migrated ${migrated.size} stores with ${errors.size} errors"
-            )
-        }
-    }
 
     /**
      * Applies key mappings, key routes, and value transformations to a single store's JSON object.
@@ -213,9 +222,10 @@ public class LegacyBackupJsonMigrator {
             val newKey = mapping.keyMappings[key] ?: key
             val value = source.get(key)
 
-            val transformed = mapping.valueTransformers[newKey]?.invoke(value, migrationCtx)
-                ?: mapping.valueTransformers[key]?.invoke(value, migrationCtx)
-                ?: value
+            val transformed =
+                mapping.valueTransformers[newKey]?.invoke(value, migrationCtx)
+                    ?: mapping.valueTransformers[key]?.invoke(value, migrationCtx)
+                    ?: value
 
             result.put(newKey, transformed)
         }
@@ -284,17 +294,19 @@ public class LegacyBackupJsonMigrator {
         when (store) {
             is MapSettingsStore -> {
                 if (value is JSONObject) {
-                    logD(BACKUP_TAG) { "Importing ${value.length()}\n$value\n keys to ${store.name}"}
+                    logD(BACKUP_TAG) { "Importing ${value.length()}\n$value\n keys to ${store.name}" }
                     store.importFromBackup(ctx, value)
                 } else {
-                    logD(BACKUP_TAG) { "Value should have been JsonObject but is ${if (value==null) null else value::class.simpleName} to ${store.name}"}
+                    logD(BACKUP_TAG) {
+                        "Value should have been JsonObject but is ${if (value == null) null else value::class.simpleName} to ${store.name}"
+                    }
                 }
             }
 
             is JsonArraySettingsStore -> {
                 when (value) {
                     is JSONArray -> {
-                        logD(BACKUP_TAG) { "Importing an array of length ${value.length()}\n$value\n to ${store.name}"}
+                        logD(BACKUP_TAG) { "Importing an array of length ${value.length()}\n$value\n to ${store.name}" }
                         store.importFromBackup(ctx, value)
                     }
 
@@ -302,44 +314,54 @@ public class LegacyBackupJsonMigrator {
                         // Object payloads (e.g. `app_overrides` is keyed by cache key) are stored
                         // as their raw JSON string; the consuming manager decodes it directly.
                         if (value.length() > 0) {
-                            logD(BACKUP_TAG) { "Importing an object of length ${value.length()}\n$value\n to ${store.name}"}
+                            logD(BACKUP_TAG) { "Importing an object of length ${value.length()}\n$value\n to ${store.name}" }
                             store.jsonSetting.set(ctx, value.toString())
                         } else {
-                            logD(BACKUP_TAG) { "value: $value is empty for ${store.name}"}
+                            logD(BACKUP_TAG) { "value: $value is empty for ${store.name}" }
                         }
                     }
 
-                    else -> logD(BACKUP_TAG) { "Value should have been JSONArray or JSONObject but is ${if (value==null) null else value::class.simpleName} to ${store.name}"}
+                    else ->
+                        logD(BACKUP_TAG) {
+                            "Value should have been JSONArray or JSONObject but is ${if (value == null) null else value::class.simpleName} to ${store.name}"
+                        }
                 }
             }
 
             is JsonObjectSettingsStore -> {
-                val obj = when (value) {
-                    is JSONObject -> if (value.length() > 0) value else null
-                    is JSONArray -> {
-                        if (value.length() > 0) {
-                            val o = JSONObject()
-                            o.put("data", value)
-                            o
-                        } else null
-                    }
+                val obj =
+                    when (value) {
+                        is JSONObject -> if (value.length() > 0) value else null
+                        is JSONArray -> {
+                            if (value.length() > 0) {
+                                val o = JSONObject()
+                                o.put("data", value)
+                                o
+                            } else {
+                                null
+                            }
+                        }
 
-                    is String -> {
-                        // Raw JSON string payloads (e.g. main_screen_layers stores the
-                        // encoded layers list directly).
-                        if (value.isNotBlank()) {
-                            store.jsonSetting.set(ctx, value)
-                            null
-                        } else null
-                    }
+                        is String -> {
+                            // Raw JSON string payloads (e.g. main_screen_layers stores the
+                            // encoded layers list directly).
+                            if (value.isNotBlank()) {
+                                store.jsonSetting.set(ctx, value)
+                                null
+                            } else {
+                                null
+                            }
+                        }
 
-                    else -> null
-                }
+                        else -> null
+                    }
                 if (obj != null) {
-                    logD(BACKUP_TAG) { "Importing an object to ${store.name}"}
+                    logD(BACKUP_TAG) { "Importing an object to ${store.name}" }
                     store.importFromBackup(ctx, obj)
                 } else {
-                    logD(BACKUP_TAG) { "Value should have been JSONObject but is ${if (value==null) null else value::class.simpleName} to ${store.name}"}
+                    logD(BACKUP_TAG) {
+                        "Value should have been JSONObject but is ${if (value == null) null else value::class.simpleName} to ${store.name}"
+                    }
                 }
             }
         }
@@ -352,11 +374,12 @@ public class LegacyBackupJsonMigrator {
      * @param assetPath Path to the asset file (e.g., `"backup-3.2.2-witness.json"`).
      * @return The file content as a string.
      */
-    public suspend fun readFromAssets(ctx: Context, assetPath: String): String = withContext(Dispatchers.IO) {
-        ctx.assets.open(assetPath).use { inputStream ->
-            BufferedReader(InputStreamReader(inputStream)).readText()
+    public suspend fun readFromAssets(ctx: Context, assetPath: String): String =
+        withContext(Dispatchers.IO) {
+            ctx.assets.open(assetPath).use { inputStream ->
+                BufferedReader(InputStreamReader(inputStream)).readText()
+            }
         }
-    }
 
     /**
      * Checks whether the given JSON object represents a legacy 3.2.2 backup.

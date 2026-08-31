@@ -148,12 +148,10 @@ fun WidgetsTab(
     val nestNavigation = pointsViewModel.nestsNavigationService
     val nestId by nestNavigation.currentNestId.collectAsState()
 
-
     fun removeWidget(widget: Widget) {
         onRemoveWidget(widget)
         if (selected == widget) selected = null
     }
-
 
     val rowsScrollStates = List(2) { rememberScrollState() }
 
@@ -207,7 +205,6 @@ fun WidgetsTab(
                             snapRotation = !snapRotation
                         }
                     }
-
                 }
 
                 Spacer(12.dp)
@@ -215,7 +212,6 @@ fun WidgetsTab(
             }
 
             RowWithScrollIndicator(rowsScrollStates[1]) {
-
                 AnimatedFab(
                     onClick = { showAddDialog = true },
                     icon = R.drawable.add,
@@ -239,7 +235,6 @@ fun WidgetsTab(
                     }
                 ) { entry ->
                     when (entry) {
-
                         WidgetsToolsAddNestRemove.Nests -> {
                             showNestPickerDialog = true
                         }
@@ -318,7 +313,6 @@ fun WidgetsTab(
                             WidgetsToolsMoveUpDown.MoveUp -> {
                                 selected?.let {
                                     widgetsService.moveWidgetDown(it.id)
-
                                 }
                             }
 
@@ -333,7 +327,6 @@ fun WidgetsTab(
             }
         }
     ) {
-
         Box(modifier = Modifier.fillMaxSize()) {
             /**
              * The widgets and the grid, displayed first, to keep access to the buttons
@@ -357,14 +350,13 @@ fun WidgetsTab(
                             scope.launch {
                                 offset.snapTo(
                                     (offset.value + centroid / oldScale).rotateBy(gestureRotate) -
-                                            (centroid / newScale + pan / oldScale)
+                                        (centroid / newScale + pan / oldScale)
                                 )
                                 zoom.snapTo(newScale)
                                 angle.snapTo(angle.value + gestureRotate)
                             }
                         }
-                    }
-                    .graphicsLayer {
+                    }.graphicsLayer {
                         translationX = -offset.value.x * zoom.value
                         translationY = -offset.value.y * zoom.value
                         scaleX = zoom.value
@@ -379,16 +371,17 @@ fun WidgetsTab(
                  * Draw the grid of snapping that fills the entire screen
                  */
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
-                        .conditional(snapMove) {
-                            drawWithCache {
-                                onDrawBehind {
-                                    backgroundGrid(cellSizeDp, onBackgroundColor)
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+                            .conditional(snapMove) {
+                                drawWithCache {
+                                    onDrawBehind {
+                                        backgroundGrid(cellSizeDp, onBackgroundColor)
+                                    }
                                 }
                             }
-                        }
                 )
 
                 widgets
@@ -410,9 +403,10 @@ fun WidgetsTab(
 
             this@SettingsScaffold.AnimatedVisibility(
                 visible = isPrecisionModeActive,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 32.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 32.dp),
                 enter = fadeIn() + slideInVertically { -it },
                 exit = fadeOut() + slideOutVertically { -it }
             ) {
@@ -439,7 +433,6 @@ fun WidgetsTab(
 
     StatusBar(null)
 
-
     var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
 
     if (showAddDialog) {
@@ -464,10 +457,9 @@ fun WidgetsTab(
         ) { showWidgetPicker = null }
     }
 
-
     if (showMoreSheet) {
         DragonModalBottomSheet(
-            onDismissRequest = { showMoreSheet = false },
+            onDismissRequest = { showMoreSheet = false }
         ) {
             Text(stringResource(R.string.widget_number_total, widgets.size))
             Text(stringResource(R.string.widget_number_nest, widgets.count { it.nestId == nestId }))
@@ -499,18 +491,20 @@ fun WidgetsTab(
             ) { entry ->
                 scope.launch {
                     when (entry) {
+                        Center ->
+                            scope.launch {
+                                offset.animateTo(Offset.Zero)
+                            }
 
-                        Center -> scope.launch {
-                            offset.animateTo(Offset.Zero)
-                        }
+                        ResetZoom ->
+                            scope.launch {
+                                zoom.animateTo(1f)
+                            }
 
-                        ResetZoom -> scope.launch {
-                            zoom.animateTo(1f)
-                        }
-
-                        ResetRotation -> scope.launch {
-                            angle.animateTo(0f)
-                        }
+                        ResetRotation ->
+                            scope.launch {
+                                angle.animateTo(0f)
+                            }
                     }
                 }
             }
@@ -532,7 +526,6 @@ fun WidgetsTab(
         ) { showNestPickerDialog = false }
     }
 }
-
 
 /**
  * A fully interactive, self-contained widget overlay that handles all real-time manipulation:
@@ -562,11 +555,9 @@ private fun DraggableWidget(
     widgetsViewModel: WidgetsViewModel,
     widget: Widget,
     selected: Boolean,
-
     snapRotation: () -> Boolean,
     snapMove: () -> Boolean,
     snapResize: () -> Boolean,
-
     onPrecisionModeChange: (Boolean) -> Unit,
     onSelect: () -> Unit,
     onEdit: (Widget) -> Unit
@@ -598,7 +589,6 @@ private fun DraggableWidget(
     var rawWidgetWidth by remember(widget.spanX) { mutableFloatStateOf(widget.spanX) }
     var rawWidgetHeight by remember(widget.spanY) { mutableFloatStateOf(widget.spanY) }
 
-
     var isPrecisionMode by remember { mutableStateOf(false) }
     var showEditPopup by remember { mutableStateOf(false) }
     var showShapeEditor by remember { mutableStateOf(false) }
@@ -606,7 +596,6 @@ private fun DraggableWidget(
     LaunchedEffect(isPrecisionMode) {
         onPrecisionModeChange(isPrecisionMode)
     }
-
 
     fun commitChange(newApp: Widget? = null) {
         onEdit(
@@ -632,7 +621,6 @@ private fun DraggableWidget(
 
         var localDeltaX = 0f
         var localDeltaY = 0f
-
 
         when (corner) {
             ResizeSide.Left -> {
@@ -660,48 +648,51 @@ private fun DraggableWidget(
         widgetX += worldDeltaX
         widgetY += worldDeltaY
 
-        widgetWidth = if (snapResize()) {
-            rawWidgetWidth.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
-        } else rawWidgetWidth
+        widgetWidth =
+            if (snapResize()) {
+                rawWidgetWidth.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
+            } else {
+                rawWidgetWidth
+            }
 
-        widgetHeight = if (snapResize()) {
-            rawWidgetHeight.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
-        } else rawWidgetHeight
+        widgetHeight =
+            if (snapResize()) {
+                rawWidgetHeight.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
+            } else {
+                rawWidgetHeight
+            }
     }
 
-
     Box(
-        modifier = Modifier
-            .offset {
-                IntOffset(
-                    x = (widgetX * widthPixels).toInt(),
-                    y = (widgetY * heightPixels).toInt()
+        modifier =
+            Modifier
+                .offset {
+                    IntOffset(
+                        x = (widgetX * widthPixels).toInt(),
+                        y = (widgetY * heightPixels).toInt()
+                    )
+                }.size(
+                    width = (widgetWidth * cellSizePx).toDp,
+                    height = (widgetHeight * cellSizePx).toDp
                 )
-            }
-            .size(
-                width = (widgetWidth * cellSizePx).toDp,
-                height = (widgetHeight * cellSizePx).toDp
-            )
-            // Used to compute the widget position for rotation computing
-            .onGloballyPositioned { coordinates ->
-                val rect = coordinates.boundsInRoot()
-                widgetCenter = Offset(
-                    rect.left + rect.width / 2f,
-                    rect.top + rect.height / 2f
+                // Used to compute the widget position for rotation computing
+                .onGloballyPositioned { coordinates ->
+                    val rect = coordinates.boundsInRoot()
+                    widgetCenter =
+                        Offset(
+                            rect.left + rect.width / 2f,
+                            rect.top + rect.height / 2f
+                        )
+                }.graphicsLayer {
+                    rotationZ = widgetAngle
+                    transformOrigin = TransformOrigin.Center
+                    clip = false
+                }.border(
+                    width = if (selected) 3.dp else 1.dp,
+                    color = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(selected),
+                    shape = MaterialTheme.shapes.large
                 )
-            }
-            .graphicsLayer {
-                rotationZ = widgetAngle
-                transformOrigin = TransformOrigin.Center
-                clip = false
-            }
-            .border(
-                width = if (selected) 3.dp else 1.dp,
-                color = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(selected),
-                shape = MaterialTheme.shapes.large
-            )
     ) {
-
         // Widget / App content (touch blocked during editing)
         WidgetHostView(
             widget = widget,
@@ -709,147 +700,155 @@ private fun DraggableWidget(
             cellSizePx = cellSizePx
         ) { }
 
-
         // Main interaction overlay (move + tap)
         Box(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(widget.id) {
-                    detectTapGestures(
-                        onPress = {
-                            isPrecisionMode = false
-                            onSelect()
-                            try {
-                                withTimeout(viewConfiguration.longPressTimeoutMillis.milliseconds) {
-                                    tryAwaitRelease()
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .pointerInput(widget.id) {
+                        detectTapGestures(
+                            onPress = {
+                                isPrecisionMode = false
+                                onSelect()
+                                try {
+                                    withTimeout(viewConfiguration.longPressTimeoutMillis.milliseconds) {
+                                        tryAwaitRelease()
+                                    }
+                                } catch (_: TimeoutCancellationException) {
+                                    isPrecisionMode = true
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 }
-                            } catch (_: TimeoutCancellationException) {
-                                isPrecisionMode = true
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             }
-                        }
-                    )
-                }
-                .pointerInput(widget.id, widget.angle, widget.x, widget.y) {
-                    detectDragGestures(
-                        onDragStart = {
-                            onSelect()
-                            rawWidgetX = widgetX
-                            rawWidgetY = widgetY
-                        },
-                        onDrag = { change, dragAmount ->
+                        )
+                    }.pointerInput(widget.id, widget.angle, widget.x, widget.y) {
+                        detectDragGestures(
+                            onDragStart = {
+                                onSelect()
+                                rawWidgetX = widgetX
+                                rawWidgetY = widgetY
+                            },
+                            onDrag = { change, dragAmount ->
 
-                            val angleRad = Math.toRadians(widgetAngle.toDouble())
+                                val angleRad = Math.toRadians(widgetAngle.toDouble())
 
-                            val cos = cos(angleRad)
-                            val sin = sin(angleRad)
+                                val cos = cos(angleRad)
+                                val sin = sin(angleRad)
 
-                            val amountX = if (isPrecisionMode) dragAmount.x / 2f else dragAmount.x
-                            val amountY = if (isPrecisionMode) dragAmount.y / 2f else dragAmount.y
+                                val amountX = if (isPrecisionMode) dragAmount.x / 2f else dragAmount.x
+                                val amountY = if (isPrecisionMode) dragAmount.y / 2f else dragAmount.y
 
-                            val worldDx = (amountX * cos - amountY * sin).toFloat()
-                            val worldDy = (amountX * sin + amountY * cos).toFloat()
+                                val worldDx = (amountX * cos - amountY * sin).toFloat()
+                                val worldDy = (amountX * sin + amountY * cos).toFloat()
 
+                                rawWidgetX += worldDx / widthPixels
+                                rawWidgetY += worldDy / heightPixels
 
-                            rawWidgetX += worldDx / widthPixels
-                            rawWidgetY += worldDy / heightPixels
+                                val isSnapMove = snapMove() && !isPrecisionMode
 
-                            val isSnapMove = snapMove() && !isPrecisionMode
+                                widgetX =
+                                    if (isSnapMove) {
+                                        (rawWidgetX / snapScaleX).roundToInt() * snapScaleX
+                                    } else {
+                                        rawWidgetX
+                                    }
 
-                            widgetX = if (isSnapMove) {
-                                (rawWidgetX / snapScaleX).roundToInt() * snapScaleX
-                            } else rawWidgetX
+                                widgetY =
+                                    if (isSnapMove) {
+                                        (rawWidgetY / snapScaleY).roundToInt() * snapScaleY
+                                    } else {
+                                        rawWidgetY
+                                    }
 
-                            widgetY = if (isSnapMove) {
-                                (rawWidgetY / snapScaleY).roundToInt() * snapScaleY
-                            } else rawWidgetY
-
-                            change.consume()
-                        },
-                        onDragEnd = {
-                            commitChange()
-                            isPrecisionMode = false
-                        },
-                        onDragCancel = {
-                            isPrecisionMode = false
-                        }
-                    )
-                }
+                                change.consume()
+                            },
+                            onDragEnd = {
+                                commitChange()
+                                isPrecisionMode = false
+                            },
+                            onDragCancel = {
+                                isPrecisionMode = false
+                            }
+                        )
+                    }
         )
 
         if (selected) {
-
             // Rotate drag handle
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = (-50).dp)
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .onGloballyPositioned { handleCoordinates = it }
-                    .pointerInput(widget.id, widget.angle) {
+                modifier =
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = (-50).dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .onGloballyPositioned { handleCoordinates = it }
+                        .pointerInput(widget.id, widget.angle) {
+                            var dragStartFingerAngle: Float? = null
+                            var dragStartWidgetAngle = 0f
 
-                        var dragStartFingerAngle: Float? = null
-                        var dragStartWidgetAngle = 0f
+                            detectDragGestures(
+                                onDragStart = { offset ->
 
-                        detectDragGestures(
+                                    val rootPos =
+                                        handleCoordinates
+                                            ?.localToRoot(offset)
+                                            ?: return@detectDragGestures
 
-                            onDragStart = { offset ->
+                                    dragStartFingerAngle =
+                                        Math
+                                            .toDegrees(
+                                                atan2(
+                                                    (rootPos.y - widgetCenter.y).toDouble(),
+                                                    (rootPos.x - widgetCenter.x).toDouble()
+                                                )
+                                            ).toFloat()
 
-                                val rootPos = handleCoordinates
-                                    ?.localToRoot(offset)
-                                    ?: return@detectDragGestures
+                                    // Initialize here to prevent the widget rotated to do one billion rotations a second
+                                    dragStartWidgetAngle = widgetAngle
+                                },
+                                onDragEnd = {
+                                    dragStartFingerAngle = null
+                                    commitChange()
+                                },
+                                onDragCancel = {
+                                    dragStartFingerAngle = null
+                                }
+                            ) { change, _ ->
 
-                                dragStartFingerAngle = Math.toDegrees(
-                                    atan2(
-                                        (rootPos.y - widgetCenter.y).toDouble(),
-                                        (rootPos.x - widgetCenter.x).toDouble()
-                                    )
-                                ).toFloat()
+                                val rootPos =
+                                    handleCoordinates
+                                        ?.localToRoot(change.position)
+                                        ?: return@detectDragGestures
 
-                                // Initialize here to prevent the widget rotated to do one billion rotations a second
-                                dragStartWidgetAngle = widgetAngle
-                            },
+                                val currentFingerAngle =
+                                    Math
+                                        .toDegrees(
+                                            atan2(
+                                                (rootPos.y - widgetCenter.y).toDouble(),
+                                                (rootPos.x - widgetCenter.x).toDouble()
+                                            )
+                                        ).toFloat()
 
-                            onDragEnd = {
-                                dragStartFingerAngle = null
-                                commitChange()
-                            },
+                                dragStartFingerAngle?.let { startAngle ->
 
-                            onDragCancel = {
-                                dragStartFingerAngle = null
+                                    var delta = currentFingerAngle - startAngle
+
+                                    if (delta > 180f) delta -= 360f
+                                    if (delta < -180f) delta += 360f
+
+                                    val newAngle = dragStartWidgetAngle + delta
+
+                                    widgetAngle =
+                                        if (snapRotation()) {
+                                            (newAngle / 15f).roundToInt() * 15f
+                                        } else {
+                                            newAngle
+                                        }
+                                }
+
+                                change.consume()
                             }
-
-                        ) { change, _ ->
-
-                            val rootPos = handleCoordinates
-                                ?.localToRoot(change.position)
-                                ?: return@detectDragGestures
-
-                            val currentFingerAngle = Math.toDegrees(
-                                atan2(
-                                    (rootPos.y - widgetCenter.y).toDouble(),
-                                    (rootPos.x - widgetCenter.x).toDouble()
-                                )
-                            ).toFloat()
-
-                            dragStartFingerAngle?.let { startAngle ->
-
-                                var delta = currentFingerAngle - startAngle
-
-                                if (delta > 180f) delta -= 360f
-                                if (delta < -180f) delta += 360f
-
-                                val newAngle = dragStartWidgetAngle + delta
-
-                                widgetAngle = if (snapRotation()) {
-                                    (newAngle / 15f).roundToInt() * 15f
-                                } else newAngle
-                            }
-
-                            change.consume()
-                        }
-                    },
+                        },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -859,7 +858,6 @@ private fun DraggableWidget(
                 )
             }
 
-
             // Resize handles - only visible when selected
 
             val dotSize = 12.dp
@@ -867,112 +865,120 @@ private fun DraggableWidget(
 
             // Top handle
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = -((dotSize.value / 2 + hitboxPadding.value).dp))
-                    .size(dotSize + hitboxPadding * 2)
-                    .clip(CircleShape)
-                    .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Top, widget.spanX, widget.spanY) {
-                        detectDragGestures(
-                            onDragEnd = ::commitChange
-                        ) { change, dragAmount ->
-                            change.consume()
-                            resizeWidget(ResizeSide.Top, 0f, dragAmount.y)
+                modifier =
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = -((dotSize.value / 2 + hitboxPadding.value).dp))
+                        .size(dotSize + hitboxPadding * 2)
+                        .clip(CircleShape)
+                        .background(Color.Transparent)
+                        .pointerInput(ResizeSide.Top, widget.spanX, widget.spanY) {
+                            detectDragGestures(
+                                onDragEnd = ::commitChange
+                            ) { change, dragAmount ->
+                                change.consume()
+                                resizeWidget(ResizeSide.Top, 0f, dragAmount.y)
+                            }
                         }
-                    }
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(dotSize)
-                        .align(Alignment.Center)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    modifier =
+                        Modifier
+                            .size(dotSize)
+                            .align(Alignment.Center)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
             }
 
             // Bottom handle
             Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .offset(y = ((dotSize.value / 2 + hitboxPadding.value).dp))
-                    .size(dotSize + hitboxPadding * 2)
-                    .clip(CircleShape)
-                    .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Bottom, widget.spanX, widget.spanY) {
-                        detectDragGestures(
-                            onDragEnd = ::commitChange
-                        ) { change, dragAmount ->
-                            change.consume()
-                            resizeWidget(ResizeSide.Bottom, 0f, dragAmount.y)
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = ((dotSize.value / 2 + hitboxPadding.value).dp))
+                        .size(dotSize + hitboxPadding * 2)
+                        .clip(CircleShape)
+                        .background(Color.Transparent)
+                        .pointerInput(ResizeSide.Bottom, widget.spanX, widget.spanY) {
+                            detectDragGestures(
+                                onDragEnd = ::commitChange
+                            ) { change, dragAmount ->
+                                change.consume()
+                                resizeWidget(ResizeSide.Bottom, 0f, dragAmount.y)
+                            }
                         }
-                    }
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(dotSize)
-                        .align(Alignment.Center)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    modifier =
+                        Modifier
+                            .size(dotSize)
+                            .align(Alignment.Center)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
             }
 
             // Left handle
             Box(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .offset(x = -((dotSize.value / 2 + hitboxPadding.value).dp))
-                    .size(dotSize + hitboxPadding * 2)
-                    .clip(CircleShape)
-                    .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Left, widget.spanX, widget.spanY) {
-                        detectDragGestures(
-                            onDragEnd = ::commitChange
-                        ) { change, dragAmount ->
-                            change.consume()
-                            resizeWidget(ResizeSide.Left, dragAmount.x, 0f)
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterStart)
+                        .offset(x = -((dotSize.value / 2 + hitboxPadding.value).dp))
+                        .size(dotSize + hitboxPadding * 2)
+                        .clip(CircleShape)
+                        .background(Color.Transparent)
+                        .pointerInput(ResizeSide.Left, widget.spanX, widget.spanY) {
+                            detectDragGestures(
+                                onDragEnd = ::commitChange
+                            ) { change, dragAmount ->
+                                change.consume()
+                                resizeWidget(ResizeSide.Left, dragAmount.x, 0f)
+                            }
                         }
-                    }
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(dotSize)
-                        .align(Alignment.Center)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    modifier =
+                        Modifier
+                            .size(dotSize)
+                            .align(Alignment.Center)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
             }
 
             // Right handle
             Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .offset(x = ((dotSize.value / 2 + hitboxPadding.value).dp))
-                    .size(dotSize + hitboxPadding * 2)
-                    .clip(CircleShape)
-                    .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Right, widget.spanX, widget.spanY) {
-                        detectDragGestures(
-                            onDragEnd = ::commitChange
-                        ) { change, dragAmount ->
-                            change.consume()
-                            resizeWidget(ResizeSide.Right, dragAmount.x, 0f)
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .offset(x = ((dotSize.value / 2 + hitboxPadding.value).dp))
+                        .size(dotSize + hitboxPadding * 2)
+                        .clip(CircleShape)
+                        .background(Color.Transparent)
+                        .pointerInput(ResizeSide.Right, widget.spanX, widget.spanY) {
+                            detectDragGestures(
+                                onDragEnd = ::commitChange
+                            ) { change, dragAmount ->
+                                change.consume()
+                                resizeWidget(ResizeSide.Right, dragAmount.x, 0f)
+                            }
                         }
-                    }
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(dotSize)
-                        .align(Alignment.Center)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    modifier =
+                        Modifier
+                            .size(dotSize)
+                            .align(Alignment.Center)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
             }
-
 
             // Edit button
             Box {
                 DragonIconButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .clip(CircleShape)
-                        .background(Color.Transparent),
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomEnd)
+                            .clip(CircleShape)
+                            .background(Color.Transparent),
                     icon = R.drawable.edit_rounded,
                     contentDescription = R.string.edit
                 ) { showEditPopup = true }
@@ -1013,7 +1019,6 @@ private fun DraggableWidget(
                                     checked = widget.foreground == true,
                                     onCheckedChange = null
                                 )
-
                             },
                             onClick = {
                                 commitChange(widget.copy(foreground = !(widget.foreground ?: Widget.defaultForeground)))

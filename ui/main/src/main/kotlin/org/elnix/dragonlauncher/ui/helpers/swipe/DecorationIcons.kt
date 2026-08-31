@@ -17,7 +17,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
 import org.elnix.dragonlauncher.i18n.R
 
-
 @Suppress("FunctionName")
 fun DrawScope.DecorationIcons(
     ctx: Context,
@@ -25,7 +24,6 @@ fun DrawScope.DecorationIcons(
     iconSize: Size,
     point: Point
 ) {
-
     val px = center.x
     val py = center.y
 
@@ -35,14 +33,14 @@ fun DrawScope.DecorationIcons(
 
     // Small `+1` icon top left to indicate a Cycle Actions
     if (!point.cycleActions.isNullOrEmpty()) {
-
-        val plusOneIcon = DecorationCache.getOrCompute(0) {
-            ctx.loadDrawableResAsImageBitmap(
-                R.drawable.ic_plus_one,
-                badgeSize,
-                badgeSize
-            )
-        }
+        val plusOneIcon =
+            DecorationCache.getOrCompute(0) {
+                ctx.loadDrawableResAsImageBitmap(
+                    R.drawable.ic_plus_one,
+                    badgeSize,
+                    badgeSize
+                )
+            }
 
         val leftI = px.toInt() - iconPx / 2
         val topI = py.toInt() - iconPx / 2
@@ -55,16 +53,16 @@ fun DrawScope.DecorationIcons(
         )
     }
 
-
     // Small bolt icon top right to indicate a Hold & Run
     if (point.holdAndRunDelayMs != null) {
-        val boltIcon = DecorationCache.getOrCompute(1) {
-            ctx.loadDrawableResAsImageBitmap(
-                R.drawable.ic_hold_and_run_bolt,
-                badgeSize,
-                badgeSize
-            )
-        }
+        val boltIcon =
+            DecorationCache.getOrCompute(1) {
+                ctx.loadDrawableResAsImageBitmap(
+                    R.drawable.ic_hold_and_run_bolt,
+                    badgeSize,
+                    badgeSize
+                )
+            }
 
         val leftI = px.toInt() - iconPx / 2
         val topI = py.toInt() - iconPx / 2
@@ -79,18 +77,17 @@ fun DrawScope.DecorationIcons(
     }
 }
 
-
-
 fun DrawScope.missingPoint(drawParams: DrawParams, center: Offset) {
     val size = 30.dp.toPx().toInt()
 
-    val boltIcon =  DecorationCache.getOrCompute(3) {
-        drawParams.ctx.loadDrawableResAsImageBitmap(
-            resId = R.drawable.question_mark,
-            width = size,
-            height = size
-        )
-    }
+    val boltIcon =
+        DecorationCache.getOrCompute(3) {
+            drawParams.ctx.loadDrawableResAsImageBitmap(
+                resId = R.drawable.question_mark,
+                width = size,
+                height = size
+            )
+        }
 
     val leftI = center.x.toInt() - size / 2
     val topI = center.y.toInt() - size / 2
@@ -110,7 +107,8 @@ fun DrawScope.unavailableAction(
 ) {
     val size = 30.dp.toPx().toInt()
 
-    val icon = (
+    val icon =
+        (
             if (point.action is Action.LaunchApp) {
                 when ((point.action as Action.LaunchApp).profile.type) {
                     Profile.Type.Personal -> null
@@ -134,15 +132,17 @@ fun DrawScope.unavailableAction(
                         }
                     }
                 }
-            } else null
-            )
-        ?: DecorationCache.getOrCompute(2) {
-            drawParams.ctx.loadDrawableResAsImageBitmap(
-                resId = R.drawable.question_mark,
-                width = size,
-                height = size
-            )
-        }
+            } else {
+                null
+            }
+        )
+            ?: DecorationCache.getOrCompute(2) {
+                drawParams.ctx.loadDrawableResAsImageBitmap(
+                    resId = R.drawable.question_mark,
+                    width = size,
+                    height = size
+                )
+            }
 
     val leftI = center.x.toInt() - size / 2
     val topI = center.y.toInt() - size / 2

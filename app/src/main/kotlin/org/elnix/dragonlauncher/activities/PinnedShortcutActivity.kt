@@ -4,10 +4,10 @@ import android.content.pm.LauncherApps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
-import org.elnix.dragonlauncher.PINNED_SHORTCUTS
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.PINNED_SHORTCUTS
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 
@@ -23,7 +23,6 @@ import org.elnix.dragonlauncher.ktx.showToast
  * [LauncherApps.ACTION_CONFIRM_PIN_SHORTCUT] to this activity.
  */
 class PinnedShortcutActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

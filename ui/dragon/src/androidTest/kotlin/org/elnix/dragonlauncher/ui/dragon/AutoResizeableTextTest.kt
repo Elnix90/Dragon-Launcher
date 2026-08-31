@@ -22,7 +22,6 @@ import org.junit.Test
  * doesn't affect the text content in the semantic tree.
  */
 class AutoResizeableTextTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

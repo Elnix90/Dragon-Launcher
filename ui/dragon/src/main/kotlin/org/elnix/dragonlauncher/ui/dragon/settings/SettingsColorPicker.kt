@@ -18,7 +18,6 @@ fun DragonGroupScope.Setting(
     enabled: Boolean = true,
     onPicked: ((Color?) -> Unit)? = null
 ) {
-
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

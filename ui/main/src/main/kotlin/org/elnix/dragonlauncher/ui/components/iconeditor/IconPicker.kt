@@ -102,9 +102,12 @@ fun IconPicker(
     val columns by DrawerSettingsStore.gridSize.asState()
 
     LazyVerticalGrid(
-        modifier = Modifier.fillMaxSize().heightIn(max = 9999.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .heightIn(max = 9999.dp),
         columns = GridCells.Fixed(columns),
-        contentPadding = contentPadding,
+        contentPadding = contentPadding
     ) {
         if (packsInstalled) {
             item(span = { GridItemSpan(columns) }) {
@@ -120,16 +123,19 @@ fun IconPicker(
                         Text(stringResource(R.string.select_icon))
                     },
                     colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { focusManager.clearFocus() }
-                    ),
+                    keyboardOptions =
+                        KeyboardOptions(
+                            imeAction = ImeAction.Done
+                        ),
+                    keyboardActions =
+                        KeyboardActions(
+                            onDone = { focusManager.clearFocus() }
+                        ),
                     shape = CircleShape,
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(50.dp)
+                    modifier =
+                        Modifier
+                            .width(120.dp)
+                            .height(50.dp)
                 )
             }
         }
@@ -163,36 +169,41 @@ fun IconPicker(
                 // I am not touching that thing
                 Button(
                     onClick = { showIconPackFilter = !showIconPackFilter },
-                    modifier = Modifier
-                        .wrapContentWidth(align = Alignment.CenterHorizontally)
-                        .padding(16.dp),
-                    contentPadding = PaddingValues(
-                        horizontal = 16.dp,
-                        vertical = 8.dp
-                    )
+                    modifier =
+                        Modifier
+                            .wrapContentWidth(align = Alignment.CenterHorizontally)
+                            .padding(16.dp),
+                    contentPadding =
+                        PaddingValues(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        )
                 ) {
                     if (filterIconPack == null) {
                         Icon(
-                            modifier = Modifier
-                                .padding(end = ButtonDefaults.IconSpacing)
-                                .size(ButtonDefaults.IconSize),
+                            modifier =
+                                Modifier
+                                    .padding(end = ButtonDefaults.IconSpacing)
+                                    .size(ButtonDefaults.IconSize),
                             painter = painterResource(R.drawable.filter_alt),
                             contentDescription = null
                         )
                     } else {
-                        val icon = remember(filterIconPack?.packageName) {
-                            try {
-                                filterIconPack?.packageName?.let { pkg ->
-                                    ctx.packageManager.getApplicationIcon(pkg)
+                        val icon =
+                            remember(filterIconPack?.packageName) {
+                                try {
+                                    filterIconPack?.packageName?.let { pkg ->
+                                        ctx.packageManager.getApplicationIcon(pkg)
+                                    }
+                                } catch (_: PackageManager.NameNotFoundException) {
+                                    null
                                 }
-                            } catch (_: PackageManager.NameNotFoundException) {
-                                null
                             }
-                        }
                         AsyncImage(
-                            modifier = Modifier
-                                .padding(end = ButtonDefaults.IconSpacing)
-                                .size(ButtonDefaults.IconSize),
+                            modifier =
+                                Modifier
+                                    .padding(end = ButtonDefaults.IconSpacing)
+                                    .size(ButtonDefaults.IconSize),
                             model = icon,
                             contentDescription = null
                         )
@@ -205,11 +216,6 @@ fun IconPicker(
                             shapes = MenuDefaults.groupShapes()
                         ) {
                             DropdownMenuItem(
-                                selected = filterIconPack == null,
-                                shapes = MenuDefaults.itemShape(
-                                    0,
-                                    installedIconPacks?.size?.plus(1) ?: 1
-                                ),
                                 text = { Text(stringResource(id = R.string.icon_picker_filter_all_packs)) },
                                 onClick = {
                                     showIconPackFilter = false
@@ -218,17 +224,14 @@ fun IconPicker(
                                         viewModel.searchIcon(query, filterIconPack)
                                     }
                                 },
-                                selectedLeadingIcon = {
-                                    Icon(painterResource(R.drawable.check), null)
+                                leadingIcon = {
+                                    if (filterIconPack == null) {
+                                        Icon(painterResource(R.drawable.check), null)
+                                    }
                                 }
                             )
                             installedIconPacks?.forEachIndexed { i, iconPack ->
                                 DropdownMenuItem(
-                                    selected = filterIconPack == iconPack,
-                                    shapes = MenuDefaults.itemShape(
-                                        i + 1,
-                                        installedIconPacks!!.size + 1
-                                    ),
                                     onClick = {
                                         showIconPackFilter = false
                                         filterIconPack = iconPack
@@ -236,26 +239,28 @@ fun IconPicker(
                                             viewModel.searchIcon(query, filterIconPack)
                                         }
                                     },
-                                    text = {
-                                        Text(iconPack.name)
-                                    },
-                                    selectedLeadingIcon = {
-                                        Icon(painterResource(R.drawable.check), null)
-                                    },
+                                    text = { Text(iconPack.name) },
+                                    leadingIcon = {
+                                        if (filterIconPack == iconPack) {
+                                            Icon(painterResource(R.drawable.check), null)
+                                        }
+                                    }
                                 )
                             }
                         }
                     }
                     Text(
-                        text = filterIconPack?.name
-                            ?: stringResource(id = R.string.icon_picker_filter_all_packs),
+                        text =
+                            filterIconPack?.name
+                                ?: stringResource(id = R.string.icon_picker_filter_all_packs),
                         modifier = Modifier.animateContentSize()
                     )
                     Icon(
                         painterResource(R.drawable.arrow_drop_down),
-                        modifier = Modifier
-                            .padding(start = ButtonDefaults.IconSpacing)
-                            .size(ButtonDefaults.IconSize),
+                        modifier =
+                            Modifier
+                                .padding(start = ButtonDefaults.IconSpacing)
+                                .size(ButtonDefaults.IconSize),
                         contentDescription = null
                     )
                 }
@@ -275,9 +280,10 @@ fun IconPicker(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(12.dp)
-                                .size(24.dp)
+                            modifier =
+                                Modifier
+                                    .padding(12.dp)
+                                    .size(24.dp)
                         )
                     }
                 }
@@ -290,7 +296,7 @@ fun IconPicker(
 fun IconPreview(
     item: CustomIconWithPreview?,
     iconSize: Dp,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -299,7 +305,7 @@ fun IconPreview(
         ShapedLauncherIcon(
             size = iconSize,
             icon = { item?.preview },
-            modifier = Modifier.clickable(onClick = onClick),
+            modifier = Modifier.clickable(onClick = onClick)
         )
     }
 }
@@ -310,8 +316,9 @@ fun Separator(label: String) {
         label,
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.titleSmall,
-        modifier = Modifier
-            .padding(top = 16.dp, bottom = 8.dp)
-            .fillMaxWidth()
+        modifier =
+            Modifier
+                .padding(top = 16.dp, bottom = 8.dp)
+                .fillMaxWidth()
     )
 }

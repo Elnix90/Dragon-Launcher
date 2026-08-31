@@ -34,11 +34,12 @@ fun ChangelogsScreen() {
                 val updateRegex: Regex = "[\\d-.]+".toRegex()
                 val matchResult = updateRegex.find(update.versionName)
 
-                val link = if (matchResult != null) {
-                    "https://github.com/Elnix90/Dragon-Launcher/releases/tag/v${matchResult.value}"
-                } else {
-                    "https://github.com/Elnix90/Dragon-Launcher/releases/latest"
-                }
+                val link =
+                    if (matchResult != null) {
+                        "https://github.com/Elnix90/Dragon-Launcher/releases/tag/v${matchResult.value}"
+                    } else {
+                        "https://github.com/Elnix90/Dragon-Launcher/releases/latest"
+                    }
 
                 UpdateCard(
                     update,

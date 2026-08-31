@@ -39,32 +39,33 @@ fun DefaultColorPicker(
     selectedColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
-    val defaultColors = listOf(
-        Color.Red,
-        Color.Blue,
-        Color.Green,
-        Color.Yellow,
-        Color(0xFFEF5350), // Red
-        Color(0xFFFF7043), // Deep orange
-        Color(0xFFFFCA28), // Amber
-        Color(0xFF66BB6A), // Green
-        Color(0xFF26A69A), // Teal
-        Color(0xFF42A5F5), // Blue
-        Color(0xFF5C6BC0), // Indigo
-        Color(0xFFB63AC7), // Purple
-        Color(0xFFEC407A), // Pink
-        Color(0xFF8D6E63), // Brown
-        Color(0xFF78909C), // Blue Gray
-        Color(0xFF9CCC65), // Light Green
-        Color(0xFF26C6DA), // Cyan
-        Color(0xFFD4E157), // Lime
-        Color(0xFFFFB74D), // Orange
-        Color(0xFFBA68C8), // Violet
-        Color(0xFFFFFFFF), // White
-        Color(0xFFBDBDBD), // Light Gray
-        Color(0xFF616161), // Dark Gray
-        Color(0xFF000000)  // Black
-    )
+    val defaultColors =
+        listOf(
+            Color.Red,
+            Color.Blue,
+            Color.Green,
+            Color.Yellow,
+            Color(0xFFEF5350), // Red
+            Color(0xFFFF7043), // Deep orange
+            Color(0xFFFFCA28), // Amber
+            Color(0xFF66BB6A), // Green
+            Color(0xFF26A69A), // Teal
+            Color(0xFF42A5F5), // Blue
+            Color(0xFF5C6BC0), // Indigo
+            Color(0xFFB63AC7), // Purple
+            Color(0xFFEC407A), // Pink
+            Color(0xFF8D6E63), // Brown
+            Color(0xFF78909C), // Blue Gray
+            Color(0xFF9CCC65), // Light Green
+            Color(0xFF26C6DA), // Cyan
+            Color(0xFFD4E157), // Lime
+            Color(0xFFFFB74D), // Orange
+            Color(0xFFBA68C8), // Violet
+            Color(0xFFFFFFFF), // White
+            Color(0xFFBDBDBD), // Light Gray
+            Color(0xFF616161), // Dark Gray
+            Color(0xFF000000) // Black
+        )
 
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -82,7 +83,6 @@ fun DefaultColorPicker(
                     overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-
                     rowColors.forEachIndexed { idx, color ->
                         val isSelected = color == selectedColor
 
@@ -94,46 +94,51 @@ fun DefaultColorPicker(
                                     label = "Check Scale Animation"
                                 )
 
-                                val shape = provideClickableShape(
-                                    interactionSource = interactionSources[idx],
-                                    isSelected = isSelected,
+                                val shape =
+                                    provideClickableShape(
+                                        interactionSource = interactionSources[idx],
+                                        isSelected = isSelected
 //                                    defaultShape = MaterialShapes.Bun,
 //                                    pressedShape = MaterialShapes.Cookie7Sided
-                                )
+                                    )
 
                                 Box(
-                                    modifier = Modifier
-                                        .clickable(
-                                            interactionSource = interactionSources[idx]
-                                        ) {
-                                            onColorSelected(color)
-                                        }
-                                        .weight(1f)
-                                        .animateWidth(interactionSources[idx])
-                                        .height(50.dp)
-                                        .clip(shape)
-                                        .background(color)
-                                        .border(
-                                            width = if (isSelected) 3.dp else 1.dp,
-                                            color = if (isSelected)
-                                                MaterialTheme.colorScheme.onBackground
-                                            else
-                                                MaterialTheme.colorScheme.outline,
-                                            shape = shape
-                                        ),
+                                    modifier =
+                                        Modifier
+                                            .clickable(
+                                                interactionSource = interactionSources[idx]
+                                            ) {
+                                                onColorSelected(color)
+                                            }.weight(1f)
+                                            .animateWidth(interactionSources[idx])
+                                            .height(50.dp)
+                                            .clip(shape)
+                                            .background(color)
+                                            .border(
+                                                width = if (isSelected) 3.dp else 1.dp,
+                                                color =
+                                                    if (isSelected) {
+                                                        MaterialTheme.colorScheme.onBackground
+                                                    } else {
+                                                        MaterialTheme.colorScheme.outline
+                                                    },
+                                                shape = shape
+                                            ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Box(
-                                        modifier = Modifier
-                                            .size(25.dp)
-                                            .scale(scale)
-                                            .clip(MaterialShapes.Cookie7Sided.toShape())
-                                            .background(color = MaterialTheme.colorScheme.primaryContainer)
+                                        modifier =
+                                            Modifier
+                                                .size(25.dp)
+                                                .scale(scale)
+                                                .clip(MaterialShapes.Cookie7Sided.toShape())
+                                                .background(color = MaterialTheme.colorScheme.primaryContainer)
                                     ) {
                                         Icon(
-                                            modifier = Modifier
-                                                .size(16.dp)
-                                                .align(Alignment.Center),
+                                            modifier =
+                                                Modifier
+                                                    .size(16.dp)
+                                                    .align(Alignment.Center),
                                             painter = painterResource(R.drawable.check),
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.onPrimaryContainer

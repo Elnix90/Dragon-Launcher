@@ -18,13 +18,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalFullscreen
 
-
 @Composable
 @ExperimentalMaterial3Api
 fun DragonModalBottomSheet(
     onDismissRequest: () -> Unit,
     skipPartiallyExpanded: Boolean,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     DragonModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -38,7 +37,7 @@ fun DragonModalBottomSheet(
 fun DragonModalBottomSheet(
     onDismissRequest: () -> Unit,
     sheetState: SheetState = rememberBottomSheetState(),
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -54,7 +53,6 @@ fun DragonModalBottomSheet(
             )
         }
     ) {
-
         // AHAHAHAHAHAHAHAHA FUCK ITTT
         // FUUUUUUUUUUUCK ANDROID AND YOUR WINDOWS VIEWS!!!!
         // I FINALLY MANAGED TO MAKE IT!!!!!!!!!!
@@ -83,9 +81,10 @@ fun DragonModalBottomSheet(
 fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): SheetState =
     rememberBottomSheetState(
         initialValue = SheetValue.Hidden,
-        enabledValues = buildSet {
-            add(SheetValue.Hidden)
-            if (!skipPartiallyExpanded) add(SheetValue.PartiallyExpanded)
-            add(SheetValue.Expanded)
-        }
+        enabledValues =
+            buildSet {
+                add(SheetValue.Hidden)
+                if (!skipPartiallyExpanded) add(SheetValue.PartiallyExpanded)
+                add(SheetValue.Expanded)
+            }
     )

@@ -24,39 +24,40 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class ProfilesViewModel @Inject constructor(
-    application: Application,
-    private val profileManager: ProfileManager,
-    permissionsManager: PermissionsManager
-) : AndroidViewModel(application) {
+public class ProfilesViewModel
+    @Inject
+    constructor(
+        application: Application,
+        private val profileManager: ProfileManager,
+        permissionsManager: PermissionsManager
+    ) : AndroidViewModel(application) {
+        public val profiles: SharedFlow<List<Profile?>> =
+            profileManager.profiles.shareIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                replay = 1
+            )
 
-    public val profiles: SharedFlow<List<Profile?>> = profileManager.profiles.shareIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        replay = 1
-    )
+        public val profileStates: Flow<List<Profile.State?>> =
+            profiles.flatMapLatest { profiles ->
+                combine(profiles.map { profileManager.getProfileState(it) }) {
+                    it.toList()
+                }
+            }
 
-    public val profileStates: Flow<List<Profile.State?>> = profiles.flatMapLatest { profiles ->
-        combine(profiles.map { profileManager.getProfileState(it) }) {
-            it.toList()
-        }
-    }
-
-
-    public fun askProfileLock(profile: Profile?, locked: Boolean) {
-        if (isAtLeastApiLevel(28) && profile != null) {
-            if (locked) {
-                profileManager.lockProfile(profile)
-            } else {
-                profileManager.unlockProfile(profile)
+        public fun askProfileLock(profile: Profile?, locked: Boolean) {
+            if (isAtLeastApiLevel(28) && profile != null) {
+                if (locked) {
+                    profileManager.lockProfile(profile)
+                } else {
+                    profileManager.unlockProfile(profile)
+                }
             }
         }
+
+        public val hasProfilesPermission: Flow<Boolean> = permissionsManager.hasPermission(PermissionGroup.ManageProfiles)
+
+        init {
+            viewModelInitialized()
+        }
     }
-
-    public val hasProfilesPermission: Flow<Boolean> = permissionsManager.hasPermission(PermissionGroup.ManageProfiles)
-
-
-    init {
-        viewModelInitialized()
-    }
-}

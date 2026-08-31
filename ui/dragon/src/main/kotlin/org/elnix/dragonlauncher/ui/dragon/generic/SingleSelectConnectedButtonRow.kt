@@ -47,15 +47,17 @@ fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
                         checked = checked,
                         onCheckedChange = withHapticParam { onCheck(entry) },
                         interactionSource = interactionSources[idx],
-                        modifier = Modifier
-                            .weight(1f)
-                            .animateWidth(interactionSources[idx]),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSources[idx]),
                         enabled = enabled,
-                        shapes = when (idx) {
-                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                            entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                        }
+                        shapes =
+                            when (idx) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            }
                     ) {
                         entry.iconResId?.let { icon ->
                             Icon(

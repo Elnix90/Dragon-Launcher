@@ -70,7 +70,6 @@ internal data class StoreMapping(
  * The mapping also defines the [legacyAppVersionPrefix] used to detect old backups.
  */
 internal object OldToNewStoreMapping {
-
     /**
      * Complete set of store mappings from old backup keys to new store definitions.
      *
@@ -81,302 +80,349 @@ internal object OldToNewStoreMapping {
      * - Stores with `valueTransformers` have specific values transformed.
      * - Stores with `handledExternally` are processed by a dedicated migrator.
      */
-    val mappings: Map<String, StoreMapping> = mapOf(
-        "ui" to StoreMapping(
-            oldBackupKey = "ui",
-            newBackupKey = "ui",
-            keyMappings = mapOf(
-                "showAppLaunchPreview" to "showAppLaunchingPreview",
-                "fullscreen" to "fullScreen",
-                "showAppPreviewIconCenterStartPosition" to "showPointPreviewCenterStartPosition",
-                "showCirclePreview" to "showCurrentShape",
-                "showAllActionsOnCurrentCircle" to "showAllPointsInCurrentShape",
-                "showAllActionsOnCurrentNest" to "showAllPointsInCurrentNest",
-                "freeMoveDraggedPoint" to "allowFreePoints",
-                "cellSizeDp" to "pointsCellSizeDp"
-            ),
-            skipKeys = setOf(
-                "mainScreenLayers"
-            ),
-            keyRoutes = mapOf(
-                "selected_icon_pack" to KeyRoute("icons", "selectedIconPack"),
-                "icon_pack_tint" to KeyRoute("icons", "iconsTint"),
-                "useCustomColorChannels" to KeyRoute("color_modes", "useCustomColorChannels"),
-                "rgbLine" to KeyRoute("angle_line", "rgbLine"),
-                "rgbLoading" to KeyRoute("hold_to_activate_arc", "holdRgbLoading"),
-                "mainScreenLayers" to KeyRoute(
-                    targetStore = "main_screen_layers",
-                    newKey = "mainScreenLayers",
-                    transform = { value ->
-                        (value as? String)?.let(::migrateMainScreenLayersString) ?: value
-                    }
-                )
-            )
-        ),
-        "color_mode" to StoreMapping(
-            oldBackupKey = "color_mode",
-            newBackupKey = "color_modes",
-            keyMappings = mapOf(
-                "dynamicColor" to "dynamicColors",
-                "colorPickerButton" to "colorPickerButtonOne"
-            )
-        ),
-        "color" to StoreMapping(
-            oldBackupKey = "color",
-            newBackupKey = "color",
-            keyMappings = mapOf(
-                "primary_color" to "primaryColor",
-                "on_primary_color" to "onPrimaryColor",
-                "primary_container_color" to "primaryContainerColor",
-                "on_primary_container_color" to "onPrimaryContainerColor",
-                "inverse_primary_color" to "inversePrimaryColor",
-                "secondary_color" to "secondaryColor",
-                "on_secondary_color" to "onSecondaryColor",
-                "secondary_container_color" to "secondaryContainerColor",
-                "on_secondary_container_color" to "onSecondaryContainerColor",
-                "tertiary_color" to "tertiaryColor",
-                "on_tertiary_color" to "onTertiaryColor",
-                "tertiary_container_color" to "tertiaryContainerColor",
-                "on_tertiary_container_color" to "onTertiaryContainerColor",
-                "background_color" to "backgroundColor",
-                "on_background_color" to "onBackgroundColor",
-                "surface_color" to "surfaceColor",
-                "on_surface_color" to "onSurfaceColor",
-                "surface_variant_color" to "surfaceVariantColor",
-                "on_surface_variant_color" to "onSurfaceVariantColor",
-                "surface_tint_color" to "surfaceTintColor",
-                "inverse_surface_color" to "inverseSurfaceColor",
-                "inverse_on_surface_color" to "inverseOnSurfaceColor",
-                "error_color" to "errorColor",
-                "on_error_color" to "onErrorColor",
-                "error_container_color" to "errorContainerColor",
-                "on_error_container_color" to "onErrorContainerColor",
-                "outline_color" to "outlineColor",
-                "outline_variant_color" to "outlineVariantColor",
-                "scrim_color" to "scrimColor",
-                "surface_bright_color" to "surfaceBrightColor",
-                "surface_container_color" to "surfaceContainerColor",
-                "surface_container_high_color" to "surfaceContainerHighColor",
-                "surface_container_highest_color" to "surfaceContainerHighestColor",
-                "surface_container_low_color" to "surfaceContainerLowColor",
-                "surface_container_lowest_color" to "surfaceContainerLowestColor",
-                "surface_dim_color" to "surfaceDimColor",
-                "primary_fixed_color" to "primaryFixedColor",
-                "primary_fixed_dim_color" to "primaryFixedDimColor",
-                "on_primary_fixed_color" to "onPrimaryFixedColor",
-                "on_primary_fixed_variant_color" to "onPrimaryFixedVariantColor",
-                "secondary_fixed_color" to "secondaryFixedColor",
-                "secondary_fixed_dim_color" to "secondaryFixedDimColor",
-                "on_secondary_fixed_color" to "onSecondaryFixedColor",
-                "on_secondary_fixed_variant_color" to "onSecondaryFixedVariantColor",
-                "tertiary_fixed_color" to "tertiaryFixedColor",
-                "tertiary_fixed_dim_color" to "tertiaryFixedDimColor",
-                "on_tertiary_fixed_color" to "onTertiaryFixedColor",
-                "on_tertiary_fixed_variant_color" to "onTertiaryFixedVariantColor",
-                "angle_line_color" to "angleLineColor",
-                "circle_color" to "shapesColor",
-                "launch_app_color" to "launchAppColor",
-                "open_url_color" to "openUrlColor",
-                "notification_shade_color" to "notificationShadeColor",
-                "control_panel_color" to "controlPanelColor",
-                "open_app_drawer_color" to "openAppDrawerColor",
-                "launcher_settings_color" to "launcherSettingsColor",
-                "lock_color" to "lockColor",
-                "open_file_color" to "openFileColor",
-                "reload_color" to "reloadColor",
-                "open_recent_apps" to "openRecentAppsColor",
-                "open_circle_nest" to "openCircleNestColor",
-                "go_parent_nest" to "goParentNestColor"
-            )
-        ),
-        "language" to StoreMapping(
-            oldBackupKey = "language",
-            newBackupKey = "language",
-            keyMappings = mapOf(
-                "pref_app_language" to "keyLang"
-            )
-        ),
-        "drawer" to StoreMapping(
-            oldBackupKey = "drawer",
-            newBackupKey = "drawer",
-            keyMappings = mapOf(
-                "showAppLabelInDrawer" to "showAppLabelsInDrawer",
-                "categoryGridWidth" to "categoryGridCells",
-                "iconsShape" to "iconShape",
-                "scrollDownDrawerAction" to "drawerScrollDownAction",
-                "scrollUpDrawerAction" to "drawerScrollUpAction",
-                "backDrawerAction" to "drawerBackAction",
-                "tabEmptySpaceToRaiseKeyboard" to "tapEmptySpaceAction",
-                "recentlyUsedPackagesSet" to "recentlyUsedPackages",
-                "iconsSpacingHorizontal\u00B2" to "iconsSpacingHorizontal"
-            ),
-            valueTransformers = mapOf(
-                "leftDrawerWidth" to { value, ctx ->
-                    if (value is Number) {
-                        (value.toFloat() * ctx.screenWidthDp).roundToInt().coerceAtLeast(0)
-                    } else value
-                },
-                "rightDrawerWidth" to { value, ctx ->
-                    if (value is Number) {
-                        (value.toFloat() * ctx.screenWidthDp).roundToInt().coerceAtLeast(0)
-                    } else value
-                }
-            )
-        ),
-        "debug" to StoreMapping(
-            oldBackupKey = "debug",
-            newBackupKey = "debug",
-            keyMappings = mapOf(
-                "debugInfos" to "mainScreenDebugInfos"
-            )
-        ),
-        "workspaces" to StoreMapping(
-            oldBackupKey = "workspaces",
-            newBackupKey = null,
-            splitInto = mapOf(
-                "workspaces" to { value ->
-                    (value as? JSONObject)?.optJSONArray("workspaces")?.let(::migrateWorkspacesArray)
-                },
-                "app_overrides" to { value ->
-                    migrateAppOverrides((value as? JSONObject)?.opt("appOverrides"))
-                }
-            )
-        ),
-        "behavior" to StoreMapping(
-            oldBackupKey = "behavior",
-            newBackupKey = "behavior",
-            keyMappings = mapOf(
-                "upPadding" to "topPadding",
-                "downPadding" to "bottomPadding"
-            )
-        ),
-        "backup" to StoreMapping(
-            oldBackupKey = "backup",
-            newBackupKey = "backup",
-            // Skips the auto backup uri so that it won't overwrite the auto backup if anything goes wrong
-            skipKeys = setOf("autoBackupUri")
-        ),
-        "widgets" to StoreMapping(
-            oldBackupKey = "widgets",
-            newBackupKey = null,
-            splitInto = mapOf(
-                "widgets" to { value ->
-                    (value as? JSONArray)?.let(::migrateWidgetsArray)
-                }
-            )
-        ),
-        "wellbeing" to StoreMapping(
-            oldBackupKey = "wellbeing",
-            newBackupKey = "wellbeing",
-            keyMappings = mapOf(
-                "GUILT_MODE_ENABLED" to "guiltModeEnabled",
-                "SOCIAL_MEDIA_PAUSE_ENABLED" to "socialMediaPauseEnabled",
-                "SHOW_USAGE_STATS" to "showUsageStats",
-                "PAUSE_DURATION_SECONDS" to "pauseDurationSeconds",
-                "REMINDER_ENABLED" to "reminderEnabled",
-                "REMINDER_INTERVAL_MINUTES" to "reminderIntervalMinutes",
-                "RETURN_TO_LAUNCHER_ENABLED" to "returnToLauncherEnabled",
-                "PAUSED_APPS_LIST" to "pausedApps",
-                "POPUP_SHOW_SESSION_TIME" to "popupShowSessionTime",
-                "POPUP_SHOW_TODAY_TIME" to "popupShowTodayTime",
-                "POPUP_SHOW_REMAINING_TIME" to "popupShowRemainingTime"
-            ),
-            valueTransformers = mapOf(
-                "PAUSED_APPS_LIST" to { value, _ ->
-                    when (value) {
-                        is JSONArray -> value
-                        is List<*> -> JSONArray(value)
-                        is String -> try {
-                            JSONArray(value)
-                        } catch (_: Exception) {
-                            JSONArray()
-                        }
+    val mappings: Map<String, StoreMapping> =
+        mapOf(
+            "ui" to
+                StoreMapping(
+                    oldBackupKey = "ui",
+                    newBackupKey = "ui",
+                    keyMappings =
+                        mapOf(
+                            "showAppLaunchPreview" to "showAppLaunchingPreview",
+                            "fullscreen" to "fullScreen",
+                            "showAppPreviewIconCenterStartPosition" to "showPointPreviewCenterStartPosition",
+                            "showCirclePreview" to "showCurrentShape",
+                            "showAllActionsOnCurrentCircle" to "showAllPointsInCurrentShape",
+                            "showAllActionsOnCurrentNest" to "showAllPointsInCurrentNest",
+                            "freeMoveDraggedPoint" to "allowFreePoints",
+                            "cellSizeDp" to "pointsCellSizeDp"
+                        ),
+                    skipKeys =
+                        setOf(
+                            "mainScreenLayers"
+                        ),
+                    keyRoutes =
+                        mapOf(
+                            "selected_icon_pack" to KeyRoute("icons", "selectedIconPack"),
+                            "icon_pack_tint" to KeyRoute("icons", "iconsTint"),
+                            "useCustomColorChannels" to KeyRoute("color_modes", "useCustomColorChannels"),
+                            "rgbLine" to KeyRoute("angle_line", "rgbLine"),
+                            "rgbLoading" to KeyRoute("hold_to_activate_arc", "holdRgbLoading"),
+                            "mainScreenLayers" to
+                                KeyRoute(
+                                    targetStore = "main_screen_layers",
+                                    newKey = "mainScreenLayers",
+                                    transform = { value ->
+                                        (value as? String)?.let(::migrateMainScreenLayersString) ?: value
+                                    }
+                                )
+                        )
+                ),
+            "color_mode" to
+                StoreMapping(
+                    oldBackupKey = "color_mode",
+                    newBackupKey = "color_modes",
+                    keyMappings =
+                        mapOf(
+                            "dynamicColor" to "dynamicColors",
+                            "colorPickerButton" to "colorPickerButtonOne"
+                        )
+                ),
+            "color" to
+                StoreMapping(
+                    oldBackupKey = "color",
+                    newBackupKey = "color",
+                    keyMappings =
+                        mapOf(
+                            "primary_color" to "primaryColor",
+                            "on_primary_color" to "onPrimaryColor",
+                            "primary_container_color" to "primaryContainerColor",
+                            "on_primary_container_color" to "onPrimaryContainerColor",
+                            "inverse_primary_color" to "inversePrimaryColor",
+                            "secondary_color" to "secondaryColor",
+                            "on_secondary_color" to "onSecondaryColor",
+                            "secondary_container_color" to "secondaryContainerColor",
+                            "on_secondary_container_color" to "onSecondaryContainerColor",
+                            "tertiary_color" to "tertiaryColor",
+                            "on_tertiary_color" to "onTertiaryColor",
+                            "tertiary_container_color" to "tertiaryContainerColor",
+                            "on_tertiary_container_color" to "onTertiaryContainerColor",
+                            "background_color" to "backgroundColor",
+                            "on_background_color" to "onBackgroundColor",
+                            "surface_color" to "surfaceColor",
+                            "on_surface_color" to "onSurfaceColor",
+                            "surface_variant_color" to "surfaceVariantColor",
+                            "on_surface_variant_color" to "onSurfaceVariantColor",
+                            "surface_tint_color" to "surfaceTintColor",
+                            "inverse_surface_color" to "inverseSurfaceColor",
+                            "inverse_on_surface_color" to "inverseOnSurfaceColor",
+                            "error_color" to "errorColor",
+                            "on_error_color" to "onErrorColor",
+                            "error_container_color" to "errorContainerColor",
+                            "on_error_container_color" to "onErrorContainerColor",
+                            "outline_color" to "outlineColor",
+                            "outline_variant_color" to "outlineVariantColor",
+                            "scrim_color" to "scrimColor",
+                            "surface_bright_color" to "surfaceBrightColor",
+                            "surface_container_color" to "surfaceContainerColor",
+                            "surface_container_high_color" to "surfaceContainerHighColor",
+                            "surface_container_highest_color" to "surfaceContainerHighestColor",
+                            "surface_container_low_color" to "surfaceContainerLowColor",
+                            "surface_container_lowest_color" to "surfaceContainerLowestColor",
+                            "surface_dim_color" to "surfaceDimColor",
+                            "primary_fixed_color" to "primaryFixedColor",
+                            "primary_fixed_dim_color" to "primaryFixedDimColor",
+                            "on_primary_fixed_color" to "onPrimaryFixedColor",
+                            "on_primary_fixed_variant_color" to "onPrimaryFixedVariantColor",
+                            "secondary_fixed_color" to "secondaryFixedColor",
+                            "secondary_fixed_dim_color" to "secondaryFixedDimColor",
+                            "on_secondary_fixed_color" to "onSecondaryFixedColor",
+                            "on_secondary_fixed_variant_color" to "onSecondaryFixedVariantColor",
+                            "tertiary_fixed_color" to "tertiaryFixedColor",
+                            "tertiary_fixed_dim_color" to "tertiaryFixedDimColor",
+                            "on_tertiary_fixed_color" to "onTertiaryFixedColor",
+                            "on_tertiary_fixed_variant_color" to "onTertiaryFixedVariantColor",
+                            "angle_line_color" to "angleLineColor",
+                            "circle_color" to "shapesColor",
+                            "launch_app_color" to "launchAppColor",
+                            "open_url_color" to "openUrlColor",
+                            "notification_shade_color" to "notificationShadeColor",
+                            "control_panel_color" to "controlPanelColor",
+                            "open_app_drawer_color" to "openAppDrawerColor",
+                            "launcher_settings_color" to "launcherSettingsColor",
+                            "lock_color" to "lockColor",
+                            "open_file_color" to "openFileColor",
+                            "reload_color" to "reloadColor",
+                            "open_recent_apps" to "openRecentAppsColor",
+                            "open_circle_nest" to "openCircleNestColor",
+                            "go_parent_nest" to "goParentNestColor"
+                        )
+                ),
+            "language" to
+                StoreMapping(
+                    oldBackupKey = "language",
+                    newBackupKey = "language",
+                    keyMappings =
+                        mapOf(
+                            "pref_app_language" to "keyLang"
+                        )
+                ),
+            "drawer" to
+                StoreMapping(
+                    oldBackupKey = "drawer",
+                    newBackupKey = "drawer",
+                    keyMappings =
+                        mapOf(
+                            "showAppLabelInDrawer" to "showAppLabelsInDrawer",
+                            "categoryGridWidth" to "categoryGridCells",
+                            "iconsShape" to "iconShape",
+                            "scrollDownDrawerAction" to "drawerScrollDownAction",
+                            "scrollUpDrawerAction" to "drawerScrollUpAction",
+                            "backDrawerAction" to "drawerBackAction",
+                            "tabEmptySpaceToRaiseKeyboard" to "tapEmptySpaceAction",
+                            "recentlyUsedPackagesSet" to "recentlyUsedPackages",
+                            "iconsSpacingHorizontal\u00B2" to "iconsSpacingHorizontal"
+                        ),
+                    valueTransformers =
+                        mapOf(
+                            "leftDrawerWidth" to { value, ctx ->
+                                if (value is Number) {
+                                    (value.toFloat() * ctx.screenWidthDp).roundToInt().coerceAtLeast(0)
+                                } else {
+                                    value
+                                }
+                            },
+                            "rightDrawerWidth" to { value, ctx ->
+                                if (value is Number) {
+                                    (value.toFloat() * ctx.screenWidthDp).roundToInt().coerceAtLeast(0)
+                                } else {
+                                    value
+                                }
+                            }
+                        )
+                ),
+            "debug" to
+                StoreMapping(
+                    oldBackupKey = "debug",
+                    newBackupKey = "debug",
+                    keyMappings =
+                        mapOf(
+                            "debugInfos" to "mainScreenDebugInfos"
+                        )
+                ),
+            "workspaces" to
+                StoreMapping(
+                    oldBackupKey = "workspaces",
+                    newBackupKey = null,
+                    splitInto =
+                        mapOf(
+                            "workspaces" to { value ->
+                                (value as? JSONObject)?.optJSONArray("workspaces")?.let(::migrateWorkspacesArray)
+                            },
+                            "app_overrides" to { value ->
+                                migrateAppOverrides((value as? JSONObject)?.opt("appOverrides"))
+                            }
+                        )
+                ),
+            "behavior" to
+                StoreMapping(
+                    oldBackupKey = "behavior",
+                    newBackupKey = "behavior",
+                    keyMappings =
+                        mapOf(
+                            "upPadding" to "topPadding",
+                            "downPadding" to "bottomPadding"
+                        )
+                ),
+            "backup" to
+                StoreMapping(
+                    oldBackupKey = "backup",
+                    newBackupKey = "backup",
+                    // Skips the auto backup uri so that it won't overwrite the auto backup if anything goes wrong
+                    skipKeys = setOf("autoBackupUri")
+                ),
+            "widgets" to
+                StoreMapping(
+                    oldBackupKey = "widgets",
+                    newBackupKey = null,
+                    splitInto =
+                        mapOf(
+                            "widgets" to { value ->
+                                (value as? JSONArray)?.let(::migrateWidgetsArray)
+                            }
+                        )
+                ),
+            "wellbeing" to
+                StoreMapping(
+                    oldBackupKey = "wellbeing",
+                    newBackupKey = "wellbeing",
+                    keyMappings =
+                        mapOf(
+                            "GUILT_MODE_ENABLED" to "guiltModeEnabled",
+                            "SOCIAL_MEDIA_PAUSE_ENABLED" to "socialMediaPauseEnabled",
+                            "SHOW_USAGE_STATS" to "showUsageStats",
+                            "PAUSE_DURATION_SECONDS" to "pauseDurationSeconds",
+                            "REMINDER_ENABLED" to "reminderEnabled",
+                            "REMINDER_INTERVAL_MINUTES" to "reminderIntervalMinutes",
+                            "RETURN_TO_LAUNCHER_ENABLED" to "returnToLauncherEnabled",
+                            "PAUSED_APPS_LIST" to "pausedApps",
+                            "POPUP_SHOW_SESSION_TIME" to "popupShowSessionTime",
+                            "POPUP_SHOW_TODAY_TIME" to "popupShowTodayTime",
+                            "POPUP_SHOW_REMAINING_TIME" to "popupShowRemainingTime"
+                        ),
+                    valueTransformers =
+                        mapOf(
+                            "PAUSED_APPS_LIST" to { value, _ ->
+                                when (value) {
+                                    is JSONArray -> value
+                                    is List<*> -> JSONArray(value)
+                                    is String ->
+                                        try {
+                                            JSONArray(value)
+                                        } catch (_: Exception) {
+                                            JSONArray()
+                                        }
 
-                        else -> JSONArray()
-                    }
-                }
-            )
-        ),
-        "swipe_map" to StoreMapping(
-            oldBackupKey = "swipe_map",
-            newBackupKey = null,
-            keyRoutes = mapOf(
-                "isInDragAroundMode" to KeyRoute("private", "isInDragAroundMode")
-            )
-        ),
-        "status_bar" to StoreMapping(
-            oldBackupKey = "status_bar",
-            newBackupKey = "status_bar"
-        ),
-        "status_bar_json" to StoreMapping(
-            oldBackupKey = "status_bar_json",
-            newBackupKey = null,
-            splitInto = mapOf(
-                "status_bar_json" to { value ->
-                    (value as? JSONArray)?.let(::migrateStatusBarJsonArray)
-                }
-            )
-        ),
-        "angle_line" to StoreMapping(
-            oldBackupKey = "angle_line",
-            newBackupKey = null,
-            skipKeys = setOf("lineJson", "angleLineJson", "startLineJson", "endLineJson"),
-            splitInto = mapOf(
-                "angle_line" to { value ->
-                    (value as? JSONObject)?.let { extractAngleLineSettings(it) }
-                },
-                "angle_object_setting_store" to { value ->
-                    (value as? JSONObject)?.let { parseCustomObject(it.optString("angleLineJson", "")) }
-                },
-                "line_object_setting_store" to { value ->
-                    (value as? JSONObject)?.let { parseCustomObject(it.optString("lineJson", "")) }
-                },
-                "start_object_setting_store" to { value ->
-                    (value as? JSONObject)?.let { parseCustomObject(it.optString("startLineJson", "")) }
-                },
-                "end_object_setting_store" to { value ->
-                    (value as? JSONObject)?.let { parseCustomObject(it.optString("endLineJson", "")) }
-                }
-            )
-        ),
-        "hold_to_activate" to StoreMapping(
-            oldBackupKey = "hold_to_activate",
-            newBackupKey = null,
-            splitInto = mapOf(
-                "hold_to_activate_arc" to { value ->
-                    (value as? JSONObject)?.let { extractHoldToActivateArcSettings(it) }
-                },
-                "hold_to_activate_object" to { value ->
-                    (value as? JSONObject)?.let { parseCustomObject(it.optString("holdToActivateArcCustomObject", "")) }
-                }
-            )
-        ),
-        "new_actions" to StoreMapping(
-            oldBackupKey = "new_actions",
-            newBackupKey = null,
-            handledExternally = true
-        ),
-        "private" to StoreMapping(
-            oldBackupKey = "private",
-            newBackupKey = "private",
-            keyMappings = mapOf(
-                "lastSeenVersionCode" to "lastSeenVersionCodeWhatsNew",
-                "lockPinHash" to "lockHash"
-            ),
-            skipKeys = setOf(
-                "lastBackupTime",
-                "lastSeenVersionCodeDoABackup"
-            )
-        ),
-        "private_apps" to StoreMapping(
-            oldBackupKey = "private_apps",
-            newBackupKey = null
-        ),
-        "floating_apps" to StoreMapping(
-            oldBackupKey = "floating_apps",
-            newBackupKey = null
+                                    else -> JSONArray()
+                                }
+                            }
+                        )
+                ),
+            "swipe_map" to
+                StoreMapping(
+                    oldBackupKey = "swipe_map",
+                    newBackupKey = null,
+                    keyRoutes =
+                        mapOf(
+                            "isInDragAroundMode" to KeyRoute("private", "isInDragAroundMode")
+                        )
+                ),
+            "status_bar" to
+                StoreMapping(
+                    oldBackupKey = "status_bar",
+                    newBackupKey = "status_bar"
+                ),
+            "status_bar_json" to
+                StoreMapping(
+                    oldBackupKey = "status_bar_json",
+                    newBackupKey = null,
+                    splitInto =
+                        mapOf(
+                            "status_bar_json" to { value ->
+                                (value as? JSONArray)?.let(::migrateStatusBarJsonArray)
+                            }
+                        )
+                ),
+            "angle_line" to
+                StoreMapping(
+                    oldBackupKey = "angle_line",
+                    newBackupKey = null,
+                    skipKeys = setOf("lineJson", "angleLineJson", "startLineJson", "endLineJson"),
+                    splitInto =
+                        mapOf(
+                            "angle_line" to { value ->
+                                (value as? JSONObject)?.let { extractAngleLineSettings(it) }
+                            },
+                            "angle_object_setting_store" to { value ->
+                                (value as? JSONObject)?.let { parseCustomObject(it.optString("angleLineJson", "")) }
+                            },
+                            "line_object_setting_store" to { value ->
+                                (value as? JSONObject)?.let { parseCustomObject(it.optString("lineJson", "")) }
+                            },
+                            "start_object_setting_store" to { value ->
+                                (value as? JSONObject)?.let { parseCustomObject(it.optString("startLineJson", "")) }
+                            },
+                            "end_object_setting_store" to { value ->
+                                (value as? JSONObject)?.let { parseCustomObject(it.optString("endLineJson", "")) }
+                            }
+                        )
+                ),
+            "hold_to_activate" to
+                StoreMapping(
+                    oldBackupKey = "hold_to_activate",
+                    newBackupKey = null,
+                    splitInto =
+                        mapOf(
+                            "hold_to_activate_arc" to { value ->
+                                (value as? JSONObject)?.let { extractHoldToActivateArcSettings(it) }
+                            },
+                            "hold_to_activate_object" to { value ->
+                                (value as? JSONObject)?.let { parseCustomObject(it.optString("holdToActivateArcCustomObject", "")) }
+                            }
+                        )
+                ),
+            "new_actions" to
+                StoreMapping(
+                    oldBackupKey = "new_actions",
+                    newBackupKey = null,
+                    handledExternally = true
+                ),
+            "private" to
+                StoreMapping(
+                    oldBackupKey = "private",
+                    newBackupKey = "private",
+                    keyMappings =
+                        mapOf(
+                            "lastSeenVersionCode" to "lastSeenVersionCodeWhatsNew",
+                            "lockPinHash" to "lockHash"
+                        ),
+                    skipKeys =
+                        setOf(
+                            "lastBackupTime",
+                            "lastSeenVersionCodeDoABackup"
+                        )
+                ),
+            "private_apps" to
+                StoreMapping(
+                    oldBackupKey = "private_apps",
+                    newBackupKey = null
+                ),
+            "floating_apps" to
+                StoreMapping(
+                    oldBackupKey = "floating_apps",
+                    newBackupKey = null
+                )
         )
-    )
 
     @Suppress("ConstPropertyName")
     const val legacyAppVersionPrefix: String = "3.2.2"
@@ -388,26 +434,28 @@ internal object OldToNewStoreMapping {
 
     private const val ROUTE_TYPE_KEY = "type"
 
-    private val VALID_CUSTOM_ICON_TYPES = setOf(
-        "CustomIconPackIcon",
-        "AdaptifiedLegacyIcon",
-        "CustomTextIcon",
-        "CustomThemedIcon",
-        "DefaultPlaceholderIcon",
-        "ForceThemedIcon",
-        "UnmodifiedSystemDefaultIcon"
-    )
+    private val VALID_CUSTOM_ICON_TYPES =
+        setOf(
+            "CustomIconPackIcon",
+            "AdaptifiedLegacyIcon",
+            "CustomTextIcon",
+            "CustomThemedIcon",
+            "DefaultPlaceholderIcon",
+            "ForceThemedIcon",
+            "UnmodifiedSystemDefaultIcon"
+        )
 
     private fun stripPrefix(value: String, prefix: String): String =
         if (value.startsWith(prefix)) value.removePrefix(prefix) else value
 
     internal fun parseCustomObject(raw: String): JSONObject? {
         if (raw.isBlank()) return null
-        val obj = try {
-            JSONObject(raw)
-        } catch (_: Exception) {
-            return null
-        }
+        val obj =
+            try {
+                JSONObject(raw)
+            } catch (_: Exception) {
+                return null
+            }
         obj.optJSONObject("shape")?.let { shape ->
             val type = shape.optString(ROUTE_TYPE_KEY, "")
             if (type.isNotEmpty()) shape.put(ROUTE_TYPE_KEY, stripPrefix(type, ICON_SHAPE_PREFIX))
@@ -453,10 +501,11 @@ internal object OldToNewStoreMapping {
 
     internal fun extractHoldToActivateArcSettings(obj: JSONObject): JSONObject {
         val result = JSONObject()
-        val renames = mapOf(
-            "rotationPerSecond" to "rotationsPerSecond",
-            "holdMenuEntries2" to "holdMenuEntriesJson"
-        )
+        val renames =
+            mapOf(
+                "rotationPerSecond" to "rotationsPerSecond",
+                "holdMenuEntries2" to "holdMenuEntriesJson"
+            )
         for (key in listOf(
             "holdDelayBeforeStartingLongClickSettings",
             "longCLickSettingsDuration",
@@ -468,24 +517,28 @@ internal object OldToNewStoreMapping {
             if (!obj.has(key)) continue
             val value = obj.get(key)
             val newKey = renames[key] ?: key
-            result.put(newKey, when (key) {
-                "holdToActivateSettingsTolerance" ->
-                    (value as? Number)?.toFloat()?.roundToInt() ?: value
+            result.put(
+                newKey,
+                when (key) {
+                    "holdToActivateSettingsTolerance" ->
+                        (value as? Number)?.toFloat()?.roundToInt() ?: value
 
-                "holdMenuEntries2" -> migrateHoldMenuEntriesString(value.toString()) ?: value
-                else -> value
-            })
+                    "holdMenuEntries2" -> migrateHoldMenuEntriesString(value.toString()) ?: value
+                    else -> value
+                }
+            )
         }
         return result
     }
 
     internal fun migrateHoldMenuEntriesString(raw: String): String? {
         if (raw.isBlank()) return null
-        val arr = try {
-            JSONArray(raw)
-        } catch (_: Exception) {
-            return null
-        }
+        val arr =
+            try {
+                JSONArray(raw)
+            } catch (_: Exception) {
+                return null
+            }
         for (i in 0 until arr.length()) {
             val entry = arr.optJSONObject(i) ?: continue
             val type = entry.optString(ROUTE_TYPE_KEY, "")
@@ -522,11 +575,12 @@ internal object OldToNewStoreMapping {
 
     internal fun migrateMainScreenLayersString(raw: String): String? {
         if (raw.isBlank()) return null
-        val arr = try {
-            JSONArray(raw)
-        } catch (_: Exception) {
-            return null
-        }
+        val arr =
+            try {
+                JSONArray(raw)
+            } catch (_: Exception) {
+                return null
+            }
         for (i in 0 until arr.length()) {
             val entry = arr.optJSONObject(i) ?: continue
             val type = entry.optString(ROUTE_TYPE_KEY, "")
@@ -614,14 +668,15 @@ internal object OldToNewStoreMapping {
                 workspace.put("removedAppIds", converted)
             }
             val type = workspace.optString("type", "")
-            val normalized = when (type.uppercase()) {
-                "USER" -> "User"
-                "SYSTEM" -> "System"
-                "ALL" -> "All"
-                "WORK" -> "Work"
-                "PRIVATE" -> "Private"
-                else -> type
-            }
+            val normalized =
+                when (type.uppercase()) {
+                    "USER" -> "User"
+                    "SYSTEM" -> "System"
+                    "ALL" -> "All"
+                    "WORK" -> "Work"
+                    "PRIVATE" -> "Private"
+                    else -> type
+                }
             if (normalized.isNotEmpty()) workspace.put("type", normalized)
         }
         return arr

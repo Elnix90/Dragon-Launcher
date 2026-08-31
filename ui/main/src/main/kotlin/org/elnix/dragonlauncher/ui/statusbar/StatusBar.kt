@@ -84,11 +84,10 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.util.UUID
 
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StatusBar(
-    launchAction: ((Action) -> Unit)?,
+    launchAction: ((Action) -> Unit)?
 ) {
     val view = LocalView.current
     val density = LocalDensity.current
@@ -101,7 +100,6 @@ fun StatusBar(
 
     val showStatusBar by showStatusBar()
 
-
     val statusBarBackground by StatusBarSettingsStore.barBackgroundColor.asState()
     val statusBarText by StatusBarSettingsStore.barTextColor.asState()
 
@@ -113,29 +111,31 @@ fun StatusBar(
     val elements = LocalStatusBarElements.current
 
     // Detect exact cutout bounding rects (geometric notch detection)
-    val totalCutoutWidth = remember(view) {
-        val insets = ViewCompat.getRootWindowInsets(view)
-        val rects = insets?.displayCutout?.boundingRects ?: emptyList()
-        // We focus on the top cutout for the status bar
-        val topCutout = rects.find { it.top == 0 }
-        topCutout?.width() ?: 0
-    }
+    val totalCutoutWidth =
+        remember(view) {
+            val insets = ViewCompat.getRootWindowInsets(view)
+            val rects = insets?.displayCutout?.boundingRects ?: emptyList()
+            // We focus on the top cutout for the status bar
+            val topCutout = rects.find { it.top == 0 }
+            topCutout?.width() ?: 0
+        }
 
     AnimatedVisibility(showStatusBar) {
         CompositionLocalProvider(
             LocalContentColor provides statusBarText
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(statusBarBackground)
-                    .padding(
-                        start = leftStatusBarPadding.dp,
-                        top = topStatusBarPadding.dp,
-                        end = rightStatusBarPadding.dp,
-                        bottom = bottomStatusBarPadding.dp
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(statusBarBackground)
+                        .padding(
+                            start = leftStatusBarPadding.dp,
+                            top = topStatusBarPadding.dp,
+                            end = rightStatusBarPadding.dp,
+                            bottom = bottomStatusBarPadding.dp
+                        ),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 elements.forEach { element ->
                     if (element !is StatusBar.Spacer) {
@@ -161,7 +161,6 @@ fun StatusBar(
     }
 }
 
-
 private data class StatusBarElement(
     val id: String,
     val item: StatusBar
@@ -184,7 +183,6 @@ fun EditStatusBar() {
 
     val elements: SnapshotStateList<StatusBarElement> = remember { mutableStateListOf() }
     var selectedElementId by remember { mutableStateOf<String?>(null) }
-
 
     suspend fun load() {
         elements.clear()
@@ -229,16 +227,17 @@ fun EditStatusBar() {
         val index = elements.indexOfFirst { it.id == element.id }
         if (index == -1) return
 
-        val copiedItem = when (val item = element.item) {
-            is StatusBar.Time -> item.copy()
-            is StatusBar.Date -> item.copy()
-            is StatusBar.Bandwidth -> item.copy()
-            is StatusBar.Notifications -> item.copy()
-            is StatusBar.Connectivity -> item.copy()
-            is StatusBar.Spacer -> item.copy()
-            is StatusBar.Battery -> item.copy()
-            is StatusBar.NextAlarm -> item.copy()
-        }
+        val copiedItem =
+            when (val item = element.item) {
+                is StatusBar.Time -> item.copy()
+                is StatusBar.Date -> item.copy()
+                is StatusBar.Bandwidth -> item.copy()
+                is StatusBar.Notifications -> item.copy()
+                is StatusBar.Connectivity -> item.copy()
+                is StatusBar.Spacer -> item.copy()
+                is StatusBar.Battery -> item.copy()
+                is StatusBar.NextAlarm -> item.copy()
+            }
 
         elements.add(
             index + 1,
@@ -268,41 +267,43 @@ fun EditStatusBar() {
     }
 
     val lazyListState = rememberLazyListState()
-    val reorderState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        onMove = { from, to ->
-            try {
-                if (from.key == to.key) return@rememberReorderableLazyListState
+    val reorderState =
+        rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            onMove = { from, to ->
+                try {
+                    if (from.key == to.key) return@rememberReorderableLazyListState
 
-                val fromIdx = elements.indexOfFirst { it.id == from.key }
-                val toIdx = elements.indexOfFirst { it.id == to.key }
+                    val fromIdx = elements.indexOfFirst { it.id == from.key }
+                    val toIdx = elements.indexOfFirst { it.id == to.key }
 
-                if (fromIdx != -1 && toIdx != -1 && fromIdx != toIdx) {
-                    val item = elements.removeAt(fromIdx)
-                    elements.add(toIdx, item)
+                    if (fromIdx != -1 && toIdx != -1 && fromIdx != toIdx) {
+                        val item = elements.removeAt(fromIdx)
+                        elements.add(toIdx, item)
+                    }
+                } catch (e: Exception) {
+                    logE(STATUS_BAR_TAG, e) { "Crash avoided during reorder" }
                 }
-            } catch (e: Exception) {
-                logE(STATUS_BAR_TAG, e) { "Crash avoided during reorder" }
             }
-        }
-    )
+        )
 
     CompositionLocalProvider(
         LocalContentColor provides statusBarText
     ) {
         LazyRowWithScrollIndicator(
             items = elements,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.large)
-                .background(statusBarBackground)
-                .padding(
-                    start = leftStatusBarPadding.dp,
-                    top = topStatusBarPadding.dp,
-                    end = rightStatusBarPadding.dp,
-                    bottom = bottomStatusBarPadding.dp
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.large)
+                    .background(statusBarBackground)
+                    .padding(
+                        start = leftStatusBarPadding.dp,
+                        top = topStatusBarPadding.dp,
+                        end = rightStatusBarPadding.dp,
+                        bottom = bottomStatusBarPadding.dp
+                    ),
             horizontalArrangement = Arrangement.spacedBy(3.dp),
             state = lazyListState
         ) { statusBarElement ->
@@ -315,30 +316,32 @@ fun EditStatusBar() {
                 val selected = statusBarElement.id == selectedElementId
 
                 val scale by animateFloatAsState(
-                    targetValue = when {
-                        isDragging && selected -> 1.2f
-                        isDragging -> 1.3f
-                        selected -> 0.9f
-                        else -> 1f
-                    },
+                    targetValue =
+                        when {
+                            isDragging && selected -> 1.2f
+                            isDragging -> 1.3f
+                            selected -> 0.9f
+                            else -> 1f
+                        },
                     label = "reorderScale"
                 )
                 val backgroundColor by animateColorAsState(
-                    targetValue = if (selected) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.surfaceVariant
-                    },
+                    targetValue =
+                        if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceVariant
+                        },
                     label = "reorderBackground"
                 )
 
-
                 val borderColor by animateColorAsState(
-                    targetValue = if (selected) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    },
+                    targetValue =
+                        if (selected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.primary
+                        },
                     label = "reorderBorder"
                 )
 
@@ -347,19 +350,22 @@ fun EditStatusBar() {
                 }
 
                 Box(
-                    modifier = Modifier
-                        .scale(scale)
-                        .longPressDraggableHandle(onDragStopped = ::save)
-                        .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
-                        .border(1.dp, borderColor, MaterialTheme.shapes.large)
-                        .clip(MaterialTheme.shapes.large)
-                        .background(backgroundColor)
-                        .clickable {
-                            selectedElementId =
-                                if (selectedElementId == statusBarElement.id) null
-                                else statusBarElement.id
-                        }
-                        .padding(10.dp),
+                    modifier =
+                        Modifier
+                            .scale(scale)
+                            .longPressDraggableHandle(onDragStopped = ::save)
+                            .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
+                            .border(1.dp, borderColor, MaterialTheme.shapes.large)
+                            .clip(MaterialTheme.shapes.large)
+                            .background(backgroundColor)
+                            .clickable {
+                                selectedElementId =
+                                    if (selectedElementId == statusBarElement.id) {
+                                        null
+                                    } else {
+                                        statusBarElement.id
+                                    }
+                            }.padding(10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     StatusBarItem(element, previewMode = true)
@@ -443,18 +449,22 @@ fun EditStatusBar() {
                                 },
                                 singleLine = true,
                                 isError = !isValidDateFormat(item.formatter),
-                                supportingText = if (!isValidDateFormat(item.formatter)) {
-                                    { Text(stringResource(R.string.invalid_format)) }
-                                } else null,
+                                supportingText =
+                                    if (!isValidDateFormat(item.formatter)) {
+                                        { Text(stringResource(R.string.invalid_format)) }
+                                    } else {
+                                        null
+                                    },
                                 placeholder = { Text("MMM dd") },
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.reset),
                                         contentDescription = stringResource(R.string.reset),
                                         tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.clickable {
-                                            updateElement(item.copy(formatter = "MMM dd"))
-                                        }
+                                        modifier =
+                                            Modifier.clickable {
+                                                updateElement(item.copy(formatter = "MMM dd"))
+                                            }
                                     )
                                 },
                                 modifier = Modifier.dragonSettingGroup(),
@@ -493,18 +503,22 @@ fun EditStatusBar() {
                                 },
                                 singleLine = true,
                                 isError = !isValidTimeFormat(item.formatter),
-                                supportingText = if (!isValidTimeFormat(item.formatter)) {
-                                    { Text(stringResource(R.string.invalid_format)) }
-                                } else null,
+                                supportingText =
+                                    if (!isValidTimeFormat(item.formatter)) {
+                                        { Text(stringResource(R.string.invalid_format)) }
+                                    } else {
+                                        null
+                                    },
                                 placeholder = { Text("HH:mm:ss") },
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.reset),
                                         contentDescription = stringResource(R.string.reset),
                                         tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.clickable {
-                                            updateElement(item.copy(formatter = "HH:mm:ss"))
-                                        }
+                                        modifier =
+                                            Modifier.clickable {
+                                                updateElement(item.copy(formatter = "HH:mm:ss"))
+                                            }
                                     )
                                 },
                                 modifier = Modifier.dragonSettingGroup(),
@@ -573,18 +587,22 @@ fun EditStatusBar() {
                                 },
                                 singleLine = true,
                                 isError = !isValidTimeFormat(item.formatter),
-                                supportingText = if (!isValidTimeFormat(item.formatter)) {
-                                    { Text(stringResource(R.string.invalid_format)) }
-                                } else null,
+                                supportingText =
+                                    if (!isValidTimeFormat(item.formatter)) {
+                                        { Text(stringResource(R.string.invalid_format)) }
+                                    } else {
+                                        null
+                                    },
                                 placeholder = { Text("HH:mm") },
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.reset),
                                         contentDescription = stringResource(R.string.reset),
                                         tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.clickable {
-                                            updateElement(item.copy(formatter = "HH:mm"))
-                                        }
+                                        modifier =
+                                            Modifier.clickable {
+                                                updateElement(item.copy(formatter = "HH:mm"))
+                                            }
                                     )
                                 },
                                 modifier = Modifier.dragonSettingGroup(),
@@ -624,13 +642,14 @@ fun EditStatusBar() {
 
                 DragonTooltip(itemName) {
                     Box(
-                        modifier = Modifier
-                            .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
-                            .clip(MaterialTheme.shapes.large)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
-                            .clickable { addElement(item) }
-                            .padding(15.dp),
+                        modifier =
+                            Modifier
+                                .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+                                .clip(MaterialTheme.shapes.large)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
+                                .clickable { addElement(item) }
+                                .padding(15.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         StatusBarItem(item, previewMode = true)
@@ -643,9 +662,9 @@ fun EditStatusBar() {
 //    DragonButton(
 //        onClick = {
 //            scope.launch {
-////                currentLayer.copy(enabled = value) as MainScreenLayer
+// //                currentLayer.copy(enabled = value) as MainScreenLayer
 //                ctx.showToast("Not implemented yet")
-////                load()
+// //                load()
 //            }
 //        }
 //    ) {
@@ -653,65 +672,74 @@ fun EditStatusBar() {
 //    }
 }
 
-
 @Composable
 fun StatusBarItem(
     element: StatusBar,
     launchAction: ((Action) -> Unit)? = null,
     previewMode: Boolean = false
-): Unit = when (element) {
-    is StatusBar.Bandwidth -> StatusBarBandwidth(element)
+): Unit =
+    when (element) {
+        is StatusBar.Bandwidth -> StatusBarBandwidth(element)
 
-    is StatusBar.Connectivity -> StatusBarConnectivity(
-        element = element,
-        previewMode = previewMode
-    )
+        is StatusBar.Connectivity ->
+            StatusBarConnectivity(
+                element = element,
+                previewMode = previewMode
+            )
 
-    is StatusBar.Date -> StatusBarDate(
-        element = element,
-        onAction = launchAction,
-    )
+        is StatusBar.Date ->
+            StatusBarDate(
+                element = element,
+                onAction = launchAction
+            )
 
-    is StatusBar.Time -> StatusBarTime(
-        element = element,
-        onAction = launchAction,
-    )
+        is StatusBar.Time ->
+            StatusBarTime(
+                element = element,
+                onAction = launchAction
+            )
 
-    is StatusBar.Notifications -> StatusBarNotifications(element)
+        is StatusBar.Notifications -> StatusBarNotifications(element)
 
-    is StatusBar.Spacer -> Text(stringResource(R.string.spacer))
+        is StatusBar.Spacer -> Text(stringResource(R.string.spacer))
 
-    is StatusBar.Battery -> StatusBarBattery(element)
+        is StatusBar.Battery -> StatusBarBattery(element)
 
-    is StatusBar.NextAlarm -> StatusBarNextAlarm(element, forceShowIcon = previewMode)
-}
-
+        is StatusBar.NextAlarm -> StatusBarNextAlarm(element, forceShowIcon = previewMode)
+    }
 
 @Composable
-private inline fun <reified T: MainScreenLayer> showX(swipeViewModel: SwipeViewModel = activityViewModel()): MutableState<Boolean> {
+private inline fun <reified T : MainScreenLayer> showX(swipeViewModel: SwipeViewModel = activityViewModel()): MutableState<Boolean> {
     val mainScreenLayers by swipeViewModel.swipeService.mainScreenLayerOrder.asState()
 
     return remember(mainScreenLayers) {
         object : MutableState<Boolean> {
             override var value: Boolean
-                get() = ((mainScreenLayers
-                    .find { it is T }
-                    ?: error("No ${T::class.simpleName} provided in the list")) as T).enabled
+                get() =
+                    (
+                        (
+                            mainScreenLayers
+                                .find { it is T }
+                                ?: error("No ${T::class.simpleName} provided in the list")
+                        ) as T
+                    ).enabled
                 set(value) {
-                    swipeViewModel.swipeService.mainScreenLayerOrder.value = mainScreenLayers.map { currentLayer ->
-                        when (currentLayer) {
-                            is MainScreenLayer.ChargingAnimation -> currentLayer.copy(enabled = value) as MainScreenLayer
-                            is MainScreenLayer.CustomDim -> currentLayer.copy(enabled = value) as MainScreenLayer
-                            is MainScreenLayer.DragOverlay -> currentLayer.copy(enabled = value) as MainScreenLayer
-                            is MainScreenLayer.HoldToActivate -> currentLayer.copy(enabled = value) as MainScreenLayer
-                            is MainScreenLayer.StatusBar -> currentLayer.copy(enabled = value) as MainScreenLayer
-                            is MainScreenLayer.Widgets -> currentLayer.copy(enabled = value) as MainScreenLayer
+                    swipeViewModel.swipeService.mainScreenLayerOrder.value =
+                        mainScreenLayers.map { currentLayer ->
+                            when (currentLayer) {
+                                is MainScreenLayer.ChargingAnimation -> currentLayer.copy(enabled = value) as MainScreenLayer
+                                is MainScreenLayer.CustomDim -> currentLayer.copy(enabled = value) as MainScreenLayer
+                                is MainScreenLayer.DragOverlay -> currentLayer.copy(enabled = value) as MainScreenLayer
+                                is MainScreenLayer.HoldToActivate -> currentLayer.copy(enabled = value) as MainScreenLayer
+                                is MainScreenLayer.StatusBar -> currentLayer.copy(enabled = value) as MainScreenLayer
+                                is MainScreenLayer.Widgets -> currentLayer.copy(enabled = value) as MainScreenLayer
+                            }
                         }
-                    }
                     swipeViewModel.swipeService.saveMainScreenLayers()
                 }
 
             override fun component1(): Boolean = value
+
             override fun component2(): (Boolean) -> Unit = { value }
         }
     }

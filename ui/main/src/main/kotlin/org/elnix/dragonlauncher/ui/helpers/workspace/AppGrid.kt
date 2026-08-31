@@ -51,26 +51,21 @@ import org.elnix.dragonlauncher.ui.drawer.AppItemHorizontal
 import kotlin.math.min
 import kotlin.time.Duration.Companion.seconds
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppGrid(
     apps: List<Application>,
     fillMaxSize: Boolean = true,
-
     gridState: LazyGridState? = null,
     categoryGridState: LazyGridState? = null,
     listState: LazyListState? = null,
-
     paddingValues: PaddingValues = PaddingValues(),
-
     // Multi select things
     isMultiSelectMode: Boolean = false,
     selectedPackages: List<Application> = emptyList(),
     onEnterMultiSelect: ((Application) -> Unit)? = null,
     onToggleSelect: ((Application) -> Unit)? = null,
     onReload: (() -> Unit)? = null,
-
     onTopStateChange: ((Boolean) -> Unit)? = null,
     longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
@@ -89,7 +84,9 @@ fun AppGrid(
             if (useCategory) {
                 // Only display the apps that belongs to the selected category, if enabled
                 apps.filter { openedCategory?.let { cat -> cat == it.category } ?: true }
-            } else apps
+            } else {
+                apps
+            }
         }
     }
 
@@ -97,24 +94,22 @@ fun AppGrid(
         openedCategory = null
     }
 
-
     val modifier = if (fillMaxSize) Modifier.fillMaxSize() else Modifier
-
 
     val isAtTop by remember {
         derivedStateOf {
             when {
                 gridSize == 1 ->
                     listState?.firstVisibleItemIndex == 0 &&
-                            listState.firstVisibleItemScrollOffset == 0
+                        listState.firstVisibleItemScrollOffset == 0
 
                 useCategory && openedCategory == null && !isMultiSelectMode ->
                     categoryGridState?.firstVisibleItemIndex == 0 &&
-                            categoryGridState.firstVisibleItemScrollOffset == 0
+                        categoryGridState.firstVisibleItemScrollOffset == 0
 
                 else ->
                     gridState?.firstVisibleItemIndex == 0 &&
-                            gridState.firstVisibleItemScrollOffset == 0
+                        gridState.firstVisibleItemScrollOffset == 0
             }
         }
     }
@@ -126,8 +121,7 @@ fun AppGrid(
     when {
         visibleApps.isEmpty() -> {
             LazyColumn(
-                modifier = modifier
-                    .fillMaxSize(),
+                modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = paddingValues,
@@ -179,7 +173,6 @@ fun AppGrid(
                 verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical),
                 horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
             ) {
-
                 AppCategory.entries.forEach { category ->
                     val categoryApps = visibleApps.filter { it.category == category }
 
@@ -190,9 +183,8 @@ fun AppGrid(
                                 CategoryGrid(
                                     category = category,
                                     apps = categoryApps,
-
                                     longPressPopup = longPressPopup,
-                                    onClick = onClick,
+                                    onClick = onClick
                                 ) {
                                     openedCategory = category
                                 }
@@ -207,21 +199,24 @@ fun AppGrid(
                 modifier = modifier,
                 state = listState ?: rememberLazyListState(),
                 contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical),
+                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical)
             ) {
                 items(visibleApps, key = { it.key.cacheKey }) { app ->
                     AppItemHorizontal(
                         app = app,
                         selected = app in selectedPackages,
-                        onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) {
-                            {
-                                if (!isMultiSelectMode) {
-                                    onEnterMultiSelect(app)
-                                } else {
-                                    onToggleSelect(app)
+                        onLongClick =
+                            if (onEnterMultiSelect != null && onToggleSelect != null) {
+                                {
+                                    if (!isMultiSelectMode) {
+                                        onEnterMultiSelect(app)
+                                    } else {
+                                        onToggleSelect(app)
+                                    }
                                 }
-                            }
-                        } else null,
+                            } else {
+                                null
+                            },
                         longPressPopup = longPressPopup,
                         onClick = {
                             if (isMultiSelectMode && onToggleSelect != null) {
@@ -248,20 +243,25 @@ fun AppGrid(
                     AppItemGrid(
                         app = app,
                         selected = app in selectedPackages,
-                        onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) {
-                            {
-                                if (!isMultiSelectMode) {
-                                    onEnterMultiSelect(app)
-                                } else {
-                                    onToggleSelect(app)
+                        onLongClick =
+                            if (onEnterMultiSelect != null && onToggleSelect != null) {
+                                {
+                                    if (!isMultiSelectMode) {
+                                        onEnterMultiSelect(app)
+                                    } else {
+                                        onToggleSelect(app)
+                                    }
                                 }
-                            }
-                        } else null,
+                            } else {
+                                null
+                            },
                         longPressPopup = longPressPopup,
                         onClick = {
                             if (isMultiSelectMode && onToggleSelect != null) {
                                 onToggleSelect(app)
-                            } else onClick?.invoke(app)
+                            } else {
+                                onClick?.invoke(app)
+                            }
                         }
                     )
                 }
@@ -269,7 +269,6 @@ fun AppGrid(
         }
     }
 }
-
 
 @Composable
 private fun CategoryGrid(
@@ -287,16 +286,17 @@ private fun CategoryGrid(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = modifier
-                .aspectRatio(1f)
-                .shapedClickable { onOpenCategory() }
-                .padding(10.dp)
+            modifier =
+                modifier
+                    .aspectRatio(1f)
+                    .shapedClickable { onOpenCategory() }
+                    .padding(10.dp)
         ) {
             AppDefinedGrid(
                 apps = apps,
                 longPressPopup = longPressPopup,
                 onClick = onClick,
-                gridCells = categoryGridCells,
+                gridCells = categoryGridCells
             )
         }
 
@@ -317,7 +317,7 @@ private fun AppDefinedGrid(
     modifier: Modifier = Modifier,
     onLongClick: ((Application) -> Unit)? = null,
     longPressPopup: Boolean,
-    onClick: ((Application) -> Unit)?,
+    onClick: ((Application) -> Unit)?
 ) {
     var appIndex = 0
 
@@ -326,9 +326,10 @@ private fun AppDefinedGrid(
     val sanitizedAppNumber = min(appNumber, maxAppNumber)
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         repeat(gridCells) {
             Row(
@@ -357,7 +358,7 @@ private fun AppDefinedGrid(
                                 Icon(
                                     painter = painterResource(R.drawable.more_horiz),
                                     contentDescription = "More",
-                                    tint = MaterialTheme.colorScheme.onBackground,
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -369,14 +370,13 @@ private fun AppDefinedGrid(
     }
 }
 
-
-//@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-//@Composable
-//fun WithFakeLoadingAnimation(
+// @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+// @Composable
+// fun WithFakeLoadingAnimation(
 //    loadingDurationMillis: Long = 500L,
 //    onClick: () -> Unit,
 //    content: @Composable () -> Unit
-//) {
+// ) {
 //    val isLoading by remember { mutableStateOf(false) }
 //
 //    Crossfade(isLoading) { showLoadingIcon ->
@@ -389,4 +389,4 @@ private fun AppDefinedGrid(
 //            content()
 //        }
 //    }
-//}
+// }

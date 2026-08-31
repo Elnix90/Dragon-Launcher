@@ -33,20 +33,20 @@ fun rememberFancyAnimations(
     normalShape: RoundedPolygon,
     pressedShape: RoundedPolygon
 ): FancyAnimation {
-
     val morph = remember { Morph(start = normalShape, end = pressedShape) }
 
     val outerRotation by animateFloatAsState(
         targetValue = if (isPressed) 360f else 0f,
         label = "infinite rotation",
-        animationSpec = if (isPressed) {
-            infiniteRepeatable(
-                animation = tween(10000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            )
-        } else {
-            tween(300)
-        }
+        animationSpec =
+            if (isPressed) {
+                infiniteRepeatable(
+                    animation = tween(10000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                )
+            } else {
+                tween(300)
+            }
     )
 
     val animatedScale by animateFloatAsState(
@@ -67,9 +67,10 @@ fun rememberFancyAnimations(
         animationSpec = bouncySpec()
     )
 
-    val shape = remember(morph, animatedProgress) {
-        MorphPolygonShape(morph, animatedProgress)
-    }
+    val shape =
+        remember(morph, animatedProgress) {
+            MorphPolygonShape(morph, animatedProgress)
+        }
 
     return FancyAnimation(
         rotation = animatedRotation,
@@ -83,7 +84,6 @@ class MorphPolygonShape(
     private val morph: Morph,
     private val percentage: Float
 ) : Shape {
-
     private val matrix = Matrix()
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)

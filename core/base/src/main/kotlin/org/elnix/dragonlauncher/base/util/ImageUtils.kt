@@ -22,8 +22,7 @@ import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
 
 public object ImageUtils {
-
-//    public fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
+    //    public fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
 //        ctx.contentResolver.openInputStream(uri).use {
 //            return BitmapFactory.decodeStream(it!!)
 //        }
@@ -40,7 +39,6 @@ public object ImageUtils {
         if (drawable is AdaptiveIconDrawable) {
             val bg = drawable.background
             val fg = drawable.foreground
-
 
             if (bg != null) {
                 // Draw background first, scaled to full bounds
@@ -63,7 +61,6 @@ public object ImageUtils {
                 drawable.setBounds(0, 0, width, height)
                 drawable.draw(canvas)
             }
-
         } else {
             // Non-adaptive drawable
             drawable.setBounds(0, 0, width, height)
@@ -83,7 +80,6 @@ public object ImageUtils {
 
 //    public fun resize(src: Bitmap, size: Int): Bitmap =
 //        src.scale(size, size)
-
 
 //    public fun base64ToImageBitmap(base64: String?): ImageBitmap? {
 //        return try {
@@ -130,7 +126,6 @@ public object ImageUtils {
 //            null
 //        }
 //    }
-
 
 //    public fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
 //        if (radius <= 0f) return bitmap
@@ -227,18 +222,17 @@ public object ImageUtils {
 //        return loadDrawableAsBitmap(drawable, width, height)
 //    }
 
-
     public fun Context.loadDrawableResAsImageBitmap(
         resId: Int,
         width: Int,
         height: Int
     ): ImageBitmap {
-        val drawable = ContextCompat.getDrawable(this, resId)
-            ?: return createDefaultBitmap(width, height).asImageBitmap()
+        val drawable =
+            ContextCompat.getDrawable(this, resId)
+                ?: return createDefaultBitmap(width, height).asImageBitmap()
 
         return loadDrawableAsBitmap(drawable, width, height).asImageBitmap()
     }
-
 
 //    public fun createUntintedBitmap(
 //        action: Action,
@@ -250,37 +244,37 @@ public object ImageUtils {
 //            when (action) {
 //                is Action.LaunchApp -> {
 //                    null
-////                    val dummyApplication = action.toApplication()
-////
-////                    val cacheKey = dummyApplication.key
-////                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyApplication\n cacheKey: $cacheKey" }
-////
-////                    icons.getOrCompute(cacheKey) {
-////
-////                        logW(ICONS_TAG) { "Did not find the cacheKey `$cacheKey` in drawer ${icons.cacheUUID}" }
-////
-////                        val drawable = pmCompat.getAppIcon(
-////                            packageName = action.packageName,
-////                            userId = action.userId ?: 0,
-////                            isPrivate = action.isPrivateSpace
-////                        )
-////
-////                        loadDrawableAsBitmap(drawable, width, height)
-////                    }
+// //                    val dummyApplication = action.toApplication()
+// //
+// //                    val cacheKey = dummyApplication.key
+// //                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyApplication\n cacheKey: $cacheKey" }
+// //
+// //                    icons.getOrCompute(cacheKey) {
+// //
+// //                        logW(ICONS_TAG) { "Did not find the cacheKey `$cacheKey` in drawer ${icons.cacheUUID}" }
+// //
+// //                        val drawable = pmCompat.getAppIcon(
+// //                            packageName = action.packageName,
+// //                            userId = action.userId ?: 0,
+// //                            isPrivate = action.isPrivateSpace
+// //                        )
+// //
+// //                        loadDrawableAsBitmap(drawable, width, height)
+// //                    }
 //                }
 //
 //                is Action.LaunchShortcut -> {
-////                    loadShortcutIcon(
-////                        ctx = ctx,
-////                        packageName = action.packageName,
-////                        shortcutId = action.shortcutId,
-////                        widthPx = width,
-////                        heightPx = height
-////                    ) ?: loadDrawableResAsBitmap(
-////                        R.drawable.ic_action_pinned_shortcut,
-////                        width,
-////                        height
-////                    )
+// //                    loadShortcutIcon(
+// //                        ctx = ctx,
+// //                        packageName = action.packageName,
+// //                        shortcutId = action.shortcutId,
+// //                        widthPx = width,
+// //                        heightPx = height
+// //                    ) ?: loadDrawableResAsBitmap(
+// //                        R.drawable.ic_action_pinned_shortcut,
+// //                        width,
+// //                        height
+// //                    )
 //                    null
 //                }
 //
@@ -359,7 +353,7 @@ public object ImageUtils {
 //            null -> base
 //        }
 
-        // Step 2: prepare output bitmap
+    // Step 2: prepare output bitmap
 //        val outBitmap = createBitmap(sizePx, sizePx)
 //        val canvas = Canvas(outBitmap)
 //
@@ -419,14 +413,14 @@ public fun Canvas.clipToShape(
 ) {
     val shape = (properties.shape ?: iconShape).resolveShape()
 
-    val outline = shape.createOutline(
-        size = Size(sizePx.toFloat(), sizePx.toFloat()),
-        layoutDirection = LayoutDirection.Ltr,
-        density = density
-    )
+    val outline =
+        shape.createOutline(
+            size = Size(sizePx.toFloat(), sizePx.toFloat()),
+            layoutDirection = LayoutDirection.Ltr,
+            density = density
+        )
 
     when (outline) {
-
         is Outline.Rectangle -> {
             clipRect(
                 0f,
@@ -439,17 +433,18 @@ public fun Canvas.clipToShape(
         is Outline.Rounded -> {
             val rr = outline.roundRect
 
-            val path = Path().apply {
-                addRoundRect(
-                    rr.left,
-                    rr.top,
-                    rr.right,
-                    rr.bottom,
-                    rr.topLeftCornerRadius.x,
-                    rr.topLeftCornerRadius.y,
-                    Path.Direction.CW
-                )
-            }
+            val path =
+                Path().apply {
+                    addRoundRect(
+                        rr.left,
+                        rr.top,
+                        rr.right,
+                        rr.bottom,
+                        rr.topLeftCornerRadius.x,
+                        rr.topLeftCornerRadius.y,
+                        Path.Direction.CW
+                    )
+                }
 
             clipPath(path)
         }

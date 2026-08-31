@@ -21,7 +21,6 @@ import org.elnix.dragonlauncher.ktx.rect
 import org.elnix.dragonlauncher.ktx.round
 import org.elnix.dragonlauncher.ktx.unless
 
-
 /**
  * Shape that can be present in any [Nest] to intersect with the points that uses their Ids
  */
@@ -30,28 +29,19 @@ import org.elnix.dragonlauncher.ktx.unless
 @SerialName("IntersectionShape")
 public data class IntersectionShape(
     val id: Int,
-
     val shape: IconShape? = null,
-
     @FloatRange(from = 0.0)
     val scale: Float? = null,
-
     @IntRange(from = 0, to = 360)
     val rotation: Int? = null,
-
     @Serializable(with = OffsetSerializer::class)
     val offset: Offset? = null,
-
     val haptic: CustomHapticFeedback? = null,
-
     @Serializable(with = DpSerializer::class)
     val borderStroke: Dp? = null,
-
     @Serializable(with = ColorSerializer::class)
     val color: Color? = null,
-
     val glow: CustomGlow? = null,
-
     /**
      * Whether if when moved, the points offsets are adapted to match their original angle relative to this shape,
      * or if they aren't taken into account and that the shape moves regardless of the points in it.
@@ -64,8 +54,16 @@ public data class IntersectionShape(
     /**
      * Returns the size of this [IntersectionShape], computed with the pixel density
      */
-    public inline fun getSize(density: Float, defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Size =
-        Size.rect((this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale) * defaultSize.dp.value * density)
+    public inline fun getSize(
+        density: Float,
+        defaultIntersectionShape: IntersectionShape,
+        isDefaultEditing: Boolean
+    ): Size =
+        Size.rect(
+            (this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale) *
+                defaultSize.dp.value *
+                density
+        )
 
     public inline fun getOffset(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Offset =
         this.offset ?: (defaultIntersectionShape.offset unless isDefaultEditing) ?: defaultOffset
@@ -75,7 +73,6 @@ public data class IntersectionShape(
 
     public inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
         (this.offset?.y ?: defaultIntersectionShape.offset?.y.unless(isDefaultEditing) ?: defaultOffset.y).round(2)
-
 
     public inline fun getScale(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
         (this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale).round(2)
@@ -111,10 +108,11 @@ public data class IntersectionShape(
         public const val defaultSize: Float = 300f
         public val defaultBorderStroke: Dp = 2.dp
 
-        public val defaultGlow: CustomGlow = CustomGlow(
-            color = null,
-            radius = 5.dp
-        )
+        public val defaultGlow: CustomGlow =
+            CustomGlow(
+                color = null,
+                radius = 5.dp
+            )
 
         public const val defaultScale: Float = 1f
         public const val defaultRotation: Int = 0
@@ -132,9 +130,9 @@ public data class IntersectionShape(
         public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
             if (selected) this.copy(glow = CustomGlow(color = color, radius = 30.dp)) else this
 
-
         public inline val IntersectionShape.isDefault: Boolean
-            get() = this.shape == null &&
+            get() =
+                this.shape == null &&
                     this.scale == null &&
                     this.rotation == null &&
                     this.offset == null &&

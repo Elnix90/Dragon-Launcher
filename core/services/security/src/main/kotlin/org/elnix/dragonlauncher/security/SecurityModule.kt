@@ -13,5 +13,7 @@ import javax.inject.Singleton
 internal object SecurityModule {
     @Provides
     @Singleton
-    fun provideSecurityService(@ApplicationContext ctx: Context): SecurityService = SecurityServiceImpl(ctx)
+    fun provideSecurityService(
+        @ApplicationContext ctx: Context
+    ): SecurityService = SecurityServiceImpl(ctx)
 }

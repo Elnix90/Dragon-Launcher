@@ -21,20 +21,23 @@ internal class CompatIconProvider(
 
         val componentName = appRepository.fromAction(action)?.componentName ?: return null
 
-        val icon = withContext(Dispatchers.IO) {
-            val activityInfo = try {
-                ctx.packageManager.getActivityInfo(componentName, 0)
-            } catch (_: PackageManager.NameNotFoundException) {
-                return@withContext null
-            }
-            val iconRes = activityInfo.iconResource
-            val resources = try {
-                ctx.packageManager.getResourcesForApplication(activityInfo.packageName)
-            } catch (e: PackageManager.NameNotFoundException) {
-                return@withContext null
-            }
-            AdaptiveIconDrawableCompat.from(resources, iconRes)
-        } ?: return null
+        val icon =
+            withContext(Dispatchers.IO) {
+                val activityInfo =
+                    try {
+                        ctx.packageManager.getActivityInfo(componentName, 0)
+                    } catch (_: PackageManager.NameNotFoundException) {
+                        return@withContext null
+                    }
+                val iconRes = activityInfo.iconResource
+                val resources =
+                    try {
+                        ctx.packageManager.getResourcesForApplication(activityInfo.packageName)
+                    } catch (e: PackageManager.NameNotFoundException) {
+                        return@withContext null
+                    }
+                AdaptiveIconDrawableCompat.from(resources, iconRes)
+            } ?: return null
 
         return icon.toLauncherIcon(themed = themed, tint = tint)
     }

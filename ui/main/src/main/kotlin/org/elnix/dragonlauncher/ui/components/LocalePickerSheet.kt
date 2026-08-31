@@ -35,7 +35,10 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import java.util.Locale
 
-private data class AppLocale(val locale: Locale, val name: String)
+private data class AppLocale(
+    val locale: Locale,
+    val name: String
+)
 
 // yeeted from nsh04/Tomato
 
@@ -46,17 +49,21 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberBottomSheetState(skipPartiallyExpanded = true)
 
-    val currentLocales = remember {
-        if (Build.VERSION.SDK_INT >= 33) {
-            ctx.getSystemService(LocaleManager::class.java).applicationLocales
-        } else LocaleList.getEmptyLocaleList()
-    }
+    val currentLocales =
+        remember {
+            if (Build.VERSION.SDK_INT >= 33) {
+                ctx.getSystemService(LocaleManager::class.java).applicationLocales
+            } else {
+                LocaleList.getEmptyLocaleList()
+            }
+        }
 
-    val supportedLocaleList: List<AppLocale>? = remember {
-        if (Build.VERSION.SDK_INT >= 33) {
-            val supportedLocales = LocaleConfig(ctx).supportedLocales
-            if (supportedLocales != null) {
-                buildList {
+    val supportedLocaleList: List<AppLocale>? =
+        remember {
+            if (Build.VERSION.SDK_INT >= 33) {
+                val supportedLocales = LocaleConfig(ctx).supportedLocales
+                if (supportedLocales != null) {
+                    buildList {
                         for (i in 0 until supportedLocales.size()) {
                             val locale = supportedLocales.get(i)
                             add(
@@ -64,15 +71,18 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
                                     locale,
                                     locale.getDisplayName(locale).replaceFirstChar {
                                         it.uppercase()
-                                    },
+                                    }
                                 )
                             )
                         }
-                    }
-                    .sortedBy { it.name }
-            } else null
-        } else null
-    }
+                    }.sortedBy { it.name }
+                } else {
+                    null
+                }
+            } else {
+                null
+            }
+        }
 
     val supportedLocalesSize = supportedLocaleList?.size ?: 0
 
@@ -84,7 +94,7 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
                 contentPadding = PaddingValues(bottom = 60.dp),
-                modifier = Modifier.heightIn(max = 600.dp).clip(shapes.large),
+                modifier = Modifier.heightIn(max = 600.dp).clip(shapes.large)
             ) {
                 item {
                     SegmentedListItem(
@@ -97,20 +107,20 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
                                             .applicationLocales = LocaleList()
                                     }
                                     sheetState.hide()
-                                }
-                                .invokeOnCompletion { onDismissRequest() }
+                                }.invokeOnCompletion { onDismissRequest() }
                         },
                         selected = currentLocales.isEmpty,
-                        colors =  listItemColors(),
+                        colors = listItemColors(),
                         shapes = segmentedListItemShapes(0, 1),
                         content = { Text(stringResource(R.string.system_default)) },
                         trailingContent = {
-                            if (currentLocales.isEmpty)
+                            if (currentLocales.isEmpty) {
                                 Icon(
                                     painter = painterResource(R.drawable.check_circle),
-                                    contentDescription = null,
+                                    contentDescription = null
                                 )
-                        },
+                            }
+                        }
                     )
                 }
 
@@ -118,7 +128,7 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
 
                 itemsIndexed(
                     items = supportedLocaleList,
-                    key = { _: Int, it: AppLocale -> it.name },
+                    key = { _: Int, it: AppLocale -> it.name }
                 ) { index, item ->
                     val selected = !currentLocales.isEmpty && item.locale == currentLocales.get(0)
 
@@ -132,20 +142,20 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
                                             .applicationLocales = LocaleList(item.locale)
                                     }
                                     sheetState.hide()
-                                }
-                                .invokeOnCompletion { onDismissRequest() }
+                                }.invokeOnCompletion { onDismissRequest() }
                         },
                         selected = selected,
                         content = { Text(item.name) },
                         trailingContent = {
-                            if (selected)
+                            if (selected) {
                                 Icon(
                                     painter = painterResource(R.drawable.check_circle),
-                                    contentDescription = null,
+                                    contentDescription = null
                                 )
+                            }
                         },
                         shapes = segmentedListItemShapes(index, supportedLocalesSize),
-                        colors = listItemColors(),
+                        colors = listItemColors()
                     )
                 }
             }
@@ -154,17 +164,14 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
 }
 
 @Composable
-fun listItemColors(): ListItemColors {
-    return ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
-}
-
+fun listItemColors(): ListItemColors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun segmentedListItemShapes(
     index: Int,
     count: Int,
-    singleElement: Boolean = count == 1,
+    singleElement: Boolean = count == 1
 ): ListItemShapes =
     ListItemDefaults.segmentedShapes(
         index,
@@ -175,7 +182,6 @@ fun segmentedListItemShapes(
             pressedShape = shapes.extraLargeIncreased,
             focusedShape = shapes.large,
             hoveredShape = shapes.extraLarge,
-            draggedShape = shapes.extraLargeIncreased,
-        ),
+            draggedShape = shapes.extraLargeIncreased
+        )
     )
-

@@ -51,10 +51,10 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
     if (q.isBlank()) return true
     val s = shortcutInfo
     return appName.contains(q, ignoreCase = true) ||
-            packageName.contains(q, ignoreCase = true) ||
-            (s.shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-            (s.longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-            s.id.contains(q, ignoreCase = true)
+        packageName.contains(q, ignoreCase = true) ||
+        (s.shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+        (s.longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+        s.id.contains(q, ignoreCase = true)
 }
 
 /**
@@ -73,35 +73,39 @@ fun PinnedShortcutsPickerDialog(
     val shortcuts by drawerViewModel.searchShortcuts(searchQuery).collectAsStateWithLifecycle(emptyList())
     val applications by drawerViewModel.allApps.collectAsStateWithLifecycle()
 
-    val groupedShortcuts: Map<String, List<PinnedShortcutItem>> = remember(shortcuts, applications) {
-        val allShortcuts = mutableListOf<PinnedShortcutItem>()
+    val groupedShortcuts: Map<String, List<PinnedShortcutItem>> =
+        remember(shortcuts, applications) {
+            val allShortcuts = mutableListOf<PinnedShortcutItem>()
 
-        for (shortcut in shortcuts) {
-            val appLabel = applications.firstOrNull { it.packageName == shortcut.`package` }?.label ?: continue
-            allShortcuts.add(
-                PinnedShortcutItem(
-                    shortcutInfo = shortcut,
-                    appName = appLabel,
-                    packageName = shortcut.`package`
+            for (shortcut in shortcuts) {
+                val appLabel = applications.firstOrNull { it.packageName == shortcut.`package` }?.label ?: continue
+                allShortcuts.add(
+                    PinnedShortcutItem(
+                        shortcutInfo = shortcut,
+                        appName = appLabel,
+                        packageName = shortcut.`package`
+                    )
                 )
-            )
+            }
+
+            allShortcuts
+                .groupBy { it.appName }
+                .toSortedMap(String.CASE_INSENSITIVE_ORDER)
         }
 
-        allShortcuts
-            .groupBy { it.appName }
-            .toSortedMap(String.CASE_INSENSITIVE_ORDER)
-    }
-
-    val filteredGrouped = remember(searchQuery, groupedShortcuts) {
-        if (searchQuery.isBlank()) groupedShortcuts
-        else {
-            val q = searchQuery
-            groupedShortcuts.mapNotNull { (appName, items) ->
-                val filteredItems = items.filter { it.matchesShortcutSearch(q) }
-                if (filteredItems.isEmpty()) null else appName to filteredItems
-            }.toMap()
+    val filteredGrouped =
+        remember(searchQuery, groupedShortcuts) {
+            if (searchQuery.isBlank()) {
+                groupedShortcuts
+            } else {
+                val q = searchQuery
+                groupedShortcuts
+                    .mapNotNull { (appName, items) ->
+                        val filteredItems = items.filter { it.matchesShortcutSearch(q) }
+                        if (filteredItems.isEmpty()) null else appName to filteredItems
+                    }.toMap()
+            }
         }
-    }
 
     DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
         DialogTitle(stringResource(R.string.pinned_shortcuts))
@@ -113,9 +117,10 @@ fun PinnedShortcutsPickerDialog(
         when {
             groupedShortcuts.isEmpty() -> {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -129,9 +134,10 @@ fun PinnedShortcutsPickerDialog(
 
             filteredGrouped.isEmpty() && searchQuery.isNotEmpty() -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 24.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -144,9 +150,10 @@ fun PinnedShortcutsPickerDialog(
 
             else -> {
                 Column(
-                    modifier = Modifier
-                        .heightIn(max = 500.dp)
-                        .verticalScroll(rememberScrollState())
+                    modifier =
+                        Modifier
+                            .heightIn(max = 500.dp)
+                            .verticalScroll(rememberScrollState())
                 ) {
                     filteredGrouped.forEach { (appName, shortcuts) ->
                         DragonSettingsGroup(appName) {
@@ -179,10 +186,11 @@ fun DragonGroupScope.ShortcutItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .dragonSettingGroup {
-                clickable(onClick = onClick)
-            }
+        modifier =
+            Modifier
+                .dragonSettingGroup {
+                    clickable(onClick = onClick)
+                }
     ) {
         ShortcutIcon(shortcut.toAction(), 36.dp)
         Spacer(8.dp)
@@ -199,7 +207,7 @@ fun DragonGroupScope.ShortcutItem(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

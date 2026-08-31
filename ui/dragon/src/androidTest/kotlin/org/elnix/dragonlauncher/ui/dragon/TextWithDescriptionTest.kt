@@ -24,11 +24,10 @@ import org.junit.Test
  * shown when non-null. We verify both the presence and absence of text nodes.
  */
 class TextWithDescriptionTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    //  Single description overload 
+    //  Single description overload
 
     @Test
     fun textWithDescription_showsTitle() {
@@ -65,7 +64,7 @@ class TextWithDescriptionTest {
         composeTestRule.onNodeWithText("Some description").assertDoesNotExist()
     }
 
-    //  Dual description overload 
+    //  Dual description overload
 
     @Test
     fun textWithDescription_dual_showsBothDescriptions() {

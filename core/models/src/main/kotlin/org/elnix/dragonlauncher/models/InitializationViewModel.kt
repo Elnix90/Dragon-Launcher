@@ -27,67 +27,72 @@ import javax.inject.Inject
  */
 @Stable
 @HiltViewModel
-public class InitializationViewModel @Inject constructor(
-    application: Application,
-    private val pointsService: PointsService,
-) : AndroidViewModel(application) {
+public class InitializationViewModel
+    @Inject
+    constructor(
+        application: Application,
+        private val pointsService: PointsService
+    ) : AndroidViewModel(application) {
+        init {
+            viewModelInitialized()
+        }
 
-    init {
-        viewModelInitialized()
-    }
+        public fun checkLauncherInitialization() {
+            viewModelScope.launch {
+                val hasInitialized = PrivateSettingsStore.hasInitialized.get(application.applicationContext)
 
-    public fun checkLauncherInitialization() {
-        viewModelScope.launch {
-            val hasInitialized = PrivateSettingsStore.hasInitialized.get(application.applicationContext)
-
-            if (!hasInitialized) {
-                logD(INIT_TAG) { "Initialisation not complete, initializing" }
-                initialize()
+                if (!hasInitialized) {
+                    logD(INIT_TAG) { "Initialisation not complete, initializing" }
+                    initialize()
+                }
             }
         }
-    }
 
-    public fun initializeSwipeSettings(
-        points: Points,
-        nests: Nests,
-        defaultPoint: Point?
-    ) {
-        logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
+        public fun initializeSwipeSettings(
+            points: Points,
+            nests: Nests,
+            defaultPoint: Point?
+        ) {
+            logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
 
-        viewModelScope.launch {
-            pointsService.set(points, nests, defaultPoint)
-            pointsService.persist()
-            PrivateSettingsStore.hasInitialized.set(application, true)
+            viewModelScope.launch {
+                pointsService.set(points, nests, defaultPoint)
+                pointsService.persist()
+                PrivateSettingsStore.hasInitialized.set(application, true)
+            }
+        }
+
+        public fun initialize() {
+            initializeSwipeSettings(defaultInitializationPoints, defaultNestsInitializationSetup, null)
         }
     }
 
-    public fun initialize() {
-        initializeSwipeSettings(defaultInitializationPoints, defaultNestsInitializationSetup, null)
-    }
-}
-
-
-private val defaultInitializationPoints: Points = mapOf(
-    0 to Point(
-        offset = Offset(0f, -200f),
-        action = Action.OpenAppDrawer(),
-        id = 0,
-        shapeId = 0
-    ),
-    1 to Point(
-        offset = Offset(-150f, 100f),
-        action = Action.NotificationShade,
-        id = 1,
-        shapeId = 0
-    ),
-    2 to Point(
-        offset = Offset(150f, 100f),
-        action = Action.ControlPanel,
-        id = 2,
-        shapeId = 0
+private val defaultInitializationPoints: Points =
+    mapOf(
+        0 to
+            Point(
+                offset = Offset(0f, -200f),
+                action = Action.OpenAppDrawer(),
+                id = 0,
+                shapeId = 0
+            ),
+        1 to
+            Point(
+                offset = Offset(-150f, 100f),
+                action = Action.NotificationShade,
+                id = 1,
+                shapeId = 0
+            ),
+        2 to
+            Point(
+                offset = Offset(150f, 100f),
+                action = Action.ControlPanel,
+                id = 2,
+                shapeId = 0
+            )
     )
-)
 
-public val defaultNestsInitializationSetup: Nests = mapOf(
-    0 to Nest(0)
-)
+public val defaultNestsInitializationSetup: Nests =
+    mapOf(
+        0 to Nest(0)
+    )

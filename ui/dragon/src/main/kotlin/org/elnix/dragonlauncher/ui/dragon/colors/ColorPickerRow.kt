@@ -80,28 +80,28 @@ import kotlin.time.Duration.Companion.milliseconds
  * The selected ones are more rounded and not spiky
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private val colorPickerMaterialShapes: Set<RoundedPolygon> = setOf(
-    MaterialShapes.Slanted,
-    MaterialShapes.Arrow,
-    MaterialShapes.Oval,
-    MaterialShapes.Pill,
-    MaterialShapes.Triangle,
-    MaterialShapes.Diamond,
-    MaterialShapes.Pentagon,
-    MaterialShapes.Gem,
-    MaterialShapes.Cookie4Sided,
-    MaterialShapes.Cookie7Sided,
-    MaterialShapes.Cookie9Sided,
-    MaterialShapes.Cookie12Sided,
-    MaterialShapes.SoftBurst,
-    MaterialShapes.Cookie12Sided,
-    MaterialShapes.Flower,
-    MaterialShapes.Clover4Leaf,
-    MaterialShapes.Sunny,
-    MaterialShapes.VerySunny,
-    MaterialShapes.Clover4Leaf
-)
-
+private val colorPickerMaterialShapes: Set<RoundedPolygon> =
+    setOf(
+        MaterialShapes.Slanted,
+        MaterialShapes.Arrow,
+        MaterialShapes.Oval,
+        MaterialShapes.Pill,
+        MaterialShapes.Triangle,
+        MaterialShapes.Diamond,
+        MaterialShapes.Pentagon,
+        MaterialShapes.Gem,
+        MaterialShapes.Cookie4Sided,
+        MaterialShapes.Cookie7Sided,
+        MaterialShapes.Cookie9Sided,
+        MaterialShapes.Cookie12Sided,
+        MaterialShapes.SoftBurst,
+        MaterialShapes.Cookie12Sided,
+        MaterialShapes.Flower,
+        MaterialShapes.Clover4Leaf,
+        MaterialShapes.Sunny,
+        MaterialShapes.VerySunny,
+        MaterialShapes.Clover4Leaf
+    )
 
 /**
  * Color picker row
@@ -146,13 +146,13 @@ fun DragonGroupScope.ColorPickerRow(
     }
 
     Row(
-        modifier = modifier
-            .dragonSettingGroup(enabled = enabled) {
-                clickable(enabled) { showPicker = true }
-            },
-        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            modifier
+                .dragonSettingGroup(enabled = enabled) {
+                    clickable(enabled) { showPicker = true }
+                },
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
         TextWithDescription(
             text = title,
             description = description,
@@ -164,7 +164,6 @@ fun DragonGroupScope.ColorPickerRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-
             ColorPickerButton(
                 button = ColorModesSettingsStore.colorPickerButtonOne,
                 enabled = enabled,
@@ -196,10 +195,11 @@ fun DragonGroupScope.ColorPickerRow(
             }
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 16.dp)
             ) {
                 DialogTitle(title)
 
@@ -226,7 +226,6 @@ fun DragonGroupScope.ColorPickerRow(
                     }
                 }
 
-
                 SingleSelectConnectedButtonRow(
                     entries = ColorPickerMode.entries,
                     checked = { currentMode == it },
@@ -241,18 +240,18 @@ fun DragonGroupScope.ColorPickerRow(
                 )
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .background(
-                            color = displayedColor,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline,
-                            shape = MaterialTheme.shapes.medium
-                        ),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .background(
+                                color = displayedColor,
+                                shape = MaterialTheme.shapes.medium
+                            ).border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.outline,
+                                shape = MaterialTheme.shapes.medium
+                            ),
                     contentAlignment = Alignment.Center
                 ) {
                     Row(
@@ -276,11 +275,12 @@ fun DragonGroupScope.ColorPickerRow(
                                     color = textBoxColor
                                 )
                             },
-                            colors = AppObjectsColors.outlinedTextFieldColors(
-                                backgroundColor = Color.Transparent,
-                                onBackgroundColor = textBoxColor,
-                                removeBorder = true
-                            ),
+                            colors =
+                                AppObjectsColors.outlinedTextFieldColors(
+                                    backgroundColor = Color.Transparent,
+                                    onBackgroundColor = textBoxColor,
+                                    removeBorder = true
+                                ),
                             singleLine = true,
                             modifier = Modifier.weight(1f)
                         )
@@ -290,21 +290,24 @@ fun DragonGroupScope.ColorPickerRow(
                 Spacer(15.dp)
 
                 when (currentMode) {
-                    ColorPickerMode.Default -> DefaultColorPicker(
-                        selectedColor = actualColor,
-                        onColorSelected = { actualColor = it }
-                    )
+                    ColorPickerMode.Default ->
+                        DefaultColorPicker(
+                            selectedColor = actualColor,
+                            onColorSelected = { actualColor = it }
+                        )
 
-                    ColorPickerMode.Slider -> SliderColorPicker(
-                        actualColor = actualColor,
-                        initialColor = initialColorNotNull,
-                        onColorSelected = { actualColor = it }
-                    )
+                    ColorPickerMode.Slider ->
+                        SliderColorPicker(
+                            actualColor = actualColor,
+                            initialColor = initialColorNotNull,
+                            onColorSelected = { actualColor = it }
+                        )
 
-                    ColorPickerMode.Gradient -> GradientColorPicker(
-                        initialColor = actualColor,
-                        onColorSelected = { actualColor = it }
-                    )
+                    ColorPickerMode.Gradient ->
+                        GradientColorPicker(
+                            initialColor = actualColor,
+                            onColorSelected = { actualColor = it }
+                        )
                 }
 
                 Spacer(12.dp)
@@ -325,7 +328,6 @@ fun DragonGroupScope.ColorPickerRow(
     }
 }
 
-
 fun pasteColorHexFromClipboard(ctx: Context): Color? {
     ctx.pasteClipboard()?.let { pasted ->
         try {
@@ -341,24 +343,23 @@ fun pasteColorHexFromClipboard(ctx: Context): Color? {
     return null
 }
 
-
 @Composable
 fun ColorCirclePreview(
     color: Color,
     shape: Shape
 ) {
     Box(
-        modifier = Modifier
-            .size(50.dp)
-            .clip(shape)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline,
-                shape = shape
-            )
-            .drawBehind {
-                pngBackgroundTexture(color)
-            }
+        modifier =
+            Modifier
+                .size(50.dp)
+                .clip(shape)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = shape
+                ).drawBehind {
+                    pngBackgroundTexture(color)
+                }
     )
 }
 
@@ -377,10 +378,11 @@ private fun DrawScope.pngBackgroundTexture(
                 color = if (count % 2 == 0) Color.White else Color.Gray,
                 size = Size.rect(cellSizePx),
                 blendMode = BlendMode.Src,
-                topLeft = Offset(
-                    x = cellSizePx * x,
-                    y = cellSizePx * y
-                )
+                topLeft =
+                    Offset(
+                        x = cellSizePx * x,
+                        y = cellSizePx * y
+                    )
             )
             count++
         }

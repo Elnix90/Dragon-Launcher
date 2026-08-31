@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.drawable.LayerDrawable
-import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.icons.AppIcon
 import org.elnix.dragonlauncher.icons.CalendarIcon
@@ -19,13 +19,14 @@ import org.xmlpull.v1.XmlPullParser
 
 internal class GrayscaleMapIconPackInstaller(
     private val ctx: Context,
-    database: AppDatabase,
+    database: AppDatabase
 ) : IconPackInstaller(database) {
-    private val SUPPORTED_GRAYSCALE_MAP_PROVIDERS = arrayOf(
-        "app.lawnchair.lawnicons", // Lawnicons
-        "de.mm20.launcher2.themedicons",
-        "de.kvaesitso.icons",
-    )
+    private val supportedGrayscaleMapProviders =
+        arrayOf(
+            "app.lawnchair.lawnicons", // Lawnicons
+            "de.mm20.launcher2.themedicons",
+            "de.kvaesitso.icons"
+        )
 
     override suspend fun IconPackInstallerScope.buildIconPack(iconPack: IconPack) {
         withContext(Dispatchers.IO) {
@@ -45,23 +46,25 @@ internal class GrayscaleMapIconPackInstaller(
                         val drawableRes =
                             parser.getAttributeResourceValue(null, "drawable", 0)
 
-                        val type = try {
-                            resources.getResourceTypeName(drawableRes)
-                        } catch (e: Resources.NotFoundException) {
-                            continue@loop
-                        }
+                        val type =
+                            try {
+                                resources.getResourceTypeName(drawableRes)
+                            } catch (e: Resources.NotFoundException) {
+                                continue@loop
+                            }
 
                         if (type == "drawable") {
                             val drawableName =
                                 resources.getResourceEntryNameOrNull(drawableRes) ?: continue@loop
-                            val icon = AppIcon(
-                                drawable = drawableName,
-                                packageName = pkg,
-                                activityName = null,
-                                iconPack = packageName,
-                                name = null,
-                                themed = true
-                            )
+                            val icon =
+                                AppIcon(
+                                    drawable = drawableName,
+                                    packageName = pkg,
+                                    activityName = null,
+                                    iconPack = packageName,
+                                    name = null,
+                                    themed = true
+                                )
                             addIcon(icon)
                         } else if (type == "array") {
                             val array = resources.obtainTypedArray(drawableRes)
@@ -98,7 +101,9 @@ internal class GrayscaleMapIconPackInstaller(
                                             i++
                                             drawable = array.getDrawable(i) as? LayerDrawable
                                             drawableName =
-                                                array.getResourceId(i, 0).takeIf { it != 0 }
+                                                array
+                                                    .getResourceId(i, 0)
+                                                    .takeIf { it != 0 }
                                                     ?.let { resources.getResourceEntryNameOrNull(it) }
                                         }
 
@@ -129,16 +134,17 @@ internal class GrayscaleMapIconPackInstaller(
                                         ClockIcon(
                                             drawable = drawableName,
                                             packageName = pkg,
-                                            config = ClockIconConfig(
-                                                hourLayer = hourIndex,
-                                                minuteLayer = minuteIndex,
-                                                defaultHour = defaultHour,
-                                                defaultMinute = defaultMinute,
-                                                defaultSecond = 0,
-                                                secondLayer = -1,
-                                            ),
+                                            config =
+                                                ClockIconConfig(
+                                                    hourLayer = hourIndex,
+                                                    minuteLayer = minuteIndex,
+                                                    defaultHour = defaultHour,
+                                                    defaultMinute = defaultMinute,
+                                                    defaultSecond = 0,
+                                                    secondLayer = -1
+                                                ),
                                             iconPack = packageName,
-                                            themed = true,
+                                            themed = true
                                         )
                                     )
                                 }
@@ -155,13 +161,13 @@ internal class GrayscaleMapIconPackInstaller(
 
     override fun getInstalledIconPacks(): List<IconPack> {
         val pm = ctx.packageManager
-        return SUPPORTED_GRAYSCALE_MAP_PROVIDERS.mapNotNull {
+        return supportedGrayscaleMapProviders.mapNotNull {
             try {
                 val packageInfo = pm.getPackageInfo(it, 0)
                 IconPack(
                     context = ctx,
                     packageInfo = packageInfo,
-                    themed = true,
+                    themed = true
                 )
             } catch (e: PackageManager.NameNotFoundException) {
                 null
@@ -170,10 +176,9 @@ internal class GrayscaleMapIconPackInstaller(
     }
 }
 
-internal fun Resources.getResourceEntryNameOrNull(res: Int): String? {
-    return try {
+internal fun Resources.getResourceEntryNameOrNull(res: Int): String? =
+    try {
         getResourceEntryName(res)
     } catch (e: Resources.NotFoundException) {
         null
     }
-}

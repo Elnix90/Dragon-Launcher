@@ -1,20 +1,41 @@
+# Formatting rules for this project. ktlint reads this file directly, and so do
+# IntelliJ / Android Studio — one source of truth for the IDE and the build.
 root = true
 
 [*]
+charset = utf-8
+end_of_line = lf
 indent_style = space
 indent_size = 4
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
 insert_final_newline = true
+trim_trailing_whitespace = true
 
-[*.{yml,yaml}]
+[*.{kt,kts}]
+# ktlint ships three presets: ktlint_official, intellij_idea, android_studio.
+# android_studio matches what the IDE does out of the box for Android projects.
+ktlint_code_style = ktlint_official
+max_line_length = 150
+
+# Trailing commas keep diffs small when adding parameters/arguments.
+ij_kotlin_allow_trailing_comma = false
+ij_kotlin_allow_trailing_comma_on_call_site = false
+
+
+# Force multi-line for data classes and functions
+ij_kotlin_force_multiline = true
+ij_kotlin_force_multiline_parameters = true
+ij_kotlin_force_multiline_when_with_single_condition = true
+
+# @Composable functions are PascalCase by convention, which the naming rule
+# would otherwise flag. Test method names are free-form for readability.
+ktlint_function_naming_ignore_when_annotated_with = Composable, Test, ParameterizedTest
+
+# Leave function signatures laid out as written. Without this, ktlint collapses
+# multi-line composable parameter lists onto one line whenever they fit.
+ktlint_standard_function-signature = disabled
+
+[*.{yml,yaml,json,xml}]
 indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
-
-[*.kt]
-indent_size = 4
-max_line_length = 120
-ij_kotlin_packages_to_use_import_on_demand = java.util.*,kotlinx.android.synthetic.*

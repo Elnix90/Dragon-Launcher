@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DragonTooltipInternal(
@@ -36,9 +35,10 @@ fun DragonTooltipInternal(
 
     @OptIn(ExperimentalMaterial3Api::class)
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Above
-        ),
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Above
+            ),
         tooltip = {
             PlainTooltip(
                 shape = MaterialTheme.shapes.large,
@@ -73,7 +73,6 @@ fun DragonTooltip(
         content = content
     )
 }
-
 
 @Composable
 fun DragonTooltip(

@@ -63,9 +63,10 @@ private fun Text(
 ) {
     Text(
         text = text,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp))
-            .clickable(onClick = onClick)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(4.dp))
+                .clickable(onClick = onClick)
     )
 }

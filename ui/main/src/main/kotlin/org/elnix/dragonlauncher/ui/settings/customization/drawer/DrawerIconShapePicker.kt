@@ -16,7 +16,6 @@ import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
-
 @Composable
 fun DragonGroupScope.DrawerIconShapePicker() {
     val ctx = LocalContext.current

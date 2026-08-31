@@ -108,13 +108,15 @@ fun ShapedLauncherIcon(
     }
 
     Box(
-        modifier = modifier
-            .sizeIn(maxWidth = size, maxHeight = size)
+        modifier =
+            modifier
+                .sizeIn(maxWidth = size, maxHeight = size)
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(shape),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .clip(shape),
             contentAlignment = Alignment.Center
         ) {
             val bmp = currentBitmap
@@ -124,7 +126,7 @@ fun ShapedLauncherIcon(
                 Canvas(modifier = Modifier.requiredSize(size)) {
                     val brush = BitmapShaderBrush(bmp)
 //                    if (ic.backgroundLayer is TransparentLayer) {
-                        drawRect(brush)
+                    drawRect(brush)
 //                    } else {
 //                        val outline =
 //                            shape.createOutline(
@@ -153,18 +155,20 @@ fun ShapedLauncherIcon(
                     is TextLayer -> {
                         Text(
                             text = fg.text,
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                fontSize = 20.sp * (size / 48.dp)
-                            ),
+                            style =
+                                MaterialTheme.typography.headlineSmall.copy(
+                                    fontSize = 20.sp * (size / 48.dp)
+                                ),
                             color = Color(fg.tint ?: 0)
                         )
                     }
 
                     is VectorLayer -> {
                         Icon(
-                            painter = painterResource(fg.icon), contentDescription = null,
+                            painter = painterResource(fg.icon),
+                            contentDescription = null,
                             tint = Color(fg.tint ?: 0),
-                            modifier = Modifier.size(size / 2f),
+                            modifier = Modifier.size(size / 2f)
                         )
                     }
 
@@ -185,16 +189,16 @@ fun ShapedLauncherIcon(
         if (badge != null) {
             Surface(
                 tonalElevation = 1.dp,
-                modifier = Modifier
-                    .size(size * 0.33f)
-                    .align(Alignment.BottomEnd),
+                modifier =
+                    Modifier
+                        .size(size * 0.33f)
+                        .align(Alignment.BottomEnd),
                 color = MaterialTheme.colorScheme.tertiary,
                 shape = CircleShape
             ) {
                 Box(
                     contentAlignment = Alignment.Center
                 ) {
-
                     badge.progress?.let {
                         val progress by animateFloatAsState(it)
                         CircularProgressIndicator(
@@ -209,18 +213,20 @@ fun ShapedLauncherIcon(
                     val number = badge.number
                     if (badgeIcon is BadgeIcon.Vector) {
                         Icon(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(size / 24),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(size / 24),
                             painter = painterResource(badgeIcon.iconRes),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onTertiary,
+                            tint = MaterialTheme.colorScheme.onTertiary
                         )
                     } else if (badgeIcon is BadgeIcon.Drawable) {
                         Canvas(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(size / 48)
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(size / 48)
                         ) {
                             badgeIcon.drawable.setBounds(
                                 0,
@@ -236,11 +242,13 @@ fun ShapedLauncherIcon(
                         Text(
                             NumberFormat.getInstance(Locale.current.platformLocale).format(number),
                             color = MaterialTheme.colorScheme.secondaryContainer,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = with(LocalDensity.current) {
-                                    size.toSp() * 0.2f
-                                }
-                            ),
+                            style =
+                                MaterialTheme.typography.labelSmall.copy(
+                                    fontSize =
+                                        with(LocalDensity.current) {
+                                            size.toSp() * 0.2f
+                                        }
+                                )
                         )
                     }
                 }
@@ -249,11 +257,11 @@ fun ShapedLauncherIcon(
     }
 }
 
-//private fun getTone(argb: Int, tone: Int): Int {
+// private fun getTone(argb: Int, tone: Int): Int {
 //    return TonalPalette
 //        .fromInt(argb)
 //        .tone(tone)
-//}
+// }
 
 @Composable
 private fun ClockLayer(
@@ -263,7 +271,7 @@ private fun ClockLayer(
     defaultSecond: Int,
     scale: Float,
     tint: Int?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val time = Instant.ofEpochMilli(LocalTime.current).atZone(ZoneId.systemDefault())
 
@@ -272,32 +280,38 @@ private fun ClockLayer(
     val hour = time.hour
 
     Canvas(modifier = modifier) {
-        val colorFilter = tint?.let {
-            PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
-        }
+        val colorFilter =
+            tint?.let {
+                PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
+            }
         withTransform({
             this.scale(scale)
         }) {
             for (sublayer in sublayers) {
                 when (sublayer.role) {
                     ClockSublayerRole.Hour -> {
-                        sublayer.drawable.level = (((hour - defaultHour + 12) % 12) * 60
-                                + ((minute) % 60))
+                        sublayer.drawable.level = (
+                            ((hour - defaultHour + 12) % 12) * 60 +
+                                ((minute) % 60)
+                        )
                     }
 
-                    ClockSublayerRole.Minute -> sublayer.drawable.level =
-                        ((minute - defaultMinute + 60) % 60)
+                    ClockSublayerRole.Minute ->
+                        sublayer.drawable.level =
+                            ((minute - defaultMinute + 60) % 60)
 
-                    ClockSublayerRole.Second -> sublayer.drawable.level =
-                        (((second - defaultSecond + 60) % 60) * 10)
+                    ClockSublayerRole.Second ->
+                        sublayer.drawable.level =
+                            (((second - defaultSecond + 60) % 60) * 10)
 
                     else -> {}
                 }
                 drawIntoCanvas {
-                    sublayer.drawable.bounds = run {
-                        val toRect = size.toRect()
-                        Rect(toRect.left.toInt(), toRect.top.toInt(), toRect.right.toInt(), toRect.bottom.toInt())
-                    }
+                    sublayer.drawable.bounds =
+                        run {
+                            val toRect = size.toRect()
+                            Rect(toRect.left.toInt(), toRect.top.toInt(), toRect.right.toInt(), toRect.bottom.toInt())
+                        }
                     sublayer.drawable.drawWithColorFilter(it.nativeCanvas, colorFilter)
                 }
             }
@@ -306,9 +320,7 @@ private fun ClockLayer(
 }
 
 class BitmapShaderBrush(
-    val bitmap: Bitmap,
+    val bitmap: Bitmap
 ) : ShaderBrush() {
-    override fun createShader(size: Size): Shader {
-        return BitmapShader(bitmap, PlatformShader.TileMode.CLAMP, PlatformShader.TileMode.CLAMP)
-    }
+    override fun createShader(size: Size): Shader = BitmapShader(bitmap, PlatformShader.TileMode.CLAMP, PlatformShader.TileMode.CLAMP)
 }

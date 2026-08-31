@@ -9,11 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import io.github.elnix90.runtime.asState
-import org.elnix.dragonlauncher.base.model.models.IconSettings
-import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
+import org.elnix.dragonlauncher.base.model.models.IconSettings
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -81,36 +81,36 @@ fun ProvideDrawerSettings(
     val autoShowKeyboard by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
     val toolbarsOrder by DrawerSettingsStore.toolbarsOrder.asState()
 
-
     CompositionLocalProvider(
-        LocalDrawerSettings provides DrawerSettings(
-            iconSize = iconSize,
-            useCategory = useCategory,
-            gridSize = gridSize,
-            categoryGridCells = categoryGridCells,
-            showAppIconsInDrawer = showAppIconsInDrawer,
-            showAppLabelsInDrawer = showAppLabelsInDrawer,
-            labelTextColor = labelTextColor,
-            iconsSpacingVertical = iconsSpacingVertical,
-            iconsSpacingHorizontal = iconsSpacingHorizontal,
-            horizontalAlignment = horizontalAlignment,
-            iconShape = iconShape,
-            iconSettings = iconSettings,
-            autoAskToUnlockProfile = autoAskToUnlockProfile,
-            autoOpenSingleMatch = autoOpenSingleMatch,
-            disableAutoLaunchWhenFirstCharIs = disableAutoLaunchWhenFirstCharIs,
-            tapEmptySpaceAction = tapEmptySpaceAction,
-            drawerEnterAction = drawerEnterAction,
-            drawerBackAction = drawerBackAction,
-            drawerHomeAction = drawerHomeAction,
-            drawerScrollDownAction = drawerScrollDownAction,
-            drawerScrollUpAction = drawerScrollUpAction,
-            showSearchBar = showSearchBar,
-            showRecentlyUsedApps = showRecentlyUsedApps,
-            recentlyUsedAppsCount = recentlyUsedAppsCount,
-            autoShowKeyboard = autoShowKeyboard,
-            toolbarsOrder = toolbarsOrder
-        ),
+        LocalDrawerSettings provides
+            DrawerSettings(
+                iconSize = iconSize,
+                useCategory = useCategory,
+                gridSize = gridSize,
+                categoryGridCells = categoryGridCells,
+                showAppIconsInDrawer = showAppIconsInDrawer,
+                showAppLabelsInDrawer = showAppLabelsInDrawer,
+                labelTextColor = labelTextColor,
+                iconsSpacingVertical = iconsSpacingVertical,
+                iconsSpacingHorizontal = iconsSpacingHorizontal,
+                horizontalAlignment = horizontalAlignment,
+                iconShape = iconShape,
+                iconSettings = iconSettings,
+                autoAskToUnlockProfile = autoAskToUnlockProfile,
+                autoOpenSingleMatch = autoOpenSingleMatch,
+                disableAutoLaunchWhenFirstCharIs = disableAutoLaunchWhenFirstCharIs,
+                tapEmptySpaceAction = tapEmptySpaceAction,
+                drawerEnterAction = drawerEnterAction,
+                drawerBackAction = drawerBackAction,
+                drawerHomeAction = drawerHomeAction,
+                drawerScrollDownAction = drawerScrollDownAction,
+                drawerScrollUpAction = drawerScrollUpAction,
+                showSearchBar = showSearchBar,
+                showRecentlyUsedApps = showRecentlyUsedApps,
+                recentlyUsedAppsCount = recentlyUsedAppsCount,
+                autoShowKeyboard = autoShowKeyboard,
+                toolbarsOrder = toolbarsOrder
+            ),
         content = content
     )
 }

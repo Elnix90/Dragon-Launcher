@@ -11,13 +11,14 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class SwipeViewModel @Inject constructor(
-    application: Application,
-    private val widgetsService: WidgetsService,
-    public val swipeService: SwipeService
-) : AndroidViewModel(application) {
-
-    init {
-        viewModelInitialized()
+public class SwipeViewModel
+    @Inject
+    constructor(
+        application: Application,
+        private val widgetsService: WidgetsService,
+        public val swipeService: SwipeService
+    ) : AndroidViewModel(application) {
+        init {
+            viewModelInitialized()
+        }
     }
-}

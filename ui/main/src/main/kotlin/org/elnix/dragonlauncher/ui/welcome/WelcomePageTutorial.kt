@@ -20,22 +20,21 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Composable
 fun WelcomePageTutorial() {
-
-
     WelcomePagerHeader(
         title = stringResource(R.string.quick_tutorial),
         icon = R.drawable.help
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            TutorialEntry(R.mipmap.long_click_3second,R.string.long_click_to_access_settings)
-            TutorialEntry(R.mipmap.configure_your_apps,R.string.configure_your_apps)
-            TutorialEntry(R.mipmap.swipe_to_open_app,R.string.swipe_to_open_app)
+            TutorialEntry(R.mipmap.long_click_3second, R.string.long_click_to_access_settings)
+            TutorialEntry(R.mipmap.configure_your_apps, R.string.configure_your_apps)
+            TutorialEntry(R.mipmap.swipe_to_open_app, R.string.swipe_to_open_app)
         }
     }
 }
@@ -58,7 +57,7 @@ private fun TutorialEntry(
 
             Image(
                 painterResource(painterResId),
-                contentDescription = stringResource(titleResId),
+                contentDescription = stringResource(titleResId)
             )
         }
     }

@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
 
-
 @Composable
 fun TextWithDescription(
     text: String,
@@ -33,8 +32,6 @@ fun TextWithDescription(
         }
     }
 }
-
-
 
 @Composable
 fun TextWithDescription(

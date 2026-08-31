@@ -103,15 +103,17 @@ fun MigrationDialog(
         else -> {
             FullScreenOverlay(
                 onDismissRequest = {},
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black)
-                    .background(MaterialTheme.colorScheme.background)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                        .background(MaterialTheme.colorScheme.background)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(5.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -120,11 +122,12 @@ fun MigrationDialog(
                     var random by remember { mutableStateOf(Random.nextBoolean()) }
                     AnimatedContent(
                         targetState = random,
-                        modifier = Modifier
-                            .height(200.dp)
-                            .clickable(interactionSource = null, indication = null) {
-                                random = !random
-                            },
+                        modifier =
+                            Modifier
+                                .height(200.dp)
+                                .clickable(interactionSource = null, indication = null) {
+                                    random = !random
+                                },
                         transitionSpec = { barsContentTransform }
                     ) {
                         Image(
@@ -138,11 +141,12 @@ fun MigrationDialog(
                         text = stringResource(R.string.migrating_settings),
                         style = MaterialTheme.typography.headlineSmallEmphasized,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .clip(MaterialTheme.shapes.large)
-                            .background(MaterialTheme.colorScheme.secondaryContainer)
-                            .padding(12.dp)
+                        modifier =
+                            Modifier
+                                .wrapContentWidth()
+                                .clip(MaterialTheme.shapes.large)
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                                .padding(12.dp)
                     )
 
                     Spacer(24.dp)
@@ -152,11 +156,12 @@ fun MigrationDialog(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .clip(MaterialTheme.shapes.largeIncreased)
-                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                            .padding(15.dp)
+                        modifier =
+                            Modifier
+                                .wrapContentWidth()
+                                .clip(MaterialTheme.shapes.largeIncreased)
+                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                .padding(15.dp)
                     )
 
                     Spacer(30.dp)
@@ -174,11 +179,12 @@ fun MigrationDialog(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .clip(MaterialTheme.shapes.large)
-                            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                            .padding(10.dp)
+                        modifier =
+                            Modifier
+                                .wrapContentWidth()
+                                .clip(MaterialTheme.shapes.large)
+                                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                                .padding(10.dp)
                     )
                 }
             }

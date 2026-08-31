@@ -24,16 +24,19 @@ fun BoxedIcon(
     onClick: (() -> Unit)? = null
 ) {
     Box(
-        modifier = Modifier
-            .size(40.dp)
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.primary.alphaMultiplier(0.1f).semiTransparentIfDisabled(enabled))
-            .conditional(onClick) {
-                clickable(onClick = it)
-            }
-            .padding(8.dp),
+        modifier =
+            Modifier
+                .size(40.dp)
+                .clip(MaterialTheme.shapes.medium)
+                .background(
+                    MaterialTheme.colorScheme.primary
+                        .alphaMultiplier(0.1f)
+                        .semiTransparentIfDisabled(enabled)
+                ).conditional(onClick) {
+                    clickable(onClick = it)
+                }.padding(8.dp),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Icon(
             painter = painterResource(icon),
             contentDescription = null,

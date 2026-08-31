@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
-
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState

@@ -67,5 +67,4 @@ dependencies {
     api(project(":data:workspaces"))
     api(project(":data:appoverrides"))
     api(project(":core:profiles"))
-
 }

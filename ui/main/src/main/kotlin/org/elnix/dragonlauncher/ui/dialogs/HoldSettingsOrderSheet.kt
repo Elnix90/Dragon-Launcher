@@ -44,12 +44,10 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-
 private data class MenuItem(
     val route: NavigationRoute,
-    val isSelected: MutableState<Boolean>,
+    val isSelected: MutableState<Boolean>
 )
-
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,32 +65,35 @@ fun HoldSettingsOrderSheet(
     var menuItems: List<MenuItem> by retain { mutableStateOf(emptyList()) }
 
     LaunchedEffect(holdMenuEntries) {
-        menuItems = buildList {
-            settingsRoutes
-                .sortedBy { route ->
-                    holdMenuEntries.indexOf(route).let {
-                        if (it == -1) Int.MAX_VALUE else it
-                    }
-                }.forEach { route ->
-                    add(
-                        MenuItem(
-                            route = route,
-                            isSelected = mutableStateOf(route in holdMenuEntries),
+        menuItems =
+            buildList {
+                settingsRoutes
+                    .sortedBy { route ->
+                        holdMenuEntries.indexOf(route).let {
+                            if (it == -1) Int.MAX_VALUE else it
+                        }
+                    }.forEach { route ->
+                        add(
+                            MenuItem(
+                                route = route,
+                                isSelected = mutableStateOf(route in holdMenuEntries)
+                            )
                         )
-                    )
-                }
-        }
+                    }
+            }
     }
 
     val lazyListState = rememberLazyListState()
-    val reorderState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        onMove = { from, to ->
-            menuItems = menuItems.toMutableList().apply {
-                add(to.index, removeAt(from.index))
+    val reorderState =
+        rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            onMove = { from, to ->
+                menuItems =
+                    menuItems.toMutableList().apply {
+                        add(to.index, removeAt(from.index))
+                    }
             }
-        }
-    )
+        )
 
     DragonModalBottomSheet(
         onDismissRequest = {
@@ -142,7 +143,6 @@ fun HoldSettingsOrderSheet(
             }
         }
 
-
         Box(modifier = Modifier.heightIn(max = 600.dp)) {
             LazyColumn(
                 state = lazyListState,
@@ -163,13 +163,17 @@ fun HoldSettingsOrderSheet(
                             onClick = {
                                 when {
                                     !isEnabled -> ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
-                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value -> ctx.showToast(ctx.getString(R.string.cannot_add_more_than_x, MAX_ITEMS_ALLOWED))
+                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value ->
+                                        ctx.showToast(
+                                            ctx.getString(R.string.cannot_add_more_than_x, MAX_ITEMS_ALLOWED)
+                                        )
                                     else -> entry.isSelected.value = !isSelected
                                 }
                             },
-                            modifier = Modifier
-                                .scale(scale)
-                                .longPressDraggableHandle()
+                            modifier =
+                                Modifier
+                                    .scale(scale)
+                                    .longPressDraggableHandle()
                         ) {
                             Checkbox(
                                 checked = isSelected,

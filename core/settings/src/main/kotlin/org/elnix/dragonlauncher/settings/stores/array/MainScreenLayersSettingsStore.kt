@@ -4,4 +4,4 @@ import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.stores.JsonArraySettingsStore
 
 @SettingsStore
-public object MainScreenLayersSettingsStore: JsonArraySettingsStore()
+public object MainScreenLayersSettingsStore : JsonArraySettingsStore()

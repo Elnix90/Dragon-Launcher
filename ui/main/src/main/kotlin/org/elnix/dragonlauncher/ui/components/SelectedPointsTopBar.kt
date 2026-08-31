@@ -60,7 +60,6 @@ fun SelectedPointsTopBar(
         if (selectedPointsIds.isEmpty()) showSelectedPointsDialog = false
     }
 
-
     var frozenIds by remember { mutableStateOf<List<Int>>(emptyList()) }
     var frozenPoints by remember { mutableStateOf(points) }
     if (selectedPointsIds.isNotEmpty()) {
@@ -68,11 +67,12 @@ fun SelectedPointsTopBar(
         frozenPoints = points
     }
 
-    val whatPreviewToShow = when (selectedPointsIds.size) {
-        0 -> null
-        1 -> true
-        else -> false
-    }
+    val whatPreviewToShow =
+        when (selectedPointsIds.size) {
+            0 -> null
+            1 -> true
+            else -> false
+        }
 
     var oldCount by remember { mutableIntStateOf(frozenIds.size) }
 
@@ -101,12 +101,13 @@ fun SelectedPointsTopBar(
 
             false -> {
                 Row(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .shapedClickable { showSelectedPointsDialog = true }
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .padding(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier =
+                        Modifier
+                            .padding(top = 10.dp)
+                            .shapedClickable { showSelectedPointsDialog = true }
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     DragonIconButton(
                         icon = R.drawable.close,
@@ -146,18 +147,19 @@ fun SelectedPointsTopBar(
                         )
 
                         BurgerListAction(
-                            actions = listOf(
-                                MoreOptions(
-                                    onClick = onSelectAll,
-                                    icon = R.drawable.select_all,
-                                    text = { stringResource(R.string.select_all) }
+                            actions =
+                                listOf(
+                                    MoreOptions(
+                                        onClick = onSelectAll,
+                                        icon = R.drawable.select_all,
+                                        text = { stringResource(R.string.select_all) }
+                                    ),
+                                    MoreOptions(
+                                        onClick = onInvert,
+                                        icon = R.drawable.swap_calls,
+                                        text = { stringResource(R.string.invert) }
+                                    )
                                 ),
-                                MoreOptions(
-                                    onClick = onInvert,
-                                    icon = R.drawable.swap_calls,
-                                    text = { stringResource(R.string.invert) }
-                                )
-                            ),
                             isExpanded = showMoreDialog,
                             onDismissRequest = { showMoreDialog = false }
                         )
@@ -166,7 +168,6 @@ fun SelectedPointsTopBar(
             }
         }
     }
-
 
     if (showSelectedPointsDialog) {
         CustomAlertDialog(
@@ -210,12 +211,13 @@ private fun PointItem(
 ) {
     val color = point.action.actionColor(LocalExtraColors.current)
     Row(
-        modifier = Modifier
-            .shapedClickable(onClick = deselect)
-            .background(color.alphaMultiplier(0.2f))
-            .padding(10.dp),
+        modifier =
+            Modifier
+                .shapedClickable(onClick = deselect)
+                .background(color.alphaMultiplier(0.2f))
+                .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         FinalPointIcon(point, size = null)
         Text(

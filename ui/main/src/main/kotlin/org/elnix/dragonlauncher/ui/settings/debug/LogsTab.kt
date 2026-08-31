@@ -84,7 +84,6 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     val navigator = LocalNavigator.current
 //    val scope = rememberCoroutineScope()
 
-
     val enableLogging by DebugSettingsStore.enableLogging.asState()
 //    val filterTag by DebugSettingsStore.filterTag.asState()
 
@@ -106,11 +105,15 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     val versionNumber = ctx.getVersionNumber()
     val codeName = ctx.getCodeName()
     val versionCode = ctx.getVersionNumber()
-""
+    ""
     // Build extension list by parsing the registry JSON directly (robust to field names)
     var finalExtensionText = "No extensions installed"
     try {
-        val registryContent = ctx.assets.open("extensions-registry.json").bufferedReader().readText()
+        val registryContent =
+            ctx.assets
+                .open("extensions-registry.json")
+                .bufferedReader()
+                .readText()
         val root = json.parseToJsonElement(registryContent)
         val lines = ArrayList<String>()
 
@@ -123,11 +126,12 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 
                     if (!pkgValue.isNullOrEmpty()) {
                         if (ExtensionManager.isExtensionInstalled(ctx, pkgValue)) {
-                            val pkgInfo = try {
-                                ctx.packageManager.getPackageInfo(pkgValue, 0)
-                            } catch (_: Exception) {
-                                null
-                            }
+                            val pkgInfo =
+                                try {
+                                    ctx.packageManager.getPackageInfo(pkgValue, 0)
+                                } catch (_: Exception) {
+                                    null
+                                }
 
                             val versionStr = pkgInfo?.versionName ?: "unknown"
                             lines.add("$nameValue ($versionStr)")
@@ -143,43 +147,45 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
         // registry not available or parse failed -> leave default text
     }
 
-    val deviceDetails = remember {
-        buildString {
-            appendLine(" DEVICE DETAILS ")
-            appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
-            appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
-            if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
-                appendLine("Security Patch: ${Build.VERSION.SECURITY_PATCH}")
-            }
-            appendLine("Arch: ${Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"}")
-            appendLine("Display: ${windowInfo.containerSize.width}x${windowInfo.containerSize.height}px")
-            appendLine(
-                "RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
-                    (memInfo.totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
-                    memInfo.totalMem / 1024.0 / 1024 / 1024,
-                    memInfo.availMem * 100 / memInfo.totalMem
-                )
-            )
-            appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
-            appendLine("App version: $versionNumber ($codeName) ($versionCode)")
-
-            appendLine("\n EXTENSIONS ")
-            appendLine(finalExtensionText)
-
-            appendLine("\n PERMISSIONS ")
-            try {
-                val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
-                info.requestedPermissions?.forEachIndexed { index, perm ->
-                    val flags = info.requestedPermissionsFlags
-                    val granted = (flags != null && (flags[index] and 0x00000002) != 0) ||
-                            ContextCompat.checkSelfPermission(ctx, perm) == PackageManager.PERMISSION_GRANTED
-                    appendLine("${perm.substringAfterLast(".")}: ${if (granted) "✅" else "❌"}")
+    val deviceDetails =
+        remember {
+            buildString {
+                appendLine(" DEVICE DETAILS ")
+                appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
+                appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
+                if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
+                    appendLine("Security Patch: ${Build.VERSION.SECURITY_PATCH}")
                 }
-            } catch (e: Exception) {
-                appendLine("Error reading permissions: $e")
+                appendLine("Arch: ${Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"}")
+                appendLine("Display: ${windowInfo.containerSize.width}x${windowInfo.containerSize.height}px")
+                appendLine(
+                    "RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
+                        (memInfo.totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
+                        memInfo.totalMem / 1024.0 / 1024 / 1024,
+                        memInfo.availMem * 100 / memInfo.totalMem
+                    )
+                )
+                appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
+                appendLine("App version: $versionNumber ($codeName) ($versionCode)")
+
+                appendLine("\n EXTENSIONS ")
+                appendLine(finalExtensionText)
+
+                appendLine("\n PERMISSIONS ")
+                try {
+                    val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
+                    info.requestedPermissions?.forEachIndexed { index, perm ->
+                        val flags = info.requestedPermissionsFlags
+                        val granted =
+                            (flags != null && (flags[index] and 0x00000002) != 0) ||
+                                ContextCompat.checkSelfPermission(ctx, perm) == PackageManager.PERMISSION_GRANTED
+                        appendLine("${perm.substringAfterLast(".")}: ${if (granted) "✅" else "❌"}")
+                    }
+                } catch (e: Exception) {
+                    appendLine("Error reading permissions: $e")
+                }
             }
         }
-    }
 
     SettingsScaffold(
         title = "Logs",
@@ -194,14 +200,15 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                 },
                 icon = R.drawable.refresh
             )
-        },
+        }
     ) {
         DragonSettingsGroup {
-            val expandableSectionState = rememberExpandableSection(
-                title = R.string.device_info,
-                description = R.string.device_info_desc,
-                icon = R.drawable.bug_report
-            )
+            val expandableSectionState =
+                rememberExpandableSection(
+                    title = R.string.device_info,
+                    description = R.string.device_info_desc,
+                    icon = R.drawable.bug_report
+                )
 
             ExpandableSection(expandableSectionState) {
                 DialogTitle(
@@ -212,7 +219,8 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                             ctx.copyToClipboard(deviceDetails)
                             ctx.showToast("Device info copied")
                         }
-                    })
+                    }
+                )
                 SelectionContainer(
                     modifier = Modifier.dragonSettingGroup()
                 ) {
@@ -233,7 +241,6 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 DragonSettingsGroup(R.string.log_level) {
                     Setting(
                         setting = DebugSettingsStore.snackBarLogLevel,
@@ -267,26 +274,28 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(5.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 600.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 600.dp)
                 ) {
                     items(logFiles) { file ->
                         Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    navigator.navigate(NavigationRoute.LogsViewer(file.name))
-                                }
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        navigator.navigate(NavigationRoute.LogsViewer(file.name))
+                                    }
                         ) {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-
                                 Column(modifier = Modifier.weight(1f)) {
                                     TextWithDescription(
                                         text = file.name,
@@ -301,7 +310,6 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-
                                     DragonIconButton(
                                         icon = R.drawable.delete_forever,
                                         contentDescription = R.string.delete
@@ -317,7 +325,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 
                                     DragonIconButton(
                                         icon = R.drawable.share,
-                                        contentDescription = R.string.export,
+                                        contentDescription = R.string.export
                                     ) { exportLogFile(dragonLogViewModel, ctx, file) }
                                 }
                             }
@@ -359,7 +367,6 @@ private fun exportLogFile(
         )
 
         logD(LOGS_TAG) { "Share opened: ${shareFile.name}" }
-
     } catch (e: SecurityException) {
         logE(LOGS_TAG, e) { "FileProvider not configured, falling back to text share" }
 

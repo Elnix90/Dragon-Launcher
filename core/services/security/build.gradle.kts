@@ -6,7 +6,6 @@ plugins {
 
 android {
     namespace = "org.elnix.dragonlauncher.services.security"
-
 }
 
 dependencies {

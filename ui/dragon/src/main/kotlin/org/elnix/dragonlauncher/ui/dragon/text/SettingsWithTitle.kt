@@ -23,9 +23,10 @@ fun SettingsWithTitle(
     Column(modifier = modifier) {
         if (title != null) {
             Row(
-                modifier = Modifier
-                    .padding(start = 10.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(start = 10.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
+                        .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

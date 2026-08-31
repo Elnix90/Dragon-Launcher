@@ -10,7 +10,6 @@ import org.junit.Test
  * Negative angles wrap around, and angles >= 360 are reduced modulo 360.
  */
 class DoubleNormalizeAngleTest {
-
     private companion object {
         /** Tolerance for floating-point comparisons. */
         const val EPSILON = 1e-9
@@ -38,7 +37,7 @@ class DoubleNormalizeAngleTest {
         assertEquals(359.9, 359.9.normalizeAngle(), EPSILON)
     }
 
-    //  Boundary: exactly 360 
+    //  Boundary: exactly 360
 
     @Test
     fun `360 degrees wraps to 0`() {
@@ -50,7 +49,7 @@ class DoubleNormalizeAngleTest {
         assertEquals(0.0, 720.0.normalizeAngle(), EPSILON)
     }
 
-    //  Angles greater than 360 
+    //  Angles greater than 360
 
     @Test
     fun `450 degrees normalizes to 90`() {
@@ -63,7 +62,7 @@ class DoubleNormalizeAngleTest {
         assertEquals(90.0, 810.0.normalizeAngle(), EPSILON)
     }
 
-    //  Negative angles 
+    //  Negative angles
 
     @Test
     fun `negative 90 degrees normalizes to 270`() {
@@ -97,7 +96,7 @@ class DoubleNormalizeAngleTest {
         assertEquals(270.0, (-450.0).normalizeAngle(), EPSILON)
     }
 
-    //  Fractional angles 
+    //  Fractional angles
 
     @Test
     fun `fractional positive angle within range`() {

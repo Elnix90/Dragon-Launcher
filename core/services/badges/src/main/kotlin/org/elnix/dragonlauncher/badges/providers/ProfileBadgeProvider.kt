@@ -14,9 +14,8 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 internal class ProfileBadgeProvider(
     private val profileManager: ProfileManager
 ) : BadgeProvider {
-
-    override fun getBadge(application: Application): Flow<Badge?> = flow {
-
+    override fun getBadge(application: Application): Flow<Badge?> =
+        flow {
             emitAll(
                 profileManager.getProfile(application.user).map {
                     when (it?.type) {
@@ -26,15 +25,17 @@ internal class ProfileBadgeProvider(
                     }
                 }
             )
-    }
+        }
 
     companion object {
-        private val WorkProfile = Badge(
-            icon = BadgeIcon(R.drawable.enterprise)
-        )
+        private val WorkProfile =
+            Badge(
+                icon = BadgeIcon(R.drawable.enterprise)
+            )
 
-        private val PrivateProfile = Badge(
-            icon = BadgeIcon(R.drawable.encrypted)
-        )
+        private val PrivateProfile =
+            Badge(
+                icon = BadgeIcon(R.drawable.encrypted)
+            )
     }
 }

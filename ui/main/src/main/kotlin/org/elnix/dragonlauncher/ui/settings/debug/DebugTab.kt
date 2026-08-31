@@ -62,11 +62,12 @@ fun DebugTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val storeResetSectionState = rememberExpandableSection(
-        R.string.store_reset,
-        description = R.string.store_reset,
-        icon = R.drawable.delete_forever
-    )
+    val storeResetSectionState =
+        rememberExpandableSection(
+            R.string.store_reset,
+            description = R.string.store_reset,
+            icon = R.drawable.delete_forever
+        )
 
     var packageResult by remember { mutableStateOf<String?>(null) }
     var showPermissionDialog by remember { mutableStateOf(false) }
@@ -122,48 +123,53 @@ fun DebugTab() {
             var packageQuery by remember { mutableStateOf("") }
 
             fun searchPackage() {
-                packageResult = try {
-                    val info = ctx.packageManager.getPackageInfo(packageQuery.trim(), 0)
-                    animatedIcon.setSuccess()
-                    buildString {
-                        appendLine("Package: ${info.packageName}")
+                packageResult =
+                    try {
+                        val info = ctx.packageManager.getPackageInfo(packageQuery.trim(), 0)
+                        animatedIcon.setSuccess()
+                        buildString {
+                            appendLine("Package: ${info.packageName}")
 
-                        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            info.longVersionCode
-                        } else {
-                            @Suppress("DEPRECATION")
-                            info.versionCode
+                            val versionCode =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                    info.longVersionCode
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    info.versionCode
+                                }
+                            appendLine("Version: ${info.versionName} ($versionCode)")
+
+                            appendLine("Enabled: ${info.applicationInfo?.enabled ?: "unknown"}")
+                            appendLine("Data Dir: ${info.applicationInfo?.dataDir ?: "unknown"}")
                         }
-                        appendLine("Version: ${info.versionName} (${versionCode})")
-
-                        appendLine("Enabled: ${info.applicationInfo?.enabled ?: "unknown"}")
-                        appendLine("Data Dir: ${info.applicationInfo?.dataDir ?: "unknown"}")
+                    } catch (e: Exception) {
+                        animatedIcon.setError()
+                        "Not found or error: $e"
                     }
-                } catch (e: Exception) {
-                    animatedIcon.setError()
-                    "Not found or error: $e"
-                }
             }
 
             TextField(
                 value = packageQuery,
                 onValueChange = { packageQuery = it },
                 placeholder = { Text("Search package") },
-                colors = AppObjectsColors.outlinedTextFieldColors(
-                    removeBorder = true
-                ),
+                colors =
+                    AppObjectsColors.outlinedTextFieldColors(
+                        removeBorder = true
+                    ),
                 shape = CircleShape,
                 modifier = Modifier.dragonSettingGroup(),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        searchPackage()
-                        focusManager.clearFocus()
-                    }
-                ),
+                keyboardOptions =
+                    KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = {
+                            searchPackage()
+                            focusManager.clearFocus()
+                        }
+                    ),
                 trailingIcon = {
                     animatedIcon.Icon(
                         defaultIcon = R.drawable.search,
@@ -199,6 +205,7 @@ fun DebugTab() {
             val animatedIcon = rememberAnimatedIcon()
 
             var customSystemPackage by remember { mutableStateOf("") }
+
             fun setSystemPackage() {
                 scope.launch {
                     DebugSettingsStore.systemLauncherPackageName.set(ctx, customSystemPackage)
@@ -208,7 +215,6 @@ fun DebugTab() {
 
             val systemLauncherPackageNameSetting by DebugSettingsStore.systemLauncherPackageName.asState()
             val systemLauncherPackageName = remember { ctx.detectSystemLauncher() }
-
 
             val setButtonEnabled = systemLauncherPackageName != systemLauncherPackageNameSetting
             DragonButton(
@@ -254,21 +260,24 @@ fun DebugTab() {
                 value = customSystemPackage,
                 onValueChange = { customSystemPackage = it },
                 placeholder = { Text("System launcher package") },
-                colors = AppObjectsColors.outlinedTextFieldColors(
-                    removeBorder = true
-                ),
+                colors =
+                    AppObjectsColors.outlinedTextFieldColors(
+                        removeBorder = true
+                    ),
                 shape = CircleShape,
                 modifier = Modifier.dragonSettingGroup(),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        setSystemPackage()
-                        focusManager.clearFocus()
-                    }
-                ),
+                keyboardOptions =
+                    KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = {
+                            setSystemPackage()
+                            focusManager.clearFocus()
+                        }
+                    ),
                 trailingIcon = {
                     animatedIcon.Icon(
                         defaultIcon = R.drawable.search,

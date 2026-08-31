@@ -26,7 +26,6 @@ import java.io.FileNotFoundException
  * and writes the result to `build/test-output/migration/` for inspection.
  */
 class MigrationTest {
-
     companion object {
         private val legacyBackups: MutableList<BackupEntry> = mutableListOf()
         private val testDensity = Density(2.0f)
@@ -38,27 +37,28 @@ class MigrationTest {
         fun discoverBackups() {
             val moduleResources = File("core/services/migration/src/test/resources")
             val altResources = File("src/test/resources")
-            val resourceDir = when {
-                moduleResources.isDirectory -> moduleResources
-                altResources.isDirectory -> altResources
-                else -> return
-            }
-            val files: Array<File> = resourceDir.listFiles { f ->
-                f.name.matches(Regex("backup-3\\.2\\.2-.*\\.json"))
-            } ?: return
+            val resourceDir =
+                when {
+                    moduleResources.isDirectory -> moduleResources
+                    altResources.isDirectory -> altResources
+                    else -> return
+                }
+            val files: Array<File> =
+                resourceDir.listFiles { f ->
+                    f.name.matches(Regex("backup-3\\.2\\.2-.*\\.json"))
+                } ?: return
             val sorted = files.sortedBy { it.name }
             for (f in sorted) {
                 legacyBackups.add(BackupEntry(f.name, f.readText()))
             }
         }
 
-        private fun loadResource(path: String): String {
-            return MigrationTest::class.java.classLoader
+        private fun loadResource(path: String): String =
+            MigrationTest::class.java.classLoader
                 ?.getResourceAsStream(path)
                 ?.bufferedReader()
                 ?.readText()
                 ?: throw FileNotFoundException("Cannot load resource: $path")
-        }
     }
 
     private data class BackupEntry(
@@ -90,7 +90,8 @@ class MigrationTest {
 
             assertEquals(
                 "${entry.fileName}: points count must match",
-                oldPoints.length(), result.newPoints.length()
+                oldPoints.length(),
+                result.newPoints.length()
             )
 
             assertTrue(

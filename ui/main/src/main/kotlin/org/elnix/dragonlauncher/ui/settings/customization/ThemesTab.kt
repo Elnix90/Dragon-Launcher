@@ -48,9 +48,9 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.BACKUP_TAG
 import org.elnix.dragonlauncher.THEMES_TAG
 import org.elnix.dragonlauncher.base.loadThemes
+import org.elnix.dragonlauncher.base.model.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.base.utils.DateUtils
-import org.elnix.dragonlauncher.base.model.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
@@ -86,48 +86,48 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
         userThemes.addAll(userThemesStore)
     }
 
-
     var themes by remember { mutableStateOf<List<ThemeObject>?>(null) }
 
     LaunchedEffect(Unit) {
         themes = loadThemes(ctx)
     }
 
-
     var showJson by remember { mutableStateOf<JSONObject?>(null) }
 
-    val settingsImportLauncher = rememberSettingsImportLauncher(
-        onJsonReady = { json ->
-            scope.launch {
-                try {
-                    ColorSettingsStore.backupColors(ctx)
-                    ColorModesSettingsStore.colorTestMode.set(ctx, true)
+    val settingsImportLauncher =
+        rememberSettingsImportLauncher(
+            onJsonReady = { json ->
+                scope.launch {
+                    try {
+                        ColorSettingsStore.backupColors(ctx)
+                        ColorModesSettingsStore.colorTestMode.set(ctx, true)
 
-                    SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
-                    backupViewModel.result.value = BackupResult(
-                        export = false,
-                        error = false,
-                        title = ctx.getString(R.string.import_successful)
-                    )
-                } catch (e: Exception) {
-                    logE(BACKUP_TAG, e) { "Import failed" }
+                        SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
+                        backupViewModel.result.value =
+                            BackupResult(
+                                export = false,
+                                error = false,
+                                title = ctx.getString(R.string.import_successful)
+                            )
+                    } catch (e: Exception) {
+                        logE(BACKUP_TAG, e) { "Import failed" }
 
-                    ColorSettingsStore.restoreColors(ctx)
-                    ColorModesSettingsStore.colorTestMode.reset(ctx)
+                        ColorSettingsStore.restoreColors(ctx)
+                        ColorModesSettingsStore.colorTestMode.reset(ctx)
 
-                    backupViewModel.result.value = BackupResult(
-                        export = false,
-                        error = true,
-                        title = ctx.getString(R.string.import_failed),
-                        message = e.message ?: ""
-                    )
+                        backupViewModel.result.value =
+                            BackupResult(
+                                export = false,
+                                error = true,
+                                title = ctx.getString(R.string.import_failed),
+                                message = e.message ?: ""
+                            )
+                    }
                 }
             }
-        }
-    )
+        )
 
     val settingsExportLauncher = rememberSettingsExportLauncher(themeSettingsStores)
-
 
     SettingsScaffold(
         title = stringResource(R.string.theme_selector),
@@ -177,7 +177,6 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.heightIn(max = 1000.dp)
             ) {
-
                 themes?.let {
                     items(it) { theme ->
                         ThemeCard(
@@ -197,7 +196,6 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
         }
 
         fun addCurrentTheme() {
-
             scope.launch {
                 val json = SettingsBackupManager.createJsonToExport(ctx, themeSettingsStores, true)
 
@@ -213,7 +211,6 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.heightIn(max = 1000.dp)
         ) {
-
             item {
                 DragonRow(
                     onClick = ::addCurrentTheme,
@@ -228,12 +225,13 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
                 }
             }
             userThemes.forEachIndexed { index, string ->
-                val json = try {
-                    JSONObject(string)
-                } catch (e: Exception) {
-                    logE(THEMES_TAG, e) { "Error decoding user theme json" }
-                    JSONObject()
-                }
+                val json =
+                    try {
+                        JSONObject(string)
+                    } catch (e: Exception) {
+                        logE(THEMES_TAG, e) { "Error decoding user theme json" }
+                        JSONObject()
+                    }
 
                 item {
                     UserThemeCard(
@@ -272,24 +270,26 @@ private fun ThemeCard(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .shapedClickable(
-                onLongClick = onLongClick,
-                onClick = onClick
-            )
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .shapedClickable(
+                    onLongClick = onLongClick,
+                    onClick = onClick
+                ).background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
     ) {
         Image(
-            painter = if (theme.imageAssetPath != null) {
-                rememberAssetPainter(theme.imageAssetPath!!)
-            } else {
-                painterResource(R.drawable.ic_app_default)
-            },
+            painter =
+                if (theme.imageAssetPath != null) {
+                    rememberAssetPainter(theme.imageAssetPath!!)
+                } else {
+                    painterResource(R.drawable.ic_app_default)
+                },
             contentDescription = theme.name,
-            modifier = Modifier
-                .height(300.dp)
+            modifier =
+                Modifier
+                    .height(300.dp)
         )
 
         Spacer(5.dp)
@@ -302,7 +302,6 @@ private fun ThemeCard(
     }
 }
 
-
 @Composable
 private fun UserThemeCard(
     name: String,
@@ -313,16 +312,15 @@ private fun UserThemeCard(
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .shapedClickable(
-                onLongClick = onLongClick,
-                onClick = onClick
-            )
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .shapedClickable(
+                    onLongClick = onLongClick,
+                    onClick = onClick
+                ).background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
     ) {
-
         Text(
             text = name,
             style = MaterialTheme.typography.labelMedium,
@@ -341,8 +339,9 @@ private fun UserThemeCard(
 @Composable
 private fun rememberAssetPainter(assetPath: String): Painter {
     val ctx = LocalContext.current
-    val bitmap = remember(assetPath) {
-        ctx.assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
-    }
+    val bitmap =
+        remember(assetPath) {
+            ctx.assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
+        }
     return BitmapPainter(bitmap.asImageBitmap())
 }

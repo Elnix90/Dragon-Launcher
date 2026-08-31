@@ -17,7 +17,6 @@ import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 
-
 @Composable
 fun DragonRow(
     onClick: () -> Unit,
@@ -31,15 +30,15 @@ fun DragonRow(
         LocalContentColor provides MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
     ) {
         Row(
-            modifier = modifier
-                .shapedClickable(
-                    enabled = enabled,
-                    interactionSource = interactionSource,
-                    onLongClick = onLongClick,
-                    onClick = onClick
-                )
-                .background(MaterialTheme.colorScheme.surface.semiTransparentIfDisabled(enabled))
-                .padding(10.dp),
+            modifier =
+                modifier
+                    .shapedClickable(
+                        enabled = enabled,
+                        interactionSource = interactionSource,
+                        onLongClick = onLongClick,
+                        onClick = onClick
+                    ).background(MaterialTheme.colorScheme.surface.semiTransparentIfDisabled(enabled))
+                    .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             content = content

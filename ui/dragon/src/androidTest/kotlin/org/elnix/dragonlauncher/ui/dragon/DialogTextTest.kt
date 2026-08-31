@@ -26,7 +26,6 @@ import org.junit.Test
  * and don't interfere with each other when placed side by side.
  */
 class DialogTextTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

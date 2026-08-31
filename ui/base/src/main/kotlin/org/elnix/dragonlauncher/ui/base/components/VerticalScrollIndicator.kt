@@ -46,7 +46,7 @@ fun <T> LazyColumnWithScrollIndicator(
         LazyColumn(
             modifier = modifier,
             verticalArrangement = verticalArrangement,
-            state = state,
+            state = state
         ) {
             items(
                 items = items,
@@ -107,9 +107,10 @@ fun BoxScope.VerticalScrollIndicator(
             painter = painterResource(R.drawable.arrow_down),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.graphicsLayer {
-                rotationZ = 180f
-            }
+            modifier =
+                Modifier.graphicsLayer {
+                    rotationZ = 180f
+                }
         )
     }
 }

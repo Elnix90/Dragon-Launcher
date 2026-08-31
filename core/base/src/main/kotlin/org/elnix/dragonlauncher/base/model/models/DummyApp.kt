@@ -5,7 +5,6 @@ import android.content.Context
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 
-
 /**
  * Dummy app
  *

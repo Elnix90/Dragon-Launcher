@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun CustomAlertDialog(
     onDismissRequest: () -> Unit,
@@ -35,10 +34,8 @@ fun CustomAlertDialog(
     title: @Composable (() -> Unit)? = null,
     text: @Composable (() -> Unit)? = null
 ) {
-
     @SuppressLint("ConfigurationScreenWidthHeight")
     val maxDialogHeight = LocalConfiguration.current.screenHeightDp.dp * 0.9f
-
 
     CompositionLocalProvider(
         LocalContentColor provides MaterialTheme.colorScheme.onSurface
@@ -49,19 +46,21 @@ fun CustomAlertDialog(
             alignment = alignment
         ) {
             Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .heightIn(max = maxDialogHeight)
-                    .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                    .padding(top = 15.dp),
+                modifier =
+                    modifier
+                        .fillMaxWidth()
+                        .heightIn(max = maxDialogHeight)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                        .padding(top = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -76,16 +75,19 @@ fun CustomAlertDialog(
                         .then(
                             if (scroll) {
                                 Modifier.verticalScroll(rememberScrollState())
-                            } else Modifier
+                            } else {
+                                Modifier
+                            }
                         )
                 ) {
                     text?.invoke()
                 }
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {

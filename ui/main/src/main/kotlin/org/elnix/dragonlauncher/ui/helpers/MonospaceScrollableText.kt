@@ -36,16 +36,16 @@ fun MonospaceScrollableText(
 
     val thumbColor = MaterialTheme.colorScheme.primary
 
-    val scrollBar = remember(thumbColor) {
-        ScrollbarSettings(
-            alwaysShowScrollbar = true,
-            thumbThickness = 10.dp,
-            thumbUnselectedColor = thumbColor.alphaMultiplier(0.5f),
-            thumbSelectedColor = thumbColor,
-            selectionMode = ScrollbarSelectionMode.Full
-        )
-    }
-
+    val scrollBar =
+        remember(thumbColor) {
+            ScrollbarSettings(
+                alwaysShowScrollbar = true,
+                thumbThickness = 10.dp,
+                thumbUnselectedColor = thumbColor.alphaMultiplier(0.5f),
+                thumbSelectedColor = thumbColor,
+                selectionMode = ScrollbarSelectionMode.Full
+            )
+        }
 
     fun lineColor(idx: Int): Color? {
         if (idx !in lines.indices) return null
@@ -72,15 +72,19 @@ fun MonospaceScrollableText(
             ) {
                 LazyColumn(
                     state = lazyListState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(horizontalScrollState)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(horizontalScrollState)
                 ) {
                     itemsIndexed(lines) { idx, line ->
 
-                        val color = if (useDragonLogsColoration) {
-                            lineColor(idx)
-                        } else null
+                        val color =
+                            if (useDragonLogsColoration) {
+                                lineColor(idx)
+                            } else {
+                                null
+                            }
 
                         Text(
                             text = line,

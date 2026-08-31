@@ -22,7 +22,6 @@ import org.junit.Test
  * content is properly shown and hidden.
  */
 class DragonDropDownMenuTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

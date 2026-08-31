@@ -13,16 +13,15 @@ import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DragonIconButtonImpl(
     onClick: () -> Unit,
-    modifier: Modifier ,
+    modifier: Modifier,
     enabled: Boolean,
     interactionSource: MutableInteractionSource,
     colors: IconButtonColors,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     IconButton(
         onClick = onClick,
@@ -63,8 +62,8 @@ fun DragonIconButton(
     }
 }
 
-//@Composable
-//fun DragonIconButton(
+// @Composable
+// fun DragonIconButton(
 //    icon: Int,
 //    contentDescription: String,
 //    modifier: Modifier = Modifier,
@@ -72,7 +71,7 @@ fun DragonIconButton(
 //    isCancel: Boolean = false,
 //    interactionSource: MutableInteractionSource = rememberInteractionSource(),
 //    onClick: () -> Unit
-//) {
+// ) {
 //    val colors = if (isCancel) AppObjectsColors.cancelIconButtonColors() else AppObjectsColors.iconButtonColors()
 //
 //    DragonTooltip(contentDescription) {
@@ -89,4 +88,4 @@ fun DragonIconButton(
 //            )
 //        }
 //    }
-//}
+// }

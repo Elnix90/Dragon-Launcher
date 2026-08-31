@@ -4,9 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.FONT_RECEIVER_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.FONT_RECEIVER_TAG
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

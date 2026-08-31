@@ -53,10 +53,11 @@ fun GamblingInputDialog(
                     singleLine = true,
                     label = { Text(stringResource(R.string.how_many_question)) },
                     colors = AppObjectsColors.outlinedTextFieldColors(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Done
-                    ),
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        ),
                     shape = CircleShape,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -75,17 +76,17 @@ fun GamblingInputDialog(
                 validateText = stringResource(R.string.ok),
                 onCancel = onDismiss
             ) {
-                val number = try {
-                    text.toInt()
-                } catch (_: Exception) {
-                    ctx.showToast("Wrong number format")
-                    0
-                }
+                val number =
+                    try {
+                        text.toInt()
+                    } catch (_: Exception) {
+                        ctx.showToast("Wrong number format")
+                        0
+                    }
 
                 onSelect(number, snapToShapes)
                 onDismiss()
             }
-
         },
         containerColor = MaterialTheme.colorScheme.surface
     )

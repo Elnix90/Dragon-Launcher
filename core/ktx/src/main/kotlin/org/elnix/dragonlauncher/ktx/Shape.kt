@@ -12,11 +12,12 @@ public fun Shape.toPath(
     size: Size,
     density: Density
 ): Path {
-    val outline = createOutline(
-        size = size,
-        layoutDirection = LayoutDirection.Ltr,
-        density = density
-    )
+    val outline =
+        createOutline(
+            size = size,
+            layoutDirection = LayoutDirection.Ltr,
+            density = density
+        )
 
     return when (outline) {
         is Outline.Rectangle -> Path().apply { addRect(outline.rect) }

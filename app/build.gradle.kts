@@ -8,17 +8,16 @@ plugins {
     alias(libs.plugins.dragon.application)
 }
 
-
-val dotenv = Properties().apply {
-    val envFile = rootProject.file(".env")
-    if (envFile.exists()) {
-        envFile.inputStream().use { load(it) }
+val dotenv =
+    Properties().apply {
+        val envFile = rootProject.file(".env")
+        if (envFile.exists()) {
+            envFile.inputStream().use { load(it) }
+        }
     }
-}
 
 fun env(name: String): String? =
     System.getenv(name) ?: dotenv.getProperty(name)
-
 
 extensions.configure<ApplicationExtension> {
     namespace = "org.elnix.dragonlauncher"
@@ -29,7 +28,8 @@ extensions.configure<ApplicationExtension> {
         versionCode = 62
     }
 
-    val hasSigningConfig = env("KEYSTORE_FILE") != null &&
+    val hasSigningConfig =
+        env("KEYSTORE_FILE") != null &&
             env("KEYSTORE_PASSWORD") != null &&
             env("KEY_ALIAS") != null &&
             env("KEY_PASSWORD") != null
@@ -93,7 +93,6 @@ dependencies {
     // DO NOT FUCKING DELTE THIS!!!!!
     implementation(libs.shizuku.provider)
 
-
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:ktx"))
@@ -126,7 +125,6 @@ dependencies {
     implementation(project(":ui:main"))
     implementation(project(":ui:theme"))
 }
-
 
 // Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app
 tasks.register<Copy>("copyChangelogsToAssets") {

@@ -12,17 +12,16 @@ import kotlin.time.Clock
 object GoogleWarningManager {
     fun showWarning(): Boolean = (getDaysLeft() >= 0)
 
-
     val showWarningDialog: SettingFlow<Boolean> = SettingFlow(showWarning())
 
     fun updateWarningDialog(newValue: Boolean) {
         showWarningDialog.update { newValue }
     }
 
-    fun getDaysLeft(): Int {
-        return Clock.System.now()
+    fun getDaysLeft(): Int =
+        Clock.System
+            .now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .date
             .daysUntil(LocalDate(year = 2027, month = 1, day = 1))
-    }
 }

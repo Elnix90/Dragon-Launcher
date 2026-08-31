@@ -12,14 +12,14 @@ public data class IconPack(
     val packageName: String,
     val version: String,
     val scale: Float = 1f,
-    val themed: Boolean = false,
+    val themed: Boolean = false
 ) {
     public constructor(entity: IconPackEntity) : this(
         name = entity.name,
         packageName = entity.packageName,
         version = entity.version,
         scale = entity.scale,
-        themed = entity.themed,
+        themed = entity.themed
     )
 
     internal constructor(
@@ -29,11 +29,13 @@ public data class IconPack(
     ) : this(
         name = resolveInfo.loadLabel(context.packageManager).toString(),
         packageName = resolveInfo.activityInfo.packageName,
-        version = context.packageManager.getPackageInfo(resolveInfo.activityInfo.packageName, 0)
-            .let {
-                "${it.versionName} (${it.versionCode})"
-            },
-        themed = themed,
+        version =
+            context.packageManager
+                .getPackageInfo(resolveInfo.activityInfo.packageName, 0)
+                .let {
+                    "${it.versionName} (${it.versionCode})"
+                },
+        themed = themed
     )
 
     internal constructor(
@@ -43,19 +45,19 @@ public data class IconPack(
     ) : this(
         name = packageInfo.applicationInfo!!.loadLabel(context.packageManager).toString(),
         packageName = packageInfo.packageName,
-        version = context.packageManager.getPackageInfo(packageInfo.packageName, 0).let {
-            "${it.versionName} (${it.versionCode})"
-        },
-        themed = themed,
+        version =
+            context.packageManager.getPackageInfo(packageInfo.packageName, 0).let {
+                "${it.versionName} (${it.versionCode})"
+            },
+        themed = themed
     )
 
-    public fun toDatabaseEntity(): IconPackEntity {
-        return IconPackEntity(
+    public fun toDatabaseEntity(): IconPackEntity =
+        IconPackEntity(
             name = name,
             scale = scale,
             version = version,
             packageName = packageName,
-            themed = themed,
+            themed = themed
         )
-    }
 }

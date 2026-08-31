@@ -25,86 +25,86 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class SecurityViewModel @Inject constructor(
-    application: Application,
-    private val securityService: SecurityService,
-) : AndroidViewModel(application) {
+public class SecurityViewModel
+    @Inject
+    constructor(
+        application: Application,
+        private val securityService: SecurityService
+    ) : AndroidViewModel(application) {
+        public val isLocked: SettingFlow<Boolean> = SettingFlow(false)
 
-    public val isLocked: SettingFlow<Boolean> = SettingFlow(false)
+        public val signatureMatched: SettingFlow<Boolean> = SettingFlow(true)
+        public val useAnyways: SettingFlow<Boolean> = SettingFlow(false)
 
-    public val signatureMatched: SettingFlow<Boolean> = SettingFlow(true)
-    public val useAnyways: SettingFlow<Boolean> = SettingFlow(false)
-
-    init {
-        signatureMatched.value = application.checkSignature(DRAGON_LAUNCHER_SIGNATURE_HASH)
-        viewModelInitialized()
-    }
-
-
-    public fun removeLock() {
-        viewModelScope.launch {
-            PrivateSettingsStore.settingsHash.reset(application)
-            PrivateSettingsStore.lockMethod.reset(application)
-            unlock()
+        init {
+            signatureMatched.value = application.checkSignature(DRAGON_LAUNCHER_SIGNATURE_HASH)
+            viewModelInitialized()
         }
-    }
 
-    public fun setPinLockMethod(pin: String) {
-        viewModelScope.launch {
-            val hash = securityService.hash(pin)
-            PrivateSettingsStore.settingsHash.set(application, hash)
-            PrivateSettingsStore.lockMethod.set(application, Pin)
-            application.showToast(application.getString(R.string.pin_set_success))
-            unlock()
+        public fun removeLock() {
+            viewModelScope.launch {
+                PrivateSettingsStore.settingsHash.reset(application)
+                PrivateSettingsStore.lockMethod.reset(application)
+                unlock()
+            }
         }
-    }
 
-    public fun setPatternLockMethod(pattern: String) {
-        viewModelScope.launch {
-            val hash = securityService.hash(pattern)
-            PrivateSettingsStore.settingsHash.set(application, hash)
-            PrivateSettingsStore.lockMethod.set(application, Pattern)
-            application.showToast(application.getString(R.string.pattern_set_successfully))
-            unlock()
+        public fun setPinLockMethod(pin: String) {
+            viewModelScope.launch {
+                val hash = securityService.hash(pin)
+                PrivateSettingsStore.settingsHash.set(application, hash)
+                PrivateSettingsStore.lockMethod.set(application, Pin)
+                application.showToast(application.getString(R.string.pin_set_success))
+                unlock()
+            }
         }
-    }
 
-    public fun setDeviceLockScreenMethod() {
-        viewModelScope.launch {
-            PrivateSettingsStore.settingsHash.reset(application)
-            PrivateSettingsStore.lockMethod.set(application, Device)
-            unlock()
+        public fun setPatternLockMethod(pattern: String) {
+            viewModelScope.launch {
+                val hash = securityService.hash(pattern)
+                PrivateSettingsStore.settingsHash.set(application, hash)
+                PrivateSettingsStore.lockMethod.set(application, Pattern)
+                application.showToast(application.getString(R.string.pattern_set_successfully))
+                unlock()
+            }
         }
-    }
 
-
-    public fun lock() {
-        isLocked.value = true
-    }
-
-    public fun unlock() {
-        isLocked.value = false
-    }
-
-    public suspend fun verify(pin: String): Boolean = securityService.verify(pin)
-
-    public fun onEnterNewRoute(route: NavKey) {
-        if (route !in NavigationRoute.settingsRoutes) {
-            lock()
+        public fun setDeviceLockScreenMethod() {
+            viewModelScope.launch {
+                PrivateSettingsStore.settingsHash.reset(application)
+                PrivateSettingsStore.lockMethod.set(application, Device)
+                unlock()
+            }
         }
+
+        public fun lock() {
+            isLocked.value = true
+        }
+
+        public fun unlock() {
+            isLocked.value = false
+        }
+
+        public suspend fun verify(pin: String): Boolean = securityService.verify(pin)
+
+        public fun onEnterNewRoute(route: NavKey) {
+            if (route !in NavigationRoute.settingsRoutes) {
+                lock()
+            }
+        }
+
+        public fun isDeviceUnlockAvailable(): Boolean = securityService.isDeviceUnlockAvailable(application)
+
+        public fun showDeviceUnlockPrompt(
+            activity: FragmentActivity,
+            onSuccess: () -> Unit,
+            onError: (String) -> Unit,
+            onFailed: () -> Unit
+        ): Unit =
+            securityService.showDeviceUnlockPrompt(
+                activity = activity,
+                onSuccess = onSuccess,
+                onError = onError,
+                onFailed = onFailed
+            )
     }
-
-    public fun isDeviceUnlockAvailable(): Boolean = securityService.isDeviceUnlockAvailable(application)
-
-    public fun showDeviceUnlockPrompt(
-        activity: FragmentActivity,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit,
-        onFailed: () -> Unit
-    ): Unit = securityService.showDeviceUnlockPrompt(
-        activity = activity,
-        onSuccess = onSuccess,
-        onError = onError,
-        onFailed = onFailed
-    )
-}

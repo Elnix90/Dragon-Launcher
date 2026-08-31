@@ -3,7 +3,6 @@ package org.elnix.dragonlauncher.base.model.serializables.serializers
 import android.os.Parcel
 import android.os.Process
 import android.os.UserHandle
-import org.elnix.dragonlauncher.PROFILES_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -11,6 +10,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.elnix.dragonlauncher.PROFILES_TAG
 
 /**
  * Serializes a [UserHandle] as its raw user id (`Int`).

@@ -19,9 +19,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.PointsViewModel
@@ -52,8 +52,9 @@ fun PointPreviewCanvas(
     val pointSize = editPoint.getSize(defaultPoint, isDefaultEditing).px
 
     BoxWithConstraints(
-        modifier = modifier
-            .height(height + 40.dp)
+        modifier =
+            modifier
+                .height(height + 40.dp)
     ) {
         val width = this.maxWidth
         val height = this.maxHeight
@@ -65,26 +66,28 @@ fun PointPreviewCanvas(
         val leftCenter = Offset(leftX, centerY)
         val rightCenter = Offset(rightX, centerY)
 
-        val drawParams = rememberDrawParams(
-            eraseColor = backgroundColor,
-            isDefaultEditing = isDefaultEditing,
-            pointSettingsDisplay = false,
-            showCancelZone = false,
-            allowShowPointCenter = false,
-            hideShapes = false,
-            skipSelected = false
-        )
+        val drawParams =
+            rememberDrawParams(
+                eraseColor = backgroundColor,
+                isDefaultEditing = isDefaultEditing,
+                pointSettingsDisplay = false,
+                showCancelZone = false,
+                allowShowPointCenter = false,
+                hideShapes = false,
+                skipSelected = false
+            )
 
         val selected = rememberCustomText(stringResource(R.string.selected_text), pointSize)
         val unselected = rememberCustomText(stringResource(R.string.unselected), pointSize)
         val textColor = MaterialTheme.colorScheme.onSurface
 
         Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    compositingStrategy = CompositingStrategy.Offscreen
-                }
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        compositingStrategy = CompositingStrategy.Offscreen
+                    }
         ) {
             drawText(
                 textLayoutResult = unselected.offsetTextLayoutResult,
@@ -102,14 +105,14 @@ fun PointPreviewCanvas(
                 depth = Int.MAX_VALUE,
                 center = leftCenter,
                 selected = false,
-                drawParams = drawParams,
+                drawParams = drawParams
             )
             this.PointIcon(
                 point = editPoint,
                 depth = Int.MAX_VALUE,
                 center = rightCenter,
                 selected = true,
-                drawParams = drawParams,
+                drawParams = drawParams
             )
         }
 

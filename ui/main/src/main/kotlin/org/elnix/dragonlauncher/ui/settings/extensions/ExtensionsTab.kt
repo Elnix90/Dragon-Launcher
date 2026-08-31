@@ -89,14 +89,15 @@ fun ExtensionsTab() {
             }
         }
 
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocument(),
-            onResult = { uri ->
-                uri?.let {
-                    ExtensionManager.installApk(ctx, it)
+        val launcher =
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocument(),
+                onResult = { uri ->
+                    uri?.let {
+                        ExtensionManager.installApk(ctx, it)
+                    }
                 }
-            }
-        )
+            )
 
         DragonSettingsGroup(R.string.extension_manual_install_title) {
             Text(
@@ -110,7 +111,6 @@ fun ExtensionsTab() {
         }
     }
 }
-
 
 @Composable
 private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
@@ -155,9 +155,10 @@ private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -172,8 +173,9 @@ private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
                             ctx.tryStartActivity(intent)
                         } else {
                             // Try showing app info instead if no launcher intent
-                            val infoIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                .apply { data = "package:$pkg".toUri() }
+                            val infoIntent =
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                    .apply { data = "package:$pkg".toUri() }
                             ctx.tryStartActivity(infoIntent)
                         }
                     }
@@ -195,11 +197,12 @@ private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
                     } else {
                         // Uninstall logic (via Intent)
                         val pkg = extension.packageName
-                        val intent = Intent(Intent.ACTION_DELETE)
-                            .apply { data = "package:$pkg".toUri() }
+                        val intent =
+                            Intent(Intent.ACTION_DELETE)
+                                .apply { data = "package:$pkg".toUri() }
                         ctx.tryStartActivity(intent)
                     }
-                },
+                }
             ) {
                 Icon(
                     painter = painterResource(if (isInstalled) R.drawable.delete_forever else R.drawable.download),

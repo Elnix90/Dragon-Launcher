@@ -13,7 +13,6 @@ import org.elnix.dragonlauncher.i18n.R
 @Suppress("EqualsOrHashCode")
 @Serializable
 public sealed class NavigationRoute : NavKey {
-
     @get:StringRes
     public abstract val resId: Int
 
@@ -85,7 +84,7 @@ public sealed class NavigationRoute : NavKey {
 
     @Serializable
     @SerialName("Widgets")
-    public data object Widgets: NavigationRoute() {
+    public data object Widgets : NavigationRoute() {
         override val resId: Int = R.string.widgets
         override val icon: Int = R.drawable.widgets
     }
@@ -208,6 +207,7 @@ public sealed class NavigationRoute : NavKey {
         val filename: String
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
+
         override val resId: Int = R.string.logs
         override val icon: Int = R.drawable.source_notes
     }
@@ -232,6 +232,7 @@ public sealed class NavigationRoute : NavKey {
         val workspaceId: String
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
+
         override val resId: Int = R.string.edit_workspace
         override val icon: Int = R.drawable.edit_rounded
     }
@@ -242,6 +243,7 @@ public sealed class NavigationRoute : NavKey {
         val appName: String
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
+
         override val resId: Int = R.string.time_exceeded_title
         override val icon: Int = R.drawable.timer
     }
@@ -257,11 +259,12 @@ public sealed class NavigationRoute : NavKey {
 
     @Serializable
     @SerialName("LockScreenSetup")
-    public data class LockScreenSetup(val lockMethod: LockMethod) : NavigationRoute() {
+    public data class LockScreenSetup(
+        val lockMethod: LockMethod
+    ) : NavigationRoute() {
         override val resId: Int = R.string.lock
         override val icon: Int = R.drawable.lock
     }
-
 
     override fun hashCode(): Int = System.identityHashCode(this)
 
@@ -296,40 +299,45 @@ public sealed class NavigationRoute : NavKey {
                 WorkspaceDetail("")
             )
         }
-
     }
 }
 
 /** List of routes that the routes killer ignores when the user leave the app for too long, usually files pickers */
 public val NavKey.isIgnoredReturnScreen: Boolean
-    get() = when (this) {
-        NavigationRoute.Welcome,
-        NavigationRoute.Backup,
-        NavigationRoute.Wallpaper,
-        NavigationRoute.Widgets -> true
+    get() =
+        when (this) {
+            NavigationRoute.Welcome,
+            NavigationRoute.Backup,
+            NavigationRoute.Wallpaper,
+            NavigationRoute.Widgets
+            -> true
 
-        else -> false
-    }
+            else -> false
+        }
 
 /** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
 public val NavKey.inTransparentScreen: Boolean
-    get() = when (this) {
-        NavigationRoute.Main,
-        NavigationRoute.Drawer,
-        NavigationRoute.DrawerSettings,
-        NavigationRoute.Wallpaper,
-        NavigationRoute.Widgets,
-        is NavigationRoute.LockScreen,
-        is NavigationRoute.LockScreenSetup, -> true
+    get() =
+        when (this) {
+            NavigationRoute.Main,
+            NavigationRoute.Drawer,
+            NavigationRoute.DrawerSettings,
+            NavigationRoute.Wallpaper,
+            NavigationRoute.Widgets,
+            is NavigationRoute.LockScreen,
+            is NavigationRoute.LockScreenSetup
+            -> true
 
-        else -> false
-    }
+            else -> false
+        }
 
 /** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
 public val NavKey.halfTransparentScreen: Boolean
-    get() = when (this) {
-        NavigationRoute.PointsSettings,
-        NavigationRoute.NestEdit -> true
+    get() =
+        when (this) {
+            NavigationRoute.PointsSettings,
+            NavigationRoute.NestEdit
+            -> true
 
-        else -> false
-    }
+            else -> false
+        }

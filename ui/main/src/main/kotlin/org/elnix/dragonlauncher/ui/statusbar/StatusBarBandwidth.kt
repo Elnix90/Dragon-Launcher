@@ -96,10 +96,9 @@ fun StatusBarBandwidth(element: StatusBar.Bandwidth) {
 }
 
 @SuppressLint("DefaultLocale")
-private fun formatSpeed(bytesPerSecond: Long): String {
-    return when {
+private fun formatSpeed(bytesPerSecond: Long): String =
+    when {
         bytesPerSecond >= 1_048_576L -> String.format("%.1fM", bytesPerSecond / 1_048_576.0)
         bytesPerSecond >= 1_024L -> String.format("%.0fK", bytesPerSecond / 1_024.0)
         else -> "${bytesPerSecond}B"
     }
-}

@@ -11,29 +11,29 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-
-private val OLD_DATASTORE_FILES: Map<String, String> = mapOf(
-    "uiDatastore" to "ui",
-    "colorModeDatastore" to "color_mode",
-    "colorDatastore" to "color",
-    "drawerDatastore" to "drawer",
-    "behaviorDatastore" to "behavior",
-    "wellbeingDatastore" to "wellbeing",
-    "languageDatastore" to "language",
-    "backupDatastore" to "backup",
-    "statusDatastore" to "status_bar",
-    "debugDatastore" to "debug",
-    "widgetsDatastore" to "widgets",
-    "workspacesDataStore" to "workspaces",
-    "privateSettingsStore" to "private",
-    "privateAppsDatastore" to "private_apps",
-    "floatingAppsDatastore" to "floating_apps",
-    "swipePointsDatastore" to "new_actions",
-    "swipeMapDataStore" to "swipe_map",
-    "statusBarJsonDataStore" to "status_bar_json",
-    "AngleLineDatastore" to "angle_line",
-    "HoldTOActivateDatastore" to "hold_to_activate"
-)
+private val OLD_DATASTORE_FILES: Map<String, String> =
+    mapOf(
+        "uiDatastore" to "ui",
+        "colorModeDatastore" to "color_mode",
+        "colorDatastore" to "color",
+        "drawerDatastore" to "drawer",
+        "behaviorDatastore" to "behavior",
+        "wellbeingDatastore" to "wellbeing",
+        "languageDatastore" to "language",
+        "backupDatastore" to "backup",
+        "statusDatastore" to "status_bar",
+        "debugDatastore" to "debug",
+        "widgetsDatastore" to "widgets",
+        "workspacesDataStore" to "workspaces",
+        "privateSettingsStore" to "private",
+        "privateAppsDatastore" to "private_apps",
+        "floatingAppsDatastore" to "floating_apps",
+        "swipePointsDatastore" to "new_actions",
+        "swipeMapDataStore" to "swipe_map",
+        "statusBarJsonDataStore" to "status_bar_json",
+        "AngleLineDatastore" to "angle_line",
+        "HoldTOActivateDatastore" to "hold_to_activate"
+    )
 
 /**
  * Raw DataStore preference keys of old stores whose backup JSON has a different
@@ -56,7 +56,6 @@ private const val KEY_STATUS_BAR_JSON = "statusBarJson"
  * when old DataStore files are detected and the new DataStore is empty (see [isMigrationNeeded]).
  */
 public class DataStoreMigrator {
-
     /**
      * Reconstructs the old backup JSON from every present old DataStore file and
      * migrates it via [LegacyBackupJsonMigrator].
@@ -100,11 +99,12 @@ public class DataStoreMigrator {
         if (!oldFile.exists()) return null
 
         val oldDataStore = PreferenceDataStoreFactory.create { oldFile }
-        val prefs = try {
-            oldDataStore.data.first()
-        } catch (_: Exception) {
-            emptyPreferences()
-        }
+        val prefs =
+            try {
+                oldDataStore.data.first()
+            } catch (_: Exception) {
+                emptyPreferences()
+            }
         if (prefs.asMap().isEmpty()) return null
 
         return when (oldBackupKey) {
@@ -147,17 +147,19 @@ public class DataStoreMigrator {
         return null
     }
 
-    private fun parseArray(raw: String): JSONArray? = try {
-        JSONArray(raw)
-    } catch (_: Exception) {
-        null
-    }
+    private fun parseArray(raw: String): JSONArray? =
+        try {
+            JSONArray(raw)
+        } catch (_: Exception) {
+            null
+        }
 
-    private fun parseObject(raw: String): JSONObject? = try {
-        JSONObject(raw)
-    } catch (_: Exception) {
-        null
-    }
+    private fun parseObject(raw: String): JSONObject? =
+        try {
+            JSONObject(raw)
+        } catch (_: Exception) {
+            null
+        }
 
     /**
      * Checks whether any old 3.2.2 DataStore files still exist on disk.
@@ -165,11 +167,10 @@ public class DataStoreMigrator {
      * @param ctx Android context.
      * @return `true` if at least one old DataStore file is present.
      */
-    public fun hasOldDataStoreFiles(ctx: Context): Boolean {
-        return OLD_DATASTORE_FILES.keys.any { name ->
-            File(ctx.filesDir, "datastore/${name}.preferences_pb").exists()
+    public fun hasOldDataStoreFiles(ctx: Context): Boolean =
+        OLD_DATASTORE_FILES.keys.any { name ->
+            File(ctx.filesDir, "datastore/$name.preferences_pb").exists()
         }
-    }
 
     /**
      * Determines whether auto-migration is needed.

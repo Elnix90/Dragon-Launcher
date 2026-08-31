@@ -34,10 +34,10 @@ import java.text.Collator
 
 @Immutable
 public abstract class Application : Comparable<Application> {
-
     public abstract val label: String
     public abstract val defaultLabel: String
     public abstract val labelOverride: String?
+
     public abstract fun overrideLabel(label: String): Application
 
     public abstract val category: AppCategory
@@ -53,7 +53,6 @@ public abstract class Application : Comparable<Application> {
 
     public abstract val isSuspended: Boolean
     public abstract val componentName: ComponentName
-
 
     public abstract val packageName: String
 
@@ -71,7 +70,6 @@ public abstract class Application : Comparable<Application> {
      * Second string is the normalized label
      */
     public abstract var cachedNormalizerResult: Pair<String, String>?
-
 
     public val action: Action.LaunchApp by lazy {
         Action.LaunchApp(packageName, profile)
@@ -105,24 +103,22 @@ public abstract class Application : Comparable<Application> {
         return true
     }
 
-
-    public fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon {
-        return StaticLauncherIcon(
-            foregroundLayer = StaticIconLayer(
-                icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
-                scale = 0.65f,
-                tint = 0xff3dda84.toInt(),
-            ),
+    public fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon =
+        StaticLauncherIcon(
+            foregroundLayer =
+                StaticIconLayer(
+                    icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
+                    scale = 0.65f,
+                    tint = 0xff3dda84.toInt()
+                ),
             backgroundLayer = ColorLayer(0xff3dda84.toInt())
         )
-    }
-
 
     public abstract fun getStoreDetails(ctx: Context): StoreLink?
 
     public fun uninstall(ctx: Context) {
         val intent = Intent(Intent.ACTION_DELETE)
-        intent.data = "package:${packageName}".toUri()
+        intent.data = "package:$packageName".toUri()
         ctx.startActivity(intent)
     }
 
@@ -139,10 +135,11 @@ public abstract class Application : Comparable<Application> {
 
     public suspend fun shareApkFile(ctx: Context) {
         val launcherApps = ctx.getSystemService<LauncherApps>()!!
-        val fileCopy = File(
-            ctx.cacheDir,
-            "$packageName-$versionName.apk"
-        )
+        val fileCopy =
+            File(
+                ctx.cacheDir,
+                "$packageName-$versionName.apk"
+            )
         withContext(Dispatchers.IO) {
             try {
                 val info = launcherApps.getApplicationInfo(packageName, 0, user)
@@ -158,11 +155,12 @@ public abstract class Application : Comparable<Application> {
         }
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        val uri = FileProvider.getUriForFile(
-            ctx,
-            ctx.applicationContext.packageName + ".fileprovider",
-            fileCopy
-        )
+        val uri =
+            FileProvider.getUriForFile(
+                ctx,
+                ctx.applicationContext.packageName + ".fileprovider",
+                fileCopy
+            )
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
         shareIntent.type = "application/vnd.android.package-archive"
         withContext(Dispatchers.Main) {
@@ -170,32 +168,31 @@ public abstract class Application : Comparable<Application> {
         }
     }
 
-
-    public fun getActivityInfo(ctx: Context): ActivityInfo? {
-        return try {
+    public fun getActivityInfo(ctx: Context): ActivityInfo? =
+        try {
             ctx.packageManager.getActivityInfo(componentName, 0)
         } catch (_: PackageManager.NameNotFoundException) {
             null
         }
-    }
 
     override fun compareTo(other: Application): Int {
         val label1 = labelOverride ?: label
         val label2 = other.labelOverride ?: other.label
-        return Collator.getInstance().apply { strength = Collator.SECONDARY }
+        return Collator
+            .getInstance()
+            .apply { strength = Collator.SECONDARY }
             .compare(label1, label2)
     }
 
     public companion object {
-
         public fun Application.getStoreLinkForInstaller(
-            installerPackage: String?,
-        ): StoreLink? {
-            return when (installerPackage) {
+            installerPackage: String?
+        ): StoreLink? =
+            when (installerPackage) {
                 "de.amazon.mShop.android", "com.amazon.venezia" -> {
                     StoreLink(
                         label = "Amazon App Shop",
-                        url = "http://www.amazon.com/gp/mas/dl/android?p=${packageName}",
+                        url = "http://www.amazon.com/gp/mas/dl/android?p=$packageName",
                         icon = R.drawable.amazon
                     )
                 }
@@ -203,15 +200,15 @@ public abstract class Application : Comparable<Application> {
                 "dev.imranr.obtainium", "dev.imranr.obtainium.fdroid" -> {
                     StoreLink(
                         label = "Obtainium",
-                        url = "https://obtainium.imranr.dev/app/${packageName}",
+                        url = "https://obtainium.imranr.dev/app/$packageName",
                         icon = R.drawable.obtainium
                     )
                 }
 
-                "com.android.vending"-> {
+                "com.android.vending" -> {
                     StoreLink(
                         label = "Google Play Store",
-                        url = "https://play.google.com/store/apps/details?id=${packageName}",
+                        url = "https://play.google.com/store/apps/details?id=$packageName",
                         icon = R.drawable.play_store
                     )
                 }
@@ -219,41 +216,39 @@ public abstract class Application : Comparable<Application> {
                 "org.fdroid.fdroid" -> {
                     StoreLink(
                         label = "F-Droid",
-                        url = "https://f-droid.org/packages/${packageName}",
+                        url = "https://f-droid.org/packages/$packageName",
                         icon = R.drawable.f_droid
                     )
                 }
 
-                "com.aurora.store", "com.aurora.adroid"  -> {
+                "com.aurora.store", "com.aurora.adroid" -> {
                     StoreLink(
                         label = "Aurora Store",
-                        url = "https://play.google.com/store/apps/details?id=${packageName}",
+                        url = "https://play.google.com/store/apps/details?id=$packageName",
                         icon = R.drawable.aurora_store
                     )
                 }
 
                 else -> null
             }
-        }
 
-        public fun getPackageVersionName(ctx: Context, packageName: String): String? {
-            return try {
+        public fun getPackageVersionName(ctx: Context, packageName: String): String? =
+            try {
                 ctx.packageManager.getPackageInfo(packageName, 0).versionName
             } catch (_: PackageManager.NameNotFoundException) {
                 null
             }
-        }
 
-        public fun isSuspended(ctx: Context, packageName: String): Boolean {
-            return try {
-                ctx.packageManager.getApplicationInfo(
-                    packageName,
-                    0
-                ).flags and ApplicationInfo.FLAG_SUSPENDED != 0
+        public fun isSuspended(ctx: Context, packageName: String): Boolean =
+            try {
+                ctx.packageManager
+                    .getApplicationInfo(
+                        packageName,
+                        0
+                    ).flags and ApplicationInfo.FLAG_SUSPENDED != 0
             } catch (_: PackageManager.NameNotFoundException) {
                 false
             }
-        }
 
         public fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
     }

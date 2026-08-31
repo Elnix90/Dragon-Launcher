@@ -15,45 +15,46 @@ import org.elnix.dragonlauncher.shizuku.ShellCommandExecutor
 import org.elnix.dragonlauncher.shizuku.ShizukuPermissionHandler
 import javax.inject.Inject
 
-
 @Stable
 @HiltViewModel
-public class ShizukuViewModel @Inject constructor() : ViewModel() {
-    private val shellCommandExecutor = ShellCommandExecutor()
-    private val shizukuPermissionHandler = ShizukuPermissionHandler()
+public class ShizukuViewModel
+    @Inject
+    constructor() : ViewModel() {
+        private val shellCommandExecutor = ShellCommandExecutor()
+        private val shizukuPermissionHandler = ShizukuPermissionHandler()
 
-    public val outputValue: SettingFlow<OutputLine?> = SettingFlow(null)
+        public val outputValue: SettingFlow<OutputLine?> = SettingFlow(null)
 
-    private val _showUnavailable = MutableStateFlow(false)
-    public val showUnavailable: StateFlow<Boolean> = _showUnavailable.asStateFlow()
+        private val _showUnavailable = MutableStateFlow(false)
+        public val showUnavailable: StateFlow<Boolean> = _showUnavailable.asStateFlow()
 
+        public fun clearOutput() {
+            outputValue.value = null
+        }
 
-    public fun clearOutput() {
-        outputValue.value = null
-    }
+        public fun shizukuPermissionState(): StateFlow<Boolean> = shizukuPermissionHandler.permissionGranted
 
-    public fun shizukuPermissionState(): StateFlow<Boolean> = shizukuPermissionHandler.permissionGranted
+        public fun requestShizukuPermission(): Unit = shizukuPermissionHandler.requestPermission()
 
-    public fun requestShizukuPermission(): Unit = shizukuPermissionHandler.requestPermission()
+        public fun executeShizukuCommand(command: String) {
+            viewModelScope.launch {
+                shellCommandExecutor
+                    .runShizuku(command)
+                    .collect { outputLine ->
+                        outputValue.value = outputLine
+                    }
+            }
+        }
 
-    public fun executeShizukuCommand(command: String) {
-        viewModelScope.launch {
-            shellCommandExecutor.runShizuku(command)
-                .collect { outputLine ->
-                    outputValue.value = outputLine
-                }
+        public fun setUnavailable() {
+            _showUnavailable.value = true
+        }
+
+        public fun dismissUnavailableDialog() {
+            _showUnavailable.value = false
+        }
+
+        init {
+            viewModelInitialized()
         }
     }
-
-    public fun setUnavailable() {
-        _showUnavailable.value = true
-    }
-
-    public fun dismissUnavailableDialog() {
-        _showUnavailable.value = false
-    }
-
-    init {
-        viewModelInitialized()
-    }
-}

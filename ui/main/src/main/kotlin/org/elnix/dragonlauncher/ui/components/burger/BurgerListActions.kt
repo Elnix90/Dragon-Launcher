@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.util.fastForEachIndexed
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BurgerListAction(
@@ -36,11 +35,12 @@ fun BurgerListAction(
                         onDismissRequest()
                     },
                     enabled = option.enabled,
-                    shape = when (index) {
-                        0 -> MenuDefaults.leadingItemShape
-                        actions.lastIndex -> MenuDefaults.trailingItemShape
-                        else -> MenuDefaults.middleItemShape
-                    },
+                    shape =
+                        when (index) {
+                            0 -> MenuDefaults.leadingItemShape
+                            actions.lastIndex -> MenuDefaults.trailingItemShape
+                            else -> MenuDefaults.middleItemShape
+                        },
                     text = {
                         if (option.enabled) {
                             Text(option.text())
@@ -59,4 +59,3 @@ fun BurgerListAction(
         }
     }
 }
-

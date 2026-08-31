@@ -1,4 +1,5 @@
 package org.elnix.dragonlauncher.base.model.models
+
 public data class IconSettings(
     val iconPack: String? = null,
     val iconsTint: Int? = null,

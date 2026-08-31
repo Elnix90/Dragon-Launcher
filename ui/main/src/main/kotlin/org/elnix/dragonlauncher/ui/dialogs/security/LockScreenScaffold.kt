@@ -24,7 +24,6 @@ import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 
-
 /**
  * A full screen scaffold for lock-screen related screens
  * Currently, [PinPrompt] and [PatternPrompt] uses this function to display the same across the UI
@@ -50,7 +49,6 @@ fun LockScreenScaffold(content: @Composable (PaddingValues) -> Unit) {
     }
 }
 
-
 /**
  * Secret unlock button that appears in the screen to allow user to remove the lock method when they forgot the password
  * When the user presses it, the lock method is disabled and the stored hash discarded
@@ -61,22 +59,22 @@ fun LockScreenScaffold(content: @Composable (PaddingValues) -> Unit) {
 @Composable
 fun SecretUnlockButton(
     enabled: Boolean,
-    securityViewModel: SecurityViewModel = activityViewModel(),
+    securityViewModel: SecurityViewModel = activityViewModel()
 ) {
     Box(
-        modifier = Modifier
-            .size(50.dp)
-            .offset(y = 120.dp)
-            .conditional(!enabled) {
-                border(1.dp, Color.White)
-                background(Color.Gray.alphaMultiplier(0.5f))
-            }
-            .clickable(
-                indication = null,
-                interactionSource = null,
-                enabled = enabled
-            ) {
-                securityViewModel.removeLock()
-            }
+        modifier =
+            Modifier
+                .size(50.dp)
+                .offset(y = 120.dp)
+                .conditional(!enabled) {
+                    border(1.dp, Color.White)
+                    background(Color.Gray.alphaMultiplier(0.5f))
+                }.clickable(
+                    indication = null,
+                    interactionSource = null,
+                    enabled = enabled
+                ) {
+                    securityViewModel.removeLock()
+                }
     )
 }

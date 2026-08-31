@@ -18,7 +18,6 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DragonButton(
@@ -29,18 +28,21 @@ fun DragonButton(
     confirmText: String = stringResource(R.string.are_you_sure),
     isCancel: Boolean = false,
     interactionSource: MutableInteractionSource = rememberInteractionSource(),
-    content: @Composable RowScope.() -> Unit,
+    content: @Composable RowScope.() -> Unit
 ) {
     var showConfirmPopup by remember { mutableStateOf(false) }
-
 
     val colors = if (isCancel) AppObjectsColors.cancelButtonColors() else AppObjectsColors.buttonColors()
     Button(
         modifier = modifier,
-        onClick = withHaptic {
-            if (needConfirm) showConfirmPopup = true
-            else onClick()
-        },
+        onClick =
+            withHaptic {
+                if (needConfirm) {
+                    showConfirmPopup = true
+                } else {
+                    onClick()
+                }
+            },
         shapes = ButtonDefaults.shapes(),
         enabled = enabled,
         colors = colors,
@@ -67,7 +69,7 @@ fun DragonGroupScope.DragonButton(
     needConfirm: Boolean = false,
     confirmText: String = stringResource(R.string.are_you_sure),
     isCancel: Boolean = false,
-    content: @Composable RowScope.() -> Unit,
+    content: @Composable RowScope.() -> Unit
 ) {
     DragonButton(
         onClick = onClick,

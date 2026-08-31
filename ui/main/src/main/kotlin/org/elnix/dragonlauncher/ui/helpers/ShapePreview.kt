@@ -39,42 +39,50 @@ fun ShapePreview(
     onClick: (() -> Unit)? = null
 ) {
     val bgColor by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.secondary
-        else Color.Transparent
+        if (selected) {
+            MaterialTheme.colorScheme.secondary
+        } else {
+            Color.Transparent
+        }
     )
 
     val borderColor by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.secondary
-        else MaterialTheme.colorScheme.primaryContainer
+        if (selected) {
+            MaterialTheme.colorScheme.secondary
+        } else {
+            MaterialTheme.colorScheme.primaryContainer
+        }
     )
 
     Box(
-        modifier = modifier
-            .aspectRatio(1f, true)
-            .size(size)
-            .clip(MaterialTheme.shapes.extraLarge)
-            .conditional(onClick) {
-                combinedClickable(onLongClick = onLongClick, onClick = it)
-            },
+        modifier =
+            modifier
+                .aspectRatio(1f, true)
+                .size(size)
+                .clip(MaterialTheme.shapes.extraLarge)
+                .conditional(onClick) {
+                    combinedClickable(onLongClick = onLongClick, onClick = it)
+                },
         contentAlignment = Alignment.Center
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(size / 5)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(size / 5)
         ) {
             when (iconShape) {
-
                 is IconShape.Random -> {
                     Icon(
                         painter = painterResource(R.drawable.shuffle),
                         contentDescription = stringResource(R.string.random_shape),
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(MaterialTheme.shapes.large)
-                            .background(bgColor.alphaMultiplier(0.5f))
-                            .border(1.dp, borderColor, MaterialTheme.shapes.large)
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .clip(MaterialTheme.shapes.large)
+                                .background(bgColor.alphaMultiplier(0.5f))
+                                .border(1.dp, borderColor, MaterialTheme.shapes.large)
                     )
                 }
 
@@ -82,11 +90,12 @@ fun ShapePreview(
                     val shape = iconShape.resolveShape()
 
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(shape)
-                            .background(bgColor.alphaMultiplier(0.5f))
-                            .border(1.dp, borderColor, shape)
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .clip(shape)
+                                .background(bgColor.alphaMultiplier(0.5f))
+                                .border(1.dp, borderColor, shape)
                     )
                 }
             }

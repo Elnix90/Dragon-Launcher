@@ -86,13 +86,12 @@ fun IconsTab(
         topContent = {
             LazyRowWithScrollIndicator(
                 items = apps,
-                modifier = Modifier.height(70.dp),
+                modifier = Modifier.height(70.dp)
             ) { app ->
                 AppIcon(app, size = 56.dp)
             }
         }
     ) {
-
         // because of the icons in top content
         Spacer(30.dp)
 
@@ -120,8 +119,6 @@ fun IconsTab(
             DrawerIconShapePicker()
         }
 
-
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -131,7 +128,6 @@ fun IconsTab(
                 text = stringResource(R.string.icon_packs_found, packs.size),
                 style = MaterialTheme.typography.bodyLargeEmphasized
             )
-
 
             var isLoading by remember { mutableStateOf(false) }
 
@@ -154,7 +150,6 @@ fun IconsTab(
                 }
             }
         }
-
 
         DragonSettingsGroup(R.string.icon_packs) {
             packs.forEach { pack ->
@@ -206,7 +201,6 @@ fun IconsTab(
     }
 }
 
-
 @Composable
 private fun DragonGroupScope.PackItem(
     selected: Boolean,
@@ -216,11 +210,12 @@ private fun DragonGroupScope.PackItem(
     icon: @Composable () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .dragonSettingGroup(selected = selected) {
-                clickable(onClick = onClick)
-            },
-        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            Modifier
+                .dragonSettingGroup(selected = selected) {
+                    clickable(onClick = onClick)
+                },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         icon()
         Spacer(12.dp)
@@ -237,8 +232,9 @@ private fun DragonGroupScope.PackItem(
         )
 
         Box(
-            modifier = Modifier
-                .size(40.dp),
+            modifier =
+                Modifier
+                    .size(40.dp),
             contentAlignment = Alignment.Center
         ) {
             if (scale > 0f) {

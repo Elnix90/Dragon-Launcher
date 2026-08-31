@@ -20,19 +20,17 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
 fun GoogleWarningReminder(modifier: Modifier = Modifier) {
-
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge
     ) {
-
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -50,7 +48,7 @@ fun GoogleWarningReminder(modifier: Modifier = Modifier) {
 
             Text(
                 text = stringResource(R.string.warning_description),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Text(
@@ -66,9 +64,10 @@ fun GoogleWarningReminder(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(
-                        R.string.do_something
-                    )
+                    text =
+                        stringResource(
+                            R.string.do_something
+                        )
                 )
             }
         }

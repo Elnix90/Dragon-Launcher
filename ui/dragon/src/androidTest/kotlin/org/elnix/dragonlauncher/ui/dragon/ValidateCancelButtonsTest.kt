@@ -31,7 +31,6 @@ import org.junit.Test
  * If the app module's resources aren't available, use explicit text overrides.
  */
 class ValidateCancelButtonsTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

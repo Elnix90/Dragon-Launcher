@@ -30,7 +30,6 @@ public interface WidgetsService {
 
     public fun save()
 
-
     public fun addWidget(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int)
 
     public fun removeWidget(widget: Widget, onDeleteId: (Int?) -> Unit)
@@ -44,29 +43,28 @@ public interface WidgetsService {
     public fun resetWidgetSize(appId: Int, info: AppWidgetProviderInfo? = null)
 
     public fun resetAllWidgets()
+
     public fun updateWidget(
         appId: Int,
         newWidget: (Widget) -> Widget
     )
 }
 
-
 internal class WidgetServiceImpl(
     private val ctx: Context
 ) : WidgetsService {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-
     override val widgets: SettingFlow<List<Widget>> = SettingFlow(emptyList())
-
 
     override val dm: DisplayMetrics = ctx.resources.displayMetrics
 
-    override val cellSizePx: StateFlow<Float> = widgetsCellSizeDp.flow(ctx).map { it.value * dm.density }.stateIn(
-        scope = scope,
-        started = SharingStarted.Eagerly,
-        initialValue = 30 * dm.density
-    )
+    override val cellSizePx: StateFlow<Float> =
+        widgetsCellSizeDp.flow(ctx).map { it.value * dm.density }.stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = 30 * dm.density
+        )
 
     private val screenWidth = dm.widthPixels.toFloat()
     private val screenHeight = dm.heightPixels.toFloat()
@@ -75,19 +73,19 @@ internal class WidgetServiceImpl(
         loadWidgets()
     }
 
-
     private fun snapshotWidgets(): List<Widget> = widgets.value.map { it.copy() }
 
-    override val undoRedo: UndoRedoManager = UndoRedoManager(
-        stacks = arrayOf(
-            UndoRedoStack(
-                snapshot = { snapshotWidgets() },
-                restore = { snapshot -> widgets.value = snapshot }
-            )
-        ),
-        scope = scope
-    )
-
+    override val undoRedo: UndoRedoManager =
+        UndoRedoManager(
+            stacks =
+                arrayOf(
+                    UndoRedoStack(
+                        snapshot = { snapshotWidgets() },
+                        restore = { snapshot -> widgets.value = snapshot }
+                    )
+                ),
+            scope = scope
+        )
 
     override fun save() {
         scope.launch {
@@ -95,17 +93,16 @@ internal class WidgetServiceImpl(
         }
     }
 
-
     override fun addWidget(action: Action, info: AppWidgetProviderInfo?, nestId: Int) {
-
         scope.launch {
             val appWidgetId = if (action is Action.OpenWidget) action.widgetId else null
-            val app = Widget(
-                id = Random.nextInt(),
-                appWidgetId = appWidgetId,
-                nestId = nestId,
-                action = action
-            )
+            val app =
+                Widget(
+                    id = Random.nextInt(),
+                    appWidgetId = appWidgetId,
+                    nestId = nestId,
+                    action = action
+                )
 
             undoRedo.applyChange {
                 widgets.value += app
@@ -115,7 +112,6 @@ internal class WidgetServiceImpl(
             resetWidgetSize(appId = app.id, info = info)
         }
     }
-
 
     override fun removeWidget(widget: Widget, onDeleteId: (Int?) -> Unit) {
         scope.launch {
@@ -131,10 +127,11 @@ internal class WidgetServiceImpl(
         val index = current.indexOfFirst { it.id == appId }
         if (index <= 0) return
 
-        val moved = current.toMutableList().apply {
-            val widget = removeAt(index)
-            add(index - 1, widget)
-        }
+        val moved =
+            current.toMutableList().apply {
+                val widget = removeAt(index)
+                add(index - 1, widget)
+            }
         undoRedo.applyChange {
             widgets.value = moved
         }
@@ -145,15 +142,15 @@ internal class WidgetServiceImpl(
         val index = current.indexOfFirst { it.id == appId }
         if (index == -1 || index == current.lastIndex) return
 
-        val moved = current.toMutableList().apply {
-            val widget = removeAt(index)
-            add(index + 1, widget)
-        }
+        val moved =
+            current.toMutableList().apply {
+                val widget = removeAt(index)
+                add(index + 1, widget)
+            }
         undoRedo.applyChange {
             widgets.value = moved
         }
     }
-
 
     override fun centerWidget(appId: Int) {
         updateWidget(appId) { app ->
@@ -170,7 +167,6 @@ internal class WidgetServiceImpl(
         }
     }
 
-
     override fun resetWidgetSize(appId: Int, info: AppWidgetProviderInfo?) {
         updateWidget(appId) { app ->
             app.copy(
@@ -180,7 +176,6 @@ internal class WidgetServiceImpl(
             )
         }
     }
-
 
     override fun resetAllWidgets() {
         undoRedo.applyChange {
@@ -192,7 +187,6 @@ internal class WidgetServiceImpl(
         }
     }
 
-
     override fun updateWidget(
         appId: Int,
         newWidget: (Widget) -> Widget
@@ -200,13 +194,14 @@ internal class WidgetServiceImpl(
         undoRedo.applyChange {
             val current = widgets.value
 
-            val updatedList = current.map { app ->
-                if (app.id == appId) {
-                    newWidget(app)
-                } else {
-                    app
+            val updatedList =
+                current.map { app ->
+                    if (app.id == appId) {
+                        newWidget(app)
+                    } else {
+                        app
+                    }
                 }
-            }
 
             widgets.value = updatedList
         }

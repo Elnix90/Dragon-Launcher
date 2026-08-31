@@ -29,7 +29,6 @@ import org.junit.Test
  * to compile.
  */
 class DragonRowTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

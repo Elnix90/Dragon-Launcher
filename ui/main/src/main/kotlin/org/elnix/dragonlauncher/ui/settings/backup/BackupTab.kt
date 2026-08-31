@@ -63,27 +63,26 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
     val autoBackupUriString by BackupSettingsStore.autoBackupUri.asState()
     val backupStores by BackupSettingsStore.backupStores.asState()
 
-
-    val snapshotStateMapStores = remember(backupStores) {
-        val settingStoreList = backupStores.toSettingsStoreList()
-        mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
-            backupableStores.forEach { put(it, backupStores.isEmpty() || it in settingStoreList) }
+    val snapshotStateMapStores =
+        remember(backupStores) {
+            val settingStoreList = backupStores.toSettingsStoreList()
+            mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
+                backupableStores.forEach { put(it, backupStores.isEmpty() || it in settingStoreList) }
+            }
         }
-    }
 
     val autoBackupUri: Uri? = autoBackupUriString.takeIf { it.isNotEmpty() }?.toUri()
 
-    val backupPath: String? = autoBackupUri?.let { uri ->
-        ctx.getFilePathFromUri(uri)
-    }
+    val backupPath: String? =
+        autoBackupUri?.let { uri ->
+            ctx.getFilePathFromUri(uri)
+        }
 
     var selectedStoresForExport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
     var showExportDialog by remember { mutableStateOf(false) }
 
     val settingsExportLauncher = rememberSettingsExportLauncher(selectedStoresForExport)
     val autoBackupLauncher = rememberAutoBackupLauncher()
-
-
 
     SettingsScaffold(
         title = ctx.getString(R.string.backup),
@@ -92,10 +91,11 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
                 if (snapshotStateMapStores.count { it.value } == backupableStores.size) {
                     BackupSettingsStore.backupStores.reset(ctx)
                 } else {
-                    val final = snapshotStateMapStores
-                        .filter { it.value }
-                        .keys
-                        .mapTo(mutableSetOf()) { it.name }
+                    val final =
+                        snapshotStateMapStores
+                            .filter { it.value }
+                            .keys
+                            .mapTo(mutableSetOf()) { it.name }
 
                     BackupSettingsStore.backupStores.set(ctx, final)
                 }
@@ -166,10 +166,11 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
                 enabled = autoBackupEnabled && backupPath != null,
                 onClick = {
                     autoBackupUri.let { uri ->
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            setDataAndType(uri, "application/json")
-                            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        }
+                        val intent =
+                            Intent(Intent.ACTION_VIEW).apply {
+                                setDataAndType(uri, "application/json")
+                                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            }
                         try {
                             ctx.startActivity(
                                 Intent.createChooser(
@@ -224,4 +225,3 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
         )
     }
 }
-

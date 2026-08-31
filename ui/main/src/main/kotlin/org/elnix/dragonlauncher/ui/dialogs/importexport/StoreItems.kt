@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 @Composable
 fun DragonGroupScope.StoreItems(
     snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>,
-    onAnyAction: () -> Unit = { },
+    onAnyAction: () -> Unit = { }
 ) {
     LazyColumnWithScrollIndicator(
         items = snapshotStateMapStores.toList(),
@@ -35,7 +35,7 @@ fun DragonGroupScope.StoreItems(
 
 @Composable
 fun DragonGroupScope.StoreItemsNotScrollable(
-    snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>,
+    snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>
 ) {
     snapshotStateMapStores.forEach { (store, selected) ->
         StoreItem(selected, store) {
@@ -52,14 +52,15 @@ private fun DragonGroupScope.StoreItem(
 ) {
     val interactionSource = rememberInteractionSource()
     Row(
-        modifier = Modifier
-            .dragonSettingGroup {
-                toggleable(
-                    interactionSource = interactionSource,
-                    value = selected,
-                    onValueChange = onToggle
-                )
-            },
+        modifier =
+            Modifier
+                .dragonSettingGroup {
+                    toggleable(
+                        interactionSource = interactionSource,
+                        value = selected,
+                        onValueChange = onToggle
+                    )
+                },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

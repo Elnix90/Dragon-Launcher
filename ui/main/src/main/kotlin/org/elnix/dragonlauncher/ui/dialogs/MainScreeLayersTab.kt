@@ -54,14 +54,16 @@ fun MainScreeLayersTab(
     val order by swipeService.mainScreenLayerOrder.asState()
 
     val lazyListState = rememberLazyListState()
-    val reorderState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        onMove = { from, to ->
-            swipeService.mainScreenLayerOrder.value = order.toMutableList().apply {
-                add(to.index, removeAt(from.index))
+    val reorderState =
+        rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            onMove = { from, to ->
+                swipeService.mainScreenLayerOrder.value =
+                    order.toMutableList().apply {
+                        add(to.index, removeAt(from.index))
+                    }
             }
-        }
-    )
+        )
 
     SettingsScaffold(
         title = stringResource(R.string.main_screen_layers),
@@ -93,30 +95,32 @@ fun MainScreeLayersTab(
                     )
 
                     ElevatedCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .scale(scale)
-                            .longPressDraggableHandle(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .scale(scale)
+                                .longPressDraggableHandle(),
                         elevation = elevatedCardElevation(elevation),
                         shape = CardDefaults.shape
                     ) {
-
                         Column(
                             verticalArrangement = Arrangement.spacedBy(5.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = 12.dp,
-                                    vertical = 10.dp
-                                )
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = 12.dp,
+                                        vertical = 10.dp
+                                    )
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
                                     onCheckedChange = {
-                                        swipeService.mainScreenLayerOrder.value = order.map {
-                                            if (it == item) it.copyWithEnabled(!it.enabled) else it
-                                        }
+                                        swipeService.mainScreenLayerOrder.value =
+                                            order.map {
+                                                if (it == item) it.copyWithEnabled(!it.enabled) else it
+                                            }
                                     },
                                     checked = item.enabled
                                 )
@@ -134,7 +138,6 @@ fun MainScreeLayersTab(
                                 )
                             }
 
-
                             @Suppress("UnusedExpression")
                             when (item) {
                                 is MainScreenLayer.CustomDim -> {
@@ -150,15 +153,23 @@ fun MainScreeLayersTab(
                                                 description = stringResource(R.string.show_after_help),
                                                 resetEnabled = tempShowAfter != MainScreenLayer.CustomDim.defaultShowAfterMs,
                                                 onReset = {
-                                                    swipeService.mainScreenLayerOrder.value = order.map {
-                                                        if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs) else it
-                                                    }
+                                                    swipeService.mainScreenLayerOrder.value =
+                                                        order.map {
+                                                            if (it is MainScreenLayer.CustomDim) {
+                                                                it.copy(
+                                                                    showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs
+                                                                )
+                                                            } else {
+                                                                it
+                                                            }
+                                                        }
                                                 },
                                                 onDragStateChange = { isDragging ->
                                                     if (!isDragging) {
-                                                        swipeService.mainScreenLayerOrder.value = order.map {
-                                                            if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
-                                                        }
+                                                        swipeService.mainScreenLayerOrder.value =
+                                                            order.map {
+                                                                if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
+                                                            }
                                                     }
                                                 }
                                             ) { newValue ->
@@ -172,15 +183,23 @@ fun MainScreeLayersTab(
                                                 description = stringResource(R.string.dim_amount_help),
                                                 resetEnabled = tempDimAmount != MainScreenLayer.CustomDim.defaultDimAmount,
                                                 onReset = {
-                                                    swipeService.mainScreenLayerOrder.value = order.map {
-                                                        if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = MainScreenLayer.CustomDim.defaultDimAmount) else it
-                                                    }
+                                                    swipeService.mainScreenLayerOrder.value =
+                                                        order.map {
+                                                            if (it is MainScreenLayer.CustomDim) {
+                                                                it.copy(
+                                                                    dimAmount = MainScreenLayer.CustomDim.defaultDimAmount
+                                                                )
+                                                            } else {
+                                                                it
+                                                            }
+                                                        }
                                                 },
                                                 onDragStateChange = { isDragging ->
                                                     if (!isDragging) {
-                                                        swipeService.mainScreenLayerOrder.value = order.map {
-                                                            if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
-                                                        }
+                                                        swipeService.mainScreenLayerOrder.value =
+                                                            order.map {
+                                                                if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
+                                                            }
                                                     }
                                                 }
                                             ) { newValue ->
@@ -199,14 +218,22 @@ fun MainScreeLayersTab(
                                                 title = R.string.line_before_nests,
                                                 resetEnabled = item.lineBeforeNests != MainScreenLayer.DragOverlay.defaultLineBeforeNests,
                                                 onReset = {
-                                                    swipeService.mainScreenLayerOrder.value = order.map {
-                                                        if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests) else it
-                                                    }
+                                                    swipeService.mainScreenLayerOrder.value =
+                                                        order.map {
+                                                            if (it is MainScreenLayer.DragOverlay) {
+                                                                it.copy(
+                                                                    lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests
+                                                                )
+                                                            } else {
+                                                                it
+                                                            }
+                                                        }
                                                 }
                                             ) { newValue ->
-                                                swipeService.mainScreenLayerOrder.value = order.map {
-                                                    if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
-                                                }
+                                                swipeService.mainScreenLayerOrder.value =
+                                                    order.map {
+                                                        if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
+                                                    }
                                             }
                                         }
                                     }

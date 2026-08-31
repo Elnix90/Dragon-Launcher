@@ -9,8 +9,8 @@ import android.util.AttributeSet
 import android.util.Xml
 import android.view.InflateException
 import androidx.core.content.res.ResourcesCompat
-import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
@@ -22,21 +22,18 @@ import org.elnix.dragonlauncher.ktx.skipToNextTag
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 
-
 internal data class AdaptiveIconDrawableCompat(
     val background: Drawable,
     val foreground: Drawable,
-    val monochrome: Drawable?,
+    val monochrome: Drawable?
 ) {
-
     companion object {
-        fun from(adaptiveIconDrawable: AdaptiveIconDrawable): AdaptiveIconDrawableCompat {
-            return AdaptiveIconDrawableCompat(
+        fun from(adaptiveIconDrawable: AdaptiveIconDrawable): AdaptiveIconDrawableCompat =
+            AdaptiveIconDrawableCompat(
                 background = adaptiveIconDrawable.background,
                 foreground = adaptiveIconDrawable.foreground,
-                monochrome = if (isAtLeastApiLevel(33)) adaptiveIconDrawable.monochrome else null,
+                monochrome = if (isAtLeastApiLevel(33)) adaptiveIconDrawable.monochrome else null
             )
-        }
 
         fun from(resources: Resources, resId: Int): AdaptiveIconDrawableCompat? {
             if (isAtLeastApiLevel(33)) {
@@ -86,7 +83,7 @@ internal data class AdaptiveIconDrawableCompat(
                     return AdaptiveIconDrawableCompat(
                         background = background,
                         foreground = foreground,
-                        monochrome = monochrome,
+                        monochrome = monochrome
                     )
                 }
             } catch (_: Resources.NotFoundException) {
@@ -111,11 +108,12 @@ internal data class AdaptiveIconDrawableCompat(
             parser: XmlResourceParser,
             attrs: AttributeSet
         ): Drawable? {
-            val drawableId = parser.getAttributeResourceValue(
-                "http://schemas.android.com/apk/res/android",
-                "drawable",
-                0
-            )
+            val drawableId =
+                parser.getAttributeResourceValue(
+                    "http://schemas.android.com/apk/res/android",
+                    "drawable",
+                    0
+                )
 
             if (drawableId != 0) {
                 return ResourcesCompat.getDrawable(resources, drawableId, null)
@@ -124,7 +122,7 @@ internal data class AdaptiveIconDrawableCompat(
             return try {
                 Drawable.createFromXmlInner(resources, parser, attrs)
             } catch (e: InflateException) {
-                logE(ICONS_TAG, e) { "Error parsing icon layer "}
+                logE(ICONS_TAG, e) { "Error parsing icon layer " }
                 null
             }
         }
@@ -134,25 +132,41 @@ internal data class AdaptiveIconDrawableCompat(
 internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
     themed: Boolean,
     tint: Int?,
-    clock: ClockIconConfig? = null,
+    clock: ClockIconConfig? = null
 ): StaticLauncherIcon {
     val clockForeground = (if (themed) monochrome else foreground) as? LayerDrawable
     if (clock != null && clockForeground != null) {
-        val clockLayers = (0 until clockForeground.numberOfLayers).map {
-            val drw = clockForeground.getDrawable(it)
-            ClockSublayer(
-                drawable = drw,
-                role = when (it) {
-                    clock.hourLayer -> ClockSublayerRole.Hour
-                    clock.minuteLayer -> ClockSublayerRole.Minute
-                    clock.secondLayer -> ClockSublayerRole.Second
-                    else -> ClockSublayerRole.Static
-                }
-            )
-        }
+        val clockLayers =
+            (0 until clockForeground.numberOfLayers).map {
+                val drw = clockForeground.getDrawable(it)
+                ClockSublayer(
+                    drawable = drw,
+                    role =
+                        when (it) {
+                            clock.hourLayer -> ClockSublayerRole.Hour
+                            clock.minuteLayer -> ClockSublayerRole.Minute
+                            clock.secondLayer -> ClockSublayerRole.Second
+                            else -> ClockSublayerRole.Static
+                        }
+                )
+            }
         if (themed) {
             return StaticLauncherIcon(
-                foregroundLayer = ClockLayer(
+                foregroundLayer =
+                    ClockLayer(
+                        defaultHour = clock.defaultHour,
+                        defaultMinute = clock.defaultMinute,
+                        defaultSecond = clock.defaultSecond,
+                        sublayers = clockLayers,
+                        scale = 1.5f,
+                        tint = tint
+                    ),
+                backgroundLayer = TransparentLayer
+            )
+        }
+        return StaticLauncherIcon(
+            foregroundLayer =
+                ClockLayer(
                     defaultHour = clock.defaultHour,
                     defaultMinute = clock.defaultMinute,
                     defaultSecond = clock.defaultSecond,
@@ -160,47 +174,39 @@ internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
                     scale = 1.5f,
                     tint = tint
                 ),
-                backgroundLayer = TransparentLayer,
-            )
-        }
-        return StaticLauncherIcon(
-            foregroundLayer = ClockLayer(
-                defaultHour = clock.defaultHour,
-                defaultMinute = clock.defaultMinute,
-                defaultSecond = clock.defaultSecond,
-                sublayers = clockLayers,
-                scale = 1.5f,
-                tint = tint
-            ),
-            backgroundLayer = StaticIconLayer(
-                icon = this.background,
-                scale = 1.5f,
-                tint = null
-            )
+            backgroundLayer =
+                StaticIconLayer(
+                    icon = this.background,
+                    scale = 1.5f,
+                    tint = null
+                )
         )
     }
 
     if (themed && this.monochrome != null) {
         return StaticLauncherIcon(
-            foregroundLayer = StaticIconLayer(
-                scale = 1.5f,
-                icon = this.monochrome,
-                tint = tint
-            ),
+            foregroundLayer =
+                StaticIconLayer(
+                    scale = 1.5f,
+                    icon = this.monochrome,
+                    tint = tint
+                ),
             backgroundLayer = TransparentLayer
         )
     } else {
         return StaticLauncherIcon(
-            foregroundLayer = StaticIconLayer(
-                scale = 1.5f,
-                icon = this.foreground,
-                tint = tint
-            ),
-            backgroundLayer = StaticIconLayer(
-                scale = 1.5f,
-                icon = this.background,
-                tint = null
-            )
+            foregroundLayer =
+                StaticIconLayer(
+                    scale = 1.5f,
+                    icon = this.foreground,
+                    tint = tint
+                ),
+            backgroundLayer =
+                StaticIconLayer(
+                    scale = 1.5f,
+                    icon = this.background,
+                    tint = null
+                )
         )
     }
 }
@@ -211,5 +217,5 @@ public data class ClockIconConfig(
     val secondLayer: Int,
     val defaultHour: Int,
     val defaultMinute: Int,
-    val defaultSecond: Int,
+    val defaultSecond: Int
 )

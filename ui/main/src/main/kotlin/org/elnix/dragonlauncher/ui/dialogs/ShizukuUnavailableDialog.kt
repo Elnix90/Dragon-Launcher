@@ -33,9 +33,10 @@ fun ShizukuUnavailableDialog(
         onDismissRequest = onDismiss,
         title = {
             Column(
-                modifier = modifier
-                    .padding(24.dp)
-                    .widthIn(min = 280.dp)
+                modifier =
+                    modifier
+                        .padding(24.dp)
+                        .widthIn(min = 280.dp)
             ) {
                 Image(
                     imageVector = undraw404Error(),

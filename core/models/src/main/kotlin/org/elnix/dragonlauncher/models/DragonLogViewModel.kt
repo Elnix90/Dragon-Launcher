@@ -8,12 +8,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.core.objects.BooleanSettingObject
 import io.github.elnix90.logging.FileLoggingTree
-import org.elnix.dragonlauncher.LOGS_TAG
 import io.github.elnix90.logging.LogAlert
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.LOGS_TAG
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import timber.log.Timber
@@ -23,107 +23,103 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class DragonLogViewModel @Inject constructor(
-    application: Application
-) : AndroidViewModel(application) {
-    private var fileTree: FileLoggingTree? = null
+public class DragonLogViewModel
+    @Inject
+    constructor(
+        application: Application
+    ) : AndroidViewModel(application) {
+        private var fileTree: FileLoggingTree? = null
 
-    private val recentLogs = ConcurrentLinkedQueue<LogAlert>()
-    private val _alertFlow = MutableStateFlow<LogAlert?>(null)
-    public val alertFlow: StateFlow<LogAlert?> = _alertFlow
+        private val recentLogs = ConcurrentLinkedQueue<LogAlert>()
+        private val _alertFlow = MutableStateFlow<LogAlert?>(null)
+        public val alertFlow: StateFlow<LogAlert?> = _alertFlow
 
+        private val enableLogging: BooleanSettingObject = DebugSettingsStore.enableLogging
 
-    private val enableLogging: BooleanSettingObject = DebugSettingsStore.enableLogging
+        private val maxRecentLogs = 50
 
-    private val maxRecentLogs = 50
+        init {
+            viewModelScope.launch {
+                fileTree = FileLoggingTree(application.applicationContext, ::onHighPriorityLog)
 
+                updateLoggingState()
 
-    init {
-        viewModelScope.launch {
-            fileTree = FileLoggingTree(application.applicationContext, ::onHighPriorityLog)
+                launch {
+                    DebugSettingsStore.snackBarLogLevel.flow(application.applicationContext).collect {
+                        fileTree?.snackBarLogLevel = it
+                    }
+                }
 
-            updateLoggingState()
+                launch {
+                    DebugSettingsStore.filesLogLevel.flow(application.applicationContext).collect {
+                        fileTree?.filesLogsLevel = it
+                    }
+                }
 
-            launch {
-                DebugSettingsStore.snackBarLogLevel.flow(application.applicationContext).collect {
-                    fileTree?.snackBarLogLevel = it
+                launch {
+                    DebugSettingsStore.filterTag.flow(application.applicationContext).collect {
+                        fileTree?.filterTag = it
+                    }
                 }
             }
+            viewModelInitialized()
+        }
 
-            launch {
-                DebugSettingsStore.filesLogLevel.flow(application.applicationContext).collect {
-                    fileTree?.filesLogsLevel = it
+        private fun onHighPriorityLog(level: Int, message: String) {
+            val alert = LogAlert(level, message)
+            recentLogs.add(alert)
+            if (recentLogs.size > maxRecentLogs) {
+                recentLogs.poll()
+            }
+            _alertFlow.value = alert
+        }
+
+        public fun updateEnableLogging(enable: Boolean) {
+            viewModelScope.launch {
+                if (enableLogging.get(application.applicationContext) == enable) {
+                    return@launch
+                }
+
+                DebugSettingsStore.enableLogging.set(application.applicationContext, enable)
+                updateLoggingState()
+            }
+        }
+
+        private suspend fun updateLoggingState() {
+            val tree = fileTree ?: return
+            val plantedTrees = Timber.forest()
+            if (enableLogging.get(application.applicationContext)) {
+                if (tree !in plantedTrees) {
+                    Timber.plant(tree)
+                }
+            } else {
+                if (tree in plantedTrees) {
+                    Timber.uproot(tree)
                 }
             }
-
-            launch {
-                DebugSettingsStore.filterTag.flow(application.applicationContext).collect {
-                    fileTree?.filterTag = it
-                }
-            }
         }
-        viewModelInitialized()
-    }
 
-    private fun onHighPriorityLog(level: Int, message: String) {
-        val alert = LogAlert(level, message)
-        recentLogs.add(alert)
-        if (recentLogs.size > maxRecentLogs) {
-            recentLogs.poll()
+        public fun getAllLogFiles(): List<File> = fileTree?.getAllLogFiles() ?: emptyList()
+
+        public fun clearLogs() {
+            fileTree?.clearAllLogs()
+            recentLogs.clear()
+            _alertFlow.value = null
         }
-        _alertFlow.value = alert
-    }
 
-    public fun updateEnableLogging(enable: Boolean) {
-        viewModelScope.launch {
-
-            if (enableLogging.get(application.applicationContext) == enable) {
-                return@launch
+        public fun readLogFile(file: File): String =
+            try {
+                file.readText()
+            } catch (e: Exception) {
+                logE(LOGS_TAG, e) { "Failed to read log file: ${file.absolutePath}" }
+                "Failed to read log file: $e"
             }
 
-            DebugSettingsStore.enableLogging.set(application.applicationContext, enable)
-            updateLoggingState()
-        }
-    }
-
-    private suspend fun updateLoggingState() {
-        val tree = fileTree ?: return
-        val plantedTrees = Timber.forest()
-        if (enableLogging.get(application.applicationContext)) {
-            if (tree !in plantedTrees) {
-                Timber.plant(tree)
-            }
-        } else {
-            if (tree in plantedTrees) {
-                Timber.uproot(tree)
+        public fun deleteLogFile(file: File) {
+            try {
+                file.delete()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
-
-    public fun getAllLogFiles(): List<File> {
-        return fileTree?.getAllLogFiles() ?: emptyList()
-    }
-
-    public fun clearLogs() {
-        fileTree?.clearAllLogs()
-        recentLogs.clear()
-        _alertFlow.value = null
-    }
-
-    public fun readLogFile(file: File): String {
-        return try {
-            file.readText()
-        } catch (e: Exception) {
-            logE(LOGS_TAG, e) { "Failed to read log file: ${file.absolutePath}" }
-            "Failed to read log file: $e"
-        }
-    }
-
-    public fun deleteLogFile(file: File) {
-        try {
-            file.delete()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-}

@@ -14,21 +14,27 @@ import org.elnix.dragonlauncher.database.entities.SavedSearchableEntity
     entities = [
         SavedSearchableEntity::class,
         IconEntity::class,
-        IconPackEntity::class,
-    ], version = 1, exportSchema = true
+        IconPackEntity::class
+    ],
+    version = 1,
+    exportSchema = true
 )
 @TypeConverters(ComponentNameConverter::class)
 public abstract class AppDatabase : RoomDatabase() {
     public abstract fun iconDao(): IconDao
 
     public companion object {
-        private var _instance: AppDatabase? = null
-        public fun getInstance(context: Context): AppDatabase {
-            val instance = _instance
-                ?: Room
-                    .databaseBuilder(context.applicationContext, AppDatabase::class.java, "room")
-                    .build()
-            if (_instance == null) _instance = instance
+        @Volatile
+        private var instance: AppDatabase? = null
+
+        @JvmStatic
+        public fun getInstance(ctx: Context): AppDatabase {
+            val instance =
+                instance
+                    ?: Room
+                        .databaseBuilder(ctx.applicationContext, AppDatabase::class.java, "room")
+                        .build()
+            if (Companion.instance == null) Companion.instance = instance
             return instance
         }
     }

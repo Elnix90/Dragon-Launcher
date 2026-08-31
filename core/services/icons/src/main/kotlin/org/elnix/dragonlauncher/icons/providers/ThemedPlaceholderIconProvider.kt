@@ -15,9 +15,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 
 internal class ThemedPlaceholderIconProvider(
     private val appRepository: AppRepository,
-    private val ctx: Context,
+    private val ctx: Context
 ) : IconProvider {
-
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
         if (action !is Action.LaunchApp) return null
 
@@ -26,12 +25,12 @@ internal class ThemedPlaceholderIconProvider(
 
         return StaticLauncherIcon(
             foregroundLayer = asThemed(icon.foregroundLayer),
-            backgroundLayer = asThemed(icon.backgroundLayer),
+            backgroundLayer = asThemed(icon.backgroundLayer)
         )
     }
 
-    private fun asThemed(layer: LauncherIconLayer): LauncherIconLayer {
-        return when (layer) {
+    private fun asThemed(layer: LauncherIconLayer): LauncherIconLayer =
+        when (layer) {
             is ColorLayer -> layer.copy(tint = 0)
             is VectorLayer -> layer.copy(tint = 0)
             is TextLayer -> layer.copy(tint = 0)
@@ -39,5 +38,4 @@ internal class ThemedPlaceholderIconProvider(
             is ClockLayer -> layer.copy(tint = 0)
             is TransparentLayer -> layer
         }
-    }
 }

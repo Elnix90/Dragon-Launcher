@@ -21,6 +21,4 @@ public fun jsonObjectOf(vararg pairs: Pair<String, Any?>): JSONObject {
 }
 
 @ChecksSdkIntAtLeast(parameter = 0)
-public fun isAtLeastApiLevel(apiLevel: Int): Boolean {
-    return Build.VERSION.SDK_INT >= apiLevel
-}
+public fun isAtLeastApiLevel(apiLevel: Int): Boolean = Build.VERSION.SDK_INT >= apiLevel

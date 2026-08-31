@@ -21,8 +21,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WorkspaceAction
+import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -43,15 +43,17 @@ fun ReorderableCollectionItemScope.WorkspaceRow(
     Card(
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(elevation),
-        modifier = Modifier
-            .scale(scale)
-            .longPressDraggableHandle(onDragStopped = onDragEnd)
-            .clickable(onClick = onClick)
+        modifier =
+            Modifier
+                .scale(scale)
+                .longPressDraggableHandle(onDragStopped = onDragEnd)
+                .clickable(onClick = onClick)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

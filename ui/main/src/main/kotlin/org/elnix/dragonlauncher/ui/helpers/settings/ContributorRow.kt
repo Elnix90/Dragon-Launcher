@@ -21,7 +21,6 @@ import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DragonGroupScope.ContributorItem(
@@ -41,17 +40,19 @@ fun DragonGroupScope.ContributorItem(
         Image(
             painter = painterResource(imageRes),
             contentDescription = "$name profile picture",
-            modifier = Modifier
-                .size(48.dp)
-                .clip(shape.toShape()),
+            modifier =
+                Modifier
+                    .size(48.dp)
+                    .clip(shape.toShape()),
             contentScale = ContentScale.Fit
         )
 
         TextWithDescription(
             text = name,
             description = description,
-            modifier = Modifier
-                .weight(1f)
+            modifier =
+                Modifier
+                    .weight(1f)
         )
 
         socialLinks.forEach {

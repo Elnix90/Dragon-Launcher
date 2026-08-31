@@ -9,7 +9,6 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 @Serializable
 @SerialName("IconShape")
 public sealed class IconShape {
-
     @Serializable
     @SerialName("PlatformDefault")
     public object PlatformDefault : IconShape()
@@ -54,7 +53,6 @@ public sealed class IconShape {
     @SerialName("RoundedSquare")
     public object RoundedSquare : IconShape()
 
-
     @Serializable
     @SerialName("Squircle")
     public object Squircle : IconShape()
@@ -98,6 +96,7 @@ public sealed class IconShape {
     @Serializable
     @SerialName("RoundedTriangle")
     public object RoundedTriangle : IconShape()
+
     @Serializable
     @SerialName("Triangle")
     public object Triangle : IconShape()
@@ -211,8 +210,6 @@ public sealed class IconShape {
     override fun toString(): String = this.javaClass.simpleName
 
     public companion object {
-
-
         /**
          * The shapes that are allowed to be picked into the nest shape picker.
          * This limitation is due to the heavy math required to compute the shape boundary.
@@ -235,7 +232,6 @@ public sealed class IconShape {
                 Cookie12Sided
             )
         }
-
 
         public val allShapes: Set<IconShape> by lazy {
             setOf(

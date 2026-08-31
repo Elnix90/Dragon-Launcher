@@ -10,67 +10,73 @@ import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
 import org.elnix.dragonlauncher.i18n.R
 
-
 @SettingsStore
 public object AngleLineSettingsStore : MapSettingsStore() {
-
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     @SettingKey
-    public val rgbLine: BooleanSettingObject = boolean(
-        title = R.string.rgb_line_selector,
-        description = R.string.rgb_line_selector_description,
-        icon = R.drawable.palette,
-        default = true
-    )
+    public val rgbLine: BooleanSettingObject =
+        boolean(
+            title = R.string.rgb_line_selector,
+            description = R.string.rgb_line_selector_description,
+            icon = R.drawable.palette,
+            default = true
+        )
 
     @SettingKey
-    public val startAndAngleShareSameRandomAngle: BooleanSettingObject = boolean(
-        title = R.string.start_ang_angle_share_same_random_angle,
-        description = R.string.start_ang_angle_share_same_random_angle_desc,
-        icon = R.drawable.share,
-        default = false
-    )
+    public val startAndAngleShareSameRandomAngle: BooleanSettingObject =
+        boolean(
+            title = R.string.start_ang_angle_share_same_random_angle,
+            description = R.string.start_ang_angle_share_same_random_angle_desc,
+            icon = R.drawable.share,
+            default = false
+        )
 
     @SettingKey
-    public val useSnappedAngleOrRealAngle: BooleanSettingObject = boolean(
-        title = R.string.use_snapped_angle_or_real_angle,
-        description = R.string.use_snapped_angle_or_real_angle_desc,
-        icon = R.drawable.call_missed,
-        default = true
-    )
+    public val useSnappedAngleOrRealAngle: BooleanSettingObject =
+        boolean(
+            title = R.string.use_snapped_angle_or_real_angle,
+            description = R.string.use_snapped_angle_or_real_angle_desc,
+            icon = R.drawable.call_missed,
+            default = true
+        )
 
     @SettingKey
-    public val showLineObjectPreview: BooleanSettingObject = boolean(
-        title = R.string.show_app_line_preview,
-        description = R.string.show_app_line_preview_desc,
-        icon = R.drawable.polyline,
-        default = true
-    )
+    public val showLineObjectPreview: BooleanSettingObject =
+        boolean(
+            title = R.string.show_app_line_preview,
+            description = R.string.show_app_line_preview_desc,
+            icon = R.drawable.polyline,
+            default = true
+        )
 
     @SettingKey
-    public val showAngleLineObjectPreview: BooleanSettingObject = boolean(
-        title = R.string.show_angle_preview,
-        description = R.string.show_app_angle_preview_description,
-        icon = R.drawable.polyline,
-        default = false
-    )
+    public val showAngleLineObjectPreview: BooleanSettingObject =
+        boolean(
+            title = R.string.show_angle_preview,
+            description = R.string.show_app_angle_preview_description,
+            icon = R.drawable.polyline,
+            default = false
+        )
 
     @SettingKey
-    public val showStartObjectPreview: BooleanSettingObject = boolean(
-        title = R.string.show_start_object_preview,
-        description = R.string.show_start_object_preview_desc,
-        icon = R.drawable.polyline,
-        default = true
-    )
+    public val showStartObjectPreview: BooleanSettingObject =
+        boolean(
+            title = R.string.show_start_object_preview,
+            description = R.string.show_start_object_preview_desc,
+            icon = R.drawable.polyline,
+            default = true
+        )
 
     @SettingKey
-    public val showEndObjectPreview: BooleanSettingObject = boolean(
-        title = R.string.show_end_object_preview,
-        description = R.string.show_end_object_preview_desc,
-        icon = R.drawable.polyline,
-        default = true
-    )
+    public val showEndObjectPreview: BooleanSettingObject =
+        boolean(
+            title = R.string.show_end_object_preview,
+            description = R.string.show_end_object_preview_desc,
+            icon = R.drawable.polyline,
+            default = true
+        )
 
     @SettingKey
-    public val angleLineObjectsOrder: StringSettingObject = string(AngleLineObjects.entries.joinToString(",") { it.name })
+    public val angleLineObjectsOrder: StringSettingObject =
+        string(AngleLineObjects.entries.joinToString(",") { it.name })
 }

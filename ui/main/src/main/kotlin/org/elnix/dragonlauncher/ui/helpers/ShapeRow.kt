@@ -20,7 +20,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
-
 @Composable
 fun DragonGroupScope.ShapeRow(
     selected: IconShape,
@@ -30,10 +29,11 @@ fun DragonGroupScope.ShapeRow(
     onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .dragonSettingGroup() {
-                clickable(onClick = onClick)
-            },
+        modifier =
+            Modifier
+                .dragonSettingGroup {
+                    clickable(onClick = onClick)
+                },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -50,7 +50,6 @@ fun DragonGroupScope.ShapeRow(
     }
 }
 
-
 @Composable
 fun SmallShapeRow(
     selected: IconShape,
@@ -58,15 +57,15 @@ fun SmallShapeRow(
     onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .clickable { onClick() }
-            .background(MaterialTheme.colorScheme.surface),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.large)
+                .clickable { onClick() }
+                .background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
         ShapePreview(
             iconShape = selected,
             modifier = Modifier.size(40.dp)

@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.ktx.to255
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
-private const val multiplier = 0.2f
+private const val MULTIPLIER = 0.2f
 
 @Composable
 fun SliderColorPicker(
@@ -39,7 +39,7 @@ fun SliderColorPicker(
             label = stringResource(R.string.red),
             value = red,
             color = Color.Red,
-            backgroundColor = Color.Red.alphaMultiplier(multiplier),
+            backgroundColor = Color.Red.alphaMultiplier(MULTIPLIER),
             valueRange = 0..255,
             resetEnabled = red != initialColorRed,
             onReset = {
@@ -55,7 +55,7 @@ fun SliderColorPicker(
             label = stringResource(R.string.green),
             value = green,
             color = Color.Green,
-            backgroundColor = Color.Green.alphaMultiplier(multiplier),
+            backgroundColor = Color.Green.alphaMultiplier(MULTIPLIER),
             valueRange = 0..255,
             resetEnabled = green != initialColorGreen,
             onReset = {
@@ -71,7 +71,7 @@ fun SliderColorPicker(
             label = stringResource(R.string.blue),
             value = blue,
             color = Color.Blue,
-            backgroundColor = Color.Blue.alphaMultiplier(multiplier),
+            backgroundColor = Color.Blue.alphaMultiplier(MULTIPLIER),
             valueRange = 0..255,
             resetEnabled = blue != initialColorBlue,
             onReset = {

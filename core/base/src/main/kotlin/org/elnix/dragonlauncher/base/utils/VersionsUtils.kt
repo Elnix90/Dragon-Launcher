@@ -9,7 +9,6 @@ public object VersionsUtils {
     private var _codeName: String? = null
     private var _buildType: String? = null
 
-
     /**
      * Reads from the [android.content.pm.PackageManager] and splits the version.
      *
@@ -23,12 +22,13 @@ public object VersionsUtils {
         _codeName = fullVersion.substringAfter('(').substringBefore(')')
         _buildType = if ('-' in fullVersion) fullVersion.substringAfterLast('-') else "release"
 
-        _versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageManager.getPackageInfo(packageName, 0).longVersionCode.toInt()
-        } else {
-            @Suppress("DEPRECATION")
-            packageManager.getPackageInfo(packageName, 0).versionCode
-        }
+        _versionCode =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageManager.getPackageInfo(packageName, 0).longVersionCode.toInt()
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getPackageInfo(packageName, 0).versionCode
+            }
         _versionCode!!
     }
 

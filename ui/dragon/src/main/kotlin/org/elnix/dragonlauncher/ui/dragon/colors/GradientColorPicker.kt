@@ -32,17 +32,17 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import android.graphics.Color as AndroidColor
 
-
 @Composable
 fun GradientColorPicker(
     initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
-    val hsvArray = remember(initialColor) {
-        FloatArray(3).apply {
-            AndroidColor.colorToHSV(initialColor.toArgb(), this)
+    val hsvArray =
+        remember(initialColor) {
+            FloatArray(3).apply {
+                AndroidColor.colorToHSV(initialColor.toArgb(), this)
+            }
         }
-    }
 
     var hue by remember(hsvArray) { mutableFloatStateOf(hsvArray[0]) }
     var sat by remember(hsvArray) { mutableFloatStateOf(hsvArray[1]) }
@@ -52,11 +52,7 @@ fun GradientColorPicker(
 
     val hueColor = remember(hue) { Color.hsv(hue, 1f, 1f) }
 
-
-
-
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-
         var pickerSize by remember { mutableFloatStateOf(0f) }
 
         fun PointerInputScope.pickColorFromPos(pos: Offset) {
@@ -74,72 +70,70 @@ fun GradientColorPicker(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(MaterialTheme.shapes.large)
-                .background(Brush.horizontalGradient(listOf(Color.White, hueColor)))
-                .drawWithContent {
-                    drawContent()
-                    drawRect(
-                        brush = Brush.verticalGradient(
-                            listOf(Color.Transparent, Color.Black)
-                        ),
-                        blendMode = BlendMode.Multiply
-                    )
-                    // Draw selector circle
-                    val x = sat * size.width
-                    val y = (1f - value) * size.height
-                    drawCircle(
-                        color = if (selectedColor.luminance() > 0.5) Color.Black else Color.White,
-                        radius = 10.dp.toPx(),
-                        center = Offset(x, y),
-                        style = Stroke(width = 2.dp.toPx())
-                    )
-                }
-                .pointerInput(hueColor) {
-                    detectDragGestures(
-                        onDragStart = ::pickColorFromPos,
-                        onDrag = { change, _ -> pickColorFromPos(change.position) }
-                    )
-                }
-                .pointerInput(hueColor) {
-                    detectTapGestures(
-                        onTap = ::pickColorFromPos,
-                        onLongPress = ::pickColorFromPos
-                    )
-                }
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(MaterialTheme.shapes.large)
+                    .background(Brush.horizontalGradient(listOf(Color.White, hueColor)))
+                    .drawWithContent {
+                        drawContent()
+                        drawRect(
+                            brush =
+                                Brush.verticalGradient(
+                                    listOf(Color.Transparent, Color.Black)
+                                ),
+                            blendMode = BlendMode.Multiply
+                        )
+                        // Draw selector circle
+                        val x = sat * size.width
+                        val y = (1f - value) * size.height
+                        drawCircle(
+                            color = if (selectedColor.luminance() > 0.5) Color.Black else Color.White,
+                            radius = 10.dp.toPx(),
+                            center = Offset(x, y),
+                            style = Stroke(width = 2.dp.toPx())
+                        )
+                    }.pointerInput(hueColor) {
+                        detectDragGestures(
+                            onDragStart = ::pickColorFromPos,
+                            onDrag = { change, _ -> pickColorFromPos(change.position) }
+                        )
+                    }.pointerInput(hueColor) {
+                        detectTapGestures(
+                            onTap = ::pickColorFromPos,
+                            onLongPress = ::pickColorFromPos
+                        )
+                    }
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(25.dp)
-                .clip(RoundedCornerShape(5.dp))
-                .background(
-                    Brush.horizontalGradient(
-                        colors = (360 downTo 0 step 30).map { Color.hsv(it.toFloat(), 1f, 1f) }
-                    )
-                )
-                .drawWithContent {
-                    drawContent()
-                    val x = (1 - hue / 360f) * size.width
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(x, 0f),
-                        end = Offset(x, size.height),
-                        strokeWidth = 3.dp.toPx()
-                    )
-                }
-
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = ::pickColorFromPosHorizontal,
-                        onDrag = { change, _ ->
-                            pickColorFromPosHorizontal(change.position)
-                        }
-                    )
-                }
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(25.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = (360 downTo 0 step 30).map { Color.hsv(it.toFloat(), 1f, 1f) }
+                        )
+                    ).drawWithContent {
+                        drawContent()
+                        val x = (1 - hue / 360f) * size.width
+                        drawLine(
+                            color = Color.White,
+                            start = Offset(x, 0f),
+                            end = Offset(x, size.height),
+                            strokeWidth = 3.dp.toPx()
+                        )
+                    }.pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = ::pickColorFromPosHorizontal,
+                            onDrag = { change, _ ->
+                                pickColorFromPosHorizontal(change.position)
+                            }
+                        )
+                    }
         )
     }
 }

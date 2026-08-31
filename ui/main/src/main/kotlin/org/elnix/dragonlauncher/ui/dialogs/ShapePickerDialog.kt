@@ -24,12 +24,14 @@ fun ShapePickerDialog(
     onDismiss: () -> Unit,
     onPicked: (IconShape) -> Unit
 ) {
-
-    val filteredShapes = remember(allowedShapes) {
-        if (allowedShapes != null) {
-            allShapes.filter { it in allowedShapes }
-        } else allShapes.toList()
-    }
+    val filteredShapes =
+        remember(allowedShapes) {
+            if (allowedShapes != null) {
+                allShapes.filter { it in allowedShapes }
+            } else {
+                allShapes.toList()
+            }
+        }
 
     DragonModalBottomSheet(onDismissRequest = onDismiss) {
         LazyVerticalGrid(
@@ -39,7 +41,6 @@ fun ShapePickerDialog(
             contentPadding = PaddingValues(top = 10.dp, bottom = 50.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-
             items(filteredShapes) { shape ->
                 ShapePreview(
                     iconShape = shape,

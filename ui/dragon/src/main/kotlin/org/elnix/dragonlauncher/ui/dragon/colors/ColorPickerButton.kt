@@ -37,7 +37,6 @@ import org.elnix.dragonlauncher.ktx.randomColor
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 
-
 @Composable
 fun ColorPickerButton(
     button: EnumSettingObject<ColorPickerButtonAction>,
@@ -56,43 +55,45 @@ fun ColorPickerButton(
         }
     }
 
-    val buttonEnabled = enabled && when (button) {
-        Reset -> currentColor != defaultColor
-        Random, Copy, Paste -> true
-    }
+    val buttonEnabled =
+        enabled &&
+            when (button) {
+                Reset -> currentColor != defaultColor
+                Random, Copy, Paste -> true
+            }
 
     Box {
         Icon(
             painter = painterResource(button.iconEnabled),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(buttonEnabled),
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh.semiTransparentIfDisabled(buttonEnabled))
-                .combinedClickable(
-                    enabled = enabled,
-                    onLongClick = { showSelector = true }
-                ) {
-                    if (buttonEnabled) {
-                        when (button) {
-                            Random -> onColorPicked(randomColor(minLuminance = 0.2f))
-                            Reset -> {
-                                onColorPicked(null)
-                            }
+            modifier =
+                Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh.semiTransparentIfDisabled(buttonEnabled))
+                    .combinedClickable(
+                        enabled = enabled,
+                        onLongClick = { showSelector = true }
+                    ) {
+                        if (buttonEnabled) {
+                            when (button) {
+                                Random -> onColorPicked(randomColor(minLuminance = 0.2f))
+                                Reset -> {
+                                    onColorPicked(null)
+                                }
 
-                            Copy -> {
-                                if (currentColor != null) ctx.copyToClipboard(currentColor.toHexWithAlpha)
-                            }
-                            Paste -> {
-                                val newColor = pasteColorHexFromClipboard(ctx)
-                                newColor?.let { pasted ->
-                                    onColorPicked(pasted)
+                                Copy -> {
+                                    if (currentColor != null) ctx.copyToClipboard(currentColor.toHexWithAlpha)
+                                }
+                                Paste -> {
+                                    val newColor = pasteColorHexFromClipboard(ctx)
+                                    newColor?.let { pasted ->
+                                        onColorPicked(pasted)
+                                    }
                                 }
                             }
                         }
-                    }
-                }
-                .padding(5.dp)
+                    }.padding(5.dp)
         )
 
         DropdownMenu(
@@ -110,14 +111,14 @@ fun ColorPickerButton(
                         painter = painterResource(it.iconEnabled),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .aspectRatio(1.8f)
-                            .clip(CircleShape)
-                            .clickable {
-                                button = it
-                                showSelector = false
-                            }
-                            .padding(8.dp)
+                        modifier =
+                            Modifier
+                                .aspectRatio(1.8f)
+                                .clip(CircleShape)
+                                .clickable {
+                                    button = it
+                                    showSelector = false
+                                }.padding(8.dp)
                     )
                 }
             }

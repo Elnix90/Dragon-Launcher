@@ -75,7 +75,6 @@ fun MainScreenOverlay(
     val defaultPoint by pointsService.defaultPoint.asState()
     val defaultNest by pointsService.defaultNest.asState()
 
-
     val lineObject by swipeService.lineObject.asState()
     val angleObject by swipeService.angleObject.asState()
     val startObject by swipeService.startObject.asState()
@@ -95,12 +94,13 @@ fun MainScreenOverlay(
 
     val isDragging = start != null && current != null
 
-    val liveNestControllersStack: List<LiveNestState> = rememberLiveNestControllerStack(
-        isDragging = isDragging,
-        current = current,
-        rootStartPos = start,
-        rootNestId = currentNestId
-    )
+    val liveNestControllersStack: List<LiveNestState> =
+        rememberLiveNestControllerStack(
+            isDragging = isDragging,
+            current = current,
+            rootStartPos = start,
+            rootNestId = currentNestId
+        )
 
     /** Find which level is currently active (highest active one) */
     val activeLevelIndex = liveNestControllersStack.indexOfLast { it.isActive }
@@ -108,9 +108,12 @@ fun MainScreenOverlay(
 
     val isAnyLiveNestActive = activeLevelIndex > 0
 
-    val hoveredPoint = liveNestControllersStack.findLast { liveNestState ->
-        liveNestState.nestedHitResult?.selectedPoint != null
-    }?.nestedHitResult?.selectedPoint
+    val hoveredPoint =
+        liveNestControllersStack
+            .findLast { liveNestState ->
+                liveNestState.nestedHitResult?.selectedPoint != null
+            }?.nestedHitResult
+            ?.selectedPoint
 
     /**
      * The offset that is used to provide an animated offset to current selected points, when user uses animation when snapping.
@@ -120,9 +123,10 @@ fun MainScreenOverlay(
      *
      * [Offset.Zero] is considered the center of the nest, or in other words, [start]
      */
-    val animatedCurrent = remember {
-        Animatable(Offset.Zero, Offset.VectorConverter)
-    }
+    val animatedCurrent =
+        remember {
+            Animatable(Offset.Zero, Offset.VectorConverter)
+        }
 
     /**
      * 1. selects the hovered point in the point service
@@ -132,7 +136,12 @@ fun MainScreenOverlay(
         val hoveredPointId = hoveredPoint?.id
         pointsService.selectOnyOne(hoveredPointId)
 
-        if (!animationWhenSnapping || hoveredPoint == null || (isAnyLiveNestActive && hoveredPoint == highestController.hostPoint)) return@LaunchedEffect
+        if (!animationWhenSnapping ||
+            hoveredPoint == null ||
+            (isAnyLiveNestActive && hoveredPoint == highestController.hostPoint)
+        ) {
+            return@LaunchedEffect
+        }
 
         animatedCurrent.animateTo(
             targetValue = hoveredPoint.getPos(),
@@ -156,10 +165,11 @@ fun MainScreenOverlay(
         }
     }
 
-    val cycleActionsController = rememberCycleActionsController(
-        currentAction = hoveredPoint,
-        isDragging = isDragging
-    )
+    val cycleActionsController =
+        rememberCycleActionsController(
+            currentAction = hoveredPoint,
+            isDragging = isDragging
+        )
 
     /**
      * When a non-base cycle stage is active, substitute the stage's action in the preview point
@@ -167,22 +177,23 @@ fun MainScreenOverlay(
      * Loop Over reuses the last stage's action with a temporary label; customIcon is cleared
      * whenever either the base or staged action is OpenCircleNest (mini-nest rings need null icon).
      */
-    val displayPoint: Point? = hoveredPoint?.let { hp ->
-        val ca = hp.cycleActions
-        if (ca.isNullOrEmpty()) return@let hp
+    val displayPoint: Point? =
+        hoveredPoint?.let { hp ->
+            val ca = hp.cycleActions
+            if (ca.isNullOrEmpty()) return@let hp
 
-        val idx = cycleActionsController.currentStageIndex
-        if (idx > 0) {
-            val staged = ca.getOrNull(idx - 1)?.action ?: return@let hp
-            if (staged is Action.OpenNest || hp.action is Action.OpenNest)
-                hp.copy(action = staged, customIcon = null)
-            else {
-                hp.copy(action = staged)
+            val idx = cycleActionsController.currentStageIndex
+            if (idx > 0) {
+                val staged = ca.getOrNull(idx - 1)?.action ?: return@let hp
+                if (staged is Action.OpenNest || hp.action is Action.OpenNest) {
+                    hp.copy(action = staged, customIcon = null)
+                } else {
+                    hp.copy(action = staged)
+                }
+            } else {
+                hp
             }
-        } else {
-            hp
         }
-    }
 //
 //    // Reload the point icon depending on the action in the cycleController
 //    LaunchedEffect(hoveredPoint?.id, cycleActionsController.currentStageIndex) {
@@ -193,14 +204,13 @@ fun MainScreenOverlay(
 //        iconsViewModel.reloadIcon(dp)
 //    }
 
-
-    val holdAndRun = rememberHoldAndRunController(
-        currentPoint = hoveredPoint,
-        isDragging = isDragging
-    ) { firedPoint ->
-        onLaunch?.invoke(firedPoint)
-    }
-
+    val holdAndRun =
+        rememberHoldAndRunController(
+            currentPoint = hoveredPoint,
+            isDragging = isDragging
+        ) { firedPoint ->
+            onLaunch?.invoke(firedPoint)
+        }
 
     LaunchedEffect(hoveredPoint?.id, liveNestControllersStack.count { it.isActive }) {
         hoveredPoint?.let { point ->
@@ -219,11 +229,14 @@ fun MainScreenOverlay(
 
     val haptic = LocalHapticFeedback.current
     LaunchedEffect(highestController.nestedHitResult?.isInCancelZone) {
-        if (isAnyLiveNestActive && highestController.isActive && highestController.nestedHitResult?.isInCancelZone == true && !disableHapticFeedbackGlobally) {
+        if (isAnyLiveNestActive &&
+            highestController.isActive &&
+            highestController.nestedHitResult?.isInCancelZone == true &&
+            !disableHapticFeedbackGlobally
+        ) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         }
     }
-
 
     LaunchedEffect(isDragging) {
         if (!isDragging) {
@@ -254,12 +267,10 @@ fun MainScreenOverlay(
         cycleActionsController.clear()
     }
 
-
     val showLineObjectPreview by AngleLineSettingsStore.showLineObjectPreview.asState()
     val showAngleLineObjectPreview by AngleLineSettingsStore.showAngleLineObjectPreview.asState()
     val showStartObjectPreview by AngleLineSettingsStore.showStartObjectPreview.asState()
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
-
 
     val multiplyOrSubtractOpacityInLiveNests by UiSettingsStore.multiplyOrSubtractOpacityInLiveNests.asState()
 
@@ -267,39 +278,40 @@ fun MainScreenOverlay(
      * Alpha value for each layer: main nest, then each active Live Nest overlay (from highest to shallowest).
      * The more the user go deeper, the more transparent first layers get
      * */
-    val liveNestLayersAlphas: List<Float> = buildList {
-        var alpha = 1f
+    val liveNestLayersAlphas: List<Float> =
+        buildList {
+            var alpha = 1f
 
-        liveNestControllersStack.filter { it.isActive }.forEach { controller ->
-            add(alpha)
+            liveNestControllersStack.filter { it.isActive }.forEach { controller ->
+                add(alpha)
 
-            val percent =
-                (controller.hostPoint?.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent)
-                    .takeIf { it != -1 } ?: Point.defaultLiveNestMainNestOpacityPercent
+                val percent =
+                    (controller.hostPoint?.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent)
+                        .takeIf { it != -1 } ?: Point.defaultLiveNestMainNestOpacityPercent
 
-            if (multiplyOrSubtractOpacityInLiveNests) {
-                alpha -= percent.coerceIn(0, 100) / 100f
-            } else {
-                alpha *= percent.coerceIn(0, 100) / 100f
+                if (multiplyOrSubtractOpacityInLiveNests) {
+                    alpha -= percent.coerceIn(0, 100) / 100f
+                } else {
+                    alpha *= percent.coerceIn(0, 100) / 100f
+                }
             }
-        }
-    }.reversed()
+        }.reversed()
 
     val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
     val nestDebugOverlay = LocalNestDebugOverlay.current
-    val drawParams = rememberDrawParams(
-        eraseColor = Color.Transparent,
-        isDefaultEditing = false,
-        allowShowPointCenter = true,
-        pointSettingsDisplay = false,
-        showCancelZone = nestDebugOverlay,
-        hideShapes = false,
-        skipSelected = false
-    )
+    val drawParams =
+        rememberDrawParams(
+            eraseColor = Color.Transparent,
+            isDefaultEditing = false,
+            allowShowPointCenter = true,
+            pointSettingsDisplay = false,
+            showCancelZone = nestDebugOverlay,
+            hideShapes = false,
+            skipSelected = false
+        )
 
     val iconsTrigger by PointStableCache.cacheTrigger.asState()
     Box(Modifier.fillMaxSize()) {
-
         DebugZone(debugInfo) {
             Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
             Text("current = ${current?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
@@ -367,7 +379,6 @@ fun MainScreenOverlay(
                             else -> current
                         }
 
-
                     val sweepAngle: Float = controller.sweepAngleState.sweepAngle()
 
                     /**
@@ -381,7 +392,11 @@ fun MainScreenOverlay(
                     val effectiveSweepAngle: Int =
                         when {
                             !isHighestController ->
-                                liveNestControllersStack[idx + 1].hostPoint!!.getPos().angleDeg().toInt()
+                                liveNestControllersStack[idx + 1]
+                                    .hostPoint!!
+                                    .getPos()
+                                    .angleDeg()
+                                    .toInt()
 
                             useSnappedAngleOrRealAngle && liveNestSelectedPoint != null ->
                                 liveNestSelectedPoint.getPos().angleDeg().toInt()
@@ -399,7 +414,6 @@ fun MainScreenOverlay(
                     val pickedRememberRotationEnd = endObject.resolveRotation(false, effectiveSweepAngle)
 
                     fun DrawScope.lineDrawing() {
-
                         /**
                          * The line color uses a [Int] angle, that it converts to a float, to prevent tiny difference in colors.
                          * This method can only produce at most 360 different colors.
@@ -410,7 +424,9 @@ fun MainScreenOverlay(
                         val lineColor: Color =
                             if (rgbLine) {
                                 Color.hsv(effectiveSweepAngle.angle360().toFloat(), 1f, 1f)
-                            } else extraColors.angleLine
+                            } else {
+                                extraColors.angleLine
+                            }
 
                         actionLine(
                             start = liveNestCenter,
@@ -438,12 +454,13 @@ fun MainScreenOverlay(
 
                     if (lineBeforeNests) {
                         Canvas(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    alpha = liveNestOpacity
-                                    compositingStrategy = CompositingStrategy.Offscreen
-                                }
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .graphicsLayer {
+                                        alpha = liveNestOpacity
+                                        compositingStrategy = CompositingStrategy.Offscreen
+                                    }
                         ) {
                             lineDrawing()
                         }
@@ -451,29 +468,27 @@ fun MainScreenOverlay(
 
                     // Main canvas, uses drawWithCache to improve drawing performances
                     Canvas(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer {
-                                alpha = liveNestOpacity
-                                compositingStrategy = CompositingStrategy.Offscreen
-                            }
-                            .drawWithCache {
-                                onDrawBehind {
-                                    iconsTrigger
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .graphicsLayer {
+                                    alpha = liveNestOpacity
+                                    compositingStrategy = CompositingStrategy.Offscreen
+                                }.drawWithCache {
+                                    onDrawBehind {
+                                        iconsTrigger
 
-                                    NestOverlay(
-                                        center = liveNestCenter,
-                                        nest = nest,
-                                        depth = 1,
-                                        drawParams = drawParams,
-                                        selectedAll = false,
-                                        lockedPoint = if (isHighestController) null else controller.hostPoint
-                                    )
+                                        NestOverlay(
+                                            center = liveNestCenter,
+                                            nest = nest,
+                                            depth = 1,
+                                            drawParams = drawParams,
+                                            selectedAll = false,
+                                            lockedPoint = if (isHighestController) null else controller.hostPoint
+                                        )
+                                    }
                                 }
-                            }
                     ) {
-
-
                         if (!lineBeforeNests) {
                             lineDrawing()
                         }
@@ -511,7 +526,9 @@ fun MainScreenOverlay(
                             strokeWidth = 2f
                         )
                     }
-                } else break
+                } else {
+                    break
+                }
             }
         }
     }
@@ -526,7 +543,7 @@ fun MainScreenOverlay(
     }
 }
 
-
-fun defaultHapticFeedback(): CustomHapticFeedback = CustomHapticFeedback.build {
-    haptic(20)
-}
+fun defaultHapticFeedback(): CustomHapticFeedback =
+    CustomHapticFeedback.build {
+        haptic(20)
+    }
