@@ -31,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -545,13 +546,21 @@ fun AppDrawerScreen(
                                     .clip(MaterialTheme.shapes.large)
                                     .background(MaterialTheme.colorScheme.surface)
                         ) {
-                            AppGrid(
-                                apps = recentApps,
-                                fillMaxSize = false,
-                                longPressPopup = true,
-                                onReload = drawerViewModel::reloadApps
+                            // The recent apps DO NOT use the category otherwise it ends up filling out all the space
+                            CompositionLocalProvider(
+                                LocalDrawerSettings provides
+                                    LocalDrawerSettings.current.copy(
+                                        useCategory = false
+                                    )
                             ) {
-                                onLaunchAction(it.action)
+                                AppGrid(
+                                    apps = recentApps,
+                                    fillMaxSize = false,
+                                    longPressPopup = true,
+                                    onReload = drawerViewModel::reloadApps
+                                ) {
+                                    onLaunchAction(it.action)
+                                }
                             }
                         }
                     }
