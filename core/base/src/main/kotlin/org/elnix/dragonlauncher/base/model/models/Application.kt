@@ -42,6 +42,11 @@ public abstract class Application : Comparable<Application> {
 
     public abstract val category: AppCategory
 
+    public abstract val categoryOverride: String?
+    public abstract fun overrideCategory(categoryName: String?): Application
+    public val effectiveCategory: String
+        get() = categoryOverride ?: category.name
+
     public abstract val profile: Profile
     public val userSerialNumber: Long
         get() = profile.serial

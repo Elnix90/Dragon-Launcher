@@ -29,16 +29,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.AppCategory
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
@@ -48,6 +52,8 @@ import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.drawer.AppItemGrid
 import org.elnix.dragonlauncher.ui.drawer.AppItemHorizontal
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyGridState
 import kotlin.math.min
 import kotlin.time.Duration.Companion.seconds
 
@@ -77,13 +83,12 @@ fun AppGrid(
     val iconsSpacingVertical = drawerSettings.iconsSpacingVertical
     val iconsSpacingHorizontal = drawerSettings.iconsSpacingHorizontal
 
-    var openedCategory by remember { mutableStateOf<AppCategory?>(null) }
+    var openedCategory by remember { mutableStateOf<String?>(null) }
 
     val visibleApps by remember(apps) {
         derivedStateOf {
             if (useCategory) {
-                // Only display the apps that belongs to the selected category, if enabled
-                apps.filter { openedCategory?.let { cat -> cat == it.category } ?: true }
+                apps.filter { openedCategory?.let { cat -> cat == it.effectiveCategory } ?: true }
             } else {
                 apps
             }
@@ -165,31 +170,78 @@ fun AppGrid(
 
         // Can't use categories with multi-select mode cause it's too annoying to implement
         useCategory && openedCategory == null && !isMultiSelectMode -> {
+            val ctx = LocalContext.current
+            val scope = rememberCoroutineScope()
+            val disabledSystemCategories = drawerSettings.disabledSystemCategories
+            val categoryOrder = drawerSettings.categoryOrder
+
+            val allCategoryNames = remember(visibleApps, disabledSystemCategories, categoryOrder) {
+                val systemCategories =
+                    AppCategory.entries
+                        .filter { it.name !in disabledSystemCategories }
+                        .map { it.name }
+
+                val customCategories =
+                    visibleApps
+                        .mapNotNull { it.categoryOverride }
+                        .distinct()
+
+                val allCategories = customCategories + systemCategories
+
+                if (categoryOrder.isNotEmpty()) {
+                    allCategories.sortedBy { name ->
+                        val idx = categoryOrder.indexOf(name)
+                        if (idx >= 0) idx else Int.MAX_VALUE
+                    }
+                } else {
+                    allCategories
+                }
+            }
+
+            val mutableCategoryNames = remember(allCategoryNames) {
+                mutableStateListOf<String>().apply { addAll(allCategoryNames) }
+            }
+
+            val gridState = categoryGridState ?: rememberLazyGridState()
+            val reorderState =
+                rememberReorderableLazyGridState(
+                    lazyGridState = gridState,
+                    onMove = { from, to ->
+                        mutableCategoryNames.apply {
+                            add(to.index, removeAt(from.index))
+                        }
+                        scope.launch {
+                            DrawerSettingsStore.categoryOrder.set(ctx, mutableCategoryNames.toList())
+                        }
+                    }
+                )
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(categoryGridCells),
                 modifier = modifier,
-                state = categoryGridState ?: rememberLazyGridState(),
+                state = gridState,
                 contentPadding = paddingValues,
                 verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical),
                 horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
             ) {
-                AppCategory.entries.forEach { category ->
-                    val categoryApps = visibleApps.filter { it.category == category }
+                items(
+                    items = mutableCategoryNames,
+                    key = { it }
+                ) { categoryName ->
+                    val categoryApps = visibleApps.filter { it.effectiveCategory == categoryName }
 
-                    categoryApps
-                        .takeIf { it.isNotEmpty() }
-                        ?.let {
-                            item {
-                                CategoryGrid(
-                                    category = category,
-                                    apps = categoryApps,
-                                    longPressPopup = longPressPopup,
-                                    onClick = onClick
-                                ) {
-                                    openedCategory = category
-                                }
+                    if (categoryApps.isNotEmpty()) {
+                        ReorderableItem(state = reorderState, key = categoryName) {
+                            CategoryGrid(
+                                categoryName = categoryName,
+                                apps = categoryApps,
+                                longPressPopup = longPressPopup,
+                                onClick = onClick,
+                            ) {
+                                openedCategory = categoryName
                             }
                         }
+                    }
                 }
             }
         }
@@ -272,7 +324,7 @@ fun AppGrid(
 
 @Composable
 private fun CategoryGrid(
-    category: AppCategory,
+    categoryName: String,
     apps: List<Application>,
     modifier: Modifier = Modifier,
     longPressPopup: Boolean,
@@ -302,7 +354,7 @@ private fun CategoryGrid(
 
         if (showCategoryName) {
             Text(
-                text = category.name,
+                text = categoryName,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelSmall
             )

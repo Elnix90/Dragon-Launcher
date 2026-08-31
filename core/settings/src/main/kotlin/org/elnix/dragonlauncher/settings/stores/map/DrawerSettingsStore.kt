@@ -337,4 +337,20 @@ public object DrawerSettingsStore : MapSettingsStore() {
             icon = R.drawable.drag_indicator,
             default = DrawerToolbar.defaultToolbarOrder
         )
+
+    @SettingKey
+    public val disabledSystemCategories: StringListSettingObject =
+        stringList(
+            title = R.string.disabled_system_categories,
+            description = R.string.disabled_system_categories_desc,
+            icon = R.drawable.filter_alt,
+            default = emptyList()
+        )
+
+    @SettingKey
+    public val categoryOrder: StringListSettingObject =
+        stringList(
+            default = emptyList(),
+            backupable = false
+        )
 }

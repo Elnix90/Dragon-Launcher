@@ -44,7 +44,9 @@ data class DrawerSettings(
     val showRecentlyUsedApps: Boolean,
     val recentlyUsedAppsCount: Int,
     val autoShowKeyboard: Boolean,
-    val toolbarsOrder: List<DrawerToolbar>
+    val toolbarsOrder: List<DrawerToolbar>,
+    val disabledSystemCategories: List<String>,
+    val categoryOrder: List<String>,
 )
 
 val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
@@ -80,6 +82,8 @@ fun ProvideDrawerSettings(
     val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
     val autoShowKeyboard by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
     val toolbarsOrder by DrawerSettingsStore.toolbarsOrder.asState()
+    val disabledSystemCategories by DrawerSettingsStore.disabledSystemCategories.asState()
+    val categoryOrder by DrawerSettingsStore.categoryOrder.asState()
 
     CompositionLocalProvider(
         LocalDrawerSettings provides
@@ -109,7 +113,9 @@ fun ProvideDrawerSettings(
                 showRecentlyUsedApps = showRecentlyUsedApps,
                 recentlyUsedAppsCount = recentlyUsedAppsCount,
                 autoShowKeyboard = autoShowKeyboard,
-                toolbarsOrder = toolbarsOrder
+                toolbarsOrder = toolbarsOrder,
+                disabledSystemCategories = disabledSystemCategories,
+                categoryOrder = categoryOrder,
             ),
         content = content
     )
