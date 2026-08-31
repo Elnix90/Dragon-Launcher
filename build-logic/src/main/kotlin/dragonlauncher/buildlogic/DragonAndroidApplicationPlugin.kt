@@ -16,10 +16,9 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
 
             configureKotlinAndroid(
                 enableExplicitApi = false,
-                enablePropertyParamAnnotationFlag = false,
+                enablePropertyParamAnnotationFlag = false
             )
             forceKotlinMetadataResolution()
-
 
             extensions.configure(ApplicationExtension::class.java) {
                 compileSdk {
@@ -43,7 +42,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
                         versionNameSuffix = " ($CODE_NAME)"
                         proguardFiles(
                             getDefaultProguardFile("proguard-android-optimize.txt"),
-                            "proguard-rules.pro",
+                            "proguard-rules.pro"
                         )
                     }
 
@@ -53,7 +52,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
                         versionNameSuffix = " ($CODE_NAME)-beta"
                         proguardFiles(
                             getDefaultProguardFile("proguard-android-optimize.txt"),
-                            "proguard-rules.pro",
+                            "proguard-rules.pro"
                         )
                     }
 
@@ -83,6 +82,19 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
                 dependenciesInfo {
                     includeInApk = false
                     includeInBundle = false
+                }
+            }
+
+            val androidTestDir = file("src/androidTest")
+            val hasAndroidTestSources =
+                androidTestDir.exists() &&
+                    androidTestDir.walkTopDown().any { it.isFile && (it.extension == "kt" || it.extension == "java") }
+
+            if (!hasAndroidTestSources) {
+                tasks.configureEach {
+                    if (name.startsWith("connected") && name.endsWith("AndroidTest")) {
+                        enabled = false
+                    }
                 }
             }
         }

@@ -84,7 +84,7 @@ class DragonRowTest {
     fun nonClickableRow_displaysContent() {
         composeTestRule.setContent {
             MaterialTheme {
-                DragonRow {
+                DragonRow({}) {
                     Text("Static Row")
                 }
             }

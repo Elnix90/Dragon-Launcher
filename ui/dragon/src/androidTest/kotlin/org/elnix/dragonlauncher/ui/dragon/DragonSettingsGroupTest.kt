@@ -31,7 +31,7 @@ class DragonSettingsGroupTest {
     fun settingsGroup_displaysContentWithoutTitle() {
         composeTestRule.setContent {
             MaterialTheme {
-                DragonSettingsGroup(title = null) {
+                DragonSettingsGroup {
                     Text("Group content")
                 }
             }
@@ -44,7 +44,7 @@ class DragonSettingsGroupTest {
     fun settingsGroup_displaysMultipleChildren() {
         composeTestRule.setContent {
             MaterialTheme {
-                DragonSettingsGroup(title = null) {
+                DragonSettingsGroup {
                     Text("Setting A")
                     Text("Setting B")
                 }

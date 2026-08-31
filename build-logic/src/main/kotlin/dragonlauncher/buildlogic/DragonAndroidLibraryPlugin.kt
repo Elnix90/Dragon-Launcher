@@ -41,6 +41,19 @@ class DragonAndroidLibraryPlugin : Plugin<Project> {
                     targetCompatibility = JAVA_VERSION
                 }
             }
+
+            val androidTestDir = file("src/androidTest")
+            val hasAndroidTestSources =
+                androidTestDir.exists() &&
+                    androidTestDir.walkTopDown().any { it.isFile && (it.extension == "kt" || it.extension == "java") }
+
+            if (!hasAndroidTestSources) {
+                tasks.configureEach {
+                    if (name.startsWith("connected") && name.endsWith("AndroidTest")) {
+                        enabled = false
+                    }
+                }
+            }
         }
     }
 }

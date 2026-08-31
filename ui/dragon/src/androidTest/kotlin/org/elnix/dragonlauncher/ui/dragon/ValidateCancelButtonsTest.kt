@@ -2,10 +2,14 @@ package org.elnix.dragonlauncher.ui.dragon
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -34,10 +38,22 @@ class ValidateCancelButtonsTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
+    @Composable
+    fun TestTheme(content: @Composable () -> Unit) {
+        MaterialTheme {
+            CompositionLocalProvider(
+                LocalUseCustomColorChannels provides true,
+                LocalDisableHapticFeedbackGlobally provides false
+            ) {
+                content()
+            }
+        }
+    }
+
     @Test
     fun validateCancelButtons_bothButtonsVisible() {
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 ValidateCancelButtons(
                     validateText = "Save",
                     cancelText = "Cancel",
@@ -56,7 +72,7 @@ class ValidateCancelButtonsTest {
         var confirmed = false
 
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 ValidateCancelButtons(
                     validateText = "OK",
                     cancelText = "Cancel",
@@ -75,7 +91,7 @@ class ValidateCancelButtonsTest {
         var cancelled = false
 
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 ValidateCancelButtons(
                     validateText = "Save",
                     cancelText = "Cancel",
@@ -92,7 +108,7 @@ class ValidateCancelButtonsTest {
     @Test
     fun validateCancelButtons_hidesCancelWhenOnCancelIsNull() {
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 ValidateCancelButtons(
                     validateText = "OK",
                     cancelText = "Cancel",
@@ -111,7 +127,7 @@ class ValidateCancelButtonsTest {
         var confirmed = false
 
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 ValidateCancelButtons(
                     validateText = "Save",
                     cancelText = "Cancel",
@@ -132,7 +148,7 @@ class ValidateCancelButtonsTest {
     @Test
     fun validateCancelButtons_customText() {
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 ValidateCancelButtons(
                     validateText = "Accept",
                     cancelText = "Decline",

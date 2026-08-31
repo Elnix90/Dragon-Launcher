@@ -3,11 +3,17 @@ package org.elnix.dragonlauncher.ui.dragon
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -35,10 +41,24 @@ class DragonButtonTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
+    @Composable
+    fun TestTheme(content: @Composable DragonGroupScope.() -> Unit) {
+        MaterialTheme {
+            CompositionLocalProvider(
+                LocalUseCustomColorChannels provides true,
+                LocalDisableHapticFeedbackGlobally provides false
+            ) {
+                DragonSettingsGroup {
+                    content()
+                }
+            }
+        }
+    }
+
     @Test
     fun dragonButton_displaysContent() {
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 DragonButton(onClick = {}) {
                     Text("Press Me")
                 }
@@ -53,7 +73,7 @@ class DragonButtonTest {
         var clicked = false
 
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 DragonButton(onClick = { clicked = true }) {
                     Text("Click")
                 }
@@ -69,7 +89,7 @@ class DragonButtonTest {
         var count = 0
 
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 DragonButton(onClick = { count++ }) {
                     Text("Tap")
                 }
@@ -87,7 +107,7 @@ class DragonButtonTest {
         var clicked = false
 
         composeTestRule.setContent {
-            MaterialTheme {
+            TestTheme {
                 DragonButton(
                     onClick = { clicked = true },
                     enabled = false
