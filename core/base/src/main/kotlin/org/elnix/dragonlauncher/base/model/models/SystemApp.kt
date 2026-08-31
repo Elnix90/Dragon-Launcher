@@ -34,9 +34,7 @@ public data class SystemApp(
 
     override fun overrideLabel(label: String): Application = this.copy(labelOverride = label)
 
-    override fun overrideCategory(categoryName: String?): Application {
-        return this.copy(categoryOverride = categoryName)
-    }
+    override fun overrideCategory(categoryName: String?): Application = this.copy(categoryOverride = categoryName)
 
     override val componentName: ComponentName
         get() = buildFakeComponentName(applicationInfo.packageName)

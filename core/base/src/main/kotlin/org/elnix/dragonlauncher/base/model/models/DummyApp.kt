@@ -23,7 +23,9 @@ public class DummyApp : Application() {
     override val category: AppCategory = AppCategory.Other
 
     override fun overrideLabel(label: String): Application = this
+
     override val categoryOverride: String? = null
+
     override fun overrideCategory(categoryName: String?): Application = this
 
     override val componentName: ComponentName

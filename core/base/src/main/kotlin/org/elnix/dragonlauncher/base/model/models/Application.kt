@@ -43,7 +43,9 @@ public abstract class Application : Comparable<Application> {
     public abstract val category: AppCategory
 
     public abstract val categoryOverride: String?
+
     public abstract fun overrideCategory(categoryName: String?): Application
+
     public val effectiveCategory: String
         get() = categoryOverride ?: category.name
 

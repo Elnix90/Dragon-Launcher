@@ -5,16 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,9 +40,10 @@ fun CategoryPickerDialog(
     val currentCategory = app.categoryOverride
 
     val systemCategoryNames = AppCategory.entries.map { it.name }
-    val allCategoryNames = remember(existingCustomCategories, systemCategoryNames) {
-        systemCategoryNames + existingCustomCategories.filter { it !in systemCategoryNames }
-    }
+    val allCategoryNames =
+        remember(existingCustomCategories, systemCategoryNames) {
+            systemCategoryNames + existingCustomCategories.filter { it !in systemCategoryNames }
+        }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -67,13 +67,13 @@ fun CategoryPickerDialog(
                     ) {
                         item {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onValidate(null)
-                                        onDismiss()
-                                    }
-                                    .padding(vertical = 8.dp, horizontal = 4.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            onValidate(null)
+                                            onDismiss()
+                                        }.padding(vertical = 8.dp, horizontal = 4.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
@@ -94,13 +94,13 @@ fun CategoryPickerDialog(
 
                         items(allCategoryNames) { categoryName ->
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onValidate(categoryName)
-                                        onDismiss()
-                                    }
-                                    .padding(vertical = 8.dp, horizontal = 4.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            onValidate(categoryName)
+                                            onDismiss()
+                                        }.padding(vertical = 8.dp, horizontal = 4.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
@@ -121,10 +121,11 @@ fun CategoryPickerDialog(
 
                         item {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { showCreateNew = true }
-                                    .padding(vertical = 8.dp, horizontal = 4.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clickable { showCreateNew = true }
+                                        .padding(vertical = 8.dp, horizontal = 4.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {

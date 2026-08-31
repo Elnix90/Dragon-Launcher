@@ -175,32 +175,34 @@ fun AppGrid(
             val disabledSystemCategories = drawerSettings.disabledSystemCategories
             val categoryOrder = drawerSettings.categoryOrder
 
-            val allCategoryNames = remember(visibleApps, disabledSystemCategories, categoryOrder) {
-                val systemCategories =
-                    AppCategory.entries
-                        .filter { it.name !in disabledSystemCategories }
-                        .map { it.name }
+            val allCategoryNames =
+                remember(visibleApps, disabledSystemCategories, categoryOrder) {
+                    val systemCategories =
+                        AppCategory.entries
+                            .filter { it.name !in disabledSystemCategories }
+                            .map { it.name }
 
-                val customCategories =
-                    visibleApps
-                        .mapNotNull { it.categoryOverride }
-                        .distinct()
+                    val customCategories =
+                        visibleApps
+                            .mapNotNull { it.categoryOverride }
+                            .distinct()
 
-                val allCategories = customCategories + systemCategories
+                    val allCategories = customCategories + systemCategories
 
-                if (categoryOrder.isNotEmpty()) {
-                    allCategories.sortedBy { name ->
-                        val idx = categoryOrder.indexOf(name)
-                        if (idx >= 0) idx else Int.MAX_VALUE
+                    if (categoryOrder.isNotEmpty()) {
+                        allCategories.sortedBy { name ->
+                            val idx = categoryOrder.indexOf(name)
+                            if (idx >= 0) idx else Int.MAX_VALUE
+                        }
+                    } else {
+                        allCategories
                     }
-                } else {
-                    allCategories
                 }
-            }
 
-            val mutableCategoryNames = remember(allCategoryNames) {
-                mutableStateListOf<String>().apply { addAll(allCategoryNames) }
-            }
+            val mutableCategoryNames =
+                remember(allCategoryNames) {
+                    mutableStateListOf<String>().apply { addAll(allCategoryNames) }
+                }
 
             val gridState = categoryGridState ?: rememberLazyGridState()
             val reorderState =
@@ -236,7 +238,7 @@ fun AppGrid(
                                 categoryName = categoryName,
                                 apps = categoryApps,
                                 longPressPopup = longPressPopup,
-                                onClick = onClick,
+                                onClick = onClick
                             ) {
                                 openedCategory = categoryName
                             }
