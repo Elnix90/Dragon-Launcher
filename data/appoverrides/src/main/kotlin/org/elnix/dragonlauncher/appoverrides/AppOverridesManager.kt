@@ -130,6 +130,12 @@ public class AppOverridesManager(
         }
     }
 
+    public fun setCustomCategory(cacheKey: CacheKey, categoryName: String?) {
+        updateOv(cacheKey) { old ->
+            old.copy(customCategory = categoryName?.takeIf { it.isNotEmpty() })
+        }
+    }
+
     public fun resetOverrides() {
         appOverrides.value = defaultAppOverrides
 
