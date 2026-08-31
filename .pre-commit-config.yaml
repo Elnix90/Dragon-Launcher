@@ -30,12 +30,6 @@ repos:
         language: system
         files: '\.kt$'
 
-  # Markdown lint (wiki)
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.23.2
-    hooks:
-      - id: markdownlint-cli2
-
   # Android string resource references validation
   - repo: local
     hooks:
