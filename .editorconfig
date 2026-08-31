@@ -16,6 +16,8 @@ trim_trailing_whitespace = true
 ktlint_code_style = ktlint_official
 max_line_length = 150
 
+ktlint_standard_multiline-expression-wrapping = disabled
+
 # Trailing commas keep diffs small when adding parameters/arguments.
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
