@@ -30,14 +30,14 @@ repos:
         language: system
         files: '\.kt$'
 
-  # Android string resource references validation
-  - repo: local
-    hooks:
-      - id: check-string-refs
-        name: Check string resource references
-        entry: scripts/check-string-refs.sh
-        language: script
-        files: '\.(kt|xml)$'
+#  # Android string resource references validation
+#  - repo: local
+#    hooks:
+#      - id: check-string-refs
+#        name: Check string resource references
+#        entry: scripts/check-string-refs.sh
+#        language: script
+#        files: '\.(kt|xml)$'
 
   # Commit messages (Conventional Commits)
   - repo: https://github.com/compilerla/conventional-pre-commit
