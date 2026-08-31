@@ -21,11 +21,6 @@ ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
 
 
-# # Force multi-line for data classes and functions
-# ij_kotlin_force_multiline = true
-# ij_kotlin_force_multiline_parameters = true
-# ij_kotlin_force_multiline_when_with_single_condition = true
-
 # @Composable functions are PascalCase by convention, which the naming rule
 # would otherwise flag. Test method names are free-form for readability.
 ktlint_function_naming_ignore_when_annotated_with = Composable, Test, ParameterizedTest
