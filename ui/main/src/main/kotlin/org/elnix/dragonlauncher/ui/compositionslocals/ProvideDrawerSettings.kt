@@ -46,7 +46,7 @@ data class DrawerSettings(
     val autoShowKeyboard: Boolean,
     val toolbarsOrder: List<DrawerToolbar>,
     val disabledSystemCategories: List<String>,
-    val categoryOrder: List<String>,
+    val categoryOrder: List<String>
 )
 
 val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
@@ -115,7 +115,7 @@ fun ProvideDrawerSettings(
                 autoShowKeyboard = autoShowKeyboard,
                 toolbarsOrder = toolbarsOrder,
                 disabledSystemCategories = disabledSystemCategories,
-                categoryOrder = categoryOrder,
+                categoryOrder = categoryOrder
             ),
         content = content
     )

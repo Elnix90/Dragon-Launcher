@@ -49,20 +49,22 @@ fun DisabledCategoriesDialog(
                     val isDisabled = category.name in disabledCategories
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 2.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Checkbox(
                             checked = isDisabled,
                             onCheckedChange = { checked ->
-                                val newDisabled = if (checked) {
-                                    disabledCategories + category.name
-                                } else {
-                                    disabledCategories - category.name
-                                }
+                                val newDisabled =
+                                    if (checked) {
+                                        disabledCategories + category.name
+                                    } else {
+                                        disabledCategories - category.name
+                                    }
                                 scope.launch {
                                     DrawerSettingsStore.disabledSystemCategories.set(ctx, newDisabled)
                                 }
