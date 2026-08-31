@@ -25,6 +25,7 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.specialObjects.IconShapeSettingObject
 import org.elnix.dragonlauncher.settings.specialObjects.shape
@@ -247,11 +248,21 @@ public object DrawerSettingsStore : MapSettingsStore() {
     @SettingKey
     public val categoryGridCells: IntSettingObject =
         int(
-            title = R.string.category_cells,
-            description = R.string.category_cells,
+            title = R.string.category_grid_cells,
+            description = R.string.category_grid_cells_desc,
             icon = R.drawable.more_horiz,
             default = 3,
             allowedRange = 2..5
+        )
+
+    @SettingKey
+    public val categoryCells: IntSettingObject =
+        int(
+            title = R.string.category_cells,
+            description = R.string.category_cells_desc,
+            icon = R.drawable.more_horiz,
+            default = 3,
+            allowedRange = 1..4
         )
 
     @SettingKey
@@ -352,5 +363,12 @@ public object DrawerSettingsStore : MapSettingsStore() {
         stringList(
             default = emptyList(),
             backupable = false
+        )
+
+    @SettingKey
+    public val categoryColor: ColorSettingObject =
+        color(
+            default = AmoledDragonColorScheme.surfaceVariant,
+            title = R.string.category_color
         )
 }

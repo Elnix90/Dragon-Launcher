@@ -26,7 +26,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -35,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,6 +62,12 @@ import sh.calvin.reorderable.rememberReorderableLazyGridState
 import kotlin.math.min
 import kotlin.time.Duration.Companion.seconds
 
+@Immutable
+private data class MutableCategory(
+    val categoryName: String,
+    val apps: List<Application>
+)
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppGrid(
@@ -80,7 +90,6 @@ fun AppGrid(
     val drawerSettings = LocalDrawerSettings.current
     val useCategory = drawerSettings.useCategory
     val gridSize = drawerSettings.gridSize
-    val categoryGridCells = drawerSettings.categoryGridCells
     val iconsSpacingVertical = drawerSettings.iconsSpacingVertical
     val iconsSpacingHorizontal = drawerSettings.iconsSpacingHorizontal
 
@@ -176,6 +185,8 @@ fun AppGrid(
             val disabledSystemCategories = drawerSettings.disabledSystemCategories
             val categoryOrder = drawerSettings.categoryOrder
 
+            // That's shitty code, and it should move to a viewmodel, but I don't care about the categories anyway
+
             val allCategoryNames =
                 remember(visibleApps, disabledSystemCategories, categoryOrder) {
                     val systemCategories =
@@ -200,10 +211,28 @@ fun AppGrid(
                     }
                 }
 
-            val mutableCategoryNames =
+            val mutableCategoryNames: SnapshotStateList<MutableCategory> =
                 remember(allCategoryNames) {
-                    mutableStateListOf<String>().apply { addAll(allCategoryNames) }
+                    mutableStateListOf<MutableCategory>().apply {
+                        allCategoryNames.forEach { categoryName ->
+                            val apps = visibleApps.filter { it.effectiveCategory == categoryName }
+                            if (apps.isNotEmpty()) {
+                                add(
+                                    MutableCategory(
+                                        categoryName = categoryName,
+                                        apps = apps
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
+
+            fun saveOrder() {
+                scope.launch {
+                    DrawerSettingsStore.categoryOrder.set(ctx, mutableCategoryNames.map { it.categoryName })
+                }
+            }
 
             val gridState = categoryGridState ?: rememberLazyGridState()
             val reorderState =
@@ -213,14 +242,11 @@ fun AppGrid(
                         mutableCategoryNames.apply {
                             add(to.index, removeAt(from.index))
                         }
-                        scope.launch {
-                            DrawerSettingsStore.categoryOrder.set(ctx, mutableCategoryNames.toList())
-                        }
                     }
                 )
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(categoryGridCells),
+                columns = GridCells.Fixed(drawerSettings.categoryCells),
                 modifier = modifier,
                 state = gridState,
                 contentPadding = paddingValues,
@@ -229,20 +255,19 @@ fun AppGrid(
             ) {
                 items(
                     items = mutableCategoryNames,
-                    key = { it }
-                ) { categoryName ->
-                    val categoryApps = visibleApps.filter { it.effectiveCategory == categoryName }
-
-                    if (categoryApps.isNotEmpty()) {
-                        ReorderableItem(state = reorderState, key = categoryName) {
-                            CategoryGrid(
-                                categoryName = categoryName,
-                                apps = categoryApps,
-                                longPressPopup = longPressPopup,
-                                onClick = onClick
-                            ) {
-                                openedCategory = categoryName
-                            }
+                    key = { it.categoryName }
+                ) { category ->
+                    ReorderableItem(state = reorderState, key = category.categoryName) {
+                        CategoryGrid(
+                            categoryName = category.categoryName,
+                            apps = category.apps,
+                            modifier = Modifier.longPressDraggableHandle(
+                                onDragStopped = ::saveOrder
+                            ),
+                            longPressPopup = longPressPopup,
+                            onClick = onClick
+                        ) {
+                            openedCategory = category.categoryName
                         }
                     }
                 }
@@ -329,105 +354,91 @@ fun AppGrid(
 private fun CategoryGrid(
     categoryName: String,
     apps: List<Application>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?,
     onOpenCategory: () -> Unit
 ) {
-    val categoryGridCells by DrawerSettingsStore.categoryGridCells.asState()
     val showCategoryName by DrawerSettingsStore.showCategoryName.asState()
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+    val drawerSettings = LocalDrawerSettings.current
+    val gridCells = drawerSettings.categoryGridCells
+
+    CompositionLocalProvider(
+        LocalDrawerSettings provides
+            drawerSettings.copy(
+                iconSize = drawerSettings.iconSize / gridCells,
+                showAppLabelsInDrawer = false
+            )
     ) {
-        Box(
-            modifier =
-                modifier
-                    .aspectRatio(1f)
-                    .padding(10.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AppDefinedGrid(
-                apps = apps,
-                longPressPopup = longPressPopup,
-                onOpenCategory = onOpenCategory,
-                onClick = onClick,
-                gridCells = categoryGridCells
-            )
-        }
-
-        if (showCategoryName) {
-            Text(
-                text = categoryName,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall
-            )
-        }
-    }
-}
-
-@Composable
-private fun AppDefinedGrid(
-    apps: List<Application>,
-    gridCells: Int,
-    modifier: Modifier = Modifier,
-    onLongClick: ((Application) -> Unit)? = null,
-    onOpenCategory: () -> Unit,
-    longPressPopup: Boolean,
-    onClick: ((Application) -> Unit)?
-) {
-    var appIndex = 0
-
-    val appNumber = apps.size
-    val maxAppNumber = gridCells * gridCells - 1
-    val sanitizedAppNumber = min(appNumber, maxAppNumber)
-
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onOpenCategory)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        repeat(gridCells) {
-            Row(
-                modifier = Modifier.weight(1f)
+            Box(
+                modifier =
+                    modifier
+                        .aspectRatio(1f)
+                        .padding(10.dp)
             ) {
-                repeat(gridCells) {
-                    Box(
-                        modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (appIndex < sanitizedAppNumber) {
-                            val app = apps[appIndex]
+                var appIndex = 0
 
-                            AppItemGrid(
-                                app = app,
-                                selected = false,
-                                onLongClick =
-                                    if (onLongClick != null) {
-                                        { onLongClick(app) }
-                                    } else {
-                                        null
-                                    },
-                                longPressPopup = longPressPopup,
-                                onClick = { onClick?.invoke(app) }
-                            )
-                        } else if (appNumber > maxAppNumber) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.more_horiz),
-                                    contentDescription = "More",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
+                val appNumber = apps.size
+                val maxAppNumber = gridCells * gridCells - 1
+                val sanitizedAppNumber = min(appNumber, maxAppNumber)
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = onOpenCategory)
+                        .background(drawerSettings.categoryColor)
+                ) {
+                    repeat(gridCells) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            repeat(gridCells) {
+                                Box(
+                                    modifier = Modifier.weight(1f),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (appIndex < sanitizedAppNumber) {
+                                        val app = apps[appIndex]
+
+                                        AppItemGrid(
+                                            app = app,
+                                            selected = false,
+                                            onLongClick = null,
+                                            longPressPopup = longPressPopup,
+                                            onClick = { onClick?.invoke(app) }
+                                        )
+                                    } else if (appIndex == maxAppNumber) {
+                                        Box(
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.more_horiz),
+                                                contentDescription = "More",
+                                                tint = contentColorFor(drawerSettings.categoryColor)
+                                            )
+                                        }
+                                    }
+                                }
+                                appIndex++
                             }
                         }
                     }
-                    appIndex++
                 }
+            }
+
+            if (showCategoryName) {
+                Text(
+                    text = categoryName,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelSmall
+                )
             }
         }
     }

@@ -123,19 +123,20 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             Setting(DrawerSettingsStore.showAppIconsInDrawer)
             Setting(DrawerSettingsStore.showAppLabelsInDrawer)
             Setting(DrawerSettingsStore.labelTextColor)
+            DrawerIconShapePicker()
+        }
 
+        DragonSettingsGroup(R.string.category_settings) {
             Setting(DrawerSettingsStore.useCategory)
             Setting(DrawerSettingsStore.showCategoryName, enabled = useCategory)
-            Setting(DrawerSettingsStore.categoryGridCells)
-
-            if (useCategory) {
-                SettingsItem(
-                    title = stringResource(R.string.disabled_system_categories),
-                    icon = R.drawable.filter_alt
-                ) { showDisabledCategoriesDialog = true }
-            }
-
-            DrawerIconShapePicker()
+            Setting(DrawerSettingsStore.categoryCells, enabled = useCategory)
+            Setting(DrawerSettingsStore.categoryGridCells, enabled = useCategory)
+            Setting(DrawerSettingsStore.categoryColor, enabled = useCategory)
+            SettingsItem(
+                title = stringResource(R.string.disabled_system_categories),
+                icon = R.drawable.filter_alt,
+                enabled = useCategory
+            ) { showDisabledCategoriesDialog = true }
         }
 
         DragonSettingsGroup(R.string.grid_settings) {

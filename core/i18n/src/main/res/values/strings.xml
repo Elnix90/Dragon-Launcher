@@ -499,7 +499,10 @@
     <string name="category_settings">Category settings</string>
     <string name="expanded_chevron_indicator">Expanded chevron indicator</string>
     <string name="grid_settings">Grid Settings</string>
-    <string name="category_cells">Category cells</string>
+  <string name="category_cells">Category cells</string>
+  <string name="category_cells_desc">Number of categories in the width of the drawer</string>
+  <string name="category_grid_cells">Category grid cells</string>
+  <string name="category_grid_cells_desc">Number of apps in a row/column of a category</string>
 
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d selected</string>
@@ -1110,4 +1113,5 @@
     <string name="improvements">Improvements</string>
     <string name="fixes">Fixes</string>
     <string name="known_issues">Known issues</string>
+  <string name="category_color">Categories color</string>
 </resources>
