@@ -13,7 +13,7 @@ ktlint = "1.5.0"
 "vfox:mise-plugins/vfox-android-sdk" = "latest"
 pre-commit = "latest"
 
-ffmpeg = { version = "latest", optional = true }
+#ffmpeg = { version = "latest", optional = true }
 "aqua:yashikota/exiftool-go" = { version = "latest", optional = true }
 github-cli = { version = "latest", optional = true }
 
@@ -36,7 +36,7 @@ description = "Build release APK"
 run = "./gradlew assembleDebug assembleBeta assembleRelease"
 description = "Build all variants"
 
-[tasks.install]
+[tasks.install-debug]
 run = "./gradlew installDebug"
 description = "Build + install debug on device"
 
@@ -71,14 +71,6 @@ description = "Show dependency tree"
 [tasks.build-health]
 run = "./gradlew buildHealth"
 description = "Dependency analysis"
-
-[tasks.dev]
-run = "./gradlew installDebug"
-description = "Quick dev cycle: build + install"
-
-[tasks.release]
-run = "./gradlew installRelease && adb install -r app/build/outputs/apk/release/*.apk"
-description = "Build release + transfer + install"
 
 [tasks.check]
 depends = ["lint", "test"]
