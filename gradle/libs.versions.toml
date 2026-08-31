@@ -51,10 +51,10 @@ ksp = "2.3.10"
 coil = "2.7.0"
 nav3Core = "1.1.7"
 androidx-palette = "1.0.0"
+
 androidx-room = "2.8.4"
 
 ktlintGradle = "14.2.0"
-
 # Used by the root build.gradle
 #noinspection UnusedVersionCatalogEntry
 ktlint = "1.6.0"
