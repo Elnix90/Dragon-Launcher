@@ -55,36 +55,30 @@ public class AppOverridesManager(
             AppOverridesSettingsStore.jsonSetting.set(ctx, json)
         }
 
-    private inline fun update(newAppOverrides: (AppOverrideState) -> AppOverrideState) {
-        appOverrides.value = newAppOverrides(appOverrides.value)
+    private inline fun update(cacheKey: CacheKey, newOverride: (AppOverride) -> AppOverride?) {
+        val prevOverride = appOverrides.value[cacheKey] ?: AppOverride()
+        val newOverride = newOverride(prevOverride)
+
+        appOverrides.value =
+            if (newOverride != null && newOverride.isNotNullOrEmpty) {
+                appOverrides.value + (cacheKey to newOverride)
+            } else {
+                appOverrides.value - cacheKey
+            }
+
         persistAppOverrides()
-    }
-
-    private inline fun updateOv(cacheKey: CacheKey, newOverride: (AppOverride) -> AppOverride?) {
-        update { old ->
-            val prevOverride = old[cacheKey] ?: AppOverride()
-            val newOverride = newOverride(prevOverride)
-
-            val new =
-                if (newOverride != null && newOverride.isNotNullOrEmpty) {
-                    old + (cacheKey to newOverride)
-                } else {
-                    old - cacheKey
-                }
-            new
-        }
     }
 
     public fun getAliasesForApp(app: Application): Flow<Set<String>> = appOverrides.flow.map { it[app.key]?.aliases ?: emptySet() }
 
     public fun addAliasToApp(alias: String, cacheKey: CacheKey) {
-        updateOv(cacheKey) { old ->
+        update(cacheKey) { old ->
             old.copy(aliases = (old.aliases ?: emptySet()).plus(alias))
         }
     }
 
     public fun updateAliasToApp(old: String, new: String, cacheKey: CacheKey) {
-        updateOv(cacheKey) { override ->
+        update(cacheKey) { override ->
             val currentAliases = override.aliases ?: return
             val newAliases =
                 currentAliases.mapTo(mutableSetOf()) {
@@ -99,20 +93,20 @@ public class AppOverridesManager(
     }
 
     public fun removeAliasFromApp(cacheKey: CacheKey, aliasToRemove: String) {
-        updateOv(cacheKey) { old ->
+        update(cacheKey) { old ->
             val newAliases = old.aliases?.minus(aliasToRemove)?.takeIf { it.isNotEmpty() }
             old.copy(aliases = newAliases)
         }
     }
 
     public fun resetAliasForApp(cacheKey: CacheKey) {
-        updateOv(cacheKey) { old ->
+        update(cacheKey) { old ->
             old.copy(aliases = null)
         }
     }
 
     public fun renameApp(cacheKey: CacheKey, customName: String?) {
-        updateOv(cacheKey) { old ->
+        update(cacheKey) { old ->
             old.copy(customName = customName?.takeIf { it.isNotEmpty() })
         }
     }
@@ -122,7 +116,7 @@ public class AppOverridesManager(
         customIcon: CustomIcon?,
         iconProperties: CustomIconProperties?
     ) {
-        updateOv(cacheKey) { old ->
+        update(cacheKey) { old ->
             old.copy(
                 customIcon = customIcon,
                 iconProperties = iconProperties
@@ -131,7 +125,7 @@ public class AppOverridesManager(
     }
 
     public fun setCustomCategory(cacheKey: CacheKey, categoryName: String?) {
-        updateOv(cacheKey) { old ->
+        update(cacheKey) { old ->
             old.copy(customCategory = categoryName?.takeIf { it.isNotEmpty() })
         }
     }
