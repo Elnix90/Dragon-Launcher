@@ -499,7 +499,10 @@
     <string name="category_settings">Category settings</string>
     <string name="expanded_chevron_indicator">Expanded chevron indicator</string>
     <string name="grid_settings">Grid Settings</string>
-    <string name="category_cells">Category cells</string>
+  <string name="category_cells">Category cells</string>
+  <string name="category_cells_desc">Number of categories in the width of the drawer</string>
+  <string name="category_grid_cells">Category grid cells</string>
+  <string name="category_grid_cells_desc">Number of apps in a row/column of a category</string>
 
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d selected</string>
@@ -552,6 +555,12 @@
     <string name="recently_used_apps_count">Number of recent apps</string>
     <string name="show_category_name">Show Category name</string>
     <string name="show_category_name_desc">Display the name of the category below it</string>
+    <string name="set_category">Set category</string>
+    <string name="create_category">Create new category</string>
+    <string name="category_name">Category name</string>
+    <string name="use_default_category">Use default category</string>
+    <string name="disabled_system_categories">Disabled system categories</string>
+    <string name="disabled_system_categories_desc">Choose which system categories to hide in the drawer</string>
     <string name="long_click_settings_duration">Long Click Settings Duration (ms)</string>
     <string name="long_click_settings_duration_desc">Configure how long you have to long click to access settings</string>
     <string name="hold_delay_before_starting_long_click_settings">Hold delay before starting long click settings (ms)</string>
@@ -1104,4 +1113,5 @@
     <string name="improvements">Improvements</string>
     <string name="fixes">Fixes</string>
     <string name="known_issues">Known issues</string>
+  <string name="category_color">Categories color</string>
 </resources>

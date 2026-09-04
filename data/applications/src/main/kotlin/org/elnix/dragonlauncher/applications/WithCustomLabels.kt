@@ -18,10 +18,17 @@ public fun Flow<ImmutableList<Application>>.withCustomLabels(
                     items
                         .map { item ->
                             val customLabel = state[item.key]?.customName
-                            if (customLabel != null) {
-                                item.overrideLabel(customLabel)
+                            val customCategory = state[item.key]?.customCategory
+                            val result =
+                                if (customLabel != null) {
+                                    item.overrideLabel(customLabel)
+                                } else {
+                                    item
+                                }
+                            if (customCategory != null) {
+                                result.overrideCategory(customCategory)
                             } else {
-                                item
+                                result
                             }
                         }.toImmutableList()
                 )

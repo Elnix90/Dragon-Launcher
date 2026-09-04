@@ -75,6 +75,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     }
 
     var showToolbarsOrderDialog by remember { mutableStateOf(false) }
+    var showDisabledCategoriesDialog by remember { mutableStateOf(false) }
 
     SettingsScaffold(
         title = stringResource(R.string.app_drawer),
@@ -122,12 +123,20 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             Setting(DrawerSettingsStore.showAppIconsInDrawer)
             Setting(DrawerSettingsStore.showAppLabelsInDrawer)
             Setting(DrawerSettingsStore.labelTextColor)
+            DrawerIconShapePicker()
+        }
 
+        DragonSettingsGroup(R.string.category_settings) {
             Setting(DrawerSettingsStore.useCategory)
             Setting(DrawerSettingsStore.showCategoryName, enabled = useCategory)
-            Setting(DrawerSettingsStore.categoryGridCells)
-
-            DrawerIconShapePicker()
+            Setting(DrawerSettingsStore.categoryCells, enabled = useCategory)
+            Setting(DrawerSettingsStore.categoryGridCells, enabled = useCategory)
+            Setting(DrawerSettingsStore.categoryColor, enabled = useCategory)
+            SettingsItem(
+                title = stringResource(R.string.disabled_system_categories),
+                icon = R.drawable.filter_alt,
+                enabled = useCategory
+            ) { showDisabledCategoriesDialog = true }
         }
 
         DragonSettingsGroup(R.string.grid_settings) {
@@ -303,6 +312,12 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
     if (showToolbarsOrderDialog) {
         ToolbarsOrderDialog { showToolbarsOrderDialog = false }
+    }
+
+    if (showDisabledCategoriesDialog) {
+        DisabledCategoriesDialog(
+            onDismiss = { showDisabledCategoriesDialog = false }
+        )
     }
 }
 

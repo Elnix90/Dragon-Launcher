@@ -38,7 +38,7 @@ fun AppItemHorizontal(
     longPressPopup: Boolean,
     onClick: (() -> Unit)?
 ) {
-    require(!((onLongClick != null) && (longPressPopup))) {
+    require(!((onLongClick != null) && longPressPopup)) {
         "Long press action, or popup, or neither, but not both!"
     }
 
@@ -109,7 +109,7 @@ fun AppItemGrid(
     longPressPopup: Boolean,
     onClick: (() -> Unit)?
 ) {
-    require(!((onLongClick != null) && (longPressPopup))) {
+    require(!((onLongClick != null) && longPressPopup)) {
         "Long press action, or popup, or neither, but not both!"
     }
 

@@ -20,9 +20,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 data class DrawerSettings(
     val iconSize: Dp,
-    val useCategory: Boolean,
     val gridSize: Int,
-    val categoryGridCells: Int,
     val showAppIconsInDrawer: Boolean,
     val showAppLabelsInDrawer: Boolean,
     val labelTextColor: Color,
@@ -44,7 +42,13 @@ data class DrawerSettings(
     val showRecentlyUsedApps: Boolean,
     val recentlyUsedAppsCount: Int,
     val autoShowKeyboard: Boolean,
-    val toolbarsOrder: List<DrawerToolbar>
+    val toolbarsOrder: List<DrawerToolbar>,
+    val disabledSystemCategories: List<String>,
+    val useCategory: Boolean,
+    val categoryGridCells: Int,
+    val categoryCells: Int,
+    val categoryOrder: List<String>,
+    val categoryColor: Color
 )
 
 val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
@@ -55,9 +59,7 @@ fun ProvideDrawerSettings(
     content: @Composable () -> Unit
 ) {
     val iconSize by DrawerSettingsStore.iconSize.asState()
-    val useCategory by DrawerSettingsStore.useCategory.asState()
     val gridSize by DrawerSettingsStore.gridSize.asState()
-    val categoryGridCells by DrawerSettingsStore.categoryGridCells.asState()
     val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
     val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelsInDrawer.asState()
     val labelTextColor by DrawerSettingsStore.labelTextColor.asState()
@@ -80,14 +82,18 @@ fun ProvideDrawerSettings(
     val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
     val autoShowKeyboard by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
     val toolbarsOrder by DrawerSettingsStore.toolbarsOrder.asState()
+    val disabledSystemCategories by DrawerSettingsStore.disabledSystemCategories.asState()
+    val useCategory by DrawerSettingsStore.useCategory.asState()
+    val categoryCells by DrawerSettingsStore.categoryCells.asState()
+    val categoryGridCells by DrawerSettingsStore.categoryGridCells.asState()
+    val categoryOrder by DrawerSettingsStore.categoryOrder.asState()
+    val categoryColor by DrawerSettingsStore.categoryColor.asState()
 
     CompositionLocalProvider(
         LocalDrawerSettings provides
             DrawerSettings(
                 iconSize = iconSize,
-                useCategory = useCategory,
                 gridSize = gridSize,
-                categoryGridCells = categoryGridCells,
                 showAppIconsInDrawer = showAppIconsInDrawer,
                 showAppLabelsInDrawer = showAppLabelsInDrawer,
                 labelTextColor = labelTextColor,
@@ -109,7 +115,13 @@ fun ProvideDrawerSettings(
                 showRecentlyUsedApps = showRecentlyUsedApps,
                 recentlyUsedAppsCount = recentlyUsedAppsCount,
                 autoShowKeyboard = autoShowKeyboard,
-                toolbarsOrder = toolbarsOrder
+                toolbarsOrder = toolbarsOrder,
+                disabledSystemCategories = disabledSystemCategories,
+                useCategory = useCategory,
+                categoryCells = categoryCells,
+                categoryGridCells = categoryGridCells,
+                categoryOrder = categoryOrder,
+                categoryColor = categoryColor
             ),
         content = content
     )

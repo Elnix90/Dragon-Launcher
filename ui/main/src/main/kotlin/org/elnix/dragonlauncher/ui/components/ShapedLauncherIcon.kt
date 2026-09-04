@@ -9,6 +9,7 @@ import android.icu.text.NumberFormat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
@@ -116,6 +117,7 @@ fun ShapedLauncherIcon(
             modifier =
                 Modifier
                     .fillMaxSize()
+                    .aspectRatio(1f)
                     .clip(shape),
             contentAlignment = Alignment.Center
         ) {

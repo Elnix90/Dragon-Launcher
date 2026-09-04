@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,6 +69,7 @@ fun AppLongPressPopup(
     var showRenameDialog by remember { mutableStateOf(false) }
     var showAliasDialog by remember { mutableStateOf(false) }
     var showIconDialog by remember { mutableStateOf(false) }
+    var showCategoryDialog by remember { mutableStateOf(false) }
 
     val installerStoreLink = remember { app.getStoreDetails(ctx) }
 
@@ -92,6 +94,13 @@ fun AppLongPressPopup(
                     text = { stringResource(R.string.app_aliases) },
                     icon = R.drawable.alternate_email,
                     onClick = { showAliasDialog = true }
+                )
+            )
+            add(
+                MoreOptions(
+                    text = { stringResource(R.string.set_category) },
+                    icon = R.drawable.filter_alt,
+                    onClick = { showCategoryDialog = true }
                 )
             )
 
@@ -270,6 +279,16 @@ fun AppLongPressPopup(
 
     if (showAliasDialog) {
         AppAliasesDialog(app) { showAliasDialog = false }
+    }
+
+    if (showCategoryDialog) {
+        val allApps by drawerViewModel.userApps.collectAsState()
+        val existingCustomCategories = allApps.mapNotNull { it.categoryOverride }.distinct()
+        CategoryPickerDialog(
+            app = app,
+            existingCustomCategories = existingCustomCategories,
+            onDismissRequest = { showCategoryDialog = false }
+        )
     }
 }
 

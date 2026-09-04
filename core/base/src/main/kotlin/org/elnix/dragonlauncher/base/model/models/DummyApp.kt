@@ -24,6 +24,10 @@ public class DummyApp : Application() {
 
     override fun overrideLabel(label: String): Application = this
 
+    override val categoryOverride: String? = null
+
+    override fun overrideCategory(categoryName: String?): Application = this
+
     override val componentName: ComponentName
         get() = buildFakeComponentName(packageName)
 
