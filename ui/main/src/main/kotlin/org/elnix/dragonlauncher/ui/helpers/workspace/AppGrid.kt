@@ -187,46 +187,43 @@ fun AppGrid(
 
             // That's shitty code, and it should move to a viewmodel, but I don't care about the categories anyway
 
-            val allCategoryNames =
+            val allCategoryNames: Set<String> =
                 remember(visibleApps, disabledSystemCategories, categoryOrder) {
                     val systemCategories =
                         AppCategory.entries
                             .filter { it.name !in disabledSystemCategories }
-                            .map { it.name }
+                            .mapTo(mutableSetOf()) { it.name }
 
                     val customCategories =
-                        visibleApps
-                            .mapNotNull { it.categoryOverride }
-                            .distinct()
+                        visibleApps.mapNotNullTo(mutableSetOf()) { it.categoryOverride }
 
-                    val allCategories = customCategories + systemCategories
+                    customCategories + systemCategories
+                }
 
-                    if (categoryOrder.isNotEmpty()) {
-                        allCategories.sortedBy { name ->
+            val mutableCategoryNames: SnapshotStateList<MutableCategory> = remember(allCategoryNames, categoryOrder) {
+                mutableStateListOf<MutableCategory>().apply {
+                    val allCategories = if (categoryOrder.isNotEmpty()) {
+                        allCategoryNames.sortedBy { name ->
                             val idx = categoryOrder.indexOf(name)
                             if (idx >= 0) idx else Int.MAX_VALUE
                         }
                     } else {
-                        allCategories
+                        allCategoryNames.toList()
                     }
-                }
 
-            val mutableCategoryNames: SnapshotStateList<MutableCategory> =
-                remember(allCategoryNames) {
-                    mutableStateListOf<MutableCategory>().apply {
-                        allCategoryNames.forEach { categoryName ->
-                            val apps = visibleApps.filter { it.effectiveCategory == categoryName }
-                            if (apps.isNotEmpty()) {
-                                add(
-                                    MutableCategory(
-                                        categoryName = categoryName,
-                                        apps = apps
-                                    )
+                    allCategories.forEach { categoryName ->
+                        val apps = visibleApps.filter { it.effectiveCategory == categoryName }
+                        if (apps.isNotEmpty()) {
+                            add(
+                                MutableCategory(
+                                    categoryName = categoryName,
+                                    apps = apps
                                 )
-                            }
+                            )
                         }
                     }
                 }
+            }
 
             fun saveOrder() {
                 scope.launch {
@@ -366,10 +363,7 @@ private fun CategoryGrid(
 
     CompositionLocalProvider(
         LocalDrawerSettings provides
-            drawerSettings.copy(
-                iconSize = drawerSettings.iconSize / gridCells,
-                showAppLabelsInDrawer = false
-            )
+            drawerSettings.copy(showAppLabelsInDrawer = false)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

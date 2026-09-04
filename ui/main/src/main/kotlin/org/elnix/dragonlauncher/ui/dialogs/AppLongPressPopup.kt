@@ -287,10 +287,7 @@ fun AppLongPressPopup(
         CategoryPickerDialog(
             app = app,
             existingCustomCategories = existingCustomCategories,
-            onDismiss = { showCategoryDialog = false },
-            onValidate = { categoryName ->
-                appOverridesManager.setCustomCategory(app.key, categoryName)
-            }
+            onDismissRequest = { showCategoryDialog = false }
         )
     }
 }
