@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.base.Constants.Settings.DOUBLE_CLICK_ACTION_DELAY
+import org.elnix.dragonlauncher.base.Constants.Settings.MAX_ITEMS_ALLOWED
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.json
@@ -81,6 +82,8 @@ public interface SwipeService {
     public fun saveMainScreenLayers()
 
     public fun resetMainScreenLayers()
+
+    public fun setHoldMenuEntries(newEntries: List<NavigationRoute>)
 
     public fun saveHoldMenuEntries()
 
@@ -348,11 +351,23 @@ internal class SwipeServiceImpl(
         }
     }
 
+    override fun setHoldMenuEntries(newEntries: List<NavigationRoute>) {
+        val edited = newEntries
+            .take(MAX_ITEMS_ALLOWED)
+            .toMutableList()
+            .apply {
+                if (!this.any { it is NavigationRoute.PointsSettings }) {
+                    add(0, NavigationRoute.PointsSettings)
+                }
+            }
+        holdMenuEntriesString.value = edited
+    }
+
     private fun loadHoldMenuEntries() {
         scope.launch {
             val holdMenuString = HoldToActivateArcSettingsStore.holdMenuEntriesJson.get(ctx)
             val decoded = HoldMenuEntriesJson.decode<List<NavigationRoute>>(holdMenuString, emptyList())
-            holdMenuEntriesString.value = decoded
+            setHoldMenuEntries(decoded)
         }
     }
 

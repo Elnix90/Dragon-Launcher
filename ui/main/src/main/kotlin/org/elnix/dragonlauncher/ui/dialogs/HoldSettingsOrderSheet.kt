@@ -76,7 +76,7 @@ fun HoldSettingsOrderSheet(
                         add(
                             MenuItem(
                                 route = route,
-                                isSelected = mutableStateOf(route in holdMenuEntries)
+                                isSelected = mutableStateOf(route in holdMenuEntries || route is NavigationRoute.PointsSettings)
                             )
                         )
                     }
@@ -98,10 +98,11 @@ fun HoldSettingsOrderSheet(
     DragonModalBottomSheet(
         onDismissRequest = {
             // Save in the reordered state, but only selected items
-            swipeService.holdMenuEntriesString.value =
+            swipeService.setHoldMenuEntries(
                 menuItems
                     .filter { it.isSelected.value }
                     .map { it.route }
+            )
 
             swipeService.saveHoldMenuEntries()
             onDismiss()
