@@ -157,12 +157,12 @@ fun HoldSettingsOrderSheet(
                     ) { isDragging ->
                         val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
 
-                        val isEnabled = entry.route != NavigationRoute.PointsSettings
+                        val isPointSettings = entry.route == NavigationRoute.PointsSettings
 
                         DragonRow(
                             onClick = {
                                 when {
-                                    !isEnabled -> ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
+                                    isPointSettings -> ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
                                     selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value ->
                                         ctx.showToast(
                                             ctx.getString(R.string.cannot_add_more_than_x, MAX_ITEMS_ALLOWED)
@@ -176,8 +176,8 @@ fun HoldSettingsOrderSheet(
                                     .longPressDraggableHandle()
                         ) {
                             Checkbox(
-                                checked = isSelected,
-                                enabled = isEnabled,
+                                checked = isSelected || isPointSettings,
+                                enabled = !isPointSettings,
                                 onCheckedChange = null
                             )
                             Spacer(15.dp)
