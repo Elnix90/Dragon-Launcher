@@ -165,6 +165,8 @@ internal fun launchAction(
         // Handled by the main screen / settings
         // The widget action isn't meant to be part of the choosable actions, so nothing on launch
         // None do nothing, pretty straightforward
-        is Action.OpenNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> error("Action $action shouldn't be handled here")
+        is Action.OpenNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> error(
+            "Action ${action::class.simpleName} shouldn't be handled here"
+        )
     }
 }
