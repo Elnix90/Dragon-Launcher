@@ -38,7 +38,6 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.WIDGET_TAG
@@ -314,12 +313,6 @@ class MainActivity :
 
         appWidgetHost.startListening()
 
-        var lastStackTrace by mutableStateOf(
-            runBlocking {
-                PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
-            }
-        )
-
         enableEdgeToEdge()
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -332,6 +325,18 @@ class MainActivity :
         setContent {
             val ctx = LocalContext.current
             val scope = rememberCoroutineScope()
+
+            var isCrashStackLoading by remember { mutableStateOf(true) }
+            var lastStackTrace by remember { mutableStateOf<String?>(null) }
+
+            LaunchedEffect(Unit) {
+                lastStackTrace = PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
+                isCrashStackLoading = false
+            }
+
+            if (isCrashStackLoading) {
+                return@setContent
+            }
 
             if (lastStackTrace.isNullOrBlank()) {
                 val backupViewModel: BackupViewModel = activityViewModel()

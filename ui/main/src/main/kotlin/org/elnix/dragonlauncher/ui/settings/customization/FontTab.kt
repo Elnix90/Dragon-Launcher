@@ -53,6 +53,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -103,9 +104,9 @@ fun FontTab() {
 
     var refreshTrigger by remember { mutableIntStateOf(0) }
 
-    val isExtensionInstalled =
-        remember(refreshTrigger) {
-            ExtensionManager.isExtensionInstalled(ctx, Constants.Extensions.FONT_EXTENSION_PKG)
+    val isExtensionInstalled by
+        produceState(initialValue = false, ctx, refreshTrigger) {
+            value = ExtensionManager.isExtensionInstalled(ctx, Constants.Extensions.FONT_EXTENSION_PKG)
         }
 
     var extensionSearchQuery by remember { mutableStateOf("") }
