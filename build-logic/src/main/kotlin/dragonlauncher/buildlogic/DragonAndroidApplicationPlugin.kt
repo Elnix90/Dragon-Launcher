@@ -32,7 +32,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
 
                 lint {
                     checkReleaseBuilds = false
-                    abortOnError = false
+                    abortOnError = true
                 }
 
                 buildTypes {

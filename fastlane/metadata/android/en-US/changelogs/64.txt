@@ -1,0 +1,8 @@
+4.1.3 (Labyrinth)
+2026-09-04
+[NEW]
+[IMPROVED]
+* Full ktlint rewrite
+* Reworked category feature
+ [FIXED]
+* Corrected category crashes
