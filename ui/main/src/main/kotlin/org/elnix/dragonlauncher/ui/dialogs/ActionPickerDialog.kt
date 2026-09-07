@@ -323,7 +323,7 @@ fun ActionPickerDialog(
     }
 
     if (showNestPicker) {
-        NestManagementDialog(
+        NestManagementSheet(
             onDismissRequest = { showNestPicker = false },
             title = stringResource(R.string.pick_a_nest),
             onSelect = {

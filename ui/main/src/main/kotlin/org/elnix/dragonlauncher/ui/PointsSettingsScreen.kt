@@ -108,7 +108,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
-import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
+import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.editors.PointEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -1246,7 +1246,7 @@ fun PointsSettingsScreen(
     }
 
     if (showNestManagementDialog) {
-        NestManagementDialog(
+        NestManagementSheet(
             onSelect = {
                 nestsNavigationService.goToNest(it.id)
                 pointsService.deselectAll()

@@ -95,7 +95,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
-import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
+import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -516,7 +516,7 @@ fun WidgetsTab(
     }
 
     if (showNestPickerDialog) {
-        NestManagementDialog(
+        NestManagementSheet(
             title = stringResource(R.string.pick_a_nest),
             onSelect = {
                 nestNavigation.goToNest(it.id)

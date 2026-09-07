@@ -83,7 +83,7 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.components.ManipulationSystemReset
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
+import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.editors.IntersectionShapeEditor
 import org.elnix.dragonlauncher.ui.dialogs.editors.NestEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
@@ -754,7 +754,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     }
 
     if (showNestManagementDialog) {
-        NestManagementDialog(
+        NestManagementSheet(
             onSelect = {
                 saveCurrentNest()
                 selectedShapeId = null

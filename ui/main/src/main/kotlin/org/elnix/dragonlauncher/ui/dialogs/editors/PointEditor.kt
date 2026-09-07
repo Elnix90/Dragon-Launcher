@@ -52,7 +52,7 @@ import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
-import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
+import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -1160,7 +1160,7 @@ fun PointEditor(
     }
 
     if (showLiveNestNestPicker) {
-        NestManagementDialog(
+        NestManagementSheet(
             title = stringResource(R.string.pick_a_nest),
             onSelect = { selectedNest ->
                 editPoint =
