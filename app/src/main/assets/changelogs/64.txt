@@ -1,9 +1,8 @@
 4.1.4 (Labyrinth)
-2026-09-08
+2026-09-07
 [IMPROVED]
 * Nest management sheet rework (UI)
  [FIXED]
 * UI on nest management sheet
 * Hold menu entries settings behavior (could lock out settings)
 * F-Droid reproductible builds failing
-* Corrected rare crash in charging animation
