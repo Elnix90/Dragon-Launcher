@@ -162,6 +162,8 @@ internal fun launchAction(
 
         Action.KillLauncher -> Process.killProcess(Process.myPid())
 
+//        TODO fix that on yoann's phone'
+
         // Handled by the main screen / settings
         // The widget action isn't meant to be part of the choosable actions, so nothing on launch
         // None do nothing, pretty straightforward
