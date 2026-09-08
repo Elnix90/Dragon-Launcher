@@ -32,7 +32,6 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import java.util.Locale
 
 private data class AppLocale(
@@ -47,7 +46,6 @@ private data class AppLocale(
 fun LocalePickerSheet(onDismissRequest: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val sheetState = rememberBottomSheetState(skipPartiallyExpanded = true)
 
     val currentLocales =
         remember {
@@ -86,10 +84,7 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
 
     val supportedLocalesSize = supportedLocaleList?.size ?: 0
 
-    DragonModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState
-    ) {
+    DragonModalBottomSheet(onDismissRequest = onDismissRequest) {
         if (supportedLocaleList != null) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -106,7 +101,6 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
                                             .getSystemService(LocaleManager::class.java)
                                             .applicationLocales = LocaleList()
                                     }
-                                    sheetState.hide()
                                 }.invokeOnCompletion { onDismissRequest() }
                         },
                         selected = currentLocales.isEmpty,
@@ -141,7 +135,6 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
                                             .getSystemService(LocaleManager::class.java)
                                             .applicationLocales = LocaleList(item.locale)
                                     }
-                                    sheetState.hide()
                                 }.invokeOnCompletion { onDismissRequest() }
                         },
                         selected = selected,

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults.properties
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetState
@@ -22,26 +23,15 @@ import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalFullscreen
 @ExperimentalMaterial3Api
 fun DragonModalBottomSheet(
     onDismissRequest: () -> Unit,
-    skipPartiallyExpanded: Boolean,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    DragonModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = rememberBottomSheetState(skipPartiallyExpanded),
-        content = content
-    )
-}
-
-@Composable
-@ExperimentalMaterial3Api
-fun DragonModalBottomSheet(
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState = rememberBottomSheetState(),
+    sheetGesturesEnabled: Boolean = true,
+    skipPartiallyExpanded: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
+        sheetGesturesEnabled = sheetGesturesEnabled,
+        sheetState = rememberBottomSheetState(skipPartiallyExpanded),
+        properties = properties,
         contentWindowInsets = {
             WindowInsets.safeDrawing.add(
                 WindowInsets(
