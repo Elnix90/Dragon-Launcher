@@ -96,7 +96,7 @@ fun ChargingAnimation() {
             val currentIntensity = intensity
             val newBubbles = Array(currentIntensity) { FloatArray(6) }
             withInfiniteAnimationFrameMillis {}
-            for (i in 0 until intensity) {
+            for (i in 0 until currentIntensity) {
                 val bubble = newBubbles[i]
                 val oldBubble = bubbles[i]
                 if (oldBubble.lifetime <= 0f) {
