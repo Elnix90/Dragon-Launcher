@@ -41,12 +41,8 @@ import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logLevelName
 import io.github.elnix90.runtime.asState
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.elnix.dragonlauncher.LOGS_TAG
-import org.elnix.dragonlauncher.base.model.json
+import org.elnix.dragonlauncher.base.loadExtensionRegistry
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.createShareableFile
@@ -82,12 +78,8 @@ import java.io.File
 fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
-//    val scope = rememberCoroutineScope()
 
     val enableLogging by DebugSettingsStore.enableLogging.asState()
-//    val filterTag by DebugSettingsStore.filterTag.asState()
-
-//    var tempFilterTag by remember(filterTag) { mutableStateOf(filterTag) }
 
     var refreshTrigger by remember { mutableIntStateOf(0) }
     val logFiles by produceState(initialValue = emptyList(), ctx, refreshTrigger) {
@@ -107,85 +99,48 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     val versionCode = ctx.getVersionNumber()
     ""
     // Build extension list by parsing the registry JSON directly (robust to field names)
-    var finalExtensionText = "No extensions installed"
-    try {
-        val registryContent =
-            ctx.assets
-                .open("extensions-registry.json")
-                .bufferedReader()
-                .readText()
-        val root = json.parseToJsonElement(registryContent)
-        val lines = ArrayList<String>()
-
-        if (root is JsonArray) {
-            for (elem in root) {
-                try {
-                    val obj = elem.jsonObject
-                    val pkgValue = obj["package"]?.jsonPrimitive?.contentOrNull
-                    val nameValue = obj["name"]?.jsonPrimitive?.contentOrNull ?: "Unknown"
-
-                    if (!pkgValue.isNullOrEmpty()) {
-                        if (ExtensionManager.isExtensionInstalled(ctx, pkgValue)) {
-                            val pkgInfo =
-                                try {
-                                    ctx.packageManager.getPackageInfo(pkgValue, 0)
-                                } catch (_: Exception) {
-                                    null
-                                }
-
-                            val versionStr = pkgInfo?.versionName ?: "unknown"
-                            lines.add("$nameValue ($versionStr)")
-                        }
-                    }
-                } catch (_: Exception) {
-                }
-            }
-        }
-
-        if (lines.isNotEmpty()) finalExtensionText = lines.joinToString("\n")
-    } catch (_: Exception) {
-        // registry not available or parse failed -> leave default text
+    val finalExtensionText by produceState(initialValue = "No extensions installed", refreshTrigger) {
+        value = buildExtensionText(ctx)
     }
 
-    val deviceDetails =
-        remember {
-            buildString {
-                appendLine(" DEVICE DETAILS ")
-                appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
-                appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
-                if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
-                    appendLine("Security Patch: ${Build.VERSION.SECURITY_PATCH}")
-                }
-                appendLine("Arch: ${Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"}")
-                appendLine("Display: ${windowInfo.containerSize.width}x${windowInfo.containerSize.height}px")
-                appendLine(
-                    "RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
-                        (memInfo.totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
-                        memInfo.totalMem / 1024.0 / 1024 / 1024,
-                        memInfo.availMem * 100 / memInfo.totalMem
-                    )
+    val deviceDetails = remember(finalExtensionText) {
+        buildString {
+            appendLine(" DEVICE DETAILS ")
+            appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
+            appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
+            if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
+                appendLine("Security Patch: ${Build.VERSION.SECURITY_PATCH}")
+            }
+            appendLine("Arch: ${Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"}")
+            appendLine("Display: ${windowInfo.containerSize.width}x${windowInfo.containerSize.height}px")
+            appendLine(
+                "RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
+                    (memInfo.totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
+                    memInfo.totalMem / 1024.0 / 1024 / 1024,
+                    memInfo.availMem * 100 / memInfo.totalMem
                 )
-                appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
-                appendLine("App version: $versionNumber ($codeName) ($versionCode)")
+            )
+            appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
+            appendLine("App version: $versionNumber ($codeName) ($versionCode)")
 
-                appendLine("\n EXTENSIONS ")
-                appendLine(finalExtensionText)
+            appendLine("\n EXTENSIONS ")
+            appendLine(finalExtensionText)
 
-                appendLine("\n PERMISSIONS ")
-                try {
-                    val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
-                    info.requestedPermissions?.forEachIndexed { index, perm ->
-                        val flags = info.requestedPermissionsFlags
-                        val granted =
-                            (flags != null && (flags[index] and 0x00000002) != 0) ||
-                                ContextCompat.checkSelfPermission(ctx, perm) == PackageManager.PERMISSION_GRANTED
-                        appendLine("${perm.substringAfterLast(".")}: ${if (granted) "✅" else "❌"}")
-                    }
-                } catch (e: Exception) {
-                    appendLine("Error reading permissions: $e")
+            appendLine("\n PERMISSIONS ")
+            try {
+                val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
+                info.requestedPermissions?.forEachIndexed { index, perm ->
+                    val flags = info.requestedPermissionsFlags
+                    val granted =
+                        (flags != null && (flags[index] and 0x00000002) != 0) ||
+                            ContextCompat.checkSelfPermission(ctx, perm) == PackageManager.PERMISSION_GRANTED
+                    appendLine("${perm.substringAfterLast(".")}: ${if (granted) "✅" else "❌"}")
                 }
+            } catch (e: Exception) {
+                appendLine("Error reading permissions: $e")
             }
         }
+    }
 
     SettingsScaffold(
         title = "Logs",
@@ -381,4 +336,23 @@ private fun exportLogFile(
     } catch (e: Exception) {
         logE(LOGS_TAG, e) { "Failed to share log file" }
     }
+}
+
+private suspend fun buildExtensionText(ctx: Context): String {
+    val extensions = loadExtensionRegistry(ctx) ?: return "No extensions installed"
+    val lines =
+        extensions.mapNotNull { extension ->
+            if (ExtensionManager.isExtensionInstalled(ctx, extension.packageName)) {
+                val versionStr =
+                    try {
+                        ctx.packageManager.getPackageInfo(extension.packageName, 0).versionName ?: "unknown"
+                    } catch (_: Exception) {
+                        "unknown"
+                    }
+                "${extension.name} ($versionStr)"
+            } else {
+                null
+            }
+        }
+    return if (lines.isEmpty()) "No extensions installed" else lines.joinToString("\n")
 }

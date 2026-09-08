@@ -47,13 +47,10 @@ public object ExtensionManager {
         }
     }
 
-    public fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
+    public suspend fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
         logD(EXTENSION_MANAGER_TAG) { "Checking extension installed for: $packageNameOrId" }
 
-        val disableSigCheck =
-            kotlinx.coroutines.runBlocking {
-                DebugSettingsStore.disableExtensionSignatureCheck.get(ctx)
-            }
+        val disableSigCheck = DebugSettingsStore.disableExtensionSignatureCheck.get(ctx)
 
         try {
             // Signature check

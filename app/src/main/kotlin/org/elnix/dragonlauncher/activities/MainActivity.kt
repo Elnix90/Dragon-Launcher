@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowInsetsCompat
@@ -38,7 +39,6 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.WIDGET_TAG
@@ -314,12 +314,6 @@ class MainActivity :
 
         appWidgetHost.startListening()
 
-        var lastStackTrace by mutableStateOf(
-            runBlocking {
-                PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
-            }
-        )
-
         enableEdgeToEdge()
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -332,6 +326,18 @@ class MainActivity :
         setContent {
             val ctx = LocalContext.current
             val scope = rememberCoroutineScope()
+
+            var isCrashStackLoading by retain { mutableStateOf(true) }
+            var lastStackTrace by retain { mutableStateOf<String?>(null) }
+
+            LaunchedEffect(Unit) {
+                lastStackTrace = PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
+                isCrashStackLoading = false
+            }
+
+            if (isCrashStackLoading) {
+                return@setContent
+            }
 
             if (lastStackTrace.isNullOrBlank()) {
                 val backupViewModel: BackupViewModel = activityViewModel()
