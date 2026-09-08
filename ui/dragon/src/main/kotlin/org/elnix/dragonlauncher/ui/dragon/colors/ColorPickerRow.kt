@@ -60,6 +60,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.randomColor
 import org.elnix.dragonlauncher.ktx.rect
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.ktx.specifiedOrNull
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -126,10 +127,19 @@ fun DragonGroupScope.ColorPickerRow(
 ) {
     val ctx = LocalContext.current
 
-    val initialColorNotNull = currentColor ?: Color.Unspecified
+    // The picker must never animate or draw [Color.Unspecified]. It packs to the sentinel
+    // value 0x10L whose color-space id (16) is rejected by [android.graphics.Paint.setColor]
+    // on API 29+, throwing "Invalid ID, must be in the range [0..16)". Fall back to a real
+    // color so the preview, the hex text and the animations always render something valid.
+    val initialColorNotNull = currentColor.specifiedOrNull() ?: Color.Transparent
+
+    var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
+    val displayedColor by animateColorAsState(
+        targetValue = actualColor,
+        animationSpec = tween(durationMillis = 200)
+    )
 
     var currentMode by ColorModesSettingsStore.colorPickerMode.asMutableState()
-    var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
     var previewBoxShape by remember { mutableStateOf(colorPickerMaterialShapes.random()) }
 
     var showPicker by remember { mutableStateOf(false) }
@@ -189,6 +199,7 @@ fun DragonGroupScope.ColorPickerRow(
     if (showPicker) {
         DragonModalBottomSheet(
             skipPartiallyExpanded = true,
+            sheetGesturesEnabled = false,
             onDismissRequest = {
                 onColorPicked(actualColor)
                 showPicker = false
@@ -213,7 +224,12 @@ fun DragonGroupScope.ColorPickerRow(
                     }
                 ) {
                     when (it) {
-                        Reset -> actualColor = defaultColor ?: Color.Unspecified
+                        Reset ->
+                            // Reset to the provided default. When no default exists, fall back
+                            // to the color the picker opened with instead of [Color.Unspecified],
+                            // which cannot be drawn or animated safely.
+                            actualColor = defaultColor.specifiedOrNull() ?: initialColorNotNull
+
                         Random -> actualColor = randomColor()
                         Copy -> ctx.copyToClipboard(hexText)
                         Paste -> {
@@ -233,11 +249,6 @@ fun DragonGroupScope.ColorPickerRow(
                 ) { currentMode = it }
 
                 Spacer(5.dp)
-
-                val displayedColor by animateColorAsState(
-                    targetValue = actualColor,
-                    animationSpec = tween(durationMillis = 200)
-                )
 
                 Box(
                     modifier =
@@ -369,6 +380,11 @@ private fun DrawScope.pngBackgroundTexture(
 ) {
     val cellSizePx = gridSize.toPx()
 
+    // [color] may be [Color.Unspecified] when no color is saved yet. Drawing it calls
+    // android.graphics.Paint.setColor with an invalid color-space id and crashes with
+    // "Invalid ID, must be in the range [0..16)", so fall back to transparent.
+    val drawColor = color.specifiedOrNull() ?: Color.Transparent
+
     val size = (this.size.width / cellSizePx).roundToInt()
     var count = 0
 
@@ -389,5 +405,5 @@ private fun DrawScope.pngBackgroundTexture(
         if (size % 2 == 0) count++
     }
 
-    drawRect(color)
+    drawRect(drawColor)
 }
