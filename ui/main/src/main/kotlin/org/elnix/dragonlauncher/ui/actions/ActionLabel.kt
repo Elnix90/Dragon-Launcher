@@ -2,13 +2,15 @@ package org.elnix.dragonlauncher.ui.actions
 
 import android.os.Build
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Personal
+import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Private
+import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Work
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -26,8 +28,24 @@ fun actionLabel(
 
     return when (action) {
         is Action.LaunchApp -> {
-            val app by drawerViewModel.findOne(action).collectAsState(null)
-            app?.label ?: action.packageName
+            LaunchedEffect(action) {
+                val app = drawerViewModel.fromAction(action)
+                action.appLabel = app?.label ?: app?.packageName ?: action.packageName
+            }
+
+            val prefix = when (action.profile.type) {
+                Personal -> null
+                Work -> stringResource(Work.resId)
+                Private -> stringResource(Private.resId)
+            }
+
+            // This prevents to draw anything if the appLabel isn't already loaded.
+            // The apps now gets their respective prefix before their name
+            when {
+                action.appLabel == null -> ""
+                prefix != null -> prefix + action.appLabel!!
+                else -> action.appLabel!!
+            }
         }
 
         is Action.LaunchShortcut -> {
@@ -61,8 +79,8 @@ fun actionLabel(
 
         is Action.OpenUrl -> action.url
 
-        is Action.OpenAppDrawer -> "${stringResource(R.string.app_drawer)} (${action.workspaceId})"
-        is Action.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(action.route.resId)})"
+        is Action.OpenAppDrawer -> stringResource(R.string.app_drawer) + if (action.workspaceId != null) " (${action.workspaceId})" else ""
+        is Action.OpenDragonLauncherSettings -> stringResource(R.string.dragon_launcher_settings) + " " + stringResource(action.route.resId)
 
         is Action.OpenFile ->
             ctx.getFilePathFromUri(action.uri.toUri())

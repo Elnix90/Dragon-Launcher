@@ -271,7 +271,7 @@
     <string name="show_recently_used_apps_desc">アプリドロワーの上部に最近使用したアプリを表示</string>
     <string name="recently_used_apps_count">最近のアプリ数</string>
     <string name="drag_handle">ドラッグハンドル</string>
-    <string name="private_space_title">プライベートスペース</string>
+    <string name="private_profile">プライベートスペース</string>
     <string name="private_space_locked">プライベートスペースはロックされています</string>
     <string name="private_space_authenticating">認証中…</string>
     <string name="app_info_name">name = %1$s</string>

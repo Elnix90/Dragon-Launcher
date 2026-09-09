@@ -487,7 +487,7 @@
     <string name="disable_haptic_globally">विश्व स्तर पर हैप्टिक फीडबैक अक्षम करें</string>
     <string name="disable_haptic_globally_desc">यदि आप इससे नफरत करते हैं तो ड्रैगन को अंक चयन में कोई भी गुप्त प्रतिक्रिया देने से रोकें</string>
     <string name="drag_handle">ड्रैग हैंडल</string>
-    <string name="private_space_title">निजी स्पेस</string>
+    <string name="private_profile">निजी स्पेस</string>
     <string name="private_space_locked">निजी स्पेस लॉक है</string>
     <string name="private_space_authenticating">प्रमाणीकरण हो रहा है…</string>
     <string name="app_info_name">name = %1$s</string>

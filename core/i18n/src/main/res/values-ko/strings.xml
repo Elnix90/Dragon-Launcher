@@ -270,7 +270,7 @@
     <string name="show_recently_used_apps_desc">앱 서랍 상단에 최근 사용한 앱 표시</string>
     <string name="recently_used_apps_count">최근 앱 수</string>
     <string name="drag_handle">드래그 핸들</string>
-    <string name="private_space_title">프라이빗 스페이스</string>
+    <string name="private_profile">프라이빗 스페이스</string>
     <string name="private_space_locked">프라이빗 스페이스가 잠겨 있습니다</string>
     <string name="private_space_authenticating">인증 중…</string>
     <string name="app_info_name">name = %1$s</string>

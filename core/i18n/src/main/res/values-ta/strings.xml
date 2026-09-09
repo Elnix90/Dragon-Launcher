@@ -508,7 +508,7 @@
     <string name="disable_haptic_globally">உலகளவில் ஆப்டிக் பின்னூட்டத்தை முடக்கு</string>
     <string name="disable_haptic_globally_desc">நீங்கள் அதை வெறுக்கும் பட்சத்தில் புள்ளிகள் தேர்வில் டிராகனை எந்தவிதமான கருத்துகளையும் வெளியிடுவதைத் தடுக்கவும்</string>
     <string name="drag_handle">கைப்பிடியை இழுக்கவும்</string>
-    <string name="private_space_title">தனிப்பட்ட இடம்</string>
+    <string name="private_profile">தனிப்பட்ட இடம்</string>
     <string name="private_space_locked">தனிப்பட்ட இடம் பூட்டப்பட்டுள்ளது</string>
     <string name="private_space_authenticating">அங்கீகரிக்கிறது…</string>
     <string name="app_info_name">பெயர் = %1$s</string>

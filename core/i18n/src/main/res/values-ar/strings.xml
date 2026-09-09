@@ -594,7 +594,7 @@
     <string name="disable_haptic_globally">تعطيل الردود اللمسية عالمياً</string>
     <string name="disable_haptic_globally_desc">منع التنين من إصدار أي ردود فعل لمسية عند اختيار النقاط إذا كنت تكرهها</string>
     <string name="drag_handle">مقبض السحب</string>
-    <string name="private_space_title">المساحة الخاصة</string>
+    <string name="private_profile">المساحة الخاصة</string>
     <string name="private_space_locked">المساحة الخاصة مقفولة</string>
     <string name="private_space_authenticating">جاري المصادقة…</string>
     <string name="app_info_name">الاسم = %1$s</string>

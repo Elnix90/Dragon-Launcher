@@ -502,7 +502,9 @@
     <string name="disable_haptic_globally">Désactivez globalement le retour haptique</string>
     <string name="disable_haptic_globally_desc">Empêchez Dragon de produire un quelconque retour haptique dans la sélection des points au cas où vous détesteriez ça</string>
     <string name="drag_handle">Poignée de déplacement</string>
-    <string name="private_space_title">Espace privé</string>
+  <string name="personal_profile">Personel</string>
+  <string name="work_profile">Professionnel</string>
+  <string name="private_profile">Espace privé</string>
     <string name="private_space_locked">Espace privé verrouillé</string>
     <string name="private_space_authenticating">Authentification…</string>
     <string name="app_info_name">name = %1$s</string>

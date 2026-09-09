@@ -490,7 +490,7 @@
     <string name="disable_haptic_globally">Deshabilitar la retroalimentación háptica globalmente</string>
     <string name="disable_haptic_globally_desc">Evite que Dragon produzca retroalimentación háptica en la selección de puntos en caso de que lo odie</string>
     <string name="drag_handle">Controlador de arrastre</string>
-    <string name="private_space_title">Espacio privado</string>
+    <string name="private_profile">Espacio privado</string>
     <string name="private_space_locked">Espacio privado bloqueado</string>
     <string name="private_space_authenticating">Autenticando…</string>
     <string name="app_info_name">name = %1$s</string>

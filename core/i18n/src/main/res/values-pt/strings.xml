@@ -271,7 +271,7 @@
     <string name="show_recently_used_apps_desc">Mostrar os apps usados recentemente no topo da gaveta de apps</string>
     <string name="recently_used_apps_count">Número de apps recentes</string>
     <string name="drag_handle">Alça de arrastar</string>
-    <string name="private_space_title">Espaço Privado</string>
+    <string name="private_profile">Espaço Privado</string>
     <string name="private_space_locked">Espaço Privado bloqueado</string>
     <string name="private_space_authenticating">Autenticando…</string>
     <string name="app_info_name">name = %1$s</string>

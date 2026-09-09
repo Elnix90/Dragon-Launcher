@@ -84,6 +84,8 @@ public class DrawerViewModel
 
         public fun findOne(action: Action.LaunchApp): Flow<Application?> = appsRepository.findOne(action)
 
+        public suspend fun fromAction(action: Action.LaunchApp): Application? = appsRepository.fromAction(action)
+
         public fun search(
             workspace: Workspace,
             workspaceViewMode: WorkspaceViewMode = WorkspaceViewMode.Default

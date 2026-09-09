@@ -490,7 +490,7 @@
     <string name="disable_haptic_globally">Deaktivieren Sie das haptische Feedback global</string>
     <string name="disable_haptic_globally_desc">Verhindern Sie, dass Dragon bei der Punkteauswahl haptische Rückmeldungen gibt, falls Sie das nicht mögen</string>
     <string name="drag_handle">Ziehgriff</string>
-    <string name="private_space_title">Privater Bereich</string>
+    <string name="private_profile">Privater Bereich</string>
     <string name="private_space_locked">Privater Bereich gesperrt</string>
     <string name="private_space_authenticating">Authentifizierung…</string>
     <string name="app_info_name">name = %1$s</string>

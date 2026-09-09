@@ -52,6 +52,8 @@ public sealed class Action {
         override val drawableId: Int = R.drawable.apps
         override val resId: Int = R.string.open_app
 
+        public var appLabel: String? = null
+
         public constructor(application: Application) : this(
             application.packageName,
             application.profile

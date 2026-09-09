@@ -3,9 +3,11 @@ package org.elnix.dragonlauncher.base.model.serializables
 import android.content.Context
 import android.os.Process
 import android.os.UserHandle
+import androidx.annotation.StringRes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.serializables.serializers.UserHandleSerializer
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getSerialNumber
 
 @Serializable
@@ -25,21 +27,24 @@ public data class Profile(
 
     override fun hashCode(): Int = userHandle.hashCode()
 
-    public enum class Type {
+    public enum class Type(
+        @StringRes
+        public val resId: Int
+    ) {
         /**
          * The default profile.
          */
-        Personal,
+        Personal(R.string.personal_profile),
 
         /**
          * The work profile.
          */
-        Work,
+        Work(R.string.work_profile),
 
         /**
          * The private space profile (Android 15+)
          */
-        Private
+        Private(R.string.private_profile)
     }
 
     public data class State(

@@ -508,7 +508,7 @@
     <string name="disable_haptic_globally">全局禁用触觉振动反馈</string>
     <string name="disable_haptic_globally_desc">如果您不习惯物理振动，可以强制阻止 Dragon 在任何触点交互或选取时产生振动反馈</string>
     <string name="drag_handle">拖拽控制手柄</string>
-    <string name="private_space_title">私密空间</string>
+    <string name="private_profile">私密空间</string>
     <string name="private_space_locked">私密空间已锁定</string>
     <string name="private_space_authenticating">正在验证身份…</string>
     <string name="app_info_name">应用名称 = %1$s</string>
