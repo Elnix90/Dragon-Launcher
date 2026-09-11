@@ -1,7 +1,7 @@
 name: Crash Bug Report
 description: Report crash bug
 title: "[CRASH] "
-labels: [ "crash" ]
+labels: [ "CRASH" ]
 body:
   - type: checkboxes
     id: terms

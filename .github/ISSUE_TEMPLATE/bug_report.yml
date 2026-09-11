@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug
 title: "[BUG] "
-labels: [ "bug" ]
+labels: [ "BUG" ]
 body:
   - type: checkboxes
     id: terms
