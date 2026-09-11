@@ -480,7 +480,7 @@ fun WidgetsTab(
         NestManagementSheet(
             title = stringResource(R.string.pick_a_nest),
             onSelect = {
-                nestNavigation.goToNest(it.id)
+                nestNavigation.goToNest(newNestId = it.id, clearStack = true)
                 selected = null
                 showNestPickerDialog = false
             }

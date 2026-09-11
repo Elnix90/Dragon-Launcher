@@ -136,7 +136,7 @@ fun NestManagementSheet(
                         onDelete = { pointsService.removeNest(nest.id) },
                         onDuplicate = { pointsService.duplicateNest(nest.id) },
                         onEdit = {
-                            pointsViewModel.nestsNavigationService.goToNest(id)
+                            pointsViewModel.nestsNavigationService.goToNest(id, true)
                             navigator.navigate(NavigationRoute.NestEdit)
                         },
                         onSelect = { onSelect?.invoke(nest) }
