@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.welcome
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -13,9 +14,9 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
-import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 
 @Composable
@@ -46,17 +47,20 @@ fun WelcomePageBackup() {
 
         Spacer(5.dp)
 
-        GradientBigButton(
-            text =
-                if (autoBackupUri != null) {
-                    stringResource(R.string.choose_a_auto_backup_file)
-                } else {
-                    stringResource(R.string.open_default_launcher_settings)
-                },
+        DragonButton(
             enabled = autoBackupEnabled,
             onClick = {
                 autoBackupLauncher.launch("dragonlauncher-auto-backup.json")
             }
-        )
+        ) {
+            Text(
+                text =
+                    if (autoBackupUri != null) {
+                        stringResource(R.string.choose_a_auto_backup_file)
+                    } else {
+                        stringResource(R.string.open_default_launcher_settings)
+                    }
+            )
+        }
     }
 }

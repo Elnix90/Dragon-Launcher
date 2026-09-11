@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
 fun WelcomePageFinish(
@@ -54,10 +54,11 @@ fun WelcomePageFinish(
 
         Spacer(32.dp)
 
-        GradientBigButton(
-            text = stringResource(R.string.customize_apps),
+        DragonButton(
             onClick = onEnterSettings
-        )
+        ) {
+            Text(stringResource(R.string.customize_apps))
+        }
 
         Spacer(Modifier.weight(1f))
 

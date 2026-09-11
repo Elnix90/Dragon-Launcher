@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.welcome
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -7,7 +8,7 @@ import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openDefaultLauncherSettings
-import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
 fun WelcomePageLauncher() {
@@ -18,17 +19,17 @@ fun WelcomePageLauncher() {
         title = stringResource(R.string.set_default_launcher),
         icon = R.drawable.rocket_launch
     ) {
-        GradientBigButton(
-            text =
-                if (isDefaultLauncher) {
+        DragonButton(
+            enabled = !isDefaultLauncher,
+            onClick = { ctx.openDefaultLauncherSettings() }
+        ) {
+            Text(
+                text = if (isDefaultLauncher) {
                     stringResource(R.string.already_default_launcher)
                 } else {
                     stringResource(R.string.open_default_launcher_settings)
-                },
-            enabled = !isDefaultLauncher,
-            onClick = {
-                ctx.openDefaultLauncherSettings()
-            }
-        )
+                }
+            )
+        }
     }
 }
