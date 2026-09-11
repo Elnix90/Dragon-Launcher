@@ -2,7 +2,12 @@ package org.elnix.dragonlauncher.ui.helpers
 
 import android.provider.Settings
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +27,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
@@ -57,12 +63,15 @@ fun HoldToActivateArc(
 ) {
     if (center == null || progress <= 0f) return
 
+    val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
 
     val rotationsPerSecond by HoldToActivateArcSettingsStore.rotationsPerSecond.asState()
     val rgbLoading by HoldToActivateArcSettingsStore.holdRgbLoading.asState()
     val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
     val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
+    val pulsingRadius by HoldToActivateArcSettingsStore.pulsingRadius.asState()
+    val pulsingDuration by HoldToActivateArcSettingsStore.pulsingRDuration.asState()
 
     val color =
         if (rgbLoading) {
@@ -79,18 +88,26 @@ fun HoldToActivateArc(
     // Remembers the shape for each new click, but keeps the same when holding
     val resolvedShape: Shape = remember(center) { customObject.shape.resolveShape() }
 
+    val infiniteTransition = rememberInfiniteTransition(label = "arc")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = pulsingRadius,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(pulsingDuration, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+        label = "pulse"
+    )
+
     val rotationAnimatable = remember { Animatable(0f) }
-
-    val ctx = LocalContext.current
-    val animationScale =
-        Settings.Global.getFloat(
-            ctx.contentResolver,
-            Settings.Global.ANIMATOR_DURATION_SCALE,
-            1f
-        )
-
     LaunchedEffect(rotationsPerSecond, playAnimation) {
         if (rotationsPerSecond > 0f && playAnimation) {
+            val animationScale = Settings.Global.getFloat(
+                ctx.contentResolver,
+                Settings.Global.ANIMATOR_DURATION_SCALE,
+                1f
+            )
             val durationMs = (1000f / rotationsPerSecond / animationScale).toInt().coerceAtLeast(1)
             while (this@LaunchedEffect.isActive) {
                 rotationAnimatable.animateTo(
@@ -138,6 +155,7 @@ fun HoldToActivateArc(
                         if (rotationsPerSecond > 0f && playAnimation) {
                             rotate(degrees = rotationAnimatable.value, pivot = center)
                         }
+                        scale(pulseScale, center)
                         translate(center.x, center.y)
                     }) {
                         drawPathGlow(

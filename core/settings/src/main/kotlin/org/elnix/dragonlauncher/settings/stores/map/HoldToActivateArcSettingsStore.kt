@@ -79,4 +79,24 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
             icon = R.drawable.palette,
             default = true
         )
+
+    @SettingKey
+    public val pulsingRadius: FloatSettingObject =
+        float(
+            title = R.string.pulsing_radius,
+            description = R.string.pulsing_radius_desc,
+            icon = R.drawable.circle,
+            default = 1.1f,
+            allowedRange = 0.5f..4f
+        )
+
+    @SettingKey
+    public val pulsingRDuration: IntSettingObject =
+        int(
+            title = R.string.pulsing_duration,
+            description = R.string.pulsing_duration_desc,
+            icon = R.drawable.circle,
+            default = 500,
+            allowedRange = 10..6000
+        )
 }

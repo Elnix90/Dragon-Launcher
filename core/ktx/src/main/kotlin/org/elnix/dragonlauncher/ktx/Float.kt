@@ -8,7 +8,7 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-private const val TWO_PI_F = (2.0 * PI).toFloat()
+public const val TWO_PI_F: Float = (2.0 * PI).toFloat()
 public val Float.Companion.TWO_PI: Float
     get() = TWO_PI_F
 

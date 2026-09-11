@@ -1116,4 +1116,8 @@
   <string name="fixes">Fixes</string>
   <string name="known_issues">Known issues</string>
   <string name="category_color">Categories color</string>
+  <string name="pulsing_radius">Pulsing radius</string>
+  <string name="pulsing_radius_desc">The amount of breathing/pulsing the hold to activate arc moves</string>
+  <string name="pulsing_duration">Pulsing Duration</string>
+  <string name="pulsing_duration_desc">How long it takes for 1 pulse</string>
 </resources>

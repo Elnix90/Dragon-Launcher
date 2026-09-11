@@ -256,6 +256,8 @@ fun HoldToActivateTab(
             ) { showHoldSettingsOrderDialog = true }
             Setting(HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance)
             Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
+            Setting(HoldToActivateArcSettingsStore.pulsingRadius)
+            Setting(HoldToActivateArcSettingsStore.pulsingRDuration)
             Setting(HoldToActivateArcSettingsStore.holdRgbLoading)
             Setting(ColorSettingsStore.holdToActivateColor)
         }
