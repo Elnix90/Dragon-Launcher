@@ -40,13 +40,13 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
@@ -79,8 +79,7 @@ fun MainScreen(
 
     val backAction by BehaviorSettingsStore.backAction.asStateNull()
 
-    val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
-    val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
+    val holdSettings = LocalHoldToActivateSettings.current
 
     val start by swipeService.start.asState()
     val current by swipeService.current.asState()
@@ -136,8 +135,8 @@ fun MainScreen(
                     }
                 }
             },
-            holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
-            loadDuration = longCLickSettingsDuration.toLong()
+            holdDelay = holdSettings.holdDelayBeforeStartingLongClickSettings.toLong(),
+            loadDuration = holdSettings.longCLickSettingsDuration.toLong()
         )
 
     /**

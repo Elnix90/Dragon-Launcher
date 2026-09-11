@@ -32,13 +32,12 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.ktx.toPath
-import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
 
@@ -65,13 +64,14 @@ fun HoldToActivateArc(
 
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
+    val holdSettings = LocalHoldToActivateSettings.current
 
-    val rotationsPerSecond by HoldToActivateArcSettingsStore.rotationsPerSecond.asState()
-    val rgbLoading by HoldToActivateArcSettingsStore.holdRgbLoading.asState()
-    val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
-    val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
-    val pulsingRadius by HoldToActivateArcSettingsStore.pulsingRadius.asState()
-    val pulsingDuration by HoldToActivateArcSettingsStore.pulsingRDuration.asState()
+    val rotationsPerSecond = holdSettings.rotationsPerSecond
+    val rgbLoading = holdSettings.holdRgbLoading
+    val holdToActivateSettingsTolerance = holdSettings.holdToActivateSettingsTolerance
+    val showToleranceOnMainScreen = holdSettings.showToleranceOnMainScreen
+    val pulsingRadius = holdSettings.pulsingRadius
+    val pulsingDuration = holdSettings.pulsingRDuration
 
     val color =
         if (rgbLoading) {

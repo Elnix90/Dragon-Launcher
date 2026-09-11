@@ -15,11 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
-import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ktx.px
-import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
 import kotlin.time.Duration.Companion.milliseconds
 
 /** Container for the produced gesture state. */
@@ -44,7 +43,7 @@ fun rememberHoldToOpenSettings(
     loadDuration: Long
 ): HoldGestureState {
     val scope = rememberCoroutineScope()
-    val tolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
+    val tolerance = LocalHoldToActivateSettings.current.holdToActivateSettingsTolerance
     val tolerancePx = tolerance.px
 
     var anchor: Offset? by remember { mutableStateOf(null) }

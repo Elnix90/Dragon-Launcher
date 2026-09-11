@@ -54,7 +54,9 @@ fun ProvideGlobalCompositionLocals(
     ) {
         ProvideCurrentTime {
             ProvideDrawerSettings {
-                content()
+                ProvideHoldToActivateSettings {
+                    content()
+                }
             }
         }
     }

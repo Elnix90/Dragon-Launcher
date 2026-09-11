@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HoldActions
@@ -43,6 +42,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -68,8 +68,9 @@ fun HoldToActivateTab(
     val swipeService = swipeViewModel.swipeService
     val holdObject by swipeService.holdObject.asState()
 
-    val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
-    val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
+    val holdSettings = LocalHoldToActivateSettings.current
+    val holdDelayBeforeStartingLongClickSettings = holdSettings.holdDelayBeforeStartingLongClickSettings
+    val longCLickSettingsDuration = holdSettings.longCLickSettingsDuration
 
     var showHoldSettingsOrderDialog by remember { mutableStateOf(false) }
     var playAnimation by remember { mutableStateOf(true) }
@@ -228,12 +229,10 @@ fun HoldToActivateTab(
             DragonButton(
                 onClick = {
                     scope.launch {
-                        val duration = HoldToActivateArcSettingsStore.longCLickSettingsDuration.get(ctx)
-
                         /**
                          * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
                          */
-                        val magicNumber = 1000f / duration
+                        val magicNumber = 1000f / holdSettings.longCLickSettingsDuration
                         HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, magicNumber)
                     }
                 }
