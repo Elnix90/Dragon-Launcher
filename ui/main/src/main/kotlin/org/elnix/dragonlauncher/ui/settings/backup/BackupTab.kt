@@ -3,12 +3,22 @@ package org.elnix.dragonlauncher.ui.settings.backup
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +29,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,13 +51,13 @@ import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.importexport.ExportDialog
 import org.elnix.dragonlauncher.ui.dialogs.importexport.SelectedActionRow
 import org.elnix.dragonlauncher.ui.dialogs.importexport.StoreItemsNotScrollable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
-import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
@@ -110,34 +122,23 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
             }
         }
     ) {
-        Column(
+        Row(
             Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            GradientBigButton(
-                text = stringResource(R.string.export_settings),
-                onClick = { showExportDialog = true },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(R.drawable.cloud_upload),
-                        contentDescription = stringResource(R.string.export_settings),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            )
+            BackupButton(
+                icon = R.drawable.cloud_upload,
+                text = R.string.export_settings,
+                color = MaterialTheme.colorScheme.secondary
+            ) { showExportDialog = true }
 
             ImportBackupButton {
-                GradientBigButton(
-                    text = stringResource(R.string.import_settings),
-                    onClick = it,
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.download),
-                            contentDescription = stringResource(R.string.import_settings),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                BackupButton(
+                    icon = R.drawable.download,
+                    text = R.string.import_settings,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    onClick = it
                 )
             }
         }
@@ -222,6 +223,41 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
                 selectedStoresForExport = selectedStores
                 settingsExportLauncher.launch("backup-${DateUtils.nowFormattedDateTime()}.json")
             }
+        )
+    }
+}
+
+@Composable
+private fun RowScope.BackupButton(
+    @DrawableRes
+    icon: Int,
+    @StringRes
+    text: Int,
+    color: Color,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .aspectRatio(1f)
+            .padding(12.dp)
+            .clip(MaterialTheme.shapes.large)
+            .background(color)
+            .clickable(onClick = onClick),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = stringResource(text),
+            modifier = Modifier
+                .size(40.dp)
+        )
+
+        Spacer(5.dp)
+        Text(
+            text = stringResource(text),
+            style = MaterialTheme.typography.labelLargeEmphasized
         )
     }
 }
