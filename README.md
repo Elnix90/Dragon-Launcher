@@ -27,7 +27,7 @@
 ---
 [![GitHub downloads](https://img.shields.io/github/downloads/Elnix90/Dragon-Launcher/total.svg?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases)
 [![GitHub license](https://img.shields.io/github/license/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/blob/dev/LICENSE)
-[![Discord](https://img.shields.io/discord/1327996079786168441?color=blue&label=Discord&logo=discord&style=for-the-badge)](https://discord.gg/6UyuP8EBWS)
+[![Discord](https://img.shields.io/discord/1454475177328115860?color=blue&label=Discord&logo=discord&style=for-the-badge)](https://discord.gg/6UyuP8EBWS)
 [![Offline First](https://img.shields.io/badge/Offline-First-orange.svg?style=for-the-badge&logo=rss&logoColor=white)]()
 [![Privacy](https://img.shields.io/badge/Privacy-100%25-green.svg?style=for-the-badge&logo=shield&logoColor=white)]()
 ---
@@ -142,9 +142,9 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/speedhog.jpg" width="22%" alt="speedhog Screenshot"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/oniyon.jpg" width="22%" alt="oniyon Screenshot"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/alyon.jpg" width="22%" alt="alyon Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/prizewhisper.webp" width="22%" alt="prizewhisper Screenshot"/> 
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/opaline.webp" width="22%" alt="opaline Screenshot"/> 
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/fede1.webp" width="22%" alt="fede1 Screenshot"/> 
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/prizewhisper.webp" width="22%" alt="prizewhisper Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/opaline.webp" width="22%" alt="opaline Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/fede1.webp" width="22%" alt="fede1 Screenshot"/>
 </p>
 
  <details>
@@ -176,7 +176,7 @@ Releases / F-Droid signing key (SHA-256):
 
 Verify:
 
-```bash 
+```bash
 apksigner verify --print-certs DragonLauncher-*.apk
 ```
 
