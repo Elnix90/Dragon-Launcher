@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
@@ -172,12 +173,7 @@ private fun DragonGroupScope.NestManagementItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
     ) {
-        BoxWithConstraints(
-            modifier =
-                Modifier
-                    .weight(0.5f)
-                    .size(100.dp)
-        ) {
+        BoxWithConstraints(Modifier.requiredSize(100.dp)) {
             val center = constraints.getCenter()
             PointIcon(
                 selected = false,
@@ -191,6 +187,8 @@ private fun DragonGroupScope.NestManagementItem(
                 eraseColor = bgColor
             )
         }
+
+        Spacer(5.dp)
 
         var tempState by rememberSaveable { mutableStateOf(nest.name) }
 
@@ -242,7 +240,9 @@ private fun DragonGroupScope.NestManagementItem(
                 ),
             shape = CircleShape,
             interactionSource = interactionSource,
-            modifier = modifier.wrapContentSize(),
+            modifier = Modifier
+                .weight(1f)
+                .wrapContentSize(),
             singleLine = true,
             keyboardOptions =
                 KeyboardOptions(
