@@ -94,12 +94,12 @@ fun GradientColorPicker(
                             center = Offset(x, y),
                             style = Stroke(width = 2.dp.toPx())
                         )
-                    }.pointerInput(hueColor) {
+                    }.pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = ::pickColorFromPos,
                             onDrag = { change, _ -> pickColorFromPos(change.position) }
                         )
-                    }.pointerInput(hueColor) {
+                    }.pointerInput(Unit) {
                         detectTapGestures(
                             onTap = ::pickColorFromPos,
                             onLongPress = ::pickColorFromPos
