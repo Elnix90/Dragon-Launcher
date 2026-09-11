@@ -246,6 +246,7 @@ private fun DragonGroupScope.NestManagementItem(
             singleLine = true,
             keyboardOptions =
                 KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
                     imeAction = ImeAction.Done
                 ),
             keyboardActions =
