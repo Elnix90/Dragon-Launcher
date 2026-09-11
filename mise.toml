@@ -60,6 +60,10 @@ description = "Run instrumentation tests"
 run = "./gradlew lint"
 description = "Run Android Lint"
 
+[tasks.format]
+run = "./gradlew ktlintFormat"
+description = "Run Android Lint"
+
 [tasks.clean]
 run = "./gradlew clean"
 description = "Clean build artifacts"
