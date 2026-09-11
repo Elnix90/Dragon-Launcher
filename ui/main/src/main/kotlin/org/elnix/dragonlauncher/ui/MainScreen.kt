@@ -113,6 +113,7 @@ fun MainScreen(
     val hold =
         rememberHoldToOpenSettings(
             onSettings = { offset ->
+                swipeService.clearAfterLaunch()
 
                 // When the list only has 1 element, directly go to that screen, otherwise, open the menu
                 // If the list is empty, do nothing

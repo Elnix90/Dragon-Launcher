@@ -59,6 +59,9 @@ public interface SwipeService {
     public val start: SettingFlow<Offset?>
     public val current: SettingFlow<Offset?>
 
+    /**
+     * Clears the dragging values after a successful launch
+     */
     public fun clearAfterLaunch()
 
     public val doubleClicActionChannel: Flow<Unit>
