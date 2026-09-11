@@ -1,5 +1,9 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
+import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.SoundPool
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
@@ -27,6 +31,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,7 +86,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ColorSelectorTab() {
-    val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
@@ -185,6 +190,52 @@ fun ColorSelectorTab() {
     var showRandomColorsValidation by remember { mutableStateOf(false) }
     var showAllColorsValidation by remember { mutableStateOf(false) }
     var showExitTestValidation by remember { mutableStateOf(false) }
+
+    val ctx = LocalContext.current
+
+    val soundPool =
+        remember {
+            SoundPool
+                .Builder()
+                .setMaxStreams(1)
+                .setAudioAttributes(
+                    AudioAttributes
+                        .Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build()
+                ).build()
+        }
+    var flashbangLSoundLoaded by remember { mutableStateOf(false) }
+    val flashbangSoundId = remember { soundPool.load(ctx, R.raw.flashbang, 1) }
+
+    DisposableEffect(Unit) {
+        soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+            if (status == 0) {
+                if (sampleId == flashbangSoundId) flashbangLSoundLoaded = true
+            }
+        }
+
+        onDispose { soundPool.release() }
+    }
+
+    LaunchedEffect(defaultTheme) {
+        if (defaultTheme == Light) {
+            val audioManager =
+                ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+            val maxVolume =
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+
+            audioManager.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                maxVolume / 2,
+                0
+            )
+
+            soundPool.play(flashbangSoundId, 1f, 1f, 1, 0, 1f)
+        }
+    }
 
     SettingsScaffold(
         title = stringResource(R.string.color_selector),
