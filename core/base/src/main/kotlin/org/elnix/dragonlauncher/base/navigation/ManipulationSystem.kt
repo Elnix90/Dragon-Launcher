@@ -3,17 +3,53 @@ package org.elnix.dragonlauncher.base.navigation
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.AnimationVector2D
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ktx.applyTransformations
 import org.elnix.dragonlauncher.ktx.undoTransformations
 
+@Stable
 public class ManipulationSystem(
     public var center: Offset
 ) {
     public val offset: Animatable<Offset, AnimationVector2D> = Animatable(Offset.Zero, Offset.VectorConverter)
     public val zoom: Animatable<Float, AnimationVector1D> = Animatable(1f)
     public val angle: Animatable<Float, AnimationVector1D> = Animatable(0f)
+
+    public fun canReset(): Boolean {
+        val canResetOffset = offset.value != Offset.Zero
+        val canResetZoom = zoom.value != 1f
+        val canResetRotation = angle.value != 0f
+
+        return canResetOffset || canResetZoom || canResetRotation
+    }
+
+    /**
+     * Resets [offset], [zoom] and [angle] from the current [ManipulationSystem] to the default values
+     *
+     * This function needs to be called from a coroutine scope. it does not use the [CoroutineScope] receiver,
+     * because all animations are instant and therefore doesn't need async calls
+     */
+    public suspend fun reset() {
+        offset.snapTo(Offset.Zero)
+        zoom.snapTo(1f)
+        angle.snapTo(0f)
+    }
+
+    /**
+     * Same as [reset], but animates the reset asynchronously.
+     * All animations are launched in parallel within the provided [scope].
+     */
+    public fun resetAnimated(scope: CoroutineScope) {
+        scope.launch { offset.animateTo(Offset.Zero, tween(easing = FastOutSlowInEasing)) }
+        scope.launch { zoom.animateTo(1f, tween(easing = FastOutSlowInEasing)) }
+        scope.launch { angle.animateTo(0f, tween(easing = FastOutSlowInEasing)) }
+    }
 
     /**
      * Normalize a [org.elnix.dragonlauncher.base.model.serializables.Point.offset]

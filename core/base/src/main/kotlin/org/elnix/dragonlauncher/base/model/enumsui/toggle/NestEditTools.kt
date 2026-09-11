@@ -10,5 +10,8 @@ public enum class NestEditTools(
 ) : ToggleButtonOption {
     NestManagement(R.string.manage_nests, R.drawable.nest_icon),
     GoParentNest(R.string.go_parent_nest, R.drawable.fullscreen_exit),
-    EnterNest(R.string.open_nest, R.drawable.fullscreen)
+    EnterNest(R.string.open_nest, R.drawable.fullscreen),
+
+    /** Resets the [org.elnix.dragonlauncher.base.navigation.ManipulationSystem] */
+    ResetSystem(R.string.reset_zoom, R.drawable.center_focus_strong)
 }

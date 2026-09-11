@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.SWIPE_TAG
+import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
@@ -37,7 +38,6 @@ import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle

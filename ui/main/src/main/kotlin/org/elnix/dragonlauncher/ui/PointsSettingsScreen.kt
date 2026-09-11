@@ -14,6 +14,7 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -59,18 +60,16 @@ import androidx.compose.ui.util.fastCoerceAtMost
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.Center
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.ResetRotation
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.ResetZoom
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.EnterNest
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.NestManagement
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.ResetSystem
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
@@ -95,7 +94,6 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore.isInDragAroundMode
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
@@ -202,8 +200,6 @@ fun PointsSettingsScreen(
     val isInManualPlacementMode = manualPlacementQueue.isNotEmpty()
     var isDragging by remember { mutableStateOf(false) }
 
-    val rowsScrollStates = List(3) { rememberScrollState() }
-
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
@@ -259,6 +255,9 @@ fun PointsSettingsScreen(
     val manipulationSystem = retain { ManipulationSystem(center) }
     LaunchedEffect(center) {
         manipulationSystem.center = center
+    }
+    LaunchedEffect(nestId) {
+        manipulationSystem.reset()
     }
 
     val offset = manipulationSystem.offset
@@ -471,57 +470,11 @@ fun PointsSettingsScreen(
             )
         },
         bottomContent = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                RowWithScrollIndicator(rowsScrollStates[1]) {
-                    val canResetOffset = offset.value != Offset.Zero
-                    val canResetZoom = zoom.value != 1f
-                    val canResetRotation = angle.value != 0f
-
-                    MultiSelectConnectedButtonRow(
-                        entries = MoveAroundTools.entries,
-                        enabled = {
-                            when (it) {
-                                Center -> canResetOffset
-                                ResetZoom -> canResetZoom
-                                ResetRotation -> canResetRotation
-                            }
-                        },
-                        checked = {
-                            when (it) {
-                                Center -> canResetOffset
-                                ResetZoom -> canResetZoom
-                                ResetRotation -> canResetRotation
-                            }
-                        }
-                    ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                Center ->
-                                    scope.launch {
-                                        offset.animateTo(Offset.Zero, bouncySpec())
-                                    }
-
-                                ResetZoom ->
-                                    scope.launch {
-                                        zoom.animateTo(1f, bouncySpec())
-                                    }
-
-                                ResetRotation ->
-                                    scope.launch {
-                                        angle.animateTo(0f, bouncySpec())
-                                    }
-                            }
-                        }
-                    }
-
-                    Spacer(12.dp)
-
-                    UndoRedoBlock(pointsService.undoRedo)
-                }
-
-                RowWithScrollIndicator(rowsScrollStates[2]) {
+            RowWithScrollIndicator(rememberScrollState()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     AnimatedFab(
                         onClick = { showAddDialog = true },
                         icon = R.drawable.add,
@@ -529,11 +482,13 @@ fun PointsSettingsScreen(
                         containerColor = MaterialTheme.colorScheme.secondary
                     )
 
+                    Spacer(12.dp)
+
                     ToggleAnimatedFab(
                         checked = isInDragAroundMode,
                         onCheckedChange = ::toggleDragAroundMode,
                         minSize = 70.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary
+                        containerColor = MaterialTheme.colorScheme.tertiary
                     ) {
                         if (it) {
                             R.drawable.drag_pan
@@ -541,95 +496,103 @@ fun PointsSettingsScreen(
                             R.drawable.pan_tool
                         }
                     }
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        MultiSelectConnectedButtonRow(
-                            entries = SelectedPointEditTools.entries,
-                            checked = {
-                                when (it) {
-                                    SelectedPointEditTools.Edit -> aSinglePointIsSelected
-                                    SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
-                                    SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
-                                }
-                            },
-                            enabled = {
-                                when (it) {
-                                    SelectedPointEditTools.Edit -> aSinglePointIsSelected
-                                    SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
-                                    SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
-                                }
-                            }
-                        ) { option ->
-                            when (option) {
-                                SelectedPointEditTools.Edit -> {
-                                    showEditDialog = selectedPointsIds.firstOrNull() ?: return@MultiSelectConnectedButtonRow
-                                }
+                }
 
-                                SelectedPointEditTools.Remove -> {
-                                    selectedPointsIds.forEach { id ->
-                                        pointsService.removePoint(id)
-                                    }
-                                    pointsService.deselectAll()
-                                }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    UndoRedoBlock(pointsService.undoRedo)
 
-                                SelectedPointEditTools.Duplicate -> {
-                                    selectedPointsIds.forEach { id ->
-                                        val oldPoint = pointsService.findPointById(id) ?: return@MultiSelectConnectedButtonRow
-                                        val newId =
-                                            pointsService.addPoint { newId ->
-                                                oldPoint.copy(id = newId)
-                                            }
-                                        select(newId)
-                                        pointsService.autoSeparate(nestId, newId)
-                                    }
-                                }
-                            }
+                    val nestToGo =
+                        if (selectedPointsIds.size == 1) {
+                            val point = pointsService.findPointById(selectedPointsIds.first())
+                            if (point != null && point.action is Action.OpenNest) (point.action as Action.OpenNest).nestId else null
+                        } else {
+                            null
                         }
 
-                        val nestToGo =
-                            if (selectedPointsIds.size == 1) {
-                                val point = pointsService.findPointById(selectedPointsIds.first())
-                                if (point != null && point.action is Action.OpenNest) (point.action as Action.OpenNest).nestId else null
-                            } else {
-                                null
+                    val canGoNest = nestToGo != null
+                    val canGoback = nestId != 0
+
+                    MultiSelectConnectedButtonRow(
+                        entries = NestEditTools.entries,
+                        enabled = {
+                            when (it) {
+                                NestManagement -> true
+                                GoParentNest -> canGoback
+                                EnterNest -> canGoNest
+                                ResetSystem -> manipulationSystem.canReset()
+                            }
+                        },
+                        checked = {
+                            when (it) {
+                                NestManagement -> true
+                                GoParentNest -> canGoback
+                                EnterNest -> canGoNest
+                                ResetSystem -> manipulationSystem.canReset()
+                            }
+                        }
+                    ) { entry ->
+                        when (entry) {
+                            NestManagement -> {
+                                showNestManagementDialog = true
                             }
 
-                        val canGoNest = nestToGo != null
-                        val canGoback = nestId != 0
-
-                        MultiSelectConnectedButtonRow(
-                            entries = NestEditTools.entries,
-                            enabled = {
-                                when (it) {
-                                    NestManagement -> true
-                                    GoParentNest -> canGoback
-                                    EnterNest -> canGoNest
-                                }
-                            },
-                            checked = {
-                                when (it) {
-                                    NestManagement -> true
-                                    GoParentNest -> canGoback
-                                    EnterNest -> canGoNest
-                                }
+                            GoParentNest -> {
+                                nestsNavigationService.goBack()
+                                pointsService.deselectAll()
                             }
-                        ) { entry ->
-                            when (entry) {
-                                NestManagement -> {
-                                    showNestManagementDialog = true
-                                }
 
-                                GoParentNest -> {
-                                    nestsNavigationService.goBack()
+                            EnterNest -> {
+                                nestToGo?.let {
+                                    nestsNavigationService.goToNest(it)
                                     pointsService.deselectAll()
                                 }
+                            }
 
-                                EnterNest -> {
-                                    nestToGo?.let {
-                                        nestsNavigationService.goToNest(it)
-                                        pointsService.deselectAll()
-                                    }
+                            ResetSystem -> manipulationSystem.resetAnimated(scope)
+                        }
+                    }
+
+                    MultiSelectConnectedButtonRow(
+                        entries = SelectedPointEditTools.entries,
+                        checked = {
+                            when (it) {
+                                SelectedPointEditTools.Edit -> aSinglePointIsSelected
+                                SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+                                SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+                            }
+                        },
+                        enabled = {
+                            when (it) {
+                                SelectedPointEditTools.Edit -> aSinglePointIsSelected
+                                SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+                                SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+                            }
+                        }
+                    ) { option ->
+                        when (option) {
+                            SelectedPointEditTools.Edit -> {
+                                showEditDialog = selectedPointsIds.firstOrNull() ?: return@MultiSelectConnectedButtonRow
+                            }
+
+                            SelectedPointEditTools.Remove -> {
+                                selectedPointsIds.forEach { id ->
+                                    pointsService.removePoint(id)
+                                }
+                                pointsService.deselectAll()
+                            }
+
+                            SelectedPointEditTools.Duplicate -> {
+                                selectedPointsIds.forEach { id ->
+                                    val oldPoint = pointsService.findPointById(id) ?: return@MultiSelectConnectedButtonRow
+                                    val newId =
+                                        pointsService.addPoint { newId ->
+                                            oldPoint.copy(id = newId)
+                                        }
+                                    select(newId)
+                                    pointsService.autoSeparate(nestId, newId)
                                 }
                             }
                         }

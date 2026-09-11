@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.RoundedPolygon
+import org.elnix.dragonlauncher.animation.bouncySpec
 
 data class FancyAnimation(
     val rotation: Float,

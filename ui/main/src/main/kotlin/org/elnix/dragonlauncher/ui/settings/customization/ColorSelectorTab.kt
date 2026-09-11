@@ -53,6 +53,7 @@ import io.github.elnix90.core.objects.ColorSettingObject
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Amoled
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Custom
@@ -63,7 +64,6 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
-import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional

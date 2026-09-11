@@ -6,6 +6,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
@@ -55,6 +57,7 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.EnterNest
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.NestManagement
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.ResetSystem
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.ShapesEditTools
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.highlightedIfSelected
@@ -73,14 +76,14 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.animation.rememberFancyAnimations
 import org.elnix.dragonlauncher.ui.base.asMutableState
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
-import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
-import org.elnix.dragonlauncher.ui.components.ManipulationSystemReset
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
@@ -88,7 +91,6 @@ import org.elnix.dragonlauncher.ui.dialogs.editors.IntersectionShapeEditor
 import org.elnix.dragonlauncher.ui.dialogs.editors.NestEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
@@ -166,8 +168,6 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     var showMoreSheet by remember { mutableStateOf(false) }
     var showEditDefaultNestSheet by remember { mutableStateOf(false) }
     var showEditDefaultShapeDialog by remember { mutableStateOf(false) }
-
-    val rowsScrollStates = List(3) { rememberScrollState() }
 
     var showNestManagementDialog by remember { mutableStateOf(false) }
     var center by remember { mutableStateOf(Offset.Zero) }
@@ -282,149 +282,112 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
             )
         },
         bottomContent = {
-            RowWithScrollIndicator(rowsScrollStates[0]) {
-                val canGoback = nestId != 0
-                MultiSelectConnectedButtonRow(
-                    entries = NestEditTools.entries.filterNot { it == EnterNest },
-                    enabled = {
-                        when (it) {
-                            NestManagement -> true
-                            GoParentNest -> canGoback
-                            EnterNest -> error("Shouldn't happen")
-                        }
-                    },
-                    checked = {
-                        when (it) {
-                            NestManagement -> true
-                            GoParentNest -> canGoback
-                            EnterNest -> error("Shouldn't happen")
-                        }
-                    }
-                ) { entry ->
-                    when (entry) {
-                        NestManagement -> {
-                            showNestManagementDialog = true
-                        }
-
-                        GoParentNest -> {
-                            nestNavigation.goBack()
-                            pointsService.deselectAll()
-                        }
-
-                        EnterNest -> error("Shouldn't happen")
-                    }
-                }
-
-                Spacer(12.dp)
-
-                MultiSelectConnectedButtonRow(
-                    entries = ShapesEditTools.entries,
-                    checked = {
-                        when (it) {
-                            ShapesEditTools.SnapOffset -> snapShapesOffset
-                            ShapesEditTools.SnapCenter -> snapShapesCenter
-//                            ShapesEditTools.SnapScale -> snapShapesScale
-                            ShapesEditTools.SnapAngle -> snapShapeAngle
-                        }
-                    }
+            RowWithScrollIndicator(rememberScrollState()) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    when (it) {
-                        ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
-                        ShapesEditTools.SnapCenter -> snapShapesCenter = !snapShapesCenter
-//                        ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
-                        ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
-                    }
-                }
-            }
+                    AnimatedFab(
+                        onClick = { showEditCurrentNestSheet = true },
+                        icon = R.drawable.edit_rounded,
+                        minSize = 70.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    )
 
-            Spacer(5.dp)
+                    val interactionSource = rememberInteractionSource()
+                    val isPressed by interactionSource.collectIsPressedAsState()
 
-            RowWithScrollIndicator(rowsScrollStates[2]) {
-                ManipulationSystemReset(manipulationSystem)
+                    val fabAnimation = rememberFancyAnimations(
+                        isPressed = isPressed,
+                        normalShape = MaterialShapes.Cookie9Sided,
+                        pressedShape = MaterialShapes.Cookie7Sided
+                    )
 
-                Spacer(12.dp)
+                    var showDropDownMenu by remember { mutableStateOf(false) }
 
-                UndoRedoBlock(pointsService.undoRedo)
-            }
+                    Box {
+                        AnimatedFab(
+                            onClick = { showDropDownMenu = true },
+                            enabled = paths.isNotEmpty(),
+                            icon = {
+                                AnimatedContent(isInDragAroundMode) { isInDragAroundMode ->
+                                    val selectedShape =
+                                        if (isInDragAroundMode) {
+                                            null
+                                        } else {
+                                            selectedShapeId?.let { shapeId ->
+                                                paths.keys.firstOrNull { shape -> shape.id == shapeId }
+                                            }
+                                        }
 
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AnimatedFab(
-                    onClick = { showEditCurrentNestSheet = true },
-                    icon = R.drawable.edit_rounded,
-                    minSize = 70.dp,
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
-
-                var showDropDownMenu by remember { mutableStateOf(false) }
-
-                Box {
-                    AnimatedContent(isInDragAroundMode) {
-                        val selectedShape =
-                            if (it) {
-                                null
-                            } else {
-                                selectedShapeId?.let { shapeId ->
-                                    paths.keys.firstOrNull { shape -> shape.id == shapeId }
+                                    if (selectedShape == null) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.drag_pan),
+                                            contentDescription = stringResource(R.string.move_around_mode)
+                                        )
+                                    } else {
+                                        IntersectionShapePreview(
+                                            shape = selectedShape,
+                                            defaultShape = defaultShape,
+                                            size = 30.dp,
+                                            isDefaultEditing = false
+                                        )
+                                    }
                                 }
-                            }
+                            },
+                            interactionSource = interactionSource,
+                            fabAnimation = fabAnimation,
+                            minSize = 70.dp,
+                            containerColor = MaterialTheme.colorScheme.tertiary
+                        )
 
-                        if (selectedShape == null) {
-                            DragonRow(
-                                onClick = { showDropDownMenu = true },
-                                enabled = paths.isNotEmpty()
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.drag_pan),
-                                    contentDescription = stringResource(R.string.move_around_mode)
-                                )
-                                Spacer(5.dp)
-                                Icon(
-                                    painter = painterResource(R.drawable.drag_indicator),
-                                    contentDescription = stringResource(R.string.drag_handle)
-                                )
-                            }
-                        } else {
-                            DragonRow(onClick = { showDropDownMenu = true }) {
-                                IntersectionShapePreview(
-                                    shape = selectedShape,
-                                    defaultShape = defaultShape,
-                                    size = 30.dp,
-                                    isDefaultEditing = false
-                                )
-                                Spacer(5.dp)
-                                Icon(
-                                    painter = painterResource(R.drawable.drag_indicator),
-                                    contentDescription = stringResource(R.string.drag_handle)
-                                )
-                            }
-                        }
-                    }
-
-                    DragonDropDownMenu(
-                        expanded = showDropDownMenu,
-                        onDismissRequest = { showDropDownMenu = false }
-                    ) {
-                        DropdownMenuGroup(
-                            shapes = MenuDefaults.groupShapes()
+                        DragonDropDownMenu(
+                            expanded = showDropDownMenu,
+                            onDismissRequest = { showDropDownMenu = false }
                         ) {
-                            val filteredShapes = paths.keys.filter { it.id != selectedShapeId }
-                            filteredShapes
-                                .sortedBy { it.id }
-                                .forEachIndexed { idx, shape ->
+                            DropdownMenuGroup(
+                                shapes = MenuDefaults.groupShapes()
+                            ) {
+                                val filteredShapes = paths.keys.filter { it.id != selectedShapeId }
+                                filteredShapes
+                                    .sortedBy { it.id }
+                                    .forEachIndexed { idx, shape ->
+                                        DropdownMenuItem(
+                                            text = {},
+                                            leadingIcon = {
+                                                IntersectionShapePreview(
+                                                    shape = shape,
+                                                    defaultShape = defaultShape,
+                                                    size = 25.dp,
+                                                    isDefaultEditing = false
+                                                )
+                                            },
+                                            trailingContent = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.drag_indicator),
+                                                    contentDescription = stringResource(R.string.drag_handle)
+                                                )
+                                            },
+                                            onClick = {
+                                                selectedShapeId = shape.id
+                                                showDropDownMenu = false
+                                            },
+                                            shape =
+                                                when (idx) {
+                                                    0 -> MenuDefaults.leadingItemShape
+                                                    filteredShapes.size if selectedShapeId != null -> MenuDefaults.trailingItemShape
+                                                    else -> MenuDefaults.middleItemShape
+                                                }
+                                        )
+                                    }
+
+                                if (selectedShapeId != null) {
                                     DropdownMenuItem(
                                         text = {},
                                         leadingIcon = {
-                                            IntersectionShapePreview(
-                                                shape = shape,
-                                                defaultShape = defaultShape,
-                                                size = 25.dp,
-                                                isDefaultEditing = false
+                                            Icon(
+                                                painter = painterResource(R.drawable.close),
+                                                contentDescription = null
                                             )
                                         },
                                         trailingContent = {
@@ -434,40 +397,74 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                             )
                                         },
                                         onClick = {
-                                            selectedShapeId = shape.id
+                                            selectedShapeId = null
                                             showDropDownMenu = false
                                         },
-                                        shape =
-                                            when (idx) {
-                                                0 -> MenuDefaults.leadingItemShape
-                                                filteredShapes.size if selectedShapeId != null -> MenuDefaults.trailingItemShape
-                                                else -> MenuDefaults.middleItemShape
-                                            }
+                                        shape = MenuDefaults.trailingItemShape
                                     )
                                 }
-
-                            if (selectedShapeId != null) {
-                                DropdownMenuItem(
-                                    text = {},
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.close),
-                                            contentDescription = null
-                                        )
-                                    },
-                                    trailingContent = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.drag_indicator),
-                                            contentDescription = stringResource(R.string.drag_handle)
-                                        )
-                                    },
-                                    onClick = {
-                                        selectedShapeId = null
-                                        showDropDownMenu = false
-                                    },
-                                    shape = MenuDefaults.trailingItemShape
-                                )
                             }
+                        }
+                    }
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    UndoRedoBlock(pointsService.undoRedo)
+
+                    val canGoback = nestId != 0
+                    MultiSelectConnectedButtonRow(
+                        entries = NestEditTools.entries.filterNot { it == EnterNest },
+                        enabled = {
+                            when (it) {
+                                NestManagement -> true
+                                GoParentNest -> canGoback
+                                EnterNest -> error("Shouldn't happen")
+                                ResetSystem -> manipulationSystem.canReset()
+                            }
+                        },
+                        checked = {
+                            when (it) {
+                                NestManagement -> true
+                                GoParentNest -> canGoback
+                                EnterNest -> error("Shouldn't happen")
+                                ResetSystem -> manipulationSystem.canReset()
+                            }
+                        }
+                    ) { entry ->
+                        when (entry) {
+                            NestManagement -> {
+                                showNestManagementDialog = true
+                            }
+
+                            GoParentNest -> {
+                                nestNavigation.goBack()
+                                pointsService.deselectAll()
+                            }
+
+                            EnterNest -> error("Shouldn't happen")
+                            ResetSystem -> manipulationSystem.resetAnimated(scope)
+                        }
+                    }
+
+                    MultiSelectConnectedButtonRow(
+                        entries = ShapesEditTools.entries,
+                        checked = {
+                            when (it) {
+                                ShapesEditTools.SnapOffset -> snapShapesOffset
+                                ShapesEditTools.SnapCenter -> snapShapesCenter
+                                // ShapesEditTools.SnapScale -> snapShapesScale
+                                ShapesEditTools.SnapAngle -> snapShapeAngle
+                            }
+                        }
+                    ) {
+                        when (it) {
+                            ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
+                            ShapesEditTools.SnapCenter -> snapShapesCenter = !snapShapesCenter
+                            // ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
+                            ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
                         }
                     }
                 }

@@ -2,8 +2,6 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import android.content.ComponentName
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -41,6 +39,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,10 +64,6 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.Center
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.ResetRotation
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.ResetZoom
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WidgetsToolsAddNestRemove
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WidgetsToolsCenterReset
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WidgetsToolsMoveUpDown
@@ -78,6 +73,7 @@ import org.elnix.dragonlauncher.base.model.models.ResizeSide
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Widget
+import org.elnix.dragonlauncher.base.navigation.ManipulationSystem
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
@@ -155,9 +151,10 @@ fun WidgetsTab(
 
     val rowsScrollStates = List(2) { rememberScrollState() }
 
-    val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-    val zoom = remember { Animatable(1f) }
-    val angle = remember { Animatable(0f) }
+    val manipulationSystem = retain { ManipulationSystem(Offset.Zero) }
+    val offset = manipulationSystem.offset
+    val zoom = manipulationSystem.zoom
+    val angle = manipulationSystem.angle
 
     SettingsScaffold(
         title = stringResource(R.string.widgets),
@@ -224,12 +221,14 @@ fun WidgetsTab(
                     checked = {
                         when (it) {
                             WidgetsToolsAddNestRemove.Nests -> true
+                            WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.canReset()
                             WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
                         }
                     },
                     enabled = {
                         when (it) {
                             WidgetsToolsAddNestRemove.Nests -> true
+                            WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.canReset()
                             WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
                         }
                     }
@@ -238,6 +237,8 @@ fun WidgetsTab(
                         WidgetsToolsAddNestRemove.Nests -> {
                             showNestPickerDialog = true
                         }
+
+                        WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.resetAnimated(scope)
 
                         WidgetsToolsAddNestRemove.Remove -> {
                             selected?.let { removeWidget(it) }
@@ -467,47 +468,7 @@ fun WidgetsTab(
 
             HorizontalDivider()
 
-            val canResetOffset = offset.value != Offset.Zero
-            val canResetZoom = zoom.value != 1f
-            val canResetRotation = angle.value != 0f
-
             Spacer(5.dp)
-            MultiSelectConnectedButtonRow(
-                entries = MoveAroundTools.entries,
-                enabled = {
-                    when (it) {
-                        Center -> canResetOffset
-                        ResetZoom -> canResetZoom
-                        ResetRotation -> canResetRotation
-                    }
-                },
-                checked = {
-                    when (it) {
-                        Center -> canResetOffset
-                        ResetZoom -> canResetZoom
-                        ResetRotation -> canResetRotation
-                    }
-                }
-            ) { entry ->
-                scope.launch {
-                    when (entry) {
-                        Center ->
-                            scope.launch {
-                                offset.animateTo(Offset.Zero)
-                            }
-
-                        ResetZoom ->
-                            scope.launch {
-                                zoom.animateTo(1f)
-                            }
-
-                        ResetRotation ->
-                            scope.launch {
-                                angle.animateTo(0f)
-                            }
-                    }
-                }
-            }
 
             DragonSettingsGroup(R.string.advanced) {
                 Setting(UiSettingsStore.widgetsCellSizeDp)
