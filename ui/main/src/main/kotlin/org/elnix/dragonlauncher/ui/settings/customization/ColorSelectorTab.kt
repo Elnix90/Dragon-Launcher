@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
@@ -48,13 +47,13 @@ import io.github.elnix90.core.objects.ColorSettingObject
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.enumsui.select.ColorSelectorModes
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Amoled
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Custom
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Dark
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Light
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.System
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
@@ -74,7 +73,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -170,9 +168,20 @@ fun ColorSelectorTab() {
             icon = null
         )
 
+    val customColorsSection =
+        rememberExpandableSection(
+            title = R.string.custom_colors,
+            description = R.string.custom_colors_desc,
+            customLeadingContent = {
+                with(LocalExtraColors.current) {
+                    PalettePreview(launchApp, angleLine, shapes, openAppDrawer)
+                }
+            },
+            icon = null
+        )
+
     var showResetValidation by remember { mutableStateOf(false) }
     var showBurgerMenu by remember { mutableStateOf(false) }
-    var selectedCustomView by remember { mutableStateOf(ColorSelectorModes.Normal) }
     var showRandomColorsValidation by remember { mutableStateOf(false) }
     var showAllColorsValidation by remember { mutableStateOf(false) }
     var showExitTestValidation by remember { mutableStateOf(false) }
@@ -361,109 +370,117 @@ fun ColorSelectorTab() {
                     Text(stringResource(R.string.exit_test_mode))
                 }
             }
+
+            ExpandableSection(customColorsSection) {
+                Setting(ColorSettingsStore.holdToActivateColor)
+                Setting(ColorSettingsStore.angleLineColor)
+                Setting(ColorSettingsStore.shapesColor)
+                Setting(ColorSettingsStore.launchAppColor)
+                Setting(ColorSettingsStore.openUrlColor)
+                Setting(ColorSettingsStore.notificationShadeColor)
+                Setting(ColorSettingsStore.controlPanelColor)
+                Setting(ColorSettingsStore.openAppDrawerColor)
+                Setting(ColorSettingsStore.launcherSettingsColor)
+                Setting(ColorSettingsStore.lockColor)
+                Setting(ColorSettingsStore.openFileColor)
+                Setting(ColorSettingsStore.reloadColor)
+                Setting(ColorSettingsStore.openRecentAppsColor)
+                Setting(ColorSettingsStore.openCircleNestColor)
+                Setting(ColorSettingsStore.goParentNestColor)
+                Setting(ColorSettingsStore.toggleWifi)
+                Setting(ColorSettingsStore.toggleBluetooth)
+                Setting(ColorSettingsStore.toggleData)
+                Setting(ColorSettingsStore.runAdbCommand)
+            }
         }
 
-        AnimatedVisibility(defaultTheme == Custom) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                SingleSelectConnectedButtonRow(
-                    entries = ColorSelectorModes.entries,
-                    modifier = Modifier.fillMaxWidth(),
-                    checked = { it == selectedCustomView }
-                ) { selectedCustomView = it }
+        DragonSettingsGroup {
+            ColorsGroup(
+                expandableSectionState = primarySectionState,
+                colors =
+                    listOf(
+                        ColorSettingsStore.primaryColor,
+                        ColorSettingsStore.onPrimaryColor,
+                        ColorSettingsStore.primaryContainerColor,
+                        ColorSettingsStore.onPrimaryContainerColor,
+                        ColorSettingsStore.inversePrimaryColor
+                    )
+            )
 
-                AnimatedContent(selectedCustomView) {
-                    DragonSettingsGroup {
-                        when (it) {
-                            ColorSelectorModes.Normal -> {
-                                ColorsGroup(
-                                    expandableSectionState = primarySectionState,
-                                    colors =
-                                        listOf(
-                                            ColorSettingsStore.primaryColor,
-                                            ColorSettingsStore.onPrimaryColor,
-                                            ColorSettingsStore.primaryContainerColor,
-                                            ColorSettingsStore.onPrimaryContainerColor,
-                                            ColorSettingsStore.inversePrimaryColor
-                                        )
-                                )
+            ColorsGroup(
+                expandableSectionState = secondarySectionState,
+                colors =
+                    listOf(
+                        ColorSettingsStore.secondaryColor,
+                        ColorSettingsStore.onSecondaryColor,
+                        ColorSettingsStore.secondaryContainerColor,
+                        ColorSettingsStore.onSecondaryContainerColor
+                    )
+            )
 
-                                ColorsGroup(
-                                    expandableSectionState = secondarySectionState,
-                                    colors =
-                                        listOf(
-                                            ColorSettingsStore.secondaryColor,
-                                            ColorSettingsStore.onSecondaryColor,
-                                            ColorSettingsStore.secondaryContainerColor,
-                                            ColorSettingsStore.onSecondaryContainerColor
-                                        )
-                                )
+            ColorsGroup(
+                expandableSectionState = tertiarySectionState,
+                colors =
+                    listOf(
+                        ColorSettingsStore.tertiaryColor,
+                        ColorSettingsStore.onTertiaryColor,
+                        ColorSettingsStore.tertiaryContainerColor,
+                        ColorSettingsStore.onTertiaryContainerColor
+                    )
+            )
 
-                                ColorsGroup(
-                                    expandableSectionState = tertiarySectionState,
-                                    colors =
-                                        listOf(
-                                            ColorSettingsStore.tertiaryColor,
-                                            ColorSettingsStore.onTertiaryColor,
-                                            ColorSettingsStore.tertiaryContainerColor,
-                                            ColorSettingsStore.onTertiaryContainerColor
-                                        )
-                                )
+            ColorsGroup(
+                expandableSectionState = backgroundSectionState,
+                colors =
+                    listOf(
+                        ColorSettingsStore.backgroundColor,
+                        ColorSettingsStore.onBackgroundColor,
+                        ColorSettingsStore.surfaceColor,
+                        ColorSettingsStore.onSurfaceColor,
+                        ColorSettingsStore.surfaceVariantColor,
+                        ColorSettingsStore.onSurfaceVariantColor,
+                        ColorSettingsStore.surfaceTintColor,
+                        ColorSettingsStore.inverseSurfaceColor,
+                        ColorSettingsStore.inverseOnSurfaceColor
+                    )
+            )
 
-                                ColorsGroup(
-                                    expandableSectionState = backgroundSectionState,
-                                    colors =
-                                        listOf(
-                                            ColorSettingsStore.backgroundColor,
-                                            ColorSettingsStore.onBackgroundColor,
-                                            ColorSettingsStore.surfaceColor,
-                                            ColorSettingsStore.onSurfaceColor,
-                                            ColorSettingsStore.surfaceVariantColor,
-                                            ColorSettingsStore.onSurfaceVariantColor,
-                                            ColorSettingsStore.surfaceTintColor,
-                                            ColorSettingsStore.inverseSurfaceColor,
-                                            ColorSettingsStore.inverseOnSurfaceColor
-                                        )
-                                )
+            ColorsGroup(
+                expandableSectionState = errorSectionState,
+                colors =
+                    listOf(
+                        ColorSettingsStore.errorColor,
+                        ColorSettingsStore.onErrorColor,
+                        ColorSettingsStore.errorContainerColor,
+                        ColorSettingsStore.onErrorContainerColor
+                    )
+            )
 
-                                ColorsGroup(
-                                    expandableSectionState = errorSectionState,
-                                    colors =
-                                        listOf(
-                                            ColorSettingsStore.errorColor,
-                                            ColorSettingsStore.onErrorColor,
-                                            ColorSettingsStore.errorContainerColor,
-                                            ColorSettingsStore.onErrorContainerColor
-                                        )
-                                )
+            ColorsGroup(
+                expandableSectionState = outlineSectionState,
+                colors =
+                    listOf(
+                        ColorSettingsStore.outlineColor,
+                        ColorSettingsStore.outlineVariantColor,
+                        ColorSettingsStore.scrimColor
+                    )
+            )
 
-                                ColorsGroup(
-                                    expandableSectionState = outlineSectionState,
-                                    colors =
-                                        listOf(
-                                            ColorSettingsStore.outlineColor,
-                                            ColorSettingsStore.outlineVariantColor,
-                                            ColorSettingsStore.scrimColor
-                                        )
-                                )
+            ColorsGroup(
+                expandableSectionState = surfaceContainerSectionState,
+                colors =
+                    listOf(
+                        ColorSettingsStore.surfaceBrightColor,
+                        ColorSettingsStore.surfaceContainerColor,
+                        ColorSettingsStore.surfaceContainerHighColor,
+                        ColorSettingsStore.surfaceContainerHighestColor,
+                        ColorSettingsStore.surfaceContainerLowColor,
+                        ColorSettingsStore.surfaceContainerLowestColor,
+                        ColorSettingsStore.surfaceDimColor
+                    )
+            )
 
-                                ColorsGroup(
-                                    expandableSectionState = surfaceContainerSectionState,
-                                    colors =
-                                        listOf(
-                                            ColorSettingsStore.surfaceBrightColor,
-                                            ColorSettingsStore.surfaceContainerColor,
-                                            ColorSettingsStore.surfaceContainerHighColor,
-                                            ColorSettingsStore.surfaceContainerHighestColor,
-                                            ColorSettingsStore.surfaceContainerLowColor,
-                                            ColorSettingsStore.surfaceContainerLowestColor,
-                                            ColorSettingsStore.surfaceDimColor
-                                        )
-                                )
-
-                                // Removed the fixed colors as I don't use them personally, but I may add them in the future
+            // Removed the fixed colors as I don't use them personally, but I may add them in the future
 //                                ColorsGroup(
 //                                    expandableSectionState = fixedSectionState,
 //                                    colors = listOf(
@@ -481,33 +498,6 @@ fun ColorSelectorTab() {
 //                                        ColorSettingsStore.onTertiaryFixedVariantColor
 //                                    )
 //                                )
-                            }
-
-                            ColorSelectorModes.Custom -> {
-                                Setting(ColorSettingsStore.holdToActivateColor)
-                                Setting(ColorSettingsStore.angleLineColor)
-                                Setting(ColorSettingsStore.shapesColor)
-                                Setting(ColorSettingsStore.launchAppColor)
-                                Setting(ColorSettingsStore.openUrlColor)
-                                Setting(ColorSettingsStore.notificationShadeColor)
-                                Setting(ColorSettingsStore.controlPanelColor)
-                                Setting(ColorSettingsStore.openAppDrawerColor)
-                                Setting(ColorSettingsStore.launcherSettingsColor)
-                                Setting(ColorSettingsStore.lockColor)
-                                Setting(ColorSettingsStore.openFileColor)
-                                Setting(ColorSettingsStore.reloadColor)
-                                Setting(ColorSettingsStore.openRecentAppsColor)
-                                Setting(ColorSettingsStore.openCircleNestColor)
-                                Setting(ColorSettingsStore.goParentNestColor)
-                                Setting(ColorSettingsStore.toggleWifi)
-                                Setting(ColorSettingsStore.toggleBluetooth)
-                                Setting(ColorSettingsStore.toggleData)
-                                Setting(ColorSettingsStore.runAdbCommand)
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 

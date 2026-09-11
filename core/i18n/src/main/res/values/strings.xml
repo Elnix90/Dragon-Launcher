@@ -483,6 +483,7 @@
   <string name="on_tertiary_fixed_variant_color">On Tertiary Fixed Variant</string>
 
   <string name="custom_colors">Custom Colors</string>
+  <string name="custom_colors_desc">The colors used by the launcher Actions</string>
   <string name="normal_colors">Normal Colors</string>
   <string name="reset_all_points">Reset All points</string>
   <string name="reset_all_points_desc">All your actions will be reset, this can\'t be undone!</string>
