@@ -46,14 +46,6 @@ fun rememberSettingsImportLauncher(
         logD(BACKUP_TAG) { "File picked: $uri" }
 
         if (uri == null) {
-            backupViewModel.result.value =
-                BackupResult(
-                    export = false,
-                    error = true,
-                    title = ctx.getString(R.string.import_cancelled),
-                    message = ctx.getString(R.string.no_file_picked)
-                )
-
             return@rememberLauncherForActivityResult
         }
 
