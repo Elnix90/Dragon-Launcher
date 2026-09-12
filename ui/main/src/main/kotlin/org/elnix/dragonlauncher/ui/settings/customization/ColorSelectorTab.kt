@@ -445,93 +445,94 @@ fun ColorSelectorTab() {
             }
         }
 
-        DragonSettingsGroup {
-            ColorsGroup(
-                expandableSectionState = primarySectionState,
-                colors =
-                    listOf(
-                        ColorSettingsStore.primaryColor,
-                        ColorSettingsStore.onPrimaryColor,
-                        ColorSettingsStore.primaryContainerColor,
-                        ColorSettingsStore.onPrimaryContainerColor,
-                        ColorSettingsStore.inversePrimaryColor
-                    )
-            )
+        AnimatedVisibility(defaultTheme == Custom) {
+            DragonSettingsGroup {
+                ColorsGroup(
+                    expandableSectionState = primarySectionState,
+                    colors =
+                        listOf(
+                            ColorSettingsStore.primaryColor,
+                            ColorSettingsStore.onPrimaryColor,
+                            ColorSettingsStore.primaryContainerColor,
+                            ColorSettingsStore.onPrimaryContainerColor,
+                            ColorSettingsStore.inversePrimaryColor
+                        )
+                )
 
-            ColorsGroup(
-                expandableSectionState = secondarySectionState,
-                colors =
-                    listOf(
-                        ColorSettingsStore.secondaryColor,
-                        ColorSettingsStore.onSecondaryColor,
-                        ColorSettingsStore.secondaryContainerColor,
-                        ColorSettingsStore.onSecondaryContainerColor
-                    )
-            )
+                ColorsGroup(
+                    expandableSectionState = secondarySectionState,
+                    colors =
+                        listOf(
+                            ColorSettingsStore.secondaryColor,
+                            ColorSettingsStore.onSecondaryColor,
+                            ColorSettingsStore.secondaryContainerColor,
+                            ColorSettingsStore.onSecondaryContainerColor
+                        )
+                )
 
-            ColorsGroup(
-                expandableSectionState = tertiarySectionState,
-                colors =
-                    listOf(
-                        ColorSettingsStore.tertiaryColor,
-                        ColorSettingsStore.onTertiaryColor,
-                        ColorSettingsStore.tertiaryContainerColor,
-                        ColorSettingsStore.onTertiaryContainerColor
-                    )
-            )
+                ColorsGroup(
+                    expandableSectionState = tertiarySectionState,
+                    colors =
+                        listOf(
+                            ColorSettingsStore.tertiaryColor,
+                            ColorSettingsStore.onTertiaryColor,
+                            ColorSettingsStore.tertiaryContainerColor,
+                            ColorSettingsStore.onTertiaryContainerColor
+                        )
+                )
 
-            ColorsGroup(
-                expandableSectionState = backgroundSectionState,
-                colors =
-                    listOf(
-                        ColorSettingsStore.backgroundColor,
-                        ColorSettingsStore.onBackgroundColor,
-                        ColorSettingsStore.surfaceColor,
-                        ColorSettingsStore.onSurfaceColor,
-                        ColorSettingsStore.surfaceVariantColor,
-                        ColorSettingsStore.onSurfaceVariantColor,
-                        ColorSettingsStore.surfaceTintColor,
-                        ColorSettingsStore.inverseSurfaceColor,
-                        ColorSettingsStore.inverseOnSurfaceColor
-                    )
-            )
+                ColorsGroup(
+                    expandableSectionState = backgroundSectionState,
+                    colors =
+                        listOf(
+                            ColorSettingsStore.backgroundColor,
+                            ColorSettingsStore.onBackgroundColor,
+                            ColorSettingsStore.surfaceColor,
+                            ColorSettingsStore.onSurfaceColor,
+                            ColorSettingsStore.surfaceVariantColor,
+                            ColorSettingsStore.onSurfaceVariantColor,
+                            ColorSettingsStore.surfaceTintColor,
+                            ColorSettingsStore.inverseSurfaceColor,
+                            ColorSettingsStore.inverseOnSurfaceColor
+                        )
+                )
 
-            ColorsGroup(
-                expandableSectionState = errorSectionState,
-                colors =
-                    listOf(
-                        ColorSettingsStore.errorColor,
-                        ColorSettingsStore.onErrorColor,
-                        ColorSettingsStore.errorContainerColor,
-                        ColorSettingsStore.onErrorContainerColor
-                    )
-            )
+                ColorsGroup(
+                    expandableSectionState = errorSectionState,
+                    colors =
+                        listOf(
+                            ColorSettingsStore.errorColor,
+                            ColorSettingsStore.onErrorColor,
+                            ColorSettingsStore.errorContainerColor,
+                            ColorSettingsStore.onErrorContainerColor
+                        )
+                )
 
-            ColorsGroup(
-                expandableSectionState = outlineSectionState,
-                colors =
-                    listOf(
-                        ColorSettingsStore.outlineColor,
-                        ColorSettingsStore.outlineVariantColor,
-                        ColorSettingsStore.scrimColor
-                    )
-            )
+                ColorsGroup(
+                    expandableSectionState = outlineSectionState,
+                    colors =
+                        listOf(
+                            ColorSettingsStore.outlineColor,
+                            ColorSettingsStore.outlineVariantColor,
+                            ColorSettingsStore.scrimColor
+                        )
+                )
 
-            ColorsGroup(
-                expandableSectionState = surfaceContainerSectionState,
-                colors =
-                    listOf(
-                        ColorSettingsStore.surfaceBrightColor,
-                        ColorSettingsStore.surfaceContainerColor,
-                        ColorSettingsStore.surfaceContainerHighColor,
-                        ColorSettingsStore.surfaceContainerHighestColor,
-                        ColorSettingsStore.surfaceContainerLowColor,
-                        ColorSettingsStore.surfaceContainerLowestColor,
-                        ColorSettingsStore.surfaceDimColor
-                    )
-            )
+                ColorsGroup(
+                    expandableSectionState = surfaceContainerSectionState,
+                    colors =
+                        listOf(
+                            ColorSettingsStore.surfaceBrightColor,
+                            ColorSettingsStore.surfaceContainerColor,
+                            ColorSettingsStore.surfaceContainerHighColor,
+                            ColorSettingsStore.surfaceContainerHighestColor,
+                            ColorSettingsStore.surfaceContainerLowColor,
+                            ColorSettingsStore.surfaceContainerLowestColor,
+                            ColorSettingsStore.surfaceDimColor
+                        )
+                )
 
-            // Removed the fixed colors as I don't use them personally, but I may add them in the future
+                // Removed the fixed colors as I don't use them personally, but I may add them in the future
 //                                ColorsGroup(
 //                                    expandableSectionState = fixedSectionState,
 //                                    colors = listOf(
@@ -549,6 +550,7 @@ fun ColorSelectorTab() {
 //                                        ColorSettingsStore.onTertiaryFixedVariantColor
 //                                    )
 //                                )
+            }
         }
     }
 
