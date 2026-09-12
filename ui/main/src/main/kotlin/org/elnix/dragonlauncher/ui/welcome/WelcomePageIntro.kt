@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,9 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.BuildTypeChip
+import org.elnix.dragonlauncher.ui.components.CodeNameChip
+import org.elnix.dragonlauncher.ui.components.VersionCodeChip
 import org.elnix.dragonlauncher.ui.components.VersionNumberChip
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.settings.backup.ImportBackupButton
@@ -82,7 +86,15 @@ fun WelcomePageIntro(
             textAlign = TextAlign.Center
         )
 
-        VersionNumberChip()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(15.dp)
+        ) {
+            VersionNumberChip()
+            CodeNameChip()
+            BuildTypeChip()
+            VersionCodeChip()
+        }
 
         Spacer(12.dp)
 
