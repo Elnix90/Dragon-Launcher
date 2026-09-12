@@ -42,7 +42,7 @@ extensions.configure<ApplicationExtension> {
                 keyAlias = env("KEY_ALIAS")!!
                 keyPassword = env("KEY_PASSWORD")!!
             } else {
-                println("No signing config found, APK will be unsigned")
+                logger.error("No signing config found, APK will be unsigned")
             }
         }
     }
