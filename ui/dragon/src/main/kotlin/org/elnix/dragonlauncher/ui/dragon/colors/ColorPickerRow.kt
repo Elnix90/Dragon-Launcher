@@ -1,8 +1,6 @@
 package org.elnix.dragonlauncher.ui.dragon.colors
 
 import android.content.Context
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -134,10 +132,6 @@ fun DragonGroupScope.ColorPickerRow(
     val initialColorNotNull = currentColor.specifiedOrNull() ?: Color.Transparent
 
     var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
-    val displayedColor by animateColorAsState(
-        targetValue = actualColor,
-        animationSpec = tween(durationMillis = 200)
-    )
 
     var currentMode by ColorModesSettingsStore.colorPickerMode.asMutableState()
     var previewBoxShape by remember { mutableStateOf(colorPickerMaterialShapes.random()) }
@@ -199,7 +193,6 @@ fun DragonGroupScope.ColorPickerRow(
     if (showPicker) {
         DragonModalBottomSheet(
             skipPartiallyExpanded = true,
-            sheetGesturesEnabled = false,
             onDismissRequest = {
                 onColorPicked(actualColor)
                 showPicker = false
@@ -256,7 +249,7 @@ fun DragonGroupScope.ColorPickerRow(
                             .fillMaxWidth()
                             .height(60.dp)
                             .background(
-                                color = displayedColor,
+                                color = actualColor,
                                 shape = MaterialTheme.shapes.medium
                             ).border(
                                 width = 1.dp,
@@ -303,7 +296,7 @@ fun DragonGroupScope.ColorPickerRow(
                 when (currentMode) {
                     ColorPickerMode.Default ->
                         DefaultColorPicker(
-                            selectedColor = actualColor,
+                            actualColor = actualColor,
                             onColorSelected = { actualColor = it }
                         )
 
@@ -316,7 +309,7 @@ fun DragonGroupScope.ColorPickerRow(
 
                     ColorPickerMode.Gradient ->
                         GradientColorPicker(
-                            initialColor = actualColor,
+                            actualColor = actualColor,
                             onColorSelected = { actualColor = it }
                         )
                 }

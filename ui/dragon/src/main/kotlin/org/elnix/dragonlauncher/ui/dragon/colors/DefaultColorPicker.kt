@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.provideClickableShape
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DefaultColorPicker(
-    selectedColor: Color,
+    actualColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
     val defaultColors =
@@ -84,7 +84,7 @@ fun DefaultColorPicker(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     rowColors.forEachIndexed { idx, color ->
-                        val isSelected = color == selectedColor
+                        val isSelected = color == actualColor
 
                         customItem(
                             buttonGroupContent = {

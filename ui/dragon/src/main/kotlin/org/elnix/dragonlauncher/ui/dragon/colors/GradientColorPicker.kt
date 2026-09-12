@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,39 +35,65 @@ import android.graphics.Color as AndroidColor
 
 @Composable
 fun GradientColorPicker(
-    initialColor: Color,
+    actualColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
-    val hsvArray =
-        remember(initialColor) {
-            FloatArray(3).apply {
-                AndroidColor.colorToHSV(initialColor.toArgb(), this)
-            }
+    val initialHsv = remember {
+        FloatArray(3).apply {
+            AndroidColor.colorToHSV(actualColor.toArgb(), this)
         }
+    }
 
-    var hue by remember(hsvArray) { mutableFloatStateOf(hsvArray[0]) }
-    var sat by remember(hsvArray) { mutableFloatStateOf(hsvArray[1]) }
-    var value by remember(hsvArray) { mutableFloatStateOf(hsvArray[2]) }
+    var hue by remember { mutableFloatStateOf(initialHsv[0]) }
+    var sat by remember { mutableFloatStateOf(initialHsv[1]) }
+    var value by remember { mutableFloatStateOf(initialHsv[2]) }
 
-    var selectedColor by remember(initialColor) { mutableStateOf(initialColor) }
+    /**
+     * Selected color, based on [actualColor] and only updated when I change the color.
+     * Without this thing, the displayed color in the gradient as well as the pointer position can be moved by the  external color change
+     *
+     * I tried without, and also by removing it, but it ain't working without,
+     * # DO NOT REMOVE THIS
+     */
+    var selectedColor by remember { mutableStateOf(actualColor) }
+
+    /**
+     * Colors I last emitted myself. Lets me tell apart changes that come
+     * from my own drags vs real external changes, so I never re-derive the
+     * picker position from our own output (that round-trip corrupts hue/sat
+     * for grays/black).
+     */
+    var lastSyncedColor by remember { mutableStateOf(actualColor) }
+
+    LaunchedEffect(actualColor) {
+        if (actualColor != lastSyncedColor) {
+            val hsvArray =
+                FloatArray(3).apply {
+                    AndroidColor.colorToHSV(actualColor.toArgb(), this)
+                }
+            hue = hsvArray[0]
+            sat = hsvArray[1]
+            value = hsvArray[2]
+
+            selectedColor = actualColor
+            lastSyncedColor = actualColor
+        }
+    }
+
+    fun emitColor(color: Color) {
+        selectedColor = color
+        lastSyncedColor = color
+
+        onColorSelected(color)
+    }
 
     val hueColor = remember(hue) { Color.hsv(hue, 1f, 1f) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        var pickerSize by remember { mutableFloatStateOf(0f) }
-
         fun PointerInputScope.pickColorFromPos(pos: Offset) {
-            pickerSize = size.width.toFloat()
-            sat = (pos.x / pickerSize).coerceIn(0f, 1f)
-            value = 1f - (pos.y / pickerSize).coerceIn(0f, 1f)
-            selectedColor = Color.hsv(hue, sat, value).copy(alpha = initialColor.alpha)
-            onColorSelected(selectedColor)
-        }
-
-        fun PointerInputScope.pickColorFromPosHorizontal(pos: Offset) {
-            hue = (1 - pos.x / size.width).coerceIn(0f, 1f) * 360f
-            selectedColor = Color.hsv(hue, sat, value)
-            onColorSelected(selectedColor)
+            sat = (pos.x / size.width).coerceIn(0f, 1f)
+            value = 1f - (pos.y / size.height).coerceIn(0f, 1f)
+            emitColor(Color.hsv(hue, sat, value).copy(alpha = actualColor.alpha))
         }
 
         Box(
@@ -96,16 +123,28 @@ fun GradientColorPicker(
                         )
                     }.pointerInput(Unit) {
                         detectDragGestures(
-                            onDragStart = ::pickColorFromPos,
+                            onDragStart = {
+                                pickColorFromPos(it)
+                            },
                             onDrag = { change, _ -> pickColorFromPos(change.position) }
                         )
                     }.pointerInput(Unit) {
                         detectTapGestures(
-                            onTap = ::pickColorFromPos,
-                            onLongPress = ::pickColorFromPos
+                            onTap = {
+                                pickColorFromPos(it)
+                            },
+                            onLongPress = {
+                                pickColorFromPos(it)
+                            }
                         )
                     }
         )
+
+        fun PointerInputScope.pickColorFromPosHorizontal(pos: Offset) {
+            val ratio = (pos.x / size.width).coerceIn(0f, 1f)
+            hue = ((1f - ratio) * 360f).coerceIn(0f, 360f)
+            emitColor(Color.hsv(hue, sat, value).copy(alpha = actualColor.alpha))
+        }
 
         Box(
             modifier =
@@ -128,9 +167,20 @@ fun GradientColorPicker(
                         )
                     }.pointerInput(Unit) {
                         detectDragGestures(
-                            onDragStart = ::pickColorFromPosHorizontal,
+                            onDragStart = {
+                                pickColorFromPosHorizontal(it)
+                            },
                             onDrag = { change, _ ->
                                 pickColorFromPosHorizontal(change.position)
+                            }
+                        )
+                    }.pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                pickColorFromPosHorizontal(it)
+                            },
+                            onLongPress = {
+                                pickColorFromPosHorizontal(it)
                             }
                         )
                     }
