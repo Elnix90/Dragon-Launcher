@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.dragon.colors
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +27,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
@@ -89,6 +93,8 @@ fun GradientColorPicker(
 
     val hueColor = remember(hue) { Color.hsv(hue, 1f, 1f) }
 
+    var isDraggingHue by remember { mutableStateOf(false) }
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         fun PointerInputScope.pickColorFromPos(pos: Offset) {
             sat = (pos.x / size.width).coerceIn(0f, 1f)
@@ -102,16 +108,16 @@ fun GradientColorPicker(
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(MaterialTheme.shapes.large)
-                    .background(Brush.horizontalGradient(listOf(Color.White, hueColor)))
                     .drawWithContent {
                         drawContent()
                         drawRect(
-                            brush =
-                                Brush.verticalGradient(
-                                    listOf(Color.Transparent, Color.Black)
-                                ),
+                            brush = Brush.horizontalGradient(listOf(Color.White, hueColor))
+                        )
+                        drawRect(
+                            brush = Brush.verticalGradient(listOf(Color.Transparent, Color.Black)),
                             blendMode = BlendMode.Multiply
                         )
+
                         // Draw selector circle
                         val x = sat * size.width
                         val y = (1f - value) * size.height
@@ -146,44 +152,80 @@ fun GradientColorPicker(
             emitColor(Color.hsv(hue, sat, value).copy(alpha = actualColor.alpha))
         }
 
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(25.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            colors = (360 downTo 0 step 30).map { Color.hsv(it.toFloat(), 1f, 1f) }
-                        )
-                    ).drawWithContent {
-                        drawContent()
-                        val x = (1 - hue / 360f) * size.width
-                        drawLine(
-                            color = Color.White,
-                            start = Offset(x, 0f),
-                            end = Offset(x, size.height),
-                            strokeWidth = 3.dp.toPx()
-                        )
-                    }.pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = {
-                                pickColorFromPosHorizontal(it)
-                            },
-                            onDrag = { change, _ ->
-                                pickColorFromPosHorizontal(change.position)
-                            }
-                        )
-                    }.pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = {
-                                pickColorFromPosHorizontal(it)
-                            },
-                            onLongPress = {
-                                pickColorFromPosHorizontal(it)
-                            }
-                        )
-                    }
-        )
+        Box {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(25.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = (360 downTo 0 step 30).map { Color.hsv(it.toFloat(), 1f, 1f) }
+                            )
+                        ).drawWithContent {
+                            drawContent()
+                            val x = (1 - hue / 360f) * size.width
+                            drawLine(
+                                color = Color.White,
+                                start = Offset(x, 0f),
+                                end = Offset(x, size.height),
+                                strokeWidth = 3.dp.toPx()
+                            )
+                        }.pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = {
+                                    pickColorFromPosHorizontal(it)
+                                    isDraggingHue = true
+                                },
+                                onDrag = { change, _ ->
+                                    pickColorFromPosHorizontal(change.position)
+                                },
+                                onDragEnd = {
+                                    isDraggingHue = false
+                                }
+                            )
+                        }.pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = {
+                                    pickColorFromPosHorizontal(it)
+                                },
+                                onLongPress = {
+                                    pickColorFromPosHorizontal(it)
+                                }
+                            )
+                        }
+            )
+
+            Canvas(Modifier.fillMaxSize()) {
+                if (isDraggingHue) {
+                    val x = (1 - hue / 360f) * size.width
+                    val center = Offset(x, size.height - 50.dp.toPx())
+
+                    val color = Color.hsv(hue, 1f, 1f)
+                    colorPreview(color, center)
+                }
+            }
+        }
     }
+}
+
+private val colorPinPreviewSize = 30.dp
+
+private fun DrawScope.colorPreview(
+    color: Color,
+    center: Offset
+) {
+    drawCircle(
+        color = Color.White,
+        radius = colorPinPreviewSize.toPx(),
+        center = center,
+        style = Stroke(width = 2.dp.toPx())
+    )
+    drawCircle(
+        color = color,
+        radius = (colorPinPreviewSize - 1.dp).toPx(),
+        center = center,
+        style = Fill
+    )
 }
