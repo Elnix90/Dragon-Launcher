@@ -25,11 +25,13 @@
 [![GitHub forks](https://img.shields.io/github/forks/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/forks)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/pull)
 ---
-[![GitHub downloads](https://img.shields.io/github/downloads/Elnix90/Dragon-Launcher/total.svg?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases)
 [![GitHub license](https://img.shields.io/github/license/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/blob/dev/LICENSE)
 [![Discord](https://img.shields.io/discord/1454475177328115860?color=blue&label=Discord&logo=discord&style=for-the-badge)](https://discord.gg/6UyuP8EBWS)
 [![Offline First](https://img.shields.io/badge/Offline-First-orange.svg?style=for-the-badge&logo=rss&logoColor=white)]()
 [![Privacy](https://img.shields.io/badge/Privacy-100%25-green.svg?style=for-the-badge&logo=shield&logoColor=white)]()
+---
+[![GitHub downloads](https://img.shields.io/github/downloads/Elnix90/Dragon-Launcher/total.svg?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases)
+[![F-Droid downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.elnix.dragonlauncher.json&query=%24.total_downloads&logo=fdroid&label=Total%20Downloads%20(F-Droid)&style=for-the-badge)](https://f-droid.org/en/packages/org.elnix.dragonlauncher/)
 ---
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/org.elnix.dragonlauncher/)
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/org.elnix.dragonlauncher)
