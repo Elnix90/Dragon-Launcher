@@ -15,6 +15,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.process)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -50,6 +51,7 @@ dependencies {
     implementation(libs.androidx.graphics.shapes)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.fragment)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     runtimeOnly(libs.kotlinx.coroutines.android)
     runtimeOnly(project(":data:notifications"))

@@ -77,7 +77,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
             title = R.string.rgb_loading_settings,
             description = R.string.rgb_loading_description,
             icon = R.drawable.palette,
-            default = true
+            default = false
         )
 
     @SettingKey
@@ -86,7 +86,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
             title = R.string.pulsing_radius,
             description = R.string.pulsing_radius_desc,
             icon = R.drawable.circle,
-            default = 1.1f,
+            default = 1.0f,
             allowedRange = 0.5f..4f
         )
 
@@ -97,6 +97,6 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
             description = R.string.pulsing_duration_desc,
             icon = R.drawable.circle,
             default = 500,
-            allowedRange = 10..6000
+            allowedRange = 1..6000
         )
 }

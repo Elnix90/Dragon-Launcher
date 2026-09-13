@@ -214,11 +214,11 @@
     <string name="double_click_action">إجراء النقر المزدوج</string>
     <string name="privacy_first">الخصوصية أولاً</string>
     <string name="quick_tutorial">برنامج تعليمي سريع</string>
-    <string name="long_click_to_access_settings">اضغط مطولاً لمدة 3 ثوانٍ للوصول إلى الإعدادات</string>
+
     <string name="swipe_to_open_app">اسحب لفتح التطبيقات / الاختصارات المهيأة</string>
     <string name="configure_your_apps">قم بتهيئة تطبيقاتك واختصاراتك في الإعدادات</string>
     <string name="theme_selector">محدد السمات</string>
-    <string name="everything_ready">كل شيء جاهز!</string>
+
     <string name="edit_point">تحرير النقطة</string>
     <string name="choose_action">اختر الإجراء</string>
     <string name="automatic_backups">نسخ احتياطي تلقائي</string>
@@ -365,7 +365,7 @@
     <string name="powerful_gestures">إيماءات قوية.</string>
     <string name="infinite_custom">تخصيص غير محدود</string>
     <string name="customize_apps">تخصيص التطبيقات</string>
-    <string name="dont_customize">لا تخصص وابدأ في استخدام مشغل التنين مباشرة</string>
+
     <string name="app_aliases">الأسماء المستعارة</string>
     <string name="edit_alias">تحرير الاسم المستعار</string>
     <string name="alias">الاسم المستعار</string>

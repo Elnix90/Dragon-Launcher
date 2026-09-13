@@ -110,11 +110,11 @@
     <string name="double_click_action">Ação de Duplo Clique</string>
     <string name="privacy_first">Privacy First</string>
     <string name="quick_tutorial">Tutorial Rápido</string>
-    <string name="long_click_to_access_settings">Clique longamente 3s para acessar as configurações</string>
+
     <string name="swipe_to_open_app">Deslize para abrir seus aplicativos/atalhos configurados</string>
     <string name="configure_your_apps">Configure seus aplicativos e atalhos nas configurações</string>
     <string name="theme_selector">Seletor de temas</string>
-    <string name="everything_ready">Tudo pronto!</string>
+
     <string name="edit_point">Ponto de edição</string>
     <string name="choose_action">Escolha Ação</string>
     <string name="automatic_backups">Backups automáticos</string>

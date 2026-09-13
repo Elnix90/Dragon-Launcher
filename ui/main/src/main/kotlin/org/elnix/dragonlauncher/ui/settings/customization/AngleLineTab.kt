@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,17 +37,26 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.model.enumsui.select.AngleObject
+import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
+import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.Angle
+import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.End
+import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.Line
+import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.Start
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultEndCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultLineCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
@@ -54,6 +64,8 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
+import org.elnix.dragonlauncher.ui.components.Preset
+import org.elnix.dragonlauncher.ui.components.PresetRow
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
@@ -66,6 +78,48 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.angle360
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
+
+@Stable
+private data class AngleLinePreset(
+    override val name: String,
+    val rgbLine: Boolean? = null,
+    val startAndAngleShareSameRandomAngle: Boolean? = null,
+    val useSnappedAngleOrRealAngle: Boolean? = null,
+    val showLineObjectPreview: Boolean? = null,
+    val lineObject: CustomObject = defaultLineCustomObject,
+    val showAngleLineObjectPreview: Boolean? = null,
+    val angleObject: CustomObject = defaultAngleCustomObject,
+    val showStartObjectPreview: Boolean? = null,
+    val startObject: CustomObject = defaultStartCustomObject,
+    val showEndObjectPreview: Boolean? = null,
+    val endObject: CustomObject = defaultEndCustomObject,
+    val angleLineObjectsOrder: List<AngleLineObjects>? = null,
+    val color: Color? = null
+) : Preset {
+    override fun toString(): String =
+        "AngleLinePreset(\n" +
+            "    name = \"$name\",\n" +
+            "    rgbLine = $rgbLine,\n" +
+            "    startAndAngleShareSameRandomAngle = $startAndAngleShareSameRandomAngle,\n" +
+            "    useSnappedAngleOrRealAngle = $useSnappedAngleOrRealAngle,\n" +
+            "    showLineObjectPreview = $showLineObjectPreview,\n" +
+            "    lineObject = $lineObject,\n" +
+            "    showAngleLineObjectPreview = $showAngleLineObjectPreview,\n" +
+            "    angleObject = $angleObject,\n" +
+            "    showStartObjectPreview = $showStartObjectPreview,\n" +
+            "    startObject = $startObject,\n" +
+            "    showEndObjectPreview = $showEndObjectPreview,\n" +
+            "    endObject = $endObject,\n" +
+            "    angleLineObjectsOrder = ${if (angleLineObjectsOrder != null) {
+                "[" + angleLineObjectsOrder.joinToString(
+                    ", "
+                ) { it.name } + "]"
+            } else {
+                null
+            }},\n" +
+            "    color = ${color?.let { "Color(0x${color.toHexWithAlpha.replace("#", "")}" }})\n" +
+            ")"
+}
 
 @Composable
 fun AngleLineTab(
@@ -83,6 +137,8 @@ fun AngleLineTab(
     val showStartObjectPreview by AngleLineSettingsStore.showStartObjectPreview.asState()
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
+    val startAndAngleShareSameRandomAngle by AngleLineSettingsStore.startAndAngleShareSameRandomAngle.asState()
+    val useSnappedAngleOrRealAngle by AngleLineSettingsStore.useSnappedAngleOrRealAngle.asState()
 
     var currentEditObject by remember { mutableStateOf(AngleObject.Line) }
 
@@ -252,6 +308,115 @@ fun AngleLineTab(
             VerticalDragZone { height += it.toInt() }
         }
     ) {
+        PresetRow(
+            presets = listOf(
+                AngleLinePreset("Default"),
+                AngleLinePreset(
+                    name = "new",
+                    rgbLine = true,
+                    startAndAngleShareSameRandomAngle = true,
+                    useSnappedAngleOrRealAngle = true,
+                    showLineObjectPreview = true,
+                    lineObject = CustomObject(
+                        stroke = 2.0.dp,
+                        color = null,
+                        glow = CustomGlow(
+                            radius = 10.0.dp,
+                            color = null
+                        ),
+                        shape = IconShape.Circle,
+                        size = 0.0.dp,
+                        rotation = 0,
+                        mirror = false,
+                        eraseBackground = false,
+                        alignsWithDragAngle = false
+                    ),
+                    showAngleLineObjectPreview = true,
+                    angleObject = CustomObject(
+                        stroke = 4.0.dp,
+                        color = null,
+                        glow = CustomGlow(
+                            radius = 10.47.dp,
+                            color = null
+                        ),
+                        shape = IconShape.Pebble,
+                        size = 74.10462.dp,
+                        rotation = 0,
+                        mirror = false,
+                        eraseBackground = false,
+                        alignsWithDragAngle = true
+                    ),
+                    showStartObjectPreview = true,
+                    startObject = CustomObject(
+                        stroke = 4.0.dp,
+                        color = null,
+                        glow = CustomGlow(
+                            radius = 10.8.dp,
+                            color = null
+                        ),
+                        shape = IconShape.Pebble,
+                        size = 30.0.dp,
+                        rotation = 0,
+                        mirror = false,
+                        eraseBackground = true,
+                        alignsWithDragAngle = true
+                    ),
+                    showEndObjectPreview = true,
+                    endObject = CustomObject(
+                        stroke = 4.0.dp,
+                        color = null,
+                        glow = CustomGlow(
+                            radius = 12.0.dp,
+                            color = null
+                        ),
+                        shape = IconShape.Pebble,
+                        size = 70.0.dp,
+                        rotation = 0,
+                        mirror = false,
+                        eraseBackground = true,
+                        alignsWithDragAngle = true
+                    ),
+                    angleLineObjectsOrder = listOf(Angle, Line, Start, End),
+                    color = Color(0xFFFF0000)
+                )
+            ),
+            get = {
+                AngleLinePreset(
+                    name = "new",
+                    rgbLine = rgbLine,
+                    startAndAngleShareSameRandomAngle = startAndAngleShareSameRandomAngle,
+                    useSnappedAngleOrRealAngle = useSnappedAngleOrRealAngle,
+                    showLineObjectPreview = showLineObjectPreview,
+                    lineObject = lineObject,
+                    showAngleLineObjectPreview = showAngleLineObjectPreview,
+                    angleObject = angleObject,
+                    showStartObjectPreview = showStartObjectPreview,
+                    startObject = startObject,
+                    showEndObjectPreview = showEndObjectPreview,
+                    endObject = endObject,
+                    angleLineObjectsOrder = order,
+                    color = extraColors.angleLine
+                )
+            },
+            set = { preset ->
+                scope.launch {
+                    swipeService.lineObject.value = preset.lineObject
+                    swipeService.angleObject.value = preset.angleObject
+                    swipeService.startObject.value = preset.startObject
+                    swipeService.endObject.value = preset.endObject
+
+                    AngleLineSettingsStore.startAndAngleShareSameRandomAngle.set(ctx, preset.startAndAngleShareSameRandomAngle)
+                    AngleLineSettingsStore.useSnappedAngleOrRealAngle.set(ctx, preset.useSnappedAngleOrRealAngle)
+                    AngleLineSettingsStore.showLineObjectPreview.set(ctx, preset.showLineObjectPreview)
+                    AngleLineSettingsStore.showAngleLineObjectPreview.set(ctx, preset.showAngleLineObjectPreview)
+                    AngleLineSettingsStore.showStartObjectPreview.set(ctx, preset.showStartObjectPreview)
+                    AngleLineSettingsStore.showEndObjectPreview.set(ctx, preset.showEndObjectPreview)
+                    AngleLineSettingsStore.angleLineObjectsOrder.set(ctx, preset.angleLineObjectsOrder?.joinToString(",") { it.name })
+                    ColorSettingsStore.angleLineColor.set(ctx, preset.color)
+                }
+            }
+        )
+
         SingleSelectConnectedButtonRow(
             entries = AngleObject.entries,
             checked = { currentEditObject == it }

@@ -111,11 +111,11 @@
     <string name="double_click_action">Action de double clic</string>
     <string name="privacy_first">La vie privée avant tout</string>
     <string name="quick_tutorial">Petit tutoriel rapide</string>
-    <string name="long_click_to_access_settings">Un long clic de 3 secondes pour accéder aux paramètres</string>
+
     <string name="swipe_to_open_app">Faites glisser pour ouvrir vos applications / raccourcis configurés</string>
     <string name="configure_your_apps">Configurez vos applications et raccourcis dans les paramètres</string>
     <string name="theme_selector">Sélecteur de thème</string>
-    <string name="everything_ready">Tout est prêt !</string>
+
     <string name="edit_point">Point de modification</string>
     <string name="choose_action">Choisissez une action</string>
     <string name="automatic_backups">Sauvegardes automatiques</string>
@@ -264,7 +264,7 @@
     <string name="open_default_launcher_settings">Ouvrir les paramètres du lanceur par défaut</string>
     <string name="welcome_to_dragon_launcher">Bienvenue sur Dragon Launcher</string>
     <string name="customize_apps">Personnaliser les applications</string>
-    <string name="dont_customize">Ne personnalisez pas et commencez à utiliser directement Dragon Launcher</string>
+
     <string name="app_aliases">Aliases d’applications</string>
     <string name="edit_alias">Éditeur alias</string>
     <string name="alias">Alias</string>

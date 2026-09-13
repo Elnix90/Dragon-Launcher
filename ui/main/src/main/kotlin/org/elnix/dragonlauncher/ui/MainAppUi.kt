@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.registerReceiver
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -108,6 +109,7 @@ import org.elnix.dragonlauncher.ui.helpers.LauncherSnackbarHost
 import org.elnix.dragonlauncher.ui.navigation.drawerMetadata
 import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
+import org.elnix.dragonlauncher.ui.navigation.welcomeMetadata
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
 import org.elnix.dragonlauncher.ui.settings.customization.AngleLineTab
 import org.elnix.dragonlauncher.ui.settings.customization.AppDisplayTab
@@ -133,6 +135,7 @@ import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspacesTab
 import org.elnix.dragonlauncher.ui.warning.SignatureWarningDialog
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
+import org.elnix.dragonlauncher.ui.welcome.WelcomeViewModel
 import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseScreen
 import org.elnix.dragonlauncher.ui.wellbeing.TimeLimitExceededScreen
 import org.elnix.dragonlauncher.ui.whatsnew.ChangelogsScreen
@@ -380,7 +383,7 @@ fun MainAppUi(
     val hasSeenWelcome by PrivateSettingsStore.hasSeenWelcome.asStateNull()
     LaunchedEffect(hasSeenWelcome) {
         if (hasSeenWelcome == false) {
-            navigator.navigate(NavigationRoute.Welcome)
+            navigator.go(NavigationRoute.Welcome)
         }
     }
 
@@ -445,7 +448,10 @@ fun MainAppUi(
                                 )
                             }
 
-                            entry<NavigationRoute.Welcome>(metadata = horizontalMetadata) { WelcomeScreen() }
+                            entry<NavigationRoute.Welcome>(metadata = welcomeMetadata) {
+                                val viewModel: WelcomeViewModel = hiltViewModel()
+                                WelcomeScreen(viewModel)
+                            }
                             entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) { PointsSettingsScreen() }
                             entry<NavigationRoute.Settings>(metadata = horizontalMetadata) { SettingsScreen() }
                             entry<NavigationRoute.Appearance>(metadata = horizontalMetadata) { AppearanceTab() }
@@ -476,7 +482,7 @@ fun MainAppUi(
 
                             entry<NavigationRoute.LogsViewer>(metadata = horizontalMetadata) { key -> LogsViewerScreen(key.filename) }
 
-                            entry<NavigationRoute.Widgets>(metadata = horizontalMetadata) { key ->
+                            entry<NavigationRoute.Widgets>(metadata = horizontalMetadata) {
                                 WidgetsTab(
                                     onBindCustomWidget = onBindCustomWidget,
                                     onResetWidgetSize = onResetWidgetSize,

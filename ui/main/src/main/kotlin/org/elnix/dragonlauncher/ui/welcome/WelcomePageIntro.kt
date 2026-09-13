@@ -18,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -41,10 +40,7 @@ fun WelcomePageIntro(
     isVisible: Boolean,
     setAsSeen: () -> Unit
 ) {
-    val ctx = LocalContext.current
     val navigator = LocalNavigator.current
-
-    val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
 
     val headlinesAlpha =
         remember(isVisible) {
@@ -73,18 +69,30 @@ fun WelcomePageIntro(
 
         Image(
             painter = painterResource(R.mipmap.dragon_launcher_foreground),
-            contentDescription = "App Logo",
+            contentDescription = stringResource(R.string.app_name),
             modifier = Modifier.size(260.dp)
         )
 
         Spacer(32.dp)
 
         Text(
-            stringResource(R.string.welcome_to_dragon_launcher),
+            stringResource(id = R.string.welcome_to_dragon_launcher),
             color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyLargeEmphasized,
             fontSize = 26.sp,
             textAlign = TextAlign.Center
         )
+
+        Spacer(12.dp)
+
+        Text(
+            stringResource(id = R.string.app_tagline),
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodyLargeEmphasized,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(20.dp)
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -95,15 +103,6 @@ fun WelcomePageIntro(
             BuildTypeChip()
             VersionCodeChip()
         }
-
-        Spacer(12.dp)
-
-        Text(
-            stringResource(id = R.string.app_tagline),
-            color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.bodyLargeEmphasized,
-            textAlign = TextAlign.Center
-        )
 
         Spacer(15.dp)
 

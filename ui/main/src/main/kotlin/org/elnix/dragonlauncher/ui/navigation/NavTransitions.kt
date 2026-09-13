@@ -62,3 +62,27 @@ val drawerMetadata: Map<String, Any> =
                 )
         }
     }
+
+val welcomeMetadata: Map<String, Any> =
+    metadata {
+        put(NavDisplay.TransitionKey) {
+            // Slide new content up, keeping the old content in place underneath
+            slideInVertically(
+                initialOffsetY = { it }
+            ) togetherWith ExitTransition.KeepUntilTransitionsFinished
+        }
+        put(NavDisplay.PopTransitionKey) {
+            // Slide old content down, revealing the new content in place underneath
+            EnterTransition.None togetherWith
+                slideOutVertically(
+                    targetOffsetY = { -it }
+                )
+        }
+        put(NavDisplay.PredictivePopTransitionKey) {
+            // Slide old content down, revealing the new content in place underneath
+            EnterTransition.None togetherWith
+                slideOutVertically(
+                    targetOffsetY = { -it }
+                )
+        }
+    }

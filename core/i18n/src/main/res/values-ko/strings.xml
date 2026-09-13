@@ -109,11 +109,11 @@
     <string name="double_click_action">더블 클릭 액션</string>
     <string name="privacy_first">프라이버시 퍼스트</string>
     <string name="quick_tutorial">간단한 튜토리얼</string>
-    <string name="long_click_to_access_settings">설정에 접근하려면 3s 버튼을 길게 클릭하세요</string>
+
     <string name="swipe_to_open_app">설정된 앱/바로가기를 열려면 스와이프하세요</string>
     <string name="configure_your_apps">설정에서 앱과 바로가기를 설정하세요</string>
     <string name="theme_selector">테마 셀렉터</string>
-    <string name="everything_ready">모든 준비 완료!</string>
+
     <string name="edit_point">수정 포인트</string>
     <string name="choose_action">행동을 선택하세요</string>
     <string name="automatic_backups">자동 백업</string>

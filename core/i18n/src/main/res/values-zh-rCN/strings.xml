@@ -102,11 +102,11 @@
     <string name="behavior">行为</string>
     <string name="workspaces">工作区</string>
     <string name="workspace_help">您可以在这里自定义不同的应用工作区，可以添加/编辑/删除工作区，并在其中绑定应用</string>
-    <string name="long_click_to_access_settings">长按 3 秒进入设置</string>
+
     <string name="swipe_to_open_app">滑动以打开您配置的应用/快捷方式</string>
     <string name="configure_your_apps">在设置中配置您的应用和快捷方式</string>
     <string name="theme_selector">在设置中配置您的应用和快捷方式</string>
-    <string name="everything_ready">一切就绪！</string>
+
     <string name="edit_point">编辑点 (Point)</string>
     <string name="choose_action">选择动作</string>
     <string name="automatic_backups">自动备份</string>
@@ -279,7 +279,7 @@
     <string name="powerful_gestures">强大的手势操作。</string>
     <string name="infinite_custom">无限自定义空间</string>
     <string name="customize_apps">自定义应用程序</string>
-    <string name="dont_customize">跳过自定义，直接开始使用 Dragon Launcher</string>
+
     <string name="app_aliases">应用别名</string>
     <string name="edit_alias">编辑别名</string>
     <string name="alias">别名</string>

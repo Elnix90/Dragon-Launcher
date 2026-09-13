@@ -128,11 +128,11 @@
     <string name="double_click_action">இரட்டை சொடுக்கு செயல்</string>
     <string name="privacy_first">தனியுரிமை முதலில்</string>
     <string name="quick_tutorial">விரைவு பயிற்சி</string>
-    <string name="long_click_to_access_settings">அமைப்புகளை அணுக 3s ஐ நீண்ட சொடுக்கு செய்யவும்</string>
+
     <string name="swipe_to_open_app">உங்கள் உள்ளமைக்கப்பட்ட பயன்பாடுகள் / குறுக்குவழிகளைத் திறக்க ச்வைப் செய்யவும்</string>
     <string name="configure_your_apps">அமைப்புகளில் உங்கள் ஆப்ச் மற்றும் சார்ட்கட்களை உள்ளமைக்கவும்</string>
     <string name="theme_selector">கருப்பொருள் தேர்வாளர்</string>
-    <string name="everything_ready">எல்லாம் தயார்!</string>
+
     <string name="edit_point">திருத்த புள்ளி</string>
     <string name="choose_action">செயலைத் தேர்ந்தெடுக்கவும்</string>
     <string name="automatic_backups">தானியங்கி காப்புப்பிரதிகள்</string>
@@ -279,7 +279,7 @@
     <string name="powerful_gestures">சக்திவாய்ந்த சைகைகள்.</string>
     <string name="infinite_custom">எல்லையற்ற தனிப்பயனாக்கம்</string>
     <string name="customize_apps">பயன்பாடுகளைத் தனிப்பயனாக்குங்கள்</string>
-    <string name="dont_customize">தனிப்பயனாக்க வேண்டாம் மற்றும் நேரடியாக டிராகன் துவக்கியைப் பயன்படுத்தத் தொடங்குங்கள்</string>
+
     <string name="app_aliases">மாற்றுப்பெயர்கள்</string>
     <string name="edit_alias">மாற்றுப் பெயரைத் திருத்து</string>
     <string name="alias">மாற்றுப்பெயர்</string>

@@ -13,13 +13,13 @@ import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.STATUS_BAR_TAG
@@ -154,13 +154,20 @@ public fun rememberIsDefaultLauncher(): State<Boolean> {
 
     val isDefaultLauncher = remember { mutableStateOf(ctx.isDefaultLauncher) }
 
-    LaunchedEffect(lifecycleOwner) {
-        snapshotFlow { lifecycleOwner.lifecycle.currentState }
-            .collect { state ->
-                if (state == Lifecycle.State.RESUMED) {
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
                     isDefaultLauncher.value = ctx.isDefaultLauncher
                 }
             }
+
+        // Add the observer to the lifecycle
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     return isDefaultLauncher

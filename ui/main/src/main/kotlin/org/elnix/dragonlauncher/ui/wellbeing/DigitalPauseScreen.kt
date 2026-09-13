@@ -157,7 +157,7 @@ fun DigitalPauseScreen(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AuroraBackground()
-            FloatingParticles(modifier = Modifier.fillMaxSize())
+            FloatingParticles()
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -583,7 +583,7 @@ private fun AuroraBackground() {
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-private fun FloatingParticles(modifier: Modifier = Modifier) {
+fun FloatingParticles() {
     val particles =
         remember {
             List(15) {
@@ -596,7 +596,7 @@ private fun FloatingParticles(modifier: Modifier = Modifier) {
             }
         }
 
-    Box(modifier = modifier) {
+    Box(modifier = Modifier.fillMaxSize()) {
         particles.forEach { particle ->
             val infiniteTransition = rememberInfiniteTransition(label = "particle")
             val yOffset by infiniteTransition.animateFloat(

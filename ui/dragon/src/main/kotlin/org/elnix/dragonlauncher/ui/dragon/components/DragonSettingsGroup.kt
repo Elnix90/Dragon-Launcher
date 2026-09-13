@@ -1,6 +1,8 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import android.annotation.SuppressLint
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -131,14 +133,18 @@ class DragonGroupScope
 
 @Composable
 fun DragonSettingsGroup(
+    @StringRes
     title: Int?,
     modifier: Modifier = Modifier,
+    @DrawableRes
+    icon: Int? = null,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable DragonGroupScope.() -> Unit
 ) {
     DragonSettingsGroup(
         title = title?.let { stringResource(title) },
         modifier = modifier,
+        icon = icon,
         trailingIcon = trailingIcon,
         content = content
     )
@@ -147,6 +153,8 @@ fun DragonSettingsGroup(
 @Composable
 fun DragonSettingsGroup(
     title: String? = null,
+    @DrawableRes
+    icon: Int? = null,
     @SuppressLint("ModifierParameter")
     modifier: Modifier = Modifier,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
@@ -155,7 +163,7 @@ fun DragonSettingsGroup(
     CompositionLocalProvider(
         LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
     ) {
-        SettingsWithTitle(title, modifier, trailingIcon) {
+        SettingsWithTitle(title, modifier, icon, trailingIcon) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(4.dp),

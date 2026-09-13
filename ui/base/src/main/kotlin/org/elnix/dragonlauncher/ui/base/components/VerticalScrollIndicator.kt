@@ -68,10 +68,13 @@ fun <T> LazyColumnWithScrollIndicator(
  * @param visible Whether to display the scroll indicator
  */
 @Composable
-fun BoxScope.VerticalScrollIndicator(visible: Boolean) {
+fun BoxScope.VerticalScrollIndicator(
+    visible: Boolean,
+    modifier: Modifier = Modifier
+) {
     AnimatedVisibility(
         visible = visible,
-        modifier = Modifier.align(Alignment.BottomCenter),
+        modifier = modifier.align(Alignment.BottomCenter),
         enter = slideInVerticalBouncy,
         exit = slideOutVerticalBouncy
     ) {

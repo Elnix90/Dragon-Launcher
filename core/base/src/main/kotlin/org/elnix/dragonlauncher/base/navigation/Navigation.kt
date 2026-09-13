@@ -324,9 +324,9 @@ public val NavKey.inTransparentScreen: Boolean
             NavigationRoute.DrawerSettings,
             NavigationRoute.Wallpaper,
             NavigationRoute.Widgets,
+            NavigationRoute.Welcome,
             is NavigationRoute.LockScreen,
-            is NavigationRoute.LockScreenSetup
-            -> true
+            is NavigationRoute.LockScreenSetup -> true
 
             else -> false
         }
@@ -336,8 +336,6 @@ public val NavKey.halfTransparentScreen: Boolean
     get() =
         when (this) {
             NavigationRoute.PointsSettings,
-            NavigationRoute.NestEdit
-            -> true
-
+            NavigationRoute.NestEdit -> true
             else -> false
         }

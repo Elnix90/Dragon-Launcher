@@ -92,15 +92,15 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     @SettingKey
     public val actionsLockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)
 
-    /**
-     * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection
-     */
-    @SettingKey
-    public val welcomeScreenTempPage: IntSettingObject =
-        int(
-            default = 0,
-            allowedRange = 0..6
-        )
+//    /**
+//     * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection
+//     */
+//    @SettingKey
+//    public val welcomeScreenTempPage: IntSettingObject =
+//        int(
+//            default = 0,
+//            allowedRange = 0..6
+//        )
 
     @SettingKey
     public val lastCrashStackTrace: StringSettingObject = string("")

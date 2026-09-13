@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -22,25 +23,36 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HoldActions
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
-import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultHoldCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
+import org.elnix.dragonlauncher.ktx.round
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.Preset
+import org.elnix.dragonlauncher.ui.components.PresetRow
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
@@ -57,12 +69,45 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import kotlin.time.Duration.Companion.milliseconds
 
+@Stable
+private data class HoldPreset(
+    override val name: String,
+    val customObject: CustomObject = defaultHoldCustomObject,
+    val holdDelayBeforeStartingLongClickSettings: Int? = null,
+    val longCLickSettingsDuration: Int? = null,
+    val holdToActivateSettingsTolerance: Dp? = null,
+    val showToleranceOnMainScreen: Boolean? = null,
+    val rotationsPerSecond: Float? = null,
+    val holdRgbLoading: Boolean? = null,
+    val pulsingRadius: Float? = null,
+    val pulsingRDuration: Int? = null,
+    val color: Color? = null
+) : Preset {
+    override fun toString(): String =
+        "HoldPreset(\n" +
+            "    name = \"$name\",\n" +
+            "    customObject = $customObject,\n" +
+            "    holdDelayBeforeStartingLongClickSettings = $holdDelayBeforeStartingLongClickSettings,\n" +
+            "    longCLickSettingsDuration = $longCLickSettingsDuration,\n" +
+            "    holdToActivateSettingsTolerance = ${holdToActivateSettingsTolerance?.value?.round(2)},\n" +
+            "    showToleranceOnMainScreen = $showToleranceOnMainScreen,\n" +
+            "    rotationsPerSecond = ${rotationsPerSecond?.round(2)}f,\n" +
+            "    holdRgbLoading = $holdRgbLoading,\n" +
+            "    pulsingRadius = ${pulsingRadius?.round(2)}f,\n" +
+            "    pulsingRDuration = $pulsingRDuration\n" +
+            "    color = ${color?.let { "Color(0x${color.toHexWithAlpha.replace("#", "")}" }})\n" +
+            ")"
+}
+
 @Composable
 fun HoldToActivateTab(
     swipeViewModel: SwipeViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
+    val extraColors = LocalExtraColors.current
     val navigator = LocalNavigator.current
+    val hapticFeedback = LocalHapticFeedback.current
+
     val scope = rememberCoroutineScope()
 
     val swipeService = swipeViewModel.swipeService
@@ -211,10 +256,70 @@ fun HoldToActivateTab(
             }
         }
 
+        PresetRow(
+            listOf(
+                HoldPreset("Default"),
+                HoldPreset(
+                    name = "Elnix's",
+                    customObject = CustomObject(
+                        stroke = 4.5.dp,
+                        color = null,
+                        glow = CustomGlow(radius = 12.dp, color = null),
+                        shape = IconShape.Random,
+                        size = 75.0.dp,
+                        rotation = -1,
+                        mirror = false,
+                        eraseBackground = false,
+                        alignsWithDragAngle = false
+                    ),
+                    holdDelayBeforeStartingLongClickSettings = 300,
+                    longCLickSettingsDuration = 500,
+                    holdToActivateSettingsTolerance = 10.0.dp,
+                    showToleranceOnMainScreen = false,
+                    rotationsPerSecond = 0.50f,
+                    holdRgbLoading = false,
+                    pulsingRadius = 2.0f,
+                    pulsingRDuration = 500,
+                    color = Color(0xFFB902FF)
+                )
+            ),
+            get = {
+                HoldPreset(
+                    name = "new",
+                    customObject = swipeService.holdObject.value,
+                    holdDelayBeforeStartingLongClickSettings = holdSettings.holdDelayBeforeStartingLongClickSettings,
+                    longCLickSettingsDuration = holdSettings.longCLickSettingsDuration,
+                    holdToActivateSettingsTolerance = holdSettings.holdToActivateSettingsTolerance,
+                    showToleranceOnMainScreen = holdSettings.showToleranceOnMainScreen,
+                    rotationsPerSecond = holdSettings.rotationsPerSecond,
+                    holdRgbLoading = holdSettings.holdRgbLoading,
+                    pulsingRadius = holdSettings.pulsingRadius,
+                    pulsingRDuration = holdSettings.pulsingRDuration,
+                    color = extraColors.holdToActivate
+                )
+            },
+            set = { preset ->
+                scope.launch {
+                    swipeService.holdObject.value = preset.customObject
+                    HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.set(
+                        ctx,
+                        preset.holdDelayBeforeStartingLongClickSettings
+                    )
+                    HoldToActivateArcSettingsStore.longCLickSettingsDuration.set(ctx, preset.longCLickSettingsDuration)
+                    HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.set(ctx, preset.holdToActivateSettingsTolerance)
+                    HoldToActivateArcSettingsStore.showToleranceOnMainScreen.set(ctx, preset.showToleranceOnMainScreen)
+                    HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, preset.rotationsPerSecond)
+                    HoldToActivateArcSettingsStore.holdRgbLoading.set(ctx, preset.holdRgbLoading)
+                    HoldToActivateArcSettingsStore.pulsingRadius.set(ctx, preset.pulsingRadius)
+                    HoldToActivateArcSettingsStore.pulsingRDuration.set(ctx, preset.pulsingRDuration)
+                }
+            }
+        )
+
         EditCustomObjectBlock(
             title = R.string.object_properties,
             editObject = holdObject,
-            default = defaultAngleCustomObject,
+            default = defaultHoldCustomObject,
             properties =
                 CustomObjectBlockProperties(
                     allowAlignCustomization = false,

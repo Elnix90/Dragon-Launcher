@@ -9,6 +9,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
 import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
+import org.elnix.dragonlauncher.ktx.round
 
 @Stable
 @Serializable
@@ -147,4 +148,17 @@ public data class CustomObject(
             val allowGlowCustomization: Boolean = true
         )
     }
+
+    override fun toString(): String =
+        "CustomObject(\n" +
+            "    stroke = ${stroke.value.round(2)}.dp,\n" +
+            "    color = $color,\n" +
+            "    glow = $glow,\n" +
+            "    shape = IconShape.$shape,\n" +
+            "    size = $size,\n" +
+            "    rotation = $rotation,\n" +
+            "    mirror = $mirror,\n" +
+            "    eraseBackground = $eraseBackground,\n" +
+            "    alignsWithDragAngle = $alignsWithDragAngle\n" +
+            ")"
 }

@@ -8,6 +8,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
 import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
+import org.elnix.dragonlauncher.ktx.round
+import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 
 @Immutable
 @Serializable
@@ -18,6 +20,12 @@ public data class CustomGlow(
     @Serializable(with = ColorSerializer::class)
     val color: Color? = null
 ) {
+    override fun toString(): String =
+        "CustomGlow(\n" +
+            "    radius = ${radius?.value?.round(2)}.dp,\n" +
+            "    color = ${color?.toHexWithAlpha}\n" +
+            ")"
+
     public companion object {
         @Stable
         public val Unspecified: CustomGlow = CustomGlow(null, null)
