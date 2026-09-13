@@ -80,7 +80,7 @@ public class BackupViewModel
                     if (result.success) {
                         pointsService.load()
                         PrivateSettingsStore.hasInitialized.set(application, true)
-                        PrivateSettingsStore.hasSeenWelcome.set(application, true)
+                        PrivateSettingsStore.hasSeenWelcomeScreen.set(application, true)
                     }
                 } catch (e: Exception) {
                     logE(BACKUP_TAG, e) { "Legacy migration failed" }

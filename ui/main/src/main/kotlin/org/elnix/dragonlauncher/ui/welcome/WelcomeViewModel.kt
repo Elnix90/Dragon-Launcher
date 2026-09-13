@@ -26,7 +26,7 @@ class WelcomeViewModel
 
         fun setAsSeen() {
             viewModelScope.launch {
-                PrivateSettingsStore.hasSeenWelcome.set(application, true)
+                PrivateSettingsStore.hasSeenWelcomeScreen.set(application, true)
 
                 // Do not reset the pager state instantly because otherwise the animation would be ugly
                 delay(3.seconds)

@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.welcome
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,17 +16,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.BuildTypeChip
 import org.elnix.dragonlauncher.ui.components.CodeNameChip
@@ -41,6 +47,8 @@ fun WelcomePageIntro(
     setAsSeen: () -> Unit
 ) {
     val navigator = LocalNavigator.current
+
+    val hasSeenWelcomeOriginal by PrivateSettingsStore.hasSeenWelcome.asState()
 
     val headlinesAlpha =
         remember(isVisible) {
@@ -121,6 +129,35 @@ fun WelcomePageIntro(
                 color = MaterialTheme.colorScheme.tertiary.copy(alpha = headlinesAlpha[i].value),
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp
+            )
+        }
+
+        if (hasSeenWelcomeOriginal) {
+            val uriHandler = LocalUriHandler.current
+            Spacer(30.dp)
+            Text(
+                text = stringResource(R.string.if_you_see_this_thats_because_i_wanted_to_show_old_users_the_new_welcome_screen),
+                style = MaterialTheme.typography.labelMediumEmphasized,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center
+            )
+            Spacer(5.dp)
+            Text(
+                text = stringResource(R.string.thank_you_for_using_dragon_for_so_long),
+                style = MaterialTheme.typography.labelSmallEmphasized,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
+            )
+            Spacer(5.dp)
+            Text(
+                text = stringResource(R.string.if_you_click_this_link_youll_get_a_special_role_on_discord),
+                style = MaterialTheme.typography.labelSmallEmphasized,
+                color = Color.Cyan,
+                textAlign = TextAlign.Center,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.clickable {
+                    uriHandler.openUri("https://discord.gg/Dv84wW3xfD")
+                }
             )
         }
 

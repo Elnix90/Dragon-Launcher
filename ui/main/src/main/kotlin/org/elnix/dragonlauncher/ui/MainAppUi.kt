@@ -380,7 +380,7 @@ fun MainAppUi(
 
     val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
 
-    val hasSeenWelcome by PrivateSettingsStore.hasSeenWelcome.asStateNull()
+    val hasSeenWelcome by PrivateSettingsStore.hasSeenWelcomeScreen.asStateNull()
     LaunchedEffect(hasSeenWelcome) {
         if (hasSeenWelcome == false) {
             navigator.go(NavigationRoute.Welcome)

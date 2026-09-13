@@ -34,9 +34,11 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getBuildType
 import org.elnix.dragonlauncher.base.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.services.SystemControl
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -44,8 +46,10 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.timer.OverlayReminderService
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.Icon
 import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -58,7 +62,9 @@ import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun DebugTab() {
+fun DebugTab(
+    securityViewModel: SecurityViewModel = activityViewModel()
+) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -94,8 +100,14 @@ fun DebugTab() {
                 Text(text = "Show Google lockdown warning")
             }
 
-            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.hasSeenWelcome.reset(ctx) } }) {
+            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.hasSeenWelcomeScreen.reset(ctx) } }) {
                 Text(text = "Show Welcome Screen")
+            }
+
+            val signatureMatched by securityViewModel.signatureMatched.asState()
+            // The old has seen welcome toggle, only show when in signed debug version (only I should be able to have it)
+            if (ctx.getBuildType() == "debug" && signatureMatched) {
+                Setting(PrivateSettingsStore.hasSeenWelcome)
             }
 
             Setting(DebugSettingsStore.forceAppLanguageSelector)

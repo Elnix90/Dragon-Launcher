@@ -1126,4 +1126,9 @@
   <string name="customize_angle_line">Customize angle line</string>
   <string name="share_your_config_in_the_discord">Share your config in the discord!</string>
   <string name="finish_setup_first">Finish setup first</string>
+  <string name="if_you_see_this_thats_because_i_wanted_to_show_old_users_the_new_welcome_screen">If you see this, It\'s because I wanted to show old users the new welcome screen</string>
+  <string name="thank_you_for_using_dragon_for_so_long">Thank you for using Dragon for so long ❤️</string>
+  <string name="if_you_click_this_link_youll_get_a_special_role_on_discord">If you click this link, you\'ll get a special role on discord</string>
+  <string name="has_seen_welcome_old">Has seen welcome (old)</string>
+  <string name="has_seen_welcome_old_desc">The old settings key that makes a message appear in the welcome screen</string>
 </resources>
