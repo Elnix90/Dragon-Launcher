@@ -1,0 +1,14 @@
+4.2.0 (Nounou)
+2026-09-13
+[NEW]
+* Color themes Easter egg
+* Pulsing options for hold to activate arc
+* Welcome screen complete refactor
+* Presets in hold and line settings (users must complete them)
+[IMPROVED]
+* Small startup perf improvements
+* Points/Nest Settings,widgets screens and color tab UI refactor
+[FIXED]
+* Crash with color picker
+* apps package name showing for 1 frame before Label
+* Minor small UI/UX bugs and / or internal logic
