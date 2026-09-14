@@ -89,6 +89,7 @@ fun BehaviorTab() {
 
             DragonSettingsGroup(R.string.common_settings) {
                 Setting(BehaviorSettingsStore.keepScreenOn)
+                Setting(BehaviorSettingsStore.lockOrientationToPortrait)
                 Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
                 Setting(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
                 Setting(BehaviorSettingsStore.openRootNestEachTime)
