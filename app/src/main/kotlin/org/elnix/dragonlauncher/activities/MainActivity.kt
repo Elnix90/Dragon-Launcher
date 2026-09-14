@@ -316,6 +316,7 @@ class MainActivity :
 
         enableEdgeToEdge()
 
+        // Default to portrait before the setting loads from DataStore, to avoid a landscape flash on cold start.
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         WindowInsetsControllerCompat(window, window.decorView).let { controller ->
@@ -393,6 +394,16 @@ class MainActivity :
                             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                         } else {
                             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        }
+                    }
+
+                    val lockOrientationToPortrait by
+                        BehaviorSettingsStore.lockOrientationToPortrait.asState()
+                    LaunchedEffect(lockOrientationToPortrait) {
+                        requestedOrientation = if (lockOrientationToPortrait) {
+                            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        } else {
+                            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                         }
                     }
 

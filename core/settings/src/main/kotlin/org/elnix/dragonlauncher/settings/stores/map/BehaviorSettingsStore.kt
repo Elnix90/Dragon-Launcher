@@ -54,6 +54,15 @@ public object BehaviorSettingsStore : MapSettingsStore() {
         )
 
     @SettingKey
+    public val lockOrientationToPortrait: BooleanSettingObject =
+        boolean(
+            title = R.string.lock_orientation_portrait,
+            description = R.string.lock_orientation_portrait_desc,
+            icon = R.drawable.rotate_90_degrees_cw,
+            default = true
+        )
+
+    @SettingKey
     public val leftPadding: IntSettingObject =
         int(
             default = 60,
