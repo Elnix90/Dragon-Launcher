@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.helpers.workspace
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +30,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
 @Composable
@@ -37,6 +39,7 @@ fun AppDrawerSearch(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     placeholderText: String = stringResource(R.string.search_apps),
     trailingIcon: (@Composable () -> Unit)? = null,
+    onClickSearch: (() -> Unit)? = null,
     onEnterPressed: (() -> Unit)? = null,
     onFocusStateChanged: ((Boolean) -> Unit)? = null
 ) {
@@ -65,7 +68,11 @@ fun AppDrawerSearch(
             Icon(
                 painter = painterResource(R.drawable.search),
                 contentDescription = stringResource(R.string.search_apps),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .conditional(onClickSearch) { clickable(onClick = it) }
+                    .padding(2.dp)
             )
         },
         trailingIcon = trailingIcon,

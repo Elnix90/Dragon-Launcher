@@ -191,6 +191,13 @@ public object DrawerSettingsStore : MapSettingsStore() {
         )
 
     @SettingKey
+    public val drawerClickSearchIconAction: EnumSettingObject<DrawerActions> =
+        enum(
+            title = R.string.scroll_up_action,
+            default = DrawerActions.defaultClickSearchAction
+        )
+
+    @SettingKey
     public val drawerBackAction: EnumSettingObject<DrawerActions> =
         enum(
             title = R.string.back_action,

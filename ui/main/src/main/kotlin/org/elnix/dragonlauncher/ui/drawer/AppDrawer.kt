@@ -600,6 +600,7 @@ fun AppDrawerScreen(
                                 }
                             },
                             modifier = Modifier.focusRequester(focusRequester),
+                            onClickSearch = { launchDrawerAction(drawerSettings.drawerClickSearchIconAction) },
                             onEnterPressed = { launchDrawerAction(drawerSettings.drawerEnterAction) },
                             onFocusStateChanged = { isSearchFocused = it }
                         )
@@ -611,10 +612,10 @@ fun AppDrawerScreen(
 }
 
 /**
- * Drawer actions, creates left and right clickable buttons that can activate the selected [org.elnix.dragonlauncher.enumsui.toggle.DrawerActions]
+ * Drawer actions, creates left and right clickable buttons that can activate the selected [DrawerActions]
  */
 @Composable
-fun BoxScope.DrawerActions(
+private fun BoxScope.DrawerActions(
     leftDrawerAction: DrawerActions,
     leftDrawerWidth: Dp,
     rightDrawerAction: DrawerActions,

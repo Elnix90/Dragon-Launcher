@@ -301,6 +301,7 @@
   <string name="alias">Alias</string>
   <string name="create_alias">Create Alias</string>
   <string name="scroll_up_action">Scroll up action</string>
+  <string name="click_search_icon_action">Click search icon action</string>
   <string name="scroll_down_action">Scroll down action</string>
   <string name="auto_launch_single_match">Auto launch single match</string>
   <string name="auto_launch_single_match_desc">When only one app is visible in the drawer, it\'ll be automatically launched</string>

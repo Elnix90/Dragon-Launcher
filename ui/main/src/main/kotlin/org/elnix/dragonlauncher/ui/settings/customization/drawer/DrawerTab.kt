@@ -187,6 +187,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             DrawerActionSelector(DrawerSettingsStore.drawerBackAction)
             DrawerActionSelector(DrawerSettingsStore.drawerEnterAction)
             DrawerActionSelector(DrawerSettingsStore.drawerHomeAction)
+            DrawerActionSelector(DrawerSettingsStore.drawerClickSearchIconAction)
         }
 
         DragonSettingsGroup(R.string.width_actions_settings) {

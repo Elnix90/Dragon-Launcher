@@ -38,6 +38,7 @@ data class DrawerSettings(
     val drawerHomeAction: DrawerActions,
     val drawerScrollDownAction: DrawerActions,
     val drawerScrollUpAction: DrawerActions,
+    val drawerClickSearchIconAction: DrawerActions,
     val showSearchBar: Boolean,
     val showRecentlyUsedApps: Boolean,
     val recentlyUsedAppsCount: Int,
@@ -77,6 +78,7 @@ fun ProvideDrawerSettings(
     val drawerHomeAction by DrawerSettingsStore.drawerHomeAction.asState()
     val drawerScrollDownAction by DrawerSettingsStore.drawerScrollDownAction.asState()
     val drawerScrollUpAction by DrawerSettingsStore.drawerScrollUpAction.asState()
+    val drawerClickSearchIconAction by DrawerSettingsStore.drawerClickSearchIconAction.asState()
     val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
     val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
     val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
@@ -111,6 +113,7 @@ fun ProvideDrawerSettings(
                 drawerHomeAction = drawerHomeAction,
                 drawerScrollDownAction = drawerScrollDownAction,
                 drawerScrollUpAction = drawerScrollUpAction,
+                drawerClickSearchIconAction = drawerClickSearchIconAction,
                 showSearchBar = showSearchBar,
                 showRecentlyUsedApps = showRecentlyUsedApps,
                 recentlyUsedAppsCount = recentlyUsedAppsCount,

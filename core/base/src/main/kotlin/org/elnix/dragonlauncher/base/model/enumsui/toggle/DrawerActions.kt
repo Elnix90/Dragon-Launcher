@@ -34,6 +34,7 @@ public enum class DrawerActions(
         public val defaultHomeAction: DrawerActions = Close
         public val defaultScrollDownAction: DrawerActions = Close
         public val defaultScrollUpAction: DrawerActions = CloseKb
+        public val defaultClickSearchAction: DrawerActions = SearchWeb
         public val defaultBackAction: DrawerActions = Close
 
         public inline val DrawerActions.isUsed: Boolean
