@@ -75,7 +75,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     @SettingKey
     public val lastSeenVersionCodeGoogleLockdownWarning: IntSettingObject =
         int(
-            default = 0,
+            default = Int.MAX_VALUE,
             allowedRange = 0..Int.MAX_VALUE
         )
 

@@ -60,6 +60,7 @@ import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
 @Composable
 fun DebugTab(
@@ -92,15 +93,35 @@ fun DebugTab(
         }
 
         DragonSettingsGroup(R.string.ui_flow_and_debug) {
-            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx) } }) {
+            DragonButton(
+                onClick = {
+                    scope.launch {
+                        PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx)
+                    }
+                }
+            ) {
                 Text(text = "Show What's New sheet")
             }
 
-            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx) } }) {
+            DragonButton(
+                onClick = {
+                    scope.launch {
+                        PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx)
+                        DebugSettingsStore.showGoogleLockDownWarning.reset(ctx)
+                    }
+                    GoogleWarningManager.updateWarningDialog(true)
+                }
+            ) {
                 Text(text = "Show Google lockdown warning")
             }
 
-            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.hasSeenWelcomeScreen.reset(ctx) } }) {
+            DragonButton(
+                onClick = {
+                    scope.launch {
+                        PrivateSettingsStore.hasSeenWelcomeScreen.reset(ctx)
+                    }
+                }
+            ) {
                 Text(text = "Show Welcome Screen")
             }
 
@@ -115,6 +136,7 @@ fun DebugTab(
             Setting(PrivateSettingsStore.showSetDefaultLauncherBanner)
             Setting(PrivateSettingsStore.showReselectBackupBanner)
             Setting(DebugSettingsStore.showFps)
+            Setting(DebugSettingsStore.showGoogleLockDownWarning)
             Setting(DebugSettingsStore.showKillLauncherActionInActionPicker)
             Setting(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
         }

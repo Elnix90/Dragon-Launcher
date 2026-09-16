@@ -125,6 +125,18 @@ public object DebugSettingsStore : MapSettingsStore() {
             default = false
         )
 
+    /**
+     * Whether to disable the warning in the settings, for example when you're not on stock Android (meaning you already escaped google's hell)
+     */
+    @SettingKey
+    public val showGoogleLockDownWarning: BooleanSettingObject =
+        boolean(
+            title = R.string.show_google_lockdown_warning,
+            description = R.string.show_google_lockdown_warning_desc,
+            icon = R.drawable.visibility,
+            default = true
+        )
+
     @SettingKey
     public val snackBarLogLevel: IntSettingObject =
         int(

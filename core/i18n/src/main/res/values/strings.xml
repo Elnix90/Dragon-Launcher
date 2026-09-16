@@ -1132,4 +1132,6 @@
   <string name="if_you_click_this_link_youll_get_a_special_role_on_discord">If you click this link, you\'ll get a special role on discord</string>
   <string name="has_seen_welcome_old">Has seen welcome (old)</string>
   <string name="has_seen_welcome_old_desc">The old settings key that makes a message appear in the welcome screen</string>
+  <string name="show_google_lockdown_warning">Show google lockdown warning</string>
+  <string name="show_google_lockdown_warning_desc">If disabled, you won\'t see it in top of settings</string>
 </resources>

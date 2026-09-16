@@ -147,7 +147,8 @@ fun SettingsScreen(
             }
         }
     ) {
-        AnimatedVisibility(GoogleWarningManager.showWarning()) {
+        val showGoogleLockDownWarning by DebugSettingsStore.showGoogleLockDownWarning.asState()
+        if (GoogleWarningManager.showWarning() && showGoogleLockDownWarning) {
             GoogleWarningReminder()
         }
 

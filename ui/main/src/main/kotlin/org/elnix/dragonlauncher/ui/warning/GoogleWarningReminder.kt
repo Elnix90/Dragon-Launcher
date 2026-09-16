@@ -19,9 +19,8 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
-fun GoogleWarningReminder(modifier: Modifier = Modifier) {
+fun GoogleWarningReminder() {
     Card(
-        modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge
     ) {
         Column(
