@@ -21,6 +21,7 @@ import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.objects.stringList
 import io.github.elnix90.core.stores.MapSettingsStore
+import org.elnix.dragonlauncher.base.model.enumsui.select.DrawerAlign
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
@@ -377,5 +378,13 @@ public object DrawerSettingsStore : MapSettingsStore() {
         color(
             default = AmoledDragonColorScheme.surfaceVariant,
             title = R.string.category_color
+        )
+
+    @SettingKey
+    public val drawerAlign: EnumSettingObject<DrawerAlign> =
+        enum(
+            default = DrawerAlign.Top,
+            title = R.string.drawer_align,
+            description = R.string.drawer_align_desc
         )
 }

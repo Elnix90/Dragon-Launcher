@@ -1134,4 +1134,8 @@
   <string name="has_seen_welcome_old_desc">The old settings key that makes a message appear in the welcome screen</string>
   <string name="show_google_lockdown_warning">Show google lockdown warning</string>
   <string name="show_google_lockdown_warning_desc">If disabled, you won\'t see it in top of settings</string>
+  <string name="top">Top</string>
+  <string name="bottom">Bottom</string>
+  <string name="drawer_align_desc">The alignments of icons in the drawer</string>
+  <string name="drawer_align">Drawer align</string>
 </resources>

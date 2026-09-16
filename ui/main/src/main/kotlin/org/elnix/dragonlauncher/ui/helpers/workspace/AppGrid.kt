@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.enumsui.select.DrawerAlign
 import org.elnix.dragonlauncher.base.model.models.AppCategory
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
@@ -247,8 +248,8 @@ fun AppGrid(
                 modifier = modifier,
                 state = gridState,
                 contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical),
-                horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
+                reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
+                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment())
             ) {
                 items(
                     items = mutableCategoryNames,
@@ -276,7 +277,8 @@ fun AppGrid(
                 modifier = modifier,
                 state = listState ?: rememberLazyListState(),
                 contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical)
+                reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
+                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment())
             ) {
                 items(visibleApps, key = { it.key.cacheKey }) { app ->
                     AppItemHorizontal(
@@ -313,7 +315,8 @@ fun AppGrid(
                 state = gridState ?: rememberLazyGridState(),
                 columns = GridCells.Fixed(gridSize),
                 contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical),
+                reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
+                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment()),
                 horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
             ) {
                 items(items = visibleApps, key = { it.key.cacheKey }) { app ->

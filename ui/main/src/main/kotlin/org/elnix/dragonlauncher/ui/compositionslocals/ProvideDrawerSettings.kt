@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.enumsui.select.DrawerAlign
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
@@ -49,7 +50,8 @@ data class DrawerSettings(
     val categoryGridCells: Int,
     val categoryCells: Int,
     val categoryOrder: List<String>,
-    val categoryColor: Color
+    val categoryColor: Color,
+    val drawerAlign: DrawerAlign
 )
 
 val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
@@ -90,6 +92,7 @@ fun ProvideDrawerSettings(
     val categoryGridCells by DrawerSettingsStore.categoryGridCells.asState()
     val categoryOrder by DrawerSettingsStore.categoryOrder.asState()
     val categoryColor by DrawerSettingsStore.categoryColor.asState()
+    val drawerAlign by DrawerSettingsStore.drawerAlign.asState()
 
     CompositionLocalProvider(
         LocalDrawerSettings provides
@@ -124,7 +127,8 @@ fun ProvideDrawerSettings(
                 categoryCells = categoryCells,
                 categoryGridCells = categoryGridCells,
                 categoryOrder = categoryOrder,
-                categoryColor = categoryColor
+                categoryColor = categoryColor,
+                drawerAlign = drawerAlign
             ),
         content = content
     )
