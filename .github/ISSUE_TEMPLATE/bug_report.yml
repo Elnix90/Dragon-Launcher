@@ -12,9 +12,9 @@ body:
         - required: true
         - label: I checked for duplicate issues in both opened and closed
           required: true
-        - label: I updated the app to the latest version
+        - label: I updated the app to the latest version and searched in the whole app / asked if the feature isn't already implemented
           required: true
-        - label: I updated the app to the latest beta version to test (check both if you did so)
+        - label: I updated the app to the latest beta version to test and searched in the whole app / asked if the feature isn't already implemented
           required: false
         - label: I haven't read those requirements
           required: false
