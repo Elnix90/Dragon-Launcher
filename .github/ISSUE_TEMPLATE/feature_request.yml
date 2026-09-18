@@ -9,7 +9,7 @@ body:
       label: Requirements
       options:
         - label: I have written the whole issue myself and I am not an AI Agent. Check [CONTRIBUTING.MD](https://github.com/Elnix90/Dragon-Launcher?tab=contributing-ov-file) for more info
-        - required: true
+          required: true
         - label: I checked for duplicate issues in both opened and closed and searched in the whole app / asked if the feature isn't already implemented
           required: true
         - label: I updated the app to the latest version and and searched in the whole app / asked if the feature isn't already implemented
