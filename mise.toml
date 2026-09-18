@@ -1,21 +1,8 @@
-# mise.toml — Dragon Launcher dev environment
-#
-# IDE integration:
-#   Emacs:     https://github.com/eki3z/mise.el
-#   IntelliJ:  https://github.com/134130/intellij-mise
-#   VSCode:    https://github.com/hverlin/mise-vscode
-
 [tools]
-java = "21"
-gradle = "9.7.0"
-kotlin = "2.4.10"
-ktlint = "1.5.0"
-"vfox:mise-plugins/vfox-android-sdk" = "latest"
+ktlint = "latest"
 pre-commit = "latest"
-
-#ffmpeg = { version = "latest", optional = true }
+"vfox:mise-plugins/vfox-android-sdk" = "latest"
 "aqua:yashikota/exiftool-go" = { version = "latest", optional = true }
-github-cli = { version = "latest", optional = true }
 
 [env]
 ANDROID_HOME = "~/.android/sdk"
@@ -31,10 +18,6 @@ description = "Build beta APK"
 [tasks.build-release]
 run = "./gradlew assembleRelease"
 description = "Build release APK"
-
-[tasks.build-all]
-run = "./gradlew assembleDebug assembleBeta assembleRelease"
-description = "Build all variants"
 
 [tasks.install-debug]
 run = "./gradlew installDebug"
@@ -61,16 +44,12 @@ run = "./gradlew lint"
 description = "Run Android Lint"
 
 [tasks.format]
-run = "./gradlew ktlintFormat"
-description = "Run Android Lint"
+run = "ktlint --format"
+description = "Run ktlint format"
 
 [tasks.clean]
 run = "./gradlew clean"
 description = "Clean build artifacts"
-
-[tasks.deps]
-run = "./gradlew :app:dependencies"
-description = "Show dependency tree"
 
 [tasks.build-health]
 run = "./gradlew buildHealth"
@@ -85,5 +64,5 @@ run = "./gradlew clean && rm -rf .gradle"
 description = "Clean everything"
 
 [tasks.setup-hooks]
-run = "pre-commit install && pre-commit install --hook-type commit-msg"
+run = "pre-commit install && pre-commit install --hook-type commit-msg && mise use pre-commit"
 description = "Install git hooks (pre-commit + commit-msg)"
