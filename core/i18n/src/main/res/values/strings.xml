@@ -1138,4 +1138,6 @@
   <string name="bottom">Bottom</string>
   <string name="drawer_align_desc">The alignments of icons in the drawer</string>
   <string name="drawer_align">Drawer align</string>
+  <string name="ime_padding_drawer">Ime padding drawer</string>
+  <string name="ime_padding_drawer_desc">Whether if the keyboard overlaps the apps or not</string>
 </resources>

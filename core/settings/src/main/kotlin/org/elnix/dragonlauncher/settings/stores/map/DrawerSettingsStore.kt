@@ -194,7 +194,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     @SettingKey
     public val drawerClickSearchIconAction: EnumSettingObject<DrawerActions> =
         enum(
-            title = R.string.scroll_up_action,
+            title = R.string.click_search_icon_action,
             default = DrawerActions.defaultClickSearchAction
         )
 
@@ -386,5 +386,14 @@ public object DrawerSettingsStore : MapSettingsStore() {
             default = DrawerAlign.Top,
             title = R.string.drawer_align,
             description = R.string.drawer_align_desc
+        )
+
+    @SettingKey
+    public val imePadding: BooleanSettingObject =
+        boolean(
+            title = R.string.ime_padding_drawer,
+            description = R.string.ime_padding_drawer_desc,
+            icon = R.drawable.keyboard,
+            default = false
         )
 }

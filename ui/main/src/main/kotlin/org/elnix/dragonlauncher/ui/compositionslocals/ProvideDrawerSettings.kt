@@ -51,7 +51,8 @@ data class DrawerSettings(
     val categoryCells: Int,
     val categoryOrder: List<String>,
     val categoryColor: Color,
-    val drawerAlign: DrawerAlign
+    val drawerAlign: DrawerAlign,
+    val imePadding: Boolean
 )
 
 val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
@@ -93,6 +94,7 @@ fun ProvideDrawerSettings(
     val categoryOrder by DrawerSettingsStore.categoryOrder.asState()
     val categoryColor by DrawerSettingsStore.categoryColor.asState()
     val drawerAlign by DrawerSettingsStore.drawerAlign.asState()
+    val imePadding by DrawerSettingsStore.imePadding.asState()
 
     CompositionLocalProvider(
         LocalDrawerSettings provides
@@ -128,7 +130,8 @@ fun ProvideDrawerSettings(
                 categoryGridCells = categoryGridCells,
                 categoryOrder = categoryOrder,
                 categoryColor = categoryColor,
-                drawerAlign = drawerAlign
+                drawerAlign = drawerAlign,
+                imePadding = imePadding
             ),
         content = content
     )

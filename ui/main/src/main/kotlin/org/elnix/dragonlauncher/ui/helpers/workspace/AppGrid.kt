@@ -73,6 +73,7 @@ private data class MutableCategory(
 @Composable
 fun AppGrid(
     apps: List<Application>,
+    modifier: Modifier = Modifier,
     fillMaxSize: Boolean = true,
     gridState: LazyGridState? = null,
     categoryGridState: LazyGridState? = null,
@@ -110,22 +111,40 @@ fun AppGrid(
         openedCategory = null
     }
 
-    val modifier = if (fillMaxSize) Modifier.fillMaxSize() else Modifier
+    val modifier = if (fillMaxSize) modifier.fillMaxSize() else modifier
 
+    /**
+     * This value defines when the scroll state can be dragged from the top of the screen to the bottom.
+     * When the drawer aligns top to bottom, this uses the intuitive direction: if the user cannot scroll backwards (reached the top of the screen)
+     * When the drawer aligns bottom to top, this uses the opposite direction: if the user cannot scroll down more (reached end on the apps)
+     *
+     * IT is used by the [org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen] to provide an animated down drop animation in the drawer
+     */
     val isAtTop by remember {
         derivedStateOf {
-            when {
-                gridSize == 1 ->
-                    listState?.firstVisibleItemIndex == 0 &&
-                        listState.firstVisibleItemScrollOffset == 0
+            when (drawerSettings.drawerAlign) {
+                DrawerAlign.Top -> {
+                    when {
+                        gridSize == 1 && listState != null ->
+                            !listState.canScrollBackward
+                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null ->
+                            !categoryGridState.canScrollBackward
+                        gridState != null ->
+                            !gridState.canScrollBackward
+                        else -> false
+                    }
+                }
 
-                useCategory && openedCategory == null && !isMultiSelectMode ->
-                    categoryGridState?.firstVisibleItemIndex == 0 &&
-                        categoryGridState.firstVisibleItemScrollOffset == 0
-
-                else ->
-                    gridState?.firstVisibleItemIndex == 0 &&
-                        gridState.firstVisibleItemScrollOffset == 0
+                DrawerAlign.Bottom -> {
+                    when {
+                        gridSize == 1 && listState != null ->
+                            !listState.canScrollForward
+                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null ->
+                            !categoryGridState.canScrollForward
+                        gridState != null -> !gridState.canScrollForward
+                        else -> false
+                    }
+                }
             }
         }
     }

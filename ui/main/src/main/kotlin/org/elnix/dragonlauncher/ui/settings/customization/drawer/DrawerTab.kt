@@ -98,6 +98,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             Setting(DrawerSettingsStore.searchAllWorkspacesOnlyWhenFirstCharIs, singleChar = true)
             Setting(DrawerSettingsStore.autoShowKeyboardOnDrawer)
             Setting(DrawerSettingsStore.autoAskToUnlockProfile)
+            Setting(DrawerSettingsStore.imePadding)
         }
 
         DragonSettingsGroup(R.string.drawer_pull_down_settings) {

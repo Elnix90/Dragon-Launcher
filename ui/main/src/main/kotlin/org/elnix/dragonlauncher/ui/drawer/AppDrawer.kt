@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
@@ -110,7 +111,7 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 import kotlin.math.abs
 import kotlin.math.pow
 
-@SuppressLint("LocalContextGetResourceValueCall")
+@SuppressLint("LocalContextGetResourceValueCall", "UseOfNonLambdaOffsetOverload")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDrawerScreen(
@@ -311,9 +312,13 @@ fun AppDrawerScreen(
 
     /**
      * The scroll state basically, defines what happen on vertical scrolls, the horizontal being handled by the pager
-     * Responsible for the drag up/down actions, and the top padding of the drawer on down drag
+     * Responsible for the drag up/down actions, and the sliding offset of the drawer on down drag
+     *
+     * This single connection works for both top and bottom aligned drawers: with `reverseLayout` the
+     * bottom aligned lists mirror the scroll/overscroll gestures of the top aligned ones, so "the list
+     * being at its first page" ([atTop]) is the same condition in both cases.
      */
-    val nestedConnection =
+    val nestedScrollConnection =
         remember {
             object : NestedScrollConnection {
                 override fun onPreScroll(
@@ -377,11 +382,22 @@ fun AppDrawerScreen(
 
                     // DOWN action
                     if (pullOffset > thresholdPx) {
+                        // When the down action closes the drawer, keep it pulled down so the closing
+                        // transition (slide down) continues seamlessly instead of springing back up first.
+                        // Any other action resets the pull like a normal gesture.
+                        pullOffset =
+                            if (drawerSettings.drawerScrollDownAction == Close) {
+                                maxDragDownOffset
+                            } else {
+                                0f
+                            }
+
                         launchDrawerAction(drawerSettings.drawerScrollDownAction)
+                    } else {
+                        // reset
+                        pullOffset = 0f
                     }
 
-                    // reset
-                    pullOffset = 0f
                     hasHapticed = false
 
                     return Velocity.Zero
@@ -423,8 +439,11 @@ fun AppDrawerScreen(
             Modifier
                 .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
                 .fillMaxSize()
-                .nestedScroll(nestedConnection)
-                .padding(top = animatedPadding)
+                // Offset the whole drawer down on pull instead of padding its top: a bottom aligned
+                // list is anchored to its bottom edge, so top padding would shrink its viewport
+                // without sliding the content (and re-layout mid-gesture). Offset slides it in both cases.
+                .offset(y = animatedPadding)
+                .nestedScroll(nestedScrollConnection)
                 .conditional(pullDownScaleIn) {
                     graphicsLayer {
                         scaleX = animatedScale
@@ -506,7 +525,10 @@ fun AppDrawerScreen(
                         categoryGridState = categoryGridState,
                         listState = listState,
                         onTopStateChange = { atTop = it },
-                        longPressPopup = true
+                        longPressPopup = true,
+                        modifier = Modifier.conditional(drawerSettings.imePadding) {
+                            imePadding()
+                        }
                     ) {
                         onLaunchAction(it.action)
                     }
