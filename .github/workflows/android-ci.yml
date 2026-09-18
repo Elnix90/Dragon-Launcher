@@ -27,7 +27,7 @@ jobs:
 
   build:
     name: Build
-    needs: lint
+    needs: ktlint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
