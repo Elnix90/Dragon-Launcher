@@ -26,6 +26,7 @@ dependencies {
     runtimeOnly(libs.kotlinx.coroutines.android)
 
     api(project(":core:services:widgets"))
+    api(project(":core:services:points"))
 
     api(project(":core:settings"))
     api(project(":core:base"))

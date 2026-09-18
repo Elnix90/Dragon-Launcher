@@ -33,6 +33,7 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Compani
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.ktx.isNotBlankJson
+import org.elnix.dragonlauncher.points.NestsNavigationService
 import org.elnix.dragonlauncher.settings.stores.array.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
@@ -95,6 +96,7 @@ public interface SwipeService {
 
 internal class SwipeServiceImpl(
     private val ctx: Context,
+    private val nestsNavigationService: NestsNavigationService,
     private val widgetsService: WidgetsService
 ) : SwipeService {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -442,19 +444,20 @@ internal class SwipeServiceImpl(
      * Checks if pointer position is inside any foreground widget bounds.
      */
     private fun Offset.isInsideForegroundWidget(): Boolean =
-        widgetsService.widgets.value.any { widget ->
-            if (widget.foreground == false) return@any false
+        widgetsService.widgets.value
+            .filter {
+                it.nestId == nestsNavigationService.currentNestId.value && it.foreground != false
+            }.any { widget ->
+                val dm = widgetsService.dm
+                val left = widget.x * dm.widthPixels
+                val top = widget.y * dm.heightPixels
 
-            val dm = widgetsService.dm
-            val left = widget.x * dm.widthPixels
-            val top = widget.y * dm.heightPixels
+                val width = widget.spanX * widgetsService.cellSizePx.value
+                val height = widget.spanY * widgetsService.cellSizePx.value
 
-            val width = widget.spanX * widgetsService.cellSizePx.value
-            val height = widget.spanY * widgetsService.cellSizePx.value
+                val right = left + width
+                val bottom = top + height
 
-            val right = left + width
-            val bottom = top + height
-
-            (x in left..right) && (y in top..bottom)
-        }
+                (x in left..right) && (y in top..bottom)
+            }
 }

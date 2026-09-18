@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
+import org.elnix.dragonlauncher.points.NestsNavigationService
 import org.elnix.dragonlauncher.widgets.WidgetsService
 
 @Module
@@ -16,6 +17,7 @@ internal object SwipeModule {
     @Singleton
     fun provideSwipeService(
         @ApplicationContext ctx: Context,
-        widgetsService: WidgetsService
-    ): SwipeService = SwipeServiceImpl(ctx, widgetsService)
+        widgetsService: WidgetsService,
+        nestsNavigationService: NestsNavigationService
+    ): SwipeService = SwipeServiceImpl(ctx, nestsNavigationService, widgetsService)
 }
