@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.timer
 
 import android.Manifest
-import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -508,10 +507,10 @@ public class AppTimerService : Service() {
             }
         sendBroadcast(broadIntent)
 
-        val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        am.killBackgroundProcesses(trackedPackage)
-
-        // Launch home intent to return to launcher
+        // Launch home intent to return to launcher.
+        // Note: killBackgroundProcesses was deliberately dropped here:
+        // it cannot stop a foreground app, so the HOME intent above is
+        // what actually brings the user back.
         val homeIntent =
             Intent(Intent.ACTION_MAIN).apply {
                 addCategory(Intent.CATEGORY_HOME)
