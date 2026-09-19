@@ -300,16 +300,19 @@ internal object OldToNewStoreMapping {
                         mapOf(
                             "GUILT_MODE_ENABLED" to "guiltModeEnabled",
                             "SOCIAL_MEDIA_PAUSE_ENABLED" to "socialMediaPauseEnabled",
-                            "SHOW_USAGE_STATS" to "showUsageStats",
                             "PAUSE_DURATION_SECONDS" to "pauseDurationSeconds",
                             "REMINDER_ENABLED" to "reminderEnabled",
                             "REMINDER_INTERVAL_MINUTES" to "reminderIntervalMinutes",
+                            "REMINDER_MODE" to "reminderMode",
                             "RETURN_TO_LAUNCHER_ENABLED" to "returnToLauncherEnabled",
                             "PAUSED_APPS_LIST" to "pausedApps",
                             "POPUP_SHOW_SESSION_TIME" to "popupShowSessionTime",
                             "POPUP_SHOW_TODAY_TIME" to "popupShowTodayTime",
                             "POPUP_SHOW_REMAINING_TIME" to "popupShowRemainingTime"
                         ),
+                    // showUsageStats was removed; drop it instead of
+                    // passing it through as an unknown key.
+                    skipKeys = setOf("SHOW_USAGE_STATS"),
                     valueTransformers =
                         mapOf(
                             "PAUSED_APPS_LIST" to { value, _ ->
