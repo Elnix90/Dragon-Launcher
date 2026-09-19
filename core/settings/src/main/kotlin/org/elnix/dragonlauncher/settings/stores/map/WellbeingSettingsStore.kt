@@ -44,14 +44,6 @@ public object WellbeingSettingsStore : MapSettingsStore() {
             default = false
         )
 
-    // TODO
-
-    /**
-     * Whether to show detailed usage stats (time spent yesterday, etc.)
-     */
-    @SettingKey
-    public val showUsageStats: BooleanSettingObject = boolean(true)
-
     /**
      * Duration of the pause countdown in seconds (default 10s)
      */
