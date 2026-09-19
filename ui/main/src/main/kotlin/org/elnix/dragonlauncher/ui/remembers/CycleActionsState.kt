@@ -142,7 +142,9 @@ fun rememberCycleActionsController(
                                 defaultHapticFeedback()
                             }
 
-                            else -> null
+                            else -> {
+                                null
+                            }
                         }
 
                     haptic?.perform(ctx)

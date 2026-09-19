@@ -321,11 +321,19 @@ fun ColorSelectorTab() {
                 ) {
                     val background =
                         when (it) {
-                            Amoled -> null
+                            Amoled -> {
+                                null
+                            }
 
-                            Dark -> Color.DarkGray
-                            Light -> Color.White
-                            System ->
+                            Dark -> {
+                                Color.DarkGray
+                            }
+
+                            Light -> {
+                                Color.White
+                            }
+
+                            System -> {
                                 Brush.horizontalGradient(
                                     colors =
                                         listOf(
@@ -333,8 +341,9 @@ fun ColorSelectorTab() {
                                             Color.Black
                                         )
                                 )
+                            }
 
-                            Custom ->
+                            Custom -> {
                                 Brush.linearGradient(
                                     colors =
                                         listOf(
@@ -346,6 +355,7 @@ fun ColorSelectorTab() {
                                             Color.Magenta
                                         )
                                 )
+                            }
                         }
 
                     // I like this simple animation I made, I think I've changed my mind about animations

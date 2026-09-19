@@ -646,8 +646,14 @@ internal class PointsServiceImpl(
                 .filterValues { (ignoredPointId == null || it.id !in ignoredPointId) }
 
         return when (pointsInNestFiltered.size) {
-            0 -> null
-            1 -> pointsInNestFiltered.values.first()
+            0 -> {
+                null
+            }
+
+            1 -> {
+                pointsInNestFiltered.values.first()
+            }
+
             else -> {
                 @Suppress("LiftReturnOrAssignment")
                 if (lastTarget distanceTo normalizedPos > gridSize) {
@@ -698,14 +704,6 @@ internal class PointsServiceImpl(
             nestId = nestId
         )
 
-    /**
-     * Compute the size of a nest.
-     *
-     * @param nestId which nest to process
-     * @return the furthest point of the nest or `null` if the nest is empty or absent
-     */
-    private fun computeOuterRadius(nestId: Int): Float? = furthestPointGrid[nestId]?.getPos()?.getDistance()
-
     override fun resolveLiveNestHit(
         normalizedPos: Offset,
         nestId: Int,
@@ -715,11 +713,14 @@ internal class PointsServiceImpl(
         val dist = normalizedPos.getDistance()
         val angle360 = normalizedPos.angleDeg()
 
-        // If there's no point in that nest, the HitResult returns an out-of-bounds hit
-        val outerRadius = computeOuterRadius(nestId)
+        /**
+         * The furthest point of the nest or `null` if the nest is empty or absent
+         * If there's no point in that nest, the HitResult returns an out-of-bounds hit
+         */
+        val outerRadius = furthestPointGrid[nestId]?.getPos()?.getDistance()
 
-        graceDistance?.let { graceDist ->
-            if (outerRadius == null || outerRadius > 0f && dist > outerRadius + graceDist) {
+        graceDistance?.let { graceDistance ->
+            if (outerRadius == null || (outerRadius > 0f && dist > outerRadius + graceDistance)) {
                 return HitResult(
                     selectedPoint = null,
                     isOutsideBounds = true,
@@ -910,47 +911,60 @@ internal class PointsServiceImpl(
         rotationRad: Float
     ): Offset =
         when (iconShape) {
-            is IconShape.Circle -> circleBoundary(halfSize, angleRad)
+            is IconShape.Circle -> {
+                circleBoundary(halfSize, angleRad)
+            }
 
             is IconShape.Triangle,
             is IconShape.RoundedTriangle
-            ->
+            -> {
                 polygonBoundary(3, halfSize, angleRad, rotationRad)
+            }
 
             is IconShape.Square,
             is IconShape.RoundedSquare
-            ->
+            -> {
                 polygonBoundary(4, halfSize, angleRad, rotationRad)
+            }
 
-            is IconShape.Pentagon ->
+            is IconShape.Pentagon -> {
                 polygonBoundary(5, halfSize, angleRad, rotationRad)
+            }
 
             is IconShape.Hexagon,
             is IconShape.Cookie6Sided
-            ->
+            -> {
                 polygonBoundary(6, halfSize, angleRad, rotationRad)
+            }
 
             is IconShape.Heptagon,
             is IconShape.Cookie7Sided
-            ->
+            -> {
                 polygonBoundary(7, halfSize, angleRad, rotationRad)
+            }
 
-            is IconShape.Octagon ->
+            is IconShape.Octagon -> {
                 polygonBoundary(8, halfSize, angleRad, rotationRad)
+            }
 
-            is IconShape.Cookie9Sided ->
+            is IconShape.Cookie9Sided -> {
                 polygonBoundary(9, halfSize, angleRad, rotationRad)
+            }
 
-            is IconShape.Decagon ->
+            is IconShape.Decagon -> {
                 polygonBoundary(10, halfSize, angleRad, rotationRad)
+            }
 
-            is IconShape.Cookie12Sided ->
+            is IconShape.Cookie12Sided -> {
                 polygonBoundary(12, halfSize, angleRad, rotationRad)
+            }
 
 //            is IconShape.Custom ->
 //                polygonBoundary(iconShape.numVertices, halfSize, angleRad, rotationRad)
 
-            else -> circleBoundary(halfSize, angleRad)
+            else -> {
+                circleBoundary(halfSize, angleRad)
+            }
         }
 
     /** Point on a circle of [radius] at the given angle. */

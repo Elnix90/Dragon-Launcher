@@ -43,12 +43,14 @@ internal class DynamicCalendarIcon(
                             val drawable = ResourcesCompat.getDrawable(resources, resId, null)
 
                             when {
-                                drawable is AdaptiveIconDrawable ->
+                                drawable is AdaptiveIconDrawable -> {
                                     AdaptiveIconDrawableCompat
                                         .from(
                                             drawable
                                         ).toLauncherIcon(themed = isThemed, tint = tint)
-                                drawable != null ->
+                                }
+
+                                drawable != null -> {
                                     StaticLauncherIcon(
                                         foregroundLayer =
                                             StaticIconLayer(
@@ -58,8 +60,11 @@ internal class DynamicCalendarIcon(
                                             ),
                                         backgroundLayer = TransparentLayer
                                     )
+                                }
 
-                                else -> null
+                                else -> {
+                                    null
+                                }
                             }
                         } catch (e: Resources.NotFoundException) {
                             null

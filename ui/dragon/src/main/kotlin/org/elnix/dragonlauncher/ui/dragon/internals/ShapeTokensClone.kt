@@ -1,10 +1,8 @@
-package org.elnix.dragonlauncher.ui.dragon.internals
-
-// Fuck license
-
-/**
+/*
  * My own copy of the file, because They put values as internal
+ * Fuck license
  */
+package org.elnix.dragonlauncher.ui.dragon.internals
 
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.ui.unit.dp

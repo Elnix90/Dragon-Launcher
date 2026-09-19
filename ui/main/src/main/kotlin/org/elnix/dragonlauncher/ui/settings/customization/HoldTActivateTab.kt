@@ -162,7 +162,10 @@ fun HoldToActivateTab(
                     }
                 ) {
                     when (it) {
-                        HoldActions.ManualMode -> manualMode = !manualMode
+                        HoldActions.ManualMode -> {
+                            manualMode = !manualMode
+                        }
+
                         HoldActions.PlayPause -> {
                             playAnimation = !playAnimation
                             manualMode = false

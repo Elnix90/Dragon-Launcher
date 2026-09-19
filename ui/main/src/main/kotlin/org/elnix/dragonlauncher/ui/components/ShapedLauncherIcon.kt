@@ -298,13 +298,15 @@ private fun ClockLayer(
                         )
                     }
 
-                    ClockSublayerRole.Minute ->
+                    ClockSublayerRole.Minute -> {
                         sublayer.drawable.level =
                             ((minute - defaultMinute + 60) % 60)
+                    }
 
-                    ClockSublayerRole.Second ->
+                    ClockSublayerRole.Second -> {
                         sublayer.drawable.level =
                             (((second - defaultSecond + 60) % 60) * 10)
+                    }
 
                     else -> {}
                 }

@@ -145,7 +145,7 @@ public class LegacyBackupJsonMigrator {
 
                     val transformedData =
                         when (oldData) {
-                            is JSONObject ->
+                            is JSONObject -> {
                                 applyKeyMapping(
                                     ctx,
                                     oldData,
@@ -154,9 +154,15 @@ public class LegacyBackupJsonMigrator {
                                     newStores,
                                     migrated
                                 )
+                            }
 
-                            is JSONArray -> oldData
-                            else -> oldData
+                            is JSONArray -> {
+                                oldData
+                            }
+
+                            else -> {
+                                oldData
+                            }
                         }
 
                     writeToStore(ctx, targetStore, transformedData)
@@ -321,17 +327,21 @@ public class LegacyBackupJsonMigrator {
                         }
                     }
 
-                    else ->
+                    else -> {
                         logD(BACKUP_TAG) {
                             "Value should have been JSONArray or JSONObject but is ${if (value == null) null else value::class.simpleName} to ${store.name}"
                         }
+                    }
                 }
             }
 
             is JsonObjectSettingsStore -> {
                 val obj =
                     when (value) {
-                        is JSONObject -> if (value.length() > 0) value else null
+                        is JSONObject -> {
+                            if (value.length() > 0) value else null
+                        }
+
                         is JSONArray -> {
                             if (value.length() > 0) {
                                 val o = JSONObject()
@@ -353,7 +363,9 @@ public class LegacyBackupJsonMigrator {
                             }
                         }
 
-                        else -> null
+                        else -> {
+                            null
+                        }
                     }
                 if (obj != null) {
                     logD(BACKUP_TAG) { "Importing an object to ${store.name}" }

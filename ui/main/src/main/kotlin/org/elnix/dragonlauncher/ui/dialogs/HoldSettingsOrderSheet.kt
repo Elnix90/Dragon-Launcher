@@ -163,12 +163,19 @@ fun HoldSettingsOrderSheet(
                         DragonRow(
                             onClick = {
                                 when {
-                                    isPointSettings -> ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
-                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value ->
+                                    isPointSettings -> {
+                                        ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
+                                    }
+
+                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value -> {
                                         ctx.showToast(
                                             ctx.getString(R.string.cannot_add_more_than_x, MAX_ITEMS_ALLOWED)
                                         )
-                                    else -> entry.isSelected.value = !isSelected
+                                    }
+
+                                    else -> {
+                                        entry.isSelected.value = !isSelected
+                                    }
                                 }
                             },
                             modifier =

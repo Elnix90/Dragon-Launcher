@@ -92,8 +92,12 @@ public object ConnectivityUtils {
             val typeStr =
                 when (networkType) {
                     TelephonyManager.NETWORK_TYPE_LTE -> "LTE"
-                    20 -> "5G" // TelephonyManager.NETWORK_TYPE_NR = 20
+
+                    20 -> "5G"
+
+                    // TelephonyManager.NETWORK_TYPE_NR = 20
                     TelephonyManager.NETWORK_TYPE_HSDPA, TelephonyManager.NETWORK_TYPE_HSUPA -> "3G"
+
                     else -> "2G"
                 }
 

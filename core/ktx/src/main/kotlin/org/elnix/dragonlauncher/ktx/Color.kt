@@ -67,14 +67,20 @@ public fun String.toColor(): Color {
 
     val argb =
         when (hex.length) {
-            8 -> hex.toLong(16)
+            8 -> {
+                hex.toLong(16)
+            }
+
             6 -> {
                 val rgb = hex.toLong(16)
                 (0xFF000000 or rgb)
             }
-            else -> throw IllegalArgumentException(
-                "Invalid hex color format. Expected #RRGGBB or #AARRGGBB, got: #$hex"
-            )
+
+            else -> {
+                throw IllegalArgumentException(
+                    "Invalid hex color format. Expected #RRGGBB or #AARRGGBB, got: #$hex"
+                )
+            }
         }
 
     return Color(argb)

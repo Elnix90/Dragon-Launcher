@@ -176,7 +176,9 @@ fun ActionPickerDialog(
                                         showBluetoothCommandInput = true
                                     }
 
-                                    else -> onActionPicked(action)
+                                    else -> {
+                                        onActionPicked(action)
+                                    }
                                 }
                             }
                         )

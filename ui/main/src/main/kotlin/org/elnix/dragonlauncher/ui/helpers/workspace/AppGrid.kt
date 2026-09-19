@@ -125,24 +125,41 @@ fun AppGrid(
             when (drawerSettings.drawerAlign) {
                 DrawerAlign.Top -> {
                     when {
-                        gridSize == 1 && listState != null ->
+                        gridSize == 1 && listState != null -> {
                             !listState.canScrollBackward
-                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null ->
+                        }
+
+                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null -> {
                             !categoryGridState.canScrollBackward
-                        gridState != null ->
+                        }
+
+                        gridState != null -> {
                             !gridState.canScrollBackward
-                        else -> false
+                        }
+
+                        else -> {
+                            false
+                        }
                     }
                 }
 
                 DrawerAlign.Bottom -> {
                     when {
-                        gridSize == 1 && listState != null ->
+                        gridSize == 1 && listState != null -> {
                             !listState.canScrollForward
-                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null ->
+                        }
+
+                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null -> {
                             !categoryGridState.canScrollForward
-                        gridState != null -> !gridState.canScrollForward
-                        else -> false
+                        }
+
+                        gridState != null -> {
+                            !gridState.canScrollForward
+                        }
+
+                        else -> {
+                            false
+                        }
                     }
                 }
             }

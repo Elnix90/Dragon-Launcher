@@ -98,8 +98,14 @@ fun MainScreen(
     fun launchAction(point: Point) {
         // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
-            Action.GoParentNest -> nestNavigationService.goBack()
-            is Action.OpenNest -> nestNavigationService.goToNest(action.nestId)
+            Action.GoParentNest -> {
+                nestNavigationService.goBack()
+            }
+
+            is Action.OpenNest -> {
+                nestNavigationService.goToNest(action.nestId)
+            }
+
             else -> {
                 nestNavigationService.clearStack()
                 onLaunchAction(point)
@@ -139,7 +145,7 @@ fun MainScreen(
             loadDuration = holdSettings.longCLickSettingsDuration.toLong()
         )
 
-    /**
+    /*
      * 1. Tests if the current nest is the main, if not, go back one nest
      * 2. Activate the back actions
      */

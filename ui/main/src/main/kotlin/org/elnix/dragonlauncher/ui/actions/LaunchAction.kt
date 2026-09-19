@@ -32,9 +32,13 @@ internal fun launchAction(
     onShizukuCommand: (Action.RunAdbCommand) -> Unit
 ) {
     when (action) {
-        is Action.LaunchApp -> appLaunchViewModel.requestAppLaunch(action)
+        is Action.LaunchApp -> {
+            appLaunchViewModel.requestAppLaunch(action)
+        }
 
-        is Action.LaunchShortcut -> appLaunchViewModel.launchShortcut(action)
+        is Action.LaunchShortcut -> {
+            appLaunchViewModel.launchShortcut(action)
+        }
 
         is Action.OpenUrl -> {
             val i = Intent(Intent.ACTION_VIEW, action.url.toUri())
@@ -60,9 +64,13 @@ internal fun launchAction(
             }
         }
 
-        is Action.OpenAppDrawer -> onAppDrawer(action.workspaceId)
+        is Action.OpenAppDrawer -> {
+            onAppDrawer(action.workspaceId)
+        }
 
-        is Action.OpenDragonLauncherSettings -> onAppSettings(action.route)
+        is Action.OpenDragonLauncherSettings -> {
+            onAppSettings(action.route)
+        }
 
         Action.Lock -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
@@ -105,7 +113,9 @@ internal fun launchAction(
             }
         }
 
-        Action.ReloadApps -> drawerViewModel.reloadApps()
+        Action.ReloadApps -> {
+            drawerViewModel.reloadApps()
+        }
 
         Action.OpenRecentApps -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
@@ -116,7 +126,9 @@ internal fun launchAction(
             SystemControl.openRecentApps(ctx)
         }
 
-        is Action.RunAdbCommand -> onShizukuCommand(action)
+        is Action.RunAdbCommand -> {
+            onShizukuCommand(action)
+        }
 
         is Action.ToggleBluetooth -> {
             onShizukuCommand(
@@ -160,15 +172,19 @@ internal fun launchAction(
             )
         }
 
-        Action.KillLauncher -> Process.killProcess(Process.myPid())
+        Action.KillLauncher -> {
+            Process.killProcess(Process.myPid())
+        }
 
 //        TODO fix that on yoann's phone'
 
         // Handled by the main screen / settings
         // The widget action isn't meant to be part of the choosable actions, so nothing on launch
         // None do nothing, pretty straightforward
-        is Action.OpenNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> error(
-            "Action ${action::class.simpleName} shouldn't be handled here"
-        )
+        is Action.OpenNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> {
+            error(
+                "Action ${action::class.simpleName} shouldn't be handled here"
+            )
+        }
     }
 }

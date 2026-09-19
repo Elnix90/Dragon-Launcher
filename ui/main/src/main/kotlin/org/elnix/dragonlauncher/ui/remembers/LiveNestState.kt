@@ -202,7 +202,9 @@ fun rememberLiveNestControllerStack(
 
             // No need to remember since current is changing always
             when {
-                isRoot -> rootHit
+                isRoot -> {
+                    rootHit
+                }
 
                 // If a deeper level is active, FREEZE this level's hit
                 activeLevelIndex > idx -> {
@@ -210,7 +212,9 @@ fun rememberLiveNestControllerStack(
                     level.releaseHitRef
                 }
 
-                !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> null
+                !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> {
+                    null
+                }
 
                 else -> {
                     val graceDistance = level.hostPoint?.getLiveNestGraceDistance(defaultPoint, false)?.px

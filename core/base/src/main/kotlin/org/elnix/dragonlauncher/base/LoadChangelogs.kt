@@ -65,11 +65,26 @@ public suspend fun loadChangelogs(
 
                 lines.drop(2).forEach { line ->
                     when (line) {
-                        "[NOTE]" -> currentSection = note
-                        "[NEW]" -> currentSection = whatsNew
-                        "[IMPROVED]" -> currentSection = improved
-                        "[FIXED]" -> currentSection = fixed
-                        "[ISSUES]" -> currentSection = knownIssues
+                        "[NOTE]" -> {
+                            currentSection = note
+                        }
+
+                        "[NEW]" -> {
+                            currentSection = whatsNew
+                        }
+
+                        "[IMPROVED]" -> {
+                            currentSection = improved
+                        }
+
+                        "[FIXED]" -> {
+                            currentSection = fixed
+                        }
+
+                        "[ISSUES]" -> {
+                            currentSection = knownIssues
+                        }
+
                         else -> {
                             if (line.startsWith("* ")) {
                                 currentSection?.add(

@@ -245,7 +245,9 @@ public object DateUtils {
                 if (mins > 0) "${hours}h ${mins}m" else "${hours}h"
             }
 
-            else -> "$this min"
+            else -> {
+                "$this min"
+            }
         }
 
     public fun isValidTimeFormat(formatter: String): Boolean =

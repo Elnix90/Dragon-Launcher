@@ -252,7 +252,10 @@ internal class AppFilterIconPackInstaller(
         val xmlId = res.getIdentifier("appfilter", "xml", packageName)
         val rawId = res.getIdentifier("appfilter", "raw", packageName)
         return when {
-            xmlId != 0 -> ClosableXmlResourceParser(res.getXml(xmlId))
+            xmlId != 0 -> {
+                ClosableXmlResourceParser(res.getXml(xmlId))
+            }
+
             rawId != 0 -> {
                 val inStream = res.openRawResource(rawId).reader()
                 val parser =

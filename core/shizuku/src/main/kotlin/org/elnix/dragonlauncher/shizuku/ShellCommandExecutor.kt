@@ -69,7 +69,10 @@ public class ShellCommandExecutor {
             // Update currentDir
             currentDir =
                 when {
-                    targetDir == "/" || targetDir == "~" -> "/"
+                    targetDir == "/" || targetDir == "~" -> {
+                        "/"
+                    }
+
                     targetDir == ".." -> {
                         val parent = currentDir.removeSuffix("/").substringBeforeLast("/", "")
                         if (parent.isEmpty()) "/" else "$parent/"

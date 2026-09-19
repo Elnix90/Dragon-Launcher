@@ -77,7 +77,10 @@ fun ColorPickerButton(
                     ) {
                         if (buttonEnabled) {
                             when (button) {
-                                Random -> onColorPicked(randomColor(minLuminance = 0.2f))
+                                Random -> {
+                                    onColorPicked(randomColor(minLuminance = 0.2f))
+                                }
+
                                 Reset -> {
                                     onColorPicked(null)
                                 }
@@ -85,6 +88,7 @@ fun ColorPickerButton(
                                 Copy -> {
                                     if (currentColor != null) ctx.copyToClipboard(currentColor.toHexWithAlpha)
                                 }
+
                                 Paste -> {
                                     val newColor = pasteColorHexFromClipboard(ctx)
                                     newColor?.let { pasted ->

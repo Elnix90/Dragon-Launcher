@@ -217,14 +217,21 @@ fun DragonGroupScope.ColorPickerRow(
                     }
                 ) {
                     when (it) {
-                        Reset ->
+                        Reset -> {
                             // Reset to the provided default. When no default exists, fall back
                             // to the color the picker opened with instead of [Color.Unspecified],
                             // which cannot be drawn or animated safely.
                             actualColor = defaultColor.specifiedOrNull() ?: initialColorNotNull
+                        }
 
-                        Random -> actualColor = randomColor()
-                        Copy -> ctx.copyToClipboard(hexText)
+                        Random -> {
+                            actualColor = randomColor()
+                        }
+
+                        Copy -> {
+                            ctx.copyToClipboard(hexText)
+                        }
+
                         Paste -> {
                             val newColor = pasteColorHexFromClipboard(ctx)
                             newColor?.let { pasted ->
@@ -294,24 +301,27 @@ fun DragonGroupScope.ColorPickerRow(
                 Spacer(15.dp)
 
                 when (currentMode) {
-                    ColorPickerMode.Default ->
+                    ColorPickerMode.Default -> {
                         DefaultColorPicker(
                             actualColor = actualColor,
                             onColorSelected = { actualColor = it }
                         )
+                    }
 
-                    ColorPickerMode.Slider ->
+                    ColorPickerMode.Slider -> {
                         SliderColorPicker(
                             actualColor = actualColor,
                             initialColor = initialColorNotNull,
                             onColorSelected = { actualColor = it }
                         )
+                    }
 
-                    ColorPickerMode.Gradient ->
+                    ColorPickerMode.Gradient -> {
                         GradientColorPicker(
                             actualColor = actualColor,
                             onColorSelected = { actualColor = it }
                         )
+                    }
                 }
 
                 Spacer(12.dp)

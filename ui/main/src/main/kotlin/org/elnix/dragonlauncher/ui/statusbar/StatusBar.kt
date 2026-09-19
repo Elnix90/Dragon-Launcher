@@ -92,7 +92,7 @@ fun StatusBar(
     val view = LocalView.current
     val density = LocalDensity.current
 
-    /**
+    /*
      * Don't show the status bar if not in full screen.
      * For instance, when the system status bar is displayed
      */
@@ -679,33 +679,46 @@ fun StatusBarItem(
     previewMode: Boolean = false
 ): Unit =
     when (element) {
-        is StatusBar.Bandwidth -> StatusBarBandwidth(element)
+        is StatusBar.Bandwidth -> {
+            StatusBarBandwidth(element)
+        }
 
-        is StatusBar.Connectivity ->
+        is StatusBar.Connectivity -> {
             StatusBarConnectivity(
                 element = element,
                 previewMode = previewMode
             )
+        }
 
-        is StatusBar.Date ->
+        is StatusBar.Date -> {
             StatusBarDate(
                 element = element,
                 onAction = launchAction
             )
+        }
 
-        is StatusBar.Time ->
+        is StatusBar.Time -> {
             StatusBarTime(
                 element = element,
                 onAction = launchAction
             )
+        }
 
-        is StatusBar.Notifications -> StatusBarNotifications(element)
+        is StatusBar.Notifications -> {
+            StatusBarNotifications(element)
+        }
 
-        is StatusBar.Spacer -> Text(stringResource(R.string.spacer))
+        is StatusBar.Spacer -> {
+            Text(stringResource(R.string.spacer))
+        }
 
-        is StatusBar.Battery -> StatusBarBattery(element)
+        is StatusBar.Battery -> {
+            StatusBarBattery(element)
+        }
 
-        is StatusBar.NextAlarm -> StatusBarNextAlarm(element, forceShowIcon = previewMode)
+        is StatusBar.NextAlarm -> {
+            StatusBarNextAlarm(element, forceShowIcon = previewMode)
+        }
     }
 
 @Composable

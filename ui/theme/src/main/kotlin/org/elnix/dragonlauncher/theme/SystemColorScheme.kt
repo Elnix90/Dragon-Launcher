@@ -22,18 +22,21 @@ fun systemColorScheme(): ColorScheme {
 
     return remember(darkTheme, dynamicColors, context) {
         when {
-            dynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+            dynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                 if (darkTheme) {
                     dynamicDarkColorScheme(context)
                 } else {
                     dynamicLightColorScheme(context)
                 }
+            }
 
-            darkTheme ->
+            darkTheme -> {
                 DarkDragonColorScheme
+            }
 
-            else ->
+            else -> {
                 LightDragonColorScheme
+            }
         }
     }
 }

@@ -54,7 +54,7 @@ internal class ThemedDynamicCalendarIcon(
 
             var icon =
                 when (drawable) {
-                    is AdaptiveIconDrawable ->
+                    is AdaptiveIconDrawable -> {
                         StaticLauncherIcon(
                             foregroundLayer =
                                 StaticIconLayer(
@@ -64,8 +64,9 @@ internal class ThemedDynamicCalendarIcon(
                                 ),
                             backgroundLayer = TransparentLayer
                         )
+                    }
 
-                    else ->
+                    else -> {
                         StaticLauncherIcon(
                             foregroundLayer =
                                 StaticIconLayer(
@@ -75,6 +76,7 @@ internal class ThemedDynamicCalendarIcon(
                                 ),
                             backgroundLayer = TransparentLayer
                         )
+                    }
                 }
 
             for (transformation in transformations) {

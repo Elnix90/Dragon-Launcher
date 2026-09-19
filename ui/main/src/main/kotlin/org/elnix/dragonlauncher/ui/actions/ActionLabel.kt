@@ -77,13 +77,21 @@ fun actionLabel(
             }
         }
 
-        is Action.OpenUrl -> action.url
+        is Action.OpenUrl -> {
+            action.url
+        }
 
-        is Action.OpenAppDrawer -> stringResource(R.string.app_drawer) + if (action.workspaceId != null) " (${action.workspaceId})" else ""
-        is Action.OpenDragonLauncherSettings -> stringResource(R.string.dragon_launcher_settings) + " " + stringResource(action.route.resId)
+        is Action.OpenAppDrawer -> {
+            stringResource(R.string.app_drawer) + if (action.workspaceId != null) " (${action.workspaceId})" else ""
+        }
 
-        is Action.OpenFile ->
+        is Action.OpenDragonLauncherSettings -> {
+            stringResource(R.string.dragon_launcher_settings) + " " + stringResource(action.route.resId)
+        }
+
+        is Action.OpenFile -> {
             ctx.getFilePathFromUri(action.uri.toUri())
+        }
 
         is Action.OpenNest -> {
             pointsService.nests.value[action.nestId]
@@ -92,8 +100,12 @@ fun actionLabel(
                 ?: stringResource(R.string.open_nest)
         }
 
-        is Action.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
+        is Action.RunAdbCommand -> {
+            action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
+        }
 
-        else -> stringResource(action.resId)
+        else -> {
+            stringResource(action.resId)
+        }
     }
 }

@@ -318,7 +318,6 @@ public sealed class Action {
                     OpenRecentApps -> extraColors.openRecentApps
                     GoParentNest -> extraColors.goParentNest
                     KillLauncher -> Color.Red
-
                     None, null -> Color.Unspecified
                 }
 

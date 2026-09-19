@@ -55,11 +55,15 @@ fun rememberSweepAngle(): SweepAngleState {
             when (val wrapped = cumulativeAngle % 720f) { // fold into -720..720
                 // 0..360 -> clockwise fill: 0 -> 360
                 in 0f..360f -> wrapped
+
                 // 360..720 -> continue clockwise: start unloading anticlockwise -360 -> 0
                 in 360f..720f -> wrapped - 720f
+
                 // mirror for anticlockwise
                 in -360f..0f -> wrapped
+
                 in -720f..-360f -> wrapped + 720f
+
                 else -> wrapped
             }
         },

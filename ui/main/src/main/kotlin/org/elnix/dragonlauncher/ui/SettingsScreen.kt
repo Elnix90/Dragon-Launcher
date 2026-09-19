@@ -462,7 +462,9 @@ fun SettingsScreen(
                                                     toast?.show()
                                                 }
 
-                                                else -> isDebugModeEnabled = true
+                                                else -> {
+                                                    isDebugModeEnabled = true
+                                                }
                                             }
                                         }
                             )

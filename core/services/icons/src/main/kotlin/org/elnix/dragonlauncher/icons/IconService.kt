@@ -132,9 +132,7 @@ public class IconService internal constructor(
 
         iconPacksUpdated.tryEmit(Unit)
 
-        /**
-         * Icon Settings reactive update to keep providers up-to-date
-         */
+        // Icon Settings reactive update to keep providers up-to-date
         scope.launch {
             combine(
                 iconSettingsRepository.settings.distinctUntilChanged(),
@@ -477,7 +475,9 @@ public class IconService internal constructor(
                                 ShortcutIconCache[cacheKey]
                             }
 
-                            else -> null
+                            else -> {
+                                null
+                            }
                         }
                     }
                 } else {

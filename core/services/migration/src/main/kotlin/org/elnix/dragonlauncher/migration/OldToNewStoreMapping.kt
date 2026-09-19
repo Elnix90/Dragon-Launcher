@@ -314,16 +314,25 @@ internal object OldToNewStoreMapping {
                         mapOf(
                             "PAUSED_APPS_LIST" to { value, _ ->
                                 when (value) {
-                                    is JSONArray -> value
-                                    is List<*> -> JSONArray(value)
-                                    is String ->
+                                    is JSONArray -> {
+                                        value
+                                    }
+
+                                    is List<*> -> {
+                                        JSONArray(value)
+                                    }
+
+                                    is String -> {
                                         try {
                                             JSONArray(value)
                                         } catch (_: Exception) {
                                             JSONArray()
                                         }
+                                    }
 
-                                    else -> JSONArray()
+                                    else -> {
+                                        JSONArray()
+                                    }
                                 }
                             }
                         )
@@ -520,11 +529,17 @@ internal object OldToNewStoreMapping {
             result.put(
                 newKey,
                 when (key) {
-                    "holdToActivateSettingsTolerance" ->
+                    "holdToActivateSettingsTolerance" -> {
                         (value as? Number)?.toFloat()?.roundToInt() ?: value
+                    }
 
-                    "holdMenuEntries2" -> migrateHoldMenuEntriesString(value.toString()) ?: value
-                    else -> value
+                    "holdMenuEntries2" -> {
+                        migrateHoldMenuEntriesString(value.toString()) ?: value
+                    }
+
+                    else -> {
+                        value
+                    }
                 }
             )
         }
@@ -639,7 +654,9 @@ internal object OldToNewStoreMapping {
                 }
             }
 
-            else -> return null
+            else -> {
+                return null
+            }
         }
         return if (result.length() > 0) result else null
     }
@@ -693,7 +710,9 @@ internal object OldToNewStoreMapping {
                     }
                 }
 
-                else -> cleaned.put(key, entry.get(key))
+                else -> {
+                    cleaned.put(key, entry.get(key))
+                }
             }
         }
         return cleaned

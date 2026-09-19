@@ -239,7 +239,9 @@ fun MainScreeLayersTab(
                                     }
                                 }
 
-                                else -> null
+                                else -> {
+                                    null
+                                }
                             }
                         }
                     }

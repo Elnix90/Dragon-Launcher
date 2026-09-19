@@ -337,5 +337,6 @@ public val NavKey.halfTransparentScreen: Boolean
         when (this) {
             NavigationRoute.PointsSettings,
             NavigationRoute.NestEdit -> true
+
             else -> false
         }

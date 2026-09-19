@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.graphics.shapes.RoundedPolygon
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.ktx.radians
 import org.elnix.dragonlauncher.material.shapes.toShape
@@ -42,24 +41,68 @@ public fun IconShape.resolveShape(): Shape {
     if (this is IconShape.Random) return IconShape.allShapesWithoutRandom.random().resolveShape()
     return ShapesCache.getOrCompute(this) {
         when (this) {
-            IconShape.PlatformDefault -> PlatformShape
-            IconShape.Square -> SquareShape
-            IconShape.RightSquare -> RoundedCornerShape(0)
-            IconShape.RoundedSquare -> RoundedCornerShape(25)
-            IconShape.Pebble -> PebbleShape
-            IconShape.Squircle -> SquircleShape
-            IconShape.Teardrop -> TeardropShape
-            IconShape.Circle -> CircleShape
-            IconShape.Triangle -> TriangleShape
-            IconShape.Pentagon -> PentagonShape
-            IconShape.Decagon -> DecagonShape
-            IconShape.Heptagon -> HeptagonShape
-            IconShape.Hexagon -> HexagonShape
-            IconShape.Octagon -> OctagonShape
-            IconShape.Heart -> HeartShape
+            IconShape.PlatformDefault -> {
+                PlatformShape
+            }
 
-            /** Compute first the [RoundedPolygon] and then use the [toShape] from the library  I copied to convert it to a shape. */
-            else ->
+            IconShape.Square -> {
+                SquareShape
+            }
+
+            IconShape.RightSquare -> {
+                RoundedCornerShape(0)
+            }
+
+            IconShape.RoundedSquare -> {
+                RoundedCornerShape(25)
+            }
+
+            IconShape.Pebble -> {
+                PebbleShape
+            }
+
+            IconShape.Squircle -> {
+                SquircleShape
+            }
+
+            IconShape.Teardrop -> {
+                TeardropShape
+            }
+
+            IconShape.Circle -> {
+                CircleShape
+            }
+
+            IconShape.Triangle -> {
+                TriangleShape
+            }
+
+            IconShape.Pentagon -> {
+                PentagonShape
+            }
+
+            IconShape.Decagon -> {
+                DecagonShape
+            }
+
+            IconShape.Heptagon -> {
+                HeptagonShape
+            }
+
+            IconShape.Hexagon -> {
+                HexagonShape
+            }
+
+            IconShape.Octagon -> {
+                OctagonShape
+            }
+
+            IconShape.Heart -> {
+                HeartShape
+            }
+
+            // Compute first the [RoundedPolygon] and then use the [toShape] from the library  I copied to convert it to a shape.
+            else -> {
                 when (this) {
                     IconShape.Slanted -> MaterialShapes.Slanted
                     IconShape.Arch -> MaterialShapes.Arch
@@ -101,6 +144,7 @@ public fun IconShape.resolveShape(): Shape {
 //                    perVertexRounding = this.perVertexRounding
 //                )
                 }.toShape()
+            }
         }
     }
 }

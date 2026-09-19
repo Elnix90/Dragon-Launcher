@@ -128,7 +128,7 @@ fun MainScreenOverlay(
             Animatable(Offset.Zero, Offset.VectorConverter)
         }
 
-    /**
+    /*
      * 1. selects the hovered point in the point service
      * 2. animates the offset whenever the hovered point changes to this new point offset using [Point.getPos]
      */
@@ -149,7 +149,7 @@ fun MainScreenOverlay(
         )
     }
 
-    /**
+    /*
      * This prevents the animated offset to always coming from the center, but start animating from the current pos
      * Which should be always non-null id a point is selected.
      *
@@ -367,16 +367,21 @@ fun MainScreenOverlay(
                     val effectiveCurrentPos: Offset =
                         when {
                             // Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest
-                            !isHighestController ->
+                            !isHighestController -> {
                                 liveNestControllersStack[idx + 1].liveNestCenter!!
+                            }
 
-                            linePreviewSnapToAction && animationWhenSnapping && liveNestSelectedPoint != null ->
+                            linePreviewSnapToAction && animationWhenSnapping && liveNestSelectedPoint != null -> {
                                 animatedCurrent.value + liveNestCenter
+                            }
 
-                            linePreviewSnapToAction && liveNestSelectedPoint != null ->
+                            linePreviewSnapToAction && liveNestSelectedPoint != null -> {
                                 liveNestSelectedPoint.getPos() + liveNestCenter
+                            }
 
-                            else -> current
+                            else -> {
+                                current
+                            }
                         }
 
                     val sweepAngle: Float = controller.sweepAngleState.sweepAngle()
@@ -391,17 +396,21 @@ fun MainScreenOverlay(
                      */
                     val effectiveSweepAngle: Int =
                         when {
-                            !isHighestController ->
+                            !isHighestController -> {
                                 liveNestControllersStack[idx + 1]
                                     .hostPoint!!
                                     .getPos()
                                     .angleDeg()
                                     .toInt()
+                            }
 
-                            useSnappedAngleOrRealAngle && liveNestSelectedPoint != null ->
+                            useSnappedAngleOrRealAngle && liveNestSelectedPoint != null -> {
                                 liveNestSelectedPoint.getPos().angleDeg().toInt()
+                            }
 
-                            else -> sweepAngle.toInt()
+                            else -> {
+                                sweepAngle.toInt()
+                            }
                         }
 
                     val pickedRememberShapeAngle = remember(angleObject.shape) { angleObject.shape.resolveShape() }

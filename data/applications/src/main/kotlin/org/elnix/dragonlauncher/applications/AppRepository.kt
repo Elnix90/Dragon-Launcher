@@ -294,16 +294,37 @@ internal class AppRepositoryImpl(
 
                 val workspaceFiltered =
                     when (workspaceViewMode) {
-                        WorkspaceViewMode.Added -> apps.filter { it.key in appIds }
-                        WorkspaceViewMode.Removed -> apps.filter { it.key in removedAppIds }
+                        WorkspaceViewMode.Added -> {
+                            apps.filter { it.key in appIds }
+                        }
+
+                        WorkspaceViewMode.Removed -> {
+                            apps.filter { it.key in removedAppIds }
+                        }
+
                         WorkspaceViewMode.Default -> {
                             val base =
                                 when (workspace.type) {
-                                    All -> apps
-                                    Custom -> emptyList()
-                                    User -> apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
-                                    System -> apps.filter { it.isSystem }
-                                    Work -> apps.filter { it.isWork && it.isLaunchable }
+                                    All -> {
+                                        apps
+                                    }
+
+                                    Custom -> {
+                                        emptyList()
+                                    }
+
+                                    User -> {
+                                        apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
+                                    }
+
+                                    System -> {
+                                        apps.filter { it.isSystem }
+                                    }
+
+                                    Work -> {
+                                        apps.filter { it.isWork && it.isLaunchable }
+                                    }
+
                                     Private -> {
                                         apps.filter { it.isPrivate && it.isLaunchable }
                                     }

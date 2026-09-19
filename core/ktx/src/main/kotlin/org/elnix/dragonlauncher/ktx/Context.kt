@@ -232,7 +232,10 @@ public fun Context.findFragmentActivity(): FragmentActivity? {
                 return ctx
             }
 
-            is ContextWrapper -> ctx = ctx.baseContext
+            is ContextWrapper -> {
+                ctx = ctx.baseContext
+            }
+
             else -> {
                 logD(SECURITY_SERVICE) { "Context is not ContextWrapper, cannot unwrap further" }
                 return null

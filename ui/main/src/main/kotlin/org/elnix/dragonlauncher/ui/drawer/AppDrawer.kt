@@ -157,9 +157,7 @@ fun AppDrawerScreen(
             pageCount = { activeWorkspaces.size }
         )
 
-    /**
-     * Updates the visible workspace
-     */
+    // Updates the visible workspace
     LaunchedEffect(activeWorkspaces, selectedWorkspaceId) {
         if (activeWorkspaces.isEmpty()) return@LaunchedEffect
 
@@ -198,17 +196,34 @@ fun AppDrawerScreen(
 
     fun launchDrawerAction(action: DrawerActions) {
         when (action) {
-            Close -> navigator.onBack()
-            ToggleKb -> toggleKeyboard()
-            CloseKb -> closeKeyboard()
-            OpenKb -> openKeyboard()
+            Close -> {
+                navigator.onBack()
+            }
 
-            Clear -> searchQuery = ""
+            ToggleKb -> {
+                toggleKeyboard()
+            }
+
+            CloseKb -> {
+                closeKeyboard()
+            }
+
+            OpenKb -> {
+                openKeyboard()
+            }
+
+            Clear -> {
+                searchQuery = ""
+            }
+
             SearchWeb -> {
                 if (searchQuery.isNotBlank()) ctx.openSearch(searchQuery)
             }
 
-            OpenFirstApp -> haveToLaunchFirstApp = true
+            OpenFirstApp -> {
+                haveToLaunchFirstApp = true
+            }
+
             None, Disabled -> {}
         }
     }
@@ -500,7 +515,7 @@ fun AppDrawerScreen(
                                 searchQuery.first() == drawerSettings.disableAutoLaunchWhenFirstCharIs.first()
                         )
 
-                if (haveToLaunchFirstApp || autoLaunch && apps.isNotEmpty()) {
+                if ((haveToLaunchFirstApp || autoLaunch) && apps.isNotEmpty()) {
                     onLaunchAction(apps.first().action)
                 }
             }
@@ -537,9 +552,7 @@ fun AppDrawerScreen(
         }
     }
 
-    /**
-     * Toolbars column, fills the whole size and sits over the apps boxes
-     */
+    // Toolbars column, fills the whole size and sits over the apps boxes
     Column(
         modifier =
             Modifier
@@ -550,7 +563,9 @@ fun AppDrawerScreen(
 
         toolbarsOrder.forEach { toolbar ->
             when (toolbar) {
-                Spacer -> Spacer(Modifier.weight(1f))
+                Spacer -> {
+                    Spacer(Modifier.weight(1f))
+                }
 
                 RecentlyUsed -> {
                     AnimatedVisibility(

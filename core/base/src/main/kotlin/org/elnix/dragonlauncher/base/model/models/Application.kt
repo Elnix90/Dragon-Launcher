@@ -236,7 +236,9 @@ public abstract class Application : Comparable<Application> {
                     )
                 }
 
-                else -> null
+                else -> {
+                    null
+                }
             }
 
         public fun getPackageVersionName(ctx: Context, packageName: String): String? =

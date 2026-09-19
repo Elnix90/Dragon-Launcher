@@ -15,7 +15,10 @@ internal class SystemIconProvider(
                 val application = appRepository.fromAction(action) ?: return null
                 application.loadIcon(themedIcons, tint)
             }
-            else -> null
+
+            else -> {
+                null
+            }
         }
     }
 }

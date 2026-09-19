@@ -289,9 +289,13 @@ public class PointsViewModel
                     staticIcon.render(size, settings).asImageBitmap()
                 }
 
-                is StaticLauncherIcon -> icon.render(size, settings).asImageBitmap()
+                is StaticLauncherIcon -> {
+                    icon.render(size, settings).asImageBitmap()
+                }
 
-                null -> null
+                null -> {
+                    null
+                }
             }
         }
 
@@ -324,7 +328,9 @@ public class PointsViewModel
                     ImageUtils.loadDrawableAsBitmap(badgeIcon.drawable, size, size).asImageBitmap()
                 }
 
-                else -> null
+                else -> {
+                    null
+                }
             }
         }
 

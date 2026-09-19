@@ -111,7 +111,10 @@ fun DrawScope.unavailableAction(
         (
             if (point.action is Action.LaunchApp) {
                 when ((point.action as Action.LaunchApp).profile.type) {
-                    Profile.Type.Personal -> null
+                    Profile.Type.Personal -> {
+                        null
+                    }
+
                     Profile.Type.Work -> {
                         DecorationCache.getOrCompute(3) {
                             drawParams.ctx.loadDrawableResAsImageBitmap(

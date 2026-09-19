@@ -88,7 +88,10 @@ fun SelectedPointsTopBar(
     ) { previewToShow ->
         @Suppress("UnusedExpression")
         when (previewToShow) {
-            null -> null
+            null -> {
+                null
+            }
+
             true -> {
                 val previewPointId = frozenIds.firstOrNull() ?: return@AnimatedContent
                 PointPreviewTitle(

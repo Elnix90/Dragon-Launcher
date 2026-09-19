@@ -71,8 +71,14 @@ fun WelcomeScreen(
 
     val currentPage = pagerState.currentPage
     val pagerTransparency = when {
-        currentPage < PAGES_NUMBER - 2 -> 1f
-        currentPage == PAGES_NUMBER - 1 -> 0f
+        currentPage < PAGES_NUMBER - 2 -> {
+            1f
+        }
+
+        currentPage == PAGES_NUMBER - 1 -> {
+            0f
+        }
+
         else -> {
             1f - pagerState.currentPageOffsetFraction * 2
         }
@@ -92,18 +98,26 @@ fun WelcomeScreen(
                 .padding(horizontal = 24.dp)
         ) { displayPage ->
             when (displayPage) {
-                0 -> WelcomePageIntro(pagerState.currentPage < 2, welcomeViewModel::setAsSeen)
-                1 -> WelcomePageTutorial()
-                2 -> WelcomePageSettings(
-                    onEnterSettings = {
-                        welcomeViewModel.setAsSeen()
+                0 -> {
+                    WelcomePageIntro(pagerState.currentPage < 2, welcomeViewModel::setAsSeen)
+                }
 
-                        // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
-                        initializationViewModel.checkLauncherInitialization()
-                        navigator.popBackMainScreen()
-                        navigator.go(NavigationRoute.PointsSettings)
-                    }
-                )
+                1 -> {
+                    WelcomePageTutorial()
+                }
+
+                2 -> {
+                    WelcomePageSettings(
+                        onEnterSettings = {
+                            welcomeViewModel.setAsSeen()
+
+                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+                            initializationViewModel.checkLauncherInitialization()
+                            navigator.popBackMainScreen()
+                            navigator.go(NavigationRoute.PointsSettings)
+                        }
+                    )
+                }
 
                 3 -> {
                     LaunchedEffect(pagerState.currentPage) {

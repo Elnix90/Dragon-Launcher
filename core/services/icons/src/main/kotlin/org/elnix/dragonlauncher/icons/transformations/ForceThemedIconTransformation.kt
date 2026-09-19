@@ -15,17 +15,26 @@ internal class ForceThemedIconTransformation : LauncherIconTransformation {
 
     private fun asThemed(layer: LauncherIconLayer): LauncherIconLayer =
         when (layer) {
-            is ColorLayer -> layer.copy(tint = 0)
-            is StaticIconLayer ->
+            is ColorLayer -> {
+                layer.copy(tint = 0)
+            }
+
+            is StaticIconLayer -> {
                 layer.copy(
                     tint = 0,
                     icon = layer.icon,
                     scale = layer.scale / 1.2f
                 )
-            is TextLayer ->
+            }
+
+            is TextLayer -> {
                 layer.copy(
                     tint = 0
                 )
-            else -> layer
+            }
+
+            else -> {
+                layer
+            }
         }
 }

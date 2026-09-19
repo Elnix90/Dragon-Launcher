@@ -238,7 +238,9 @@ fun WidgetsTab(
                             showNestPickerDialog = true
                         }
 
-                        WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.resetAnimated(scope)
+                        WidgetsToolsAddNestRemove.ResetSystem -> {
+                            manipulationSystem.resetAnimated(scope)
+                        }
 
                         WidgetsToolsAddNestRemove.Remove -> {
                             selected?.let { removeWidget(it) }
@@ -329,7 +331,7 @@ fun WidgetsTab(
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            /**
+            /*
              * The widgets and the grid, displayed first, to keep access to the buttons
              * The pointerInput is used to disable any widgets on click outside
              */
@@ -368,7 +370,7 @@ fun WidgetsTab(
             ) {
                 val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
-                /**
+                /*
                  * Draw the grid of snapping that fills the entire screen
                  */
                 Box(

@@ -444,8 +444,13 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                 pointsService.deselectAll()
                             }
 
-                            EnterNest -> error("Shouldn't happen")
-                            ResetSystem -> manipulationSystem.resetAnimated(scope)
+                            EnterNest -> {
+                                error("Shouldn't happen")
+                            }
+
+                            ResetSystem -> {
+                                manipulationSystem.resetAnimated(scope)
+                            }
                         }
                     }
 
@@ -454,7 +459,9 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                         checked = {
                             when (it) {
                                 ShapesEditTools.SnapOffset -> snapShapesOffset
+
                                 ShapesEditTools.SnapCenter -> snapShapesCenter
+
                                 // ShapesEditTools.SnapScale -> snapShapesScale
                                 ShapesEditTools.SnapAngle -> snapShapeAngle
                             }
@@ -462,7 +469,9 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                     ) {
                         when (it) {
                             ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
+
                             ShapesEditTools.SnapCenter -> snapShapesCenter = !snapShapesCenter
+
                             // ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
                             ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
                         }

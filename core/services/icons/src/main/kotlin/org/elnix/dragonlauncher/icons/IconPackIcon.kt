@@ -133,22 +133,28 @@ public data class ClockIcon(
 
 public fun icon(entity: IconEntity): IconPackComponent? {
     return when (entity.type) {
-        "iconback" ->
+        "iconback" -> {
             IconBack(
                 drawable = entity.drawable ?: return null,
                 iconPack = entity.iconPack
             )
-        "iconupon" ->
+        }
+
+        "iconupon" -> {
             IconUpon(
                 drawable = entity.drawable ?: return null,
                 iconPack = entity.iconPack
             )
-        "iconmask" ->
+        }
+
+        "iconmask" -> {
             IconMask(
                 drawable = entity.drawable ?: return null,
                 iconPack = entity.iconPack
             )
-        "app" ->
+        }
+
+        "app" -> {
             AppIcon(
                 drawable = entity.drawable ?: return null,
                 iconPack = entity.iconPack,
@@ -157,7 +163,9 @@ public fun icon(entity: IconEntity): IconPackComponent? {
                 themed = entity.themed,
                 name = entity.name
             )
-        "calendar" ->
+        }
+
+        "calendar" -> {
             CalendarIcon(
                 drawables = entity.drawable?.split(",") ?: return null,
                 iconPack = entity.iconPack,
@@ -166,6 +174,8 @@ public fun icon(entity: IconEntity): IconPackComponent? {
                 activityName = entity.activityName,
                 name = entity.name
             )
+        }
+
         "clock" -> {
             val config = JSONObject(entity.extras ?: return null)
             ClockIcon(
@@ -186,7 +196,10 @@ public fun icon(entity: IconEntity): IconPackComponent? {
                     )
             )
         }
-        else -> null
+
+        else -> {
+            null
+        }
     }
 }
 
