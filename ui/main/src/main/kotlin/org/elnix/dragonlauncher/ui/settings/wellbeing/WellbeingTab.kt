@@ -66,14 +66,25 @@ fun WellbeingTab(
     var showAppPicker by remember { mutableStateOf(false) }
     var showPermissionDialog by remember { mutableStateOf(false) }
     var showOverlayPermissionDialog by remember { mutableStateOf(false) }
+    // Remembers that the user asked for overlay reminders while the
+    // overlay permission was missing, so the toggle can be restored
+    // once the permission is granted.
+    var pendingReminderEnable by remember { mutableStateOf(false) }
 
     val allApps by drawerViewModel.allApps.collectAsState()
     val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
-    LaunchedEffect(reminderEnabled, reminderMode) {
-        if (reminderEnabled && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
-            WellbeingSettingsStore.reminderEnabled.set(ctx, false)
-            showOverlayPermissionDialog = true
+    val canShowOverlay = Settings.canDrawOverlays(ctx)
+    LaunchedEffect(reminderEnabled, reminderMode, canShowOverlay) {
+        if (reminderMode == ReminderMode.Overlay && !canShowOverlay) {
+            if (reminderEnabled) {
+                WellbeingSettingsStore.reminderEnabled.set(ctx, false)
+                // The toggle itself already showed the dialog in this case.
+                if (!pendingReminderEnable) showOverlayPermissionDialog = true
+            }
+        } else if (pendingReminderEnable && canShowOverlay) {
+            pendingReminderEnable = false
+            WellbeingSettingsStore.reminderEnabled.set(ctx, true)
         }
     }
 
@@ -94,12 +105,10 @@ fun WellbeingTab(
                 WellbeingSettingsStore.guiltModeEnabled,
                 enabled = socialMediaPauseEnabled
             ) { newValue ->
-                if (newValue && hasUsageStatsPermission) {
+                // Setting() persists the value itself afterwards; only
+                // guide the user to the system settings when needed.
+                if (newValue && !hasUsageStatsPermission) {
                     showPermissionDialog = true
-                } else {
-                    scope.launch {
-                        WellbeingSettingsStore.guiltModeEnabled.set(ctx, newValue)
-                    }
                 }
             }
             Setting(WellbeingSettingsStore.pauseDurationSeconds, enabled = socialMediaPauseEnabled)
@@ -111,6 +120,7 @@ fun WellbeingTab(
                 enabled = socialMediaPauseEnabled
             ) { newValue ->
                 if (newValue && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
+                    pendingReminderEnable = true
                     showOverlayPermissionDialog = true
                 }
             }
@@ -242,7 +252,10 @@ fun WellbeingTab(
 
     if (showOverlayPermissionDialog) {
         AlertDialog(
-            onDismissRequest = { showOverlayPermissionDialog = false },
+            onDismissRequest = {
+                pendingReminderEnable = false
+                showOverlayPermissionDialog = false
+            },
             title = { Text(stringResource(R.string.overlay_permission_required)) },
             text = { Text(stringResource(R.string.overlay_permission_description)) },
             confirmButton = {
@@ -263,7 +276,12 @@ fun WellbeingTab(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showOverlayPermissionDialog = false }) {
+                TextButton(
+                    onClick = {
+                        pendingReminderEnable = false
+                        showOverlayPermissionDialog = false
+                    }
+                ) {
                     Text(stringResource(R.string.cancel))
                 }
             }
