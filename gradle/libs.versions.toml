@@ -99,6 +99,7 @@ androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecyc
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-compose-base = { group = "io.coil-kt", name = "coil-compose-base", version.ref = "coil" }
+coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 core = { module = "androidx.core:core", version.ref = "androidx-core" }
