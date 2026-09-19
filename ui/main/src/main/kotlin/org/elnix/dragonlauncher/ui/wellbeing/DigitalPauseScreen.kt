@@ -30,6 +30,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -120,6 +122,11 @@ fun DigitalPauseScreen(
     var currentPhraseIndex by remember { mutableIntStateOf(0) }
 
     val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
+    val scrollState = rememberScrollState()
+    // Shrink the lotus once the choice is shown so the action buttons
+    // ("No, I'll pass" / "Yes, open anyway") stay visible on small screens,
+    // especially when the guilt stats card grows (yearly line).
+    val lotusSize = if (showChoice || showTimePicker) 120.dp else 220.dp
 
     // List of sentence to make user feel bad
     val breathingPhrases =
@@ -165,11 +172,12 @@ fun DigitalPauseScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .verticalScroll(scrollState)
                         .systemBarsPadding()
                         .padding(24.dp)
             ) {
                 AnimatedLotus(
-                    modifier = Modifier.size(220.dp),
+                    modifier = Modifier.size(lotusSize),
                     isPulsing = !countdownFinished
                 )
 
