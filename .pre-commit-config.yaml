@@ -1,4 +1,4 @@
-default_install_hook_types: [pre-commit, commit-msg]
+default_install_hook_types: [ pre-commit, commit-msg ]
 
 repos:
   # Generic hooks
@@ -6,20 +6,14 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
-        args: ['--markdown-linebreak-ext=md']
+        args: [ '--markdown-linebreak-ext=md' ]
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-xml
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
       - id: mixed-line-ending
-        args: ['--fix=lf']
-
-  # Security: secret detection
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.2
-    hooks:
-      - id: gitleaks
+        args: [ '--fix=lf' ]
 
   # Kotlin lint/format
   - repo: local
@@ -30,19 +24,23 @@ repos:
         language: system
         files: '\.kt$'
 
-#  # Android string resource references validation
-#  - repo: local
-#    hooks:
-#      - id: check-string-refs
-#        name: Check string resource references
-#        entry: scripts/check-string-refs.sh
-#        language: script
-#        files: '\.(kt|xml)$'
+  # Security: secret detection
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  # Codespell: typo detection
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        args: [ "--quiet-level=2" ]
 
   # Commit messages (Conventional Commits)
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.0.0
     hooks:
       - id: conventional-pre-commit
-        stages: [commit-msg]
-        args: [feat, fix, chore, refactor, perf, style, docs, test, ci, build]
+        stages: [ commit-msg ]
+        args: [ "--strict", "feat", "fix", "chore", "refactor", "perf", "style", "docs", "test", "ci", "build" ]
