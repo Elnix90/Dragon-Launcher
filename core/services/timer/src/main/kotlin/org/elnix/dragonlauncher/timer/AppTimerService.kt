@@ -63,7 +63,7 @@ public class AppTimerService : Service() {
         public const val EXTRA_TIME_LIMIT_MINUTES: String = "extra_time_limit_min"
 
         public const val ACTION_STOP: String = "org.elnix.dragonlauncher.STOP_TIMER"
-        public const val SHOW_LAUNCHER: String = "com.elnix.dragonlauncher.SHOW_LAUNCHER"
+        public const val SHOW_LAUNCHER: String = "org.elnix.dragonlauncher.SHOW_LAUNCHER"
         public const val EXTRA_APP_NAME: String = "extra_app_name"
 
         public fun start(
