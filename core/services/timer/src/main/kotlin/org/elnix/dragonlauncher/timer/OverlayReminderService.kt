@@ -155,6 +155,18 @@ public class OverlayReminderService : Service() {
 
                 val isWarning = mode == "time_warning"
 
+                // Don't pop an empty card: if every stat is disabled (or its
+                // text is missing), a plain reminder has nothing to say.
+                // Warnings always carry the countdown header, so keep them.
+                val hasContent =
+                    (showSession && sessionTime.isNotEmpty()) ||
+                        (showToday && todayTime.isNotEmpty()) ||
+                        (showRemaining && hasLimit)
+                if (!isWarning && !hasContent) {
+                    stopSelf()
+                    return@launch
+                }
+
                 windowManager = applicationContext.getSystemService(WINDOW_SERVICE) as WindowManager
 
                 // Build the view hierarchy
