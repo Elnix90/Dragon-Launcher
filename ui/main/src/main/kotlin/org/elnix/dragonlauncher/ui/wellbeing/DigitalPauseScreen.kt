@@ -768,18 +768,18 @@ data class AppUsageStats(
 private fun getUsageStats(ctx: Context, packageName: String): AppUsageStats? =
     try {
         val usageStatsManager = ctx.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val calendar = Calendar.getInstance()
-        val todayStart =
-            calendar
-                .apply {
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                }.timeInMillis
         val now = System.currentTimeMillis()
+        val todayCal =
+            Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+        val todayStart = todayCal.timeInMillis
         val todayStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, todayStart, now)
         val todayMinutes = todayStats.filter { it.packageName == packageName }.sumOf { it.totalTimeInForeground } / 60000
-        val yesterdayStart = calendar.apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
+        val yesterdayStart = (todayCal.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
         val yesterdayStats =
             usageStatsManager.queryUsageStats(
                 UsageStatsManager.INTERVAL_DAILY,
