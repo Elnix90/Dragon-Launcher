@@ -80,6 +80,7 @@ import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
+import coil.request.repeatCount
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -449,8 +450,8 @@ private fun LotusGif(gifSize: Dp) {
                     Brush.radialGradient(
                         colors =
                             listOf(
-                                ZenPurple.copy(alpha = 0.4f),
-                                ZenTeal.copy(alpha = 0.12f),
+                                ZenPurple.copy(alpha = 0.45f),
+                                Color(0xFF8E6BE8).copy(alpha = 0.15f),
                                 Color.Transparent
                             ),
                         center = center,
@@ -469,7 +470,8 @@ private fun LotusGif(gifSize: Dp) {
                         } else {
                             GifDecoder.Factory()
                         }
-                    ).crossfade(false)
+                    ).repeatCount(0)
+                    .crossfade(false)
                     .build(),
             contentDescription = null,
             modifier = Modifier.fillMaxSize()
