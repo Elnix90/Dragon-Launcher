@@ -56,7 +56,7 @@ public class AppTimerService : Service() {
         // Reminder mode
         public const val EXTRA_REMINDER_ENABLED: String = "extra_reminder_enabled"
         public const val EXTRA_REMINDER_INTERVAL_MINUTES: String = "extra_reminder_interval_min"
-        public const val EXTRA_REMINDER_MODE: String = "extra_reminder_mode" // "notification" | "overlay"
+        public const val EXTRA_REMINDER_MODE: String = "extra_reminder_mode" // "Notification" | "Overlay"
 
         // Return-to-launcher mode
         public const val EXTRA_TIME_LIMIT_ENABLED: String = "extra_time_limit_enabled"
@@ -337,7 +337,10 @@ public class AppTimerService : Service() {
         reminderEnabled = intent?.getBooleanExtra(EXTRA_REMINDER_ENABLED, false) ?: false
         val intervalMin = intent?.getIntExtra(EXTRA_REMINDER_INTERVAL_MINUTES, 5) ?: 5
         reminderIntervalMs = intervalMin * 60 * 1000L
-        reminderMode = ReminderMode.valueOf(intent?.getStringExtra(EXTRA_REMINDER_MODE) ?: "overlay")
+        reminderMode =
+            intent?.getStringExtra(EXTRA_REMINDER_MODE)?.let {
+                runCatching { ReminderMode.valueOf(it) }.getOrNull()
+            } ?: ReminderMode.Overlay
         timeLimitEnabled = intent?.getBooleanExtra(EXTRA_TIME_LIMIT_ENABLED, false) ?: false
         val limitMin = intent?.getIntExtra(EXTRA_TIME_LIMIT_MINUTES, 0) ?: 0
         timeLimitMs = limitMin * 60 * 1000L
