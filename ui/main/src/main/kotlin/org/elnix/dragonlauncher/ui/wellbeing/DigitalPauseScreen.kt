@@ -139,7 +139,7 @@ fun DigitalPauseScreen(
         )
 
     val usageStats =
-        remember(packageName, guiltModeEnabled) {
+        remember(packageName, guiltModeEnabled, hasUsageStatsPermission) {
             if (guiltModeEnabled && hasUsageStatsPermission) getUsageStats(ctx, packageName) else null
         }
 
