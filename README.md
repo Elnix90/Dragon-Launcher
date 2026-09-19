@@ -79,7 +79,6 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 | `android.permission.FOREGROUND_SERVICE_SPECIAL_USE` | Install             | Foreground service type `specialUse` for the timer overlay.                                                                         |
 | `android.permission.SYSTEM_ALERT_WINDOW`            | Special access      | Show the Wellbeing "time to stop" popup over other apps.                                                                            |
 | `android.permission.PACKAGE_USAGE_STATS`            | Special access      | Optional: usage statistics for the Wellbeing feature.                                                                               |
-| `android.permission.KILL_BACKGROUND_PROCESSES`      | Install             | Stop a tracked app when its timer expires (Wellbeing).                                                                              |
 | `android.permission.INTERACT_ACROSS_USERS`          | Install (signature) | Interact with the work profile / other Android users.                                                                               |
 | `android.permission.INTERACT_ACROSS_USERS_FULL`     | Install (signature) | Full cross-user access (work profile, private space).                                                                               |
 | `android.permission.ACCESS_HIDDEN_PROFILES`         | Install             | Android 15+: access apps in Private Space and other hidden profiles.                                                                |
