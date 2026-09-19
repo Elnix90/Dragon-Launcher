@@ -23,7 +23,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.base.utils.DateUtils.formatDuration
@@ -137,37 +136,31 @@ public class AppTimerService : Service() {
      */
     @RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
     private fun getTodayUsageMinutes(packageName: String): Long {
-        var todayUsage = 0L
-        serviceScope.launch {
-            todayUsage =
-                permissionManager
-                    .hasPermissionBlocking(PermissionGroup.UsageStat)
-                    .let { hasPermission ->
-                        if (!hasPermission) {
-                            -1L
-                        } else {
-                            try {
-                                val usm = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-                                val cal =
-                                    Calendar.getInstance().apply {
-                                        set(Calendar.HOUR_OF_DAY, 0)
-                                        set(Calendar.MINUTE, 0)
-                                        set(Calendar.SECOND, 0)
-                                        set(Calendar.MILLISECOND, 0)
-                                    }
-                                val todayStart = cal.timeInMillis
-                                val now = System.currentTimeMillis()
-                                val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, todayStart, now)
-                                stats
-                                    .filter { it.packageName == packageName }
-                                    .sumOf { it.totalTimeInForeground } / 60_000
-                            } catch (_: Exception) {
-                                -1L
-                            }
-                        }
-                    }
+        // Called from the timer thread, so blocking calls are fine.
+        // Do NOT wrap in serviceScope.launch: the caller needs the result now.
+        // Note: hasPermissionBlocking is suspend, so use the synchronous
+        // checkPermissionOnce here instead.
+        if (!permissionManager.checkPermissionOnce(PermissionGroup.UsageStat)) {
+            return -1L
         }
-        return todayUsage
+        return try {
+            val usm = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+            val cal =
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+            val todayStart = cal.timeInMillis
+            val now = System.currentTimeMillis()
+            val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, todayStart, now)
+            stats
+                .filter { it.packageName == packageName }
+                .sumOf { it.totalTimeInForeground } / 60_000
+        } catch (_: Exception) {
+            -1L
+        }
     }
 
     /**
@@ -177,53 +170,52 @@ public class AppTimerService : Service() {
      */
     @RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
     private fun getCurrentForegroundPackage(): String? {
-        var result: String? = null
-
-        serviceScope.launch {
-            result =
-                permissionManager.hasPermissionBlocking(PermissionGroup.UsageStat).let { hasPermission ->
-                    if (!hasPermission) return@let null
-
-                    try {
-                        val usm = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-                        val now = System.currentTimeMillis()
-
-                        // Method 1: Query recent events (most reliable for foreground detection)
-                        val events = usm.queryEvents(now - 5000, now)
-                        var lastPackage: String? = null
-                        val event = UsageEvents.Event()
-                        while (events.hasNextEvent()) {
-                            events.getNextEvent(event)
-                            @Suppress("DEPRECATION")
-                            if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
-                                lastPackage = event.packageName
-                            }
-                        }
-
-                        // If we found a recent foreground event, trust it
-                        if (lastPackage != null) {
-                            return@let lastPackage
-                        }
-
-                        // Method 2: Fallback - check which app was used most recently
-                        // If another app has been used in the last 10 seconds, the tracked app is NOT foreground
-                        val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 10000, now)
-                        if (stats.isNotEmpty()) {
-                            val mostRecentApp = stats.maxByOrNull { it.lastTimeUsed }
-                            if (mostRecentApp != null && mostRecentApp.packageName != trackedPackage && mostRecentApp.lastTimeUsed > (now - 10000)) {
-                                // Another app is more recently used -> tracked app is not foreground
-                                mostRecentApp.packageName
-                            }
-                        }
-
-                        // If no other app was recently used, assume tracked app is still foreground
-                        trackedPackage
-                    } catch (_: Exception) {
-                        null
-                    }
-                }
+        // Called from the timer thread, so blocking calls are fine.
+        // Do NOT wrap in serviceScope.launch: the caller needs the result now,
+        // otherwise this always returns null and the timer stops after ~15s.
+        // Note: hasPermissionBlocking is suspend, so use the synchronous
+        // checkPermissionOnce here instead.
+        if (!permissionManager.checkPermissionOnce(PermissionGroup.UsageStat)) {
+            return null
         }
-        return result
+
+        return try {
+            val usm = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+            val now = System.currentTimeMillis()
+
+            // Method 1: Query recent events (most reliable for foreground detection)
+            val events = usm.queryEvents(now - 5000, now)
+            var lastPackage: String? = null
+            val event = UsageEvents.Event()
+            while (events.hasNextEvent()) {
+                events.getNextEvent(event)
+                @Suppress("DEPRECATION")
+                if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                    lastPackage = event.packageName
+                }
+            }
+
+            // If we found a recent foreground event, trust it
+            if (lastPackage != null) {
+                return lastPackage
+            }
+
+            // Method 2: Fallback - check which app was used most recently
+            // If another app has been used in the last 10 seconds, the tracked app is NOT foreground
+            val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 10000, now)
+            if (stats.isNotEmpty()) {
+                val mostRecentApp = stats.maxByOrNull { it.lastTimeUsed }
+                if (mostRecentApp != null && mostRecentApp.packageName != trackedPackage && mostRecentApp.lastTimeUsed > (now - 10000)) {
+                    // Another app is more recently used -> tracked app is not foreground
+                    return mostRecentApp.packageName
+                }
+            }
+
+            // If no other app was recently used, assume tracked app is still foreground
+            trackedPackage
+        } catch (_: Exception) {
+            null
+        }
     }
 
     private fun createTimerThread(startId: Int) =
