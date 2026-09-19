@@ -388,7 +388,7 @@
   <string name="timer_notification_text">%1$s remaining on %2$s</string>
   <string name="time_warning_subtitle">Your session is almost over ⚡</string>
   <string name="time_exceeded_title">Time\'s up!</string>
-  <string name="time_exceeded_message">You\'ve been on %s for too long.</string>
+  <string name="time_exceeded_message">You\'ve been on %1$s for too long.</string>
   <string name="time_exceeded_subtitle">It\'s time to take a break and do something you enjoy offline 🌱</string>
   <string name="time_exceeded_ok">Got it, thanks Dragon</string>
   <string name="time_exceeded_header">Session ended</string>
