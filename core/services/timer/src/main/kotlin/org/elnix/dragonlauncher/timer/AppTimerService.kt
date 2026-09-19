@@ -21,8 +21,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.base.utils.DateUtils.formatDuration
@@ -127,7 +131,7 @@ public class AppTimerService : Service() {
     private var timeLimitEnabled = false
     private var timeLimitMs = 0L
     private var startTimeMs = 0L
-    private var timerThread: Thread? = null
+    private var timerJob: Job? = null
     private var fiveMinWarningShown = false
 
     /**
@@ -136,7 +140,7 @@ public class AppTimerService : Service() {
      */
     @RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
     private fun getTodayUsageMinutes(packageName: String): Long {
-        // Called from the timer thread, so blocking calls are fine.
+        // Called from the timer coroutine, so blocking calls are fine.
         // Do NOT wrap in serviceScope.launch: the caller needs the result now.
         // Note: hasPermissionBlocking is suspend, so use the synchronous
         // checkPermissionOnce here instead.
@@ -170,7 +174,7 @@ public class AppTimerService : Service() {
      */
     @RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
     private fun getCurrentForegroundPackage(): String? {
-        // Called from the timer thread, so blocking calls are fine.
+        // Called from the timer coroutine, so blocking calls are fine.
         // Do NOT wrap in serviceScope.launch: the caller needs the result now,
         // otherwise this always returns null and the timer stops after ~15s.
         // Note: hasPermissionBlocking is suspend, so use the synchronous
@@ -218,102 +222,91 @@ public class AppTimerService : Service() {
         }
     }
 
-    private fun createTimerThread(startId: Int) =
-        object : Thread("AppTimerThread") {
-            @RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-            @Suppress("AssignedValueIsNeverRead")
-            override fun run() {
-                try {
-                    var elapsed: Long
-                    var nextReminderAt = if (reminderEnabled) reminderIntervalMs else Long.MAX_VALUE
-                    var lastForegroundCheckMs = System.currentTimeMillis()
-                    var notForegroundCount = 0
-                    val maxNotForeground = 5
-                    var isAppActive = true // Track if we're still on the tracked app
+    private fun createTimerJob(startId: Int) =
+        serviceScope.launch {
+            var nextReminderAt = if (reminderEnabled) reminderIntervalMs else Long.MAX_VALUE
+            var lastForegroundCheckMs = System.currentTimeMillis()
+            var notForegroundCount = 0
+            val maxNotForeground = 5
+            var isAppActive = true // Track if we're still on the tracked app
 
-                    @Suppress("KotlinConstantConditions")
-                    while (!isInterrupted && isAppActive) {
-                        sleep(1000)
-                        elapsed = System.currentTimeMillis() - startTimeMs
+            while (isActive && isAppActive) {
+                delay(1000)
+                val elapsed = System.currentTimeMillis() - startTimeMs
 
-                        // Check if user is still on the tracked app (every 3 seconds)
-                        val nowMs = System.currentTimeMillis()
-                        if (nowMs - lastForegroundCheckMs >= 3000) {
-                            lastForegroundCheckMs = nowMs
-                            val fg = getCurrentForegroundPackage()
+                // Check if user is still on the tracked app (every 3 seconds)
+                val nowMs = System.currentTimeMillis()
+                if (nowMs - lastForegroundCheckMs >= 3000) {
+                    lastForegroundCheckMs = nowMs
+                    val fg = getCurrentForegroundPackage()
 
-                            // If fg is null (no permission), give benefit of the doubt one more time
-                            // But if we haven't gotten permission by now, something is wrong
-                            if (fg == null) {
-                                notForegroundCount++
-                                if (notForegroundCount >= maxNotForeground) {
-                                    // Can't detect foreground app - stop after grace period
-                                    isAppActive = false
-                                    break
-                                }
-                            } else if (fg != trackedPackage) {
-                                // User has switched to a different app
-                                notForegroundCount++
-                                if (notForegroundCount >= maxNotForeground) {
-                                    // User has left the app for 15+ seconds -> stop service
-                                    isAppActive = false
-                                    break
-                                }
-                            } else {
-                                // Still on tracked app, reset counter
-                                notForegroundCount = 0
-                            }
-                        }
-
-                        // Update foreground notification every 30s
-                        if (timeLimitEnabled && elapsed % 30_000 < 1000) {
-                            val remaining = (timeLimitMs - elapsed).coerceAtLeast(0)
-                            updateTimerNotification(remaining)
-                        }
-
-                        // 5-minute warning overlay (only once, only if total limit > 5 min)
-                        if (timeLimitEnabled && !fiveMinWarningShown) {
-                            val remainingMs = timeLimitMs - elapsed
-                            if (remainingMs in 1..300_000 && timeLimitMs > 300_000) {
-                                fiveMinWarningShown = true
-                                val remainingMinutes = (remainingMs / 60_000).coerceAtLeast(1)
-                                val remainingText = remainingMinutes.formatDuration()
-                                val sessionMinutes = (elapsed / 60_000).coerceAtLeast(1)
-                                val sessionText = sessionMinutes.formatDuration()
-                                val todayText = buildTodayText()
-
-                                OverlayReminderService.show(
-                                    this@AppTimerService,
-                                    appName,
-                                    sessionText,
-                                    todayText,
-                                    remainingText,
-                                    true,
-                                    "time_warning"
-                                )
-                            }
-                        }
-
-                        // Periodic reminder
-                        if (isAppActive && reminderEnabled && elapsed >= nextReminderAt) {
-                            sendReminder(elapsed)
-                            nextReminderAt += reminderIntervalMs
-                        }
-
-                        // Time limit reached
-                        if (timeLimitEnabled && elapsed >= timeLimitMs) {
-                            returnToLauncher()
+                    // If fg is null (no permission), give benefit of the doubt one more time
+                    // But if we haven't gotten permission by now, something is wrong
+                    if (fg == null) {
+                        notForegroundCount++
+                        if (notForegroundCount >= maxNotForeground) {
+                            // Can't detect foreground app - stop after grace period
+                            isAppActive = false
                             break
                         }
+                    } else if (fg != trackedPackage) {
+                        // User has switched to a different app
+                        notForegroundCount++
+                        if (notForegroundCount >= maxNotForeground) {
+                            // User has left the app for 15+ seconds -> stop service
+                            isAppActive = false
+                            break
+                        }
+                    } else {
+                        // Still on tracked app, reset counter
+                        notForegroundCount = 0
                     }
-                } catch (_: InterruptedException) {
-                    // Service stopped
-                } finally {
-                    // When loop exits (app switched or time limit), stop the service
-                    // Use stopSelfResult so only the latest start can stop the service
-                    stopSelfResult(startId)
+                }
+
+                // Update foreground notification every 30s
+                if (timeLimitEnabled && elapsed % 30_000 < 1000) {
+                    val remaining = (timeLimitMs - elapsed).coerceAtLeast(0)
+                    updateTimerNotification(remaining)
+                }
+
+                // 5-minute warning overlay (only once, only if total limit > 5 min)
+                if (timeLimitEnabled && !fiveMinWarningShown) {
+                    val remainingMs = timeLimitMs - elapsed
+                    if (remainingMs in 1..300_000 && timeLimitMs > 300_000) {
+                        fiveMinWarningShown = true
+                        val remainingMinutes = (remainingMs / 60_000).coerceAtLeast(1)
+                        val remainingText = remainingMinutes.formatDuration()
+                        val sessionMinutes = (elapsed / 60_000).coerceAtLeast(1)
+                        val sessionText = sessionMinutes.formatDuration()
+                        val todayText = buildTodayText()
+
+                        OverlayReminderService.show(
+                            this@AppTimerService,
+                            appName,
+                            sessionText,
+                            todayText,
+                            remainingText,
+                            true,
+                            "time_warning"
+                        )
+                    }
+                }
+
+                // Periodic reminder
+                if (isAppActive && reminderEnabled && elapsed >= nextReminderAt) {
+                    sendReminder(elapsed)
+                    nextReminderAt += reminderIntervalMs
+                }
+
+                // Time limit reached
+                if (timeLimitEnabled && elapsed >= timeLimitMs) {
+                    returnToLauncher()
+                    break
                 }
             }
+            // When loop exits (app switched or time limit), stop the service
+            // Use stopSelfResult so only the latest start can stop the service
+            stopSelfResult(startId)
         }
 
     override fun onCreate() {
@@ -328,8 +321,8 @@ public class AppTimerService : Service() {
         }
 
         // Stop previous timer if running
-        timerThread?.interrupt()
-        timerThread = null
+        timerJob?.cancel()
+        timerJob = null
         fiveMinWarningShown = false
 
         trackedPackage = intent?.getStringExtra(EXTRA_PACKAGE_NAME) ?: ""
@@ -362,13 +355,13 @@ public class AppTimerService : Service() {
             }
         )
 
-        timerThread = createTimerThread(startId).also { it.start() }
+        timerJob = createTimerJob(startId)
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
-        timerThread?.interrupt()
-        timerThread = null
+        timerJob?.cancel()
+        timerJob = null
         val nm = getSystemService(NotificationManager::class.java)
         nm?.cancel(NOTIF_ID_TIMER)
         nm?.cancel(NOTIF_ID_REMINDER)
