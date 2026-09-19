@@ -5,13 +5,13 @@ import android.annotation.SuppressLint
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -46,9 +46,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -65,22 +65,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -90,6 +89,7 @@ import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import java.util.Calendar
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
@@ -175,10 +175,20 @@ fun DigitalPauseScreen(
                         .systemBarsPadding()
                         .padding(24.dp)
             ) {
-                AnimatedLotus(
-                    modifier = Modifier.size(lotusSize),
-                    isPulsing = !countdownFinished
+                Text(
+                    text = application.label.uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = ZenTeal.copy(alpha = 0.9f),
+                    letterSpacing = 3.sp,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
+
+                Spacer(16.dp)
+
+                LotusGif(gifSize = lotusSize)
 
                 Spacer(32.dp)
 
@@ -190,10 +200,11 @@ fun DigitalPauseScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = countdown.toString(),
-                            fontSize = 64.sp, // Très grand et fin
-                            fontWeight = FontWeight.ExtraLight,
-                            fontFamily = FontFamily.SansSerif,
-                            color = Color.White.copy(alpha = 0.9f)
+                            style =
+                                MaterialTheme.typography.displayLarge.copy(
+                                    fontWeight = FontWeight.ExtraLight,
+                                    color = Color.White.copy(alpha = 0.9f)
+                                )
                         )
 
                         Spacer(24.dp)
@@ -214,12 +225,21 @@ fun DigitalPauseScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.pause_question),
-                            fontSize = 26.sp,
-                            fontFamily = FontFamily.Serif,
-                            fontWeight = FontWeight.Medium,
+                            style = MaterialTheme.typography.headlineMedium,
                             color = TextWhite,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 32.dp)
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        Text(
+                            text = application.label.uppercase(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = ZenTeal.copy(alpha = 0.9f),
+                            letterSpacing = 3.sp,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(bottom = 28.dp)
                         )
 
                         if (guiltModeEnabled) {
@@ -234,21 +254,16 @@ fun DigitalPauseScreen(
                         }
 
                         // Cancel Button
-                        Button(
+                        DragonButton(
                             onClick = onCancel,
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .height(60.dp),
-                            shape = RoundedCornerShape(30.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = ZenTeal),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                                    .height(60.dp)
                         ) {
                             Text(
                                 text = stringResource(R.string.pause_no_thanks).uppercase(),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
+                                style = MaterialTheme.typography.labelLarge,
                                 letterSpacing = 1.sp
                             )
                         }
@@ -270,7 +285,7 @@ fun DigitalPauseScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.pause_yes_open),
-                                fontSize = 14.sp
+                                style = MaterialTheme.typography.labelLarge
                             )
                         }
                     }
@@ -324,9 +339,7 @@ private fun TimeLimitPickerUI(
     ) {
         Text(
             text = stringResource(R.string.time_limit_picker_title),
-            fontSize = 24.sp,
-            fontFamily = FontFamily.Serif,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.headlineSmall,
             color = TextWhite,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -334,7 +347,7 @@ private fun TimeLimitPickerUI(
 
         Text(
             text = stringResource(R.string.time_limit_picker_subtitle),
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 28.dp)
@@ -363,8 +376,10 @@ private fun TimeLimitPickerUI(
                 ) {
                     Text(
                         text = stringResource(R.string.time_limit_minutes, minutes),
-                        fontSize = 15.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        style =
+                            MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            ),
                         color = textColor
                     )
                 }
@@ -382,8 +397,10 @@ private fun TimeLimitPickerUI(
         ) { text ->
             Text(
                 text = text,
-                fontSize = 14.sp,
-                fontStyle = FontStyle.Italic,
+                style =
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontStyle = FontStyle.Italic
+                    ),
                 color = encourageColor,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -392,24 +409,18 @@ private fun TimeLimitPickerUI(
 
         Spacer(32.dp)
 
-        Button(
+        DragonButton(
             onClick = { onConfirm(selectedMinutes) },
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-            shape = RoundedCornerShape(28.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = ZenTeal),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                    .height(56.dp)
         ) {
             Text(
                 text =
                     stringResource(R.string.time_limit_start) + " · " +
                         stringResource(R.string.time_limit_minutes, selectedMinutes),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                letterSpacing = 0.5.sp
+                style = MaterialTheme.typography.labelLarge
             )
         }
 
@@ -421,142 +432,47 @@ private fun TimeLimitPickerUI(
         ) {
             Text(
                 text = stringResource(R.string.time_limit_cancel),
-                fontSize = 14.sp
+                style = MaterialTheme.typography.labelLarge
             )
         }
     }
 }
 
 @Composable
-private fun AnimatedLotus(
-    modifier: Modifier = Modifier,
-    isPulsing: Boolean = true
-) {
-    val infiniteTransition = rememberInfiniteTransition(label = "lotus")
-
-    // Slow rotation for ZEN effect
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(60000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-        label = "rotation"
-    )
-
-    // Breathing (Scale)
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = if (isPulsing) 1.1f else 1f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(4000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-        label = "pulse"
-    )
-
-    Canvas(
-        modifier =
-            modifier.graphicsLayer {
-                scaleX = pulseScale
-                scaleY = pulseScale
-                rotationZ = rotation
-            }
-    ) {
-        val centerX = size.width / 2
-        val centerY = size.height / 2
-        val radius = size.minDimension / 2.2f
-
-        // 1. Glow global behind
-        drawCircle(
-            brush =
-                Brush.radialGradient(
-                    colors = listOf(ZenPurple.copy(alpha = 0.4f), Color.Transparent),
-                    center = center,
-                    radius = radius * 1.5f
-                ),
-            radius = radius * 1.5f
-        )
-
-        // Local function that draw a petal layer
-        fun drawPetalLayer(count: Int, scale: Float, alphaMult: Float, colorOffset: Int) {
-            for (i in 0 until count) {
-                val angle = (360f / count) * i
-                // uses HSV/HSL via color copy to vary
-                val baseColor = if ((i + colorOffset) % 2 == 0) Color(0xFFE056FD) else Color(0xFF686DE0)
-
-                rotate(angle, pivot = center) {
-                    val path =
-                        Path().apply {
-                            val r = radius * scale
-                            moveTo(centerX, centerY)
-                            // Petal larger at root (cubicTo adjusted)
-                            // Left
-                            cubicTo(
-                                centerX + r * 0.35f,
-                                centerY - r * 0.4f, // Control 1 (larger)
-                                centerX + r * 0.15f,
-                                centerY - r * 0.95f, // Control 2 (tip)
-                                centerX,
-                                centerY - r // Summit
-                            )
-                            // Right
-                            cubicTo(
-                                centerX - r * 0.15f,
-                                centerY - r * 0.95f,
-                                centerX - r * 0.35f,
-                                centerY - r * 0.4f,
-                                centerX,
-                                centerY
-                            )
-                            close()
+private fun LotusGif(gifSize: Dp) {
+    val ctx = LocalContext.current
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(gifSize)) {
+        // Soft glow so the line-art lotus sits in the night scene
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawCircle(
+                brush =
+                    Brush.radialGradient(
+                        colors =
+                            listOf(
+                                ZenPurple.copy(alpha = 0.4f),
+                                ZenTeal.copy(alpha = 0.12f),
+                                Color.Transparent
+                            ),
+                        center = center,
+                        radius = size.minDimension / 2
+                    ),
+                radius = size.minDimension / 2
+            )
+        }
+        AsyncImage(
+            model =
+                ImageRequest.Builder(ctx)
+                    .data("file:///android_asset/lotus_breathe.gif")
+                    .decoderFactory(
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            ImageDecoderDecoder.Factory()
+                        } else {
+                            GifDecoder.Factory()
                         }
-
-                    drawPath(
-                        path = path,
-                        brush =
-                            Brush.linearGradient(
-                                colors =
-                                    listOf(
-                                        baseColor.copy(alpha = 0.9f * alphaMult),
-                                        baseColor.copy(alpha = 0.3f * alphaMult)
-                                    ),
-                                start = Offset(centerX, centerY),
-                                end = Offset(centerX, centerY - radius * scale)
-                            )
-                    )
-                    // Thin outline
-                    Stroke(
-                        width = 1.dp.toPx(),
-                        pathEffect = null
-                    ).let { stroke ->
-                        drawPath(path, Color.White.copy(alpha = 0.3f * alphaMult), style = stroke)
-                    }
-                }
-            }
-        }
-
-        // LAYER 1: More petals
-        drawPetalLayer(count = 12, scale = 1.0f, alphaMult = 0.7f, colorOffset = 0)
-
-        // Layer 2, a little offset, fewer petals
-        rotate(15f, pivot = center) {
-            // angular offset to fill gaps
-            drawPetalLayer(count = 8, scale = 0.75f, alphaMult = 1.0f, colorOffset = 1)
-        }
-
-        // LOTUS HEART (light)
-        drawCircle(
-            brush =
-                Brush.radialGradient(
-                    colors = listOf(Color.White, Color(0xFFFFD700).copy(alpha = 0.5f), Color.Transparent),
-                    center = center,
-                    radius = radius * 0.2f
-                ),
-            radius = radius * 0.2f
+                    ).crossfade(false)
+                    .build(),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -682,13 +598,14 @@ private fun BreathingText(text: String) {
     ) { targetText ->
         Text(
             text = targetText,
-            fontSize = 28.sp,
-            fontFamily = FontFamily.Serif,
-            fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Light,
+            style =
+                MaterialTheme.typography.headlineSmall.copy(
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Light,
+                    lineHeight = 34.sp
+                ),
             color = TextWhite,
             textAlign = TextAlign.Center,
-            lineHeight = 36.sp,
             modifier = Modifier.padding(horizontal = 24.dp)
         )
     }
@@ -703,8 +620,9 @@ private fun UsageStatsDisplay(stats: AppUsageStats) {
         if (stats.yesterdayMinutes > 0) {
             Text(
                 text = stringResource(R.string.usage_yesterday, stats.yesterdayMinutes.formatDuration()),
-                fontSize = 16.sp,
-                color = TextSecondary
+                style = MaterialTheme.typography.bodyLarge,
+                color = TextSecondary,
+                textAlign = TextAlign.Center
             )
             val yearlyHours = (stats.yesterdayMinutes * 365) / 60
             if (yearlyHours > 24) {
@@ -712,9 +630,12 @@ private fun UsageStatsDisplay(stats: AppUsageStats) {
                 Spacer(4.dp)
                 Text(
                     text = stringResource(R.string.usage_guilt_yearly, "$yearlyDays days"),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFF7675)
+                    style =
+                        MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    color = Color(0xFFFF7675),
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -728,8 +649,9 @@ private fun UsageStatsDisplay(stats: AppUsageStats) {
                 } else {
                     stringResource(R.string.not_used_yet)
                 },
-            fontSize = 14.sp,
-            color = TextWhite.copy(alpha = 0.8f)
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextWhite.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -739,7 +661,7 @@ private fun PermissionNeededContent(ctx: Context) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = stringResource(R.string.usage_permission_needed),
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = TextAlign.Center
         )
