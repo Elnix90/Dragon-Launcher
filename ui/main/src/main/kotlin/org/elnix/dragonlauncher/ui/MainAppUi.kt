@@ -264,13 +264,20 @@ fun MainAppUi(
                 }
             }
         }
-    LaunchedEffect(Unit) {
+    DisposableEffect(Unit) {
         registerReceiver(
             ctx,
             launcherReceiver,
-            IntentFilter("com.elnix.dragonlauncher.SHOW_LAUNCHER"),
+            IntentFilter(SHOW_LAUNCHER),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
+        onDispose {
+            try {
+                ctx.unregisterReceiver(launcherReceiver)
+            } catch (_: Exception) {
+                // Already unregistered.
+            }
+        }
     }
 
     fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand) {
