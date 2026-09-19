@@ -159,8 +159,7 @@ fun DigitalPauseScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF0F111A),
-        onClick = onCancel
+        color = Color(0xFF0F111A)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AuroraBackground()
