@@ -30,17 +30,10 @@ repos:
     hooks:
       - id: gitleaks
 
-  # Codespell: typo detection
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
-    hooks:
-      - id: codespell
-        args: [ "--quiet-level=2" ]
-
   # Commit messages (Conventional Commits)
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.0.0
     hooks:
       - id: conventional-pre-commit
         stages: [ commit-msg ]
-        args: [ "--strict", "feat", "fix", "chore", "refactor", "perf", "style", "docs", "test", "ci", "build" ]
+        args: [ "--verbose", "--strict", "feat", "fix", "chore", "refactor", "perf", "style", "docs", "test", "ci", "build" ]
