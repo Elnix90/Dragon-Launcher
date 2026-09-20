@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.model.enumsui.select.AngleObject
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
@@ -50,6 +51,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultLineCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
@@ -80,6 +82,7 @@ import org.elnix.dragonlauncher.ui.remembers.angle360
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 
 @Stable
+@Serializable
 private data class AngleLinePreset(
     override val name: String,
     val rgbLine: Boolean? = null,
@@ -94,6 +97,7 @@ private data class AngleLinePreset(
     val showEndObjectPreview: Boolean? = null,
     val endObject: CustomObject = defaultEndCustomObject,
     val angleLineObjectsOrder: List<AngleLineObjects>? = null,
+    @Serializable(with = ColorSerializer::class)
     val color: Color? = null
 ) : Preset {
     override fun toString(): String =

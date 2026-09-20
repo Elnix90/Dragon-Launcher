@@ -26,19 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultHoldCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
+import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
@@ -70,17 +72,20 @@ import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
+@Serializable
 private data class HoldPreset(
     override val name: String,
     val customObject: CustomObject = defaultHoldCustomObject,
     val holdDelayBeforeStartingLongClickSettings: Int? = null,
     val longCLickSettingsDuration: Int? = null,
+    @Serializable(with = DpSerializer::class)
     val holdToActivateSettingsTolerance: Dp? = null,
     val showToleranceOnMainScreen: Boolean? = null,
     val rotationsPerSecond: Float? = null,
     val holdRgbLoading: Boolean? = null,
     val pulsingRadius: Float? = null,
     val pulsingRDuration: Int? = null,
+    @Serializable(with = ColorSerializer::class)
     val color: Color? = null
 ) : Preset {
     override fun toString(): String =
@@ -106,7 +111,6 @@ fun HoldToActivateTab(
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
     val navigator = LocalNavigator.current
-    val hapticFeedback = LocalHapticFeedback.current
 
     val scope = rememberCoroutineScope()
 
@@ -260,7 +264,7 @@ fun HoldToActivateTab(
         }
 
         PresetRow(
-            listOf(
+            presets = listOf(
                 HoldPreset("Default"),
                 HoldPreset(
                     name = "Elnix's",
