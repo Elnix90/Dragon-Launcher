@@ -139,13 +139,21 @@ public class AppLaunchViewModel
         public fun onAppTimerServiceStarted(duration: Int?): Boolean {
             val pendingApp = pendingAppLaunch.value
             if (pendingApp != null) {
-                if (duration != null) {
-                    viewModelScope.launch {
+                viewModelScope.launch {
+                    // A null duration means "no time limit", but the timer service
+                    // is still needed when periodic reminders are enabled.
+                    val startTimer =
+                        duration != null ||
+                            WellbeingSettingsStore.reminderEnabled.flow(application).first()
+                    if (startTimer) {
                         startTimer(duration, pendingApp)
                     }
                 }
 
                 launchAppDirectly(pendingApp)
+                // Clear here (not only in the UI) so a stale pending app
+                // cannot re-trigger the pause screen.
+                pendingAppLaunch.value = null
                 return true
             }
             return false

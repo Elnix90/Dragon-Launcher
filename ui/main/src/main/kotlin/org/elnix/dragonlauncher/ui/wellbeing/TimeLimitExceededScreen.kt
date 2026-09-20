@@ -24,8 +24,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,9 +44,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,18 +95,20 @@ fun TimeLimitExceededScreen(appName: String) {
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .systemBarsPadding()
-                        .padding(32.dp)
+                        .padding(horizontal = 32.dp, vertical = 24.dp)
             ) {
                 PulsingHourglass(modifier = Modifier.size(120.dp))
 
-                Spacer(40.dp)
+                Spacer(32.dp)
 
                 Text(
                     text = stringResource(R.string.time_exceeded_header),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = FontFamily.SansSerif,
+                    style =
+                        MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
                     color = AccentTeal,
                     letterSpacing = 3.sp,
                     textAlign = TextAlign.Center
@@ -113,42 +118,51 @@ fun TimeLimitExceededScreen(appName: String) {
 
                 Text(
                     text = stringResource(R.string.time_exceeded_title),
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Serif,
+                    style = MaterialTheme.typography.displaySmall,
                     color = TextWhite,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 44.sp
+                    textAlign = TextAlign.Center
                 )
 
-                Spacer(20.dp)
+                Spacer(16.dp)
 
                 Text(
                     text = stringResource(R.string.time_exceeded_message, appName),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Normal,
+                    style = MaterialTheme.typography.titleMedium,
                     color = WarmOrange,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(8.dp)
+
+                Text(
+                    text = appName.uppercase(),
+                    style =
+                        MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    color = TextMuted,
+                    letterSpacing = 2.sp,
                     textAlign = TextAlign.Center,
-                    lineHeight = 26.sp
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
                 Spacer(12.dp)
 
                 Text(
                     text = stringResource(R.string.time_exceeded_subtitle),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Light,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = TextMuted,
                     textAlign = TextAlign.Center,
-                    lineHeight = 22.sp,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
-                Spacer(48.dp)
+                Spacer(40.dp)
 
                 GlassEncouragementCard()
 
-                Spacer(40.dp)
+                Spacer(32.dp)
 
                 DragonButton(
                     onClick = LocalNavigator.current::onBack,
@@ -159,10 +173,7 @@ fun TimeLimitExceededScreen(appName: String) {
                 ) {
                     Text(
                         text = stringResource(R.string.time_exceeded_ok),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        letterSpacing = 0.5.sp
+                        style = MaterialTheme.typography.labelLarge
                     )
                 }
             }
@@ -300,8 +311,10 @@ private fun GlassEncouragementCard() {
     ) {
         Text(
             text = message,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
+            style =
+                MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Medium
+                ),
             color = TextWhite.copy(alpha = 0.8f),
             textAlign = TextAlign.Center
         )

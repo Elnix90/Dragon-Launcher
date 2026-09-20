@@ -23,7 +23,7 @@ fun AppUsagePermissionDialog(onDismiss: () -> Unit) {
                 onClick = {
                     onDismiss()
                     ctx.startActivity(
-                        Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
+                        Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         }
                     )

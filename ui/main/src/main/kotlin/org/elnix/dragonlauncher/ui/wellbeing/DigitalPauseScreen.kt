@@ -11,7 +11,6 @@ import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -42,11 +41,13 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -55,6 +56,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,22 +65,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -88,6 +89,7 @@ import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import java.util.Calendar
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
@@ -120,6 +122,11 @@ fun DigitalPauseScreen(
     var currentPhraseIndex by remember { mutableIntStateOf(0) }
 
     val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
+    val scrollState = rememberScrollState()
+    // Shrink the lotus once the choice is shown so the action buttons
+    // ("No, I'll pass" / "Yes, open anyway") stay visible on small screens,
+    // especially when the guilt stats card grows (yearly line).
+    val lotusSize = if (showChoice || showTimePicker) 120.dp else 220.dp
 
     // List of sentence to make user feel bad
     val breathingPhrases =
@@ -132,7 +139,7 @@ fun DigitalPauseScreen(
         )
 
     val usageStats =
-        remember(packageName, guiltModeEnabled) {
+        remember(packageName, guiltModeEnabled, hasUsageStatsPermission) {
             if (guiltModeEnabled && hasUsageStatsPermission) getUsageStats(ctx, packageName) else null
         }
 
@@ -152,8 +159,7 @@ fun DigitalPauseScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF0F111A),
-        onClick = onCancel
+        color = Color(0xFF0F111A)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AuroraBackground()
@@ -165,13 +171,24 @@ fun DigitalPauseScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .verticalScroll(scrollState)
                         .systemBarsPadding()
                         .padding(24.dp)
             ) {
-                AnimatedLotus(
-                    modifier = Modifier.size(220.dp),
-                    isPulsing = !countdownFinished
+                Text(
+                    text = application.label.uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = ZenTeal.copy(alpha = 0.9f),
+                    letterSpacing = 3.sp,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
+
+                Spacer(16.dp)
+
+                LotusBloom(flowerSize = lotusSize, startIdle = showChoice)
 
                 Spacer(32.dp)
 
@@ -180,19 +197,43 @@ fun DigitalPauseScreen(
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.height(180.dp)
+                    ) {
                         Text(
                             text = countdown.toString(),
-                            fontSize = 64.sp, // Très grand et fin
-                            fontWeight = FontWeight.ExtraLight,
-                            fontFamily = FontFamily.SansSerif,
-                            color = Color.White.copy(alpha = 0.9f)
+                            style =
+                                MaterialTheme.typography.displayLarge.copy(
+                                    fontWeight = FontWeight.ExtraLight,
+                                    color = Color.White.copy(alpha = 0.9f)
+                                )
                         )
 
                         Spacer(24.dp)
 
-                        // Phrase de respiration
-                        BreathingText(text = breathingPhrases[currentPhraseIndex])
+                        AnimatedContent(
+                            targetState = breathingPhrases[currentPhraseIndex],
+                            transitionSpec = {
+                                fadeIn(tween(1000)) togetherWith fadeOut(tween(500))
+                            },
+                            label = "text_fade"
+                        ) { targetText ->
+                            Text(
+                                text = targetText,
+                                style =
+                                    MaterialTheme.typography.headlineSmall.copy(
+                                        fontStyle = FontStyle.Italic,
+                                        fontWeight = FontWeight.Light,
+                                        lineHeight = 34.sp
+                                    ),
+                                color = TextWhite,
+                                textAlign = TextAlign.Center,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(horizontal = 24.dp)
+                            )
+                        }
                     }
                 }
 
@@ -207,12 +248,21 @@ fun DigitalPauseScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.pause_question),
-                            fontSize = 26.sp,
-                            fontFamily = FontFamily.Serif,
-                            fontWeight = FontWeight.Medium,
+                            style = MaterialTheme.typography.headlineMedium,
                             color = TextWhite,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 32.dp)
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        Text(
+                            text = application.label.uppercase(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = ZenTeal.copy(alpha = 0.9f),
+                            letterSpacing = 3.sp,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(bottom = 28.dp)
                         )
 
                         if (guiltModeEnabled) {
@@ -227,21 +277,16 @@ fun DigitalPauseScreen(
                         }
 
                         // Cancel Button
-                        Button(
+                        DragonButton(
                             onClick = onCancel,
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .height(60.dp),
-                            shape = RoundedCornerShape(30.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = ZenTeal),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                                    .height(60.dp)
                         ) {
                             Text(
                                 text = stringResource(R.string.pause_no_thanks).uppercase(),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
+                                style = MaterialTheme.typography.labelLarge,
                                 letterSpacing = 1.sp
                             )
                         }
@@ -263,7 +308,7 @@ fun DigitalPauseScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.pause_yes_open),
-                                fontSize = 14.sp
+                                style = MaterialTheme.typography.labelLarge
                             )
                         }
                     }
@@ -317,9 +362,7 @@ private fun TimeLimitPickerUI(
     ) {
         Text(
             text = stringResource(R.string.time_limit_picker_title),
-            fontSize = 24.sp,
-            fontFamily = FontFamily.Serif,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.headlineSmall,
             color = TextWhite,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -327,7 +370,7 @@ private fun TimeLimitPickerUI(
 
         Text(
             text = stringResource(R.string.time_limit_picker_subtitle),
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 28.dp)
@@ -356,8 +399,10 @@ private fun TimeLimitPickerUI(
                 ) {
                     Text(
                         text = stringResource(R.string.time_limit_minutes, minutes),
-                        fontSize = 15.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        style =
+                            MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            ),
                         color = textColor
                     )
                 }
@@ -375,8 +420,10 @@ private fun TimeLimitPickerUI(
         ) { text ->
             Text(
                 text = text,
-                fontSize = 14.sp,
-                fontStyle = FontStyle.Italic,
+                style =
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontStyle = FontStyle.Italic
+                    ),
                 color = encourageColor,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -385,24 +432,18 @@ private fun TimeLimitPickerUI(
 
         Spacer(32.dp)
 
-        Button(
+        DragonButton(
             onClick = { onConfirm(selectedMinutes) },
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-            shape = RoundedCornerShape(28.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = ZenTeal),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                    .height(56.dp)
         ) {
             Text(
                 text =
                     stringResource(R.string.time_limit_start) + " · " +
                         stringResource(R.string.time_limit_minutes, selectedMinutes),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                letterSpacing = 0.5.sp
+                style = MaterialTheme.typography.labelLarge
             )
         }
 
@@ -414,143 +455,93 @@ private fun TimeLimitPickerUI(
         ) {
             Text(
                 text = stringResource(R.string.time_limit_cancel),
-                fontSize = 14.sp
+                style = MaterialTheme.typography.labelLarge
             )
         }
     }
 }
 
+private enum class LotusPhase {
+    Reveal,
+    Idle
+}
+
 @Composable
-private fun AnimatedLotus(
-    modifier: Modifier = Modifier,
-    isPulsing: Boolean = true
-) {
-    val infiniteTransition = rememberInfiniteTransition(label = "lotus")
+private fun LotusBloom(flowerSize: Dp, startIdle: Boolean) {
+    // Phase 1: reveal played once, held briefly once fully displayed.
+    // Phase 2: idle animation, but only once the next screen (choice) is
+    // shown; replayed in a loop, 3s after each end.
+    val revealComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lotus_reveal.json"))
+    val idleComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lotus_bloom.json"))
 
-    // Slow rotation for ZEN effect
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(60000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-        label = "rotation"
+    var phase by remember { mutableStateOf(LotusPhase.Reveal) }
+    var idleRun by remember { mutableIntStateOf(0) }
+
+    val revealState = animateLottieCompositionAsState(
+        composition = revealComposition,
+        iterations = 1,
+        isPlaying = phase == LotusPhase.Reveal
     )
+    LaunchedEffect(revealState.isAtEnd, startIdle) {
+        if (revealState.isAtEnd && phase == LotusPhase.Reveal && startIdle) {
+            delay(1200)
+            phase = LotusPhase.Idle
+        }
+    }
 
-    // Breathing (Scale)
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = if (isPulsing) 1.1f else 1f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(4000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-        label = "pulse"
-    )
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(flowerSize)) {
+        // Violet halo so the animation sits in the night scene
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawCircle(
+                brush =
+                    Brush.radialGradient(
+                        colors =
+                            listOf(
+                                ZenPurple.copy(alpha = 0.45f),
+                                Color(0xFF8E6BE8).copy(alpha = 0.15f),
+                                Color.Transparent
+                            ),
+                        center = center,
+                        radius = size.minDimension / 2
+                    ),
+                radius = size.minDimension / 2
+            )
+        }
 
-    Canvas(
-        modifier =
-            modifier.graphicsLayer {
-                scaleX = pulseScale
-                scaleY = pulseScale
-                rotationZ = rotation
-            }
-    ) {
-        val centerX = size.width / 2
-        val centerY = size.height / 2
-        val radius = size.minDimension / 2.2f
-
-        // 1. Glow global behind
-        drawCircle(
-            brush =
-                Brush.radialGradient(
-                    colors = listOf(ZenPurple.copy(alpha = 0.4f), Color.Transparent),
-                    center = center,
-                    radius = radius * 1.5f
-                ),
-            radius = radius * 1.5f
-        )
-
-        // Local function that draw a petal layer
-        fun drawPetalLayer(count: Int, scale: Float, alphaMult: Float, colorOffset: Int) {
-            for (i in 0 until count) {
-                val angle = (360f / count) * i
-                // uses HSV/HSL via color copy to vary
-                val baseColor = if ((i + colorOffset) % 2 == 0) Color(0xFFE056FD) else Color(0xFF686DE0)
-
-                rotate(angle, pivot = center) {
-                    val path =
-                        Path().apply {
-                            val r = radius * scale
-                            moveTo(centerX, centerY)
-                            // Petal larger at root (cubicTo adjusted)
-                            // Left
-                            cubicTo(
-                                centerX + r * 0.35f,
-                                centerY - r * 0.4f, // Control 1 (larger)
-                                centerX + r * 0.15f,
-                                centerY - r * 0.95f, // Control 2 (tip)
-                                centerX,
-                                centerY - r // Summit
-                            )
-                            // Right
-                            cubicTo(
-                                centerX - r * 0.15f,
-                                centerY - r * 0.95f,
-                                centerX - r * 0.35f,
-                                centerY - r * 0.4f,
-                                centerX,
-                                centerY
-                            )
-                            close()
-                        }
-
-                    drawPath(
-                        path = path,
-                        brush =
-                            Brush.linearGradient(
-                                colors =
-                                    listOf(
-                                        baseColor.copy(alpha = 0.9f * alphaMult),
-                                        baseColor.copy(alpha = 0.3f * alphaMult)
-                                    ),
-                                start = Offset(centerX, centerY),
-                                end = Offset(centerX, centerY - radius * scale)
-                            )
+        AnimatedContent(
+            targetState = phase,
+            transitionSpec = {
+                fadeIn(tween(500)) togetherWith fadeOut(tween(500))
+            },
+            label = "lotus_phase"
+        ) { currentPhase ->
+            if (currentPhase == LotusPhase.Reveal) {
+                LottieAnimation(
+                    composition = revealComposition,
+                    progress = { revealState.progress },
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                key(idleRun) {
+                    val idleState = animateLottieCompositionAsState(
+                        composition = idleComposition,
+                        iterations = 1,
+                        isPlaying = true
                     )
-                    // Thin outline
-                    Stroke(
-                        width = 1.dp.toPx(),
-                        pathEffect = null
-                    ).let { stroke ->
-                        drawPath(path, Color.White.copy(alpha = 0.3f * alphaMult), style = stroke)
+                    LottieAnimation(
+                        composition = idleComposition,
+                        progress = { idleState.progress },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    LaunchedEffect(idleState.isAtEnd) {
+                        if (idleState.isAtEnd) {
+                            delay(3000)
+                            idleRun++
+                        }
                     }
                 }
             }
         }
-
-        // LAYER 1: More petals
-        drawPetalLayer(count = 12, scale = 1.0f, alphaMult = 0.7f, colorOffset = 0)
-
-        // Layer 2, a little offset, fewer petals
-        rotate(15f, pivot = center) {
-            // angular offset to fill gaps
-            drawPetalLayer(count = 8, scale = 0.75f, alphaMult = 1.0f, colorOffset = 1)
-        }
-
-        // LOTUS HEART (light)
-        drawCircle(
-            brush =
-                Brush.radialGradient(
-                    colors = listOf(Color.White, Color(0xFFFFD700).copy(alpha = 0.5f), Color.Transparent),
-                    center = center,
-                    radius = radius * 0.2f
-                ),
-            radius = radius * 0.2f
-        )
     }
 }
 
@@ -665,29 +656,6 @@ private fun GlassCard(
 }
 
 @Composable
-private fun BreathingText(text: String) {
-    AnimatedContent(
-        targetState = text,
-        transitionSpec = {
-            fadeIn(tween(1000)) togetherWith fadeOut(tween(500))
-        },
-        label = "text_fade"
-    ) { targetText ->
-        Text(
-            text = targetText,
-            fontSize = 28.sp,
-            fontFamily = FontFamily.Serif,
-            fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Light,
-            color = TextWhite,
-            textAlign = TextAlign.Center,
-            lineHeight = 36.sp,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
-    }
-}
-
-@Composable
 private fun UsageStatsDisplay(stats: AppUsageStats) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -696,8 +664,9 @@ private fun UsageStatsDisplay(stats: AppUsageStats) {
         if (stats.yesterdayMinutes > 0) {
             Text(
                 text = stringResource(R.string.usage_yesterday, stats.yesterdayMinutes.formatDuration()),
-                fontSize = 16.sp,
-                color = TextSecondary
+                style = MaterialTheme.typography.bodyLarge,
+                color = TextSecondary,
+                textAlign = TextAlign.Center
             )
             val yearlyHours = (stats.yesterdayMinutes * 365) / 60
             if (yearlyHours > 24) {
@@ -705,9 +674,12 @@ private fun UsageStatsDisplay(stats: AppUsageStats) {
                 Spacer(4.dp)
                 Text(
                     text = stringResource(R.string.usage_guilt_yearly, "$yearlyDays days"),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFF7675)
+                    style =
+                        MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    color = Color(0xFFFF7675),
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -721,8 +693,9 @@ private fun UsageStatsDisplay(stats: AppUsageStats) {
                 } else {
                     stringResource(R.string.not_used_yet)
                 },
-            fontSize = 14.sp,
-            color = TextWhite.copy(alpha = 0.8f)
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextWhite.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -732,7 +705,7 @@ private fun PermissionNeededContent(ctx: Context) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = stringResource(R.string.usage_permission_needed),
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = TextAlign.Center
         )
@@ -760,18 +733,18 @@ data class AppUsageStats(
 private fun getUsageStats(ctx: Context, packageName: String): AppUsageStats? =
     try {
         val usageStatsManager = ctx.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val calendar = Calendar.getInstance()
-        val todayStart =
-            calendar
-                .apply {
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                }.timeInMillis
         val now = System.currentTimeMillis()
+        val todayCal =
+            Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+        val todayStart = todayCal.timeInMillis
         val todayStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, todayStart, now)
         val todayMinutes = todayStats.filter { it.packageName == packageName }.sumOf { it.totalTimeInForeground } / 60000
-        val yesterdayStart = calendar.apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
+        val yesterdayStart = (todayCal.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
         val yesterdayStats =
             usageStatsManager.queryUsageStats(
                 UsageStatsManager.INTERVAL_DAILY,
