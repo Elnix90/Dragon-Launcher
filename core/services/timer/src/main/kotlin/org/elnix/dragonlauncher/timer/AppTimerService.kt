@@ -33,6 +33,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import java.util.Calendar
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Foreground service that:
@@ -230,7 +231,7 @@ public class AppTimerService : Service() {
             var isAppActive = true // Track if we're still on the tracked app
 
             while (isActive && isAppActive) {
-                delay(1000)
+                delay(1000.milliseconds)
                 val elapsed = System.currentTimeMillis() - startTimeMs
 
                 // Check if user is still on the tracked app (every 3 seconds)
