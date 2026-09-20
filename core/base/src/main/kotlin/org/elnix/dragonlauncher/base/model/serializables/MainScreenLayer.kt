@@ -101,17 +101,6 @@ public sealed class MainScreenLayer {
                     }
                 )
 
-        public val MainScreenLayer.enabled: Boolean
-            get() =
-                when (this) {
-                    is ChargingAnimation -> enabled
-                    is DragOverlay -> enabled
-                    is HoldToActivate -> enabled
-                    is StatusBar -> enabled
-                    is Widgets -> enabled
-                    is CustomDim -> enabled
-                }
-
         public fun MainScreenLayer.copyWithEnabled(enabled: Boolean): MainScreenLayer =
             when (this) {
                 is ChargingAnimation -> copy(enabled = enabled)

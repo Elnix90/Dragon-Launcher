@@ -57,6 +57,7 @@ import org.elnix.dragonlauncher.base.model.models.DateFormat
 import org.elnix.dragonlauncher.base.model.models.TimeFormat
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.copyWithEnabled
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.base.model.serializables.allStatusBars
@@ -738,14 +739,11 @@ private inline fun <reified T : MainScreenLayer> showX(swipeViewModel: SwipeView
                     ).enabled
                 set(value) {
                     swipeViewModel.swipeService.mainScreenLayerOrder.value =
-                        mainScreenLayers.map { currentLayer ->
-                            when (currentLayer) {
-                                is MainScreenLayer.ChargingAnimation -> currentLayer.copy(enabled = value) as MainScreenLayer
-                                is MainScreenLayer.CustomDim -> currentLayer.copy(enabled = value) as MainScreenLayer
-                                is MainScreenLayer.DragOverlay -> currentLayer.copy(enabled = value) as MainScreenLayer
-                                is MainScreenLayer.HoldToActivate -> currentLayer.copy(enabled = value) as MainScreenLayer
-                                is MainScreenLayer.StatusBar -> currentLayer.copy(enabled = value) as MainScreenLayer
-                                is MainScreenLayer.Widgets -> currentLayer.copy(enabled = value) as MainScreenLayer
+                        mainScreenLayers.map { layer ->
+                            if (layer is T) {
+                                layer.copyWithEnabled(value)
+                            } else {
+                                layer
                             }
                         }
                     swipeViewModel.swipeService.saveMainScreenLayers()
