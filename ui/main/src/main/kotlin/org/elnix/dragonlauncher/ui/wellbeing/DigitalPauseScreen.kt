@@ -30,8 +30,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,8 +42,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -198,7 +198,10 @@ fun DigitalPauseScreen(
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.height(150.dp)
+                    ) {
                         Text(
                             text = countdown.toString(),
                             style =
@@ -210,8 +213,26 @@ fun DigitalPauseScreen(
 
                         Spacer(24.dp)
 
-                        // Phrase de respiration
-                        BreathingText(text = breathingPhrases[currentPhraseIndex])
+                        AnimatedContent(
+                            targetState = breathingPhrases[currentPhraseIndex],
+                            transitionSpec = {
+                                fadeIn(tween(1000)) togetherWith fadeOut(tween(500))
+                            },
+                            label = "text_fade"
+                        ) { targetText ->
+                            Text(
+                                text = targetText,
+                                style =
+                                    MaterialTheme.typography.headlineSmall.copy(
+                                        fontStyle = FontStyle.Italic,
+                                        fontWeight = FontWeight.Light,
+                                        lineHeight = 34.sp
+                                    ),
+                                color = TextWhite,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = 24.dp)
+                            )
+                        }
                     }
                 }
 
@@ -462,7 +483,8 @@ private fun LotusGif(gifSize: Dp) {
         }
         AsyncImage(
             model =
-                ImageRequest.Builder(ctx)
+                ImageRequest
+                    .Builder(ctx)
                     .data("file:///android_asset/lotus_breathe.gif")
                     .decoderFactory(
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -587,30 +609,6 @@ private fun GlassCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         content = content
     )
-}
-
-@Composable
-private fun BreathingText(text: String) {
-    AnimatedContent(
-        targetState = text,
-        transitionSpec = {
-            fadeIn(tween(1000)) togetherWith fadeOut(tween(500))
-        },
-        label = "text_fade"
-    ) { targetText ->
-        Text(
-            text = targetText,
-            style =
-                MaterialTheme.typography.headlineSmall.copy(
-                    fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.Light,
-                    lineHeight = 34.sp
-                ),
-            color = TextWhite,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
-    }
 }
 
 @Composable
