@@ -233,7 +233,7 @@
     <string name="show_app_icon_start_drag_position">드래그 시작 위치에 앱 아이콘 표시</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d개 선택됨</string>
-    <string name="add_all_manual">하나씩 배치</string>
+
     <string name="place_app_where">%s을(를) 어디에 배치하시겠습니까?</string>
     <string name="tap_circle_to_place">원을 탭하여 앱 배치</string>
     <string name="multi_select_drawer_hint">💡 앱을 길게 눌러 여러 개를 한 번에 선택</string>

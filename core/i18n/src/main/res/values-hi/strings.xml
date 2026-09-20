@@ -430,7 +430,7 @@
     <string name="category_cells">श्रेणी कोशिकाएँ</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d चयनित</string>
-    <string name="add_all_manual">एक-एक करके रखें</string>
+
     <string name="place_app_where">%s को कहाँ रखना चाहते हैं?</string>
     <string name="tap_circle_to_place">ऐप रखने के लिए सर्कल पर टैप करें</string>
     <string name="multi_select_drawer_hint">💡 एक साथ कई ऐप्स चुनने के लिए देर तक दबाएं</string>

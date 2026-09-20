@@ -433,7 +433,7 @@
     <string name="category_cells">Kategoriezellen</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d ausgewählt</string>
-    <string name="add_all_manual">Einzeln platzieren</string>
+
     <string name="place_app_where">Wo möchten Sie %s platzieren?</string>
     <string name="tap_circle_to_place">Tippen Sie auf den Kreis, um die App zu platzieren</string>
     <string name="multi_select_drawer_hint">💡 Lange auf eine App drücken, um mehrere gleichzeitig auszuwählen</string>

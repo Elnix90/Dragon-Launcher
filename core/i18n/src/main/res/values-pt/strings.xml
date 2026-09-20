@@ -234,7 +234,7 @@
     <string name="show_app_icon_start_drag_position">Mostrar ícone do aplicativo na posição inicial de arrastar</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d selecionado(s)</string>
-    <string name="add_all_manual">Colocar um por um</string>
+
     <string name="place_app_where">Onde você quer colocar %s?</string>
     <string name="tap_circle_to_place">Toque no círculo para colocar o app</string>
     <string name="multi_select_drawer_hint">💡 Pressione longamente um app para selecionar vários de uma vez</string>

@@ -449,7 +449,7 @@
     <string name="grid_settings">கட்டம் அமைப்புகள்</string>
     <string name="category_cells">வகை செல்கள்</string>
     <string name="multi_select_count">%d தேர்ந்தெடுக்கப்பட்டது</string>
-    <string name="add_all_manual">ஒவ்வொன்றாக வைக்கவும்</string>
+
     <string name="place_app_where">%sஐ எங்கு வைக்க விரும்புகிறீர்கள்?</string>
     <string name="tap_circle_to_place">பயன்பாட்டை வைக்க வட்டத்தில் தட்டவும்</string>
     <string name="multi_select_drawer_hint">💡 ஒரே நேரத்தில் பலவற்றைத் தேர்ந்தெடுக்க, பயன்பாட்டை நீண்ட நேரம் அழுத்தவும்</string>

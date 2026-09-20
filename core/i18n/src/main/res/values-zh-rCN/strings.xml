@@ -449,7 +449,7 @@
     <string name="grid_settings">网格设置</string>
     <string name="category_cells">分类网格列数</string>
     <string name="multi_select_count">已选中 %d 项</string>
-    <string name="add_all_manual">逐个手动放置</string>
+
     <string name="place_app_where">您想将“%s”放置在哪个位置？</string>
     <string name="tap_circle_to_place">轻触圆圈以放置该应用</string>
     <string name="multi_select_drawer_hint">💡 提示：在抽屉中长按某个应用可开启多选模式</string>

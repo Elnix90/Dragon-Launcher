@@ -535,7 +535,7 @@
     <string name="grid_settings">إعدادات الشبكة</string>
     <string name="category_cells">خلايا الفئة</string>
     <string name="multi_select_count">%d محدد</string>
-    <string name="add_all_manual">وضع واحدة تلو الأخرى</string>
+
     <string name="place_app_where">أين تريد وضع %s؟</string>
     <string name="tap_circle_to_place">اضغط على الدائرة لوضع التطبيق</string>
     <string name="multi_select_drawer_hint">💡 اضغط مطولاً على تطبيق لتحديد عدة تطبيقات في وقت واحد</string>

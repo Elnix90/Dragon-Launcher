@@ -135,6 +135,15 @@ public class WorkspacesManager(
         }
     }
 
+    public fun addAppsToWorkspace(id: String, apps: Set<CacheKey>) {
+        updateWs(id) { old ->
+            old.copy(
+                appIds = old.appIds?.plus(apps) ?: apps,
+                removedAppIds = old.removedAppIds?.minus(apps)
+            )
+        }
+    }
+
     public fun removeAppFromWorkspace(id: String, cacheKey: CacheKey) {
         updateWs(id) { old ->
             old.copy(

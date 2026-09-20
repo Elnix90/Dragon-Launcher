@@ -433,7 +433,7 @@
     <string name="category_cells">Celdas de categoría</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d seleccionada(s)</string>
-    <string name="add_all_manual">Colocar una por una</string>
+
     <string name="place_app_where">¿Dónde quieres colocar %s?</string>
     <string name="tap_circle_to_place">Toca el círculo para colocar la app</string>
     <string name="multi_select_drawer_hint">💡 Mantén presionada una app para seleccionar varias a la vez</string>

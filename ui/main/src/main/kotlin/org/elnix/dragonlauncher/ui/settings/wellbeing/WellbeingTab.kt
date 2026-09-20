@@ -223,6 +223,13 @@ fun WellbeingTab(
             onAppSelected = { app ->
                 scope.launch {
                     WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + app.packageName)
+                    showAppPicker = false
+                }
+            },
+            onMultipleAppsSelected = { apps ->
+                scope.launch {
+                    val newPackages = pausedApps + apps.mapTo(mutableSetOf()) { it.packageName }
+                    WellbeingSettingsStore.pausedApps.set(ctx, newPackages)
                 }
                 showAppPicker = false
             }

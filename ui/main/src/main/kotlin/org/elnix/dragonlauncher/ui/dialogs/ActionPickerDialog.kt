@@ -192,7 +192,6 @@ fun ActionPickerDialog(
 
     if (showAppPicker) {
         AppPickerSheet(
-            multiSelectEnabled = onMultipleActionsSelected != null,
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
 

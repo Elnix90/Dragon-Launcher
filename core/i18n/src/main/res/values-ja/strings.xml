@@ -234,7 +234,7 @@
     <string name="show_app_icon_start_drag_position">ドラッグ開始位置にアプリアイコンを表示</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d 件選択中</string>
-    <string name="add_all_manual">1つずつ配置</string>
+
     <string name="place_app_where">%s をどこに配置しますか？</string>
     <string name="tap_circle_to_place">サークルをタップしてアプリを配置</string>
     <string name="multi_select_drawer_hint">💡 アプリを長押しして複数を一度に選択</string>

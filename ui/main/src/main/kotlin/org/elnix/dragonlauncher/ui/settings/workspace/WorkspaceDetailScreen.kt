@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.enumsui.select.LocalWorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.serializables.Profile
@@ -40,7 +39,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun WorkspaceDetailScreen(
@@ -66,11 +64,6 @@ fun WorkspaceDetailScreen(
     val apps by drawerViewModel
         .search(workspace, workspaceViewMode)
         .collectAsState(initial = emptyList())
-
-    LaunchedEffect(Unit) {
-        delay(1.seconds)
-        val apps = null
-    }
 
     Box(Modifier.fillMaxSize()) {
         SettingsScaffold(
@@ -157,6 +150,8 @@ fun WorkspaceDetailScreen(
             onAppSelected = { app ->
                 workspaceManager.addAppToWorkspace(workspaceId, app.key)
             }
-        )
+        ) { apps ->
+            workspaceManager.addAppsToWorkspace(workspaceId, apps.mapTo(mutableSetOf()) { it.key })
+        }
     }
 }

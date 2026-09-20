@@ -508,7 +508,7 @@
 
   <!--  ─────────────  Multi Select  ─────────────  -->
   <string name="multi_select_count">%d selected</string>
-  <string name="add_all_manual">Place one by one</string>
+
   <string name="place_app_where">Where do you want to place %s?</string>
   <string name="tap_circle_to_place">Tap on the circle to place the app</string>
   <string name="multi_select_drawer_hint">💡 Long press an app to select multiple at once</string>
@@ -1140,4 +1140,5 @@
   <string name="drawer_align">Drawer align</string>
   <string name="ime_padding_drawer">Ime padding drawer</string>
   <string name="ime_padding_drawer_desc">Whether if the keyboard overlaps the apps or not</string>
+  <string name="add_apps">Add apps</string>
 </resources>

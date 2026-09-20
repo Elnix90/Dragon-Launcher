@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -64,7 +65,6 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 fun AppPickerSheet(
     profilesViewModel: ProfilesViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    multiSelectEnabled: Boolean = false,
     onDismiss: () -> Unit,
     onAppSelected: (Application) -> Unit,
     onMultipleAppsSelected: ((List<Application>) -> Unit)? = null
@@ -221,13 +221,15 @@ fun AppPickerSheet(
         }
 
         // Multi-select hint
-        AnimatedVisibility(multiSelectEnabled && !isMultiSelectMode) {
+        AnimatedVisibility(onMultipleAppsSelected != null && !isMultiSelectMode) {
             Text(
                 text = stringResource(R.string.multi_select_drawer_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
 
@@ -246,7 +248,7 @@ fun AppPickerSheet(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(8.dp)
-                    Text(stringResource(R.string.add_all_manual))
+                    Text(stringResource(R.string.add_apps))
                 }
             }
         }
@@ -289,24 +291,34 @@ fun AppPickerSheet(
                 }
 
                 else -> {
+                    logWtf { "isMulti: $isMultiSelectMode\nonMultiple: $onMultipleAppsSelected" }
+
                     AppGrid(
                         apps = apps,
                         isMultiSelectMode = isMultiSelectMode,
-                        onEnterMultiSelect = { app ->
-                            isMultiSelectMode = true
-                            if (app !in selectedApps) {
-                                selectedApps.add(app)
+                        onEnterMultiSelect = if (onMultipleAppsSelected != null) {
+                            { app ->
+                                isMultiSelectMode = true
+                                if (app !in selectedApps) {
+                                    selectedApps.add(app)
+                                }
                             }
+                        } else {
+                            null
                         },
-                        onToggleSelect = { app ->
-                            if (app in selectedApps) {
-                                selectedApps.remove(app)
-                            } else {
-                                selectedApps.add(app)
+                        onToggleSelect = if (onMultipleAppsSelected != null) {
+                            { app ->
+                                if (app in selectedApps) {
+                                    selectedApps.remove(app)
+                                } else {
+                                    selectedApps.add(app)
+                                }
+                                if (selectedApps.isEmpty()) {
+                                    isMultiSelectMode = false
+                                }
                             }
-                            if (selectedApps.isEmpty()) {
-                                isMultiSelectMode = false
-                            }
+                        } else {
+                            null
                         },
                         selectedPackages = selectedApps,
                         onReload = drawerViewModel::reloadApps,

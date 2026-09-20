@@ -444,7 +444,7 @@
     <string name="category_cells">Cellules de catégorie</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d sélectionnée(s)</string>
-    <string name="add_all_manual">Placer une par une</string>
+
     <string name="place_app_where">Où voulez-vous placer %s ?</string>
     <string name="tap_circle_to_place">Appuyez sur le cercle pour placer l\'app</string>
     <string name="multi_select_drawer_hint">💡 Appui long sur une app pour en sélectionner plusieurs d\'un coup</string>
