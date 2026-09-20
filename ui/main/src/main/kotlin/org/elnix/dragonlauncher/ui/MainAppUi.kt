@@ -130,6 +130,7 @@ import org.elnix.dragonlauncher.ui.settings.debug.LogsTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
 import org.elnix.dragonlauncher.ui.settings.debug.SettingsDebugTab
 import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
+import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsScreen
 import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspacesTab

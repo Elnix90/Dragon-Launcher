@@ -1,16 +1,15 @@
-package org.elnix.dragonlauncher.ui
+package org.elnix.dragonlauncher.ui.settings.points
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,15 +27,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,13 +52,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastCoerceAtMost
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools
@@ -74,7 +69,6 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.navigation.ManipulationSystem
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
@@ -117,23 +111,22 @@ import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
+import org.elnix.dragonlauncher.ui.helpers.detectTransformGestures
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.helpers.swipe.backgroundCenteredSquareGrid
+import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsViewModel.TransformedOffset
 import kotlin.time.Duration.Companion.milliseconds
 
-private data class TempPos(
-    val shapeId: MutableState<Int?>,
-    val offset: Animatable<Offset, AnimationVector2D>
-)
-
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PointsSettingsScreen(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
+    viewModel: PointsSettingsViewModel = hiltViewModel(),
     initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
@@ -161,9 +154,6 @@ fun PointsSettingsScreen(
 
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val snapPoints by UiSettingsStore.snapPoints.asState()
-    val snapPointsToShapes by UiSettingsStore.snapPointsToShapes.asState()
-
     val snapPointsAngle by UiSettingsStore.snapPointsAngle.asState()
     val snapPointAngleThreshold by UiSettingsStore.snapPointAngleThreshold.asState()
     val showSnapPointAngleLines by UiSettingsStore.showSnapPointAngleLines.asState()
@@ -171,11 +161,12 @@ fun PointsSettingsScreen(
     val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
     val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
     val autoMerge by UiSettingsStore.autoMerge.asState()
-    val multiSelectPoints by UiSettingsStore.multiSelectPoints.asState()
 
     val cellSizeDp by UiSettingsStore.pointsCellSizeDp.asState()
     val cellSizePx = cellSizeDp.px
     val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
+
+    val snapPoints = viewModel.snapPoints
 
     fun Offset.snap(): Offset = if (snapPoints && allowFreePoints) this.snapToGrid(cellSizePx) else this
 
@@ -184,75 +175,31 @@ fun PointsSettingsScreen(
     val selectedPointsIds: List<Int> by pointsService.selectedPointsIds.asState()
     val aSinglePointIsSelected = selectedPointsIds.size == 1
 
-    var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
-    var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
-    var ableToLaunchHoverAction by remember { mutableStateOf(false) }
+    var closestHoveredPoint by viewModel.closestHoveredPoint
+    var closestHoveredTempOffset by viewModel.closestHoveredTempOffset
+    var ableToLaunchHoverAction by viewModel.ableToLaunchHoverAction
 
-    var showMoreSheet by remember { mutableStateOf(false) }
-    var showEditDefaultPoint by remember { mutableStateOf(false) }
-    var showAddDialog by remember { mutableStateOf(false) }
-    var showEditDialog by remember { mutableStateOf<Int?>(null) }
-    var showNestManagementDialog by remember { mutableStateOf(false) }
-    var showResetPointsAndNestsDialog by remember { mutableStateOf(false) }
+    var showMoreSheet by viewModel.showMoreSheet
+    var showGambleDialog by viewModel.showGambleDialog
+    var showEditDefaultPoint by viewModel.showEditDefaultPoint
+    var showAddDialog by viewModel.showAddDialog
+    var showEditDialog by viewModel.showEditDialog
+    var showNestManagementDialog by viewModel.showNestManagementDialog
+    var showResetPointsAndNestsDialog by viewModel.showResetPointsAndNestsDialog
 
     // Manual placement mode state (multi-select "Place one by one")
-    var manualPlacementQueue by remember { mutableStateOf<List<Action>>(emptyList()) }
-    val isInManualPlacementMode = manualPlacementQueue.isNotEmpty()
-    var isDragging by remember { mutableStateOf(false) }
+    var manualPlacementQueue by viewModel.manualPlacementQueue
+    val isInManualPlacementMode = viewModel.isInManualPlacementMode
+    var isDragging by viewModel.isDragging
 
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
     val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest, false) }
 
-    /**
-     * Computes the new offset for the selected point.
-     *
-     * When [snapPoints] is `false`, it simply skips the computation and returns the normalized offset.
-     * Otherwise, the function checks for each potential shapes the closest and determines the most probable shape to collide with
-     *
-     * @param point which point to move
-     * @param normalizedOffset the offset in which the gesture ends (normalized)
-     * @return the optional [shapeId][Int] the point will take if dropped here
-     */
-    fun computePointMoved(
-        point: Point,
-        normalizedOffset: Offset,
-        forceSnap: Boolean = false
-    ): Int? {
-        // Early return: if user don't want to snap to shapes, no need to compute them as it is a bit expensive
-        if (allowFreePoints && !snapPointsToShapes && !forceSnap) return null
+    val center by viewModel.center.asState()
+    val manipulationSystem = viewModel.manipulationSystem
 
-        if (shapes.isEmpty()) return null
-
-        val (minOffset, shapeId) =
-            shapes
-                .map { shape ->
-                    pointsService.computePointOffset(
-                        point.copy(
-                            offset = normalizedOffset,
-                            shapeId = shape.id
-                        )
-                    ) to shape.id
-                }.minBy { (offset, _) -> offset distanceTo normalizedOffset }
-
-        if (forceSnap) return shapeId
-
-        /**
-         * The distance between the landing [Offset] and the finger's position
-         */
-        val minOffsetDistanceToNormalized: Float = minOffset distanceTo normalizedOffset
-
-        return if (minOffsetDistanceToNormalized < COLLIDING_SHAPE_THRESHOLD_PX) {
-            shapeId
-        } else {
-            null
-        }
-    }
-
-    var center by remember { mutableStateOf(Offset.Zero) }
-
-    val manipulationSystem = retain { ManipulationSystem(center) }
     LaunchedEffect(center) {
         manipulationSystem.center = center
     }
@@ -260,90 +207,18 @@ fun PointsSettingsScreen(
         manipulationSystem.reset()
     }
 
-    val offset = manipulationSystem.offset
-    val angle = manipulationSystem.angle
-    val zoom = manipulationSystem.zoom
-
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
     /**
      * I am soooooooooooooo proud of this thing actually
      */
-    val cellNumber =
-        remember(cellSizePx, zoom.value, offset.value) {
-            val dist = offset.value.getDistance()
-            val screenMaxDimension =
-                with(density) {
-                    maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
-                }
-
-            (((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
+    val screenMaxDimensionPx =
+        with(density) {
+            maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
         }
+    val cellNumber = viewModel.computeCellNumber(cellSizePx, screenMaxDimensionPx)
 
-    /**
-     * Holds an Offset and provides helper functions and value to manage it in the [PointsSettingsScreen] scope.
-     */
-    class TransformedOffset(
-        /**
-         * Original offset, in normal screen coordinates
-         * It will be transformed to give the actual useful values
-         */
-        private val offset: Offset
-    ) {
-        /**
-         * Transformed offset, represents the coordinated in space of the [offset] after undoing the
-         * transformations of [angle], [zoom], and [offset] that are only for visual in the settings screen
-         */
-        val transformedOffset: Offset by lazy {
-            manipulationSystem.transform(this.offset)
-        }
-
-        /**
-         * Represents the offset of the point, if you do not account for both the [angle], [zoom], and [offset] transformations and the [center]
-         * in the middle ot the screen.
-         *
-         * ### **It's the offset you want to save into the points property**
-         * as it can be interpreted by the [org.elnix.dragonlauncher.points.PointsService] and be
-         * converted back to screen coordinates.
-         */
-        val normalizedOffset: Offset by lazy {
-            manipulationSystem.normalize(this.transformedOffset)
-        }
-
-        /**
-         * Computes the closest point relative to this [transformedOffset].
-         * @see org.elnix.dragonlauncher.points.PointsService.computeClosest
-         */
-        val bestP: Point? by lazy {
-            pointsService.computeClosest(this.normalizedOffset, nestId)
-        }
-
-        private val distance: Float by lazy {
-            val betsPOffset = this.bestP?.getPos() ?: return@lazy Float.MAX_VALUE
-            betsPOffset distanceTo this.normalizedOffset
-        }
-
-        /**
-         * Whether the distance to the closest point is inferior to an arbitrary [TOUCH_THRESHOLD_PX].
-         *
-         * TODO Make this threshold dependent on the [zoom]
-         */
-        private val distanceSmallEnough: Boolean by lazy { distance <= TOUCH_THRESHOLD_PX }
-
-        /** Executes [block] if [distanceSmallEnough] */
-        inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distanceSmallEnough) block() else null
-
-        override fun toString(): String =
-            "TR(\n" +
-                "   offset = ${this.offset}\n" +
-                "   transformedOffset = $transformedOffset\n" +
-                "   normalizedOffset = $normalizedOffset\n" +
-                "   bestP = $bestP\n" +
-                "   distance = $distance${if (!distanceSmallEnough) " (Too Far!)" else ""}\n" +
-                ")"
-    }
-
-    fun Offset.toTr(): TransformedOffset = TransformedOffset(this)
+    fun Offset.toTr(): TransformedOffset = viewModel.TransformedOffset(this)
 
     /**
      * Compute position of a point in the screen.
@@ -354,28 +229,7 @@ fun PointsSettingsScreen(
      */
     fun Point.computePosition(): Offset = manipulationSystem.undoBoth(this.getPos())
 
-    val selectedPointTempOffset = retain { mutableStateMapOf<Int, TempPos>() }
-
-    fun select(id: Int) {
-        if (multiSelectPoints) {
-            pointsService.select(id)
-        } else {
-            pointsService.selectOnyOne(id)
-            selectedPointTempOffset.clear()
-        }
-
-        val point = pointsService.findPointById(id) ?: return
-        selectedPointTempOffset[id] =
-            TempPos(
-                shapeId = mutableStateOf(point.shapeId),
-                offset = Animatable(point.computePosition(), Offset.VectorConverter)
-            )
-    }
-
-    fun deselect(id: Int) {
-        pointsService.deselect(id)
-        selectedPointTempOffset -= id
-    }
+    val selectedPointTempOffset = viewModel.selectedPointTempOffset
 
     fun toggleDragAroundMode(checked: Boolean) {
         scope.launch {
@@ -551,7 +405,9 @@ fun PointsSettingsScreen(
                                 }
                             }
 
-                            ResetSystem -> manipulationSystem.resetAnimated(scope)
+                            ResetSystem -> {
+                                manipulationSystem.resetAnimated(scope)
+                            }
                         }
                     }
 
@@ -591,7 +447,7 @@ fun PointsSettingsScreen(
                                         pointsService.addPoint { newId ->
                                             oldPoint.copy(id = newId)
                                         }
-                                    select(newId)
+                                    viewModel.select(newId)
                                     pointsService.autoSeparate(nestId, newId)
                                 }
                             }
@@ -614,10 +470,10 @@ fun PointsSettingsScreen(
 
                         val w = size.width.toFloat()
                         val h = size.height.toFloat()
-                        center = Offset(w / 2f, h / 2f)
+                        viewModel.center.value = Offset(w / 2f, h / 2f)
                     }
         ) {
-            /**
+            /*
              * Main Canva, draws the circles, and sub nests by recursivity.
              *
              * Uses [graphicsLayer] to apply transformation of [offset], [zoom] and [angle] and provide an easy way to navigate in the canvas
@@ -633,11 +489,11 @@ fun PointsSettingsScreen(
                     Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            translationX = -offset.value.x * zoom.value
-                            translationY = -offset.value.y * zoom.value
-                            scaleX = zoom.value
-                            scaleY = zoom.value
-                            rotationZ = angle.value
+                            translationX = -viewModel.offset.value.x * viewModel.zoom.value
+                            translationY = -viewModel.offset.value.y * viewModel.zoom.value
+                            scaleX = viewModel.zoom.value
+                            scaleY = viewModel.zoom.value
+                            rotationZ = viewModel.angle.value
                             transformOrigin = TransformOrigin(0f, 0f)
                         }
                 ) {
@@ -778,10 +634,12 @@ fun PointsSettingsScreen(
                     .fillMaxSize()
                     .pointerInput(Unit, isInDragAroundMode, nestId) {
                         if (isInDragAroundMode) {
-                            detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
+                            detectTransformGestures(
+                                panZoomLock = true
+                            ) { centroid, pan, gestureZoom, gestureRotate ->
 
-                                val oldScale = zoom.value
-                                val newScale = zoom.value * gestureZoom
+                                val oldScale = viewModel.zoom.value
+                                val newScale = viewModel.zoom.value * gestureZoom
 
                                 // For natural zooming and rotating, the centroid of the gesture should
                                 // be the fixed point where zooming and rotating occurs.
@@ -790,12 +648,12 @@ fun PointsSettingsScreen(
                                 // We then compute what the new offset should be to keep the centroid
                                 // visually stationary for rotating and zooming, and also apply the pan.
                                 scope.launch {
-                                    offset.snapTo(
-                                        (offset.value + centroid / oldScale).rotateBy(gestureRotate) -
+                                    viewModel.offset.snapTo(
+                                        (viewModel.offset.value + centroid / oldScale).rotateBy(gestureRotate) -
                                             (centroid / newScale + pan / oldScale)
                                     )
-                                    zoom.snapTo(newScale)
-                                    angle.snapTo(angle.value + gestureRotate)
+                                    viewModel.zoom.snapTo(newScale)
+                                    viewModel.angle.snapTo(viewModel.angle.value + gestureRotate)
                                 }
                             }
                         } else {
@@ -808,7 +666,7 @@ fun PointsSettingsScreen(
 
                                     // Only select if not already
                                     if (newSelectedPoint != null && newSelectedPoint.id !in selectedPointsIds) {
-                                        select(newSelectedPoint.id)
+                                        viewModel.select(newSelectedPoint.id)
                                     }
                                 },
                                 onDrag = { change, dragAmount ->
@@ -823,7 +681,7 @@ fun PointsSettingsScreen(
                                         val point = pointsService.findPointById(id) ?: return@forEach
 
                                         val tr = previousOffset.value.toTr()
-                                        val newShapeId = computePointMoved(point, tr.normalizedOffset, !allowFreePoints)
+                                        val newShapeId = viewModel.computePointMoved(point, tr.normalizedOffset, shapes, !allowFreePoints)
 
                                         selectedPointTempOffset[id]?.apply {
                                             shapeId.value = newShapeId
@@ -913,7 +771,7 @@ fun PointsSettingsScreen(
 
                                             pointsService.deselectAll()
                                             // Select here bc it adds it to the selectedPointTempOffset map
-                                            select(newNestPointId)
+                                            viewModel.select(newNestPointId)
                                         }
                                     } else {
                                         // 2) No merging, just normal dragging and dropping
@@ -990,7 +848,7 @@ fun PointsSettingsScreen(
                                             nestId = nestId,
                                             liveNestTargetNestId = newLiveNest
                                         )
-                                    val shapeId = computePointMoved(newPoint, tr.normalizedOffset, !allowFreePoints)
+                                    val shapeId = viewModel.computePointMoved(newPoint, tr.normalizedOffset, shapes, !allowFreePoints)
 
                                     val newPointId =
                                         pointsService.addPoint { id ->
@@ -1028,9 +886,9 @@ fun PointsSettingsScreen(
                                             showEditDialog = bestP.id
                                         }
                                     } else if (bestP.id in selectedPointsIds) {
-                                        deselect(id)
+                                        viewModel.deselect(id)
                                     } else {
-                                        select(id)
+                                        viewModel.select(id)
                                     }
                                 }
                             }
@@ -1041,8 +899,6 @@ fun PointsSettingsScreen(
     }
 
     if (showMoreSheet) {
-        var showGambleDialog by remember { mutableStateOf(false) }
-
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
             skipPartiallyExpanded = true
@@ -1156,9 +1012,10 @@ fun PointsSettingsScreen(
 
                             if (snapToShapes) {
                                 val shapeId =
-                                    computePointMoved(
+                                    viewModel.computePointMoved(
                                         point = point,
                                         normalizedOffset = point.offset,
+                                        shapes = shapes,
                                         forceSnap = true
                                     )
                                 point.copy(shapeId = shapeId)
@@ -1202,7 +1059,7 @@ fun PointsSettingsScreen(
 
                 pointsService.editPoint(newPoint.id) { newPoint }
 
-                select(newPoint.id)
+                viewModel.select(newPoint.id)
                 showEditDialog = null
             }
         }
@@ -1222,7 +1079,7 @@ fun PointsSettingsScreen(
         modifier = Modifier.selfAlignHorizontally(),
         points = points,
         selectedPointsIds = selectedPointsIds,
-        onDeselect = { id -> select(id) },
+        onDeselect = { id -> viewModel.select(id) },
         onInvert = { pointsService.invertSelection(nestId) },
         onSelectAll = { pointsService.selectAll(nestId) },
         onDeselectAll = { pointsService.deselectAll() }
@@ -1240,7 +1097,9 @@ fun PointsSettingsScreen(
                         }.getOrDefault(currentAction.packageName)
                 }
 
-                else -> currentAction::class.simpleName ?: ""
+                else -> {
+                    currentAction::class.simpleName ?: ""
+                }
             }
         val remaining = manualPlacementQueue.size
 
@@ -1311,7 +1170,7 @@ fun PointsSettingsScreen(
         }
     }
 
-    /**
+    /*
      * Debug Infos section
      * Shows various information about the current settings state, may be unreadable when lots of points
      */

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.dragon.library)
     alias(libs.plugins.dragon.compose)
     alias(libs.plugins.dragon.serialization)
+    alias(libs.plugins.dragon.hilt)
 }
 
 kotlin {
@@ -29,6 +30,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.hilt.core)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlin.reflect)
