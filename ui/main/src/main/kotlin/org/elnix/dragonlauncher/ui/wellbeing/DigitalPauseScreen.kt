@@ -188,7 +188,7 @@ fun DigitalPauseScreen(
 
                 Spacer(16.dp)
 
-                LotusBloom(flowerSize = lotusSize)
+                LotusBloom(flowerSize = lotusSize, startIdle = showChoice)
 
                 Spacer(32.dp)
 
@@ -467,9 +467,10 @@ private enum class LotusPhase {
 }
 
 @Composable
-private fun LotusBloom(flowerSize: Dp) {
+private fun LotusBloom(flowerSize: Dp, startIdle: Boolean) {
     // Phase 1: reveal played once, held briefly once fully displayed.
-    // Phase 2: idle animation replayed in a loop, 5s after each end.
+    // Phase 2: idle animation, but only once the next screen (choice) is
+    // shown; replayed in a loop, 3s after each end.
     val revealComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lotus_reveal.json"))
     val idleComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lotus_bloom.json"))
 
@@ -481,8 +482,8 @@ private fun LotusBloom(flowerSize: Dp) {
         iterations = 1,
         isPlaying = phase == LotusPhase.Reveal
     )
-    LaunchedEffect(revealState.isAtEnd) {
-        if (revealState.isAtEnd && phase == LotusPhase.Reveal) {
+    LaunchedEffect(revealState.isAtEnd, startIdle) {
+        if (revealState.isAtEnd && phase == LotusPhase.Reveal && startIdle) {
             delay(1200)
             phase = LotusPhase.Idle
         }
@@ -534,7 +535,7 @@ private fun LotusBloom(flowerSize: Dp) {
                     )
                     LaunchedEffect(idleState.isAtEnd) {
                         if (idleState.isAtEnd) {
-                            delay(5000)
+                            delay(3000)
                             idleRun++
                         }
                     }
