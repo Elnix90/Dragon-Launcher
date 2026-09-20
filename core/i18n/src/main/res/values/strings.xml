@@ -130,6 +130,7 @@
   <string name="workspace">Workspace</string>
   <string name="behavior_help">Here you can edit the behavior related settings of the app.</string>
   <string name="keep_screen_on">Keep Screen On</string>
+  <string name="lock_orientation_portrait">Lock orientation to portrait</string>
   <string name="back_action">Back Action</string>
   <string name="double_click_action">Double Click Action</string>
   <string name="privacy_first">Privacy First</string>
@@ -568,6 +569,7 @@
   <string name="hold_delay_before_starting_long_click_settings">Hold delay before starting long click settings (ms)</string>
   <string name="hold_delay_before_starting_long_click_settings_desc">How long to hold before the loading settings starts to load</string>
   <string name="keep_screen_on_desc">Do not turn the screen off and lock, keep it always on when Dragon is focused</string>
+  <string name="lock_orientation_portrait_desc">Prevent the launcher from rotating to landscape when the device is turned sideways</string>
   <string name="drag_zone_padding">Drag zone padding</string>
   <string name="drag_zone_padding_desc">Adjust the global draggable area</string>
   <string name="points_settings">Point settings</string>
