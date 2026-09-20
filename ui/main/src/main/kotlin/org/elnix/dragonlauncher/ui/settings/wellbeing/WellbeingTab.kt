@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.settings.wellbeing
 
-import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,10 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownSocialMediaApps
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.i18n.R
@@ -53,39 +47,26 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @Composable
 fun WellbeingTab(
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    appLaunchViewModel: AppLaunchViewModel = activityViewModel()
+    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
+    viewModel: WellbeingViewModel = hiltViewModel()
 ) {
     val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
     val pausedApps by WellbeingSettingsStore.pausedApps.asState()
     val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
     val reminderMode by WellbeingSettingsStore.reminderMode.asState()
 
-    var showAppPicker by remember { mutableStateOf(false) }
-    var showPermissionDialog by remember { mutableStateOf(false) }
-    var showOverlayPermissionDialog by remember { mutableStateOf(false) }
-    // Remembers that the user asked for overlay reminders while the
-    // overlay permission was missing, so the toggle can be restored
-    // once the permission is granted.
-    var pendingReminderEnable by remember { mutableStateOf(false) }
+    val showAppPicker by viewModel.showAppPicker
+    val showPermissionDialog by viewModel.showPermissionDialog
+    val showOverlayPermissionDialog by viewModel.showOverlayPermissionDialog
 
     val allApps by drawerViewModel.allApps.collectAsState()
     val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
     val canShowOverlay = Settings.canDrawOverlays(ctx)
     LaunchedEffect(reminderEnabled, reminderMode, canShowOverlay) {
-        if (reminderMode == ReminderMode.Overlay && !canShowOverlay) {
-            if (reminderEnabled) {
-                WellbeingSettingsStore.reminderEnabled.set(ctx, false)
-                // The toggle itself already showed the dialog in this case.
-                if (!pendingReminderEnable) showOverlayPermissionDialog = true
-            }
-        } else if (pendingReminderEnable && canShowOverlay) {
-            pendingReminderEnable = false
-            WellbeingSettingsStore.reminderEnabled.set(ctx, true)
-        }
+        viewModel.syncOverlayState(reminderEnabled, reminderMode, canShowOverlay)
     }
 
     SettingsScaffold(
@@ -93,11 +74,7 @@ fun WellbeingTab(
         helpText = stringResource(R.string.wellbeing_help),
         resetTitle = stringResource(R.string.reset_default_settings),
         resetText = stringResource(R.string.reset_settings_in_this_tab),
-        onReset = {
-            scope.launch {
-                WellbeingSettingsStore.resetAll(ctx)
-            }
-        }
+        onReset = viewModel::onResetSettings
     ) {
         DragonSettingsGroup(R.string.social_media_pause) {
             Setting(WellbeingSettingsStore.socialMediaPauseEnabled)
@@ -105,11 +82,7 @@ fun WellbeingTab(
                 WellbeingSettingsStore.guiltModeEnabled,
                 enabled = socialMediaPauseEnabled
             ) { newValue ->
-                // Setting() persists the value itself afterwards; only
-                // guide the user to the system settings when needed.
-                if (newValue && !hasUsageStatsPermission) {
-                    showPermissionDialog = true
-                }
+                viewModel.onGuiltToggle(newValue, hasUsageStatsPermission)
             }
             Setting(WellbeingSettingsStore.pauseDurationSeconds, enabled = socialMediaPauseEnabled)
         }
@@ -119,10 +92,7 @@ fun WellbeingTab(
                 setting = WellbeingSettingsStore.reminderEnabled,
                 enabled = socialMediaPauseEnabled
             ) { newValue ->
-                if (newValue && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
-                    pendingReminderEnable = true
-                    showOverlayPermissionDialog = true
-                }
+                viewModel.onReminderToggle(newValue, reminderMode)
             }
 
             Setting(WellbeingSettingsStore.reminderIntervalMinutes, enabled = socialMediaPauseEnabled && reminderEnabled)
@@ -151,7 +121,7 @@ fun WellbeingTab(
                 customItem(
                     buttonGroupContent = {
                         DragonButton(
-                            onClick = { showAppPicker = true },
+                            onClick = { viewModel.showAppPicker.value = true },
                             interactionSource = interactionSources[0],
                             modifier =
                                 Modifier
@@ -173,14 +143,10 @@ fun WellbeingTab(
                     buttonGroupContent = {
                         DragonButton(
                             onClick = {
-                                scope.launch {
-                                    val installedPackages = allApps.map { it.packageName }.toSet()
-                                    val socialApps =
-                                        knownSocialMediaApps.filter {
-                                            it in installedPackages
-                                        }
-                                    WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + socialApps)
-                                }
+                                viewModel.onAddSocialMedia(
+                                    allApps.map { it.packageName }.toSet(),
+                                    pausedApps
+                                )
                             },
                             interactionSource = interactionSources[1],
                             modifier =
@@ -207,11 +173,7 @@ fun WellbeingTab(
                     app?.let {
                         PausedAppItem(
                             app = app,
-                            onRemove = {
-                                scope.launch {
-                                    WellbeingSettingsStore.pausedApps.set(ctx, pausedApps - packageName)
-                                }
-                            }
+                            onRemove = { viewModel.onRemovePausedApp(packageName, pausedApps) }
                         )
                     }
                 }
@@ -229,59 +191,32 @@ fun WellbeingTab(
 
     if (showAppPicker) {
         AppPickerSheet(
-            onDismiss = { showAppPicker = false },
+            onDismiss = { viewModel.showAppPicker.value = false },
             onAppSelected = { app ->
-                scope.launch {
-                    WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + app.packageName)
-                    showAppPicker = false
-                }
+                viewModel.onAppPicked(app.packageName, pausedApps)
             },
             onMultipleAppsSelected = { apps ->
-                scope.launch {
-                    val newPackages = pausedApps + apps.mapTo(mutableSetOf()) { it.packageName }
-                    WellbeingSettingsStore.pausedApps.set(ctx, newPackages)
-                }
-                showAppPicker = false
+                viewModel.onMultipleAppsPicked(apps.map { it.packageName }.toSet(), pausedApps)
             }
         )
     }
 
     if (showPermissionDialog) {
-        AppUsagePermissionDialog { showPermissionDialog = false }
+        AppUsagePermissionDialog { viewModel.showPermissionDialog.value = false }
     }
 
     if (showOverlayPermissionDialog) {
         AlertDialog(
-            onDismissRequest = {
-                pendingReminderEnable = false
-                showOverlayPermissionDialog = false
-            },
+            onDismissRequest = viewModel::onOverlayDialogDismiss,
             title = { Text(stringResource(R.string.overlay_permission_required)) },
             text = { Text(stringResource(R.string.overlay_permission_description)) },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        showOverlayPermissionDialog = false
-                        ctx.startActivity(
-                            Intent(
-                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                "package:${ctx.packageName}".toUri()
-                            ).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                        )
-                    }
-                ) {
+                TextButton(onClick = viewModel::onOverlayDialogConfirm) {
                     Text(stringResource(R.string.open_settings))
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        pendingReminderEnable = false
-                        showOverlayPermissionDialog = false
-                    }
-                ) {
+                TextButton(onClick = viewModel::onOverlayDialogDismiss) {
                     Text(stringResource(R.string.cancel))
                 }
             }
