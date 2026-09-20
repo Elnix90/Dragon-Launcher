@@ -106,11 +106,9 @@
     <string name="double_click_action">Acción de doble clic</string>
     <string name="privacy_first">La privacidad es lo primero</string>
     <string name="quick_tutorial">Tutorial rápido</string>
-
     <string name="swipe_to_open_app">Desliza para abrir tus aplicaciones o atajos configurados</string>
     <string name="configure_your_apps">Configura tus aplicaciones y atajos en los ajustes</string>
     <string name="theme_selector">Selector de temas</string>
-
     <string name="edit_point">Punto de edición</string>
     <string name="choose_action">Elige Acción</string>
     <string name="automatic_backups">Copias de seguridad automáticas</string>
@@ -254,7 +252,6 @@
     <string name="open_default_launcher_settings">Abrir ajustes del lanzador predeterminados</string>
     <string name="welcome_to_dragon_launcher">Bienvenido a Dragón Lanzador</string>
     <string name="customize_apps">Personalizar aplicaciones</string>
-
     <string name="app_aliases">Apodos</string>
     <string name="edit_alias">Editar alias</string>
     <string name="alias">Alias</string>
@@ -433,7 +430,6 @@
     <string name="category_cells">Celdas de categoría</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d seleccionada(s)</string>
-
     <string name="place_app_where">¿Dónde quieres colocar %s?</string>
     <string name="tap_circle_to_place">Toca el círculo para colocar la app</string>
     <string name="multi_select_drawer_hint">💡 Mantén presionada una app para seleccionar varias a la vez</string>
@@ -750,7 +746,6 @@
     <string name="enter_adb_command">Introduzca comando ADB</string>
     <string name="command_output">Salida de comando</string>
     <string name="adb_command_leave_empty_notice">💡 Deje vacío para que se le solicite el comando al ejecutarlo</string>
-
     <string name="other">Otro</string>
     <string name="kill_launcher">Matar Lanzador</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">Multiplicar o restar la opacidad en nidos vivos</string>
