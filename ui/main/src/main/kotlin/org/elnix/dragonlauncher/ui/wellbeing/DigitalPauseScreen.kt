@@ -11,8 +11,6 @@ import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -58,6 +56,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,13 +65,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -82,6 +76,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -463,45 +461,36 @@ private fun TimeLimitPickerUI(
     }
 }
 
+private enum class LotusPhase {
+    Reveal,
+    Idle
+}
+
 @Composable
 private fun LotusBloom(flowerSize: Dp) {
-    // One-shot staged bloom (~3s), then frozen in full flower with only a
-    // faint breathing scale on top.
-    val reveal = remember { Animatable(0f) }
-    LaunchedEffect(Unit) {
-        reveal.animateTo(1f, animationSpec = tween(3000, easing = FastOutSlowInEasing))
-    }
-    val infiniteTransition = rememberInfiniteTransition(label = "lotus_breath")
-    val breath by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.03f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(4000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-        label = "breath"
-    )
+    // Phase 1: reveal played once, held briefly once fully displayed.
+    // Phase 2: idle animation replayed in a loop, 5s after each end.
+    val revealComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lotus_reveal.json"))
+    val idleComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lotus_bloom.json"))
 
-    val p = reveal.value
-    val backAlpha = (p / 0.45f).coerceIn(0f, 1f)
-    val frontAlpha = ((p - 0.35f) / 0.45f).coerceIn(0f, 1f)
-    val heartAlpha = ((p - 0.6f) / 0.4f).coerceIn(0f, 1f)
-    val grow = 0.8f + 0.2f * FastOutSlowInEasing.transform(p)
+    var phase by remember { mutableStateOf(LotusPhase.Reveal) }
+    var idleRun by remember { mutableIntStateOf(0) }
+
+    val revealState = animateLottieCompositionAsState(
+        composition = revealComposition,
+        iterations = 1,
+        isPlaying = phase == LotusPhase.Reveal
+    )
+    LaunchedEffect(revealState.isAtEnd) {
+        if (revealState.isAtEnd && phase == LotusPhase.Reveal) {
+            delay(1200)
+            phase = LotusPhase.Idle
+        }
+    }
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(flowerSize)) {
-        Canvas(
-            modifier =
-                Modifier.fillMaxSize().graphicsLayer {
-                    scaleX = grow * breath
-                    scaleY = grow * breath
-                }
-        ) {
-            val centerX = size.width / 2
-            val centerY = size.height / 2
-            val radius = size.minDimension / 2.2f
-
-            // Violet halo so the flower sits in the night scene
+        // Violet halo so the animation sits in the night scene
+        Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
                 brush =
                     Brush.radialGradient(
@@ -512,107 +501,44 @@ private fun LotusBloom(flowerSize: Dp) {
                                 Color.Transparent
                             ),
                         center = center,
-                        radius = radius * 1.5f
+                        radius = size.minDimension / 2
                     ),
-                radius = radius * 1.5f
+                radius = size.minDimension / 2
             )
+        }
 
-            // Local function that draws one petal layer
-            fun drawPetalLayer(count: Int, scale: Float, alphaMult: Float, first: Color, second: Color) {
-                for (i in 0 until count) {
-                    val angle = (360f / count) * i
-                    val baseColor = if (i % 2 == 0) first else second
-
-                    rotate(angle, pivot = center) {
-                        val r = radius * scale
-                        val path =
-                            Path().apply {
-                                moveTo(centerX, centerY)
-                                // Left edge
-                                cubicTo(
-                                    centerX + r * 0.35f,
-                                    centerY - r * 0.4f,
-                                    centerX + r * 0.15f,
-                                    centerY - r * 0.95f,
-                                    centerX,
-                                    centerY - r
-                                )
-                                // Right edge
-                                cubicTo(
-                                    centerX - r * 0.15f,
-                                    centerY - r * 0.95f,
-                                    centerX - r * 0.35f,
-                                    centerY - r * 0.4f,
-                                    centerX,
-                                    centerY
-                                )
-                                close()
-                            }
-
-                        drawPath(
-                            path = path,
-                            brush =
-                                Brush.linearGradient(
-                                    colors =
-                                        listOf(
-                                            baseColor.copy(alpha = 0.9f * alphaMult),
-                                            baseColor.copy(alpha = 0.3f * alphaMult)
-                                        ),
-                                    start = Offset(centerX, centerY),
-                                    end = Offset(centerX, centerY - radius * scale)
-                                )
-                        )
-                        // Thin outline
-                        Stroke(
-                            width = 1.dp.toPx(),
-                            pathEffect = null
-                        ).let { stroke ->
-                            drawPath(path, Color.White.copy(alpha = 0.3f * alphaMult), style = stroke)
+        AnimatedContent(
+            targetState = phase,
+            transitionSpec = {
+                fadeIn(tween(500)) togetherWith fadeOut(tween(500))
+            },
+            label = "lotus_phase"
+        ) { currentPhase ->
+            if (currentPhase == LotusPhase.Reveal) {
+                LottieAnimation(
+                    composition = revealComposition,
+                    progress = { revealState.progress },
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                key(idleRun) {
+                    val idleState = animateLottieCompositionAsState(
+                        composition = idleComposition,
+                        iterations = 1,
+                        isPlaying = true
+                    )
+                    LottieAnimation(
+                        composition = idleComposition,
+                        progress = { idleState.progress },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    LaunchedEffect(idleState.isAtEnd) {
+                        if (idleState.isAtEnd) {
+                            delay(5000)
+                            idleRun++
                         }
                     }
                 }
-            }
-
-            // Back layer blooms first
-            if (backAlpha > 0f) {
-                drawPetalLayer(
-                    count = 12,
-                    scale = 1.0f,
-                    alphaMult = 0.7f * backAlpha,
-                    first = Color(0xFF7B5CD6),
-                    second = Color(0xFF9D7BEA)
-                )
-            }
-
-            // Front layer follows, slightly offset to fill the gaps
-            if (frontAlpha > 0f) {
-                rotate(15f, pivot = center) {
-                    drawPetalLayer(
-                        count = 8,
-                        scale = 0.75f,
-                        alphaMult = frontAlpha,
-                        first = Color(0xFF9D7BEA),
-                        second = Color(0xFFB79DF5)
-                    )
-                }
-            }
-
-            // Heart light comes last
-            if (heartAlpha > 0f) {
-                drawCircle(
-                    brush =
-                        Brush.radialGradient(
-                            colors =
-                                listOf(
-                                    Color.White.copy(alpha = heartAlpha),
-                                    Color(0xFFD9C8FF).copy(alpha = 0.5f * heartAlpha),
-                                    Color.Transparent
-                                ),
-                            center = center,
-                            radius = radius * 0.2f
-                        ),
-                    radius = radius * 0.2f
-                )
             }
         }
     }

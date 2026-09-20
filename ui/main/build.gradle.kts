@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.coil.compose)
     implementation(libs.coil.compose.base)
+    implementation(libs.lottie.compose)
     implementation(libs.dragon.logging)
     implementation(libs.settings.runtime)
     implementation(libs.compose.lock)
