@@ -128,11 +128,9 @@
     <string name="double_click_action">இரட்டை சொடுக்கு செயல்</string>
     <string name="privacy_first">தனியுரிமை முதலில்</string>
     <string name="quick_tutorial">விரைவு பயிற்சி</string>
-
     <string name="swipe_to_open_app">உங்கள் உள்ளமைக்கப்பட்ட பயன்பாடுகள் / குறுக்குவழிகளைத் திறக்க ச்வைப் செய்யவும்</string>
     <string name="configure_your_apps">அமைப்புகளில் உங்கள் ஆப்ச் மற்றும் சார்ட்கட்களை உள்ளமைக்கவும்</string>
     <string name="theme_selector">கருப்பொருள் தேர்வாளர்</string>
-
     <string name="edit_point">திருத்த புள்ளி</string>
     <string name="choose_action">செயலைத் தேர்ந்தெடுக்கவும்</string>
     <string name="automatic_backups">தானியங்கி காப்புப்பிரதிகள்</string>
@@ -279,7 +277,6 @@
     <string name="powerful_gestures">சக்திவாய்ந்த சைகைகள்.</string>
     <string name="infinite_custom">எல்லையற்ற தனிப்பயனாக்கம்</string>
     <string name="customize_apps">பயன்பாடுகளைத் தனிப்பயனாக்குங்கள்</string>
-
     <string name="app_aliases">மாற்றுப்பெயர்கள்</string>
     <string name="edit_alias">மாற்றுப் பெயரைத் திருத்து</string>
     <string name="alias">மாற்றுப்பெயர்</string>
@@ -449,7 +446,6 @@
     <string name="grid_settings">கட்டம் அமைப்புகள்</string>
     <string name="category_cells">வகை செல்கள்</string>
     <string name="multi_select_count">%d தேர்ந்தெடுக்கப்பட்டது</string>
-
     <string name="place_app_where">%sஐ எங்கு வைக்க விரும்புகிறீர்கள்?</string>
     <string name="tap_circle_to_place">பயன்பாட்டை வைக்க வட்டத்தில் தட்டவும்</string>
     <string name="multi_select_drawer_hint">💡 ஒரே நேரத்தில் பலவற்றைத் தேர்ந்தெடுக்க, பயன்பாட்டை நீண்ட நேரம் அழுத்தவும்</string>
@@ -731,7 +727,6 @@
     <string name="enter_adb_command">ADB கட்டளையை உள்ளிடவும்</string>
     <string name="command_output">கட்டளை வெளியீடு</string>
     <string name="adb_command_leave_empty_notice">💡 கட்டளையை இயக்கும் போது கட்டளையிடும்படி காலியாக விடவும்</string>
-
     <string name="other">மற்றொன்று</string>
     <string name="kill_launcher">கில் லாஞ்சர்</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">நேரடி கூடுகளில் ஒளிபுகாநிலையை பெருக்கவும் அல்லது கழிக்கவும்</string>
