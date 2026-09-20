@@ -100,10 +100,12 @@ fun MainScreen(
         when (val action = point.action) {
             Action.GoParentNest -> {
                 nestNavigationService.goBack()
+                swipeService.clearAfterLaunch()
             }
 
             is Action.OpenNest -> {
                 nestNavigationService.goToNest(action.nestId)
+                swipeService.clearAfterLaunch()
             }
 
             else -> {

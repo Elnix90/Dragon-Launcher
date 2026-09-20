@@ -6,6 +6,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.unit.IntSize
+import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ANGLE_LINE_TAG
+import org.elnix.dragonlauncher.SWIPE_TAG
 import org.elnix.dragonlauncher.base.Constants.Settings.DOUBLE_CLICK_ACTION_DELAY
 import org.elnix.dragonlauncher.base.Constants.Settings.MAX_ITEMS_ALLOWED
 import org.elnix.dragonlauncher.base.SettingFlow
@@ -138,21 +140,22 @@ internal class SwipeServiceImpl(
                 val down = event.changes.firstOrNull { it.changedToDown() } ?: continue
                 val pos = down.position
 
-                val allowed =
-                    pos.isInsideActiveZone(
+                if (
+                    !pos.isInsideActiveZone(
                         size = size,
                         left = leftPadding,
                         right = rightPadding,
                         top = topPadding,
                         bottom = bottomPadding
                     )
-
-                if (!allowed) {
+                ) {
+                    logD(SWIPE_TAG) { "Not inside active zone, skipping..." }
                     continue
                 }
 
                 if (pos.isInsideForegroundWidget()) {
                     // Let widget handle scroll - do NOT consume or process
+                    logD(SWIPE_TAG) { "Inside active widget, skipping..." }
                     continue
                 }
 
@@ -166,6 +169,7 @@ internal class SwipeServiceImpl(
                 if (diff < DOUBLE_CLICK_ACTION_DELAY) {
                     clearAfterLaunch()
                     _doubleClicActionChannel.trySend(Unit)
+                    logD(SWIPE_TAG) { "Triggering double click action, skipping..." }
                     continue
                 }
 
