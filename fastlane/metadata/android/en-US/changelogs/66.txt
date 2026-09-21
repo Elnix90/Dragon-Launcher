@@ -1,0 +1,13 @@
+4.2.1 (Nounou)
+2026-09-21
+[NEW]
+* Search icon action in drawer
+* Configure drawer alignment (top/bottom)
+* Option to disable the google lockdown warning
+* Preset import button
+[IMPROVED]
+* Wellbeing feature rework by Lucky
+[FIXED]
+* Multi select apps pickers
+* Status bar layers visibility bug
+* Foreign widgets were blocking dragging
