@@ -102,11 +102,9 @@
     <string name="behavior">行为</string>
     <string name="workspaces">工作区</string>
     <string name="workspace_help">您可以在这里自定义不同的应用工作区，可以添加/编辑/删除工作区，并在其中绑定应用</string>
-
     <string name="swipe_to_open_app">滑动以打开您配置的应用/快捷方式</string>
     <string name="configure_your_apps">在设置中配置您的应用和快捷方式</string>
     <string name="theme_selector">在设置中配置您的应用和快捷方式</string>
-
     <string name="edit_point">编辑点 (Point)</string>
     <string name="choose_action">选择动作</string>
     <string name="automatic_backups">自动备份</string>
@@ -279,7 +277,6 @@
     <string name="powerful_gestures">强大的手势操作。</string>
     <string name="infinite_custom">无限自定义空间</string>
     <string name="customize_apps">自定义应用程序</string>
-
     <string name="app_aliases">应用别名</string>
     <string name="edit_alias">编辑别名</string>
     <string name="alias">别名</string>
@@ -449,7 +446,6 @@
     <string name="grid_settings">网格设置</string>
     <string name="category_cells">分类网格列数</string>
     <string name="multi_select_count">已选中 %d 项</string>
-
     <string name="place_app_where">您想将“%s”放置在哪个位置？</string>
     <string name="tap_circle_to_place">轻触圆圈以放置该应用</string>
     <string name="multi_select_drawer_hint">💡 提示：在抽屉中长按某个应用可开启多选模式</string>
@@ -731,7 +727,6 @@
     <string name="enter_adb_command">输入待执行的 ADB 核心命令</string>
     <string name="command_output">终端回显输出日志结果</string>
     <string name="adb_command_leave_empty_notice">💡 极客小窍门：如果此处选择保持明智的留空，那么后续在每次真正用手势触发去执行它时，系统都会即时弹出一个输入框当面询问您此时此刻想塞入什么命令</string>
-
     <string name="other">其余未分类杂项</string>
     <string name="kill_launcher">强退并彻底杀死本桌面进程</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">深层嵌套不透明度算法切换（乘法 vs 减法）</string>

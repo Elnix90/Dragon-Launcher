@@ -105,11 +105,9 @@
     <string name="double_click_action">डबल क्लिक क्रिया</string>
     <string name="privacy_first">गोपनीयता पहले</string>
     <string name="quick_tutorial">त्वरित ट्यूटोरियल</string>
-
     <string name="swipe_to_open_app">अपने कॉन्फ़िगर किए गए ऐप्स/शॉर्टकट खोलने के लिए स्वाइप करें</string>
     <string name="configure_your_apps">सेटिंग में अपने ऐप्लिकेशन और शॉर्टकट कॉन्फ़िगर करें</string>
     <string name="theme_selector">थीम चयनकर्ता</string>
-
     <string name="edit_point">संपादन बिंदु</string>
     <string name="choose_action">कार्रवाई चुनें</string>
     <string name="automatic_backups">स्वचालित बैकअप</string>
@@ -254,7 +252,6 @@
     <string name="open_default_launcher_settings">डिफ़ॉल्ट लॉन्चर सेटिंग्स खोलें</string>
     <string name="welcome_to_dragon_launcher">ड्रैगन लॉन्चर में आपका स्वागत है</string>
     <string name="customize_apps">अनुप्रयोगों को अनुकूलित करें</string>
-
     <string name="edit_alias">उपनाम संपादित करें</string>
     <string name="alias">उपनाम</string>
     <string name="create_alias">उपनाम बनाएँ</string>
@@ -430,7 +427,6 @@
     <string name="category_cells">श्रेणी कोशिकाएँ</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d चयनित</string>
-
     <string name="place_app_where">%s को कहाँ रखना चाहते हैं?</string>
     <string name="tap_circle_to_place">ऐप रखने के लिए सर्कल पर टैप करें</string>
     <string name="multi_select_drawer_hint">💡 एक साथ कई ऐप्स चुनने के लिए देर तक दबाएं</string>

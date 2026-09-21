@@ -111,11 +111,9 @@
     <string name="double_click_action">Action de double clic</string>
     <string name="privacy_first">La vie privée avant tout</string>
     <string name="quick_tutorial">Petit tutoriel rapide</string>
-
     <string name="swipe_to_open_app">Faites glisser pour ouvrir vos applications / raccourcis configurés</string>
     <string name="configure_your_apps">Configurez vos applications et raccourcis dans les paramètres</string>
     <string name="theme_selector">Sélecteur de thème</string>
-
     <string name="edit_point">Point de modification</string>
     <string name="choose_action">Choisissez une action</string>
     <string name="automatic_backups">Sauvegardes automatiques</string>
@@ -264,7 +262,6 @@
     <string name="open_default_launcher_settings">Ouvrir les paramètres du lanceur par défaut</string>
     <string name="welcome_to_dragon_launcher">Bienvenue sur Dragon Launcher</string>
     <string name="customize_apps">Personnaliser les applications</string>
-
     <string name="app_aliases">Aliases d’applications</string>
     <string name="edit_alias">Éditeur alias</string>
     <string name="alias">Alias</string>
@@ -444,7 +441,6 @@
     <string name="category_cells">Cellules de catégorie</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d sélectionnée(s)</string>
-
     <string name="place_app_where">Où voulez-vous placer %s ?</string>
     <string name="tap_circle_to_place">Appuyez sur le cercle pour placer l\'app</string>
     <string name="multi_select_drawer_hint">💡 Appui long sur une app pour en sélectionner plusieurs d\'un coup</string>
@@ -502,9 +498,9 @@
     <string name="disable_haptic_globally">Désactivez globalement le retour haptique</string>
     <string name="disable_haptic_globally_desc">Empêchez Dragon de produire un quelconque retour haptique dans la sélection des points au cas où vous détesteriez ça</string>
     <string name="drag_handle">Poignée de déplacement</string>
-  <string name="personal_profile">Personel</string>
-  <string name="work_profile">Professionnel</string>
-  <string name="private_profile">Espace privé</string>
+    <string name="personal_profile">Personel</string>
+    <string name="work_profile">Professionnel</string>
+    <string name="private_profile">Espace privé</string>
     <string name="private_space_locked">Espace privé verrouillé</string>
     <string name="private_space_authenticating">Authentification…</string>
     <string name="app_info_name">name = %1$s</string>
