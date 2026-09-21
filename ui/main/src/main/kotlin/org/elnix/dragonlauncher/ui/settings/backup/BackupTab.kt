@@ -67,197 +67,197 @@ import kotlin.time.Duration.Companion.seconds
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
-    val ctx = LocalContext.current
-    val navigator = LocalNavigator.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val navigator = LocalNavigator.current
+	val scope = rememberCoroutineScope()
 
-    val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
-    val autoBackupUriString by BackupSettingsStore.autoBackupUri.asState()
-    val backupStores by BackupSettingsStore.backupStores.asState()
+	val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
+	val autoBackupUriString by BackupSettingsStore.autoBackupUri.asState()
+	val backupStores by BackupSettingsStore.backupStores.asState()
 
-    val snapshotStateMapStores =
-        remember(backupStores) {
-            val settingStoreList = backupStores.toSettingsStoreList()
-            mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
-                backupableStores.forEach { put(it, backupStores.isEmpty() || it in settingStoreList) }
-            }
-        }
+	val snapshotStateMapStores =
+		remember(backupStores) {
+			val settingStoreList = backupStores.toSettingsStoreList()
+			mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
+				backupableStores.forEach { put(it, backupStores.isEmpty() || it in settingStoreList) }
+			}
+		}
 
-    val autoBackupUri: Uri? = autoBackupUriString.takeIf { it.isNotEmpty() }?.toUri()
+	val autoBackupUri: Uri? = autoBackupUriString.takeIf { it.isNotEmpty() }?.toUri()
 
-    val backupPath: String? =
-        autoBackupUri?.let { uri ->
-            ctx.getFilePathFromUri(uri)
-        }
+	val backupPath: String? =
+		autoBackupUri?.let { uri ->
+			ctx.getFilePathFromUri(uri)
+		}
 
-    var selectedStoresForExport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
-    var showExportDialog by remember { mutableStateOf(false) }
+	var selectedStoresForExport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
+	var showExportDialog by remember { mutableStateOf(false) }
 
-    val settingsExportLauncher = rememberSettingsExportLauncher(selectedStoresForExport)
-    val autoBackupLauncher = rememberAutoBackupLauncher()
+	val settingsExportLauncher = rememberSettingsExportLauncher(selectedStoresForExport)
+	val autoBackupLauncher = rememberAutoBackupLauncher()
 
-    SettingsScaffold(
-        title = ctx.getString(R.string.backup),
-        onBack = {
-            scope.launch {
-                if (snapshotStateMapStores.count { it.value } == backupableStores.size) {
-                    BackupSettingsStore.backupStores.reset(ctx)
-                } else {
-                    val final =
-                        snapshotStateMapStores
-                            .filter { it.value }
-                            .keys
-                            .mapTo(mutableSetOf()) { it.name }
+	SettingsScaffold(
+		title = ctx.getString(R.string.backup),
+		onBack = {
+			scope.launch {
+				if (snapshotStateMapStores.count { it.value } == backupableStores.size) {
+					BackupSettingsStore.backupStores.reset(ctx)
+				} else {
+					val final =
+						snapshotStateMapStores
+							.filter { it.value }
+							.keys
+							.mapTo(mutableSetOf()) { it.name }
 
-                    BackupSettingsStore.backupStores.set(ctx, final)
-                }
-                navigator.onBack()
-            }
-        },
-        helpText = ctx.getString(R.string.backup_restore_text),
-        resetText = stringResource(R.string.reset_backup_tab),
-        onReset = {
-            scope.launch {
-                BackupSettingsStore.resetAll(ctx)
-            }
-        }
-    ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BackupButton(
-                icon = R.drawable.cloud_upload,
-                text = R.string.export_settings,
-                color = MaterialTheme.colorScheme.secondary
-            ) { showExportDialog = true }
+					BackupSettingsStore.backupStores.set(ctx, final)
+				}
+				navigator.onBack()
+			}
+		},
+		helpText = ctx.getString(R.string.backup_restore_text),
+		resetText = stringResource(R.string.reset_backup_tab),
+		onReset = {
+			scope.launch {
+				BackupSettingsStore.resetAll(ctx)
+			}
+		}
+	) {
+		Row(
+			Modifier.fillMaxWidth(),
+			horizontalArrangement = Arrangement.spacedBy(20.dp),
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			BackupButton(
+				icon = R.drawable.cloud_upload,
+				text = R.string.export_settings,
+				color = MaterialTheme.colorScheme.secondary
+			) { showExportDialog = true }
 
-            ImportBackupButton {
-                BackupButton(
-                    icon = R.drawable.download,
-                    text = R.string.import_settings,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    onClick = it
-                )
-            }
-        }
+			ImportBackupButton {
+				BackupButton(
+					icon = R.drawable.download,
+					text = R.string.import_settings,
+					color = MaterialTheme.colorScheme.tertiary,
+					onClick = it
+				)
+			}
+		}
 
-        DragonSettingsGroup(R.string.automatic_backups) {
-            Setting(BackupSettingsStore.autoBackupEnabled) {
-                // If the user disabled the backup, also remove the uri
-                if (!it) {
-                    scope.launch {
-                        BackupSettingsStore.autoBackupUri.reset(ctx)
-                    }
-                }
-            }
+		DragonSettingsGroup(R.string.automatic_backups) {
+			Setting(BackupSettingsStore.autoBackupEnabled) {
+				// If the user disabled the backup, also remove the uri
+				if (!it) {
+					scope.launch {
+						BackupSettingsStore.autoBackupUri.reset(ctx)
+					}
+				}
+			}
 
-            SettingsItem(
-                title = stringResource(R.string.backup_location),
-                description = backupPath ?: stringResource(R.string.backup_location_desc),
-                icon = R.drawable.folder_open,
-                enabled = autoBackupEnabled,
-                onClick = { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
-            )
+			SettingsItem(
+				title = stringResource(R.string.backup_location),
+				description = backupPath ?: stringResource(R.string.backup_location_desc),
+				icon = R.drawable.folder_open,
+				enabled = autoBackupEnabled,
+				onClick = { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
+			)
 
-            SettingsItem(
-                title = stringResource(R.string.open_backup_file),
-                icon = R.drawable.open_in_new,
-                enabled = autoBackupEnabled && backupPath != null,
-                onClick = {
-                    autoBackupUri.let { uri ->
-                        val intent =
-                            Intent(Intent.ACTION_VIEW).apply {
-                                setDataAndType(uri, "application/json")
-                                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            }
-                        try {
-                            ctx.startActivity(
-                                Intent.createChooser(
-                                    intent,
-                                    "Open backup file"
-                                )
-                            )
-                        } catch (e: Exception) {
-                            ctx.showToast("Failed to open backup (probably no app available)")
-                            logE(BACKUP_TAG, e) { "Failed to open backup (probably no app available)" }
-                        }
-                    }
-                }
-            )
+			SettingsItem(
+				title = stringResource(R.string.open_backup_file),
+				icon = R.drawable.open_in_new,
+				enabled = autoBackupEnabled && backupPath != null,
+				onClick = {
+					autoBackupUri.let { uri ->
+						val intent =
+							Intent(Intent.ACTION_VIEW).apply {
+								setDataAndType(uri, "application/json")
+								flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+							}
+						try {
+							ctx.startActivity(
+								Intent.createChooser(
+									intent,
+									"Open backup file"
+								)
+							)
+						} catch (e: Exception) {
+							ctx.showToast("Failed to open backup (probably no app available)")
+							logE(BACKUP_TAG, e) { "Failed to open backup (probably no app available)" }
+						}
+					}
+				}
+			)
 
-            var hasTriggeredManualAutoBackup by remember { mutableStateOf(false) }
-            LaunchedEffect(hasTriggeredManualAutoBackup) {
-                if (hasTriggeredManualAutoBackup) {
-                    delay(10.seconds)
-                    hasTriggeredManualAutoBackup = false
-                }
-            }
+			var hasTriggeredManualAutoBackup by remember { mutableStateOf(false) }
+			LaunchedEffect(hasTriggeredManualAutoBackup) {
+				if (hasTriggeredManualAutoBackup) {
+					delay(10.seconds)
+					hasTriggeredManualAutoBackup = false
+				}
+			}
 
-            SettingsItem(
-                title = stringResource(R.string.trigger_backup),
-                icon = R.drawable.reset,
-                enabled = autoBackupEnabled && backupPath != null && !hasTriggeredManualAutoBackup,
-                onClick = {
-                    backupViewModel.commandBackup()
-                    ctx.showToast(ctx.getString(R.string.backup_triggered))
-                    hasTriggeredManualAutoBackup = true
-                }
-            )
-        }
+			SettingsItem(
+				title = stringResource(R.string.trigger_backup),
+				icon = R.drawable.reset,
+				enabled = autoBackupEnabled && backupPath != null && !hasTriggeredManualAutoBackup,
+				onClick = {
+					backupViewModel.commandBackup()
+					ctx.showToast(ctx.getString(R.string.backup_triggered))
+					hasTriggeredManualAutoBackup = true
+				}
+			)
+		}
 
-        AnimatedVisibility(autoBackupEnabled) {
-            DragonSettingsGroup(R.string.auto_backup_stores) {
-                SelectedActionRow(snapshotStateMapStores)
-                StoreItemsNotScrollable(snapshotStateMapStores)
-            }
-        }
-    }
+		AnimatedVisibility(autoBackupEnabled) {
+			DragonSettingsGroup(R.string.auto_backup_stores) {
+				SelectedActionRow(snapshotStateMapStores)
+				StoreItemsNotScrollable(snapshotStateMapStores)
+			}
+		}
+	}
 
-    if (showExportDialog) {
-        ExportDialog(
-            onDismiss = { showExportDialog = false },
-            onConfirm = { selectedStores ->
-                showExportDialog = false
-                selectedStoresForExport = selectedStores
-                settingsExportLauncher.launch("backup-${DateUtils.nowFormattedDateTime()}.json")
-            }
-        )
-    }
+	if (showExportDialog) {
+		ExportDialog(
+			onDismiss = { showExportDialog = false },
+			onConfirm = { selectedStores ->
+				showExportDialog = false
+				selectedStoresForExport = selectedStores
+				settingsExportLauncher.launch("backup-${DateUtils.nowFormattedDateTime()}.json")
+			}
+		)
+	}
 }
 
 @Composable
 private fun RowScope.BackupButton(
-    @DrawableRes
-    icon: Int,
-    @StringRes
-    text: Int,
-    color: Color,
-    onClick: () -> Unit
+	@DrawableRes
+	icon: Int,
+	@StringRes
+	text: Int,
+	color: Color,
+	onClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .weight(1f)
-            .aspectRatio(1f)
-            .padding(12.dp)
-            .clip(MaterialTheme.shapes.large)
-            .background(color)
-            .clickable(onClick = onClick),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = stringResource(text),
-            modifier = Modifier
-                .size(40.dp)
-        )
+	Column(
+		modifier = Modifier
+			.weight(1f)
+			.aspectRatio(1f)
+			.padding(12.dp)
+			.clip(MaterialTheme.shapes.large)
+			.background(color)
+			.clickable(onClick = onClick),
+		verticalArrangement = Arrangement.Center,
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		Icon(
+			painter = painterResource(icon),
+			contentDescription = stringResource(text),
+			modifier = Modifier
+				.size(40.dp)
+		)
 
-        Spacer(5.dp)
-        Text(
-            text = stringResource(text),
-            style = MaterialTheme.typography.labelLargeEmphasized
-        )
-    }
+		Spacer(5.dp)
+		Text(
+			text = stringResource(text),
+			style = MaterialTheme.typography.labelLargeEmphasized
+		)
+	}
 }

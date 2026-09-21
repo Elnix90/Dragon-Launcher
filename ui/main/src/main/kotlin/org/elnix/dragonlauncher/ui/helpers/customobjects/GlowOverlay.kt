@@ -34,183 +34,183 @@ import kotlin.contracts.contract
 
 @Composable
 fun GlowOverlay(
-    center: Offset,
-    progress: Float
+	center: Offset,
+	progress: Float
 ) {
-    val primaryColor = MaterialTheme.colorScheme.primary
+	val primaryColor = MaterialTheme.colorScheme.primary
 
-    Canvas(
-        Modifier
-            .fillMaxSize()
-            .scale(progress)
-    ) {
-        val glowRadius = Constants.Settings.HOVER_GRADIENT_RADIUS.toPx()
+	Canvas(
+		Modifier
+			.fillMaxSize()
+			.scale(progress)
+	) {
+		val glowRadius = Constants.Settings.HOVER_GRADIENT_RADIUS.toPx()
 
-        drawIntoCanvas { canvas ->
-            val paint = customGlowPaint(primaryColor, glowRadius)
-            canvas.nativeCanvas.drawCircle(
-                center.x,
-                center.y,
-                glowRadius,
-                paint
-            )
-        }
-    }
+		drawIntoCanvas { canvas ->
+			val paint = customGlowPaint(primaryColor, glowRadius)
+			canvas.nativeCanvas.drawCircle(
+				center.x,
+				center.y,
+				glowRadius,
+				paint
+			)
+		}
+	}
 }
 
 fun DrawScope.drawNeonGlowLine(
-    start: Offset,
-    end: Offset,
-    color: Color,
-    lineStrokeWidth: Float,
-    glow: CustomGlow?,
-    erase: Boolean,
-    eraseColor: Color?
+	start: Offset,
+	end: Offset,
+	color: Color,
+	lineStrokeWidth: Float,
+	glow: CustomGlow?,
+	erase: Boolean,
+	eraseColor: Color?
 ) {
-    glowLine(glow, color, start, end)
-    line(lineStrokeWidth, erase, eraseColor, start, end, color)
+	glowLine(glow, color, start, end)
+	line(lineStrokeWidth, erase, eraseColor, start, end, color)
 }
 
 private fun DrawScope.line(
-    lineStrokeWidth: Float,
-    erase: Boolean,
-    eraseColor: Color?,
-    start: Offset,
-    end: Offset,
-    color: Color
+	lineStrokeWidth: Float,
+	erase: Boolean,
+	eraseColor: Color?,
+	start: Offset,
+	end: Offset,
+	color: Color
 ) {
-    val width = lineStrokeWidth.dp.toPxOrNull(this) ?: return
-    if (erase) {
-        drawLine(
-            color = eraseColor ?: Color.Transparent,
-            start = start,
-            end = end,
-            strokeWidth = width,
-            cap = StrokeCap.Round,
-            blendMode = BlendMode.Dst
-        )
-    }
+	val width = lineStrokeWidth.dp.toPxOrNull(this) ?: return
+	if (erase) {
+		drawLine(
+			color = eraseColor ?: Color.Transparent,
+			start = start,
+			end = end,
+			strokeWidth = width,
+			cap = StrokeCap.Round,
+			blendMode = BlendMode.Dst
+		)
+	}
 
-    drawLine(
-        color = color,
-        start = start,
-        end = end,
-        strokeWidth = width,
-        cap = StrokeCap.Round
-    )
+	drawLine(
+		color = color,
+		start = start,
+		end = end,
+		strokeWidth = width,
+		cap = StrokeCap.Round
+	)
 }
 
 private inline fun DrawScope.glowLine(
-    glow: CustomGlow?,
-    color: Color,
-    start: Offset,
-    end: Offset
+	glow: CustomGlow?,
+	color: Color,
+	start: Offset,
+	end: Offset
 ) {
-    if (glow == null) return
-    val glowRadius = glow.radius?.toPxOrNull(this) ?: return
-    val glowColor = glow.color ?: color
+	if (glow == null) return
+	val glowRadius = glow.radius?.toPxOrNull(this) ?: return
+	val glowColor = glow.color ?: color
 
-    drawIntoCanvas { canvas ->
-        val paint = customGlowPaint(glowColor, glowRadius)
+	drawIntoCanvas { canvas ->
+		val paint = customGlowPaint(glowColor, glowRadius)
 
-        canvas.nativeCanvas.drawLine(
-            start.x,
-            start.y,
-            end.x,
-            end.y,
-            paint
-        )
-    }
+		canvas.nativeCanvas.drawLine(
+			start.x,
+			start.y,
+			end.x,
+			end.y,
+			paint
+		)
+	}
 }
 
 fun DrawScope.drawPathGlow(
-    path: Path,
-    color: Color,
-    lineStrokeWidth: Dp,
-    glow: CustomGlow?,
-    erase: Boolean,
-    eraseColor: Color?
+	path: Path,
+	color: Color,
+	lineStrokeWidth: Dp,
+	glow: CustomGlow?,
+	erase: Boolean,
+	eraseColor: Color?
 ) {
-    glow(glow, path, color)
-    if (erase) erasePath(path, lineStrokeWidth, eraseColor)
-    path(lineStrokeWidth, path, color)
+	glow(glow, path, color)
+	if (erase) erasePath(path, lineStrokeWidth, eraseColor)
+	path(lineStrokeWidth, path, color)
 }
 
 inline fun DrawScope.erasePath(
-    path: Path,
-    lineStrokeWidth: Dp,
-    eraseColor: Color?
+	path: Path,
+	lineStrokeWidth: Dp,
+	eraseColor: Color?
 ) {
-    val color = eraseColor ?: Color.Transparent
-    drawPath(
-        path = path,
-        color = color,
-        style = Fill,
-        blendMode = BlendMode.Src
-    )
+	val color = eraseColor ?: Color.Transparent
+	drawPath(
+		path = path,
+		color = color,
+		style = Fill,
+		blendMode = BlendMode.Src
+	)
 
-    val style =
-        if (lineStrokeWidth.value > 0f) {
-            Stroke(lineStrokeWidth.toPx(), cap = StrokeCap.Round)
-        } else {
-            return
-        }
-    drawPath(
-        path = path,
-        color = color,
-        style = style,
-        blendMode = BlendMode.Src
-    )
+	val style =
+		if (lineStrokeWidth.value > 0f) {
+			Stroke(lineStrokeWidth.toPx(), cap = StrokeCap.Round)
+		} else {
+			return
+		}
+	drawPath(
+		path = path,
+		color = color,
+		style = style,
+		blendMode = BlendMode.Src
+	)
 }
 
 private inline fun DrawScope.glow(
-    glow: CustomGlow?,
-    path: Path,
-    color: Color
+	glow: CustomGlow?,
+	path: Path,
+	color: Color
 ) {
-    val glowRadius = glow?.radius.toPxOrNull(this) ?: return
-    val glowColor = glow.color ?: color
-    val nativePath = path.asAndroidPath()
+	val glowRadius = glow?.radius.toPxOrNull(this) ?: return
+	val glowColor = glow.color ?: color
+	val nativePath = path.asAndroidPath()
 
-    drawIntoCanvas { canvas ->
-        val paint = customGlowPaint(glowColor, glowRadius)
-        canvas.nativeCanvas.drawPath(nativePath, paint)
-    }
+	drawIntoCanvas { canvas ->
+		val paint = customGlowPaint(glowColor, glowRadius)
+		canvas.nativeCanvas.drawPath(nativePath, paint)
+	}
 }
 
 private inline fun DrawScope.path(lineStrokeWidth: Dp, path: Path, color: Color) {
-    val style =
-        when {
-            lineStrokeWidth.value == -1f -> return
-            lineStrokeWidth.value < 0f -> Fill
-            lineStrokeWidth.value == 0.0f -> Stroke(Stroke.HairlineWidth, cap = StrokeCap.Round)
-            else -> Stroke(lineStrokeWidth.toPx(), cap = StrokeCap.Round)
-        }
+	val style =
+		when {
+			lineStrokeWidth.value == -1f -> return
+			lineStrokeWidth.value < 0f -> Fill
+			lineStrokeWidth.value == 0.0f -> Stroke(Stroke.HairlineWidth, cap = StrokeCap.Round)
+			else -> Stroke(lineStrokeWidth.toPx(), cap = StrokeCap.Round)
+		}
 
-    drawPath(
-        path = path,
-        color = color,
-        style = style
-    )
+	drawPath(
+		path = path,
+		color = color,
+		style = style
+	)
 }
 
 private inline fun customGlowPaint(
-    glowColor: Color,
-    glowPx: Float
+	glowColor: Color,
+	glowPx: Float
 ): Paint =
-    PaintCache.getOrCompute(glowColor to glowPx) {
-        Paint().apply {
-            this.color = glowColor.copy(alpha = 0.7f).toArgb()
-            style = Paint.Style.STROKE
-            strokeWidth = glowPx
-            maskFilter =
-                BlurMaskFilter(
-                    glowPx,
-                    BlurMaskFilter.Blur.NORMAL
-                )
-            isAntiAlias = true
-        }
-    }
+	PaintCache.getOrCompute(glowColor to glowPx) {
+		Paint().apply {
+			this.color = glowColor.copy(alpha = 0.7f).toArgb()
+			style = Paint.Style.STROKE
+			strokeWidth = glowPx
+			maskFilter =
+				BlurMaskFilter(
+					glowPx,
+					BlurMaskFilter.Blur.NORMAL
+				)
+			isAntiAlias = true
+		}
+	}
 
 /**
  * A [DragonCache] instance to cache [Paint] instances and avoid recomputing them all the time
@@ -233,13 +233,13 @@ private object PaintCache : DragonCache<Pair<Color, Float>, Paint>(1500)
  */
 @OptIn(ExperimentalContracts::class)
 inline fun Dp?.toPxOrNull(density: Density): Float? {
-    contract {
-        returnsNotNull() implies (this@toPxOrNull != null)
-    }
+	contract {
+		returnsNotNull() implies (this@toPxOrNull != null)
+	}
 
-    if (this == null) return null
-    if (this.isUnspecified) return null
-    if (this.value <= 0) return null
+	if (this == null) return null
+	if (this.isUnspecified) return null
+	if (this.value <= 0) return null
 
-    return with(density) { toPx() }
+	return with(density) { toPx() }
 }

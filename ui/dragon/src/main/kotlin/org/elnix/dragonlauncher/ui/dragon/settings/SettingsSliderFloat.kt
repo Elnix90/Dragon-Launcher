@@ -18,30 +18,30 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
 fun DragonGroupScope.Setting(
-    setting: FloatSettingObject,
-    modifier: Modifier = Modifier,
-    decimals: Int = 2,
-    enabled: Boolean = true,
-    customDesc: ((Float) -> String)? = null
+	setting: FloatSettingObject,
+	modifier: Modifier = Modifier,
+	decimals: Int = 2,
+	enabled: Boolean = true,
+	customDesc: ((Float) -> String)? = null
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val state by setting.asState()
+	val state by setting.asState()
 
-    var tempState by remember { mutableFloatStateOf(state) }
+	var tempState by remember { mutableFloatStateOf(state) }
 
-    LaunchedEffect(state) { tempState = state }
+	LaunchedEffect(state) { tempState = state }
 
-    SliderWithLabel(
-        label = stringResource(setting.title!!),
-        description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
-        value = tempState,
-        valueRange = setting.allowedRange,
-        enabled = enabled,
-        decimals = decimals,
-        resetEnabled = tempState != setting.default,
-        onReset = { scope.launch { setting.reset(ctx) } },
-        onDragStateChange = { scope.launch { setting.set(ctx, tempState) } }
-    ) { tempState = it }
+	SliderWithLabel(
+		label = stringResource(setting.title!!),
+		description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
+		value = tempState,
+		valueRange = setting.allowedRange,
+		enabled = enabled,
+		decimals = decimals,
+		resetEnabled = tempState != setting.default,
+		onReset = { scope.launch { setting.reset(ctx) } },
+		onDragStateChange = { scope.launch { setting.set(ctx, tempState) } }
+	) { tempState = it }
 }

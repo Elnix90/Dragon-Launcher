@@ -47,66 +47,66 @@ import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
 fun DragonGroupScope.ActionSelector(
-    label: String,
-    currentAction: Action?,
-    nullText: String? = null,
-    enabled: Boolean = true,
-    switchEnabled: Boolean = true,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    onToggle: () -> Unit,
-    resetEnabled: Boolean,
-    onReset: () -> Unit,
-    onSelected: (Action) -> Unit
+	label: String,
+	currentAction: Action?,
+	nullText: String? = null,
+	enabled: Boolean = true,
+	switchEnabled: Boolean = true,
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	onToggle: () -> Unit,
+	resetEnabled: Boolean,
+	onReset: () -> Unit,
+	onSelected: (Action) -> Unit
 ) {
-    val extraColors = LocalExtraColors.current
+	val extraColors = LocalExtraColors.current
 
-    val textColor = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
+	val textColor = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
 
-    var showDialog by remember { mutableStateOf(false) }
+	var showDialog by remember { mutableStateOf(false) }
 
-    val toggled = currentAction != null && currentAction != Action.None
-    val actionColor = currentAction.actionColor(extraColors).semiTransparentIfDisabled(enabled)
+	val toggled = currentAction != null && currentAction != Action.None
+	val actionColor = currentAction.actionColor(extraColors).semiTransparentIfDisabled(enabled)
 
-    Row(
-        modifier =
-            Modifier
-                .dragonSettingGroup(enabled) {
-                    clickable(enabled = enabled) { showDialog = true }
-                },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            modifier =
-                Modifier
-                    .weight(1f)
-        ) {
-            Text(
-                text = label,
-                color = textColor,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1
-            )
+	Row(
+		modifier =
+			Modifier
+				.dragonSettingGroup(enabled) {
+					clickable(enabled = enabled) { showDialog = true }
+				},
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Column(
+			verticalArrangement = Arrangement.spacedBy(5.dp),
+			modifier =
+				Modifier
+					.weight(1f)
+		) {
+			Text(
+				text = label,
+				color = textColor,
+				style = MaterialTheme.typography.bodyLarge,
+				maxLines = 1
+			)
 
-            AnimatedVisibility(toggled || nullText != null) {
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (toggled) {
-                        when (currentAction) {
-                            is Action.LaunchApp -> {
-                                val app by drawerViewModel.findOne(currentAction).collectAsState(null)
+			AnimatedVisibility(toggled || nullText != null) {
+				Row(
+					horizontalArrangement = Arrangement.End,
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					if (toggled) {
+						when (currentAction) {
+							is Action.LaunchApp -> {
+								val app by drawerViewModel.findOne(currentAction).collectAsState(null)
 
-                                app?.let {
-                                    AppIcon(
-                                        app = it,
-                                        size = 30.dp
-                                    )
-                                }
-                            }
+								app?.let {
+									AppIcon(
+										app = it,
+										size = 30.dp
+									)
+								}
+							}
 
-                            // TODO shortcuts annoy me sooo much
+							// TODO shortcuts annoy me sooo much
 //                            is Action.LaunchShortcut -> {
 //                                val app by drawerViewModel.findOne(currentAction.packageName, currentAction.profile.userHandle).collectAsState(null)
 //
@@ -117,99 +117,99 @@ fun DragonGroupScope.ActionSelector(
 //                                    )
 //                                }
 //                            }
-                            else -> {
-                                ActionIcon(
-                                    action = currentAction,
-                                    size = 30.dp
-                                )
-                            }
-                        }
-                        Spacer(5.dp)
+							else -> {
+								ActionIcon(
+									action = currentAction,
+									size = 30.dp
+								)
+							}
+						}
+						Spacer(5.dp)
 
-                        Text(
-                            text = actionLabel(currentAction),
-                            color = actionColor,
-                            style = MaterialTheme.typography.labelMediumEmphasized
-                        )
-                    } else if (nullText != null) {
-                        Text(
-                            text = nullText,
-                            color = textColor.copy(0.7f),
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Right
-                        )
-                    }
-                }
-            }
-        }
+						Text(
+							text = actionLabel(currentAction),
+							color = actionColor,
+							style = MaterialTheme.typography.labelMediumEmphasized
+						)
+					} else if (nullText != null) {
+						Text(
+							text = nullText,
+							color = textColor.copy(0.7f),
+							fontSize = 14.sp,
+							textAlign = TextAlign.Right
+						)
+					}
+				}
+			}
+		}
 
-        VerticalDivider(
-            modifier =
-                Modifier
-                    .height(50.dp)
-                    .padding(horizontal = 8.dp),
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
-            thickness = 1.dp
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Switch(
-            checked = toggled,
-            enabled = switchEnabled,
-            onCheckedChange = {
-                if (it) {
-                    showDialog = true
-                } else {
-                    onToggle()
-                }
-            },
-            colors = AppObjectsColors.switchColors()
-        )
+		VerticalDivider(
+			modifier =
+				Modifier
+					.height(50.dp)
+					.padding(horizontal = 8.dp),
+			color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
+			thickness = 1.dp
+		)
+		Spacer(modifier = Modifier.width(8.dp))
+		Switch(
+			checked = toggled,
+			enabled = switchEnabled,
+			onCheckedChange = {
+				if (it) {
+					showDialog = true
+				} else {
+					onToggle()
+				}
+			},
+			colors = AppObjectsColors.switchColors()
+		)
 
-        ResetIcon(
-            onReset = onReset,
-            enabled = enabled && resetEnabled
-        )
-    }
+		ResetIcon(
+			onReset = onReset,
+			enabled = enabled && resetEnabled
+		)
+	}
 
-    if (showDialog) {
-        ActionPickerDialog(
-            onDismiss = { showDialog = false },
-            onActionSelected = {
-                onSelected(it)
-                showDialog = false
-            }
-        )
-    }
+	if (showDialog) {
+		ActionPickerDialog(
+			onDismiss = { showDialog = false },
+			onActionSelected = {
+				onSelected(it)
+				showDialog = false
+			}
+		)
+	}
 }
 
 @Composable
 fun DragonGroupScope.SettingActionSelector(setting: ActionSettingObject) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val currentAction by setting.asState()
+	val currentAction by setting.asState()
 
-    ActionSelector(
-        label = stringResource(setting.title!!),
-        currentAction = currentAction,
-        nullText = null,
-        enabled = true,
-        switchEnabled = true,
-        onToggle = {
-            scope.launch {
-                setting.set(ctx, Action.None)
-            }
-        },
-        resetEnabled = currentAction != setting.default,
-        onReset = {
-            scope.launch {
-                setting.reset(ctx)
-            }
-        },
-        onSelected = {
-            scope.launch {
-                setting.set(ctx, it)
-            }
-        }
-    )
+	ActionSelector(
+		label = stringResource(setting.title!!),
+		currentAction = currentAction,
+		nullText = null,
+		enabled = true,
+		switchEnabled = true,
+		onToggle = {
+			scope.launch {
+				setting.set(ctx, Action.None)
+			}
+		},
+		resetEnabled = currentAction != setting.default,
+		onReset = {
+			scope.launch {
+				setting.reset(ctx)
+			}
+		},
+		onSelected = {
+			scope.launch {
+				setting.set(ctx, it)
+			}
+		}
+	)
 }

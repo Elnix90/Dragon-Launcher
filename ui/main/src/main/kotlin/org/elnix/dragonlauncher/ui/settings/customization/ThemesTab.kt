@@ -76,272 +76,272 @@ import org.json.JSONObject
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val userThemesStore by UiSettingsStore.userThemes.asState()
-    val userThemes: SnapshotStateSet<String> = remember { mutableStateSetOf() }
+	val userThemesStore by UiSettingsStore.userThemes.asState()
+	val userThemes: SnapshotStateSet<String> = remember { mutableStateSetOf() }
 
-    LaunchedEffect(userThemesStore) {
-        userThemes.addAll(userThemesStore)
-    }
+	LaunchedEffect(userThemesStore) {
+		userThemes.addAll(userThemesStore)
+	}
 
-    var themes by remember { mutableStateOf<List<ThemeObject>?>(null) }
+	var themes by remember { mutableStateOf<List<ThemeObject>?>(null) }
 
-    LaunchedEffect(Unit) {
-        themes = loadThemes(ctx)
-    }
+	LaunchedEffect(Unit) {
+		themes = loadThemes(ctx)
+	}
 
-    var showJson by remember { mutableStateOf<JSONObject?>(null) }
+	var showJson by remember { mutableStateOf<JSONObject?>(null) }
 
-    val settingsImportLauncher =
-        rememberSettingsImportLauncher(
-            onJsonReady = { json ->
-                scope.launch {
-                    try {
-                        ColorSettingsStore.backupColors(ctx)
-                        ColorModesSettingsStore.colorTestMode.set(ctx, true)
+	val settingsImportLauncher =
+		rememberSettingsImportLauncher(
+			onJsonReady = { json ->
+				scope.launch {
+					try {
+						ColorSettingsStore.backupColors(ctx)
+						ColorModesSettingsStore.colorTestMode.set(ctx, true)
 
-                        SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
-                        backupViewModel.result.value =
-                            BackupResult(
-                                export = false,
-                                error = false,
-                                title = ctx.getString(R.string.import_successful)
-                            )
-                    } catch (e: Exception) {
-                        logE(BACKUP_TAG, e) { "Import failed" }
+						SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
+						backupViewModel.result.value =
+							BackupResult(
+								export = false,
+								error = false,
+								title = ctx.getString(R.string.import_successful)
+							)
+					} catch (e: Exception) {
+						logE(BACKUP_TAG, e) { "Import failed" }
 
-                        ColorSettingsStore.restoreColors(ctx)
-                        ColorModesSettingsStore.colorTestMode.reset(ctx)
+						ColorSettingsStore.restoreColors(ctx)
+						ColorModesSettingsStore.colorTestMode.reset(ctx)
 
-                        backupViewModel.result.value =
-                            BackupResult(
-                                export = false,
-                                error = true,
-                                title = ctx.getString(R.string.import_failed),
-                                message = e.message ?: ""
-                            )
-                    }
-                }
-            }
-        )
+						backupViewModel.result.value =
+							BackupResult(
+								export = false,
+								error = true,
+								title = ctx.getString(R.string.import_failed),
+								message = e.message ?: ""
+							)
+					}
+				}
+			}
+		)
 
-    val settingsExportLauncher = rememberSettingsExportLauncher(themeSettingsStores)
+	val settingsExportLauncher = rememberSettingsExportLauncher(themeSettingsStores)
 
-    SettingsScaffold(
-        title = stringResource(R.string.theme_selector),
-        helpText = stringResource(R.string.theme_selector_help),
-        onReset = null,
-        resetText = null
-    ) {
-        BetaVersionWarning(BetaVersionType.Feature)
+	SettingsScaffold(
+		title = stringResource(R.string.theme_selector),
+		helpText = stringResource(R.string.theme_selector_help),
+		onReset = null,
+		resetText = null
+	) {
+		BetaVersionWarning(BetaVersionType.Feature)
 
-        SingleSelectConnectedButtonRow(
-            entries = ExportImportTheme.entries,
-            checked = { true }
-        ) {
-            when (it) {
-                ExportImportTheme.Export -> {
-                    settingsExportLauncher.launch("dragon_launcher_theme-${DateUtils.nowFormattedDateTime()}.json")
-                }
+		SingleSelectConnectedButtonRow(
+			entries = ExportImportTheme.entries,
+			checked = { true }
+		) {
+			when (it) {
+				ExportImportTheme.Export -> {
+					settingsExportLauncher.launch("dragon_launcher_theme-${DateUtils.nowFormattedDateTime()}.json")
+				}
 
-                ExportImportTheme.Import -> {
-                    settingsImportLauncher.launch(
-                        arrayOf(
-                            "application/json",
-                            "text/plain",
-                            "application/octet-stream",
-                            "*/*"
-                        )
-                    )
-                }
-            }
-        }
+				ExportImportTheme.Import -> {
+					settingsImportLauncher.launch(
+						arrayOf(
+							"application/json",
+							"text/plain",
+							"application/octet-stream",
+							"*/*"
+						)
+					)
+				}
+			}
+		}
 
-        if (themes == null) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(stringResource(R.string.loading_themes))
-                Spacer(20.dp)
-                LoadingIndicator()
-            }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.heightIn(max = 1000.dp)
-            ) {
-                themes?.let {
-                    items(it) { theme ->
-                        ThemeCard(
-                            theme = theme,
-                            onLongClick = { showJson = theme.json },
-                            onClick = {
-                                scope.launch {
-                                    ColorSettingsStore.backupColors(ctx)
-                                    ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                    SettingsBackupManager.importSettingsFromJson(ctx, theme.json, themeSettingsStores)
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-        }
+		if (themes == null) {
+			Column(
+				modifier = Modifier.fillMaxSize(),
+				verticalArrangement = Arrangement.Center,
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				Text(stringResource(R.string.loading_themes))
+				Spacer(20.dp)
+				LoadingIndicator()
+			}
+		} else {
+			LazyVerticalGrid(
+				columns = GridCells.Fixed(2),
+				contentPadding = PaddingValues(8.dp),
+				horizontalArrangement = Arrangement.spacedBy(8.dp),
+				verticalArrangement = Arrangement.spacedBy(8.dp),
+				modifier = Modifier.heightIn(max = 1000.dp)
+			) {
+				themes?.let {
+					items(it) { theme ->
+						ThemeCard(
+							theme = theme,
+							onLongClick = { showJson = theme.json },
+							onClick = {
+								scope.launch {
+									ColorSettingsStore.backupColors(ctx)
+									ColorModesSettingsStore.colorTestMode.set(ctx, true)
+									SettingsBackupManager.importSettingsFromJson(ctx, theme.json, themeSettingsStores)
+								}
+							}
+						)
+					}
+				}
+			}
+		}
 
-        fun addCurrentTheme() {
-            scope.launch {
-                val json = SettingsBackupManager.createJsonToExport(ctx, themeSettingsStores, true)
+		fun addCurrentTheme() {
+			scope.launch {
+				val json = SettingsBackupManager.createJsonToExport(ctx, themeSettingsStores, true)
 
-                userThemes.add(json.toString())
-                UiSettingsStore.userThemes.set(ctx, userThemes)
-            }
-        }
+				userThemes.add(json.toString())
+				UiSettingsStore.userThemes.set(ctx, userThemes)
+			}
+		}
 
-        HorizontalDivider()
+		HorizontalDivider()
 
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.heightIn(max = 1000.dp)
-        ) {
-            item {
-                DragonRow(
-                    onClick = ::addCurrentTheme,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    DragonIconButton(
-                        onClick = ::addCurrentTheme,
-                        icon = R.drawable.add,
-                        contentDescription = R.string.add_current_theme
-                    )
-                    Text(stringResource(R.string.add_current_theme))
-                }
-            }
-            userThemes.forEachIndexed { index, string ->
-                val json =
-                    try {
-                        JSONObject(string)
-                    } catch (e: Exception) {
-                        logE(THEMES_TAG, e) { "Error decoding user theme json" }
-                        JSONObject()
-                    }
+		LazyColumn(
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.spacedBy(8.dp),
+			modifier = Modifier.heightIn(max = 1000.dp)
+		) {
+			item {
+				DragonRow(
+					onClick = ::addCurrentTheme,
+					modifier = Modifier.fillMaxWidth()
+				) {
+					DragonIconButton(
+						onClick = ::addCurrentTheme,
+						icon = R.drawable.add,
+						contentDescription = R.string.add_current_theme
+					)
+					Text(stringResource(R.string.add_current_theme))
+				}
+			}
+			userThemes.forEachIndexed { index, string ->
+				val json =
+					try {
+						JSONObject(string)
+					} catch (e: Exception) {
+						logE(THEMES_TAG, e) { "Error decoding user theme json" }
+						JSONObject()
+					}
 
-                item {
-                    UserThemeCard(
-                        name = stringResource(R.string.user_theme, index),
-                        onRemove = {
-                            userThemes.remove(string)
-                            scope.launch {
-                                UiSettingsStore.userThemes.set(ctx, userThemes)
-                            }
-                        },
-                        onLongClick = { showJson = json },
-                        onClick = {
-                            scope.launch {
-                                ColorSettingsStore.backupColors(ctx)
-                                ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
-                            }
-                        }
-                    )
-                }
-            }
-        }
-    }
+				item {
+					UserThemeCard(
+						name = stringResource(R.string.user_theme, index),
+						onRemove = {
+							userThemes.remove(string)
+							scope.launch {
+								UiSettingsStore.userThemes.set(ctx, userThemes)
+							}
+						},
+						onLongClick = { showJson = json },
+						onClick = {
+							scope.launch {
+								ColorSettingsStore.backupColors(ctx)
+								ColorModesSettingsStore.colorTestMode.set(ctx, true)
+								SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
+							}
+						}
+					)
+				}
+			}
+		}
+	}
 
-    if (showJson != null) {
-        ThemeJsonPopup(showJson!!) { showJson = null }
-    }
+	if (showJson != null) {
+		ThemeJsonPopup(showJson!!) { showJson = null }
+	}
 }
 
 @Composable
 private fun ThemeCard(
-    theme: ThemeObject,
-    onLongClick: () -> Unit,
-    onClick: () -> Unit
+	theme: ThemeObject,
+	onLongClick: () -> Unit,
+	onClick: () -> Unit
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .shapedClickable(
-                    onLongClick = onLongClick,
-                    onClick = onClick
-                ).background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-    ) {
-        Image(
-            painter =
-                if (theme.imageAssetPath != null) {
-                    rememberAssetPainter(theme.imageAssetPath!!)
-                } else {
-                    painterResource(R.drawable.ic_app_default)
-                },
-            contentDescription = theme.name,
-            modifier =
-                Modifier
-                    .height(300.dp)
-        )
+	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
+		modifier =
+			Modifier
+				.fillMaxWidth()
+				.shapedClickable(
+					onLongClick = onLongClick,
+					onClick = onClick
+				).background(MaterialTheme.colorScheme.surface)
+				.padding(16.dp)
+	) {
+		Image(
+			painter =
+				if (theme.imageAssetPath != null) {
+					rememberAssetPainter(theme.imageAssetPath!!)
+				} else {
+					painterResource(R.drawable.ic_app_default)
+				},
+			contentDescription = theme.name,
+			modifier =
+				Modifier
+					.height(300.dp)
+		)
 
-        Spacer(5.dp)
+		Spacer(5.dp)
 
-        Text(
-            text = theme.name,
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center
-        )
-    }
+		Text(
+			text = theme.name,
+			style = MaterialTheme.typography.labelMedium,
+			textAlign = TextAlign.Center
+		)
+	}
 }
 
 @Composable
 private fun UserThemeCard(
-    name: String,
-    onRemove: () -> Unit,
-    onLongClick: () -> Unit,
-    onClick: () -> Unit
+	name: String,
+	onRemove: () -> Unit,
+	onLongClick: () -> Unit,
+	onClick: () -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .shapedClickable(
-                    onLongClick = onLongClick,
-                    onClick = onClick
-                ).background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-    ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center
-        )
+	Row(
+		horizontalArrangement = Arrangement.SpaceBetween,
+		verticalAlignment = Alignment.CenterVertically,
+		modifier =
+			Modifier
+				.fillMaxWidth()
+				.shapedClickable(
+					onLongClick = onLongClick,
+					onClick = onClick
+				).background(MaterialTheme.colorScheme.surface)
+				.padding(16.dp)
+	) {
+		Text(
+			text = name,
+			style = MaterialTheme.typography.labelMedium,
+			textAlign = TextAlign.Center
+		)
 
-        DragonIconButton(
-            onClick = onRemove,
-            icon = R.drawable.remove_circle,
-            contentDescription = R.string.remove,
-            isCancel = true
-        )
-    }
+		DragonIconButton(
+			onClick = onRemove,
+			icon = R.drawable.remove_circle,
+			contentDescription = R.string.remove,
+			isCancel = true
+		)
+	}
 }
 
 @Composable
 private fun rememberAssetPainter(assetPath: String): Painter {
-    val ctx = LocalContext.current
-    val bitmap =
-        remember(assetPath) {
-            ctx.assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
-        }
-    return BitmapPainter(bitmap.asImageBitmap())
+	val ctx = LocalContext.current
+	val bitmap =
+		remember(assetPath) {
+			ctx.assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
+		}
+	return BitmapPainter(bitmap.asImageBitmap())
 }

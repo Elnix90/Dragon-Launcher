@@ -33,59 +33,59 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkspacePickerDialog(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    onDismiss: () -> Unit,
-    onActionPicked: (Action.OpenAppDrawer) -> Unit
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	onDismiss: () -> Unit,
+	onActionPicked: (Action.OpenAppDrawer) -> Unit
 ) {
-    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsState()
-    val workspacesDisplayed =
-        remember(activeWorkspaces) {
-            mutableListOf<Workspace?>(null).apply {
-                addAll(activeWorkspaces)
-            }
-        }
+	val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsState()
+	val workspacesDisplayed =
+		remember(activeWorkspaces) {
+			mutableListOf<Workspace?>(null).apply {
+				addAll(activeWorkspaces)
+			}
+		}
 
-    DragonModalBottomSheet(onDismissRequest = onDismiss) {
-        DialogTitle(stringResource(R.string.select_default_workspace))
-        DialogDescription(stringResource(R.string.select_workspace_hint))
+	DragonModalBottomSheet(onDismissRequest = onDismiss) {
+		DialogTitle(stringResource(R.string.select_default_workspace))
+		DialogDescription(stringResource(R.string.select_workspace_hint))
 
-        Spacer(10.dp)
+		Spacer(10.dp)
 
-        DragonSettingsGroup {
-            LazyColumnWithScrollIndicator(
-                items = workspacesDisplayed,
-                modifier = Modifier.heightIn(max = 500.dp)
-            ) { workspace ->
-                WorkspaceCard(workspace) {
-                    onActionPicked(Action.OpenAppDrawer(workspace?.id))
-                }
-            }
-        }
-    }
+		DragonSettingsGroup {
+			LazyColumnWithScrollIndicator(
+				items = workspacesDisplayed,
+				modifier = Modifier.heightIn(max = 500.dp)
+			) { workspace ->
+				WorkspaceCard(workspace) {
+					onActionPicked(Action.OpenAppDrawer(workspace?.id))
+				}
+			}
+		}
+	}
 }
 
 @Composable
 private fun DragonGroupScope.WorkspaceCard(
-    workspace: Workspace?,
-    onClick: () -> Unit
+	workspace: Workspace?,
+	onClick: () -> Unit
 ) {
-    Row(
-        modifier =
-            Modifier
-                .dragonSettingGroup {
-                    clickable(onClick = onClick)
-                },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        Icon(
-            painter = painterResource(workspace?.type?.icon ?: R.drawable.account_tree),
-            contentDescription = null
-        )
+	Row(
+		modifier =
+			Modifier
+				.dragonSettingGroup {
+					clickable(onClick = onClick)
+				},
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(5.dp)
+	) {
+		Icon(
+			painter = painterResource(workspace?.type?.icon ?: R.drawable.account_tree),
+			contentDescription = null
+		)
 
-        Text(
-            text = workspace?.id ?: stringResource(R.string.default_text),
-            style = MaterialTheme.typography.labelMedium
-        )
-    }
+		Text(
+			text = workspace?.id ?: stringResource(R.string.default_text),
+			style = MaterialTheme.typography.labelMedium
+		)
+	}
 }

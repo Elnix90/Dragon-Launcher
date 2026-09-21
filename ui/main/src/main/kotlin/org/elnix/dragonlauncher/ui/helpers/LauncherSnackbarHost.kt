@@ -15,36 +15,36 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun LauncherSnackbarHost(
-    dragonLogViewModel: DragonLogViewModel = activityViewModel()
+	dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+	val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(Unit) {
-        dragonLogViewModel.alertFlow.collect { alert ->
-            if (alert != null) {
-                launch {
-                    snackbarHostState.showSnackbar(
-                        message = "${alert.level.logLevelChar}: ${alert.message}",
-                        actionLabel = "Dismiss",
-                        duration = SnackbarDuration.Long
-                    )
-                }
-            }
-        }
-    }
+	LaunchedEffect(Unit) {
+		dragonLogViewModel.alertFlow.collect { alert ->
+			if (alert != null) {
+				launch {
+					snackbarHostState.showSnackbar(
+						message = "${alert.level.logLevelChar}: ${alert.message}",
+						actionLabel = "Dismiss",
+						duration = SnackbarDuration.Long
+					)
+				}
+			}
+		}
+	}
 
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = { data ->
-            Snackbar(
-                snackbarData = data,
-                shape = MaterialTheme.shapes.large,
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                actionColor = MaterialTheme.colorScheme.primary,
-                actionContentColor = MaterialTheme.colorScheme.onPrimary,
-                dismissActionContentColor = MaterialTheme.colorScheme.error
-            )
-        }
-    )
+	SnackbarHost(
+		hostState = snackbarHostState,
+		snackbar = { data ->
+			Snackbar(
+				snackbarData = data,
+				shape = MaterialTheme.shapes.large,
+				containerColor = MaterialTheme.colorScheme.surfaceVariant,
+				contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+				actionColor = MaterialTheme.colorScheme.primary,
+				actionContentColor = MaterialTheme.colorScheme.onPrimary,
+				dismissActionContentColor = MaterialTheme.colorScheme.error
+			)
+		}
+	)
 }

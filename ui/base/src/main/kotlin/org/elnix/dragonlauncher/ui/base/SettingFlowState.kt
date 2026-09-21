@@ -13,19 +13,19 @@ fun <T> SettingFlow<T>.asState(): State<T> = this.flow.collectAsStateWithLifecyc
 
 @Composable
 fun <T> SettingFlow<T>.asMutableState(): MutableState<T> {
-    val state by this.flow.collectAsStateWithLifecycle()
+	val state by this.flow.collectAsStateWithLifecycle()
 
-    return remember(state) {
-        object : MutableState<T> {
-            override var value: T
-                get() = state
-                set(value) {
-                    this@asMutableState.value = value
-                }
+	return remember(state) {
+		object : MutableState<T> {
+			override var value: T
+				get() = state
+				set(value) {
+					this@asMutableState.value = value
+				}
 
-            override fun component1() = value
+			override fun component1() = value
 
-            override fun component2(): (T) -> Unit = { value = it }
-        }
-    }
+			override fun component2(): (T) -> Unit = { value = it }
+		}
+	}
 }

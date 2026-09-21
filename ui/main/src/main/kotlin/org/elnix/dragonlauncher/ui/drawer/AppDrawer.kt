@@ -115,537 +115,537 @@ import kotlin.math.pow
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDrawerScreen(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    profilesViewModel: ProfilesViewModel = activityViewModel(),
-    onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
-    onLaunchAction: (Action) -> Unit
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	profilesViewModel: ProfilesViewModel = activityViewModel(),
+	onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
+	onLaunchAction: (Action) -> Unit
 ) {
-    val ctx = LocalContext.current
-    val navigator = LocalNavigator.current
-    val drawerSettings = LocalDrawerSettings.current
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val haptic = LocalHapticFeedback.current
-    val density = LocalDensity.current
-    val focusRequester = remember { FocusRequester() }
+	val ctx = LocalContext.current
+	val navigator = LocalNavigator.current
+	val drawerSettings = LocalDrawerSettings.current
+	val focusManager = LocalFocusManager.current
+	val keyboardController = LocalSoftwareKeyboardController.current
+	val haptic = LocalHapticFeedback.current
+	val density = LocalDensity.current
+	val focusRequester = remember { FocusRequester() }
 
-    val autoShowKeyboard = drawerSettings.autoShowKeyboard
-    val showSearchBar = drawerSettings.showSearchBar
-    val showRecentlyUsedApps = drawerSettings.showRecentlyUsedApps
-    val toolbarsOrder = drawerSettings.toolbarsOrder
+	val autoShowKeyboard = drawerSettings.autoShowKeyboard
+	val showSearchBar = drawerSettings.showSearchBar
+	val showRecentlyUsedApps = drawerSettings.showRecentlyUsedApps
+	val toolbarsOrder = drawerSettings.toolbarsOrder
 
-    val recentApps by drawerViewModel.getRecentApps(drawerSettings.recentlyUsedAppsCount).collectAsStateWithLifecycle(emptyList())
+	val recentApps by drawerViewModel.getRecentApps(drawerSettings.recentlyUsedAppsCount).collectAsStateWithLifecycle(emptyList())
 
-    var haveToLaunchFirstApp by remember { mutableStateOf(false) }
-    var searchQuery by drawerViewModel.searchQuery
-    var isSearchFocused by remember { mutableStateOf(false) }
+	var haveToLaunchFirstApp by remember { mutableStateOf(false) }
+	var searchQuery by drawerViewModel.searchQuery
+	var isSearchFocused by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit, autoShowKeyboard) {
-        if (autoShowKeyboard) {
-            yield()
-            focusRequester.requestFocus()
-        }
-    }
+	LaunchedEffect(Unit, autoShowKeyboard) {
+		if (autoShowKeyboard) {
+			yield()
+			focusRequester.requestFocus()
+		}
+	}
 
-    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsStateWithLifecycle()
-    val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsStateWithLifecycle()
+	val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsStateWithLifecycle()
+	val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsStateWithLifecycle()
 
-    val initialIndex = activeWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
-    val pagerState =
-        rememberPagerState(
-            initialPage = initialIndex.coerceIn(0, (activeWorkspaces.size - 1).coerceAtLeast(0)),
-            pageCount = { activeWorkspaces.size }
-        )
+	val initialIndex = activeWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
+	val pagerState =
+		rememberPagerState(
+			initialPage = initialIndex.coerceIn(0, (activeWorkspaces.size - 1).coerceAtLeast(0)),
+			pageCount = { activeWorkspaces.size }
+		)
 
-    // Updates the visible workspace
-    LaunchedEffect(activeWorkspaces, selectedWorkspaceId) {
-        if (activeWorkspaces.isEmpty()) return@LaunchedEffect
+	// Updates the visible workspace
+	LaunchedEffect(activeWorkspaces, selectedWorkspaceId) {
+		if (activeWorkspaces.isEmpty()) return@LaunchedEffect
 
-        val selectedPresent = activeWorkspaces.any { it.id == selectedWorkspaceId }
-        val targetId = if (selectedPresent) selectedWorkspaceId else activeWorkspaces.first().id
-        val targetIndex = activeWorkspaces.indexOfFirst { it.id == targetId }
+		val selectedPresent = activeWorkspaces.any { it.id == selectedWorkspaceId }
+		val targetId = if (selectedPresent) selectedWorkspaceId else activeWorkspaces.first().id
+		val targetIndex = activeWorkspaces.indexOfFirst { it.id == targetId }
 
-        if (targetIndex >= 0 && pagerState.currentPage != targetIndex) {
-            pagerState.scrollToPage(targetIndex)
-        }
-    }
+		if (targetIndex >= 0 && pagerState.currentPage != targetIndex) {
+			pagerState.scrollToPage(targetIndex)
+		}
+	}
 
-    LaunchedEffect(pagerState.currentPage) {
-        val newWorkspace = if (activeWorkspaces.size > pagerState.currentPage) activeWorkspaces[pagerState.currentPage] else null
-        val targetId = newWorkspace?.id ?: activeWorkspaces.firstOrNull()?.id
-        DrawerSettingsStore.lastWorkspaceUsed.set(ctx, targetId)
-    }
+	LaunchedEffect(pagerState.currentPage) {
+		val newWorkspace = if (activeWorkspaces.size > pagerState.currentPage) activeWorkspaces[pagerState.currentPage] else null
+		val targetId = newWorkspace?.id ?: activeWorkspaces.firstOrNull()?.id
+		DrawerSettingsStore.lastWorkspaceUsed.set(ctx, targetId)
+	}
 
-    fun closeKeyboard() {
-        focusManager.clearFocus()
-        keyboardController?.hide()
-    }
+	fun closeKeyboard() {
+		focusManager.clearFocus()
+		keyboardController?.hide()
+	}
 
-    fun openKeyboard() {
-        focusRequester.requestFocus()
-        keyboardController?.show()
-    }
+	fun openKeyboard() {
+		focusRequester.requestFocus()
+		keyboardController?.show()
+	}
 
-    fun toggleKeyboard() {
-        if (isSearchFocused) {
-            closeKeyboard()
-        } else {
-            openKeyboard()
-        }
-    }
+	fun toggleKeyboard() {
+		if (isSearchFocused) {
+			closeKeyboard()
+		} else {
+			openKeyboard()
+		}
+	}
 
-    fun launchDrawerAction(action: DrawerActions) {
-        when (action) {
-            Close -> {
-                navigator.onBack()
-            }
+	fun launchDrawerAction(action: DrawerActions) {
+		when (action) {
+			Close -> {
+				navigator.onBack()
+			}
 
-            ToggleKb -> {
-                toggleKeyboard()
-            }
+			ToggleKb -> {
+				toggleKeyboard()
+			}
 
-            CloseKb -> {
-                closeKeyboard()
-            }
+			CloseKb -> {
+				closeKeyboard()
+			}
 
-            OpenKb -> {
-                openKeyboard()
-            }
+			OpenKb -> {
+				openKeyboard()
+			}
 
-            Clear -> {
-                searchQuery = ""
-            }
+			Clear -> {
+				searchQuery = ""
+			}
 
-            SearchWeb -> {
-                if (searchQuery.isNotBlank()) ctx.openSearch(searchQuery)
-            }
+			SearchWeb -> {
+				if (searchQuery.isNotBlank()) ctx.openSearch(searchQuery)
+			}
 
-            OpenFirstApp -> {
-                haveToLaunchFirstApp = true
-            }
+			OpenFirstApp -> {
+				haveToLaunchFirstApp = true
+			}
 
-            None, Disabled -> {}
-        }
-    }
+			None, Disabled -> {}
+		}
+	}
 
-    // Used to correctly handle the home action when in drawer (otherwise the action is consumed by the nav host and not made here)
-    DisposableEffect(Unit) {
-        val handler = {
-            launchDrawerAction(drawerSettings.drawerHomeAction)
-        }
+	// Used to correctly handle the home action when in drawer (otherwise the action is consumed by the nav host and not made here)
+	DisposableEffect(Unit) {
+		val handler = {
+			launchDrawerAction(drawerSettings.drawerHomeAction)
+		}
 
-        onRegisterHomeHandler(handler)
+		onRegisterHomeHandler(handler)
 
-        onDispose {
-            onRegisterHomeHandler(null)
-        }
-    }
+		onDispose {
+			onRegisterHomeHandler(null)
+		}
+	}
 
-    BackHandler {
-        launchDrawerAction(drawerSettings.drawerBackAction)
-    }
+	BackHandler {
+		launchDrawerAction(drawerSettings.drawerBackAction)
+	}
 
-    val filteredToolbarsOrder by remember(toolbarsOrder, showSearchBar, showRecentlyUsedApps) {
-        derivedStateOf {
-            toolbarsOrder.filter { item ->
-                when (item) {
-                    RecentlyUsed -> showRecentlyUsedApps
-                    SearchBar -> showSearchBar
-                    else -> true
-                }
-            }
-        }
-    }
+	val filteredToolbarsOrder by remember(toolbarsOrder, showSearchBar, showRecentlyUsedApps) {
+		derivedStateOf {
+			toolbarsOrder.filter { item ->
+				when (item) {
+					RecentlyUsed -> showRecentlyUsedApps
+					SearchBar -> showSearchBar
+					else -> true
+				}
+			}
+		}
+	}
 
-    // Computes the position of the spacer in the toolbars list, and deduce 2 lists:
-    // one with the elements that come before, and one with those that come after
-    val spacerIndex =
-        remember(filteredToolbarsOrder) {
-            filteredToolbarsOrder.indexOf(Spacer).takeIf { it != -1 } ?: 0
-        }
-    val beforeSpacer =
-        remember(filteredToolbarsOrder, spacerIndex) {
-            filteredToolbarsOrder.subList(0, spacerIndex)
-        }
-    val afterSpacer =
-        remember(filteredToolbarsOrder, spacerIndex) {
-            filteredToolbarsOrder.subList(spacerIndex + 1, filteredToolbarsOrder.size)
-        }
+	// Computes the position of the spacer in the toolbars list, and deduce 2 lists:
+	// one with the elements that come before, and one with those that come after
+	val spacerIndex =
+		remember(filteredToolbarsOrder) {
+			filteredToolbarsOrder.indexOf(Spacer).takeIf { it != -1 } ?: 0
+		}
+	val beforeSpacer =
+		remember(filteredToolbarsOrder, spacerIndex) {
+			filteredToolbarsOrder.subList(0, spacerIndex)
+		}
+	val afterSpacer =
+		remember(filteredToolbarsOrder, spacerIndex) {
+			filteredToolbarsOrder.subList(spacerIndex + 1, filteredToolbarsOrder.size)
+		}
 
-    var searchBarHeightPx by remember { mutableIntStateOf(0) }
-    var recentAppsHeightPx by remember { mutableIntStateOf(0) }
+	var searchBarHeightPx by remember { mutableIntStateOf(0) }
+	var recentAppsHeightPx by remember { mutableIntStateOf(0) }
 
-    val appsContentPadding =
-        remember(filteredToolbarsOrder, searchBarHeightPx, recentAppsHeightPx) {
-            PaddingValues(
-                top =
-                    with(density) {
-                        beforeSpacer
-                            .sumOf {
-                                when (it) {
-                                    Spacer -> 0
-                                    RecentlyUsed -> recentAppsHeightPx
-                                    SearchBar -> searchBarHeightPx
-                                }
-                            }.toDp() + 5.dp
-                    },
-                bottom =
-                    with(density) {
-                        afterSpacer
-                            .sumOf {
-                                when (it) {
-                                    Spacer -> 0
-                                    RecentlyUsed -> recentAppsHeightPx
-                                    SearchBar -> searchBarHeightPx
-                                }
-                            }.toDp() + 5.dp
-                    }
-            )
-        }
+	val appsContentPadding =
+		remember(filteredToolbarsOrder, searchBarHeightPx, recentAppsHeightPx) {
+			PaddingValues(
+				top =
+					with(density) {
+						beforeSpacer
+							.sumOf {
+								when (it) {
+									Spacer -> 0
+									RecentlyUsed -> recentAppsHeightPx
+									SearchBar -> searchBarHeightPx
+								}
+							}.toDp() + 5.dp
+					},
+				bottom =
+					with(density) {
+						afterSpacer
+							.sumOf {
+								when (it) {
+									Spacer -> 0
+									RecentlyUsed -> recentAppsHeightPx
+									SearchBar -> searchBarHeightPx
+								}
+							}.toDp() + 5.dp
+					}
+			)
+		}
 
-    val pullDownAnimations by DrawerSettingsStore.pullDownAnimations.asState()
-    val pullDownScaleIn by DrawerSettingsStore.pullDownScaleIn.asState()
+	val pullDownAnimations by DrawerSettingsStore.pullDownAnimations.asState()
+	val pullDownScaleIn by DrawerSettingsStore.pullDownScaleIn.asState()
 //    val pullDownIconFade by DrawerSettingsStore.pullDownIconFade.asState()
 
-    var atTop by remember { mutableStateOf(true) }
+	var atTop by remember { mutableStateOf(true) }
 
-    val thresholdPx = Constants.Drawer.DRAWER_DRAG_DOWN_THRESHOLD.dp.px
-    val maxDragDownOffset = Constants.Drawer.DRAWER_MAX_DRAG_DOWN.dp.px
+	val thresholdPx = Constants.Drawer.DRAWER_DRAG_DOWN_THRESHOLD.dp.px
+	val maxDragDownOffset = Constants.Drawer.DRAWER_MAX_DRAG_DOWN.dp.px
 
-    var pullOffset by remember { mutableFloatStateOf(0f) }
+	var pullOffset by remember { mutableFloatStateOf(0f) }
 
-    /**
-     * `Of..1f`, used for animations
-     * `1f` is at the threshold
-     */
-    val pullProgress = 1 - (pullOffset / thresholdPx).coerceAtMost(1f)
+	/**
+	 * `Of..1f`, used for animations
+	 * `1f` is at the threshold
+	 */
+	val pullProgress = 1 - (pullOffset / thresholdPx).coerceAtMost(1f)
 
-    /**
-     * If the haptic feedback has already been executed, to avoid repeating it indefinitely
-     */
-    var hasHapticed by remember { mutableStateOf(false) }
+	/**
+	 * If the haptic feedback has already been executed, to avoid repeating it indefinitely
+	 */
+	var hasHapticed by remember { mutableStateOf(false) }
 
-    /**
-     * The scroll state basically, defines what happen on vertical scrolls, the horizontal being handled by the pager
-     * Responsible for the drag up/down actions, and the sliding offset of the drawer on down drag
-     *
-     * This single connection works for both top and bottom aligned drawers: with `reverseLayout` the
-     * bottom aligned lists mirror the scroll/overscroll gestures of the top aligned ones, so "the list
-     * being at its first page" ([atTop]) is the same condition in both cases.
-     */
-    val nestedScrollConnection =
-        remember {
-            object : NestedScrollConnection {
-                override fun onPreScroll(
-                    available: Offset,
-                    source: NestedScrollSource
-                ): Offset {
-                    if (source != NestedScrollSource.UserInput) {
-                        return Offset.Zero
-                    }
+	/**
+	 * The scroll state basically, defines what happen on vertical scrolls, the horizontal being handled by the pager
+	 * Responsible for the drag up/down actions, and the sliding offset of the drawer on down drag
+	 *
+	 * This single connection works for both top and bottom aligned drawers: with `reverseLayout` the
+	 * bottom aligned lists mirror the scroll/overscroll gestures of the top aligned ones, so "the list
+	 * being at its first page" ([atTop]) is the same condition in both cases.
+	 */
+	val nestedScrollConnection =
+		remember {
+			object : NestedScrollConnection {
+				override fun onPreScroll(
+					available: Offset,
+					source: NestedScrollSource
+				): Offset {
+					if (source != NestedScrollSource.UserInput) {
+						return Offset.Zero
+					}
 
-                    // ignore horizontal gestures
-                    if (abs(available.y) <= abs(available.x)) {
-                        return Offset.Zero
-                    }
+					// ignore horizontal gestures
+					if (abs(available.y) <= abs(available.x)) {
+						return Offset.Zero
+					}
 
-                    // Down Drag (pull-to-trigger)
-                    if (available.y > 0f && atTop) {
-                        // Linear curve for clean output
-                        val newPullOffset =
-                            pullOffset + available.y *
-                                (1f - (pullOffset / thresholdPx))
-                                    .coerceAtLeast(0.2f)
+					// Down Drag (pull-to-trigger)
+					if (available.y > 0f && atTop) {
+						// Linear curve for clean output
+						val newPullOffset =
+							pullOffset + available.y *
+								(1f - (pullOffset / thresholdPx))
+									.coerceAtLeast(0.2f)
 
-                        // Block when max offset is reached (constant)
-                        pullOffset = newPullOffset.coerceAtMost(maxDragDownOffset)
+						// Block when max offset is reached (constant)
+						pullOffset = newPullOffset.coerceAtMost(maxDragDownOffset)
 
-                        val thresholdReachedNow = pullOffset > thresholdPx
+						val thresholdReachedNow = pullOffset > thresholdPx
 
-                        // Haptic feedback
-                        if (thresholdReachedNow && !hasHapticed) {
-                            hasHapticed = true
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        }
-                        if (!thresholdReachedNow && hasHapticed) hasHapticed = false
+						// Haptic feedback
+						if (thresholdReachedNow && !hasHapticed) {
+							hasHapticed = true
+							haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+						}
+						if (!thresholdReachedNow && hasHapticed) hasHapticed = false
 
-                        // consume only what we used
-                        return Offset(0f, available.y)
-                    }
+						// consume only what we used
+						return Offset(0f, available.y)
+					}
 
-                    // UP DRAG while stretching (reversible)
-                    if (available.y < 0f && pullOffset > 0f) {
-                        pullOffset = (pullOffset + available.y).coerceAtLeast(0f)
+					// UP DRAG while stretching (reversible)
+					if (available.y < 0f && pullOffset > 0f) {
+						pullOffset = (pullOffset + available.y).coerceAtLeast(0f)
 
-                        if (!(pullOffset > thresholdPx) && hasHapticed) hasHapticed = false
-                        return Offset(0f, available.y)
-                    }
+						if (!(pullOffset > thresholdPx) && hasHapticed) hasHapticed = false
+						return Offset(0f, available.y)
+					}
 
-                    // Launch Up action on any up scroll large enough
-                    if (available.y < -15) {
-                        launchDrawerAction(drawerSettings.drawerScrollUpAction)
-                    }
+					// Launch Up action on any up scroll large enough
+					if (available.y < -15) {
+						launchDrawerAction(drawerSettings.drawerScrollUpAction)
+					}
 
-                    return Offset.Zero
-                }
+					return Offset.Zero
+				}
 
-                override suspend fun onPostFling(
-                    consumed: Velocity,
-                    available: Velocity
-                ): Velocity {
-                    // No need to enclave in if statement as values aren't changing if !pullDownAnimations
+				override suspend fun onPostFling(
+					consumed: Velocity,
+					available: Velocity
+				): Velocity {
+					// No need to enclave in if statement as values aren't changing if !pullDownAnimations
 
-                    // DOWN action
-                    if (pullOffset > thresholdPx) {
-                        // When the down action closes the drawer, keep it pulled down so the closing
-                        // transition (slide down) continues seamlessly instead of springing back up first.
-                        // Any other action resets the pull like a normal gesture.
-                        pullOffset =
-                            if (drawerSettings.drawerScrollDownAction == Close) {
-                                maxDragDownOffset
-                            } else {
-                                0f
-                            }
+					// DOWN action
+					if (pullOffset > thresholdPx) {
+						// When the down action closes the drawer, keep it pulled down so the closing
+						// transition (slide down) continues seamlessly instead of springing back up first.
+						// Any other action resets the pull like a normal gesture.
+						pullOffset =
+							if (drawerSettings.drawerScrollDownAction == Close) {
+								maxDragDownOffset
+							} else {
+								0f
+							}
 
-                        launchDrawerAction(drawerSettings.drawerScrollDownAction)
-                    } else {
-                        // reset
-                        pullOffset = 0f
-                    }
+						launchDrawerAction(drawerSettings.drawerScrollDownAction)
+					} else {
+						// reset
+						pullOffset = 0f
+					}
 
-                    hasHapticed = false
+					hasHapticed = false
 
-                    return Velocity.Zero
-                }
-            }
-        }
+					return Velocity.Zero
+				}
+			}
+		}
 
-    val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
-    val wallpaperDimMainScreen by UiSettingsStore.wallpaperDimMainScreen.asState()
-    val pullDownWallPaperDimFadeEnabled by DrawerSettingsStore.pullDownWallPaperDim.asState()
+	val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
+	val wallpaperDimMainScreen by UiSettingsStore.wallpaperDimMainScreen.asState()
+	val pullDownWallPaperDimFadeEnabled by DrawerSettingsStore.pullDownWallPaperDim.asState()
 
-    val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
-    val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
+	val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
+	val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
 
-    val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
-    val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
+	val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
+	val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
 
-    val profiles by profilesViewModel.profiles.collectAsState(emptyList())
-    val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
+	val profiles by profilesViewModel.profiles.collectAsState(emptyList())
+	val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
 
-    val animatedScale by animateFloatAsState(if (pullDownScaleIn) (pullProgress.pow(0.9f)).coerceIn(0.95f, 1f) else 1f)
-    val animatedPadding by animateDpAsState((if (pullDownAnimations) pullOffset else 0f).toDp)
+	val animatedScale by animateFloatAsState(if (pullDownScaleIn) (pullProgress.pow(0.9f)).coerceIn(0.95f, 1f) else 1f)
+	val animatedPadding by animateDpAsState((if (pullDownAnimations) pullOffset else 0f).toDp)
 
-    val dim =
-        remember(pullProgress, pullDownWallPaperDimFadeEnabled, wallpaperDimDrawerScreen, wallpaperDimMainScreen) {
-            if (pullDownWallPaperDimFadeEnabled) {
-                wallpaperDimDrawerScreen + pullProgress * (wallpaperDimDrawerScreen - wallpaperDimMainScreen)
-            } else {
-                wallpaperDimDrawerScreen
-            }
-        }
+	val dim =
+		remember(pullProgress, pullDownWallPaperDimFadeEnabled, wallpaperDimDrawerScreen, wallpaperDimMainScreen) {
+			if (pullDownWallPaperDimFadeEnabled) {
+				wallpaperDimDrawerScreen + pullProgress * (wallpaperDimDrawerScreen - wallpaperDimMainScreen)
+			} else {
+				wallpaperDimDrawerScreen
+			}
+		}
 
-    // Dims the wallpaper, when the user starts pulling down,
-    // the dim amount is reduced proportionally to the drag amount
-    WallpaperDim(dim)
+	// Dims the wallpaper, when the user starts pulling down,
+	// the dim amount is reduced proportionally to the drag amount
+	WallpaperDim(dim)
 
-    Box(
-        modifier =
-            Modifier
-                .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
-                .fillMaxSize()
-                // Offset the whole drawer down on pull instead of padding its top: a bottom aligned
-                // list is anchored to its bottom edge, so top padding would shrink its viewport
-                // without sliding the content (and re-layout mid-gesture). Offset slides it in both cases.
-                .offset(y = animatedPadding)
-                .nestedScroll(nestedScrollConnection)
-                .conditional(pullDownScaleIn) {
-                    graphicsLayer {
-                        scaleX = animatedScale
-                        scaleY = animatedScale
-                    }
-                }.clickable(
-                    enabled = drawerSettings.tapEmptySpaceAction.isUsed,
-                    indication = null,
-                    interactionSource = null
-                ) {
-                    toggleKeyboard()
-                }
-    ) {
-        DrawerActions(leftDrawerAction, leftDrawerWidth, rightDrawerAction, rightDrawerWidth, ::launchDrawerAction)
-        HorizontalPager(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(start = leftDrawerWidth, end = rightDrawerWidth),
-            state = pagerState
-        ) { pageIndex ->
+	Box(
+		modifier =
+			Modifier
+				.windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
+				.fillMaxSize()
+				// Offset the whole drawer down on pull instead of padding its top: a bottom aligned
+				// list is anchored to its bottom edge, so top padding would shrink its viewport
+				// without sliding the content (and re-layout mid-gesture). Offset slides it in both cases.
+				.offset(y = animatedPadding)
+				.nestedScroll(nestedScrollConnection)
+				.conditional(pullDownScaleIn) {
+					graphicsLayer {
+						scaleX = animatedScale
+						scaleY = animatedScale
+					}
+				}.clickable(
+					enabled = drawerSettings.tapEmptySpaceAction.isUsed,
+					indication = null,
+					interactionSource = null
+				) {
+					toggleKeyboard()
+				}
+	) {
+		DrawerActions(leftDrawerAction, leftDrawerWidth, rightDrawerAction, rightDrawerWidth, ::launchDrawerAction)
+		HorizontalPager(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.padding(start = leftDrawerWidth, end = rightDrawerWidth),
+			state = pagerState
+		) { pageIndex ->
 
-            val workspace = activeWorkspaces[pageIndex]
+			val workspace = activeWorkspaces[pageIndex]
 
-            val workspaceProfileType =
-                when (workspace.type) {
-                    WorkspaceType.Work -> Profile.Type.Work
-                    WorkspaceType.Private -> Profile.Type.Private
-                    else -> Profile.Type.Personal
-                }
+			val workspaceProfileType =
+				when (workspace.type) {
+					WorkspaceType.Work -> Profile.Type.Work
+					WorkspaceType.Private -> Profile.Type.Private
+					else -> Profile.Type.Personal
+				}
 
-            val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
+			val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
-            val workspaceLocked =
-                when (workspaceProfileType) {
-                    Profile.Type.Personal -> false
-                    Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
-                    Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
-                }
+			val workspaceLocked =
+				when (workspaceProfileType) {
+					Profile.Type.Personal -> false
+					Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+					Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
+				}
 
-            val gridState = remember(workspace.id) { LazyGridState() }
-            val listState = remember(workspace.id) { LazyListState() }
-            val categoryGridState = remember(workspace.id) { LazyGridState() }
+			val gridState = remember(workspace.id) { LazyGridState() }
+			val listState = remember(workspace.id) { LazyListState() }
+			val categoryGridState = remember(workspace.id) { LazyGridState() }
 
-            val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
+			val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
 
-            LaunchedEffect(haveToLaunchFirstApp, apps) {
-                val autoLaunch =
-                    drawerSettings.autoOpenSingleMatch &&
-                        apps.size == 1 &&
-                        searchQuery.isNotEmpty() &&
-                        !(
-                            drawerSettings.disableAutoLaunchWhenFirstCharIs.isNotEmpty() &&
-                                searchQuery.first() == drawerSettings.disableAutoLaunchWhenFirstCharIs.first()
-                        )
+			LaunchedEffect(haveToLaunchFirstApp, apps) {
+				val autoLaunch =
+					drawerSettings.autoOpenSingleMatch &&
+						apps.size == 1 &&
+						searchQuery.isNotEmpty() &&
+						!(
+							drawerSettings.disableAutoLaunchWhenFirstCharIs.isNotEmpty() &&
+								searchQuery.first() == drawerSettings.disableAutoLaunchWhenFirstCharIs.first()
+						)
 
-                if ((haveToLaunchFirstApp || autoLaunch) && apps.isNotEmpty()) {
-                    onLaunchAction(apps.first().action)
-                }
-            }
+				if ((haveToLaunchFirstApp || autoLaunch) && apps.isNotEmpty()) {
+					onLaunchAction(apps.first().action)
+				}
+			}
 
-            when {
-                workspaceProfile == null -> {
-                    WorkspaceUnavailableContent(workspace.type)
-                }
+			when {
+				workspaceProfile == null -> {
+					WorkspaceUnavailableContent(workspace.type)
+				}
 
-                workspaceLocked -> {
-                    WorkspaceLockedContent(
-                        workspaceProfile = workspaceProfile,
-                        isActive = selectedWorkspaceId == workspace.id
-                    )
-                }
+				workspaceLocked -> {
+					WorkspaceLockedContent(
+						workspaceProfile = workspaceProfile,
+						isActive = selectedWorkspaceId == workspace.id
+					)
+				}
 
-                else -> {
-                    AppGrid(
-                        apps = apps,
-                        gridState = gridState,
-                        paddingValues = appsContentPadding,
-                        categoryGridState = categoryGridState,
-                        listState = listState,
-                        onTopStateChange = { atTop = it },
-                        longPressPopup = true,
-                        modifier = Modifier.conditional(drawerSettings.imePadding) {
-                            imePadding()
-                        }
-                    ) {
-                        onLaunchAction(it.action)
-                    }
-                }
-            }
-        }
-    }
+				else -> {
+					AppGrid(
+						apps = apps,
+						gridState = gridState,
+						paddingValues = appsContentPadding,
+						categoryGridState = categoryGridState,
+						listState = listState,
+						onTopStateChange = { atTop = it },
+						longPressPopup = true,
+						modifier = Modifier.conditional(drawerSettings.imePadding) {
+							imePadding()
+						}
+					) {
+						onLaunchAction(it.action)
+					}
+				}
+			}
+		}
+	}
 
-    // Toolbars column, fills the whole size and sits over the apps boxes
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .imePadding()
-    ) {
-        var showMoreMenu by remember { mutableStateOf(false) }
+	// Toolbars column, fills the whole size and sits over the apps boxes
+	Column(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.imePadding()
+	) {
+		var showMoreMenu by remember { mutableStateOf(false) }
 
-        toolbarsOrder.forEach { toolbar ->
-            when (toolbar) {
-                Spacer -> {
-                    Spacer(Modifier.weight(1f))
-                }
+		toolbarsOrder.forEach { toolbar ->
+			when (toolbar) {
+				Spacer -> {
+					Spacer(Modifier.weight(1f))
+				}
 
-                RecentlyUsed -> {
-                    AnimatedVisibility(
-                        visible = showRecentlyUsedApps && searchQuery.isBlank() && recentApps.isNotEmpty(),
-                        modifier =
-                            Modifier.onGloballyPositioned {
-                                recentAppsHeightPx = it.size.height
-                            }
-                    ) {
-                        Box(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp)
-                                    .clip(MaterialTheme.shapes.large)
-                                    .background(MaterialTheme.colorScheme.surface)
-                        ) {
-                            // The recent apps DO NOT use the category otherwise it ends up filling out all the space
-                            CompositionLocalProvider(
-                                LocalDrawerSettings provides
-                                    LocalDrawerSettings.current.copy(
-                                        useCategory = false
-                                    )
-                            ) {
-                                AppGrid(
-                                    apps = recentApps,
-                                    fillMaxSize = false,
-                                    longPressPopup = true,
-                                    onReload = drawerViewModel::reloadApps
-                                ) {
-                                    onLaunchAction(it.action)
-                                }
-                            }
-                        }
-                    }
-                }
+				RecentlyUsed -> {
+					AnimatedVisibility(
+						visible = showRecentlyUsedApps && searchQuery.isBlank() && recentApps.isNotEmpty(),
+						modifier =
+							Modifier.onGloballyPositioned {
+								recentAppsHeightPx = it.size.height
+							}
+					) {
+						Box(
+							modifier =
+								Modifier
+									.fillMaxWidth()
+									.padding(5.dp)
+									.clip(MaterialTheme.shapes.large)
+									.background(MaterialTheme.colorScheme.surface)
+						) {
+							// The recent apps DO NOT use the category otherwise it ends up filling out all the space
+							CompositionLocalProvider(
+								LocalDrawerSettings provides
+									LocalDrawerSettings.current.copy(
+										useCategory = false
+									)
+							) {
+								AppGrid(
+									apps = recentApps,
+									fillMaxSize = false,
+									longPressPopup = true,
+									onReload = drawerViewModel::reloadApps
+								) {
+									onLaunchAction(it.action)
+								}
+							}
+						}
+					}
+				}
 
-                SearchBar -> {
-                    AnimatedVisibility(
-                        visible = showSearchBar,
-                        modifier =
-                            Modifier.onGloballyPositioned {
-                                searchBarHeightPx = it.size.height
-                            }
-                    ) {
-                        AppDrawerSearch(
-                            trailingIcon = {
-                                Box {
-                                    Icon(
-                                        painter = painterResource(R.drawable.more_vert),
-                                        contentDescription = stringResource(R.string.more),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.shapedClickable { showMoreMenu = true }
-                                    )
+				SearchBar -> {
+					AnimatedVisibility(
+						visible = showSearchBar,
+						modifier =
+							Modifier.onGloballyPositioned {
+								searchBarHeightPx = it.size.height
+							}
+					) {
+						AppDrawerSearch(
+							trailingIcon = {
+								Box {
+									Icon(
+										painter = painterResource(R.drawable.more_vert),
+										contentDescription = stringResource(R.string.more),
+										tint = MaterialTheme.colorScheme.onSurfaceVariant,
+										modifier = Modifier.shapedClickable { showMoreMenu = true }
+									)
 
-                                    val navigator = LocalNavigator.current
-                                    BurgerListAction(
-                                        actions =
-                                            listOf(
-                                                MoreOptions(
-                                                    onClick = { navigator.navigate(NavigationRoute.DrawerSettings) },
-                                                    icon = R.drawable.workspaces,
-                                                    text = { stringResource(R.string.drawer_settings) }
-                                                )
-                                            ),
-                                        isExpanded = showMoreMenu,
-                                        onDismissRequest = { showMoreMenu = false }
-                                    )
-                                }
-                            },
-                            modifier = Modifier.focusRequester(focusRequester),
-                            onClickSearch = { launchDrawerAction(drawerSettings.drawerClickSearchIconAction) },
-                            onEnterPressed = { launchDrawerAction(drawerSettings.drawerEnterAction) },
-                            onFocusStateChanged = { isSearchFocused = it }
-                        )
-                    }
-                }
-            }
-        }
-    }
+									val navigator = LocalNavigator.current
+									BurgerListAction(
+										actions =
+											listOf(
+												MoreOptions(
+													onClick = { navigator.navigate(NavigationRoute.DrawerSettings) },
+													icon = R.drawable.workspaces,
+													text = { stringResource(R.string.drawer_settings) }
+												)
+											),
+										isExpanded = showMoreMenu,
+										onDismissRequest = { showMoreMenu = false }
+									)
+								}
+							},
+							modifier = Modifier.focusRequester(focusRequester),
+							onClickSearch = { launchDrawerAction(drawerSettings.drawerClickSearchIconAction) },
+							onEnterPressed = { launchDrawerAction(drawerSettings.drawerEnterAction) },
+							onFocusStateChanged = { isSearchFocused = it }
+						)
+					}
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -653,36 +653,36 @@ fun AppDrawerScreen(
  */
 @Composable
 private fun BoxScope.DrawerActions(
-    leftDrawerAction: DrawerActions,
-    leftDrawerWidth: Dp,
-    rightDrawerAction: DrawerActions,
-    rightDrawerWidth: Dp,
-    launchDrawerAction: (DrawerActions) -> Unit
+	leftDrawerAction: DrawerActions,
+	leftDrawerWidth: Dp,
+	rightDrawerAction: DrawerActions,
+	rightDrawerWidth: Dp,
+	launchDrawerAction: (DrawerActions) -> Unit
 ) {
-    if (leftDrawerAction != Disabled) {
-        Box(
-            modifier =
-                Modifier
-                    .align(Alignment.CenterStart)
-                    .fillMaxHeight()
-                    .width(leftDrawerWidth)
-                    .clickable(
-                        indication = null,
-                        interactionSource = null
-                    ) { launchDrawerAction(leftDrawerAction) }
-        )
-    }
+	if (leftDrawerAction != Disabled) {
+		Box(
+			modifier =
+				Modifier
+					.align(Alignment.CenterStart)
+					.fillMaxHeight()
+					.width(leftDrawerWidth)
+					.clickable(
+						indication = null,
+						interactionSource = null
+					) { launchDrawerAction(leftDrawerAction) }
+		)
+	}
 
-    if (rightDrawerAction != Disabled) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .width(rightDrawerWidth)
-                    .clickable(
-                        indication = null,
-                        interactionSource = null
-                    ) { launchDrawerAction(rightDrawerAction) }
-        )
-    }
+	if (rightDrawerAction != Disabled) {
+		Box(
+			modifier =
+				Modifier
+					.fillMaxHeight()
+					.width(rightDrawerWidth)
+					.clickable(
+						indication = null,
+						interactionSource = null
+					) { launchDrawerAction(rightDrawerAction) }
+		)
+	}
 }

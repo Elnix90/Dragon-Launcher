@@ -9,13 +9,13 @@ import android.util.ArraySet
  * @return The [destination] map.
  **/
 public inline fun <T, K, M : MutableMap<in K, MutableSet<T>>> Iterable<T>.groupByTo(
-    destination: M,
-    keySelector: (T) -> K
+	destination: M,
+	keySelector: (T) -> K
 ): M {
-    for (element in this) {
-        val key = keySelector(element)
-        val set = destination.getOrPut(key) { ArraySet() }
-        set.add(element)
-    }
-    return destination
+	for (element in this) {
+		val key = keySelector(element)
+		val set = destination.getOrPut(key) { ArraySet() }
+		set.add(element)
+	}
+	return destination
 }

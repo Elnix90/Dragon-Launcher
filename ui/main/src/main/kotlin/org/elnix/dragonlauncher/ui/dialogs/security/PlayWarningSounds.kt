@@ -16,73 +16,73 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Composable
 fun PlayWarningSounds(
-    failedTries: Int,
-    superWarningMode: Boolean,
-    superWarningModeSound: Int,
-    alarmSoundEnabled: Boolean,
-    metalPipesSoundEnabled: Boolean
+	failedTries: Int,
+	superWarningMode: Boolean,
+	superWarningModeSound: Int,
+	alarmSoundEnabled: Boolean,
+	metalPipesSoundEnabled: Boolean
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    val soundPool =
-        remember {
-            SoundPool
-                .Builder()
-                .setMaxStreams(2)
-                .setAudioAttributes(
-                    AudioAttributes
-                        .Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
-                ).build()
-        }
+	val soundPool =
+		remember {
+			SoundPool
+				.Builder()
+				.setMaxStreams(2)
+				.setAudioAttributes(
+					AudioAttributes
+						.Builder()
+						.setUsage(AudioAttributes.USAGE_MEDIA)
+						.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+						.build()
+				).build()
+		}
 
-    var alarmLoaded by remember { mutableStateOf(false) }
-    var metalLoaded by remember { mutableStateOf(false) }
+	var alarmLoaded by remember { mutableStateOf(false) }
+	var metalLoaded by remember { mutableStateOf(false) }
 
-    val alarmSoundId =
-        remember {
-            soundPool.load(ctx, R.raw.warning, 1)
-        }
+	val alarmSoundId =
+		remember {
+			soundPool.load(ctx, R.raw.warning, 1)
+		}
 
-    val metalSoundId =
-        remember {
-            soundPool.load(ctx, R.raw.metal_pipe, 1)
-        }
+	val metalSoundId =
+		remember {
+			soundPool.load(ctx, R.raw.metal_pipe, 1)
+		}
 
-    DisposableEffect(Unit) {
-        soundPool.setOnLoadCompleteListener { _, sampleId, status ->
-            if (status == 0) {
-                if (sampleId == alarmSoundId) alarmLoaded = true
-                if (sampleId == metalSoundId) metalLoaded = true
-            }
-        }
+	DisposableEffect(Unit) {
+		soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+			if (status == 0) {
+				if (sampleId == alarmSoundId) alarmLoaded = true
+				if (sampleId == metalSoundId) metalLoaded = true
+			}
+		}
 
-        onDispose { soundPool.release() }
-    }
+		onDispose { soundPool.release() }
+	}
 
-    LaunchedEffect(failedTries, superWarningMode) {
-        if (failedTries > 0 && superWarningMode && superWarningModeSound > 0) {
-            val audioManager =
-                ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+	LaunchedEffect(failedTries, superWarningMode) {
+		if (failedTries > 0 && superWarningMode && superWarningModeSound > 0) {
+			val audioManager =
+				ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-            val maxVolume =
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+			val maxVolume =
+				audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
-            audioManager.setStreamVolume(
-                AudioManager.STREAM_MUSIC,
-                superWarningModeSound.coerceIn(0, maxVolume),
-                0
-            )
+			audioManager.setStreamVolume(
+				AudioManager.STREAM_MUSIC,
+				superWarningModeSound.coerceIn(0, maxVolume),
+				0
+			)
 
-            if (alarmSoundEnabled && alarmLoaded) {
-                soundPool.play(alarmSoundId, 1f, 1f, 1, -1, 1f)
-            }
+			if (alarmSoundEnabled && alarmLoaded) {
+				soundPool.play(alarmSoundId, 1f, 1f, 1, -1, 1f)
+			}
 
-            if (metalPipesSoundEnabled && metalLoaded) {
-                soundPool.play(metalSoundId, 1f, 1f, 1, 0, 1f)
-            }
-        }
-    }
+			if (metalPipesSoundEnabled && metalLoaded) {
+				soundPool.play(metalSoundId, 1f, 1f, 1, 0, 1f)
+			}
+		}
+	}
 }

@@ -5,19 +5,19 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import org.json.JSONObject
 
 public fun jsonObjectOf(vararg pairs: Pair<String, Any?>): JSONObject {
-    val json = JSONObject()
-    for ((k, v) in pairs) {
-        when (v) {
-            is Float -> json.put(k, v.toDouble())
-            is Double -> json.put(k, v)
-            is Int -> json.put(k, v)
-            is Long -> json.put(k, v)
-            is Boolean -> json.put(k, v)
-            is String -> json.put(k, v)
-            else -> json.put(k, v)
-        }
-    }
-    return json
+	val json = JSONObject()
+	for ((k, v) in pairs) {
+		when (v) {
+			is Float -> json.put(k, v.toDouble())
+			is Double -> json.put(k, v)
+			is Int -> json.put(k, v)
+			is Long -> json.put(k, v)
+			is Boolean -> json.put(k, v)
+			is String -> json.put(k, v)
+			else -> json.put(k, v)
+		}
+	}
+	return json
 }
 
 @ChecksSdkIntAtLeast(parameter = 0)

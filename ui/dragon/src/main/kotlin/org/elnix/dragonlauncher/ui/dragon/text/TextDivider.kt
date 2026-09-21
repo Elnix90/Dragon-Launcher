@@ -21,37 +21,37 @@ import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 @Deprecated("use DragonSettingGroup instead")
 @Composable
 fun TextDividerOld(
-    text: String,
-    modifier: Modifier = Modifier,
-    lineColor: Color = MaterialTheme.colorScheme.outline,
-    textColor: Color = MaterialTheme.colorScheme.outline,
-    enabled: Boolean = true,
-    thickness: Dp = 1.dp,
-    padding: Dp = 8.dp
+	text: String,
+	modifier: Modifier = Modifier,
+	lineColor: Color = MaterialTheme.colorScheme.outline,
+	textColor: Color = MaterialTheme.colorScheme.outline,
+	enabled: Boolean = true,
+	thickness: Dp = 1.dp,
+	padding: Dp = 8.dp
 ) {
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .background(Color.Transparent),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        HorizontalDivider(
-            modifier = Modifier.weight(1f).clip(CircleShape),
-            color = lineColor.semiTransparentIfDisabled(enabled),
-            thickness = thickness
-        )
-        Text(
-            text = text,
-            color = textColor.semiTransparentIfDisabled(enabled),
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(horizontal = padding)
-        )
-        HorizontalDivider(
-            modifier = Modifier.weight(1f).clip(CircleShape),
-            color = lineColor.semiTransparentIfDisabled(enabled),
-            thickness = thickness
-        )
-    }
+	Row(
+		modifier =
+			modifier
+				.fillMaxWidth()
+				.background(Color.Transparent),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.Center
+	) {
+		HorizontalDivider(
+			modifier = Modifier.weight(1f).clip(CircleShape),
+			color = lineColor.semiTransparentIfDisabled(enabled),
+			thickness = thickness
+		)
+		Text(
+			text = text,
+			color = textColor.semiTransparentIfDisabled(enabled),
+			style = MaterialTheme.typography.labelMedium,
+			modifier = Modifier.padding(horizontal = padding)
+		)
+		HorizontalDivider(
+			modifier = Modifier.weight(1f).clip(CircleShape),
+			color = lineColor.semiTransparentIfDisabled(enabled),
+			thickness = thickness
+		)
+	}
 }

@@ -36,84 +36,84 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AngleLineObjectsOrderDialog(
-    swipeViewModel: SwipeViewModel = activityViewModel(),
-    onDismiss: () -> Unit
+	swipeViewModel: SwipeViewModel = activityViewModel(),
+	onDismiss: () -> Unit
 ) {
-    val swipeService = swipeViewModel.swipeService
-    val angleLineObjects by swipeService.lineObjectOrder.asState()
+	val swipeService = swipeViewModel.swipeService
+	val angleLineObjects by swipeService.lineObjectOrder.asState()
 
-    val lazyListState = rememberLazyListState()
-    val reorderState =
-        rememberReorderableLazyListState(
-            lazyListState = lazyListState,
-            onMove = { from, to ->
-                swipeService.lineObjectOrder.value =
-                    angleLineObjects.toMutableList().apply {
-                        add(to.index, removeAt(from.index))
-                    }
-            }
-        )
+	val lazyListState = rememberLazyListState()
+	val reorderState =
+		rememberReorderableLazyListState(
+			lazyListState = lazyListState,
+			onMove = { from, to ->
+				swipeService.lineObjectOrder.value =
+					angleLineObjects.toMutableList().apply {
+						add(to.index, removeAt(from.index))
+					}
+			}
+		)
 
-    DragonModalBottomSheet(
-        onDismissRequest = onDismiss
-    ) {
-        DialogTitle(stringResource(R.string.configure_draw_order)) {
-            swipeService.resetAngleLineOrder()
-        }
+	DragonModalBottomSheet(
+		onDismissRequest = onDismiss
+	) {
+		DialogTitle(stringResource(R.string.configure_draw_order)) {
+			swipeService.resetAngleLineOrder()
+		}
 
-        LazyColumn(
-            state = lazyListState
-        ) {
-            items(angleLineObjects, key = { it.name }) { item ->
+		LazyColumn(
+			state = lazyListState
+		) {
+			items(angleLineObjects, key = { it.name }) { item ->
 
-                ReorderableItem(
-                    state = reorderState,
-                    key = item.name
-                ) { isDragging ->
+				ReorderableItem(
+					state = reorderState,
+					key = item.name
+				) { isDragging ->
 
-                    val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
-                    val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
+					val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
+					val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
 
-                    ElevatedCard(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .scale(scale)
-                                .draggableHandle()
-                                .longPressDraggableHandle(),
-                        elevation = elevatedCardElevation(elevation),
-                        colors =
-                            CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surface
-                            ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        horizontal = 12.dp,
-                                        vertical = 10.dp
-                                    )
-                        ) {
-                            Text(
-                                text = stringResource(item.resId),
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.weight(1f)
-                            )
+					ElevatedCard(
+						modifier =
+							Modifier
+								.fillMaxWidth()
+								.padding(vertical = 4.dp)
+								.scale(scale)
+								.draggableHandle()
+								.longPressDraggableHandle(),
+						elevation = elevatedCardElevation(elevation),
+						colors =
+							CardDefaults.cardColors(
+								containerColor = MaterialTheme.colorScheme.surface
+							),
+						shape = RoundedCornerShape(12.dp)
+					) {
+						Row(
+							verticalAlignment = Alignment.CenterVertically,
+							modifier =
+								Modifier
+									.fillMaxWidth()
+									.padding(
+										horizontal = 12.dp,
+										vertical = 10.dp
+									)
+						) {
+							Text(
+								text = stringResource(item.resId),
+								style = MaterialTheme.typography.bodyLarge,
+								modifier = Modifier.weight(1f)
+							)
 
-                            Icon(
-                                painter = painterResource(R.drawable.drag_handle),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+							Icon(
+								painter = painterResource(R.drawable.drag_handle),
+								contentDescription = null,
+								tint = MaterialTheme.colorScheme.outline
+							)
+						}
+					}
+				}
+			}
+		}
+	}
 }

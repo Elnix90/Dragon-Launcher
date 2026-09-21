@@ -123,356 +123,356 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PointsSettingsScreen(
-    iconsViewModel: IconsViewModel = activityViewModel(),
-    pointsViewModel: PointsViewModel = activityViewModel(),
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    viewModel: PointsSettingsViewModel = hiltViewModel(),
-    initializationViewModel: InitializationViewModel = activityViewModel()
+	iconsViewModel: IconsViewModel = activityViewModel(),
+	pointsViewModel: PointsViewModel = activityViewModel(),
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	viewModel: PointsSettingsViewModel = hiltViewModel(),
+	initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
-    val ctx = LocalContext.current
-    val navigator = LocalNavigator.current
-    val density = LocalDensity.current
-    val extraColors = LocalExtraColors.current
-    val config = LocalResources.current.configuration
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val navigator = LocalNavigator.current
+	val density = LocalDensity.current
+	val extraColors = LocalExtraColors.current
+	val config = LocalResources.current.configuration
+	val scope = rememberCoroutineScope()
 
-    val pointsService = pointsViewModel.pointsService
-    val defaultPoint by pointsService.defaultPoint.asState()
-    val defaultNest by pointsService.defaultNest.asState()
-    val defaultIntersectionShape by pointsService.defaultIntersectionShape.asState()
+	val pointsService = pointsViewModel.pointsService
+	val defaultPoint by pointsService.defaultPoint.asState()
+	val defaultNest by pointsService.defaultNest.asState()
+	val defaultIntersectionShape by pointsService.defaultIntersectionShape.asState()
 
-    // Force icons to recompose in the screen, because sometimes, the points icons are not loaded and display "?"
-    LaunchedEffect(Unit) {
-        delay(200.milliseconds)
-        pointsService.recompose()
-    }
+	// Force icons to recompose in the screen, because sometimes, the points icons are not loaded and display "?"
+	LaunchedEffect(Unit) {
+		delay(200.milliseconds)
+		pointsService.recompose()
+	}
 
-    val points by pointsService.points.collectAsState()
-    val nests by pointsService.nests.collectAsState()
+	val points by pointsService.points.collectAsState()
+	val nests by pointsService.nests.collectAsState()
 
-    val isInDragAroundMode by isInDragAroundMode.asState()
+	val isInDragAroundMode by isInDragAroundMode.asState()
 
-    val primaryColor = MaterialTheme.colorScheme.primary
+	val primaryColor = MaterialTheme.colorScheme.primary
 
-    val snapPointsAngle by UiSettingsStore.snapPointsAngle.asState()
-    val snapPointAngleThreshold by UiSettingsStore.snapPointAngleThreshold.asState()
-    val showSnapPointAngleLines by UiSettingsStore.showSnapPointAngleLines.asState()
+	val snapPointsAngle by UiSettingsStore.snapPointsAngle.asState()
+	val snapPointAngleThreshold by UiSettingsStore.snapPointAngleThreshold.asState()
+	val showSnapPointAngleLines by UiSettingsStore.showSnapPointAngleLines.asState()
 
-    val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
-    val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
-    val autoMerge by UiSettingsStore.autoMerge.asState()
+	val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
+	val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
+	val autoMerge by UiSettingsStore.autoMerge.asState()
 
-    val cellSizeDp by UiSettingsStore.pointsCellSizeDp.asState()
-    val cellSizePx = cellSizeDp.px
-    val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
+	val cellSizeDp by UiSettingsStore.pointsCellSizeDp.asState()
+	val cellSizePx = cellSizeDp.px
+	val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
 
-    val snapPoints = viewModel.snapPoints
+	val snapPoints = viewModel.snapPoints
 
-    fun Offset.snap(): Offset = if (snapPoints && allowFreePoints) this.snapToGrid(cellSizePx) else this
+	fun Offset.snap(): Offset = if (snapPoints && allowFreePoints) this.snapToGrid(cellSizePx) else this
 
-    val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
+	val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
 
-    val selectedPointsIds: List<Int> by pointsService.selectedPointsIds.asState()
-    val aSinglePointIsSelected = selectedPointsIds.size == 1
+	val selectedPointsIds: List<Int> by pointsService.selectedPointsIds.asState()
+	val aSinglePointIsSelected = selectedPointsIds.size == 1
 
-    var closestHoveredPoint by viewModel.closestHoveredPoint
-    var closestHoveredTempOffset by viewModel.closestHoveredTempOffset
-    var ableToLaunchHoverAction by viewModel.ableToLaunchHoverAction
+	var closestHoveredPoint by viewModel.closestHoveredPoint
+	var closestHoveredTempOffset by viewModel.closestHoveredTempOffset
+	var ableToLaunchHoverAction by viewModel.ableToLaunchHoverAction
 
-    var showMoreSheet by viewModel.showMoreSheet
-    var showGambleDialog by viewModel.showGambleDialog
-    var showEditDefaultPoint by viewModel.showEditDefaultPoint
-    var showAddDialog by viewModel.showAddDialog
-    var showEditDialog by viewModel.showEditDialog
-    var showNestManagementDialog by viewModel.showNestManagementDialog
-    var showResetPointsAndNestsDialog by viewModel.showResetPointsAndNestsDialog
+	var showMoreSheet by viewModel.showMoreSheet
+	var showGambleDialog by viewModel.showGambleDialog
+	var showEditDefaultPoint by viewModel.showEditDefaultPoint
+	var showAddDialog by viewModel.showAddDialog
+	var showEditDialog by viewModel.showEditDialog
+	var showNestManagementDialog by viewModel.showNestManagementDialog
+	var showResetPointsAndNestsDialog by viewModel.showResetPointsAndNestsDialog
 
-    // Manual placement mode state (multi-select "Place one by one")
-    var manualPlacementQueue by viewModel.manualPlacementQueue
-    val isInManualPlacementMode = viewModel.isInManualPlacementMode
-    var isDragging by viewModel.isDragging
+	// Manual placement mode state (multi-select "Place one by one")
+	var manualPlacementQueue by viewModel.manualPlacementQueue
+	val isInManualPlacementMode = viewModel.isInManualPlacementMode
+	var isDragging by viewModel.isDragging
 
-    val nestsNavigationService = pointsViewModel.nestsNavigationService
-    val nestId by nestsNavigationService.currentNestId.collectAsState()
-    val currentNest = pointsService.findNestById(nestId)
-    val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest, false) }
+	val nestsNavigationService = pointsViewModel.nestsNavigationService
+	val nestId by nestsNavigationService.currentNestId.collectAsState()
+	val currentNest = pointsService.findNestById(nestId)
+	val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest, false) }
 
-    val center by viewModel.center.asState()
-    val manipulationSystem = viewModel.manipulationSystem
+	val center by viewModel.center.asState()
+	val manipulationSystem = viewModel.manipulationSystem
 
-    LaunchedEffect(center) {
-        manipulationSystem.center = center
-    }
-    LaunchedEffect(nestId) {
-        manipulationSystem.reset()
-    }
+	LaunchedEffect(center) {
+		manipulationSystem.center = center
+	}
+	LaunchedEffect(nestId) {
+		manipulationSystem.reset()
+	}
 
-    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+	val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
-    /**
-     * I am soooooooooooooo proud of this thing actually
-     */
-    val screenMaxDimensionPx =
-        with(density) {
-            maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
-        }
-    val cellNumber = viewModel.computeCellNumber(cellSizePx, screenMaxDimensionPx)
+	/**
+	 * I am soooooooooooooo proud of this thing actually
+	 */
+	val screenMaxDimensionPx =
+		with(density) {
+			maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
+		}
+	val cellNumber = viewModel.computeCellNumber(cellSizePx, screenMaxDimensionPx)
 
-    fun Offset.toTr(): TransformedOffset = viewModel.TransformedOffset(this)
+	fun Offset.toTr(): TransformedOffset = viewModel.TransformedOffset(this)
 
-    /**
-     * Compute position of a point in the screen.
-     *
-     * ### NEVER TOUCH THAT AGAIN IT WORKS!!
-     * Mb I touched it but it still works :)
-     * @return the `transformed offset` of the point.
-     */
-    fun Point.computePosition(): Offset = manipulationSystem.undoBoth(this.getPos())
+	/**
+	 * Compute position of a point in the screen.
+	 *
+	 * ### NEVER TOUCH THAT AGAIN IT WORKS!!
+	 * Mb I touched it but it still works :)
+	 * @return the `transformed offset` of the point.
+	 */
+	fun Point.computePosition(): Offset = manipulationSystem.undoBoth(this.getPos())
 
-    val selectedPointTempOffset = viewModel.selectedPointTempOffset
+	val selectedPointTempOffset = viewModel.selectedPointTempOffset
 
-    fun toggleDragAroundMode(checked: Boolean) {
-        scope.launch {
-            PrivateSettingsStore.isInDragAroundMode.set(ctx, checked)
-        }
-        if (checked) {
-            pointsService.deselectAll()
-        }
-    }
+	fun toggleDragAroundMode(checked: Boolean) {
+		scope.launch {
+			PrivateSettingsStore.isInDragAroundMode.set(ctx, checked)
+		}
+		if (checked) {
+			pointsService.deselectAll()
+		}
+	}
 
-    val recomposeTrigger by pointsService.recomposeTrigger.asState()
-    LaunchedEffect(recomposeTrigger) {
-        // First Delete all the keys that aren't selected anymore
-        selectedPointTempOffset.keys.forEach { key ->
-            if (key !in selectedPointsIds) {
-                selectedPointTempOffset.remove(key)
-            }
-        }
+	val recomposeTrigger by pointsService.recomposeTrigger.asState()
+	LaunchedEffect(recomposeTrigger) {
+		// First Delete all the keys that aren't selected anymore
+		selectedPointTempOffset.keys.forEach { key ->
+			if (key !in selectedPointsIds) {
+				selectedPointTempOffset.remove(key)
+			}
+		}
 
-        // Then:
-        // - If the id is already in the list, animate it towards its required position
-        // - If it is not present, add it
-        selectedPointsIds.forEach { id ->
-            val point = pointsService.findPointById(id) ?: return@forEach
-            val pointPos = point.computePosition()
-            val selected = selectedPointTempOffset[id]
+		// Then:
+		// - If the id is already in the list, animate it towards its required position
+		// - If it is not present, add it
+		selectedPointsIds.forEach { id ->
+			val point = pointsService.findPointById(id) ?: return@forEach
+			val pointPos = point.computePosition()
+			val selected = selectedPointTempOffset[id]
 
-            selected?.apply {
-                this@apply.shapeId.value = point.shapeId
+			selected?.apply {
+				this@apply.shapeId.value = point.shapeId
 
-                // Another coroutine to avoid them to be launched one after another
-                this@LaunchedEffect.launch {
-                    this@apply.offset.animateTo(
-                        targetValue = pointPos,
-                        animationSpec = bouncySpec()
-                    )
-                }
-            } ?: run {
-                selectedPointTempOffset[id] =
-                    TempPos(
-                        shapeId = mutableStateOf(point.shapeId),
-                        offset = Animatable(pointPos, Offset.VectorConverter)
-                    )
-            }
-        }
-    }
+				// Another coroutine to avoid them to be launched one after another
+				this@LaunchedEffect.launch {
+					this@apply.offset.animateTo(
+						targetValue = pointPos,
+						animationSpec = bouncySpec()
+					)
+				}
+			} ?: run {
+				selectedPointTempOffset[id] =
+					TempPos(
+						shapeId = mutableStateOf(point.shapeId),
+						offset = Animatable(pointPos, Offset.VectorConverter)
+					)
+			}
+		}
+	}
 
-    LaunchedEffect(closestHoveredPoint) {
-        ableToLaunchHoverAction = false
-        closestHoveredPoint?.let {
-            closestHoveredTempOffset = it.computePosition()
-            delay(Constants.Settings.HOVER_POINT_DURATION.milliseconds)
-            ableToLaunchHoverAction = true
-        }
-    }
+	LaunchedEffect(closestHoveredPoint) {
+		ableToLaunchHoverAction = false
+		closestHoveredPoint?.let {
+			closestHoveredTempOffset = it.computePosition()
+			delay(Constants.Settings.HOVER_POINT_DURATION.milliseconds)
+			ableToLaunchHoverAction = true
+		}
+	}
 
-    val handleBack = {
-        if (isInManualPlacementMode) {
-            manualPlacementQueue = emptyList()
-        } else if (selectedPointsIds.isNotEmpty()) {
-            pointsService.deselectAll()
-        } else if (nestId != 0) {
-            nestsNavigationService.goBack()
-        } else {
-            pointsService.persist()
-            navigator.onBack()
-        }
-    }
-    BackHandler(onBack = handleBack)
+	val handleBack = {
+		if (isInManualPlacementMode) {
+			manualPlacementQueue = emptyList()
+		} else if (selectedPointsIds.isNotEmpty()) {
+			pointsService.deselectAll()
+		} else if (nestId != 0) {
+			nestsNavigationService.goBack()
+		} else {
+			pointsService.persist()
+			navigator.onBack()
+		}
+	}
+	BackHandler(onBack = handleBack)
 
-    SettingsScaffold(
-        title = stringResource(R.string.points_settings),
-        onBack = handleBack,
-        helpText = null,
-        onReset = null,
-        resetText = null,
-        horizontalPadding = 0.dp,
-        scrollableContent = false,
-        imePadding = false,
-        specialSettingsTitleContent = {
-            AnimatedFab(
-                onClick = { showMoreSheet = true },
-                icon = R.drawable.more_horiz
-            )
+	SettingsScaffold(
+		title = stringResource(R.string.points_settings),
+		onBack = handleBack,
+		helpText = null,
+		onReset = null,
+		resetText = null,
+		horizontalPadding = 0.dp,
+		scrollableContent = false,
+		imePadding = false,
+		specialSettingsTitleContent = {
+			AnimatedFab(
+				onClick = { showMoreSheet = true },
+				icon = R.drawable.more_horiz
+			)
 
-            AnimatedFab(
-                onClick = {
-                    pointsService.persist()
-                    navigator.navigate(NavigationRoute.Settings)
-                },
-                icon = R.drawable.settings
-            )
-        },
-        bottomContent = {
-            RowWithScrollIndicator(rememberScrollState()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    AnimatedFab(
-                        onClick = { showAddDialog = true },
-                        icon = R.drawable.add,
-                        minSize = 70.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
+			AnimatedFab(
+				onClick = {
+					pointsService.persist()
+					navigator.navigate(NavigationRoute.Settings)
+				},
+				icon = R.drawable.settings
+			)
+		},
+		bottomContent = {
+			RowWithScrollIndicator(rememberScrollState()) {
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceEvenly
+				) {
+					AnimatedFab(
+						onClick = { showAddDialog = true },
+						icon = R.drawable.add,
+						minSize = 70.dp,
+						containerColor = MaterialTheme.colorScheme.secondary
+					)
 
-                    Spacer(12.dp)
+					Spacer(12.dp)
 
-                    ToggleAnimatedFab(
-                        checked = isInDragAroundMode,
-                        onCheckedChange = ::toggleDragAroundMode,
-                        minSize = 70.dp,
-                        containerColor = MaterialTheme.colorScheme.tertiary
-                    ) {
-                        if (it) {
-                            R.drawable.drag_pan
-                        } else {
-                            R.drawable.pan_tool
-                        }
-                    }
-                }
+					ToggleAnimatedFab(
+						checked = isInDragAroundMode,
+						onCheckedChange = ::toggleDragAroundMode,
+						minSize = 70.dp,
+						containerColor = MaterialTheme.colorScheme.tertiary
+					) {
+						if (it) {
+							R.drawable.drag_pan
+						} else {
+							R.drawable.pan_tool
+						}
+					}
+				}
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    UndoRedoBlock(pointsService.undoRedo)
+				Column(
+					verticalArrangement = Arrangement.spacedBy(5.dp),
+					horizontalAlignment = Alignment.CenterHorizontally
+				) {
+					UndoRedoBlock(pointsService.undoRedo)
 
-                    val nestToGo =
-                        if (selectedPointsIds.size == 1) {
-                            val point = pointsService.findPointById(selectedPointsIds.first())
-                            if (point != null && point.action is Action.OpenNest) (point.action as Action.OpenNest).nestId else null
-                        } else {
-                            null
-                        }
+					val nestToGo =
+						if (selectedPointsIds.size == 1) {
+							val point = pointsService.findPointById(selectedPointsIds.first())
+							if (point != null && point.action is Action.OpenNest) (point.action as Action.OpenNest).nestId else null
+						} else {
+							null
+						}
 
-                    val canGoNest = nestToGo != null
-                    val canGoback = nestId != 0
+					val canGoNest = nestToGo != null
+					val canGoback = nestId != 0
 
-                    MultiSelectConnectedButtonRow(
-                        entries = NestEditTools.entries,
-                        enabled = {
-                            when (it) {
-                                NestManagement -> true
-                                GoParentNest -> canGoback
-                                EnterNest -> canGoNest
-                                ResetSystem -> manipulationSystem.canReset()
-                            }
-                        },
-                        checked = {
-                            when (it) {
-                                NestManagement -> true
-                                GoParentNest -> canGoback
-                                EnterNest -> canGoNest
-                                ResetSystem -> manipulationSystem.canReset()
-                            }
-                        }
-                    ) { entry ->
-                        when (entry) {
-                            NestManagement -> {
-                                showNestManagementDialog = true
-                            }
+					MultiSelectConnectedButtonRow(
+						entries = NestEditTools.entries,
+						enabled = {
+							when (it) {
+								NestManagement -> true
+								GoParentNest -> canGoback
+								EnterNest -> canGoNest
+								ResetSystem -> manipulationSystem.canReset()
+							}
+						},
+						checked = {
+							when (it) {
+								NestManagement -> true
+								GoParentNest -> canGoback
+								EnterNest -> canGoNest
+								ResetSystem -> manipulationSystem.canReset()
+							}
+						}
+					) { entry ->
+						when (entry) {
+							NestManagement -> {
+								showNestManagementDialog = true
+							}
 
-                            GoParentNest -> {
-                                nestsNavigationService.goBack()
-                                pointsService.deselectAll()
-                            }
+							GoParentNest -> {
+								nestsNavigationService.goBack()
+								pointsService.deselectAll()
+							}
 
-                            EnterNest -> {
-                                nestToGo?.let {
-                                    nestsNavigationService.goToNest(it)
-                                    pointsService.deselectAll()
-                                }
-                            }
+							EnterNest -> {
+								nestToGo?.let {
+									nestsNavigationService.goToNest(it)
+									pointsService.deselectAll()
+								}
+							}
 
-                            ResetSystem -> {
-                                manipulationSystem.resetAnimated(scope)
-                            }
-                        }
-                    }
+							ResetSystem -> {
+								manipulationSystem.resetAnimated(scope)
+							}
+						}
+					}
 
-                    MultiSelectConnectedButtonRow(
-                        entries = SelectedPointEditTools.entries,
-                        checked = {
-                            when (it) {
-                                SelectedPointEditTools.Edit -> aSinglePointIsSelected
-                                SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
-                                SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
-                            }
-                        },
-                        enabled = {
-                            when (it) {
-                                SelectedPointEditTools.Edit -> aSinglePointIsSelected
-                                SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
-                                SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
-                            }
-                        }
-                    ) { option ->
-                        when (option) {
-                            SelectedPointEditTools.Edit -> {
-                                showEditDialog = selectedPointsIds.firstOrNull() ?: return@MultiSelectConnectedButtonRow
-                            }
+					MultiSelectConnectedButtonRow(
+						entries = SelectedPointEditTools.entries,
+						checked = {
+							when (it) {
+								SelectedPointEditTools.Edit -> aSinglePointIsSelected
+								SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+								SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+							}
+						},
+						enabled = {
+							when (it) {
+								SelectedPointEditTools.Edit -> aSinglePointIsSelected
+								SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+								SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+							}
+						}
+					) { option ->
+						when (option) {
+							SelectedPointEditTools.Edit -> {
+								showEditDialog = selectedPointsIds.firstOrNull() ?: return@MultiSelectConnectedButtonRow
+							}
 
-                            SelectedPointEditTools.Remove -> {
-                                selectedPointsIds.forEach { id ->
-                                    pointsService.removePoint(id)
-                                }
-                                pointsService.deselectAll()
-                            }
+							SelectedPointEditTools.Remove -> {
+								selectedPointsIds.forEach { id ->
+									pointsService.removePoint(id)
+								}
+								pointsService.deselectAll()
+							}
 
-                            SelectedPointEditTools.Duplicate -> {
-                                selectedPointsIds.forEach { id ->
-                                    val oldPoint = pointsService.findPointById(id) ?: return@MultiSelectConnectedButtonRow
-                                    val newId =
-                                        pointsService.addPoint { newId ->
-                                            oldPoint.copy(id = newId)
-                                        }
-                                    viewModel.select(newId)
-                                    pointsService.autoSeparate(nestId, newId)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .onSizeChanged { size ->
-                        // Updates the center and available width variables, that depends on the phone size and orientation.
-                        // Computes the larger size between width and height to ensure all points belongs to the hittable zone
-                        // The visual points and hitboxes are separated due to the need of a precise pointer input.
-                        // Should be synchronized using the [computePointPosition] function that relies on common
-                        // center to output the points position on screen
+							SelectedPointEditTools.Duplicate -> {
+								selectedPointsIds.forEach { id ->
+									val oldPoint = pointsService.findPointById(id) ?: return@MultiSelectConnectedButtonRow
+									val newId =
+										pointsService.addPoint { newId ->
+											oldPoint.copy(id = newId)
+										}
+									viewModel.select(newId)
+									pointsService.autoSeparate(nestId, newId)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	) {
+		Box(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.onSizeChanged { size ->
+						// Updates the center and available width variables, that depends on the phone size and orientation.
+						// Computes the larger size between width and height to ensure all points belongs to the hittable zone
+						// The visual points and hitboxes are separated due to the need of a precise pointer input.
+						// Should be synchronized using the [computePointPosition] function that relies on common
+						// center to output the points position on screen
 
-                        val w = size.width.toFloat()
-                        val h = size.height.toFloat()
-                        viewModel.center.value = Offset(w / 2f, h / 2f)
-                    }
-        ) {
+						val w = size.width.toFloat()
+						val h = size.height.toFloat()
+						viewModel.center.value = Offset(w / 2f, h / 2f)
+					}
+		) {
             /*
              * Main Canva, draws the circles, and sub nests by recursivity.
              *
@@ -484,705 +484,705 @@ fun PointsSettingsScreen(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(recomposeTrigger, selectedPointsIds, points.size, defaultPoint) {
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = -viewModel.offset.value.x * viewModel.zoom.value
-                            translationY = -viewModel.offset.value.y * viewModel.zoom.value
-                            scaleX = viewModel.zoom.value
-                            scaleY = viewModel.zoom.value
-                            rotationZ = viewModel.angle.value
-                            transformOrigin = TransformOrigin(0f, 0f)
-                        }
-                ) {
-                    Canvas(Modifier.fillMaxSize()) {
-                        if (allowFreePoints && snapPoints && showGridWhenSnappingIsOn) {
-                            backgroundCenteredSquareGrid(
-                                cellSizePx = cellSizeDp,
-                                color = onBackgroundColor,
-                                center = center,
-                                cells = cellNumber
-                            )
-                        }
+			key(recomposeTrigger, selectedPointsIds, points.size, defaultPoint) {
+				Box(
+					Modifier
+						.fillMaxSize()
+						.graphicsLayer {
+							translationX = -viewModel.offset.value.x * viewModel.zoom.value
+							translationY = -viewModel.offset.value.y * viewModel.zoom.value
+							scaleX = viewModel.zoom.value
+							scaleY = viewModel.zoom.value
+							rotationZ = viewModel.angle.value
+							transformOrigin = TransformOrigin(0f, 0f)
+						}
+				) {
+					Canvas(Modifier.fillMaxSize()) {
+						if (allowFreePoints && snapPoints && showGridWhenSnappingIsOn) {
+							backgroundCenteredSquareGrid(
+								cellSizePx = cellSizeDp,
+								color = onBackgroundColor,
+								center = center,
+								cells = cellNumber
+							)
+						}
 
-                        if (showSnapPointAngleLines) {
-                            var a = 0
-                            val defaultOffset = Offset(1000f, 0f)
-                            while (a < 360) {
-                                val endPos = defaultOffset.rotateBy(a.toFloat())
-                                drawLine(
-                                    start = center,
-                                    end = center + endPos,
-                                    color = onBackgroundColor.alphaMultiplier(0.5f)
-                                )
+						if (showSnapPointAngleLines) {
+							var a = 0
+							val defaultOffset = Offset(1000f, 0f)
+							while (a < 360) {
+								val endPos = defaultOffset.rotateBy(a.toFloat())
+								drawLine(
+									start = center,
+									end = center + endPos,
+									color = onBackgroundColor.alphaMultiplier(0.5f)
+								)
 
-                                a += snapPointAngleThreshold
-                            }
-                        }
-                    }
+								a += snapPointAngleThreshold
+							}
+						}
+					}
 
-                    val eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
-                    NestOverlay(
-                        center = center,
-                        nest = currentNest,
-                        eraseColor = eraseColor,
-                        pointSettingsDisplay = true,
-                        hideShapes = false,
-                        skipSelected = true
-                    )
+					val eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
+					NestOverlay(
+						center = center,
+						nest = currentNest,
+						eraseColor = eraseColor,
+						pointSettingsDisplay = true,
+						hideShapes = false,
+						skipSelected = true
+					)
 
-                    if (isDragging) {
-                        Canvas(Modifier.fillMaxSize()) {
-                            selectedPointTempOffset
-                                .values
-                                .mapNotNullTo(mutableSetOf()) { it.shapeId.value }
-                                .forEach { shapeId ->
-                                    val shape = shapes.firstOrNull { it.id == shapeId } ?: return@Canvas
-                                    val path = NestIntersectionShapesPathCache[shape] ?: return@Canvas
+					if (isDragging) {
+						Canvas(Modifier.fillMaxSize()) {
+							selectedPointTempOffset
+								.values
+								.mapNotNullTo(mutableSetOf()) { it.shapeId.value }
+								.forEach { shapeId ->
+									val shape = shapes.firstOrNull { it.id == shapeId } ?: return@Canvas
+									val path = NestIntersectionShapesPathCache[shape] ?: return@Canvas
 
-                                    this.IntersectionShape(
-                                        path = path,
-                                        shape =
-                                            shape.copy(
-                                                borderStroke = Dp.Unspecified,
-                                                glow = CustomGlow(color = primaryColor, radius = 30.dp),
-                                                color = Color.Transparent
-                                            ),
-                                        defaultShape = defaultIntersectionShape,
-                                        center = center,
-                                        extraColors = extraColors,
-                                        erase = false,
-                                        isDefaultEditing = false,
-                                        eraseColor = null
-                                    )
-                                }
-                        }
-                    }
+									this.IntersectionShape(
+										path = path,
+										shape =
+											shape.copy(
+												borderStroke = Dp.Unspecified,
+												glow = CustomGlow(color = primaryColor, radius = 30.dp),
+												color = Color.Transparent
+											),
+										defaultShape = defaultIntersectionShape,
+										center = center,
+										extraColors = extraColors,
+										erase = false,
+										isDefaultEditing = false,
+										eraseColor = null
+									)
+								}
+						}
+					}
 
-                    // Animated Selected points
-                    selectedPointTempOffset.forEach { (id, tempPos) ->
-                        val point = pointsService.findPointById(id) ?: return@forEach
+					// Animated Selected points
+					selectedPointTempOffset.forEach { (id, tempPos) ->
+						val point = pointsService.findPointById(id) ?: return@forEach
 
-                        val shapeId = tempPos.shapeId.value
-                        val tr = tempPos.offset.value.toTr()
-                        val pointOffset = tr.transformedOffset
+						val shapeId = tempPos.shapeId.value
+						val tr = tempPos.offset.value.toTr()
+						val pointOffset = tr.transformedOffset
 
-                        if (LocalNestDebugOverlay.current) {
-                            Canvas(Modifier.fillMaxSize()) {
-                                val endOffset: Offset =
-                                    if (shapeId == null) {
-                                        center
-                                    } else {
-                                        shapes.firstOrNull { it.id == shapeId }?.let { shape ->
-                                            center + shape.getOffset(defaultIntersectionShape, false)
-                                        } ?: center
-                                    }
+						if (LocalNestDebugOverlay.current) {
+							Canvas(Modifier.fillMaxSize()) {
+								val endOffset: Offset =
+									if (shapeId == null) {
+										center
+									} else {
+										shapes.firstOrNull { it.id == shapeId }?.let { shape ->
+											center + shape.getOffset(defaultIntersectionShape, false)
+										} ?: center
+									}
 
-                                drawLine(
-                                    color = Color.White,
-                                    start = endOffset,
-                                    end = pointOffset
-                                )
-                            }
-                        }
+								drawLine(
+									color = Color.White,
+									start = endOffset,
+									end = pointOffset
+								)
+							}
+						}
 //
 //                        val pointSize = point.getSize(defaultPoint).px
 //                        val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize, defaultPoint)
 
-                        PointIcon(
-                            center = pointOffset,
-                            point = point,
-                            selected = true,
-                            pointSettingsDisplay = true,
-                            eraseColor = eraseColor
+						PointIcon(
+							center = pointOffset,
+							point = point,
+							selected = true,
+							pointSettingsDisplay = true,
+							eraseColor = eraseColor
 //                            customText = customText
-                        )
+						)
 
-                        val liveTargetId = point.liveNestTargetNestId ?: return@forEach
+						val liveTargetId = point.liveNestTargetNestId ?: return@forEach
 
-                        // Don't draw if the action is opening the same nest it is displaying
-                        if (point.action is Action.OpenNest && (point.action as Action.OpenNest).nestId == liveTargetId) return@forEach
+						// Don't draw if the action is opening the same nest it is displaying
+						if (point.action is Action.OpenNest && (point.action as Action.OpenNest).nestId == liveTargetId) return@forEach
 
-                        val nestedNest = pointsService.findNestById(liveTargetId)
+						val nestedNest = pointsService.findNestById(liveTargetId)
 //                        val nestScale = point.liveNestScale ?: Point.defaultLiveNestScale
 //                        val scaledNest = nestedNest scaledBy nestScale
 
-                        NestOverlay(
-                            modifier = Modifier.graphicsLayer { alpha = 0.4f },
-                            center = pointOffset,
-                            nest = nestedNest,
-                            eraseColor = eraseColor,
-                            pointSettingsDisplay = true
-                        )
-                    }
+						NestOverlay(
+							modifier = Modifier.graphicsLayer { alpha = 0.4f },
+							center = pointOffset,
+							nest = nestedNest,
+							eraseColor = eraseColor,
+							pointSettingsDisplay = true
+						)
+					}
 
-                    val hoveredPointRadialGradientProgress by animateFloatAsState(if (ableToLaunchHoverAction) 1f else 0f)
+					val hoveredPointRadialGradientProgress by animateFloatAsState(if (ableToLaunchHoverAction) 1f else 0f)
 
-                    if (closestHoveredTempOffset != null && ableToLaunchHoverAction && hoveredPointRadialGradientProgress > 0f) {
-                        GlowOverlay(
-                            center = closestHoveredTempOffset!!,
-                            progress = hoveredPointRadialGradientProgress
-                        )
-                    }
-                }
-            }
+					if (closestHoveredTempOffset != null && ableToLaunchHoverAction && hoveredPointRadialGradientProgress > 0f) {
+						GlowOverlay(
+							center = closestHoveredTempOffset!!,
+							progress = hoveredPointRadialGradientProgress
+						)
+					}
+				}
+			}
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit, isInDragAroundMode, nestId) {
-                        if (isInDragAroundMode) {
-                            detectTransformGestures(
-                                panZoomLock = true
-                            ) { centroid, pan, gestureZoom, gestureRotate ->
+			Box(
+				Modifier
+					.fillMaxSize()
+					.pointerInput(Unit, isInDragAroundMode, nestId) {
+						if (isInDragAroundMode) {
+							detectTransformGestures(
+								panZoomLock = true
+							) { centroid, pan, gestureZoom, gestureRotate ->
 
-                                val oldScale = viewModel.zoom.value
-                                val newScale = viewModel.zoom.value * gestureZoom
+								val oldScale = viewModel.zoom.value
+								val newScale = viewModel.zoom.value * gestureZoom
 
-                                // For natural zooming and rotating, the centroid of the gesture should
-                                // be the fixed point where zooming and rotating occurs.
-                                // We compute where the centroid was (in the pre-transformed coordinate
-                                // space), and then compute where it will be after this delta.
-                                // We then compute what the new offset should be to keep the centroid
-                                // visually stationary for rotating and zooming, and also apply the pan.
-                                scope.launch {
-                                    viewModel.offset.snapTo(
-                                        (viewModel.offset.value + centroid / oldScale).rotateBy(gestureRotate) -
-                                            (centroid / newScale + pan / oldScale)
-                                    )
-                                    viewModel.zoom.snapTo(newScale)
-                                    viewModel.angle.snapTo(viewModel.angle.value + gestureRotate)
-                                }
-                            }
-                        } else {
-                            detectDragGestures(
-                                onDragStart = { tapOffset ->
-                                    isDragging = true
+								// For natural zooming and rotating, the centroid of the gesture should
+								// be the fixed point where zooming and rotating occurs.
+								// We compute where the centroid was (in the pre-transformed coordinate
+								// space), and then compute where it will be after this delta.
+								// We then compute what the new offset should be to keep the centroid
+								// visually stationary for rotating and zooming, and also apply the pan.
+								scope.launch {
+									viewModel.offset.snapTo(
+										(viewModel.offset.value + centroid / oldScale).rotateBy(gestureRotate) -
+											(centroid / newScale + pan / oldScale)
+									)
+									viewModel.zoom.snapTo(newScale)
+									viewModel.angle.snapTo(viewModel.angle.value + gestureRotate)
+								}
+							}
+						} else {
+							detectDragGestures(
+								onDragStart = { tapOffset ->
+									isDragging = true
 
-                                    val tr = tapOffset.toTr()
-                                    val newSelectedPoint = (tr ifDistanceIsSmallEnough { tr.bestP })
+									val tr = tapOffset.toTr()
+									val newSelectedPoint = (tr ifDistanceIsSmallEnough { tr.bestP })
 
-                                    // Only select if not already
-                                    if (newSelectedPoint != null && newSelectedPoint.id !in selectedPointsIds) {
-                                        viewModel.select(newSelectedPoint.id)
-                                    }
-                                },
-                                onDrag = { change, dragAmount ->
-                                    change.consume()
+									// Only select if not already
+									if (newSelectedPoint != null && newSelectedPoint.id !in selectedPointsIds) {
+										viewModel.select(newSelectedPoint.id)
+									}
+								},
+								onDrag = { change, dragAmount ->
+									change.consume()
 
-                                    // 1. the selected points are updated in real time to provide visual feedback.
-                                    //    If snapShapes is enabled, the closest shape should light up to indicate
-                                    //    that when the user releases its finger, the point snaps to the shape
+									// 1. the selected points are updated in real time to provide visual feedback.
+									//    If snapShapes is enabled, the closest shape should light up to indicate
+									//    that when the user releases its finger, the point snaps to the shape
 
-                                    selectedPointsIds.forEach { id ->
-                                        val (_, previousOffset) = selectedPointTempOffset[id] ?: return@forEach
-                                        val point = pointsService.findPointById(id) ?: return@forEach
+									selectedPointsIds.forEach { id ->
+										val (_, previousOffset) = selectedPointTempOffset[id] ?: return@forEach
+										val point = pointsService.findPointById(id) ?: return@forEach
 
-                                        val tr = previousOffset.value.toTr()
-                                        val newShapeId = viewModel.computePointMoved(point, tr.normalizedOffset, shapes, !allowFreePoints)
+										val tr = previousOffset.value.toTr()
+										val newShapeId = viewModel.computePointMoved(point, tr.normalizedOffset, shapes, !allowFreePoints)
 
-                                        selectedPointTempOffset[id]?.apply {
-                                            shapeId.value = newShapeId
-                                            val oldOffset = this@apply.offset.value
-                                            scope.launch {
-                                                this@apply.offset.snapTo(oldOffset + dragAmount)
-                                            }
-                                        }
-                                    }
+										selectedPointTempOffset[id]?.apply {
+											shapeId.value = newShapeId
+											val oldOffset = this@apply.offset.value
+											scope.launch {
+												this@apply.offset.snapTo(oldOffset + dragAmount)
+											}
+										}
+									}
 
-                                    // 2. If autoMerge is enabled, the closest point is analyzed and optionally light up
-                                    //    to indicate a merge with the current dragged point
-                                    if (autoMerge) {
-                                        val tr = change.position.toTr()
-                                        val bestPExcept =
-                                            pointsService.computeClosestExcept(
-                                                ignoredPointId = selectedPointsIds.toTypedArray(),
-                                                normalizedPos = tr.normalizedOffset,
-                                                nestId = nestId
-                                            ) ?: return@detectDragGestures
+									// 2. If autoMerge is enabled, the closest point is analyzed and optionally light up
+									//    to indicate a merge with the current dragged point
+									if (autoMerge) {
+										val tr = change.position.toTr()
+										val bestPExcept =
+											pointsService.computeClosestExcept(
+												ignoredPointId = selectedPointsIds.toTypedArray(),
+												normalizedPos = tr.normalizedOffset,
+												nestId = nestId
+											) ?: return@detectDragGestures
 
-                                        closestHoveredPoint =
-                                            if (bestPExcept.getPos() distanceTo tr.normalizedOffset <= TOUCH_THRESHOLD_PX) {
-                                                bestPExcept
-                                            } else {
-                                                null
-                                            }
-                                    }
-                                },
-                                onDragEnd = {
-                                    // 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
-                                    //    do the computation to merge the 2 points
-                                    if (ableToLaunchHoverAction && closestHoveredPoint != null) {
-                                        val closest = closestHoveredPoint!!
+										closestHoveredPoint =
+											if (bestPExcept.getPos() distanceTo tr.normalizedOffset <= TOUCH_THRESHOLD_PX) {
+												bestPExcept
+											} else {
+												null
+											}
+									}
+								},
+								onDragEnd = {
+									// 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
+									//    do the computation to merge the 2 points
+									if (ableToLaunchHoverAction && closestHoveredPoint != null) {
+										val closest = closestHoveredPoint!!
 
-                                        // When the action is to open a nest, put the point in that Nest
-                                        if (closest.action is Action.OpenNest) {
-                                            // Put all selected points into that nest
-                                            selectedPointTempOffset.forEach { (id, _) ->
-                                                pointsService.editPoint(id) { old ->
-                                                    val targetNestId = (closest.action as Action.OpenNest).nestId
-                                                    old.copy(nestId = targetNestId)
-                                                }
-                                            }
-                                            pointsService.deselectAll()
-                                        } else {
-                                            val newNestId = pointsService.addNest()
+										// When the action is to open a nest, put the point in that Nest
+										if (closest.action is Action.OpenNest) {
+											// Put all selected points into that nest
+											selectedPointTempOffset.forEach { (id, _) ->
+												pointsService.editPoint(id) { old ->
+													val targetNestId = (closest.action as Action.OpenNest).nestId
+													old.copy(nestId = targetNestId)
+												}
+											}
+											pointsService.deselectAll()
+										} else {
+											val newNestId = pointsService.addNest()
 
-                                            // Creates a new nest point, to open the newly created Nest
-                                            val newNestPointId =
-                                                pointsService.addPoint(false) { id ->
-                                                    Point(
-                                                        offset = closest.offset.snap(),
-                                                        shapeId = closest.shapeId,
-                                                        nestId = nestId,
-                                                        action =
-                                                            Action.OpenNest(
-                                                                newNestId
-                                                            ),
-                                                        id = id,
-                                                        liveNestTargetNestId =
-                                                            if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
-                                                                newNestId
-                                                            } else {
-                                                                null
-                                                            }
-                                                    )
-                                                }
+											// Creates a new nest point, to open the newly created Nest
+											val newNestPointId =
+												pointsService.addPoint(false) { id ->
+													Point(
+														offset = closest.offset.snap(),
+														shapeId = closest.shapeId,
+														nestId = nestId,
+														action =
+															Action.OpenNest(
+																newNestId
+															),
+														id = id,
+														liveNestTargetNestId =
+															if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+																newNestId
+															} else {
+																null
+															}
+													)
+												}
 
-                                            // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
-                                            pointsService.addPoint(false) { id ->
-                                                Point(
-                                                    offset = Offset(0f, -150f).snap(),
-                                                    nestId = newNestId,
-                                                    shapeId = 0,
-                                                    action = Action.GoParentNest,
-                                                    id = id
-                                                )
-                                            }
+											// Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
+											pointsService.addPoint(false) { id ->
+												Point(
+													offset = Offset(0f, -150f).snap(),
+													nestId = newNestId,
+													shapeId = 0,
+													action = Action.GoParentNest,
+													id = id
+												)
+											}
 
-                                            selectedPointTempOffset.forEach { (id, _) ->
-                                                pointsService.editPoint(id) { old ->
-                                                    old.copy(nestId = newNestId)
-                                                }
-                                            }
-                                            pointsService.editPoint(closest.id) { old -> old.copy(nestId = newNestId) }
+											selectedPointTempOffset.forEach { (id, _) ->
+												pointsService.editPoint(id) { old ->
+													old.copy(nestId = newNestId)
+												}
+											}
+											pointsService.editPoint(closest.id) { old -> old.copy(nestId = newNestId) }
 
-                                            pointsService.deselectAll()
-                                            // Select here bc it adds it to the selectedPointTempOffset map
-                                            viewModel.select(newNestPointId)
-                                        }
-                                    } else {
-                                        // 2) No merging, just normal dragging and dropping
-                                        selectedPointTempOffset.forEach { (id, tempPos) ->
-                                            val finalPos =
-                                                tempPos.offset.value
-                                                    .toTr()
-                                                    .normalizedOffset
+											pointsService.deselectAll()
+											// Select here bc it adds it to the selectedPointTempOffset map
+											viewModel.select(newNestPointId)
+										}
+									} else {
+										// 2) No merging, just normal dragging and dropping
+										selectedPointTempOffset.forEach { (id, tempPos) ->
+											val finalPos =
+												tempPos.offset.value
+													.toTr()
+													.normalizedOffset
 
-                                            val shape = shapes.firstOrNull { it.id == tempPos.shapeId.value }
-                                            val effectiveFinalPos: Offset =
-                                                if (snapPointsAngle && shape != null) {
-                                                    val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape, false)
-                                                    val angleDeg = pointRelativeOffset.angleDeg()
-                                                    val snappedAngle = angleDeg.snapToGrid(snapPointAngleThreshold.toFloat())
+											val shape = shapes.firstOrNull { it.id == tempPos.shapeId.value }
+											val effectiveFinalPos: Offset =
+												if (snapPointsAngle && shape != null) {
+													val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape, false)
+													val angleDeg = pointRelativeOffset.angleDeg()
+													val snappedAngle = angleDeg.snapToGrid(snapPointAngleThreshold.toFloat())
 
-                                                    /**
-                                                     * By how much the final offset has to rotate to match the asked angle
-                                                     */
-                                                    val angleDiff = snappedAngle - angleDeg
+													/**
+													 * By how much the final offset has to rotate to match the asked angle
+													 */
+													val angleDiff = snappedAngle - angleDeg
 
-                                                    pointRelativeOffset.rotateBy(angleDiff)
-                                                } else {
-                                                    finalPos
-                                                }
+													pointRelativeOffset.rotateBy(angleDiff)
+												} else {
+													finalPos
+												}
 
-                                            pointsService.editPoint(id) { old ->
-                                                old.copy(
-                                                    offset = effectiveFinalPos.snap(),
-                                                    shapeId = tempPos.shapeId.value
-                                                )
-                                            }
+											pointsService.editPoint(id) { old ->
+												old.copy(
+													offset = effectiveFinalPos.snap(),
+													shapeId = tempPos.shapeId.value
+												)
+											}
 
-                                            if (autoSeparatePoints) {
-                                                pointsService.autoSeparate(nestId, draggedPointId = id)
-                                            }
-                                        }
-                                    }
+											if (autoSeparatePoints) {
+												pointsService.autoSeparate(nestId, draggedPointId = id)
+											}
+										}
+									}
 
-                                    isDragging = false
-                                    closestHoveredPoint = null
-                                    ableToLaunchHoverAction = false
-                                },
-                                onDragCancel = {
-                                    isDragging = false
-                                    selectedPointTempOffset.clear()
-                                    pointsService.deselectAll()
-                                    closestHoveredPoint = null
-                                    ableToLaunchHoverAction = false
-                                }
-                            )
-                        }
-                    }.pointerInput(isInManualPlacementMode, isInDragAroundMode, nestId) {
-                        detectTapGestures(
-                            onTap = { tapOffset ->
-                                val tr = tapOffset.toTr()
+									isDragging = false
+									closestHoveredPoint = null
+									ableToLaunchHoverAction = false
+								},
+								onDragCancel = {
+									isDragging = false
+									selectedPointTempOffset.clear()
+									pointsService.deselectAll()
+									closestHoveredPoint = null
+									ableToLaunchHoverAction = false
+								}
+							)
+						}
+					}.pointerInput(isInManualPlacementMode, isInDragAroundMode, nestId) {
+						detectTapGestures(
+							onTap = { tapOffset ->
+								val tr = tapOffset.toTr()
 
-                                // Manual placement mode: place the current queued app where user tapped
-                                if (isInManualPlacementMode) {
-                                    val action = manualPlacementQueue.first()
+								// Manual placement mode: place the current queued app where user tapped
+								if (isInManualPlacementMode) {
+									val action = manualPlacementQueue.first()
 
-                                    val newLiveNest =
-                                        if (action is Action.OpenNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
-                                            action.nestId
-                                        } else {
-                                            null
-                                        }
+									val newLiveNest =
+										if (action is Action.OpenNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+											action.nestId
+										} else {
+											null
+										}
 
-                                    val newPoint =
-                                        Point(
-                                            id = -1,
-                                            offset = tr.normalizedOffset,
-                                            action = action,
-                                            nestId = nestId,
-                                            liveNestTargetNestId = newLiveNest
-                                        )
-                                    val shapeId = viewModel.computePointMoved(newPoint, tr.normalizedOffset, shapes, !allowFreePoints)
+									val newPoint =
+										Point(
+											id = -1,
+											offset = tr.normalizedOffset,
+											action = action,
+											nestId = nestId,
+											liveNestTargetNestId = newLiveNest
+										)
+									val shapeId = viewModel.computePointMoved(newPoint, tr.normalizedOffset, shapes, !allowFreePoints)
 
-                                    val newPointId =
-                                        pointsService.addPoint { id ->
-                                            newPoint.copy(
-                                                id = id,
-                                                shapeId = shapeId
-                                            )
-                                        }
+									val newPointId =
+										pointsService.addPoint { id ->
+											newPoint.copy(
+												id = id,
+												shapeId = shapeId
+											)
+										}
 
-                                    if (autoSeparatePoints) {
-                                        pointsService.autoSeparate(nestId, newPointId)
-                                    }
+									if (autoSeparatePoints) {
+										pointsService.autoSeparate(nestId, newPointId)
+									}
 
-                                    manualPlacementQueue = manualPlacementQueue.drop(1)
-                                }
+									manualPlacementQueue = manualPlacementQueue.drop(1)
+								}
 
-                                val bestP = tr ifDistanceIsSmallEnough { tr.bestP }
+								val bestP = tr ifDistanceIsSmallEnough { tr.bestP }
 
-                                if (bestP == null) {
-                                    pointsService.deselectAll()
-                                } else {
-                                    val id = bestP.id
+								if (bestP == null) {
+									pointsService.deselectAll()
+								} else {
+									val id = bestP.id
 
-                                    if (isInDragAroundMode) {
-                                        toggleDragAroundMode(false)
-                                    }
+									if (isInDragAroundMode) {
+										toggleDragAroundMode(false)
+									}
 
-                                    // Checks whether if there are only 1 point selected, and if it is the case, open its editor or nest
-                                    if (selectedPointsIds.size == 1 && id in selectedPointsIds) {
-                                        // Same point tapped -> if circle nest, open it, else edit point
-                                        if (bestP.action is Action.OpenNest) {
-                                            pointsService.deselectAll()
-                                            nestsNavigationService.goToNest((bestP.action as Action.OpenNest).nestId)
-                                        } else {
-                                            showEditDialog = bestP.id
-                                        }
-                                    } else if (bestP.id in selectedPointsIds) {
-                                        viewModel.deselect(id)
-                                    } else {
-                                        viewModel.select(id)
-                                    }
-                                }
-                            }
-                        )
-                    }
-            )
-        }
-    }
+									// Checks whether if there are only 1 point selected, and if it is the case, open its editor or nest
+									if (selectedPointsIds.size == 1 && id in selectedPointsIds) {
+										// Same point tapped -> if circle nest, open it, else edit point
+										if (bestP.action is Action.OpenNest) {
+											pointsService.deselectAll()
+											nestsNavigationService.goToNest((bestP.action as Action.OpenNest).nestId)
+										} else {
+											showEditDialog = bestP.id
+										}
+									} else if (bestP.id in selectedPointsIds) {
+										viewModel.deselect(id)
+									} else {
+										viewModel.select(id)
+									}
+								}
+							}
+						)
+					}
+			)
+		}
+	}
 
-    if (showMoreSheet) {
-        DragonModalBottomSheet(
-            onDismissRequest = { showMoreSheet = false },
-            skipPartiallyExpanded = true
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .heightIn(max = 600.dp)
-                        .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                DragonButton(
-                    onClick = {
-                        pointsService.deselectAll()
-                        pointsService.persist()
-                        navigator.navigate(NavigationRoute.NestEdit)
-                        showMoreSheet = false
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(painter = painterResource(R.drawable.edit_rounded), null)
-                    Spacer(5.dp)
-                    Text(stringResource(R.string.edit_nest_arg, nestId))
-                }
+	if (showMoreSheet) {
+		DragonModalBottomSheet(
+			onDismissRequest = { showMoreSheet = false },
+			skipPartiallyExpanded = true
+		) {
+			Column(
+				modifier =
+					Modifier
+						.heightIn(max = 600.dp)
+						.verticalScroll(rememberScrollState()),
+				verticalArrangement = Arrangement.spacedBy(5.dp)
+			) {
+				DragonButton(
+					onClick = {
+						pointsService.deselectAll()
+						pointsService.persist()
+						navigator.navigate(NavigationRoute.NestEdit)
+						showMoreSheet = false
+					},
+					modifier = Modifier.fillMaxWidth()
+				) {
+					Icon(painter = painterResource(R.drawable.edit_rounded), null)
+					Spacer(5.dp)
+					Text(stringResource(R.string.edit_nest_arg, nestId))
+				}
 
-                DragonSettingsGroup(R.string.move_around_mode) {
-                    Setting(UiSettingsStore.snapPointsAngle)
-                    AnimatedVisibility(snapPointsAngle) {
-                        Setting(UiSettingsStore.snapPointAngleThreshold)
-                    }
-                    AnimatedVisibility(snapPointsAngle) {
-                        Setting(UiSettingsStore.showSnapPointAngleLines)
-                    }
+				DragonSettingsGroup(R.string.move_around_mode) {
+					Setting(UiSettingsStore.snapPointsAngle)
+					AnimatedVisibility(snapPointsAngle) {
+						Setting(UiSettingsStore.snapPointAngleThreshold)
+					}
+					AnimatedVisibility(snapPointsAngle) {
+						Setting(UiSettingsStore.showSnapPointAngleLines)
+					}
 
-                    Setting(UiSettingsStore.autoMerge)
-                    Setting(UiSettingsStore.multiSelectPoints)
+					Setting(UiSettingsStore.autoMerge)
+					Setting(UiSettingsStore.multiSelectPoints)
 //                    Setting(UiSettingsStore.autoSeparatePoints)
-                }
+				}
 
-                DragonSettingsGroup(R.string.miscellaneous) {
-                    DragonButton(onClick = { showEditDefaultPoint = true }) {
-                        Icon(painter = painterResource(R.drawable.edit_rounded), null)
-                        Spacer(5.dp)
-                        Text(stringResource(R.string.edit_default_point))
-                    }
-                    DragonButton(
-                        onClick = {
-                            pointsService.selectAll(nestId)
-                            showMoreSheet = false
-                        }
-                    ) {
-                        Icon(painter = painterResource(R.drawable.select_all), null)
-                        Spacer(5.dp)
-                        Text(stringResource(R.string.select_all))
-                    }
-                    DragonButton(onClick = { showGambleDialog = true }) {
-                        Icon(painter = painterResource(R.drawable.casino), null)
-                        Spacer(5.dp)
-                        Text(stringResource(R.string.gamble_apps))
-                    }
-                }
+				DragonSettingsGroup(R.string.miscellaneous) {
+					DragonButton(onClick = { showEditDefaultPoint = true }) {
+						Icon(painter = painterResource(R.drawable.edit_rounded), null)
+						Spacer(5.dp)
+						Text(stringResource(R.string.edit_default_point))
+					}
+					DragonButton(
+						onClick = {
+							pointsService.selectAll(nestId)
+							showMoreSheet = false
+						}
+					) {
+						Icon(painter = painterResource(R.drawable.select_all), null)
+						Spacer(5.dp)
+						Text(stringResource(R.string.select_all))
+					}
+					DragonButton(onClick = { showGambleDialog = true }) {
+						Icon(painter = painterResource(R.drawable.casino), null)
+						Spacer(5.dp)
+						Text(stringResource(R.string.gamble_apps))
+					}
+				}
 
-                DragonSettingsGroup(R.string.advanced) {
-                    Setting(UiSettingsStore.allowFreePoints)
-                    AnimatedVisibility(allowFreePoints) {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            this@DragonSettingsGroup.Setting(UiSettingsStore.snapPoints)
-                            this@DragonSettingsGroup.Setting(UiSettingsStore.snapPointsToShapes)
-                            this@DragonSettingsGroup.Setting(UiSettingsStore.pointsCellSizeDp)
-                            this@DragonSettingsGroup.Setting(UiSettingsStore.showGridWhenSnappingIsOn)
-                        }
-                    }
-                }
+				DragonSettingsGroup(R.string.advanced) {
+					Setting(UiSettingsStore.allowFreePoints)
+					AnimatedVisibility(allowFreePoints) {
+						Column(
+							verticalArrangement = Arrangement.spacedBy(5.dp)
+						) {
+							this@DragonSettingsGroup.Setting(UiSettingsStore.snapPoints)
+							this@DragonSettingsGroup.Setting(UiSettingsStore.snapPointsToShapes)
+							this@DragonSettingsGroup.Setting(UiSettingsStore.pointsCellSizeDp)
+							this@DragonSettingsGroup.Setting(UiSettingsStore.showGridWhenSnappingIsOn)
+						}
+					}
+				}
 
-                DragonSettingsGroup(R.string.dangerous_actions) {
-                    DragonButton(
-                        onClick = { showResetPointsAndNestsDialog = true },
-                        isCancel = true
-                    ) {
-                        Icon(painter = painterResource(R.drawable.delete_forever), null)
-                        Spacer(5.dp)
-                        Text(stringResource(R.string.reset_all_points))
-                    }
-                }
-            }
-        }
+				DragonSettingsGroup(R.string.dangerous_actions) {
+					DragonButton(
+						onClick = { showResetPointsAndNestsDialog = true },
+						isCancel = true
+					) {
+						Icon(painter = painterResource(R.drawable.delete_forever), null)
+						Spacer(5.dp)
+						Text(stringResource(R.string.reset_all_points))
+					}
+				}
+			}
+		}
 
-        if (showGambleDialog) {
-            GamblingInputDialog(
-                initialSnap = snapPoints,
-                onSelect = { number, snapToShapes ->
-                    repeat(number) {
-                        pointsService.addPoint(false) { id ->
-                            val newOffset =
-                                Offset(
-                                    x = (-1000..1000).random().toFloat(),
-                                    y = (-1000..1000).random().toFloat()
-                                )
-                            val newAction = Action.LaunchApp(drawerViewModel.userApps.value.random())
+		if (showGambleDialog) {
+			GamblingInputDialog(
+				initialSnap = snapPoints,
+				onSelect = { number, snapToShapes ->
+					repeat(number) {
+						pointsService.addPoint(false) { id ->
+							val newOffset =
+								Offset(
+									x = (-1000..1000).random().toFloat(),
+									y = (-1000..1000).random().toFloat()
+								)
+							val newAction = Action.LaunchApp(drawerViewModel.userApps.value.random())
 
-                            val point =
-                                Point(
-                                    id = id,
-                                    offset = newOffset,
-                                    nestId = nestId,
-                                    action = newAction,
-                                    shapeId = null
-                                )
+							val point =
+								Point(
+									id = id,
+									offset = newOffset,
+									nestId = nestId,
+									action = newAction,
+									shapeId = null
+								)
 
-                            if (snapToShapes) {
-                                val shapeId =
-                                    viewModel.computePointMoved(
-                                        point = point,
-                                        normalizedOffset = point.offset,
-                                        shapes = shapes,
-                                        forceSnap = true
-                                    )
-                                point.copy(shapeId = shapeId)
-                            } else {
-                                point
-                            }
-                        }
-                    }
-                }
-            ) {
-                showMoreSheet = false
-                showGambleDialog = false
-            }
-        }
-    }
+							if (snapToShapes) {
+								val shapeId =
+									viewModel.computePointMoved(
+										point = point,
+										normalizedOffset = point.offset,
+										shapes = shapes,
+										forceSnap = true
+									)
+								point.copy(shapeId = shapeId)
+							} else {
+								point
+							}
+						}
+					}
+				}
+			) {
+				showMoreSheet = false
+				showGambleDialog = false
+			}
+		}
+	}
 
-    if (showAddDialog) {
-        ActionPickerDialog(
-            onDismiss = {
-                showAddDialog = false
-            },
-            onMultipleActionsSelected = { actions ->
-                toggleDragAroundMode(false)
-                manualPlacementQueue = actions
-                showAddDialog = false
-            }
-        )
-    }
+	if (showAddDialog) {
+		ActionPickerDialog(
+			onDismiss = {
+				showAddDialog = false
+			},
+			onMultipleActionsSelected = { actions ->
+				toggleDragAroundMode(false)
+				manualPlacementQueue = actions
+				showAddDialog = false
+			}
+		)
+	}
 
-    if (showEditDialog != null) {
-        val editPointId = showEditDialog!!
-        val editPoint = pointsService.findPointById(editPointId)
+	if (showEditDialog != null) {
+		val editPointId = showEditDialog!!
+		val editPoint = pointsService.findPointById(editPointId)
 
-        editPoint?.let {
-            PointEditor(
-                point = editPoint,
-                defaultPoint = defaultPoint,
-                isDefaultEditing = false
-            ) { newPoint ->
+		editPoint?.let {
+			PointEditor(
+				point = editPoint,
+				defaultPoint = defaultPoint,
+				isDefaultEditing = false
+			) { newPoint ->
 //                iconsViewModel.reloadIcon(newPoint)
 
-                pointsService.editPoint(newPoint.id) { newPoint }
+				pointsService.editPoint(newPoint.id) { newPoint }
 
-                viewModel.select(newPoint.id)
-                showEditDialog = null
-            }
-        }
-    }
+				viewModel.select(newPoint.id)
+				showEditDialog = null
+			}
+		}
+	}
 
-    if (showNestManagementDialog) {
-        NestManagementSheet(
-            onSelect = {
-                nestsNavigationService.goToNest(it.id)
-                pointsService.deselectAll()
-                showNestManagementDialog = false
-            }
-        ) { showNestManagementDialog = false }
-    }
+	if (showNestManagementDialog) {
+		NestManagementSheet(
+			onSelect = {
+				nestsNavigationService.goToNest(it.id)
+				pointsService.deselectAll()
+				showNestManagementDialog = false
+			}
+		) { showNestManagementDialog = false }
+	}
 
-    SelectedPointsTopBar(
-        modifier = Modifier.selfAlignHorizontally(),
-        points = points,
-        selectedPointsIds = selectedPointsIds,
-        onDeselect = { id -> viewModel.select(id) },
-        onInvert = { pointsService.invertSelection(nestId) },
-        onSelectAll = { pointsService.selectAll(nestId) },
-        onDeselectAll = { pointsService.deselectAll() }
-    )
+	SelectedPointsTopBar(
+		modifier = Modifier.selfAlignHorizontally(),
+		points = points,
+		selectedPointsIds = selectedPointsIds,
+		onDeselect = { id -> viewModel.select(id) },
+		onInvert = { pointsService.invertSelection(nestId) },
+		onSelectAll = { pointsService.selectAll(nestId) },
+		onDeselectAll = { pointsService.deselectAll() }
+	)
 
-    if (isInManualPlacementMode) {
-        val appName =
-            when (val currentAction = manualPlacementQueue.first()) {
-                is Action.LaunchApp -> {
-                    ctx.packageManager
-                        .runCatching {
-                            getApplicationLabel(
-                                getApplicationInfo(currentAction.packageName, 0)
-                            ).toString()
-                        }.getOrDefault(currentAction.packageName)
-                }
+	if (isInManualPlacementMode) {
+		val appName =
+			when (val currentAction = manualPlacementQueue.first()) {
+				is Action.LaunchApp -> {
+					ctx.packageManager
+						.runCatching {
+							getApplicationLabel(
+								getApplicationInfo(currentAction.packageName, 0)
+							).toString()
+						}.getOrDefault(currentAction.packageName)
+				}
 
-                else -> {
-                    currentAction::class.simpleName ?: ""
-                }
-            }
-        val remaining = manualPlacementQueue.size
+				else -> {
+					currentAction::class.simpleName ?: ""
+				}
+			}
+		val remaining = manualPlacementQueue.size
 
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier =
-                    Modifier
-                        .background(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            shape = MaterialTheme.shapes.medium
-                        ).padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.place_app_where, appName),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = stringResource(R.string.multi_select_count, remaining),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-                    fontSize = 12.sp
-                )
-                Text(
-                    text = stringResource(R.string.tap_circle_to_place),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
-                    fontSize = 11.sp
-                )
-            }
-        }
-    }
+		Box(
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.padding(horizontal = 16.dp, vertical = 8.dp),
+			contentAlignment = Alignment.TopCenter
+		) {
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				modifier =
+					Modifier
+						.background(
+							MaterialTheme.colorScheme.primaryContainer,
+							shape = MaterialTheme.shapes.medium
+						).padding(horizontal = 16.dp, vertical = 12.dp)
+			) {
+				Text(
+					text = stringResource(R.string.place_app_where, appName),
+					color = MaterialTheme.colorScheme.onPrimaryContainer,
+					fontWeight = FontWeight.Bold,
+					textAlign = TextAlign.Center,
+					fontSize = 14.sp
+				)
+				Text(
+					text = stringResource(R.string.multi_select_count, remaining),
+					color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+					fontSize = 12.sp
+				)
+				Text(
+					text = stringResource(R.string.tap_circle_to_place),
+					color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+					fontSize = 11.sp
+				)
+			}
+		}
+	}
 
-    if (showEditDefaultPoint) {
-        PointEditor(
-            point = defaultPoint.copy(id = 0),
-            defaultPoint = defaultPoint,
-            isDefaultEditing = true
-        ) {
-            pointsService.editDefaultPoint(newDefaultPoint = it)
-            iconsViewModel.reloadAllPointsIcons()
+	if (showEditDefaultPoint) {
+		PointEditor(
+			point = defaultPoint.copy(id = 0),
+			defaultPoint = defaultPoint,
+			isDefaultEditing = true
+		) {
+			pointsService.editDefaultPoint(newDefaultPoint = it)
+			iconsViewModel.reloadAllPointsIcons()
 
-            showEditDefaultPoint = false
-        }
-    }
+			showEditDefaultPoint = false
+		}
+	}
 
-    if (showResetPointsAndNestsDialog) {
-        UserValidation(
-            title = stringResource(R.string.reset_all_points),
-            message = stringResource(R.string.reset_all_points_desc),
-            onDismiss = { showResetPointsAndNestsDialog = false }
-        ) {
-            pointsService.reset(
-                resetPoints = true,
-                resetNests = true,
-                resetDefaultPoint = true
-            )
+	if (showResetPointsAndNestsDialog) {
+		UserValidation(
+			title = stringResource(R.string.reset_all_points),
+			message = stringResource(R.string.reset_all_points_desc),
+			onDismiss = { showResetPointsAndNestsDialog = false }
+		) {
+			pointsService.reset(
+				resetPoints = true,
+				resetNests = true,
+				resetDefaultPoint = true
+			)
 
-            initializationViewModel.initialize()
-            showResetPointsAndNestsDialog = false
-        }
-    }
+			initializationViewModel.initialize()
+			showResetPointsAndNestsDialog = false
+		}
+	}
 
     /*
      * Debug Infos section
      * Shows various information about the current settings state, may be unreadable when lots of points
      */
-    DebugZone(DebugSettingsStore.settingsDebugInfo) {
-        Text("current nest: $currentNest")
-        Text("Points number: ${points.size}")
-        Text("Nests number: ${nests.size}")
-        Text("current Nest shapes number: ${shapes.size}")
-        val firstPoint =
-            selectedPointsIds.firstOrNull()?.let {
-                pointsService.findPointById(it)
-            }
-        Text("first selected point: $firstPoint")
-    }
+	DebugZone(DebugSettingsStore.settingsDebugInfo) {
+		Text("current nest: $currentNest")
+		Text("Points number: ${points.size}")
+		Text("Nests number: ${nests.size}")
+		Text("current Nest shapes number: ${shapes.size}")
+		val firstPoint =
+			selectedPointsIds.firstOrNull()?.let {
+				pointsService.findPointById(it)
+			}
+		Text("first selected point: $firstPoint")
+	}
 }

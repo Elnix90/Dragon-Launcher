@@ -33,78 +33,78 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : ADBCommands> AdbCommandPickerDialog(
-    label: String,
-    options: List<T>,
-    selected: () -> T,
-    onDismiss: () -> Unit,
-    onSelected: (T, Boolean) -> Unit
+	label: String,
+	options: List<T>,
+	selected: () -> T,
+	onDismiss: () -> Unit,
+	onSelected: (T, Boolean) -> Unit
 ) {
-    var selected by remember { mutableStateOf(selected()) }
-    var toast by remember { mutableStateOf(false) }
+	var selected by remember { mutableStateOf(selected()) }
+	var toast by remember { mutableStateOf(false) }
 
-    DragonModalBottomSheet(
-        onDismissRequest = onDismiss,
-        skipPartiallyExpanded = true
-    ) {
-        DialogTitle(label)
+	DragonModalBottomSheet(
+		onDismissRequest = onDismiss,
+		skipPartiallyExpanded = true
+	) {
+		DialogTitle(label)
 
-        DragonSettingsGroup {
-            options.forEach { option ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier =
-                        Modifier
-                            .dragonSettingGroup {
-                                clickable {
-                                    onSelected(selected, toast)
-                                }
-                            },
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        Text(
-                            text = option.commandEnable,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = FontFamily.Monospace,
-                            modifier =
-                                Modifier
-                                    .clip(MaterialTheme.shapes.medium)
-                                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium)
-                                    .padding(5.dp)
-                        )
-                        Text(
-                            text = stringResource(option.resId),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-            }
-        }
+		DragonSettingsGroup {
+			options.forEach { option ->
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					modifier =
+						Modifier
+							.dragonSettingGroup {
+								clickable {
+									onSelected(selected, toast)
+								}
+							},
+					horizontalArrangement = Arrangement.spacedBy(5.dp)
+				) {
+					Column(
+						modifier = Modifier.weight(1f),
+						verticalArrangement = Arrangement.spacedBy(5.dp)
+					) {
+						Text(
+							text = option.commandEnable,
+							style = MaterialTheme.typography.bodyMedium,
+							fontFamily = FontFamily.Monospace,
+							modifier =
+								Modifier
+									.clip(MaterialTheme.shapes.medium)
+									.background(MaterialTheme.colorScheme.surfaceVariant)
+									.border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium)
+									.padding(5.dp)
+						)
+						Text(
+							text = stringResource(option.resId),
+							style = MaterialTheme.typography.labelSmall
+						)
+					}
+				}
+			}
+		}
 
-        Spacer(10.dp)
+		Spacer(10.dp)
 
-        val interactionSource = rememberInteractionSource()
+		val interactionSource = rememberInteractionSource()
 
-        DragonSettingsGroup {
-            Row(
-                modifier =
-                    Modifier
-                        .dragonSettingGroup {
-                            clickable(interactionSource = interactionSource) { toast = !toast }
-                        },
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Text(stringResource(R.string.show_toast))
-                Checkbox(
-                    checked = toast,
-                    onCheckedChange = null,
-                    interactionSource = interactionSource
-                )
-            }
-        }
-    }
+		DragonSettingsGroup {
+			Row(
+				modifier =
+					Modifier
+						.dragonSettingGroup {
+							clickable(interactionSource = interactionSource) { toast = !toast }
+						},
+				horizontalArrangement = Arrangement.spacedBy(5.dp)
+			) {
+				Text(stringResource(R.string.show_toast))
+				Checkbox(
+					checked = toast,
+					onCheckedChange = null,
+					interactionSource = interactionSource
+				)
+			}
+		}
+	}
 }

@@ -14,25 +14,25 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 
 @Composable
 fun DragonGroupScope.Setting(
-    setting: SettingObject<Color, String>,
-    enabled: Boolean = true,
-    onPicked: ((Color?) -> Unit)? = null
+	setting: SettingObject<Color, String>,
+	enabled: Boolean = true,
+	onPicked: ((Color?) -> Unit)? = null
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val state by setting.asState()
+	val state by setting.asState()
 
-    ColorPickerRow(
-        title = stringResource(setting.title!!),
-        description = setting.description?.let { stringResource(it) },
-        currentColor = state,
-        enabled = enabled,
-        defaultColor = setting.default
-    ) {
-        onPicked?.invoke(it)
-        scope.launch {
-            setting.set(ctx, it)
-        }
-    }
+	ColorPickerRow(
+		title = stringResource(setting.title!!),
+		description = setting.description?.let { stringResource(it) },
+		currentColor = state,
+		enabled = enabled,
+		defaultColor = setting.default
+	) {
+		onPicked?.invoke(it)
+		scope.launch {
+			setting.set(ctx, it)
+		}
+	}
 }

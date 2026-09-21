@@ -18,25 +18,25 @@ import javax.inject.Inject
 @Stable
 @HiltViewModel
 public class ColorsViewModel
-    @Inject
-    constructor(
-        colorService: ColorService
-    ) : ViewModel() {
-        init {
-            viewModelInitialized()
-        }
+	@Inject
+	constructor(
+		colorService: ColorService
+	) : ViewModel() {
+		init {
+			viewModelInitialized()
+		}
 
-        public val colorscheme: StateFlow<ColorScheme> =
-            colorService.colors.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly,
-                initialValue = AmoledDragonColorScheme
-            )
+		public val colorscheme: StateFlow<ColorScheme> =
+			colorService.colors.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.Eagerly,
+				initialValue = AmoledDragonColorScheme
+			)
 
-        public val extraColors: StateFlow<ExtraColors> =
-            colorService.extraColors.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly,
-                initialValue = DefaultExtraColors
-            )
-    }
+		public val extraColors: StateFlow<ExtraColors> =
+			colorService.extraColors.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.Eagerly,
+				initialValue = DefaultExtraColors
+			)
+	}

@@ -20,55 +20,55 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
 fun GoogleWarningReminder() {
-    Card(
-        shape = MaterialTheme.shapes.extraLarge
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = GoogleWarningManager.getDaysLeft().toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.error
-                )
-                Text(
-                    text = stringResource(R.string.warning_days_until_lockdown),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
+	Card(
+		shape = MaterialTheme.shapes.extraLarge
+	) {
+		Column(
+			modifier =
+				Modifier
+					.padding(16.dp)
+					.fillMaxWidth(),
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(16.dp)
+			) {
+				Text(
+					text = GoogleWarningManager.getDaysLeft().toString(),
+					style = MaterialTheme.typography.displayLarge,
+					color = MaterialTheme.colorScheme.error
+				)
+				Text(
+					text = stringResource(R.string.warning_days_until_lockdown),
+					style = MaterialTheme.typography.titleLarge
+				)
+			}
 
-            Text(
-                text = stringResource(R.string.warning_description),
-                style = MaterialTheme.typography.bodyMedium
-            )
+			Text(
+				text = stringResource(R.string.warning_description),
+				style = MaterialTheme.typography.bodyMedium
+			)
 
-            Text(
-                text = stringResource(R.string.warning_worldwide),
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.error
-            )
+			Text(
+				text = stringResource(R.string.warning_worldwide),
+				style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+				color = MaterialTheme.colorScheme.error
+			)
 
-            val uriHandler = LocalUriHandler.current
+			val uriHandler = LocalUriHandler.current
 
-            DragonButton(
-                onClick = { uriHandler.openUri("https://keepandroidopen.org/") },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text =
-                        stringResource(
-                            R.string.do_something
-                        )
-                )
-            }
-        }
-    }
+			DragonButton(
+				onClick = { uriHandler.openUri("https://keepandroidopen.org/") },
+				modifier = Modifier.fillMaxWidth()
+			) {
+				Text(
+					text =
+						stringResource(
+							R.string.do_something
+						)
+				)
+			}
+		}
+	}
 }

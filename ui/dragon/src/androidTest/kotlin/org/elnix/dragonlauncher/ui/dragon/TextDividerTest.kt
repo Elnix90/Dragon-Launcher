@@ -24,52 +24,52 @@ import org.junit.Test
  */
 @Suppress("DEPRECATION")
 class TextDividerTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun textDivider_displaysText() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextDividerOld(text = "Section")
-            }
-        }
+	@Test
+	fun textDivider_displaysText() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextDividerOld(text = "Section")
+			}
+		}
 
-        composeTestRule.onNodeWithText("Section").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Section").assertIsDisplayed()
+	}
 
-    @Test
-    fun textDivider_displaysLongText() {
-        val text = "This is a longer divider label"
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextDividerOld(text = text)
-            }
-        }
+	@Test
+	fun textDivider_displaysLongText() {
+		val text = "This is a longer divider label"
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextDividerOld(text = text)
+			}
+		}
 
-        composeTestRule.onNodeWithText(text).assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText(text).assertIsDisplayed()
+	}
 
-    @Test
-    fun textDivider_enabledByDefault() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextDividerOld(text = "Enabled divider", enabled = true)
-            }
-        }
+	@Test
+	fun textDivider_enabledByDefault() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextDividerOld(text = "Enabled divider", enabled = true)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Enabled divider").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Enabled divider").assertIsDisplayed()
+	}
 
-    @Test
-    fun textDivider_disabledStillDisplays() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextDividerOld(text = "Disabled divider", enabled = false)
-            }
-        }
+	@Test
+	fun textDivider_disabledStillDisplays() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextDividerOld(text = "Disabled divider", enabled = false)
+			}
+		}
 
-        // Disabled state affects colors (transparency) but text should still render
-        composeTestRule.onNodeWithText("Disabled divider").assertIsDisplayed()
-    }
+		// Disabled state affects colors (transparency) but text should still render
+		composeTestRule.onNodeWithText("Disabled divider").assertIsDisplayed()
+	}
 }

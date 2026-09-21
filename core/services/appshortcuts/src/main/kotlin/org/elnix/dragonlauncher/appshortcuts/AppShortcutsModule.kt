@@ -14,18 +14,18 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AppShortcutsModule {
-    @Provides
-    @Singleton
-    fun provideAppShortcutRepository(
-        @ApplicationContext ctx: Context,
-        permissionManager: PermissionsManager,
-        profileManager: ProfileManager,
-        stringNormalizer: StringNormalizer
-    ): AppShortcutRepository =
-        AppShortcutRepositoryImpl(
-            ctx = ctx,
-            permissionsManager = permissionManager,
-            profileManager = profileManager,
-            stringNormalizer = stringNormalizer
-        )
+	@Provides
+	@Singleton
+	fun provideAppShortcutRepository(
+		@ApplicationContext ctx: Context,
+		permissionManager: PermissionsManager,
+		profileManager: ProfileManager,
+		stringNormalizer: StringNormalizer
+	): AppShortcutRepository =
+		AppShortcutRepositoryImpl(
+			ctx = ctx,
+			permissionsManager = permissionManager,
+			profileManager = profileManager,
+			stringNormalizer = stringNormalizer
+		)
 }

@@ -9,8 +9,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object I18nModule {
-    @Provides
-    @Singleton
-    fun provideCompatStringNormalizer(): StringNormalizer =
-        CompatStringNormalizer()
+	@Provides
+	@Singleton
+	fun provideCompatStringNormalizer(): StringNormalizer =
+		CompatStringNormalizer()
 }

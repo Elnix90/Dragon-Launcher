@@ -49,269 +49,269 @@ import org.elnix.dragonlauncher.ui.dialogs.editors.AppIconEditor
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppLongPressPopup(
-    app: Application,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    onOpenApp: () -> Unit,
-    close: () -> Unit
+	app: Application,
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	onOpenApp: () -> Unit,
+	close: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val uriHandler = LocalUriHandler.current
-    val workspaceViewMode = LocalWorkspaceViewMode.current
+	val ctx = LocalContext.current
+	val uriHandler = LocalUriHandler.current
+	val workspaceViewMode = LocalWorkspaceViewMode.current
 
-    val scope = rememberCoroutineScope()
+	val scope = rememberCoroutineScope()
 
-    val appOverridesManager = drawerViewModel.appOverrideManager
-    val workspacesManager = drawerViewModel.workspaceManager
-    val selectedWorkspaceId by DrawerSettingsStore.lastWorkspaceUsed.asState()
+	val appOverridesManager = drawerViewModel.appOverrideManager
+	val workspacesManager = drawerViewModel.workspaceManager
+	val selectedWorkspaceId by DrawerSettingsStore.lastWorkspaceUsed.asState()
 
-    var showDetailedAppInfoDialog by remember { mutableStateOf(false) }
+	var showDetailedAppInfoDialog by remember { mutableStateOf(false) }
 
-    var showRenameDialog by remember { mutableStateOf(false) }
-    var showAliasDialog by remember { mutableStateOf(false) }
-    var showIconDialog by remember { mutableStateOf(false) }
-    var showCategoryDialog by remember { mutableStateOf(false) }
+	var showRenameDialog by remember { mutableStateOf(false) }
+	var showAliasDialog by remember { mutableStateOf(false) }
+	var showIconDialog by remember { mutableStateOf(false) }
+	var showCategoryDialog by remember { mutableStateOf(false) }
 
-    val installerStoreLink = remember { app.getStoreDetails(ctx) }
+	val installerStoreLink = remember { app.getStoreDetails(ctx) }
 
-    val entries =
-        buildList {
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.rename) },
-                    icon = R.drawable.edit_rounded,
-                    onClick = { showRenameDialog = true }
-                )
-            )
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.change_app_icon) },
-                    icon = R.drawable.image,
-                    onClick = { showIconDialog = true }
-                )
-            )
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.app_aliases) },
-                    icon = R.drawable.alternate_email,
-                    onClick = { showAliasDialog = true }
-                )
-            )
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.set_category) },
-                    icon = R.drawable.filter_alt,
-                    onClick = { showCategoryDialog = true }
-                )
-            )
+	val entries =
+		buildList {
+			add(
+				MoreOptions(
+					text = { stringResource(R.string.rename) },
+					icon = R.drawable.edit_rounded,
+					onClick = { showRenameDialog = true }
+				)
+			)
+			add(
+				MoreOptions(
+					text = { stringResource(R.string.change_app_icon) },
+					icon = R.drawable.image,
+					onClick = { showIconDialog = true }
+				)
+			)
+			add(
+				MoreOptions(
+					text = { stringResource(R.string.app_aliases) },
+					icon = R.drawable.alternate_email,
+					onClick = { showAliasDialog = true }
+				)
+			)
+			add(
+				MoreOptions(
+					text = { stringResource(R.string.set_category) },
+					icon = R.drawable.filter_alt,
+					onClick = { showCategoryDialog = true }
+				)
+			)
 
-            if (workspaceViewMode == WorkspaceViewMode.Removed) {
-                add(
-                    MoreOptions(
-                        text = { stringResource(R.string.add_to_workspace) },
-                        icon = R.drawable.add_circle,
-                        onClick = {
-                            workspacesManager.addAppToWorkspace(
-                                id = selectedWorkspaceId,
-                                cacheKey = app.key
-                            )
-                            close()
-                        }
-                    )
-                )
-            } else {
-                add(
-                    MoreOptions(
-                        text = { stringResource(R.string.remove_from_workspace) },
-                        icon = R.drawable.remove_circle,
-                        onClick = {
-                            workspacesManager.removeAppFromWorkspace(
-                                id = selectedWorkspaceId,
-                                cacheKey = app.key
-                            )
-                            close()
-                        }
-                    )
-                )
-            }
+			if (workspaceViewMode == WorkspaceViewMode.Removed) {
+				add(
+					MoreOptions(
+						text = { stringResource(R.string.add_to_workspace) },
+						icon = R.drawable.add_circle,
+						onClick = {
+							workspacesManager.addAppToWorkspace(
+								id = selectedWorkspaceId,
+								cacheKey = app.key
+							)
+							close()
+						}
+					)
+				)
+			} else {
+				add(
+					MoreOptions(
+						text = { stringResource(R.string.remove_from_workspace) },
+						icon = R.drawable.remove_circle,
+						onClick = {
+							workspacesManager.removeAppFromWorkspace(
+								id = selectedWorkspaceId,
+								cacheKey = app.key
+							)
+							close()
+						}
+					)
+				)
+			}
 
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.export_apk) },
-                    icon = R.drawable.share,
-                    onClick = {
-                        scope.launch {
-                            app.shareApkFile(ctx)
-                            close()
-                        }
-                    }
-                )
-            )
+			add(
+				MoreOptions(
+					text = { stringResource(R.string.export_apk) },
+					icon = R.drawable.share,
+					onClick = {
+						scope.launch {
+							app.shareApkFile(ctx)
+							close()
+						}
+					}
+				)
+			)
 
-            installerStoreLink?.let { link ->
-                add(
-                    MoreOptions(
-                        text = { link.label },
-                        icon = link.icon,
-                        onClick = {
-                            scope.launch {
-                                uriHandler.openUri(link.url)
-                                close()
-                            }
-                        }
-                    )
-                )
-            }
+			installerStoreLink?.let { link ->
+				add(
+					MoreOptions(
+						text = { link.label },
+						icon = link.icon,
+						onClick = {
+							scope.launch {
+								uriHandler.openUri(link.url)
+								close()
+							}
+						}
+					)
+				)
+			}
 
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.detailed_info) },
-                    icon = R.drawable.info,
-                    onClick = {
-                        showDetailedAppInfoDialog = true
-                    }
-                )
-            )
-        }
+			add(
+				MoreOptions(
+					text = { stringResource(R.string.detailed_info) },
+					icon = R.drawable.info,
+					onClick = {
+						showDetailedAppInfoDialog = true
+					}
+				)
+			)
+		}
 
-    val cannotMessage = stringResource(R.string.cannot_directly_uninstall_from_other_profiles)
+	val cannotMessage = stringResource(R.string.cannot_directly_uninstall_from_other_profiles)
 
-    Column {
-        ButtonGroup(
-            overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(MenuDefaults.GroupSpacing, Alignment.CenterHorizontally)
-        ) {
-            customItem(
-                buttonGroupContent = {
-                    Button(
-                        onClick = onOpenApp,
-                        icon = R.drawable.open_in_new
-                    )
-                },
-                menuContent = {}
-            )
-            customItem(
-                buttonGroupContent = {
-                    Button(
-                        onClick = { app.openAppDetails(ctx) },
-                        icon = R.drawable.settings
-                    )
-                },
-                menuContent = {}
-            )
-            customItem(
-                buttonGroupContent = {
-                    Button(
-                        onClick = {
-                            if (!app.isPrivate) {
-                                app.uninstall(ctx)
-                            } else {
-                                ctx.showToast(cannotMessage)
-                                app.openAppDetails(ctx)
-                            }
-                        },
-                        icon = R.drawable.delete_forever
-                    )
-                },
-                menuContent = { }
-            )
-        }
+	Column {
+		ButtonGroup(
+			overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
+			modifier = Modifier.fillMaxWidth(),
+			horizontalArrangement = Arrangement.spacedBy(MenuDefaults.GroupSpacing, Alignment.CenterHorizontally)
+		) {
+			customItem(
+				buttonGroupContent = {
+					Button(
+						onClick = onOpenApp,
+						icon = R.drawable.open_in_new
+					)
+				},
+				menuContent = {}
+			)
+			customItem(
+				buttonGroupContent = {
+					Button(
+						onClick = { app.openAppDetails(ctx) },
+						icon = R.drawable.settings
+					)
+				},
+				menuContent = {}
+			)
+			customItem(
+				buttonGroupContent = {
+					Button(
+						onClick = {
+							if (!app.isPrivate) {
+								app.uninstall(ctx)
+							} else {
+								ctx.showToast(cannotMessage)
+								app.openAppDetails(ctx)
+							}
+						},
+						icon = R.drawable.delete_forever
+					)
+				},
+				menuContent = { }
+			)
+		}
 
-        Spacer(MenuDefaults.GroupSpacing)
+		Spacer(MenuDefaults.GroupSpacing)
 
-        DropdownMenuGroup(
-            shapes = MenuDefaults.groupShapes()
-        ) {
-            DropdownMenuItem(
-                onClick = onOpenApp,
-                shape = MenuDefaults.leadingItemShape,
-                text = { Text(app.label) },
-                leadingIcon = { AppIcon(app, size = 35.dp) }
-            )
+		DropdownMenuGroup(
+			shapes = MenuDefaults.groupShapes()
+		) {
+			DropdownMenuItem(
+				onClick = onOpenApp,
+				shape = MenuDefaults.leadingItemShape,
+				text = { Text(app.label) },
+				leadingIcon = { AppIcon(app, size = 35.dp) }
+			)
 
-            entries.fastForEachIndexed { index, option ->
-                DropdownMenuItem(
-                    onClick = option.onClick,
-                    enabled = option.enabled,
-                    shape =
-                        if (index == entries.lastIndex && installerStoreLink == null) {
-                            MenuDefaults.trailingItemShape
-                        } else {
-                            MenuDefaults.middleItemShape
-                        },
-                    text = { Text(option.text()) },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(option.icon),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                )
-            }
-        }
+			entries.fastForEachIndexed { index, option ->
+				DropdownMenuItem(
+					onClick = option.onClick,
+					enabled = option.enabled,
+					shape =
+						if (index == entries.lastIndex && installerStoreLink == null) {
+							MenuDefaults.trailingItemShape
+						} else {
+							MenuDefaults.middleItemShape
+						},
+					text = { Text(option.text()) },
+					leadingIcon = {
+						Icon(
+							painter = painterResource(option.icon),
+							contentDescription = null,
+							modifier = Modifier.size(20.dp)
+						)
+					}
+				)
+			}
+		}
 
-        if (showDetailedAppInfoDialog) {
-            ApplicationInfoDialog(app) { showDetailedAppInfoDialog = false }
-        }
-    }
+		if (showDetailedAppInfoDialog) {
+			ApplicationInfoDialog(app) { showDetailedAppInfoDialog = false }
+		}
+	}
 
-    if (showRenameDialog) {
-        val cacheKey = app.key
-        TextEditorDialog(
-            title = { stringResource(R.string.rename) },
-            placeHolder = { app.label },
-            onDismiss = { showRenameDialog = false },
-            defaultText = app.defaultLabel,
-            initialText = app.label
-        ) { newName ->
-            appOverridesManager.renameApp(
-                cacheKey = cacheKey,
-                customName = newName
-            )
-            showRenameDialog = false
-        }
-    }
+	if (showRenameDialog) {
+		val cacheKey = app.key
+		TextEditorDialog(
+			title = { stringResource(R.string.rename) },
+			placeHolder = { app.label },
+			onDismiss = { showRenameDialog = false },
+			defaultText = app.defaultLabel,
+			initialText = app.label
+		) { newName ->
+			appOverridesManager.renameApp(
+				cacheKey = cacheKey,
+				customName = newName
+			)
+			showRenameDialog = false
+		}
+	}
 
-    if (showIconDialog) {
-        AppIconEditor(app) { showIconDialog = false }
-    }
+	if (showIconDialog) {
+		AppIconEditor(app) { showIconDialog = false }
+	}
 
-    if (showAliasDialog) {
-        AppAliasesDialog(app) { showAliasDialog = false }
-    }
+	if (showAliasDialog) {
+		AppAliasesDialog(app) { showAliasDialog = false }
+	}
 
-    if (showCategoryDialog) {
-        val allApps by drawerViewModel.userApps.collectAsState()
-        val existingCustomCategories = allApps.mapNotNull { it.categoryOverride }.distinct()
-        CategoryPickerDialog(
-            app = app,
-            existingCustomCategories = existingCustomCategories,
-            onDismissRequest = { showCategoryDialog = false }
-        )
-    }
+	if (showCategoryDialog) {
+		val allApps by drawerViewModel.userApps.collectAsState()
+		val existingCustomCategories = allApps.mapNotNull { it.categoryOverride }.distinct()
+		CategoryPickerDialog(
+			app = app,
+			existingCustomCategories = existingCustomCategories,
+			onDismissRequest = { showCategoryDialog = false }
+		)
+	}
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ButtonGroupScope.Button(
-    onClick: () -> Unit,
-    icon: Int
+	onClick: () -> Unit,
+	icon: Int
 ) {
-    val interactionSource = rememberInteractionSource()
+	val interactionSource = rememberInteractionSource()
 
-    Button(
-        onClick = onClick,
-        interactionSource = interactionSource,
-        shapes = ButtonDefaults.shapes(),
-        modifier =
-            Modifier
-                .weight(1f)
-                .animateWidth(interactionSource)
-    ) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = null
-        )
-    }
+	Button(
+		onClick = onClick,
+		interactionSource = interactionSource,
+		shapes = ButtonDefaults.shapes(),
+		modifier =
+			Modifier
+				.weight(1f)
+				.animateWidth(interactionSource)
+	) {
+		Icon(
+			painter = painterResource(icon),
+			contentDescription = null
+		)
+	}
 }

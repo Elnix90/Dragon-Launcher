@@ -33,68 +33,68 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class
+	ExperimentalMaterial3ExpressiveApi::class,
+	ExperimentalMaterial3Api::class
 )
 @Composable
 fun SignatureWarningDialog(
-    securityViewModel: SecurityViewModel = activityViewModel()
+	securityViewModel: SecurityViewModel = activityViewModel()
 ) {
-    val signatureMatched by securityViewModel.signatureMatched.asState()
-    val useAnyways by securityViewModel.useAnyways.asState()
-    if (signatureMatched || useAnyways) return
+	val signatureMatched by securityViewModel.signatureMatched.asState()
+	val useAnyways by securityViewModel.useAnyways.asState()
+	if (signatureMatched || useAnyways) return
 
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    BasicAlertDialog(
-        onDismissRequest = {}
-    ) {
-        Card(shape = MaterialTheme.shapes.extraLarge) {
-            Column(
-                modifier =
-                    Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier =
-                        Modifier
-                            .size(48.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.errorContainer,
-                                shape = MaterialShapes.Pill.toShape()
-                            )
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.warning),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
+	BasicAlertDialog(
+		onDismissRequest = {}
+	) {
+		Card(shape = MaterialTheme.shapes.extraLarge) {
+			Column(
+				modifier =
+					Modifier
+						.padding(16.dp)
+						.fillMaxWidth(),
+				verticalArrangement = Arrangement.spacedBy(8.dp)
+			) {
+				Box(
+					contentAlignment = Alignment.Center,
+					modifier =
+						Modifier
+							.size(48.dp)
+							.background(
+								color = MaterialTheme.colorScheme.errorContainer,
+								shape = MaterialShapes.Pill.toShape()
+							)
+				) {
+					Icon(
+						painter = painterResource(R.drawable.warning),
+						contentDescription = null,
+						tint = MaterialTheme.colorScheme.onErrorContainer
+					)
+				}
 
-                Text(
-                    text = stringResource(R.string.signature_not_matched),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.error
-                )
+				Text(
+					text = stringResource(R.string.signature_not_matched),
+					style = MaterialTheme.typography.headlineLarge,
+					color = MaterialTheme.colorScheme.error
+				)
 
-                ValidateCancelButtons(
-                    cancelText = stringResource(R.string.use_anyways),
-                    validateText = "${stringResource(R.string.uninstall)} ☠\uFE0F",
-                    onCancel = {
-                        securityViewModel.useAnyways.value = true
-                    },
-                    onConfirm = {
-                        ctx.startActivity(
-                            Intent(Intent.ACTION_DELETE).apply {
-                                data = "package:${ctx.packageName}".toUri()
-                            }
-                        )
-                    }
-                )
-            }
-        }
-    }
+				ValidateCancelButtons(
+					cancelText = stringResource(R.string.use_anyways),
+					validateText = "${stringResource(R.string.uninstall)} ☠\uFE0F",
+					onCancel = {
+						securityViewModel.useAnyways.value = true
+					},
+					onConfirm = {
+						ctx.startActivity(
+							Intent(Intent.ACTION_DELETE).apply {
+								data = "package:${ctx.packageName}".toUri()
+							}
+						)
+					}
+				)
+			}
+		}
+	}
 }

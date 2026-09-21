@@ -45,170 +45,170 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 private data class MenuItem(
-    val route: NavigationRoute,
-    val isSelected: MutableState<Boolean>
+	val route: NavigationRoute,
+	val isSelected: MutableState<Boolean>
 )
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HoldSettingsOrderSheet(
-    swipeViewModel: SwipeViewModel = activityViewModel(),
-    onDismiss: () -> Unit
+	swipeViewModel: SwipeViewModel = activityViewModel(),
+	onDismiss: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val swipeService = swipeViewModel.swipeService
+	val ctx = LocalContext.current
+	val swipeService = swipeViewModel.swipeService
 
-    val holdMenuEntries by swipeService.holdMenuEntriesString.asState()
+	val holdMenuEntries by swipeService.holdMenuEntriesString.asState()
 
-    // I don't want to put this in the viewmodel as it might be a lot of boilerplate, so I fall back to retain API
-    var menuItems: List<MenuItem> by retain { mutableStateOf(emptyList()) }
+	// I don't want to put this in the viewmodel as it might be a lot of boilerplate, so I fall back to retain API
+	var menuItems: List<MenuItem> by retain { mutableStateOf(emptyList()) }
 
-    LaunchedEffect(holdMenuEntries) {
-        menuItems =
-            buildList {
-                settingsRoutes
-                    .sortedBy { route ->
-                        holdMenuEntries.indexOf(route).let {
-                            if (it == -1) Int.MAX_VALUE else it
-                        }
-                    }.forEach { route ->
-                        add(
-                            MenuItem(
-                                route = route,
-                                isSelected = mutableStateOf(route in holdMenuEntries || route is NavigationRoute.PointsSettings)
-                            )
-                        )
-                    }
-            }
-    }
+	LaunchedEffect(holdMenuEntries) {
+		menuItems =
+			buildList {
+				settingsRoutes
+					.sortedBy { route ->
+						holdMenuEntries.indexOf(route).let {
+							if (it == -1) Int.MAX_VALUE else it
+						}
+					}.forEach { route ->
+						add(
+							MenuItem(
+								route = route,
+								isSelected = mutableStateOf(route in holdMenuEntries || route is NavigationRoute.PointsSettings)
+							)
+						)
+					}
+			}
+	}
 
-    val lazyListState = rememberLazyListState()
-    val reorderState =
-        rememberReorderableLazyListState(
-            lazyListState = lazyListState,
-            onMove = { from, to ->
-                menuItems =
-                    menuItems.toMutableList().apply {
-                        add(to.index, removeAt(from.index))
-                    }
-            }
-        )
+	val lazyListState = rememberLazyListState()
+	val reorderState =
+		rememberReorderableLazyListState(
+			lazyListState = lazyListState,
+			onMove = { from, to ->
+				menuItems =
+					menuItems.toMutableList().apply {
+						add(to.index, removeAt(from.index))
+					}
+			}
+		)
 
-    DragonModalBottomSheet(
-        onDismissRequest = {
-            // Save in the reordered state, but only selected items
-            swipeService.setHoldMenuEntries(
-                menuItems
-                    .filter { it.isSelected.value }
-                    .map { it.route }
-            )
+	DragonModalBottomSheet(
+		onDismissRequest = {
+			// Save in the reordered state, but only selected items
+			swipeService.setHoldMenuEntries(
+				menuItems
+					.filter { it.isSelected.value }
+					.map { it.route }
+			)
 
-            swipeService.saveHoldMenuEntries()
-            onDismiss()
-        },
-        skipPartiallyExpanded = true
-    ) {
-        DialogTitle(stringResource(R.string.edit_hold_to_activate_elements))
-        val selectedCount = menuItems.count { it.isSelected.value }
+			swipeService.saveHoldMenuEntries()
+			onDismiss()
+		},
+		skipPartiallyExpanded = true
+	) {
+		DialogTitle(stringResource(R.string.edit_hold_to_activate_elements))
+		val selectedCount = menuItems.count { it.isSelected.value }
 
-        MultiSelectConnectedButtonRow(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            entries = BackupSelectStoresButtons.entries,
-            enabled = { entry ->
-                when (entry) {
-                    BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
-                    BackupSelectStoresButtons.SelectAll -> selectedCount < settingsRoutes.size
-                    BackupSelectStoresButtons.Invert -> true
-                }
-            }
-        ) { button ->
-            when (button) {
-                BackupSelectStoresButtons.DeselectAll -> {
-                    menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
-                        item.isSelected.value = false
-                    }
-                }
+		MultiSelectConnectedButtonRow(
+			modifier = Modifier.align(Alignment.CenterHorizontally),
+			entries = BackupSelectStoresButtons.entries,
+			enabled = { entry ->
+				when (entry) {
+					BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
+					BackupSelectStoresButtons.SelectAll -> selectedCount < settingsRoutes.size
+					BackupSelectStoresButtons.Invert -> true
+				}
+			}
+		) { button ->
+			when (button) {
+				BackupSelectStoresButtons.DeselectAll -> {
+					menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
+						item.isSelected.value = false
+					}
+				}
 
-                BackupSelectStoresButtons.SelectAll -> {
-                    menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
-                        item.isSelected.value = true
-                    }
-                }
+				BackupSelectStoresButtons.SelectAll -> {
+					menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
+						item.isSelected.value = true
+					}
+				}
 
-                BackupSelectStoresButtons.Invert -> {
-                    menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
-                        item.isSelected.value = !item.isSelected.value
-                    }
-                }
-            }
-        }
+				BackupSelectStoresButtons.Invert -> {
+					menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
+						item.isSelected.value = !item.isSelected.value
+					}
+				}
+			}
+		}
 
-        Box(modifier = Modifier.heightIn(max = 600.dp)) {
-            LazyColumn(
-                state = lazyListState,
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                items(menuItems, key = { it.route.toString() }) { entry ->
-                    val isSelected by entry.isSelected
+		Box(modifier = Modifier.heightIn(max = 600.dp)) {
+			LazyColumn(
+				state = lazyListState,
+				verticalArrangement = Arrangement.spacedBy(3.dp)
+			) {
+				items(menuItems, key = { it.route.toString() }) { entry ->
+					val isSelected by entry.isSelected
 
-                    ReorderableItem(
-                        state = reorderState,
-                        key = entry.route.toString()
-                    ) { isDragging ->
-                        val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
+					ReorderableItem(
+						state = reorderState,
+						key = entry.route.toString()
+					) { isDragging ->
+						val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
 
-                        val isPointSettings = entry.route == NavigationRoute.PointsSettings
+						val isPointSettings = entry.route == NavigationRoute.PointsSettings
 
-                        DragonRow(
-                            onClick = {
-                                when {
-                                    isPointSettings -> {
-                                        ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
-                                    }
+						DragonRow(
+							onClick = {
+								when {
+									isPointSettings -> {
+										ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
+									}
 
-                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value -> {
-                                        ctx.showToast(
-                                            ctx.getString(R.string.cannot_add_more_than_x, MAX_ITEMS_ALLOWED)
-                                        )
-                                    }
+									selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value -> {
+										ctx.showToast(
+											ctx.getString(R.string.cannot_add_more_than_x, MAX_ITEMS_ALLOWED)
+										)
+									}
 
-                                    else -> {
-                                        entry.isSelected.value = !isSelected
-                                    }
-                                }
-                            },
-                            modifier =
-                                Modifier
-                                    .scale(scale)
-                                    .longPressDraggableHandle()
-                        ) {
-                            Checkbox(
-                                checked = isSelected || isPointSettings,
-                                enabled = !isPointSettings,
-                                onCheckedChange = null
-                            )
-                            Spacer(15.dp)
-                            Icon(
-                                painter = painterResource(entry.route.icon),
-                                contentDescription = "Entry icon"
-                            )
-                            Spacer(5.dp)
-                            Text(
-                                text = stringResource(entry.route.resId),
-                                modifier = Modifier.weight(1f)
-                            )
-                            Icon(
-                                painter = painterResource(R.drawable.drag_handle),
-                                contentDescription = "Drag handle",
-                                modifier = Modifier.draggableHandle()
-                            )
-                        }
-                    }
-                }
-            }
-            VerticalScrollIndicator(lazyListState.canScrollBackward, true)
-            VerticalScrollIndicator(lazyListState.canScrollForward)
-        }
-    }
+									else -> {
+										entry.isSelected.value = !isSelected
+									}
+								}
+							},
+							modifier =
+								Modifier
+									.scale(scale)
+									.longPressDraggableHandle()
+						) {
+							Checkbox(
+								checked = isSelected || isPointSettings,
+								enabled = !isPointSettings,
+								onCheckedChange = null
+							)
+							Spacer(15.dp)
+							Icon(
+								painter = painterResource(entry.route.icon),
+								contentDescription = "Entry icon"
+							)
+							Spacer(5.dp)
+							Text(
+								text = stringResource(entry.route.resId),
+								modifier = Modifier.weight(1f)
+							)
+							Icon(
+								painter = painterResource(R.drawable.drag_handle),
+								contentDescription = "Drag handle",
+								modifier = Modifier.draggableHandle()
+							)
+						}
+					}
+				}
+			}
+			VerticalScrollIndicator(lazyListState.canScrollBackward, true)
+			VerticalScrollIndicator(lazyListState.canScrollForward)
+		}
+	}
 }

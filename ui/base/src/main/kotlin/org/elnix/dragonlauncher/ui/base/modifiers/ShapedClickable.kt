@@ -18,55 +18,55 @@ import org.elnix.dragonlauncher.ui.base.withHaptic
 
 @Composable
 fun Modifier.shapedClickable(
-    enabled: Boolean = true,
-    isSelected: Boolean = false,
-    hapticFeedback: Boolean = false,
-    interactionSource: MutableInteractionSource = rememberInteractionSource(),
-    onLongClick: (() -> Unit)? = null,
-    onClick: () -> Unit
+	enabled: Boolean = true,
+	isSelected: Boolean = false,
+	hapticFeedback: Boolean = false,
+	interactionSource: MutableInteractionSource = rememberInteractionSource(),
+	onLongClick: (() -> Unit)? = null,
+	onClick: () -> Unit
 ): Modifier {
-    val shape =
-        provideClickableShape(
-            interactionSource = interactionSource,
-            isSelected = isSelected
-        )
+	val shape =
+		provideClickableShape(
+			interactionSource = interactionSource,
+			isSelected = isSelected
+		)
 
-    val onclickWithOptionalHaptic =
-        if (hapticFeedback) {
-            withHaptic(HapticFeedbackType.LongPress) {
-                onClick()
-            }
-        } else {
-            onClick
-        }
-    return this
-        .clip(shape)
-        .combinedClickable(
-            interactionSource = interactionSource,
-            enabled = enabled,
-            onClick = onclickWithOptionalHaptic,
-            onLongClick = onLongClick
-        )
+	val onclickWithOptionalHaptic =
+		if (hapticFeedback) {
+			withHaptic(HapticFeedbackType.LongPress) {
+				onClick()
+			}
+		} else {
+			onClick
+		}
+	return this
+		.clip(shape)
+		.combinedClickable(
+			interactionSource = interactionSource,
+			enabled = enabled,
+			onClick = onclickWithOptionalHaptic,
+			onLongClick = onLongClick
+		)
 }
 
 @Composable
 fun provideClickableShape(
-    interactionSource: MutableInteractionSource,
-    isSelected: Boolean = false,
-    @IntRange(0, 100)
-    defaultRoundingPercent: Int = 35,
-    @IntRange(0, 100)
-    pressedRoundingPercent: Int = 20
+	interactionSource: MutableInteractionSource,
+	isSelected: Boolean = false,
+	@IntRange(0, 100)
+	defaultRoundingPercent: Int = 35,
+	@IntRange(0, 100)
+	pressedRoundingPercent: Int = 20
 ): Shape {
-    val isPressed by interactionSource.collectIsPressedAsState()
+	val isPressed by interactionSource.collectIsPressedAsState()
 
-    val shapeRound by animateIntAsState(
-        targetValue = if (isPressed || isSelected) pressedRoundingPercent else defaultRoundingPercent,
-        label = "shape_anim",
-        animationSpec = defaultSpec()
-    )
+	val shapeRound by animateIntAsState(
+		targetValue = if (isPressed || isSelected) pressedRoundingPercent else defaultRoundingPercent,
+		label = "shape_anim",
+		animationSpec = defaultSpec()
+	)
 
-    return RoundedCornerShape(shapeRound)
+	return RoundedCornerShape(shapeRound)
 }
 
 // private val defaultDefaultShape = RoundedPolygon.rectangle(

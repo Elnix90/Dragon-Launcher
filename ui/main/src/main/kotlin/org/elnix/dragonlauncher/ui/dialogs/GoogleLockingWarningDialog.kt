@@ -15,23 +15,23 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
 @Composable
 fun GoogleLockingWarningDialog() {
-    // Show warning in settings
-    val showGoogleLockDownWarning by DebugSettingsStore.showGoogleLockDownWarning.asState()
-    if (!showGoogleLockDownWarning) return
+	// Show warning in settings
+	val showGoogleLockDownWarning by DebugSettingsStore.showGoogleLockDownWarning.asState()
+	if (!showGoogleLockDownWarning) return
 
-    // Show warning at each new version
-    val versionCode = LocalContext.current.getVersionCode()
-    var lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asMutableState()
-    if (lastSeenVersionCodeGoogleLockdownWarning >= versionCode) return
+	// Show warning at each new version
+	val versionCode = LocalContext.current.getVersionCode()
+	var lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asMutableState()
+	if (lastSeenVersionCodeGoogleLockdownWarning >= versionCode) return
 
-    // Show warning when there are still days left
-    val showWarning by GoogleWarningManager.showWarningDialog.asState()
-    if (!showWarning) return
+	// Show warning when there are still days left
+	val showWarning by GoogleWarningManager.showWarningDialog.asState()
+	if (!showWarning) return
 
-    GoogleWarningDialog(
-        onDismissRequest = {
-            lastSeenVersionCodeGoogleLockdownWarning = versionCode
-            GoogleWarningManager.updateWarningDialog(false)
-        }
-    )
+	GoogleWarningDialog(
+		onDismissRequest = {
+			lastSeenVersionCodeGoogleLockdownWarning = versionCode
+			GoogleWarningManager.updateWarningDialog(false)
+		}
+	)
 }

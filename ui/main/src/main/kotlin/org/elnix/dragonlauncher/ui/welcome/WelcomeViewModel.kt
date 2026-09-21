@@ -18,19 +18,19 @@ const val PAGES_NUMBER = 4
 @HiltViewModel
 @Stable
 class WelcomeViewModel
-    @Inject
-    constructor(
-        application: Application
-    ) : AndroidViewModel(application) {
-        val pagerState = PagerState { PAGES_NUMBER }
+	@Inject
+	constructor(
+		application: Application
+	) : AndroidViewModel(application) {
+		val pagerState = PagerState { PAGES_NUMBER }
 
-        fun setAsSeen() {
-            viewModelScope.launch {
-                PrivateSettingsStore.hasSeenWelcomeScreen.set(application, true)
+		fun setAsSeen() {
+			viewModelScope.launch {
+				PrivateSettingsStore.hasSeenWelcomeScreen.set(application, true)
 
-                // Do not reset the pager state instantly because otherwise the animation would be ugly
-                delay(3.seconds)
-                pagerState.scrollToPage(0)
-            }
-        }
-    }
+				// Do not reset the pager state instantly because otherwise the animation would be ugly
+				delay(3.seconds)
+				pagerState.scrollToPage(0)
+			}
+		}
+	}

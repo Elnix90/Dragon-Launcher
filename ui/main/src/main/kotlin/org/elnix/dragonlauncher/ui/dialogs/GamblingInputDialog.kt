@@ -30,64 +30,64 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 @Composable
 fun GamblingInputDialog(
-    onSelect: (number: Int, snapToShapes: Boolean) -> Unit,
-    initialSnap: Boolean,
-    onDismiss: () -> Unit
+	onSelect: (number: Int, snapToShapes: Boolean) -> Unit,
+	initialSnap: Boolean,
+	onDismiss: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
+	val ctx = LocalContext.current
+	val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
 
-    var text by remember { mutableStateOf("") }
-    var snapToShapes by remember { mutableStateOf(initialSnap) }
+	var text by remember { mutableStateOf("") }
+	var snapToShapes by remember { mutableStateOf(initialSnap) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { DialogTitle(stringResource(R.string.gamble_apps)) },
-        text = {
-            DragonSettingsGroup {
-                TextField(
-                    value = text,
-                    onValueChange = {
-                        text = it
-                    },
-                    singleLine = true,
-                    label = { Text(stringResource(R.string.how_many_question)) },
-                    colors = AppObjectsColors.outlinedTextFieldColors(),
-                    keyboardOptions =
-                        KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Done
-                        ),
-                    shape = CircleShape,
-                    modifier = Modifier.fillMaxWidth()
-                )
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		title = { DialogTitle(stringResource(R.string.gamble_apps)) },
+		text = {
+			DragonSettingsGroup {
+				TextField(
+					value = text,
+					onValueChange = {
+						text = it
+					},
+					singleLine = true,
+					label = { Text(stringResource(R.string.how_many_question)) },
+					colors = AppObjectsColors.outlinedTextFieldColors(),
+					keyboardOptions =
+						KeyboardOptions(
+							keyboardType = KeyboardType.Decimal,
+							imeAction = ImeAction.Done
+						),
+					shape = CircleShape,
+					modifier = Modifier.fillMaxWidth()
+				)
 
-                // Only show this when user has explicitly selected to allow free points
-                AnimatedVisibility(allowFreePoints) {
-                    SwitchRow(
-                        state = snapToShapes,
-                        title = R.string.snap_points
-                    ) { snapToShapes = it }
-                }
-            }
-        },
-        confirmButton = {
-            ValidateCancelButtons(
-                validateText = stringResource(R.string.ok),
-                onCancel = onDismiss
-            ) {
-                val number =
-                    try {
-                        text.toInt()
-                    } catch (_: Exception) {
-                        ctx.showToast("Wrong number format")
-                        0
-                    }
+				// Only show this when user has explicitly selected to allow free points
+				AnimatedVisibility(allowFreePoints) {
+					SwitchRow(
+						state = snapToShapes,
+						title = R.string.snap_points
+					) { snapToShapes = it }
+				}
+			}
+		},
+		confirmButton = {
+			ValidateCancelButtons(
+				validateText = stringResource(R.string.ok),
+				onCancel = onDismiss
+			) {
+				val number =
+					try {
+						text.toInt()
+					} catch (_: Exception) {
+						ctx.showToast("Wrong number format")
+						0
+					}
 
-                onSelect(number, snapToShapes)
-                onDismiss()
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surface
-    )
+				onSelect(number, snapToShapes)
+				onDismiss()
+			}
+		},
+		containerColor = MaterialTheme.colorScheme.surface
+	)
 }

@@ -68,315 +68,315 @@ private val BgBottom = Color(0xFF1A1A2E)
 
 @Composable
 fun TimeLimitExceededScreen(appName: String) {
-    var showContent by remember { mutableStateOf(false) }
+	var showContent by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        delay(300.milliseconds)
-        showContent = true
-    }
+	LaunchedEffect(Unit) {
+		delay(300.milliseconds)
+		showContent = true
+	}
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        GradientBackground()
+	Box(modifier = Modifier.fillMaxSize()) {
+		GradientBackground()
 
-        SoftParticles(modifier = Modifier.fillMaxSize())
+		SoftParticles(modifier = Modifier.fillMaxSize())
 
-        AnimatedVisibility(
-            visible = showContent,
-            enter =
-                fadeIn(tween(800)) +
-                    slideInVertically(
-                        initialOffsetY = { it / 6 },
-                        animationSpec = tween(800, easing = FastOutSlowInEasing)
-                    )
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .systemBarsPadding()
-                        .padding(horizontal = 32.dp, vertical = 24.dp)
-            ) {
-                PulsingHourglass(modifier = Modifier.size(120.dp))
+		AnimatedVisibility(
+			visible = showContent,
+			enter =
+				fadeIn(tween(800)) +
+					slideInVertically(
+						initialOffsetY = { it / 6 },
+						animationSpec = tween(800, easing = FastOutSlowInEasing)
+					)
+		) {
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center,
+				modifier =
+					Modifier
+						.fillMaxSize()
+						.verticalScroll(rememberScrollState())
+						.systemBarsPadding()
+						.padding(horizontal = 32.dp, vertical = 24.dp)
+			) {
+				PulsingHourglass(modifier = Modifier.size(120.dp))
 
-                Spacer(32.dp)
+				Spacer(32.dp)
 
-                Text(
-                    text = stringResource(R.string.time_exceeded_header),
-                    style =
-                        MaterialTheme.typography.labelLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                    color = AccentTeal,
-                    letterSpacing = 3.sp,
-                    textAlign = TextAlign.Center
-                )
+				Text(
+					text = stringResource(R.string.time_exceeded_header),
+					style =
+						MaterialTheme.typography.labelLarge.copy(
+							fontWeight = FontWeight.Bold
+						),
+					color = AccentTeal,
+					letterSpacing = 3.sp,
+					textAlign = TextAlign.Center
+				)
 
-                Spacer(12.dp)
+				Spacer(12.dp)
 
-                Text(
-                    text = stringResource(R.string.time_exceeded_title),
-                    style = MaterialTheme.typography.displaySmall,
-                    color = TextWhite,
-                    textAlign = TextAlign.Center
-                )
+				Text(
+					text = stringResource(R.string.time_exceeded_title),
+					style = MaterialTheme.typography.displaySmall,
+					color = TextWhite,
+					textAlign = TextAlign.Center
+				)
 
-                Spacer(16.dp)
+				Spacer(16.dp)
 
-                Text(
-                    text = stringResource(R.string.time_exceeded_message, appName),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = WarmOrange,
-                    textAlign = TextAlign.Center
-                )
+				Text(
+					text = stringResource(R.string.time_exceeded_message, appName),
+					style = MaterialTheme.typography.titleMedium,
+					color = WarmOrange,
+					textAlign = TextAlign.Center
+				)
 
-                Spacer(8.dp)
+				Spacer(8.dp)
 
-                Text(
-                    text = appName.uppercase(),
-                    style =
-                        MaterialTheme.typography.labelMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                    color = TextMuted,
-                    letterSpacing = 2.sp,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+				Text(
+					text = appName.uppercase(),
+					style =
+						MaterialTheme.typography.labelMedium.copy(
+							fontWeight = FontWeight.Bold
+						),
+					color = TextMuted,
+					letterSpacing = 2.sp,
+					textAlign = TextAlign.Center,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis,
+					modifier = Modifier.padding(horizontal = 16.dp)
+				)
 
-                Spacer(12.dp)
+				Spacer(12.dp)
 
-                Text(
-                    text = stringResource(R.string.time_exceeded_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextMuted,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+				Text(
+					text = stringResource(R.string.time_exceeded_subtitle),
+					style = MaterialTheme.typography.bodyMedium,
+					color = TextMuted,
+					textAlign = TextAlign.Center,
+					modifier = Modifier.padding(horizontal = 16.dp)
+				)
 
-                Spacer(40.dp)
+				Spacer(40.dp)
 
-                GlassEncouragementCard()
+				GlassEncouragementCard()
 
-                Spacer(32.dp)
+				Spacer(32.dp)
 
-                DragonButton(
-                    onClick = LocalNavigator.current::onBack,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.time_exceeded_ok),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-            }
-        }
-    }
+				DragonButton(
+					onClick = LocalNavigator.current::onBack,
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.height(60.dp)
+				) {
+					Text(
+						text = stringResource(R.string.time_exceeded_ok),
+						style = MaterialTheme.typography.labelLarge
+					)
+				}
+			}
+		}
+	}
 }
 
 @Composable
 private fun GradientBackground() {
-    val infiniteTransition = rememberInfiniteTransition(label = "bg")
-    val shift by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(8000, easing = LinearEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-        label = "bg_shift"
-    )
+	val infiniteTransition = rememberInfiniteTransition(label = "bg")
+	val shift by infiniteTransition.animateFloat(
+		initialValue = 0f,
+		targetValue = 1f,
+		animationSpec =
+			infiniteRepeatable(
+				animation = tween(8000, easing = LinearEasing),
+				repeatMode = RepeatMode.Reverse
+			),
+		label = "bg_shift"
+	)
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors =
-                            listOf(
-                                BgTop,
-                                Color.lerp(BgBottom, AccentPurple.copy(alpha = 0.15f), shift)
-                            )
-                    )
-                )
-    )
+	Box(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.background(
+					Brush.verticalGradient(
+						colors =
+							listOf(
+								BgTop,
+								Color.lerp(BgBottom, AccentPurple.copy(alpha = 0.15f), shift)
+							)
+					)
+				)
+	)
 }
 
 private fun Color.Companion.lerp(a: Color, b: Color, t: Float): Color =
-    Color(
-        red = a.red + (b.red - a.red) * t,
-        green = a.green + (b.green - a.green) * t,
-        blue = a.blue + (b.blue - a.blue) * t,
-        alpha = a.alpha + (b.alpha - a.alpha) * t
-    )
+	Color(
+		red = a.red + (b.red - a.red) * t,
+		green = a.green + (b.green - a.green) * t,
+		blue = a.blue + (b.blue - a.blue) * t,
+		alpha = a.alpha + (b.alpha - a.alpha) * t
+	)
 
 @Composable
 private fun PulsingHourglass(modifier: Modifier = Modifier) {
-    val infiniteTransition = rememberInfiniteTransition(label = "hourglass")
+	val infiniteTransition = rememberInfiniteTransition(label = "hourglass")
 
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.15f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(3000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-        label = "scale"
-    )
+	val scale by infiniteTransition.animateFloat(
+		initialValue = 1f,
+		targetValue = 1.15f,
+		animationSpec =
+			infiniteRepeatable(
+				animation = tween(3000, easing = FastOutSlowInEasing),
+				repeatMode = RepeatMode.Reverse
+			),
+		label = "scale"
+	)
 
-    val glowAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.7f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(2000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-        label = "glow"
-    )
+	val glowAlpha by infiniteTransition.animateFloat(
+		initialValue = 0.3f,
+		targetValue = 0.7f,
+		animationSpec =
+			infiniteRepeatable(
+				animation = tween(2000, easing = FastOutSlowInEasing),
+				repeatMode = RepeatMode.Reverse
+			),
+		label = "glow"
+	)
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            modifier.graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-    ) {
-        Canvas(modifier = Modifier.size(120.dp)) {
-            drawCircle(
-                brush =
-                    Brush.radialGradient(
-                        colors =
-                            listOf(
-                                WarmOrange.copy(alpha = glowAlpha * 0.5f),
-                                AccentPurple.copy(alpha = glowAlpha * 0.3f),
-                                Color.Transparent
-                            ),
-                        center = center,
-                        radius = size.minDimension / 2
-                    )
-            )
-        }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier =
+			modifier.graphicsLayer {
+				scaleX = scale
+				scaleY = scale
+			}
+	) {
+		Canvas(modifier = Modifier.size(120.dp)) {
+			drawCircle(
+				brush =
+					Brush.radialGradient(
+						colors =
+							listOf(
+								WarmOrange.copy(alpha = glowAlpha * 0.5f),
+								AccentPurple.copy(alpha = glowAlpha * 0.3f),
+								Color.Transparent
+							),
+						center = center,
+						radius = size.minDimension / 2
+					)
+			)
+		}
 
-        Text(
-            text = "⏳",
-            fontSize = 56.sp,
-            textAlign = TextAlign.Center
-        )
-    }
+		Text(
+			text = "⏳",
+			fontSize = 56.sp,
+			textAlign = TextAlign.Center
+		)
+	}
 }
 
 @Composable
 private fun GlassEncouragementCard() {
-    val messages =
-        listOf(
-            stringResource(R.string.encouragement_walk),
-            stringResource(R.string.encouragement_water),
-            stringResource(R.string.encouragement_stretch),
-            stringResource(R.string.encouragement_window),
-            stringResource(R.string.encouragement_text_someone)
-        )
-    val message = remember { messages.random() }
+	val messages =
+		listOf(
+			stringResource(R.string.encouragement_walk),
+			stringResource(R.string.encouragement_water),
+			stringResource(R.string.encouragement_stretch),
+			stringResource(R.string.encouragement_window),
+			stringResource(R.string.encouragement_text_someone)
+		)
+	val message = remember { messages.random() }
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
-                .background(Color.White.copy(alpha = 0.06f))
-                .border(
-                    1.dp,
-                    Brush.linearGradient(
-                        colors =
-                            listOf(
-                                AccentTeal.copy(alpha = 0.3f),
-                                AccentPurple.copy(alpha = 0.2f),
-                                Color.Transparent
-                            )
-                    ),
-                    RoundedCornerShape(20.dp)
-                ).padding(20.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = message,
-            style =
-                MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Medium
-                ),
-            color = TextWhite.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center
-        )
-    }
+	Box(
+		modifier =
+			Modifier
+				.fillMaxWidth()
+				.clip(RoundedCornerShape(20.dp))
+				.background(Color.White.copy(alpha = 0.06f))
+				.border(
+					1.dp,
+					Brush.linearGradient(
+						colors =
+							listOf(
+								AccentTeal.copy(alpha = 0.3f),
+								AccentPurple.copy(alpha = 0.2f),
+								Color.Transparent
+							)
+					),
+					RoundedCornerShape(20.dp)
+				).padding(20.dp),
+		contentAlignment = Alignment.Center
+	) {
+		Text(
+			text = message,
+			style =
+				MaterialTheme.typography.bodyLarge.copy(
+					fontWeight = FontWeight.Medium
+				),
+			color = TextWhite.copy(alpha = 0.8f),
+			textAlign = TextAlign.Center
+		)
+	}
 }
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 private fun SoftParticles(modifier: Modifier = Modifier) {
-    data class Particle(
-        val x: Float,
-        val y: Float,
-        val size: Dp,
-        val speed: Long
-    )
+	data class Particle(
+		val x: Float,
+		val y: Float,
+		val size: Dp,
+		val speed: Long
+	)
 
-    val particles =
-        remember {
-            List(10) {
-                Particle(
-                    x = Random.nextFloat(),
-                    y = Random.nextFloat(),
-                    size = Random.nextInt(2, 4).dp,
-                    speed = Random.nextLong(5000, 10000)
-                )
-            }
-        }
+	val particles =
+		remember {
+			List(10) {
+				Particle(
+					x = Random.nextFloat(),
+					y = Random.nextFloat(),
+					size = Random.nextInt(2, 4).dp,
+					speed = Random.nextLong(5000, 10000)
+				)
+			}
+		}
 
-    Box(modifier = modifier) {
-        particles.forEach { particle ->
-            val infiniteTransition = rememberInfiniteTransition(label = "p")
-            val yOffset by infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = -100f,
-                animationSpec =
-                    infiniteRepeatable(
-                        animation = tween(particle.speed.toInt(), easing = LinearEasing),
-                        repeatMode = RepeatMode.Restart
-                    ),
-                label = "y"
-            )
-            val alpha by infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = 0.4f,
-                animationSpec =
-                    infiniteRepeatable(
-                        animation = tween(particle.speed.toInt()),
-                        repeatMode = RepeatMode.Reverse
-                    ),
-                label = "a"
-            )
+	Box(modifier = modifier) {
+		particles.forEach { particle ->
+			val infiniteTransition = rememberInfiniteTransition(label = "p")
+			val yOffset by infiniteTransition.animateFloat(
+				initialValue = 0f,
+				targetValue = -100f,
+				animationSpec =
+					infiniteRepeatable(
+						animation = tween(particle.speed.toInt(), easing = LinearEasing),
+						repeatMode = RepeatMode.Restart
+					),
+				label = "y"
+			)
+			val alpha by infiniteTransition.animateFloat(
+				initialValue = 0f,
+				targetValue = 0.4f,
+				animationSpec =
+					infiniteRepeatable(
+						animation = tween(particle.speed.toInt()),
+						repeatMode = RepeatMode.Reverse
+					),
+				label = "a"
+			)
 
-            Box(
-                modifier =
-                    Modifier
-                        .offset(
-                            x = (particle.x * 400).dp,
-                            y = (particle.y * 800).dp + yOffset.dp
-                        ).size(particle.size)
-                        .alpha(alpha)
-                        .background(Color.White, CircleShape)
-            )
-        }
-    }
+			Box(
+				modifier =
+					Modifier
+						.offset(
+							x = (particle.x * 400).dp,
+							y = (particle.y * 800).dp + yOffset.dp
+						).size(particle.size)
+						.alpha(alpha)
+						.background(Color.White, CircleShape)
+			)
+		}
+	}
 }

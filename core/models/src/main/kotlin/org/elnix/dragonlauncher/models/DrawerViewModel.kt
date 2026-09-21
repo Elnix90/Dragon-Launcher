@@ -39,112 +39,112 @@ import javax.inject.Inject
 @Stable
 @HiltViewModel
 public class DrawerViewModel
-    @Inject
-    constructor(
-        private val appsRepository: AppRepository,
-        private val shortcutRepository: AppShortcutRepository,
-        private val recentsService: RecentsService,
-        private val permissionsManager: PermissionsManager,
-        private val iconPackManager: IconPackManager,
-        public val appOverrideManager: AppOverridesManager,
-        public val workspaceManager: WorkspacesManager
-    ) : ViewModel() {
-        public val allApps: StateFlow<List<Application>> =
-            appsRepository.getAllApps().stateIn(
-                viewModelScope,
-                SharingStarted.Eagerly,
-                emptyList()
-            )
+	@Inject
+	constructor(
+		private val appsRepository: AppRepository,
+		private val shortcutRepository: AppShortcutRepository,
+		private val recentsService: RecentsService,
+		private val permissionsManager: PermissionsManager,
+		private val iconPackManager: IconPackManager,
+		public val appOverrideManager: AppOverridesManager,
+		public val workspaceManager: WorkspacesManager
+	) : ViewModel() {
+		public val allApps: StateFlow<List<Application>> =
+			appsRepository.getAllApps().stateIn(
+				viewModelScope,
+				SharingStarted.Eagerly,
+				emptyList()
+			)
 
-        // Only used for preview, the real user apps getter are using the appsForWorkspace function
-        public val userApps: StateFlow<List<Application>> =
-            allApps
-                .map { list ->
-                    list.filter { it.isLaunchable && !it.isWork && !it.isSystem && !it.isPrivate }
-                }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+		// Only used for preview, the real user apps getter are using the appsForWorkspace function
+		public val userApps: StateFlow<List<Application>> =
+			allApps
+				.map { list ->
+					list.filter { it.isLaunchable && !it.isWork && !it.isSystem && !it.isPrivate }
+				}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-        public val notifications: Array<out StatusBarNotification?>?
-            get() = NotificationService.getInstance()?.activeNotifications
+		public val notifications: Array<out StatusBarNotification?>?
+			get() = NotificationService.getInstance()?.activeNotifications
 
-        public fun isAppInstalled(packageName: String): StateFlow<Boolean> =
-            allApps
-                .map { apps ->
-                    apps.any { it.packageName == packageName }
-                }.stateIn(
-                    viewModelScope,
-                    SharingStarted.Lazily,
-                    false
-                )
+		public fun isAppInstalled(packageName: String): StateFlow<Boolean> =
+			allApps
+				.map { apps ->
+					apps.any { it.packageName == packageName }
+				}.stateIn(
+					viewModelScope,
+					SharingStarted.Lazily,
+					false
+				)
 
-        public val searchQuery: MutableState<String> = mutableStateOf("")
+		public val searchQuery: MutableState<String> = mutableStateOf("")
 
-        public fun clearSearchQuery() {
-            searchQuery.value = ""
-        }
+		public fun clearSearchQuery() {
+			searchQuery.value = ""
+		}
 
-        public fun findOne(action: Action.LaunchApp): Flow<Application?> = appsRepository.findOne(action)
+		public fun findOne(action: Action.LaunchApp): Flow<Application?> = appsRepository.findOne(action)
 
-        public suspend fun fromAction(action: Action.LaunchApp): Application? = appsRepository.fromAction(action)
+		public suspend fun fromAction(action: Action.LaunchApp): Application? = appsRepository.fromAction(action)
 
-        public fun search(
-            workspace: Workspace,
-            workspaceViewMode: WorkspaceViewMode = WorkspaceViewMode.Default
-        ): StateFlow<List<Application>> =
-            appsRepository
-                .search(
-                    searchQuery.value.trim(),
-                    workspace = workspace,
-                    workspaceViewMode = workspaceViewMode
-                ).stateIn(
-                    viewModelScope,
-                    SharingStarted.Eagerly,
-                    emptyList()
-                )
+		public fun search(
+			workspace: Workspace,
+			workspaceViewMode: WorkspaceViewMode = WorkspaceViewMode.Default
+		): StateFlow<List<Application>> =
+			appsRepository
+				.search(
+					searchQuery.value.trim(),
+					workspace = workspace,
+					workspaceViewMode = workspaceViewMode
+				).stateIn(
+					viewModelScope,
+					SharingStarted.Eagerly,
+					emptyList()
+				)
 
-        public fun reloadApps(): Job =
-            viewModelScope.launch {
-                appsRepository.refreshApps()
-            }
+		public fun reloadApps(): Job =
+			viewModelScope.launch {
+				appsRepository.refreshApps()
+			}
 
-        public fun getRecentApps(count: Int): StateFlow<List<Application>> = recentsService.getRecentApps(count)
+		public fun getRecentApps(count: Int): StateFlow<List<Application>> = recentsService.getRecentApps(count)
 
-        public val selectedWorkspaceId: StateFlow<String> =
-            workspaceManager.selectedWorkspaceId.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                initialValue = "User"
-            )
+		public val selectedWorkspaceId: StateFlow<String> =
+			workspaceManager.selectedWorkspaceId.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.Lazily,
+				initialValue = "User"
+			)
 
-        /**
-         * Returns a flow containing only the active workspaces.
-         * It shares the flow using [SharingStarted.Eagerly] and its really important,
-         * so that the flow always receives the correct workspaces, and not an emptyList when it starts to collect it
-         */
-        public val activeWorkspaces: StateFlow<List<Workspace>> =
-            workspaceManager.workspaces.flow
-                .map { workspaces ->
-                    workspaces.filter { it.enabled }
-                }.stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.Eagerly,
-                    initialValue = emptyList()
-                )
+		/**
+		 * Returns a flow containing only the active workspaces.
+		 * It shares the flow using [SharingStarted.Eagerly] and its really important,
+		 * so that the flow always receives the correct workspaces, and not an emptyList when it starts to collect it
+		 */
+		public val activeWorkspaces: StateFlow<List<Workspace>> =
+			workspaceManager.workspaces.flow
+				.map { workspaces ->
+					workspaces.filter { it.enabled }
+				}.stateIn(
+					scope = viewModelScope,
+					started = SharingStarted.Eagerly,
+					initialValue = emptyList()
+				)
 
-        public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> =
-            appsRepository.queryAppShortcuts(
-                packageName
-            )
+		public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> =
+			appsRepository.queryAppShortcuts(
+				packageName
+			)
 
-        public fun hasPermission(permission: PermissionGroup): Flow<Boolean> = permissionsManager.hasPermission(permission)
+		public fun hasPermission(permission: PermissionGroup): Flow<Boolean> = permissionsManager.hasPermission(permission)
 
-        public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
+		public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
 
-        public fun searchShortcuts(searchQuery: String): Flow<ImmutableList<ShortcutInfo>> =
-            shortcutRepository.search(
-                searchQuery
-            )
+		public fun searchShortcuts(searchQuery: String): Flow<ImmutableList<ShortcutInfo>> =
+			shortcutRepository.search(
+				searchQuery
+			)
 
-        init {
-            viewModelInitialized()
-        }
-    }
+		init {
+			viewModelInitialized()
+		}
+	}

@@ -42,83 +42,83 @@ import kotlin.math.atan2
  * @param closePath whether or not to close the created [Path]
  */
 internal fun RoundedPolygon.toPath(
-    path: Path = Path(),
-    startAngle: Int = 270,
-    repeatPath: Boolean = false,
-    closePath: Boolean = true
+	path: Path = Path(),
+	startAngle: Int = 270,
+	repeatPath: Boolean = false,
+	closePath: Boolean = true
 ): Path {
-    pathFromCubics(
-        path = path,
-        startAngle = startAngle,
-        repeatPath = repeatPath,
-        closePath = closePath,
-        cubics = cubics,
-        rotationPivotX = centerX,
-        rotationPivotY = centerY
-    )
-    return path
+	pathFromCubics(
+		path = path,
+		startAngle = startAngle,
+		repeatPath = repeatPath,
+		closePath = closePath,
+		cubics = cubics,
+		rotationPivotX = centerX,
+		rotationPivotY = centerY
+	)
+	return path
 }
 
 private fun pathFromCubics(
-    path: Path,
-    startAngle: Int,
-    repeatPath: Boolean,
-    closePath: Boolean,
-    cubics: List<Cubic>,
-    rotationPivotX: Float,
-    rotationPivotY: Float
+	path: Path,
+	startAngle: Int,
+	repeatPath: Boolean,
+	closePath: Boolean,
+	cubics: List<Cubic>,
+	rotationPivotX: Float,
+	rotationPivotY: Float
 ) {
-    var first = true
-    var firstCubic: Cubic? = null
-    path.rewind()
-    cubics.fastForEach {
-        if (first) {
-            path.moveTo(it.anchor0X, it.anchor0Y)
-            if (startAngle != 0) {
-                firstCubic = it
-            }
-            first = false
-        }
-        path.cubicTo(
-            it.control0X,
-            it.control0Y,
-            it.control1X,
-            it.control1Y,
-            it.anchor1X,
-            it.anchor1Y
-        )
-    }
-    if (repeatPath) {
-        var firstInRepeat = true
-        cubics.fastForEach {
-            if (firstInRepeat) {
-                path.lineTo(it.anchor0X, it.anchor0Y)
-                firstInRepeat = false
-            }
-            path.cubicTo(
-                it.control0X,
-                it.control0Y,
-                it.control1X,
-                it.control1Y,
-                it.anchor1X,
-                it.anchor1Y
-            )
-        }
-    }
+	var first = true
+	var firstCubic: Cubic? = null
+	path.rewind()
+	cubics.fastForEach {
+		if (first) {
+			path.moveTo(it.anchor0X, it.anchor0Y)
+			if (startAngle != 0) {
+				firstCubic = it
+			}
+			first = false
+		}
+		path.cubicTo(
+			it.control0X,
+			it.control0Y,
+			it.control1X,
+			it.control1Y,
+			it.anchor1X,
+			it.anchor1Y
+		)
+	}
+	if (repeatPath) {
+		var firstInRepeat = true
+		cubics.fastForEach {
+			if (firstInRepeat) {
+				path.lineTo(it.anchor0X, it.anchor0Y)
+				firstInRepeat = false
+			}
+			path.cubicTo(
+				it.control0X,
+				it.control0Y,
+				it.control1X,
+				it.control1Y,
+				it.anchor1X,
+				it.anchor1Y
+			)
+		}
+	}
 
-    if (closePath) path.close()
+	if (closePath) path.close()
 
-    if (startAngle != 0 && firstCubic != null) {
-        val angleToFirstCubic =
-            radiansToDegrees(
-                atan2(
-                    y = cubics[0].anchor0Y - rotationPivotY,
-                    x = cubics[0].anchor0X - rotationPivotX
-                )
-            )
-        // Rotate the Path to to start from the given angle.
-        path.transform(Matrix().apply { rotateZ(-angleToFirstCubic + startAngle) })
-    }
+	if (startAngle != 0 && firstCubic != null) {
+		val angleToFirstCubic =
+			radiansToDegrees(
+				atan2(
+					y = cubics[0].anchor0Y - rotationPivotY,
+					x = cubics[0].anchor0X - rotationPivotX
+				)
+			)
+		// Rotate the Path to to start from the given angle.
+		path.transform(Matrix().apply { rotateZ(-angleToFirstCubic + startAngle) })
+	}
 }
 
 private fun radiansToDegrees(radians: Float): Float = (radians * 180.0 / PI).toFloat()

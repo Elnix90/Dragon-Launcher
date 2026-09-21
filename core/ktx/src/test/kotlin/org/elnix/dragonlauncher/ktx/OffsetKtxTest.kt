@@ -12,331 +12,331 @@ import kotlin.math.sqrt
  * operations and coordinate math inherently produce tiny rounding errors.
  */
 class OffsetKtxTest {
-    private companion object {
-        const val EPSILON = 1e-3f
-        const val DEG_EPSILON = 0.5f
-    }
+	private companion object {
+		const val EPSILON = 1e-3f
+		const val DEG_EPSILON = 0.5f
+	}
 
-    //  distanceTo
+	//  distanceTo
 
-    @Test
-    fun `distanceTo same point is 0`() {
-        val a = Offset(5f, 5f)
-        assertEquals(0f, a distanceTo a, EPSILON)
-    }
+	@Test
+	fun `distanceTo same point is 0`() {
+		val a = Offset(5f, 5f)
+		assertEquals(0f, a distanceTo a, EPSILON)
+	}
 
-    @Test
-    fun `distanceTo horizontal`() {
-        val a = Offset(0f, 0f)
-        val b = Offset(3f, 0f)
-        assertEquals(3f, a distanceTo b, EPSILON)
-    }
+	@Test
+	fun `distanceTo horizontal`() {
+		val a = Offset(0f, 0f)
+		val b = Offset(3f, 0f)
+		assertEquals(3f, a distanceTo b, EPSILON)
+	}
 
-    @Test
-    fun `distanceTo vertical`() {
-        val a = Offset(0f, 0f)
-        val b = Offset(0f, 4f)
-        assertEquals(4f, a distanceTo b, EPSILON)
-    }
+	@Test
+	fun `distanceTo vertical`() {
+		val a = Offset(0f, 0f)
+		val b = Offset(0f, 4f)
+		assertEquals(4f, a distanceTo b, EPSILON)
+	}
 
-    @Test
-    fun `distanceTo 3-4-5 triangle`() {
-        val a = Offset(0f, 0f)
-        val b = Offset(3f, 4f)
-        assertEquals(5f, a distanceTo b, EPSILON)
-    }
+	@Test
+	fun `distanceTo 3-4-5 triangle`() {
+		val a = Offset(0f, 0f)
+		val b = Offset(3f, 4f)
+		assertEquals(5f, a distanceTo b, EPSILON)
+	}
 
-    @Test
-    fun `distanceTo is symmetric`() {
-        val a = Offset(1f, 2f)
-        val b = Offset(4f, 6f)
-        assertEquals(a distanceTo b, b distanceTo a, EPSILON)
-    }
+	@Test
+	fun `distanceTo is symmetric`() {
+		val a = Offset(1f, 2f)
+		val b = Offset(4f, 6f)
+		assertEquals(a distanceTo b, b distanceTo a, EPSILON)
+	}
 
-    @Test
-    fun `distanceTo with negative coordinates`() {
-        val a = Offset(-3f, -4f)
-        val b = Offset(0f, 0f)
-        assertEquals(5f, a distanceTo b, EPSILON)
-    }
+	@Test
+	fun `distanceTo with negative coordinates`() {
+		val a = Offset(-3f, -4f)
+		val b = Offset(0f, 0f)
+		assertEquals(5f, a distanceTo b, EPSILON)
+	}
 
-    //  distanceSquaredTo
+	//  distanceSquaredTo
 
-    @Test
-    fun `distanceSquaredTo same point is 0`() {
-        val a = Offset(5f, 5f)
-        assertEquals(0f, a distanceSquaredTo a, EPSILON)
-    }
+	@Test
+	fun `distanceSquaredTo same point is 0`() {
+		val a = Offset(5f, 5f)
+		assertEquals(0f, a distanceSquaredTo a, EPSILON)
+	}
 
-    @Test
-    fun `distanceSquaredTo 3-4-5 triangle returns 25`() {
-        val a = Offset(0f, 0f)
-        val b = Offset(3f, 4f)
-        assertEquals(25f, a distanceSquaredTo b, EPSILON)
-    }
+	@Test
+	fun `distanceSquaredTo 3-4-5 triangle returns 25`() {
+		val a = Offset(0f, 0f)
+		val b = Offset(3f, 4f)
+		assertEquals(25f, a distanceSquaredTo b, EPSILON)
+	}
 
-    @Test
-    fun `distanceSquaredTo is symmetric`() {
-        val a = Offset(1f, 2f)
-        val b = Offset(4f, 6f)
-        assertEquals(a distanceSquaredTo b, b distanceSquaredTo a, EPSILON)
-    }
+	@Test
+	fun `distanceSquaredTo is symmetric`() {
+		val a = Offset(1f, 2f)
+		val b = Offset(4f, 6f)
+		assertEquals(a distanceSquaredTo b, b distanceSquaredTo a, EPSILON)
+	}
 
-    //  angleDeg
+	//  angleDeg
 
-    @Test
-    fun `angleDeg right (positive x) is 0`() {
-        assertEquals(0f, Offset(1f, 0f).angleDeg(), DEG_EPSILON)
-    }
+	@Test
+	fun `angleDeg right (positive x) is 0`() {
+		assertEquals(0f, Offset(1f, 0f).angleDeg(), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angleDeg up (positive y) is 90`() {
-        assertEquals(90f, Offset(0f, 1f).angleDeg(), DEG_EPSILON)
-    }
+	@Test
+	fun `angleDeg up (positive y) is 90`() {
+		assertEquals(90f, Offset(0f, 1f).angleDeg(), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angleDeg left (negative x) is 180`() {
-        assertEquals(180f, Offset(-1f, 0f).angleDeg(), DEG_EPSILON)
-    }
+	@Test
+	fun `angleDeg left (negative x) is 180`() {
+		assertEquals(180f, Offset(-1f, 0f).angleDeg(), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angleDeg down (negative y) is 270`() {
-        assertEquals(270f, Offset(0f, -1f).angleDeg(), DEG_EPSILON)
-    }
+	@Test
+	fun `angleDeg down (negative y) is 270`() {
+		assertEquals(270f, Offset(0f, -1f).angleDeg(), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angleDeg origin is 0`() {
-        // atan2(0, 0) = 0, so angleDeg should be 0
-        assertEquals(0f, Offset(0f, 0f).angleDeg(), DEG_EPSILON)
-    }
+	@Test
+	fun `angleDeg origin is 0`() {
+		// atan2(0, 0) = 0, so angleDeg should be 0
+		assertEquals(0f, Offset(0f, 0f).angleDeg(), DEG_EPSILON)
+	}
 
-    //  angle360FromOffset
+	//  angle360FromOffset
 
-    @Test
-    fun `angle360FromOffset north is 0`() {
-        val center = Offset(100f, 100f)
-        val offset = Offset(100f, 0f) // above center
-        assertEquals(270f, angle360FromOffset(center, offset), DEG_EPSILON)
-    }
+	@Test
+	fun `angle360FromOffset north is 0`() {
+		val center = Offset(100f, 100f)
+		val offset = Offset(100f, 0f) // above center
+		assertEquals(270f, angle360FromOffset(center, offset), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angle360FromOffset east is 90`() {
-        val center = Offset(100f, 100f)
-        val offset = Offset(200f, 100f) // right of center
-        assertEquals(0f, angle360FromOffset(center, offset), DEG_EPSILON)
-    }
+	@Test
+	fun `angle360FromOffset east is 90`() {
+		val center = Offset(100f, 100f)
+		val offset = Offset(200f, 100f) // right of center
+		assertEquals(0f, angle360FromOffset(center, offset), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angle360FromOffset south is 180`() {
-        val center = Offset(100f, 100f)
-        val offset = Offset(100f, 200f) // below center
-        assertEquals(90f, angle360FromOffset(center, offset), DEG_EPSILON)
-    }
+	@Test
+	fun `angle360FromOffset south is 180`() {
+		val center = Offset(100f, 100f)
+		val offset = Offset(100f, 200f) // below center
+		assertEquals(90f, angle360FromOffset(center, offset), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angle360FromOffset west is 270`() {
-        val center = Offset(100f, 100f)
-        val offset = Offset(0f, 100f) // left of center
-        assertEquals(180f, angle360FromOffset(center, offset), DEG_EPSILON)
-    }
+	@Test
+	fun `angle360FromOffset west is 270`() {
+		val center = Offset(100f, 100f)
+		val offset = Offset(0f, 100f) // left of center
+		assertEquals(180f, angle360FromOffset(center, offset), DEG_EPSILON)
+	}
 
-    @Test
-    fun `angle360FromOffset same point is 0`() {
-        val center = Offset(50f, 50f)
-        assertEquals(0f, angle360FromOffset(center, center), DEG_EPSILON)
-    }
+	@Test
+	fun `angle360FromOffset same point is 0`() {
+		val center = Offset(50f, 50f)
+		assertEquals(0f, angle360FromOffset(center, center), DEG_EPSILON)
+	}
 
-    //  rotateBy
+	//  rotateBy
 
-    @Test
-    fun `rotateBy 0 returns same offset`() {
-        val offset = Offset(10f, 20f)
-        val rotated = offset.rotateBy(0f)
-        assertEquals(offset.x, rotated.x, EPSILON)
-        assertEquals(offset.y, rotated.y, EPSILON)
-    }
+	@Test
+	fun `rotateBy 0 returns same offset`() {
+		val offset = Offset(10f, 20f)
+		val rotated = offset.rotateBy(0f)
+		assertEquals(offset.x, rotated.x, EPSILON)
+		assertEquals(offset.y, rotated.y, EPSILON)
+	}
 
-    @Test
-    fun `rotateBy 360 returns same offset`() {
-        val offset = Offset(10f, 20f)
-        val rotated = offset.rotateBy(360f)
-        assertEquals(offset.x, rotated.x, EPSILON)
-        assertEquals(offset.y, rotated.y, EPSILON)
-    }
+	@Test
+	fun `rotateBy 360 returns same offset`() {
+		val offset = Offset(10f, 20f)
+		val rotated = offset.rotateBy(360f)
+		assertEquals(offset.x, rotated.x, EPSILON)
+		assertEquals(offset.y, rotated.y, EPSILON)
+	}
 
-    @Test
-    fun `rotateBy 90 degrees counterclockwise`() {
-        // (1, 0) rotated 90° CCW -> (0, 1)
-        val offset = Offset(1f, 0f)
-        val rotated = offset.rotateBy(90f)
-        assertEquals(0f, rotated.x, EPSILON)
-        assertEquals(1f, rotated.y, EPSILON)
-    }
+	@Test
+	fun `rotateBy 90 degrees counterclockwise`() {
+		// (1, 0) rotated 90° CCW -> (0, 1)
+		val offset = Offset(1f, 0f)
+		val rotated = offset.rotateBy(90f)
+		assertEquals(0f, rotated.x, EPSILON)
+		assertEquals(1f, rotated.y, EPSILON)
+	}
 
-    @Test
-    fun `rotateBy -90 degrees (clockwise)`() {
-        // (1, 0) rotated 90° CW -> (0, -1)
-        val offset = Offset(1f, 0f)
-        val rotated = offset.rotateBy(-90f)
-        assertEquals(0f, rotated.x, EPSILON)
-        assertEquals(-1f, rotated.y, EPSILON)
-    }
+	@Test
+	fun `rotateBy -90 degrees (clockwise)`() {
+		// (1, 0) rotated 90° CW -> (0, -1)
+		val offset = Offset(1f, 0f)
+		val rotated = offset.rotateBy(-90f)
+		assertEquals(0f, rotated.x, EPSILON)
+		assertEquals(-1f, rotated.y, EPSILON)
+	}
 
-    @Test
-    fun `rotateBy 180 degrees flips both components`() {
-        val offset = Offset(3f, 4f)
-        val rotated = offset.rotateBy(180f)
-        assertEquals(-3f, rotated.x, EPSILON)
-        assertEquals(-4f, rotated.y, EPSILON)
-    }
+	@Test
+	fun `rotateBy 180 degrees flips both components`() {
+		val offset = Offset(3f, 4f)
+		val rotated = offset.rotateBy(180f)
+		assertEquals(-3f, rotated.x, EPSILON)
+		assertEquals(-4f, rotated.y, EPSILON)
+	}
 
-    @Test
-    fun `rotateBy preserves magnitude`() {
-        val offset = Offset(3f, 4f)
-        val expectedMagnitude = sqrt(3f * 3f + 4f * 4f)
-        val rotated = offset.rotateBy(45f)
-        val actualMagnitude = sqrt(rotated.x * rotated.x + rotated.y * rotated.y)
-        assertEquals(expectedMagnitude, actualMagnitude, EPSILON)
-    }
+	@Test
+	fun `rotateBy preserves magnitude`() {
+		val offset = Offset(3f, 4f)
+		val expectedMagnitude = sqrt(3f * 3f + 4f * 4f)
+		val rotated = offset.rotateBy(45f)
+		val actualMagnitude = sqrt(rotated.x * rotated.x + rotated.y * rotated.y)
+		assertEquals(expectedMagnitude, actualMagnitude, EPSILON)
+	}
 
-    //  applyTransformations & undoTransformations
+	//  applyTransformations & undoTransformations
 
-    @Test
-    fun `applyTransformations then undoTransformations is identity`() {
-        val original = Offset(100f, 200f)
-        val zoom = 2f
-        val offset = Offset(50f, 30f)
-        val angle = 45f
+	@Test
+	fun `applyTransformations then undoTransformations is identity`() {
+		val original = Offset(100f, 200f)
+		val zoom = 2f
+		val offset = Offset(50f, 30f)
+		val angle = 45f
 
-        val transformed = original.applyTransformations(zoom, offset, angle)
-        val restored = transformed.undoTransformations(angle, zoom, offset)
+		val transformed = original.applyTransformations(zoom, offset, angle)
+		val restored = transformed.undoTransformations(angle, zoom, offset)
 
-        assertEquals(original.x, restored.x, EPSILON)
-        assertEquals(original.y, restored.y, EPSILON)
-    }
+		assertEquals(original.x, restored.x, EPSILON)
+		assertEquals(original.y, restored.y, EPSILON)
+	}
 
-    @Test
-    fun `applyTransformations with zero zoom and offset and angle is identity`() {
-        val original = Offset(10f, 20f)
-        val transformed = original.applyTransformations(1f, Offset.Zero, 0f)
-        assertEquals(original.x, transformed.x, EPSILON)
-        assertEquals(original.y, transformed.y, EPSILON)
-    }
+	@Test
+	fun `applyTransformations with zero zoom and offset and angle is identity`() {
+		val original = Offset(10f, 20f)
+		val transformed = original.applyTransformations(1f, Offset.Zero, 0f)
+		assertEquals(original.x, transformed.x, EPSILON)
+		assertEquals(original.y, transformed.y, EPSILON)
+	}
 
-    @Test
-    fun `applyTransformations only zoom scales correctly`() {
-        val original = Offset(10f, 20f)
-        val transformed = original.applyTransformations(2f, Offset.Zero, 0f)
-        // div(2) then plus(0) then rotateBy(0) -> original / 2
-        assertEquals(5f, transformed.x, EPSILON)
-        assertEquals(10f, transformed.y, EPSILON)
-    }
+	@Test
+	fun `applyTransformations only zoom scales correctly`() {
+		val original = Offset(10f, 20f)
+		val transformed = original.applyTransformations(2f, Offset.Zero, 0f)
+		// div(2) then plus(0) then rotateBy(0) -> original / 2
+		assertEquals(5f, transformed.x, EPSILON)
+		assertEquals(10f, transformed.y, EPSILON)
+	}
 
-    //  snapToRound (Float extension)
+	//  snapToRound (Float extension)
 
-    @Test
-    fun `snapToGrid snaps positive coordinates`() {
-        val offset = Offset(25f, 47f)
-        val result = offset.snapToGrid(10f)
+	@Test
+	fun `snapToGrid snaps positive coordinates`() {
+		val offset = Offset(25f, 47f)
+		val result = offset.snapToGrid(10f)
 
-        assertEquals(30f, result.x, EPSILON)
-        assertEquals(50f, result.y, EPSILON)
-    }
+		assertEquals(30f, result.x, EPSILON)
+		assertEquals(50f, result.y, EPSILON)
+	}
 
-    @Test
-    fun `snapToGrid snaps negative coordinates`() {
-        val offset = Offset(-25f, -47f)
-        val result = offset.snapToGrid(10f)
+	@Test
+	fun `snapToGrid snaps negative coordinates`() {
+		val offset = Offset(-25f, -47f)
+		val result = offset.snapToGrid(10f)
 
-        assertEquals(-20f, result.x, EPSILON)
-        assertEquals(-50f, result.y, EPSILON)
-    }
+		assertEquals(-20f, result.x, EPSILON)
+		assertEquals(-50f, result.y, EPSILON)
+	}
 
-    @Test
-    fun `snapToGrid already snapped returns unchanged`() {
-        val offset = Offset(20f, 50f)
-        val result = offset.snapToGrid(10f)
+	@Test
+	fun `snapToGrid already snapped returns unchanged`() {
+		val offset = Offset(20f, 50f)
+		val result = offset.snapToGrid(10f)
 
-        assertEquals(20f, result.x, EPSILON)
-        assertEquals(50f, result.y, EPSILON)
-    }
+		assertEquals(20f, result.x, EPSILON)
+		assertEquals(50f, result.y, EPSILON)
+	}
 
-    @Test
-    fun `snapToGrid mixed coordinates`() {
-        val offset = Offset(33f, -16f)
-        val result = offset.snapToGrid(10f)
+	@Test
+	fun `snapToGrid mixed coordinates`() {
+		val offset = Offset(33f, -16f)
+		val result = offset.snapToGrid(10f)
 
-        assertEquals(30f, result.x, EPSILON)
-        assertEquals(-20f, result.y, EPSILON)
-    }
+		assertEquals(30f, result.x, EPSILON)
+		assertEquals(-20f, result.y, EPSILON)
+	}
 
-    @Test
-    fun `snapToGrid small cell size`() {
-        val offset = Offset(1.7f, 2.4f)
-        val result = offset.snapToGrid(1f)
+	@Test
+	fun `snapToGrid small cell size`() {
+		val offset = Offset(1.7f, 2.4f)
+		val result = offset.snapToGrid(1f)
 
-        assertEquals(2f, result.x, EPSILON)
-        assertEquals(2f, result.y, EPSILON)
-    }
+		assertEquals(2f, result.x, EPSILON)
+		assertEquals(2f, result.y, EPSILON)
+	}
 
-    @Test
-    fun `snapToGrid zero offset`() {
-        val offset = Offset(0f, 0f)
-        val result = offset.snapToGrid(10f)
+	@Test
+	fun `snapToGrid zero offset`() {
+		val offset = Offset(0f, 0f)
+		val result = offset.snapToGrid(10f)
 
-        assertEquals(0f, result.x, EPSILON)
-        assertEquals(0f, result.y, EPSILON)
-    }
+		assertEquals(0f, result.x, EPSILON)
+		assertEquals(0f, result.y, EPSILON)
+	}
 
-    @Test(expected = IllegalArgumentException::class)
-    fun `snapToGrid zero cell size throws`() {
-        Offset(10f, 10f).snapToGrid(0f)
-    }
+	@Test(expected = IllegalArgumentException::class)
+	fun `snapToGrid zero cell size throws`() {
+		Offset(10f, 10f).snapToGrid(0f)
+	}
 
-    @Test(expected = IllegalArgumentException::class)
-    fun `snapToGrid negative cell size throws`() {
-        Offset(10f, 10f).snapToGrid(-5f)
-    }
+	@Test(expected = IllegalArgumentException::class)
+	fun `snapToGrid negative cell size throws`() {
+		Offset(10f, 10f).snapToGrid(-5f)
+	}
 
-    //  snapToRound (Offset extension)
+	//  snapToRound (Offset extension)
 
-    @Test
-    fun `Offset snapToRound snaps both axes`() {
-        val result = Offset(4.9f, 3.1f).snapToRound(Offset(5f, 3f), 0.2f)
-        assertEquals(5f, result.x, EPSILON)
-        assertEquals(3f, result.y, EPSILON)
-    }
+	@Test
+	fun `Offset snapToRound snaps both axes`() {
+		val result = Offset(4.9f, 3.1f).snapToRound(Offset(5f, 3f), 0.2f)
+		assertEquals(5f, result.x, EPSILON)
+		assertEquals(3f, result.y, EPSILON)
+	}
 
-    @Test
-    fun `Offset snapToRound only snaps x when y is beyond threshold`() {
-        val result = Offset(4.9f, 10f).snapToRound(Offset(5f, 3f), 0.2f)
-        assertEquals(5f, result.x, EPSILON)
-        assertEquals(10f, result.y, EPSILON)
-    }
+	@Test
+	fun `Offset snapToRound only snaps x when y is beyond threshold`() {
+		val result = Offset(4.9f, 10f).snapToRound(Offset(5f, 3f), 0.2f)
+		assertEquals(5f, result.x, EPSILON)
+		assertEquals(10f, result.y, EPSILON)
+	}
 
-    //  cleanString
+	//  cleanString
 
-    @Test
-    fun `cleanString formats integer coordinates`() {
-        val offset = Offset(10.0f, 20.0f)
-        assertEquals("10 ; 20", offset.cleanString())
-    }
+	@Test
+	fun `cleanString formats integer coordinates`() {
+		val offset = Offset(10.0f, 20.0f)
+		assertEquals("10 ; 20", offset.cleanString())
+	}
 
-    @Test
-    fun `cleanString rounds fractional coordinates`() {
-        val offset = Offset(10.6f, 20.4f)
-        assertEquals("11 ; 20", offset.cleanString())
-    }
+	@Test
+	fun `cleanString rounds fractional coordinates`() {
+		val offset = Offset(10.6f, 20.4f)
+		assertEquals("11 ; 20", offset.cleanString())
+	}
 
-    @Test
-    fun `cleanString with negative coordinates`() {
-        val offset = Offset(-5.7f, -10.3f)
-        assertEquals("-6 ; -10", offset.cleanString())
-    }
+	@Test
+	fun `cleanString with negative coordinates`() {
+		val offset = Offset(-5.7f, -10.3f)
+		assertEquals("-6 ; -10", offset.cleanString())
+	}
 
-    @Test
-    fun `cleanString with zero`() {
-        val offset = Offset(0f, 0f)
-        assertEquals("0 ; 0", offset.cleanString())
-    }
+	@Test
+	fun `cleanString with zero`() {
+		val offset = Offset(0f, 0f)
+		assertEquals("0 ; 0", offset.cleanString())
+	}
 }

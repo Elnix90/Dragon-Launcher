@@ -19,72 +19,72 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DragonTooltipInternal(
-    text: String,
-    enabled: Boolean,
-    modifier: Modifier,
-    content: @Composable ((Modifier) -> Unit)
+	text: String,
+	enabled: Boolean,
+	modifier: Modifier,
+	content: @Composable ((Modifier) -> Unit)
 ) {
-    val tooltipState = rememberTooltipState(isPersistent = true)
-    val haptic = LocalHapticFeedback.current
+	val tooltipState = rememberTooltipState(isPersistent = true)
+	val haptic = LocalHapticFeedback.current
 
-    LaunchedEffect(tooltipState.isVisible) {
-        if (tooltipState.isVisible) {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-        }
-    }
+	LaunchedEffect(tooltipState.isVisible) {
+		if (tooltipState.isVisible) {
+			haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+		}
+	}
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    TooltipBox(
-        positionProvider =
-            TooltipDefaults.rememberTooltipPositionProvider(
-                positioning = TooltipAnchorPosition.Above
-            ),
-        tooltip = {
-            PlainTooltip(
-                shape = MaterialTheme.shapes.large,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 5.dp,
-                shadowElevation = 3.dp
-            ) {
-                Text(text)
-            }
-        },
-        enableUserInput = enabled,
-        state = tooltipState
-    ) {
-        content(modifier)
-    }
+	@OptIn(ExperimentalMaterial3Api::class)
+	TooltipBox(
+		positionProvider =
+			TooltipDefaults.rememberTooltipPositionProvider(
+				positioning = TooltipAnchorPosition.Above
+			),
+		tooltip = {
+			PlainTooltip(
+				shape = MaterialTheme.shapes.large,
+				contentColor = MaterialTheme.colorScheme.onSurface,
+				containerColor = MaterialTheme.colorScheme.surface,
+				tonalElevation = 5.dp,
+				shadowElevation = 3.dp
+			) {
+				Text(text)
+			}
+		},
+		enableUserInput = enabled,
+		state = tooltipState
+	) {
+		content(modifier)
+	}
 }
 
 @Composable
 fun DragonTooltip(
-    resId: Int,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    content: @Composable ((Modifier) -> Unit)
+	resId: Int,
+	modifier: Modifier = Modifier,
+	enabled: Boolean = true,
+	content: @Composable ((Modifier) -> Unit)
 ) {
-    val text = resId.takeIf { it != -1 }?.let { stringResource(resId) } ?: "Unknown ressource"
+	val text = resId.takeIf { it != -1 }?.let { stringResource(resId) } ?: "Unknown ressource"
 
-    DragonTooltipInternal(
-        text = text,
-        modifier = modifier,
-        enabled = enabled,
-        content = content
-    )
+	DragonTooltipInternal(
+		text = text,
+		modifier = modifier,
+		enabled = enabled,
+		content = content
+	)
 }
 
 @Composable
 fun DragonTooltip(
-    description: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    content: @Composable ((Modifier) -> Unit)
+	description: String,
+	modifier: Modifier = Modifier,
+	enabled: Boolean = true,
+	content: @Composable ((Modifier) -> Unit)
 ) {
-    DragonTooltipInternal(
-        text = description,
-        modifier = modifier,
-        enabled = enabled,
-        content = content
-    )
+	DragonTooltipInternal(
+		text = description,
+		modifier = modifier,
+		enabled = enabled,
+		content = content
+	)
 }

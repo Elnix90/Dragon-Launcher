@@ -11,53 +11,53 @@ import org.elnix.dragonlauncher.base.cache.DrawScopeText
 
 @Suppress("FunctionName")
 fun DrawScope.PointerLocation(
-    offset: Offset,
-    color: Color = Color.White,
-    stroke: Float = 4f,
-    circleCenter: Boolean = true,
-    centerText: DrawScopeText? = null
+	offset: Offset,
+	color: Color = Color.White,
+	stroke: Float = 4f,
+	circleCenter: Boolean = true,
+	centerText: DrawScopeText? = null
 ) {
-    drawIntoCanvas { canvas ->
-        canvas.save()
+	drawIntoCanvas { canvas ->
+		canvas.save()
 
-        drawLine(
-            color = color,
-            start = offset.copy(x = 0f),
-            end = offset.copy(x = size.width),
-            strokeWidth = stroke
-        )
+		drawLine(
+			color = color,
+			start = offset.copy(x = 0f),
+			end = offset.copy(x = size.width),
+			strokeWidth = stroke
+		)
 
-        drawLine(
-            color = color,
-            start = offset.copy(y = 0f),
-            end = offset.copy(y = size.height),
-            strokeWidth = stroke
-        )
+		drawLine(
+			color = color,
+			start = offset.copy(y = 0f),
+			end = offset.copy(y = size.height),
+			strokeWidth = stroke
+		)
 
-        if (circleCenter) {
-            drawCircle(
-                color = color,
-                radius = 100f,
-                center = offset,
-                blendMode = BlendMode.Clear
-            )
+		if (circleCenter) {
+			drawCircle(
+				color = color,
+				radius = 100f,
+				center = offset,
+				blendMode = BlendMode.Clear
+			)
 
-            drawCircle(
-                color = color,
-                radius = 100f,
-                center = offset,
-                style = Stroke(stroke)
-            )
-        }
+			drawCircle(
+				color = color,
+				radius = 100f,
+				center = offset,
+				style = Stroke(stroke)
+			)
+		}
 
-        if (centerText != null) {
-            drawText(
-                textLayoutResult = centerText.offsetTextLayoutResult,
-                topLeft = offset - centerText.topLeft,
-                color = color
-            )
-        }
+		if (centerText != null) {
+			drawText(
+				textLayoutResult = centerText.offsetTextLayoutResult,
+				topLeft = offset - centerText.topLeft,
+				color = color
+			)
+		}
 
-        canvas.restore()
-    }
+		canvas.restore()
+	}
 }

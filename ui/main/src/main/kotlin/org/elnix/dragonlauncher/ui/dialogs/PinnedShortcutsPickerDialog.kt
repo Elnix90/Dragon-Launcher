@@ -42,19 +42,19 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.AppShortcutSearch
  * Represents a pinned shortcut with extra metadata for display.
  */
 private data class PinnedShortcutItem(
-    val shortcutInfo: ShortcutInfo,
-    val appName: String,
-    val packageName: String
+	val shortcutInfo: ShortcutInfo,
+	val appName: String,
+	val packageName: String
 )
 
 private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
-    if (q.isBlank()) return true
-    val s = shortcutInfo
-    return appName.contains(q, ignoreCase = true) ||
-        packageName.contains(q, ignoreCase = true) ||
-        (s.shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-        (s.longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-        s.id.contains(q, ignoreCase = true)
+	if (q.isBlank()) return true
+	val s = shortcutInfo
+	return appName.contains(q, ignoreCase = true) ||
+		packageName.contains(q, ignoreCase = true) ||
+		(s.shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+		(s.longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+		s.id.contains(q, ignoreCase = true)
 }
 
 /**
@@ -64,152 +64,152 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PinnedShortcutsPickerDialog(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    onDismiss: () -> Unit,
-    onShortcutSelected: (Action.LaunchShortcut) -> Unit
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	onDismiss: () -> Unit,
+	onShortcutSelected: (Action.LaunchShortcut) -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+	var searchQuery by remember { mutableStateOf("") }
 
-    val shortcuts by drawerViewModel.searchShortcuts(searchQuery).collectAsStateWithLifecycle(emptyList())
-    val applications by drawerViewModel.allApps.collectAsStateWithLifecycle()
+	val shortcuts by drawerViewModel.searchShortcuts(searchQuery).collectAsStateWithLifecycle(emptyList())
+	val applications by drawerViewModel.allApps.collectAsStateWithLifecycle()
 
-    val groupedShortcuts: Map<String, List<PinnedShortcutItem>> =
-        remember(shortcuts, applications) {
-            val allShortcuts = mutableListOf<PinnedShortcutItem>()
+	val groupedShortcuts: Map<String, List<PinnedShortcutItem>> =
+		remember(shortcuts, applications) {
+			val allShortcuts = mutableListOf<PinnedShortcutItem>()
 
-            for (shortcut in shortcuts) {
-                val appLabel = applications.firstOrNull { it.packageName == shortcut.`package` }?.label ?: continue
-                allShortcuts.add(
-                    PinnedShortcutItem(
-                        shortcutInfo = shortcut,
-                        appName = appLabel,
-                        packageName = shortcut.`package`
-                    )
-                )
-            }
+			for (shortcut in shortcuts) {
+				val appLabel = applications.firstOrNull { it.packageName == shortcut.`package` }?.label ?: continue
+				allShortcuts.add(
+					PinnedShortcutItem(
+						shortcutInfo = shortcut,
+						appName = appLabel,
+						packageName = shortcut.`package`
+					)
+				)
+			}
 
-            allShortcuts
-                .groupBy { it.appName }
-                .toSortedMap(String.CASE_INSENSITIVE_ORDER)
-        }
+			allShortcuts
+				.groupBy { it.appName }
+				.toSortedMap(String.CASE_INSENSITIVE_ORDER)
+		}
 
-    val filteredGrouped =
-        remember(searchQuery, groupedShortcuts) {
-            if (searchQuery.isBlank()) {
-                groupedShortcuts
-            } else {
-                val q = searchQuery
-                groupedShortcuts
-                    .mapNotNull { (appName, items) ->
-                        val filteredItems = items.filter { it.matchesShortcutSearch(q) }
-                        if (filteredItems.isEmpty()) null else appName to filteredItems
-                    }.toMap()
-            }
-        }
+	val filteredGrouped =
+		remember(searchQuery, groupedShortcuts) {
+			if (searchQuery.isBlank()) {
+				groupedShortcuts
+			} else {
+				val q = searchQuery
+				groupedShortcuts
+					.mapNotNull { (appName, items) ->
+						val filteredItems = items.filter { it.matchesShortcutSearch(q) }
+						if (filteredItems.isEmpty()) null else appName to filteredItems
+					}.toMap()
+			}
+		}
 
-    DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
-        DialogTitle(stringResource(R.string.pinned_shortcuts))
-        Spacer(10.dp)
+	DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
+		DialogTitle(stringResource(R.string.pinned_shortcuts))
+		Spacer(10.dp)
 
-        AppShortcutSearch(searchQuery) { searchQuery = it }
-        Spacer(10.dp)
+		AppShortcutSearch(searchQuery) { searchQuery = it }
+		Spacer(10.dp)
 
-        when {
-            groupedShortcuts.isEmpty() -> {
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.no_pinned_shortcuts),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+		when {
+			groupedShortcuts.isEmpty() -> {
+				Column(
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.padding(16.dp),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.Center
+				) {
+					Text(
+						text = stringResource(R.string.no_pinned_shortcuts),
+						style = MaterialTheme.typography.bodyLarge,
+						color = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+				}
+			}
 
-            filteredGrouped.isEmpty() && searchQuery.isNotEmpty() -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.no_search_match),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+			filteredGrouped.isEmpty() && searchQuery.isNotEmpty() -> {
+				Box(
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.padding(vertical = 24.dp),
+					contentAlignment = Alignment.Center
+				) {
+					Text(
+						text = stringResource(R.string.no_search_match),
+						style = MaterialTheme.typography.bodyLarge,
+						color = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+				}
+			}
 
-            else -> {
-                Column(
-                    modifier =
-                        Modifier
-                            .heightIn(max = 500.dp)
-                            .verticalScroll(rememberScrollState())
-                ) {
-                    filteredGrouped.forEach { (appName, shortcuts) ->
-                        DragonSettingsGroup(appName) {
-                            shortcuts.forEach { item ->
-                                ShortcutItem(
-                                    shortcut = item.shortcutInfo,
-                                    onClick = {
-                                        onShortcutSelected(
-                                            Action.LaunchShortcut(
-                                                packageName = item.packageName,
-                                                shortcutId = item.shortcutInfo.id,
-                                                user = item.shortcutInfo.userHandle
-                                            )
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+			else -> {
+				Column(
+					modifier =
+						Modifier
+							.heightIn(max = 500.dp)
+							.verticalScroll(rememberScrollState())
+				) {
+					filteredGrouped.forEach { (appName, shortcuts) ->
+						DragonSettingsGroup(appName) {
+							shortcuts.forEach { item ->
+								ShortcutItem(
+									shortcut = item.shortcutInfo,
+									onClick = {
+										onShortcutSelected(
+											Action.LaunchShortcut(
+												packageName = item.packageName,
+												shortcutId = item.shortcutInfo.id,
+												user = item.shortcutInfo.userHandle
+											)
+										)
+									}
+								)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 @Composable
 fun DragonGroupScope.ShortcutItem(
-    shortcut: ShortcutInfo,
-    onClick: () -> Unit
+	shortcut: ShortcutInfo,
+	onClick: () -> Unit
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            Modifier
-                .dragonSettingGroup {
-                    clickable(onClick = onClick)
-                }
-    ) {
-        ShortcutIcon(shortcut.toAction(), 36.dp)
-        Spacer(8.dp)
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = shortcut.shortLabel?.toString() ?: shortcut.id,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            shortcut.longLabel?.toString()?.takeIf { it.isNotBlank() }?.let { longLabel ->
-                Text(
-                    text = longLabel,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-    }
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		modifier =
+			Modifier
+				.dragonSettingGroup {
+					clickable(onClick = onClick)
+				}
+	) {
+		ShortcutIcon(shortcut.toAction(), 36.dp)
+		Spacer(8.dp)
+		Column(modifier = Modifier.weight(1f)) {
+			Text(
+				text = shortcut.shortLabel?.toString() ?: shortcut.id,
+				style = MaterialTheme.typography.bodyLarge,
+				maxLines = 1,
+				overflow = TextOverflow.Ellipsis
+			)
+			shortcut.longLabel?.toString()?.takeIf { it.isNotBlank() }?.let { longLabel ->
+				Text(
+					text = longLabel,
+					style = MaterialTheme.typography.labelMedium,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
+			}
+		}
+	}
 }

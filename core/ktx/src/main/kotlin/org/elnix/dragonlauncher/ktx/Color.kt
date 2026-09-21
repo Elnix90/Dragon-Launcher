@@ -17,7 +17,7 @@ import kotlin.random.Random
  * @return this color if defined, or `null` if it is `null` or `Color.Unspecified`
  */
 public fun Color?.specifiedOrNull(): Color? =
-    this.takeIf { it != Color.Unspecified }
+	this.takeIf { it != Color.Unspecified }
 
 /**
  * Returns a copy of this [Color] with its alpha multiplied by [multiplier].
@@ -32,7 +32,7 @@ public fun Color?.specifiedOrNull(): Color? =
  * @return a copy of this color with the adjusted alpha
  */
 public fun Color.alphaMultiplier(multiplier: Float): Color =
-    copy(alpha = alpha * multiplier)
+	copy(alpha = alpha * multiplier)
 
 /**
  * Returns this [Color], reducing its alpha by half when [enabled] is false.
@@ -45,11 +45,11 @@ public fun Color.alphaMultiplier(multiplier: Float): Color =
  * @return this color, or a version with its alpha halved when disabled
  */
 public fun Color.semiTransparentIfDisabled(enabled: Boolean): Color =
-    if (enabled) this else alphaMultiplier(0.5f)
+	if (enabled) this else alphaMultiplier(0.5f)
 
 /** Utility: convert Color -> #AARRGGBB */
 public inline val Color.toHexWithAlpha: String
-    get() = "#%08X".format(this.toArgb())
+	get() = "#%08X".format(this.toArgb())
 
 /**
  * Converts a hex color string to a [Color].
@@ -63,56 +63,56 @@ public inline val Color.toHexWithAlpha: String
  * @throws IllegalArgumentException If the string is not a valid hex color format
  */
 public fun String.toColor(): Color {
-    val hex = this.trim().removePrefix("#")
+	val hex = this.trim().removePrefix("#")
 
-    val argb =
-        when (hex.length) {
-            8 -> {
-                hex.toLong(16)
-            }
+	val argb =
+		when (hex.length) {
+			8 -> {
+				hex.toLong(16)
+			}
 
-            6 -> {
-                val rgb = hex.toLong(16)
-                (0xFF000000 or rgb)
-            }
+			6 -> {
+				val rgb = hex.toLong(16)
+				(0xFF000000 or rgb)
+			}
 
-            else -> {
-                throw IllegalArgumentException(
-                    "Invalid hex color format. Expected #RRGGBB or #AARRGGBB, got: #$hex"
-                )
-            }
-        }
+			else -> {
+				throw IllegalArgumentException(
+					"Invalid hex color format. Expected #RRGGBB or #AARRGGBB, got: #$hex"
+				)
+			}
+		}
 
-    return Color(argb)
+	return Color(argb)
 }
 
 public fun randomColor(
-    minLuminance: Float = 0f,
-    maxLuminance: Float = 1f,
-    alpha: Boolean = false
+	minLuminance: Float = 0f,
+	maxLuminance: Float = 1f,
+	alpha: Boolean = false
 ): Color {
-    val hue = Random.nextFloat() * 360f
-    val saturation = 1f
-    val value = Random.nextFloat() * (maxLuminance - minLuminance) + minLuminance
+	val hue = Random.nextFloat() * 360f
+	val saturation = 1f
+	val value = Random.nextFloat() * (maxLuminance - minLuminance) + minLuminance
 
-    // Convert HSV to RGB
-    val c = value * saturation
-    val x = c * (1 - abs((hue / 60f) % 2 - 1))
-    val m = value - c
+	// Convert HSV to RGB
+	val c = value * saturation
+	val x = c * (1 - abs((hue / 60f) % 2 - 1))
+	val m = value - c
 
-    val (r1, g1, b1) =
-        when (hue) {
-            in 0f..60f -> Triple(c, x, 0f)
-            in 60f..120f -> Triple(x, c, 0f)
-            in 120f..180f -> Triple(0f, c, x)
-            in 180f..240f -> Triple(0f, x, c)
-            in 240f..300f -> Triple(x, 0f, c)
-            else -> Triple(c, 0f, x)
-        }
+	val (r1, g1, b1) =
+		when (hue) {
+			in 0f..60f -> Triple(c, x, 0f)
+			in 60f..120f -> Triple(x, c, 0f)
+			in 120f..180f -> Triple(0f, c, x)
+			in 180f..240f -> Triple(0f, x, c)
+			in 240f..300f -> Triple(x, 0f, c)
+			else -> Triple(c, 0f, x)
+		}
 
-    val r = r1 + m
-    val g = g1 + m
-    val b = b1 + m
+	val r = r1 + m
+	val g = g1 + m
+	val b = b1 + m
 
-    return Color(r, g, b, if (alpha) Random.nextFloat() else 1f)
+	return Color(r, g, b, if (alpha) Random.nextFloat() else 1f)
 }

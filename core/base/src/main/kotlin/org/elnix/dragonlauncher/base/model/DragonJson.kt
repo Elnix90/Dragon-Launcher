@@ -12,14 +12,14 @@ import org.elnix.dragonlauncher.JSON_TAG
  * [DragonJson.decode] for type-safe and logged operations.
  */
 public val json: Json =
-    Json {
-        explicitNulls = false
-        ignoreUnknownKeys = true
-        prettyPrint = true
+	Json {
+		explicitNulls = false
+		ignoreUnknownKeys = true
+		prettyPrint = true
 
-        decodeEnumsCaseInsensitive = true
-        allowTrailingComma = true
-    }
+		decodeEnumsCaseInsensitive = true
+		allowTrailingComma = true
+	}
 
 /**
  * Abstract utility class for JSON serialization and deserialization using Kotlin's
@@ -35,64 +35,64 @@ public val json: Json =
  * @constructor Creates an empty [DragonJson] instance. Subclasses can extend this for custom logic.
  */
 public abstract class DragonJson<T> {
-    /**
-     * Encodes a Kotlin object to a JSON string.
-     *
-     * Uses the global [json] instance for serialization. Logs errors if encoding fails.
-     *
-     * @param T The type of the object to encode.
-     * @param value The object to serialize.
-     * @return The JSON string representation of [value], or `null` if encoding fails.
-     * @see json
-     */
-    public inline fun <reified T : Any> encode(value: T): String? =
-        runCatching {
-            json.encodeToString(value)
-        }.onFailure { e ->
-            logE(JSON_TAG, e) { "Failed to encode ${T::class.simpleName}" }
-        }.getOrNull()
+	/**
+	 * Encodes a Kotlin object to a JSON string.
+	 *
+	 * Uses the global [json] instance for serialization. Logs errors if encoding fails.
+	 *
+	 * @param T The type of the object to encode.
+	 * @param value The object to serialize.
+	 * @return The JSON string representation of [value], or `null` if encoding fails.
+	 * @see json
+	 */
+	public inline fun <reified T : Any> encode(value: T): String? =
+		runCatching {
+			json.encodeToString(value)
+		}.onFailure { e ->
+			logE(JSON_TAG, e) { "Failed to encode ${T::class.simpleName}" }
+		}.getOrNull()
 
-    /**
-     * Decodes a JSON string to a Kotlin object.
-     *
-     * Uses the global [json] instance for deserialization. Logs errors if decoding fails.
-     *
-     * @param T The expected type of the decoded object.
-     * @param string The JSON string to deserialize (can be `null` or any type with a `toString()` method).
-     * @return The deserialized object of type [T], or `null` if decoding fails.
-     * @see json
-     */
-    public inline fun <reified T : Any> decode(string: Any?): T? {
-        return runCatching {
-            val stringifiedString = string?.toString() ?: return null
-            if (stringifiedString.isEmpty()) return null
+	/**
+	 * Decodes a JSON string to a Kotlin object.
+	 *
+	 * Uses the global [json] instance for deserialization. Logs errors if decoding fails.
+	 *
+	 * @param T The expected type of the decoded object.
+	 * @param string The JSON string to deserialize (can be `null` or any type with a `toString()` method).
+	 * @return The deserialized object of type [T], or `null` if decoding fails.
+	 * @see json
+	 */
+	public inline fun <reified T : Any> decode(string: Any?): T? {
+		return runCatching {
+			val stringifiedString = string?.toString() ?: return null
+			if (stringifiedString.isEmpty()) return null
 
-            json.decodeFromString<T>(stringifiedString)
-        }.onFailure { e ->
-            logE(JSON_TAG, e) { "Failed to decode JSON:\n$string\n to ${T::class.simpleName}" }
-        }.getOrNull()
-    }
+			json.decodeFromString<T>(stringifiedString)
+		}.onFailure { e ->
+			logE(JSON_TAG, e) { "Failed to decode JSON:\n$string\n to ${T::class.simpleName}" }
+		}.getOrNull()
+	}
 
-    /**
-     * Decodes a JSON string to a Kotlin object, with a fallback value if decoding fails.
-     *
-     * Uses the global [json] instance for deserialization. Logs errors if decoding fails
-     * and returns the provided [fallback] value.
-     *
-     * @param T The expected type of the decoded object.
-     * @param string The JSON string to deserialize (can be `null` or any type with a `toString()` method).
-     * @param fallback The value to return if decoding fails.
-     * @return The deserialized object of type [T], or [fallback] if decoding fails.
-     * @see json
-     */
-    public inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
-        return runCatching {
-            val stringifiedString = string?.toString() ?: return fallback
-            if (stringifiedString.isEmpty()) return fallback
+	/**
+	 * Decodes a JSON string to a Kotlin object, with a fallback value if decoding fails.
+	 *
+	 * Uses the global [json] instance for deserialization. Logs errors if decoding fails
+	 * and returns the provided [fallback] value.
+	 *
+	 * @param T The expected type of the decoded object.
+	 * @param string The JSON string to deserialize (can be `null` or any type with a `toString()` method).
+	 * @param fallback The value to return if decoding fails.
+	 * @return The deserialized object of type [T], or [fallback] if decoding fails.
+	 * @see json
+	 */
+	public inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
+		return runCatching {
+			val stringifiedString = string?.toString() ?: return fallback
+			if (stringifiedString.isEmpty()) return fallback
 
-            json.decodeFromString<T>(stringifiedString)
-        }.onFailure { e ->
-            logE(JSON_TAG, e) { "Failed to decode JSON\n$string\n to ${T::class.simpleName}, returning fallback" }
-        }.getOrElse { fallback }
-    }
+			json.decodeFromString<T>(stringifiedString)
+		}.onFailure { e ->
+			logE(JSON_TAG, e) { "Failed to decode JSON\n$string\n to ${T::class.simpleName}, returning fallback" }
+		}.getOrElse { fallback }
+	}
 }

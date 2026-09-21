@@ -14,22 +14,22 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 
 @Composable
 fun SetDefaultLauncherBanner(onHide: () -> Unit) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    DragonRow(
-        onClick = { ctx.openDefaultLauncherSettings() }
-    ) {
-        Text(
-            stringResource(R.string.set_default_launcher),
-            color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.weight(1f)
-        )
+	DragonRow(
+		onClick = { ctx.openDefaultLauncherSettings() }
+	) {
+		Text(
+			stringResource(R.string.set_default_launcher),
+			color = MaterialTheme.colorScheme.onPrimary,
+			modifier = Modifier.weight(1f)
+		)
 
-        DragonIconButton(
-            icon = R.drawable.close,
-            contentDescription = R.string.close,
-            onClick = onHide
-        )
-    }
+		DragonIconButton(
+			icon = R.drawable.close,
+			contentDescription = R.string.close,
+			onClick = onHide
+		)
+	}
 }

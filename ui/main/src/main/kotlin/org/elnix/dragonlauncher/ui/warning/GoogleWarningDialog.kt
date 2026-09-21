@@ -31,93 +31,93 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 // Cloned from https://github.com/shub39/Grit/blob/89c2bb9a8c3b9bc66262ced9e378a8103a6d7a61/app/src/main/java/com/shub39/grit/warning/WarningDialog.kt
 
 @OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class
+	ExperimentalMaterial3ExpressiveApi::class,
+	ExperimentalMaterial3Api::class
 )
 @Composable
 fun GoogleWarningDialog(
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
+	onDismissRequest: () -> Unit,
+	modifier: Modifier = Modifier
 ) {
-    BasicAlertDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest
-    ) {
-        Card(shape = MaterialTheme.shapes.extraLarge) {
-            Column(
-                modifier =
-                    Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier =
-                        Modifier
-                            .size(48.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.errorContainer,
-                                shape = MaterialShapes.Pill.toShape()
-                            )
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.warning),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
+	BasicAlertDialog(
+		modifier = modifier,
+		onDismissRequest = onDismissRequest
+	) {
+		Card(shape = MaterialTheme.shapes.extraLarge) {
+			Column(
+				modifier =
+					Modifier
+						.padding(16.dp)
+						.fillMaxWidth(),
+				verticalArrangement = Arrangement.spacedBy(8.dp)
+			) {
+				Box(
+					contentAlignment = Alignment.Center,
+					modifier =
+						Modifier
+							.size(48.dp)
+							.background(
+								color = MaterialTheme.colorScheme.errorContainer,
+								shape = MaterialShapes.Pill.toShape()
+							)
+				) {
+					Icon(
+						painter = painterResource(R.drawable.warning),
+						contentDescription = null,
+						tint = MaterialTheme.colorScheme.onErrorContainer
+					)
+				}
 
-                Text(
-                    text = stringResource(R.string.warning_title),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.error
-                )
+				Text(
+					text = stringResource(R.string.warning_title),
+					style = MaterialTheme.typography.headlineSmall,
+					color = MaterialTheme.colorScheme.error
+				)
 
-                Text(
-                    text = stringResource(R.string.warning_subtitle),
-                    style = MaterialTheme.typography.titleMedium
-                )
+				Text(
+					text = stringResource(R.string.warning_subtitle),
+					style = MaterialTheme.typography.titleMedium
+				)
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = GoogleWarningManager.getDaysLeft().toString(),
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.error
-                    )
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.spacedBy(16.dp)
+				) {
+					Text(
+						text = GoogleWarningManager.getDaysLeft().toString(),
+						style = MaterialTheme.typography.displayLarge,
+						color = MaterialTheme.colorScheme.error
+					)
 
-                    Text(
-                        text = stringResource(R.string.warning_days_until_lockdown),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
+					Text(
+						text = stringResource(R.string.warning_days_until_lockdown),
+						style = MaterialTheme.typography.titleMedium
+					)
+				}
 
-                Text(
-                    text = stringResource(R.string.warning_description),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+				Text(
+					text = stringResource(R.string.warning_description),
+					style = MaterialTheme.typography.bodyMedium
+				)
 
-                Text(
-                    text = stringResource(R.string.warning_worldwide),
-                    style =
-                        MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                )
+				Text(
+					text = stringResource(R.string.warning_worldwide),
+					style =
+						MaterialTheme.typography.bodyMedium.copy(
+							fontWeight = FontWeight.Bold,
+							color = MaterialTheme.colorScheme.error
+						)
+				)
 
-                val uriHandler = LocalUriHandler.current
+				val uriHandler = LocalUriHandler.current
 
-                ValidateCancelButtons(
-                    cancelText = stringResource(R.string.do_something),
-                    validateText = "${stringResource(R.string.ok)} \uD83D\uDE2D",
-                    onCancel = { uriHandler.openUri("https://keepandroidopen.org/") },
-                    onConfirm = onDismissRequest
-                )
-            }
-        }
-    }
+				ValidateCancelButtons(
+					cancelText = stringResource(R.string.do_something),
+					validateText = "${stringResource(R.string.ok)} \uD83D\uDE2D",
+					onCancel = { uriHandler.openUri("https://keepandroidopen.org/") },
+					onConfirm = onDismissRequest
+				)
+			}
+		}
+	}
 }

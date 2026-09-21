@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun CategoryNameInputDialog(
-    onSelect: (name: String?) -> Unit,
-    onDismiss: () -> Unit
+	onSelect: (name: String?) -> Unit,
+	onDismiss: () -> Unit
 ) {
 }

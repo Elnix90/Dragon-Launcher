@@ -25,11 +25,11 @@ import kotlin.time.Duration.Companion.milliseconds
  * finger-down: cumulative sums of those delays.
  */
 private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<Long> {
-    var acc = 0L
-    return stages.map { stage ->
-        acc += stage.triggerTimeMs.toLong().coerceAtLeast(1)
-        acc
-    }
+	var acc = 0L
+	return stages.map { stage ->
+		acc += stage.triggerTimeMs.toLong().coerceAtLeast(1)
+		acc
+	}
 }
 
 /**
@@ -44,11 +44,11 @@ private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<
  * @property clear Resets all cycle state; call after a launch or after a cancel.
  */
 data class CycleActionsState(
-    val isActive: Boolean,
-    val currentStageIndex: Int,
-    val currentStageAction: Action?,
-    val resolveOnRelease: () -> Action?,
-    val clear: () -> Unit
+	val isActive: Boolean,
+	val currentStageIndex: Int,
+	val currentStageAction: Action?,
+	val resolveOnRelease: () -> Action?,
+	val clear: () -> Unit
 )
 
 /**
@@ -67,129 +67,129 @@ data class CycleActionsState(
  */
 @Composable
 fun rememberCycleActionsController(
-    pointsViewModel: PointsViewModel = activityViewModel(),
-    currentAction: Point?,
-    isDragging: Boolean
+	pointsViewModel: PointsViewModel = activityViewModel(),
+	currentAction: Point?,
+	isDragging: Boolean
 ): CycleActionsState {
-    val ctx = LocalContext.current
-    val pointsService = pointsViewModel.pointsService
-    val defaultPoint by pointsService.defaultPoint.asState()
+	val ctx = LocalContext.current
+	val pointsService = pointsViewModel.pointsService
+	val defaultPoint by pointsService.defaultPoint.asState()
 
-    val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
+	val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
-    val stages: List<CycleActionStage>? = currentAction?.cycleActions
+	val stages: List<CycleActionStage>? = currentAction?.cycleActions
 
-    var currentStageIndex by remember { mutableIntStateOf(0) }
+	var currentStageIndex by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(
-        currentAction?.id,
-        isDragging,
-        stages,
-        currentAction?.cycleActionsLoopDelayMs
-    ) {
-        // When isDragging goes false, do NOT reset here: let the overlay's release resolution logic
-        // read the final stage index via resolveOnRelease() before cleaning up.
-        if (!isDragging) return@LaunchedEffect
+	LaunchedEffect(
+		currentAction?.id,
+		isDragging,
+		stages,
+		currentAction?.cycleActionsLoopDelayMs
+	) {
+		// When isDragging goes false, do NOT reset here: let the overlay's release resolution logic
+		// read the final stage index via resolveOnRelease() before cleaning up.
+		if (!isDragging) return@LaunchedEffect
 
-        // New gesture or hovered point changed: start fresh.
-        currentStageIndex = 0
-        if (stages.isNullOrEmpty()) return@LaunchedEffect
+		// New gesture or hovered point changed: start fresh.
+		currentStageIndex = 0
+		if (stages.isNullOrEmpty()) return@LaunchedEffect
 
-        val loopDelayMs =
-            (
-                currentAction.cycleActionsLoopDelayMs
-                    ?: defaultPoint.cycleActionsLoopDelayMs
-                    ?: Point.defaultCycleActionsLoopDelayMs
-            ).toLong()
-                .coerceAtLeast(1L)
+		val loopDelayMs =
+			(
+				currentAction.cycleActionsLoopDelayMs
+					?: defaultPoint.cycleActionsLoopDelayMs
+					?: Point.defaultCycleActionsLoopDelayMs
+			).toLong()
+				.coerceAtLeast(1L)
 
-        val loopEnabled = loopDelayMs != -1L
+		val loopEnabled = loopDelayMs != -1L
 
-        val cumulativeMs = cumulativeTriggerThresholdsMs(stages)
-        val tLastEntry = cumulativeMs.last()
-        val cycleLen = tLastEntry + loopDelayMs
+		val cumulativeMs = cumulativeTriggerThresholdsMs(stages)
+		val tLastEntry = cumulativeMs.last()
+		val cycleLen = tLastEntry + loopDelayMs
 
-        val startTime = System.currentTimeMillis()
-        var lastCycleCount = -1L
-        var lastFiredStageIndex = -1
+		val startTime = System.currentTimeMillis()
+		var lastCycleCount = -1L
+		var lastFiredStageIndex = -1
 
-        while (isActive) {
-            val now = System.currentTimeMillis()
-            val totalElapsed = now - startTime
+		while (isActive) {
+			val now = System.currentTimeMillis()
+			val totalElapsed = now - startTime
 
-            val cycleCount = if (loopEnabled) totalElapsed / cycleLen else 0L
-            val eff = if (loopEnabled) totalElapsed % cycleLen else totalElapsed
+			val cycleCount = if (loopEnabled) totalElapsed / cycleLen else 0L
+			val eff = if (loopEnabled) totalElapsed % cycleLen else totalElapsed
 
-            if (loopEnabled && cycleCount != lastCycleCount) {
-                lastCycleCount = cycleCount
-            }
+			if (loopEnabled && cycleCount != lastCycleCount) {
+				lastCycleCount = cycleCount
+			}
 
-            val newIndex = (cumulativeMs.indexOfLast { eff >= it } + 1).coerceAtMost(stages.size)
+			val newIndex = (cumulativeMs.indexOfLast { eff >= it } + 1).coerceAtMost(stages.size)
 
-            if (newIndex != currentStageIndex) {
-                currentStageIndex = newIndex
+			if (newIndex != currentStageIndex) {
+				currentStageIndex = newIndex
 
-                // Haptic feedback for stage entries `1..N` and loop-wrap to Base (0).
-                if (!disableHapticFeedbackGlobally && newIndex != lastFiredStageIndex) {
-                    val haptic =
-                        when (newIndex) {
-                            in 1..stages.size -> {
-                                stages[newIndex - 1].hapticFeedback ?: defaultHapticFeedback()
-                            }
+				// Haptic feedback for stage entries `1..N` and loop-wrap to Base (0).
+				if (!disableHapticFeedbackGlobally && newIndex != lastFiredStageIndex) {
+					val haptic =
+						when (newIndex) {
+							in 1..stages.size -> {
+								stages[newIndex - 1].hapticFeedback ?: defaultHapticFeedback()
+							}
 
-                            0 if loopEnabled && lastFiredStageIndex == stages.size -> {
-                                // Light haptic when the loop wraps back to the base action.
-                                defaultHapticFeedback()
-                            }
+							0 if loopEnabled && lastFiredStageIndex == stages.size -> {
+								// Light haptic when the loop wraps back to the base action.
+								defaultHapticFeedback()
+							}
 
-                            else -> {
-                                null
-                            }
-                        }
+							else -> {
+								null
+							}
+						}
 
-                    haptic?.perform(ctx)
-                    lastFiredStageIndex = newIndex
-                }
-            }
+					haptic?.perform(ctx)
+					lastFiredStageIndex = newIndex
+				}
+			}
 
-            // If looping is disabled, we stay in the last stage after it is reached.
-            if (!loopEnabled && newIndex >= stages.size) break
+			// If looping is disabled, we stay in the last stage after it is reached.
+			if (!loopEnabled && newIndex >= stages.size) break
 
-            delay(16L.milliseconds)
-        }
-    }
+			delay(16L.milliseconds)
+		}
+	}
 
-    val resolveOnRelease: () -> Action? =
-        remember(stages) {
-            {
-                val idx = currentStageIndex
-                if (idx == 0 || stages.isNullOrEmpty()) {
-                    null
-                } else if (idx in 1..stages.size) {
-                    stages[idx - 1].action
-                } else {
-                    null
-                }
-            }
-        }
+	val resolveOnRelease: () -> Action? =
+		remember(stages) {
+			{
+				val idx = currentStageIndex
+				if (idx == 0 || stages.isNullOrEmpty()) {
+					null
+				} else if (idx in 1..stages.size) {
+					stages[idx - 1].action
+				} else {
+					null
+				}
+			}
+		}
 
-    val clear: () -> Unit = remember { { currentStageIndex = 0 } }
+	val clear: () -> Unit = remember { { currentStageIndex = 0 } }
 
-    val safeStageIndex = currentStageIndex.coerceIn(0, stages?.size ?: 0)
+	val safeStageIndex = currentStageIndex.coerceIn(0, stages?.size ?: 0)
 
-    val currentStageAction: Action? =
-        when {
-            stages.isNullOrEmpty() -> null
-            safeStageIndex == 0 -> null
-            safeStageIndex in 1..stages.size -> stages[safeStageIndex - 1].action
-            else -> null
-        }
+	val currentStageAction: Action? =
+		when {
+			stages.isNullOrEmpty() -> null
+			safeStageIndex == 0 -> null
+			safeStageIndex in 1..stages.size -> stages[safeStageIndex - 1].action
+			else -> null
+		}
 
-    return CycleActionsState(
-        isActive = isDragging && !stages.isNullOrEmpty(),
-        currentStageIndex = safeStageIndex,
-        currentStageAction = currentStageAction,
-        resolveOnRelease = resolveOnRelease,
-        clear = clear
-    )
+	return CycleActionsState(
+		isActive = isDragging && !stages.isNullOrEmpty(),
+		currentStageIndex = safeStageIndex,
+		currentStageAction = currentStageAction,
+		resolveOnRelease = resolveOnRelease,
+		clear = clear
+	)
 }

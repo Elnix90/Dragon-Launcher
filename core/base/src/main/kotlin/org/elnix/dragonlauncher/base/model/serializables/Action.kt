@@ -34,318 +34,318 @@ import org.elnix.dragonlauncher.i18n.R
 @Serializable
 @SerialName("Action")
 public sealed class Action {
-    @get:DrawableRes
-    public abstract val drawableId: Int
+	@get:DrawableRes
+	public abstract val drawableId: Int
 
-    @get:StringRes
-    public abstract val resId: Int
+	@get:StringRes
+	public abstract val resId: Int
 
-    @Immutable
-    @Serializable
-    @SerialName("LaunchApp")
-    public data class LaunchApp(
-        val packageName: String,
-        val profile: Profile,
-        @Transient
-        val timerDuration: Int? = null
-    ) : Action() {
-        override val drawableId: Int = R.drawable.apps
-        override val resId: Int = R.string.open_app
+	@Immutable
+	@Serializable
+	@SerialName("LaunchApp")
+	public data class LaunchApp(
+		val packageName: String,
+		val profile: Profile,
+		@Transient
+		val timerDuration: Int? = null
+	) : Action() {
+		override val drawableId: Int = R.drawable.apps
+		override val resId: Int = R.string.open_app
 
-        public var appLabel: String? = null
+		public var appLabel: String? = null
 
-        public constructor(application: Application) : this(
-            application.packageName,
-            application.profile
-        )
+		public constructor(application: Application) : this(
+			application.packageName,
+			application.profile
+		)
 
-        public companion object {
-            public val dummy: LaunchApp = LaunchApp(DummyApp())
-        }
-    }
+		public companion object {
+			public val dummy: LaunchApp = LaunchApp(DummyApp())
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("LaunchShortcut")
-    public data class LaunchShortcut(
-        val packageName: String,
-        val shortcutId: String,
-        @Serializable(UserHandleSerializer::class)
-        val user: UserHandle
-    ) : Action() {
-        override val drawableId: Int = R.drawable.ic_action_pinned_shortcut
-        override val resId: Int = R.string.pinned_shortcuts
+	@Immutable
+	@Serializable
+	@SerialName("LaunchShortcut")
+	public data class LaunchShortcut(
+		val packageName: String,
+		val shortcutId: String,
+		@Serializable(UserHandleSerializer::class)
+		val user: UserHandle
+	) : Action() {
+		override val drawableId: Int = R.drawable.ic_action_pinned_shortcut
+		override val resId: Int = R.string.pinned_shortcuts
 
-        public companion object {
-            public val dummy: LaunchShortcut = LaunchShortcut("", "", Process.myUserHandle())
+		public companion object {
+			public val dummy: LaunchShortcut = LaunchShortcut("", "", Process.myUserHandle())
 
-            public fun ShortcutInfo.toAction(): LaunchShortcut = LaunchShortcut(`package`, id, userHandle)
-        }
-    }
+			public fun ShortcutInfo.toAction(): LaunchShortcut = LaunchShortcut(`package`, id, userHandle)
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("OpenUrl")
-    public data class OpenUrl(
-        val url: String
-    ) : Action() {
-        override val drawableId: Int = R.drawable.web
-        override val resId: Int = R.string.open_url
+	@Immutable
+	@Serializable
+	@SerialName("OpenUrl")
+	public data class OpenUrl(
+		val url: String
+	) : Action() {
+		override val drawableId: Int = R.drawable.web
+		override val resId: Int = R.string.open_url
 
-        public companion object {
-            public val dummy: OpenUrl = OpenUrl("")
-        }
-    }
+		public companion object {
+			public val dummy: OpenUrl = OpenUrl("")
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("OpenFile")
-    public data class OpenFile(
-        val uri: String,
-        val mimeType: String? = null
-    ) : Action() {
-        override val drawableId: Int = R.drawable.ic_action_open_file
-        override val resId: Int = R.string.open_file
+	@Immutable
+	@Serializable
+	@SerialName("OpenFile")
+	public data class OpenFile(
+		val uri: String,
+		val mimeType: String? = null
+	) : Action() {
+		override val drawableId: Int = R.drawable.ic_action_open_file
+		override val resId: Int = R.string.open_file
 
-        public companion object {
-            public val dummy: OpenFile = OpenFile("")
-        }
-    }
+		public companion object {
+			public val dummy: OpenFile = OpenFile("")
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("OpenAppDrawer")
-    public data class OpenAppDrawer(
-        val workspaceId: String? = null
-    ) : Action() {
-        override val drawableId: Int = R.drawable.workspaces
-        override val resId: Int = R.string.app_drawer
+	@Immutable
+	@Serializable
+	@SerialName("OpenAppDrawer")
+	public data class OpenAppDrawer(
+		val workspaceId: String? = null
+	) : Action() {
+		override val drawableId: Int = R.drawable.workspaces
+		override val resId: Int = R.string.app_drawer
 
-        public companion object {
-            public val dummy: OpenAppDrawer = OpenAppDrawer("Pick")
-        }
-    }
+		public companion object {
+			public val dummy: OpenAppDrawer = OpenAppDrawer("Pick")
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("OpenDragonLauncherSettings")
-    public data class OpenDragonLauncherSettings(
-        val route: NavigationRoute = NavigationRoute.PointsSettings
-    ) : Action() {
-        override val drawableId: Int = R.mipmap.dragon_launcher_foreground
-        override val resId: Int = R.string.dragon_launcher_settings
+	@Immutable
+	@Serializable
+	@SerialName("OpenDragonLauncherSettings")
+	public data class OpenDragonLauncherSettings(
+		val route: NavigationRoute = NavigationRoute.PointsSettings
+	) : Action() {
+		override val drawableId: Int = R.mipmap.dragon_launcher_foreground
+		override val resId: Int = R.string.dragon_launcher_settings
 
-        public companion object {
-            public val dummy: OpenDragonLauncherSettings = OpenDragonLauncherSettings()
-        }
-    }
+		public companion object {
+			public val dummy: OpenDragonLauncherSettings = OpenDragonLauncherSettings()
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("OpenCircleNest")
-    public data class OpenNest(
-        val nestId: Int
-    ) : Action() {
-        override val drawableId: Int = R.drawable.nest_icon
-        override val resId: Int = R.string.open_nest
+	@Immutable
+	@Serializable
+	@SerialName("OpenCircleNest")
+	public data class OpenNest(
+		val nestId: Int
+	) : Action() {
+		override val drawableId: Int = R.drawable.nest_icon
+		override val resId: Int = R.string.open_nest
 
-        public companion object {
-            public val dummy: OpenNest = OpenNest(0)
-        }
-    }
+		public companion object {
+			public val dummy: OpenNest = OpenNest(0)
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("OpenWidget")
-    public data class OpenWidget(
-        val widgetId: Int,
-        val providerPackage: String,
-        val providerClass: String
-    ) : Action() {
-        override val drawableId: Int = R.drawable.widgets
-        override val resId: Int = R.string.widgets
+	@Immutable
+	@Serializable
+	@SerialName("OpenWidget")
+	public data class OpenWidget(
+		val widgetId: Int,
+		val providerPackage: String,
+		val providerClass: String
+	) : Action() {
+		override val drawableId: Int = R.drawable.widgets
+		override val resId: Int = R.string.widgets
 
-        public companion object {
-            public val dummy: OpenWidget = OpenWidget(0, "", "")
-        }
-    }
+		public companion object {
+			public val dummy: OpenWidget = OpenWidget(0, "", "")
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("ToggleWifi")
-    public data class ToggleWifi(
-        val command: WifiADBCommands = WifiADBCommands.Svc,
-        val toast: Boolean? = false
-    ) : Action() {
-        override val drawableId: Int = R.drawable.wifi
-        override val resId: Int = R.string.toggle_wifi
+	@Immutable
+	@Serializable
+	@SerialName("ToggleWifi")
+	public data class ToggleWifi(
+		val command: WifiADBCommands = WifiADBCommands.Svc,
+		val toast: Boolean? = false
+	) : Action() {
+		override val drawableId: Int = R.drawable.wifi
+		override val resId: Int = R.string.toggle_wifi
 
-        public companion object {
-            public val dummy: ToggleWifi = ToggleWifi()
-        }
-    }
+		public companion object {
+			public val dummy: ToggleWifi = ToggleWifi()
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("ToggleBluetooth")
-    public data class ToggleBluetooth(
-        val command: BluetoothADBCommands = BluetoothADBCommands.Cmd,
-        val toast: Boolean? = false
-    ) : Action() {
-        override val drawableId: Int = R.drawable.bluetooth
-        override val resId: Int = R.string.toggle_bluetooth
+	@Immutable
+	@Serializable
+	@SerialName("ToggleBluetooth")
+	public data class ToggleBluetooth(
+		val command: BluetoothADBCommands = BluetoothADBCommands.Cmd,
+		val toast: Boolean? = false
+	) : Action() {
+		override val drawableId: Int = R.drawable.bluetooth
+		override val resId: Int = R.string.toggle_bluetooth
 
-        public companion object {
-            public val dummy: ToggleBluetooth = ToggleBluetooth()
-        }
-    }
+		public companion object {
+			public val dummy: ToggleBluetooth = ToggleBluetooth()
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("ToggleData")
-    public data class ToggleData(
-        val command: DataADBCommands = DataADBCommands.Svc,
-        val toast: Boolean? = false
-    ) : Action() {
-        override val drawableId: Int = R.drawable.cellular_icon
-        override val resId: Int = R.string.toggle_mobile_data
+	@Immutable
+	@Serializable
+	@SerialName("ToggleData")
+	public data class ToggleData(
+		val command: DataADBCommands = DataADBCommands.Svc,
+		val toast: Boolean? = false
+	) : Action() {
+		override val drawableId: Int = R.drawable.cellular_icon
+		override val resId: Int = R.string.toggle_mobile_data
 
-        public companion object {
-            public val dummy: ToggleData = ToggleData()
-        }
-    }
+		public companion object {
+			public val dummy: ToggleData = ToggleData()
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("RunAdbCommand")
-    public data class RunAdbCommand(
-        val command: String,
-        val toast: Boolean? = false
-    ) : Action() {
-        override val drawableId: Int = R.drawable.adb_icon
-        override val resId: Int = R.string.adb_command
+	@Immutable
+	@Serializable
+	@SerialName("RunAdbCommand")
+	public data class RunAdbCommand(
+		val command: String,
+		val toast: Boolean? = false
+	) : Action() {
+		override val drawableId: Int = R.drawable.adb_icon
+		override val resId: Int = R.string.adb_command
 
-        public companion object {
-            public val dummy: RunAdbCommand = RunAdbCommand("")
-        }
-    }
+		public companion object {
+			public val dummy: RunAdbCommand = RunAdbCommand("")
+		}
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("Lock")
-    public object Lock : Action() {
-        override val drawableId: Int = R.drawable.lock
-        override val resId: Int = R.string.lock
-    }
+	@Immutable
+	@Serializable
+	@SerialName("Lock")
+	public object Lock : Action() {
+		override val drawableId: Int = R.drawable.lock
+		override val resId: Int = R.string.lock
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("ReloadApps")
-    public object ReloadApps : Action() {
-        override val drawableId: Int = R.drawable.reload
-        override val resId: Int = R.string.reload_apps
-    }
+	@Immutable
+	@Serializable
+	@SerialName("ReloadApps")
+	public object ReloadApps : Action() {
+		override val drawableId: Int = R.drawable.reload
+		override val resId: Int = R.string.reload_apps
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("OpenRecentApps")
-    public object OpenRecentApps : Action() {
-        override val drawableId: Int = R.drawable.recent
-        override val resId: Int = R.string.recent_apps
-    }
+	@Immutable
+	@Serializable
+	@SerialName("OpenRecentApps")
+	public object OpenRecentApps : Action() {
+		override val drawableId: Int = R.drawable.recent
+		override val resId: Int = R.string.recent_apps
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("NotificationShade")
-    public object NotificationShade : Action() {
-        override val drawableId: Int = R.drawable.notification
-        override val resId: Int = R.string.notifications
-    }
+	@Immutable
+	@Serializable
+	@SerialName("NotificationShade")
+	public object NotificationShade : Action() {
+		override val drawableId: Int = R.drawable.notification
+		override val resId: Int = R.string.notifications
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("ControlPanel")
-    public object ControlPanel : Action() {
-        override val drawableId: Int = R.drawable.ic_action_grid
-        override val resId: Int = R.string.control_panel
-    }
+	@Immutable
+	@Serializable
+	@SerialName("ControlPanel")
+	public object ControlPanel : Action() {
+		override val drawableId: Int = R.drawable.ic_action_grid
+		override val resId: Int = R.string.control_panel
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("GoParentNest")
-    public object GoParentNest : Action() {
-        override val drawableId: Int = R.drawable.fullscreen_exit
-        override val resId: Int = R.string.go_parent_nest
-    }
+	@Immutable
+	@Serializable
+	@SerialName("GoParentNest")
+	public object GoParentNest : Action() {
+		override val drawableId: Int = R.drawable.fullscreen_exit
+		override val resId: Int = R.string.go_parent_nest
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("KillLauncher")
-    public data object KillLauncher : Action() {
-        override val drawableId: Int = R.drawable.ic_action_kill
-        override val resId: Int = R.string.kill_launcher
-    }
+	@Immutable
+	@Serializable
+	@SerialName("KillLauncher")
+	public data object KillLauncher : Action() {
+		override val drawableId: Int = R.drawable.ic_action_kill
+		override val resId: Int = R.string.kill_launcher
+	}
 
-    @Immutable
-    @Serializable
-    @SerialName("None")
-    public object None : Action() {
-        override val drawableId: Int = R.drawable.remove
-        override val resId: Int = R.string.none
-    }
+	@Immutable
+	@Serializable
+	@SerialName("None")
+	public object None : Action() {
+		override val drawableId: Int = R.drawable.remove
+		override val resId: Int = R.string.none
+	}
 
-    public companion object {
-        public fun Action?.actionColor(
-            extraColors: ExtraColors,
-            customColor: Color? = null
-        ): Color =
-            customColor
-                ?: when (this) {
-                    is LaunchApp, is LaunchShortcut, is OpenWidget -> extraColors.launchApp
-                    is OpenUrl -> extraColors.openUrl
-                    is OpenAppDrawer -> extraColors.openAppDrawer
-                    is OpenDragonLauncherSettings -> extraColors.launcherSettings
-                    is OpenFile -> extraColors.openFile
-                    is ReloadApps -> extraColors.reload
-                    is OpenNest -> extraColors.openCircleNest
-                    is RunAdbCommand -> extraColors.runAdbCommand
-                    is ToggleBluetooth -> extraColors.toggleBluetooth
-                    is ToggleData -> extraColors.toggleData
-                    is ToggleWifi -> extraColors.toggleWifi
-                    NotificationShade -> extraColors.notificationShade
-                    ControlPanel -> extraColors.controlPanel
-                    Lock -> extraColors.lock
-                    OpenRecentApps -> extraColors.openRecentApps
-                    GoParentNest -> extraColors.goParentNest
-                    KillLauncher -> Color.Red
-                    None, null -> Color.Unspecified
-                }
+	public companion object {
+		public fun Action?.actionColor(
+			extraColors: ExtraColors,
+			customColor: Color? = null
+		): Color =
+			customColor
+				?: when (this) {
+					is LaunchApp, is LaunchShortcut, is OpenWidget -> extraColors.launchApp
+					is OpenUrl -> extraColors.openUrl
+					is OpenAppDrawer -> extraColors.openAppDrawer
+					is OpenDragonLauncherSettings -> extraColors.launcherSettings
+					is OpenFile -> extraColors.openFile
+					is ReloadApps -> extraColors.reload
+					is OpenNest -> extraColors.openCircleNest
+					is RunAdbCommand -> extraColors.runAdbCommand
+					is ToggleBluetooth -> extraColors.toggleBluetooth
+					is ToggleData -> extraColors.toggleData
+					is ToggleWifi -> extraColors.toggleWifi
+					NotificationShade -> extraColors.notificationShade
+					ControlPanel -> extraColors.controlPanel
+					Lock -> extraColors.lock
+					OpenRecentApps -> extraColors.openRecentApps
+					GoParentNest -> extraColors.goParentNest
+					KillLauncher -> Color.Red
+					None, null -> Color.Unspecified
+				}
 
-        public val allActions: List<Action> =
-            listOf(
-                OpenWidget.dummy,
-                LaunchApp.dummy,
-                OpenNest.dummy,
-                GoParentNest,
-                LaunchShortcut.dummy,
-                OpenUrl.dummy,
-                OpenFile.dummy,
-                NotificationShade,
-                ControlPanel,
-                OpenAppDrawer.dummy,
-                Lock,
-                ReloadApps,
-                OpenRecentApps,
-                OpenDragonLauncherSettings.dummy,
-                RunAdbCommand.dummy,
-                ToggleBluetooth.dummy,
-                ToggleWifi.dummy,
-                ToggleData.dummy,
-                KillLauncher
-            )
+		public val allActions: List<Action> =
+			listOf(
+				OpenWidget.dummy,
+				LaunchApp.dummy,
+				OpenNest.dummy,
+				GoParentNest,
+				LaunchShortcut.dummy,
+				OpenUrl.dummy,
+				OpenFile.dummy,
+				NotificationShade,
+				ControlPanel,
+				OpenAppDrawer.dummy,
+				Lock,
+				ReloadApps,
+				OpenRecentApps,
+				OpenDragonLauncherSettings.dummy,
+				RunAdbCommand.dummy,
+				ToggleBluetooth.dummy,
+				ToggleWifi.dummy,
+				ToggleData.dummy,
+				KillLauncher
+			)
 
-        public object ActionJson : DragonJson<Action>()
+		public object ActionJson : DragonJson<Action>()
 
-        public val actionsNumber: Int = Action::class.sealedSubclasses.size
-    }
+		public val actionsNumber: Int = Action::class.sealedSubclasses.size
+	}
 }

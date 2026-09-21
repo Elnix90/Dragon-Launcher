@@ -36,144 +36,144 @@ import org.junit.Test
  * and TextWithDescription from :core:ui:dragon. These must be on the classpath.
  */
 class SwitchRowTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Composable
-    fun TestTheme(content: @Composable DragonGroupScope.() -> Unit) {
-        MaterialTheme {
-            CompositionLocalProvider(
-                LocalUseCustomColorChannels provides true
-            ) {
-                DragonSettingsGroup {
-                    content()
-                }
-            }
-        }
-    }
+	@Composable
+	fun TestTheme(content: @Composable DragonGroupScope.() -> Unit) {
+		MaterialTheme {
+			CompositionLocalProvider(
+				LocalUseCustomColorChannels provides true
+			) {
+				DragonSettingsGroup {
+					content()
+				}
+			}
+		}
+	}
 
-    @Test
-    fun switchRow_displaysTitle() {
-        composeTestRule.setContent {
-            TestTheme {
-                SwitchRow(
-                    state = false,
-                    title = R.string.test,
-                    onCheck = {}
-                )
-            }
-        }
+	@Test
+	fun switchRow_displaysTitle() {
+		composeTestRule.setContent {
+			TestTheme {
+				SwitchRow(
+					state = false,
+					title = R.string.test,
+					onCheck = {}
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Test").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Test").assertIsDisplayed()
+	}
 
-    @Test
-    fun switchRow_displaysDescriptionWhenProvided() {
-        composeTestRule.setContent {
-            TestTheme {
-                SwitchRow(
-                    state = true,
-                    title = R.string.test,
-                    description = R.string.desc,
-                    onCheck = {}
-                )
-            }
-        }
+	@Test
+	fun switchRow_displaysDescriptionWhenProvided() {
+		composeTestRule.setContent {
+			TestTheme {
+				SwitchRow(
+					state = true,
+					title = R.string.test,
+					description = R.string.desc,
+					onCheck = {}
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Test").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Desc").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Test").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Desc").assertIsDisplayed()
+	}
 
-    @Test
-    fun switchRow_hidesDescriptionWhenNull() {
-        composeTestRule.setContent {
-            TestTheme {
-                SwitchRow(
-                    state = false,
-                    title = R.string.test,
-                    description = null,
-                    onCheck = {}
-                )
-            }
-        }
+	@Test
+	fun switchRow_hidesDescriptionWhenNull() {
+		composeTestRule.setContent {
+			TestTheme {
+				SwitchRow(
+					state = false,
+					title = R.string.test,
+					description = null,
+					onCheck = {}
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Test").assertIsDisplayed()
-        composeTestRule.onNodeWithText("").assertDoesNotExist()
-    }
+		composeTestRule.onNodeWithText("Test").assertIsDisplayed()
+		composeTestRule.onNodeWithText("").assertDoesNotExist()
+	}
 
-    @Test
-    fun switchRow_clickRowTriggersOnCheck() {
-        var checkedValue = false
+	@Test
+	fun switchRow_clickRowTriggersOnCheck() {
+		var checkedValue = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                SwitchRow(
-                    state = false,
-                    title = R.string.test,
-                    onCheck = { checkedValue = it }
-                )
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				SwitchRow(
+					state = false,
+					title = R.string.test,
+					onCheck = { checkedValue = it }
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Test").performClick()
-        assertTrue("onCheck should have been called with true", checkedValue)
-    }
+		composeTestRule.onNodeWithText("Test").performClick()
+		assertTrue("onCheck should have been called with true", checkedValue)
+	}
 
-    @Test
-    fun switchRow_clickRowWhenCheckedTriggersOnCheckWithFalse() {
-        var checkedValue = true
+	@Test
+	fun switchRow_clickRowWhenCheckedTriggersOnCheckWithFalse() {
+		var checkedValue = true
 
-        composeTestRule.setContent {
-            TestTheme {
-                SwitchRow(
-                    state = true,
-                    title = R.string.test,
-                    onCheck = { checkedValue = it }
-                )
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				SwitchRow(
+					state = true,
+					title = R.string.test,
+					onCheck = { checkedValue = it }
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Test").performClick()
-        assertFalse("onCheck should have been called with false", checkedValue)
-    }
+		composeTestRule.onNodeWithText("Test").performClick()
+		assertFalse("onCheck should have been called with false", checkedValue)
+	}
 
-    @Test
-    fun switchRow_usesDefaultWhenStateIsNull() {
-        // When state is null, defaultValue (false by default) is used.
-        // We verify the title is shown and the row is clickable.
-        var wasClicked = false
+	@Test
+	fun switchRow_usesDefaultWhenStateIsNull() {
+		// When state is null, defaultValue (false by default) is used.
+		// We verify the title is shown and the row is clickable.
+		var wasClicked = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                SwitchRow(
-                    state = null,
-                    title = R.string.test,
-                    onCheck = { wasClicked = it }
-                )
-            }
+		composeTestRule.setContent {
+			TestTheme {
+				SwitchRow(
+					state = null,
+					title = R.string.test,
+					onCheck = { wasClicked = it }
+				)
+			}
 
-            composeTestRule.onNodeWithText("Test").assertIsDisplayed()
-            composeTestRule.onNodeWithText("Test").performClick()
-            assertTrue("onCheck should trigger with true (default false toggled)", wasClicked)
-        }
-    }
+			composeTestRule.onNodeWithText("Test").assertIsDisplayed()
+			composeTestRule.onNodeWithText("Test").performClick()
+			assertTrue("onCheck should trigger with true (default false toggled)", wasClicked)
+		}
+	}
 
-    @Test
-    fun switchRow_customDefaultValue() {
-        var wasClicked = false
+	@Test
+	fun switchRow_customDefaultValue() {
+		var wasClicked = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                SwitchRow(
-                    state = null,
-                    title = R.string.test,
-                    defaultValue = true,
-                    onCheck = { wasClicked = it }
-                )
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				SwitchRow(
+					state = null,
+					title = R.string.test,
+					defaultValue = true,
+					onCheck = { wasClicked = it }
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Test").performClick()
-        assertFalse("onCheck should trigger with false (default true toggled)", wasClicked)
-    }
+		composeTestRule.onNodeWithText("Test").performClick()
+		assertFalse("onCheck should trigger with false (default true toggled)", wasClicked)
+	}
 }

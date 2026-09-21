@@ -35,123 +35,123 @@ import java.security.MessageDigest
  * @param duration Toast duration ([Toast.LENGTH_SHORT] or [Toast.LENGTH_LONG])
  */
 public fun Context.showToast(
-    message: Any?,
-    duration: Int = Toast.LENGTH_SHORT
+	message: Any?,
+	duration: Int = Toast.LENGTH_SHORT
 ) {
-    val context = this
-    val handler = Handler(Looper.getMainLooper())
-    handler.post {
-        try {
-            when (message) {
-                is String -> {
-                    if (message.isNotBlank()) {
-                        Toast.makeText(context, message, duration).show()
-                    }
-                }
+	val context = this
+	val handler = Handler(Looper.getMainLooper())
+	handler.post {
+		try {
+			when (message) {
+				is String -> {
+					if (message.isNotBlank()) {
+						Toast.makeText(context, message, duration).show()
+					}
+				}
 
-                is Int -> {
-                    Toast.makeText(context, message, duration).show()
-                }
+				is Int -> {
+					Toast.makeText(context, message, duration).show()
+				}
 
-                else -> {
-                    // Null or unsupported type, do nothing
-                }
-            }
-        } catch (e: Exception) {
-            logE(TAG, e) { "Error while showing toast" }
-        }
-    }
+				else -> {
+					// Null or unsupported type, do nothing
+				}
+			}
+		} catch (e: Exception) {
+			logE(TAG, e) { "Error while showing toast" }
+		}
+	}
 }
 
 @Deprecated("Use Uri Handler instead")
 public fun Context.openUrl(url: String) {
-    if (url.isEmpty()) return
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = url.toUri()
-    startActivity(intent)
+	if (url.isEmpty()) return
+	val intent = Intent(Intent.ACTION_VIEW)
+	intent.data = url.toUri()
+	startActivity(intent)
 }
 
 public fun Context.openSearch(query: String) {
-    val intent = Intent(Intent.ACTION_WEB_SEARCH)
-    intent.putExtra(SearchManager.QUERY, query)
-    startActivity(intent)
+	val intent = Intent(Intent.ACTION_WEB_SEARCH)
+	intent.putExtra(SearchManager.QUERY, query)
+	startActivity(intent)
 }
 
 public fun Context.expandQuickActionsDrawer() {
-    try {
-        //  (Android 12+)
+	try {
+		//  (Android 12+)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 //            val statusBarManager = context.getSystemService(Context.STATUS_BAR_SERVICE) as StatusBarManager
 //            statusBarManager.expandNotificationsPanel()
 //            return
 //        }
 
-        // Fall back -> reflection for older versions
-        val statusBarService = getSystemService("statusbar")
-        val statusBarManager = Class.forName("android.app.StatusBarManager")
-        val method = statusBarManager.getMethod("expandNotificationsPanel")
-        method.invoke(statusBarService)
-    } catch (_: Exception) {
-        // If all else fails, try to use the notification intent
-        try {
-            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-            startActivity(intent)
-        } catch (e2: Exception) {
-            e2.printStackTrace()
-        }
-    }
+		// Fall back -> reflection for older versions
+		val statusBarService = getSystemService("statusbar")
+		val statusBarManager = Class.forName("android.app.StatusBarManager")
+		val method = statusBarManager.getMethod("expandNotificationsPanel")
+		method.invoke(statusBarService)
+	} catch (_: Exception) {
+		// If all else fails, try to use the notification intent
+		try {
+			val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+			startActivity(intent)
+		} catch (e2: Exception) {
+			e2.printStackTrace()
+		}
+	}
 }
 
 public fun Context.getFilePathFromUri(uri: Uri): String {
-    // 1. Try SAF document path reconstruction
-    if (DocumentsContract.isDocumentUri(this, uri)) {
-        val docId = DocumentsContract.getDocumentId(uri)
-        val split = docId.split(":")
-        if (split.size == 2) {
-            val type = split[0]
-            val subPath = split[1]
+	// 1. Try SAF document path reconstruction
+	if (DocumentsContract.isDocumentUri(this, uri)) {
+		val docId = DocumentsContract.getDocumentId(uri)
+		val split = docId.split(":")
+		if (split.size == 2) {
+			val type = split[0]
+			val subPath = split[1]
 
-            // Internal storage (primary)
-            if (type.equals("primary", ignoreCase = true)) {
-                return "/storage/emulated/0/$subPath"
-            }
-        }
-    }
+			// Internal storage (primary)
+			if (type.equals("primary", ignoreCase = true)) {
+				return "/storage/emulated/0/$subPath"
+			}
+		}
+	}
 
-    // 2. If not from primary storage: fall back to the display name
-    val name = this.getUriDisplayName(uri)
-    if (name != null) return name
+	// 2. If not from primary storage: fall back to the display name
+	val name = this.getUriDisplayName(uri)
+	if (name != null) return name
 
-    // 3. Last fallback: last path segment
-    return uri.lastPathSegment ?: "Unknown file"
+	// 3. Last fallback: last path segment
+	return uri.lastPathSegment ?: "Unknown file"
 }
 
 private fun Context.getUriDisplayName(uri: Uri): String? =
-    try {
-        this.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (nameIndex != -1 && cursor.moveToFirst()) {
-                cursor.getString(nameIndex)
-            } else {
-                null
-            }
-        }
-    } catch (_: Exception) {
-        null
-    }
+	try {
+		this.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+			val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+			if (nameIndex != -1 && cursor.moveToFirst()) {
+				cursor.getString(nameIndex)
+			} else {
+				null
+			}
+		}
+	} catch (_: Exception) {
+		null
+	}
 
 public fun Context.hasUriReadPermission(uri: Uri): Boolean {
-    val perms = contentResolver.persistedUriPermissions
-    return perms.any { it.uri == uri && it.isReadPermission }
+	val perms = contentResolver.persistedUriPermissions
+	return perms.any { it.uri == uri && it.isReadPermission }
 }
 
 public fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
-    val perms = contentResolver.persistedUriPermissions
-    return perms.any { perm ->
-        perm.uri == uri &&
-            perm.isReadPermission &&
-            perm.isWritePermission
-    }
+	val perms = contentResolver.persistedUriPermissions
+	return perms.any { perm ->
+		perm.uri == uri &&
+			perm.isReadPermission &&
+			perm.isWritePermission
+	}
 }
 
 // fun Context.hasUsageStatsPermission(): Boolean {
@@ -178,43 +178,43 @@ public fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
 // }
 
 public val Context.dp: Float
-    get() = resources.displayMetrics.density
+	get() = resources.displayMetrics.density
 
 public fun Context.checkPermission(permission: String): Boolean =
-    ContextCompat.checkSelfPermission(
-        this,
-        permission
-    ) == PackageManager.PERMISSION_GRANTED
+	ContextCompat.checkSelfPermission(
+		this,
+		permission
+	) == PackageManager.PERMISSION_GRANTED
 
 public fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean =
-    try {
-        startActivity(intent, bundle)
-        true
-    } catch (_: ActivityNotFoundException) {
-        false
-    } catch (_: SecurityException) {
-        false
-    }
+	try {
+		startActivity(intent, bundle)
+		true
+	} catch (_: ActivityNotFoundException) {
+		false
+	} catch (_: SecurityException) {
+		false
+	}
 
 public fun Context.getInstallSource(
-    packageName: String
+	packageName: String
 ): InstallSourceInfoCompat {
-    val pm = this.packageManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        val installSourceInfo = pm.getInstallSourceInfo(packageName)
-        return InstallSourceInfoCompat(
-            originatingPackageName = installSourceInfo.originatingPackageName,
-            initiatingPackageName = installSourceInfo.initiatingPackageName,
-            installingPackageName = installSourceInfo.installingPackageName
-        )
-    } else {
-        val installerPackageName = pm.getInstallerPackageName(packageName)
-        return InstallSourceInfoCompat(
-            originatingPackageName = installerPackageName,
-            initiatingPackageName = installerPackageName,
-            installingPackageName = installerPackageName
-        )
-    }
+	val pm = this.packageManager
+	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+		val installSourceInfo = pm.getInstallSourceInfo(packageName)
+		return InstallSourceInfoCompat(
+			originatingPackageName = installSourceInfo.originatingPackageName,
+			initiatingPackageName = installSourceInfo.initiatingPackageName,
+			installingPackageName = installSourceInfo.installingPackageName
+		)
+	} else {
+		val installerPackageName = pm.getInstallerPackageName(packageName)
+		return InstallSourceInfoCompat(
+			originatingPackageName = installerPackageName,
+			initiatingPackageName = installerPackageName,
+			installingPackageName = installerPackageName
+		)
+	}
 }
 
 /**
@@ -222,39 +222,39 @@ public fun Context.getInstallSource(
  * Compose's `LocalContext.current` may be wrapped by ContextThemeWrapper or similar.
  */
 public fun Context.findFragmentActivity(): FragmentActivity? {
-    var ctx: Context? = this
-    var depth = 0
-    while (ctx != null && depth < 20) { // Prevent infinite loops
-        logD(SECURITY_SERVICE) { "findFragmentActivity: depth=$depth, ctx=${ctx::class.simpleName}" }
-        when (ctx) {
-            is FragmentActivity -> {
-                logD(SECURITY_SERVICE) { "Found FragmentActivity at depth $depth" }
-                return ctx
-            }
+	var ctx: Context? = this
+	var depth = 0
+	while (ctx != null && depth < 20) { // Prevent infinite loops
+		logD(SECURITY_SERVICE) { "findFragmentActivity: depth=$depth, ctx=${ctx::class.simpleName}" }
+		when (ctx) {
+			is FragmentActivity -> {
+				logD(SECURITY_SERVICE) { "Found FragmentActivity at depth $depth" }
+				return ctx
+			}
 
-            is ContextWrapper -> {
-                ctx = ctx.baseContext
-            }
+			is ContextWrapper -> {
+				ctx = ctx.baseContext
+			}
 
-            else -> {
-                logD(SECURITY_SERVICE) { "Context is not ContextWrapper, cannot unwrap further" }
-                return null
-            }
-        }
-        depth++
-    }
-    logD(SECURITY_SERVICE) { "findFragmentActivity failed after $depth iterations" }
-    return null
+			else -> {
+				logD(SECURITY_SERVICE) { "Context is not ContextWrapper, cannot unwrap further" }
+				return null
+			}
+		}
+		depth++
+	}
+	logD(SECURITY_SERVICE) { "findFragmentActivity failed after $depth iterations" }
+	return null
 }
 
 public fun Context.openDefaultLauncherSettings() {
-    tryStartActivity(Intent(Settings.ACTION_HOME_SETTINGS))
+	tryStartActivity(Intent(Settings.ACTION_HOME_SETTINGS))
 }
 
 public data class InstallSourceInfoCompat(
-    val originatingPackageName: String?,
-    val initiatingPackageName: String?,
-    val installingPackageName: String?
+	val originatingPackageName: String?,
+	val initiatingPackageName: String?,
+	val installingPackageName: String?
 )
 
 /**
@@ -265,58 +265,58 @@ public data class InstallSourceInfoCompat(
  */
 @RequiresPermission(Manifest.permission.VIBRATE)
 @Deprecated(
-    "Prefer using LocalHapticFeedback instead of this low level api that doesn't account for the user preferences about haptic feedback"
+	"Prefer using LocalHapticFeedback instead of this low level api that doesn't account for the user preferences about haptic feedback"
 )
 public fun Context.vibrate(milliseconds: Long) {
-    val vibrator =
-        if (Build.VERSION.SDK_INT >= 31) {
-            val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            manager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION")
-            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        }
+	val vibrator =
+		if (Build.VERSION.SDK_INT >= 31) {
+			val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+			manager.defaultVibrator
+		} else {
+			@Suppress("DEPRECATION")
+			getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+		}
 
-    vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
+	vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
 }
 
 public fun Context.checkSignature(expectedHash: String): Boolean {
-    return try {
-        val packageInfo =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                this.packageManager.getPackageInfo(
-                    this.packageName,
-                    PackageManager.GET_SIGNING_CERTIFICATES
-                )
-            } else {
-                // Fallback for older versions (pre-API 28)
-                @Suppress("DEPRECATION")
-                this.packageManager.getPackageInfo(
-                    this.packageName,
-                    PackageManager.GET_SIGNATURES
-                )
-            }
+	return try {
+		val packageInfo =
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+				this.packageManager.getPackageInfo(
+					this.packageName,
+					PackageManager.GET_SIGNING_CERTIFICATES
+				)
+			} else {
+				// Fallback for older versions (pre-API 28)
+				@Suppress("DEPRECATION")
+				this.packageManager.getPackageInfo(
+					this.packageName,
+					PackageManager.GET_SIGNATURES
+				)
+			}
 
-        val signatures =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo.signingInfo?.signingCertificateHistory ?: return false
-            } else {
-                @Suppress("DEPRECATION")
-                packageInfo.signatures ?: return false
-            }
+		val signatures =
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+				packageInfo.signingInfo?.signingCertificateHistory ?: return false
+			} else {
+				@Suppress("DEPRECATION")
+				packageInfo.signatures ?: return false
+			}
 
-        signatures.any { signature ->
-            val hash = hashSignature(signature.toByteArray())
-            hash.equals(expectedHash, ignoreCase = true)
-        }
-    } catch (e: Exception) {
-        logE(SECURITY_SERVICE, e) { "Failed to get signatures" }
-        false
-    }
+		signatures.any { signature ->
+			val hash = hashSignature(signature.toByteArray())
+			hash.equals(expectedHash, ignoreCase = true)
+		}
+	} catch (e: Exception) {
+		logE(SECURITY_SERVICE, e) { "Failed to get signatures" }
+		false
+	}
 }
 
 private fun hashSignature(signatureBytes: ByteArray): String {
-    val digest = MessageDigest.getInstance("SHA-256")
-    val hashBytes = digest.digest(signatureBytes)
-    return hashBytes.joinToString("") { "%02x".format(it) }
+	val digest = MessageDigest.getInstance("SHA-256")
+	val hashBytes = digest.digest(signatureBytes)
+	return hashBytes.joinToString("") { "%02x".format(it) }
 }

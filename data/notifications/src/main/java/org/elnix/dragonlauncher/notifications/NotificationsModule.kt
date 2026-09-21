@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object NotificationsModule {
-    @Provides
-    @Singleton
-    fun provideNotificationRepository(): NotificationRepository = NotificationRepository()
+	@Provides
+	@Singleton
+	fun provideNotificationRepository(): NotificationRepository = NotificationRepository()
 }

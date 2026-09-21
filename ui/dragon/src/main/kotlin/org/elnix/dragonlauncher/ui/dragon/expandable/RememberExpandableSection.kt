@@ -9,25 +9,25 @@ import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 
 @Composable
 fun rememberExpandableSection(
-    title: Int,
-    description: Int?,
-    icon: Int?,
-    customLeadingContent: (@Composable () -> Unit)? = null,
-    skipPartiallyExpanded: Boolean = true,
-    enabled: Boolean = true
+	title: Int,
+	description: Int?,
+	icon: Int?,
+	customLeadingContent: (@Composable () -> Unit)? = null,
+	skipPartiallyExpanded: Boolean = true,
+	enabled: Boolean = true
 ): ExpandableSectionState {
-    var isExpanded by remember { mutableStateOf(false) }
+	var isExpanded by remember { mutableStateOf(false) }
 
-    return remember(title, description, enabled) {
-        ExpandableSectionState(
-            isExpanded = { isExpanded },
-            enabled = enabled,
-            title = title,
-            description = description,
-            icon = icon,
-            customLeadingContent = customLeadingContent,
-            skipPartiallyExpanded = skipPartiallyExpanded,
-            toggle = { isExpanded = !isExpanded }
-        )
-    }
+	return remember(title, description, enabled) {
+		ExpandableSectionState(
+			isExpanded = { isExpanded },
+			enabled = enabled,
+			title = title,
+			description = description,
+			icon = icon,
+			customLeadingContent = customLeadingContent,
+			skipPartiallyExpanded = skipPartiallyExpanded,
+			toggle = { isExpanded = !isExpanded }
+		)
+	}
 }

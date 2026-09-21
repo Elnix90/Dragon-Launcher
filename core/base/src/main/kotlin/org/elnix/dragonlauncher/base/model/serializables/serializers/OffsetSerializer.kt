@@ -12,15 +12,15 @@ import org.elnix.dragonlauncher.ktx.round
 
 @OptIn(ExperimentalSerializationApi::class)
 internal object OffsetSerializer : KSerializer<Offset> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("Offset", PrimitiveKind.STRING)
+	override val descriptor: SerialDescriptor =
+		PrimitiveSerialDescriptor("Offset", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Offset) {
-        encoder.encodeString("${value.x.round(2)},${value.y.round(2)}")
-    }
+	override fun serialize(encoder: Encoder, value: Offset) {
+		encoder.encodeString("${value.x.round(2)},${value.y.round(2)}")
+	}
 
-    override fun deserialize(decoder: Decoder): Offset {
-        val parts = decoder.decodeString().split(",")
-        return Offset(x = parts[0].toFloat(), y = parts[1].toFloat())
-    }
+	override fun deserialize(decoder: Decoder): Offset {
+		val parts = decoder.decodeString().split(",")
+		return Offset(x = parts[0].toFloat(), y = parts[1].toFloat())
+	}
 }

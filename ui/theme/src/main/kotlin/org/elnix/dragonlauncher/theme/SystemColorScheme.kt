@@ -16,27 +16,27 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 
 @Composable
 fun systemColorScheme(): ColorScheme {
-    val context = LocalContext.current
-    val darkTheme = isSystemInDarkTheme()
-    val dynamicColors by ColorModesSettingsStore.dynamicColors.asState()
+	val context = LocalContext.current
+	val darkTheme = isSystemInDarkTheme()
+	val dynamicColors by ColorModesSettingsStore.dynamicColors.asState()
 
-    return remember(darkTheme, dynamicColors, context) {
-        when {
-            dynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                if (darkTheme) {
-                    dynamicDarkColorScheme(context)
-                } else {
-                    dynamicLightColorScheme(context)
-                }
-            }
+	return remember(darkTheme, dynamicColors, context) {
+		when {
+			dynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+				if (darkTheme) {
+					dynamicDarkColorScheme(context)
+				} else {
+					dynamicLightColorScheme(context)
+				}
+			}
 
-            darkTheme -> {
-                DarkDragonColorScheme
-            }
+			darkTheme -> {
+				DarkDragonColorScheme
+			}
 
-            else -> {
-                LightDragonColorScheme
-            }
-        }
-    }
+			else -> {
+				LightDragonColorScheme
+			}
+		}
+	}
 }

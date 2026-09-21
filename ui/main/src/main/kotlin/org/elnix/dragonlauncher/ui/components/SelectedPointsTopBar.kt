@@ -45,188 +45,188 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
 fun SelectedPointsTopBar(
-    modifier: Modifier,
-    points: Points,
-    selectedPointsIds: List<Int>,
-    onDeselect: (Int) -> Unit,
-    onInvert: () -> Unit,
-    onSelectAll: () -> Unit,
-    onDeselectAll: () -> Unit
+	modifier: Modifier,
+	points: Points,
+	selectedPointsIds: List<Int>,
+	onDeselect: (Int) -> Unit,
+	onInvert: () -> Unit,
+	onSelectAll: () -> Unit,
+	onDeselectAll: () -> Unit
 ) {
-    var showSelectedPointsDialog by remember { mutableStateOf(false) }
-    var showMoreDialog by remember { mutableStateOf(false) }
+	var showSelectedPointsDialog by remember { mutableStateOf(false) }
+	var showMoreDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(selectedPointsIds) {
-        if (selectedPointsIds.isEmpty()) showSelectedPointsDialog = false
-    }
+	LaunchedEffect(selectedPointsIds) {
+		if (selectedPointsIds.isEmpty()) showSelectedPointsDialog = false
+	}
 
-    var frozenIds by remember { mutableStateOf<List<Int>>(emptyList()) }
-    var frozenPoints by remember { mutableStateOf(points) }
-    if (selectedPointsIds.isNotEmpty()) {
-        frozenIds = selectedPointsIds
-        frozenPoints = points
-    }
+	var frozenIds by remember { mutableStateOf<List<Int>>(emptyList()) }
+	var frozenPoints by remember { mutableStateOf(points) }
+	if (selectedPointsIds.isNotEmpty()) {
+		frozenIds = selectedPointsIds
+		frozenPoints = points
+	}
 
-    val whatPreviewToShow =
-        when (selectedPointsIds.size) {
-            0 -> null
-            1 -> true
-            else -> false
-        }
+	val whatPreviewToShow =
+		when (selectedPointsIds.size) {
+			0 -> null
+			1 -> true
+			else -> false
+		}
 
-    var oldCount by remember { mutableIntStateOf(frozenIds.size) }
+	var oldCount by remember { mutableIntStateOf(frozenIds.size) }
 
-    LaunchedEffect(frozenIds.size) {
-        oldCount = frozenIds.size
-    }
+	LaunchedEffect(frozenIds.size) {
+		oldCount = frozenIds.size
+	}
 
-    AnimatedContent(
-        targetState = whatPreviewToShow,
-        transitionSpec = { barsContentTransform },
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-    ) { previewToShow ->
-        @Suppress("UnusedExpression")
-        when (previewToShow) {
-            null -> {
-                null
-            }
+	AnimatedContent(
+		targetState = whatPreviewToShow,
+		transitionSpec = { barsContentTransform },
+		contentAlignment = Alignment.Center,
+		modifier = modifier
+	) { previewToShow ->
+		@Suppress("UnusedExpression")
+		when (previewToShow) {
+			null -> {
+				null
+			}
 
-            true -> {
-                val previewPointId = frozenIds.firstOrNull() ?: return@AnimatedContent
-                PointPreviewTitle(
-                    point = frozenPoints[previewPointId],
-                    topPadding = 30.dp,
-                    showLabel = true,
-                    showIcon = true
-                )
-            }
+			true -> {
+				val previewPointId = frozenIds.firstOrNull() ?: return@AnimatedContent
+				PointPreviewTitle(
+					point = frozenPoints[previewPointId],
+					topPadding = 30.dp,
+					showLabel = true,
+					showIcon = true
+				)
+			}
 
-            false -> {
-                Row(
-                    modifier =
-                        Modifier
-                            .padding(top = 10.dp)
-                            .shapedClickable { showSelectedPointsDialog = true }
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .padding(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    DragonIconButton(
-                        icon = R.drawable.close,
-                        contentDescription = R.string.deselect_all,
-                        onClick = onDeselectAll
-                    )
+			false -> {
+				Row(
+					modifier =
+						Modifier
+							.padding(top = 10.dp)
+							.shapedClickable { showSelectedPointsDialog = true }
+							.background(MaterialTheme.colorScheme.surfaceContainerHigh)
+							.padding(10.dp),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					DragonIconButton(
+						icon = R.drawable.close,
+						contentDescription = R.string.deselect_all,
+						onClick = onDeselectAll
+					)
 
-                    Spacer(5.dp)
+					Spacer(5.dp)
 
-                    AnimatedContent(
-                        targetState = frozenIds.size,
-                        transitionSpec = {
-                            if (oldCount < frozenIds.size) {
-                                slideInVertically { it } togetherWith slideOutVertically { -it }
-                            } else {
-                                slideInVertically { -it } togetherWith slideOutVertically { it }
-                            }
-                        }
-                    ) {
-                        Text(
-                            it.toString(),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(3.dp)
-                        )
-                    }
-                    Text(
-                        pluralStringResource(R.plurals.n_points_selected, frozenIds.size),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(3.dp)
-                    )
+					AnimatedContent(
+						targetState = frozenIds.size,
+						transitionSpec = {
+							if (oldCount < frozenIds.size) {
+								slideInVertically { it } togetherWith slideOutVertically { -it }
+							} else {
+								slideInVertically { -it } togetherWith slideOutVertically { it }
+							}
+						}
+					) {
+						Text(
+							it.toString(),
+							color = MaterialTheme.colorScheme.onSurface,
+							modifier = Modifier.padding(3.dp)
+						)
+					}
+					Text(
+						pluralStringResource(R.plurals.n_points_selected, frozenIds.size),
+						color = MaterialTheme.colorScheme.onSurface,
+						modifier = Modifier.padding(3.dp)
+					)
 
-                    Box {
-                        DragonIconButton(
-                            icon = R.drawable.more_vert,
-                            contentDescription = R.string.more,
-                            onClick = { showMoreDialog = true }
-                        )
+					Box {
+						DragonIconButton(
+							icon = R.drawable.more_vert,
+							contentDescription = R.string.more,
+							onClick = { showMoreDialog = true }
+						)
 
-                        BurgerListAction(
-                            actions =
-                                listOf(
-                                    MoreOptions(
-                                        onClick = onSelectAll,
-                                        icon = R.drawable.select_all,
-                                        text = { stringResource(R.string.select_all) }
-                                    ),
-                                    MoreOptions(
-                                        onClick = onInvert,
-                                        icon = R.drawable.swap_calls,
-                                        text = { stringResource(R.string.invert) }
-                                    )
-                                ),
-                            isExpanded = showMoreDialog,
-                            onDismissRequest = { showMoreDialog = false }
-                        )
-                    }
-                }
-            }
-        }
-    }
+						BurgerListAction(
+							actions =
+								listOf(
+									MoreOptions(
+										onClick = onSelectAll,
+										icon = R.drawable.select_all,
+										text = { stringResource(R.string.select_all) }
+									),
+									MoreOptions(
+										onClick = onInvert,
+										icon = R.drawable.swap_calls,
+										text = { stringResource(R.string.invert) }
+									)
+								),
+							isExpanded = showMoreDialog,
+							onDismissRequest = { showMoreDialog = false }
+						)
+					}
+				}
+			}
+		}
+	}
 
-    if (showSelectedPointsDialog) {
-        CustomAlertDialog(
-            onDismissRequest = { showSelectedPointsDialog = false },
-            modifier = Modifier.padding(36.dp),
-            imePadding = false,
-            scroll = false,
-            alignment = Alignment.Center,
-            confirmButton = {
-                ValidateCancelButtons(validateText = stringResource(R.string.ok)) { showSelectedPointsDialog = false }
-            },
-            title = {
-                Text(
-                    text = stringResource(R.string.selected_points),
-                    style = MaterialTheme.typography.titleLargeEmphasized
-                )
-            }
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(60.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier.heightIn(min = 200.dp)
-            ) {
-                items(selectedPointsIds) { pointId ->
-                    points[pointId]?.let { point ->
-                        PointItem(point) {
-                            onDeselect(point.id)
-                        }
-                    }
-                }
-            }
-        }
-    }
+	if (showSelectedPointsDialog) {
+		CustomAlertDialog(
+			onDismissRequest = { showSelectedPointsDialog = false },
+			modifier = Modifier.padding(36.dp),
+			imePadding = false,
+			scroll = false,
+			alignment = Alignment.Center,
+			confirmButton = {
+				ValidateCancelButtons(validateText = stringResource(R.string.ok)) { showSelectedPointsDialog = false }
+			},
+			title = {
+				Text(
+					text = stringResource(R.string.selected_points),
+					style = MaterialTheme.typography.titleLargeEmphasized
+				)
+			}
+		) {
+			LazyVerticalGrid(
+				columns = GridCells.Adaptive(60.dp),
+				verticalArrangement = Arrangement.spacedBy(5.dp),
+				horizontalArrangement = Arrangement.spacedBy(5.dp),
+				modifier = Modifier.heightIn(min = 200.dp)
+			) {
+				items(selectedPointsIds) { pointId ->
+					points[pointId]?.let { point ->
+						PointItem(point) {
+							onDeselect(point.id)
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 @Composable
 private fun PointItem(
-    point: Point,
-    deselect: () -> Unit
+	point: Point,
+	deselect: () -> Unit
 ) {
-    val color = point.action.actionColor(LocalExtraColors.current)
-    Row(
-        modifier =
-            Modifier
-                .shapedClickable(onClick = deselect)
-                .background(color.alphaMultiplier(0.2f))
-                .padding(10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        FinalPointIcon(point, size = null)
-        Text(
-            text = point.id.toString(),
-            color = color,
-            style = MaterialTheme.typography.bodyMediumEmphasized
-        )
-    }
+	val color = point.action.actionColor(LocalExtraColors.current)
+	Row(
+		modifier =
+			Modifier
+				.shapedClickable(onClick = deselect)
+				.background(color.alphaMultiplier(0.2f))
+				.padding(10.dp),
+		horizontalArrangement = Arrangement.SpaceBetween,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		FinalPointIcon(point, size = null)
+		Text(
+			text = point.id.toString(),
+			color = color,
+			style = MaterialTheme.typography.bodyMediumEmphasized
+		)
+	}
 }

@@ -12,11 +12,11 @@ import kotlinx.serialization.encoding.Encoder
 
 @OptIn(ExperimentalSerializationApi::class)
 public object DpSerializer : KSerializer<Dp> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Dp", PrimitiveKind.FLOAT)
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Dp", PrimitiveKind.FLOAT)
 
-    override fun serialize(encoder: Encoder, value: Dp) {
-        encoder.encodeFloat(value.value)
-    }
+	override fun serialize(encoder: Encoder, value: Dp) {
+		encoder.encodeFloat(value.value)
+	}
 
-    override fun deserialize(decoder: Decoder): Dp = decoder.decodeFloat().dp
+	override fun deserialize(decoder: Decoder): Dp = decoder.decodeFloat().dp
 }

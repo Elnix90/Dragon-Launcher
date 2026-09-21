@@ -10,20 +10,20 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 
 val barsContentTransform: ContentTransform =
-    ContentTransform(
-        targetContentEnter =
-            slideInVertically(
-                spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            ) { it } + fadeIn(),
-        initialContentExit =
-            slideOutVertically(
-                spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            ) { it } + fadeOut(),
-        sizeTransform = SizeTransform(clip = false) // prevents the content from getting clipped during bounce
-    )
+	ContentTransform(
+		targetContentEnter =
+			slideInVertically(
+				spring(
+					dampingRatio = Spring.DampingRatioMediumBouncy,
+					stiffness = Spring.StiffnessLow
+				)
+			) { it } + fadeIn(),
+		initialContentExit =
+			slideOutVertically(
+				spring(
+					dampingRatio = Spring.DampingRatioMediumBouncy,
+					stiffness = Spring.StiffnessLow
+				)
+			) { it } + fadeOut(),
+		sizeTransform = SizeTransform(clip = false) // prevents the content from getting clipped during bounce
+	)

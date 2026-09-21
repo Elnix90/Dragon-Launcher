@@ -17,83 +17,83 @@ import java.io.InputStreamReader
 import java.io.InterruptedIOException
 
 public class ShellCommandExecutor {
-    private var currentProcess: Process? = null
-    private var shizukuProcess: ShizukuRemoteProcess? = null
-    private var currentDir = "/storage/emulated/0/"
+	private var currentProcess: Process? = null
+	private var shizukuProcess: ShizukuRemoteProcess? = null
+	private var currentDir = "/storage/emulated/0/"
 
-    /**
-     * Handle cd command and return the command to actually execute.
-     * - If it's a pure "cd" command, updates currentDir and returns null.
-     * - If it's a compound command starting with cd (e.g., "cd /data && ls"),
-     *   updates currentDir and returns the remaining commands.
-     * - Otherwise returns the original command.
-     */
-    private fun handleCdCommand(commandText: String): String? {
-        val trimmedCommand = commandText.trim()
+	/**
+	 * Handle cd command and return the command to actually execute.
+	 * - If it's a pure "cd" command, updates currentDir and returns null.
+	 * - If it's a compound command starting with cd (e.g., "cd /data && ls"),
+	 *   updates currentDir and returns the remaining commands.
+	 * - Otherwise returns the original command.
+	 */
+	private fun handleCdCommand(commandText: String): String? {
+		val trimmedCommand = commandText.trim()
 
-        // Check if this is a cd command (standalone or at start of compound)
-        if (trimmedCommand.startsWith("cd ") || trimmedCommand == "cd") {
-            // Check for compound command separators (&& or ;)
-            val andAndIndex = trimmedCommand.indexOf(" && ")
-            val semicolonIndex = trimmedCommand.indexOf("; ")
+		// Check if this is a cd command (standalone or at start of compound)
+		if (trimmedCommand.startsWith("cd ") || trimmedCommand == "cd") {
+			// Check for compound command separators (&& or ;)
+			val andAndIndex = trimmedCommand.indexOf(" && ")
+			val semicolonIndex = trimmedCommand.indexOf("; ")
 
-            val separatorIndex =
-                when {
-                    andAndIndex >= 0 && semicolonIndex >= 0 -> minOf(andAndIndex, semicolonIndex)
-                    andAndIndex >= 0 -> andAndIndex
-                    semicolonIndex >= 0 -> semicolonIndex
-                    else -> -1
-                }
+			val separatorIndex =
+				when {
+					andAndIndex >= 0 && semicolonIndex >= 0 -> minOf(andAndIndex, semicolonIndex)
+					andAndIndex >= 0 -> andAndIndex
+					semicolonIndex >= 0 -> semicolonIndex
+					else -> -1
+				}
 
-            val cdPart: String
-            val remainingCommand: String?
+			val cdPart: String
+			val remainingCommand: String?
 
-            if (separatorIndex > 0) {
-                // Compound command: extract cd part and remaining
-                cdPart = trimmedCommand.take(separatorIndex).trim()
-                remainingCommand =
-                    trimmedCommand
-                        .substring(
-                            separatorIndex + if (trimmedCommand.substring(separatorIndex).startsWith(" && ")) 4 else 2
-                        ).trim()
-            } else {
-                // Pure cd command
-                cdPart = trimmedCommand
-                remainingCommand = null
-            }
+			if (separatorIndex > 0) {
+				// Compound command: extract cd part and remaining
+				cdPart = trimmedCommand.take(separatorIndex).trim()
+				remainingCommand =
+					trimmedCommand
+						.substring(
+							separatorIndex + if (trimmedCommand.substring(separatorIndex).startsWith(" && ")) 4 else 2
+						).trim()
+			} else {
+				// Pure cd command
+				cdPart = trimmedCommand
+				remainingCommand = null
+			}
 
-            // Parse the cd part to get target directory
-            val parts = cdPart.split("\\s+".toRegex(), limit = 2)
-            val targetDir = if (parts.size > 1) parts[1] else "/"
+			// Parse the cd part to get target directory
+			val parts = cdPart.split("\\s+".toRegex(), limit = 2)
+			val targetDir = if (parts.size > 1) parts[1] else "/"
 
-            // Update currentDir
-            currentDir =
-                when {
-                    targetDir == "/" || targetDir == "~" -> {
-                        "/"
-                    }
+			// Update currentDir
+			currentDir =
+				when {
+					targetDir == "/" || targetDir == "~" -> {
+						"/"
+					}
 
-                    targetDir == ".." -> {
-                        val parent = currentDir.removeSuffix("/").substringBeforeLast("/", "")
-                        if (parent.isEmpty()) "/" else "$parent/"
-                    }
+					targetDir == ".." -> {
+						val parent = currentDir.removeSuffix("/").substringBeforeLast("/", "")
+						if (parent.isEmpty()) "/" else "$parent/"
+					}
 
-                    targetDir.startsWith("/") -> {
-                        if (targetDir.endsWith("/")) targetDir else "$targetDir/"
-                    }
+					targetDir.startsWith("/") -> {
+						if (targetDir.endsWith("/")) targetDir else "$targetDir/"
+					}
 
-                    else -> {
-                        val newPath = currentDir + targetDir
-                        if (newPath.endsWith("/")) newPath else "$newPath/"
-                    }
-                }
+					else -> {
+						val newPath = currentDir + targetDir
+						if (newPath.endsWith("/")) newPath else "$newPath/"
+					}
+				}
 
-            // Return remaining command or null if pure cd
-            return remainingCommand
-        }
+			// Return remaining command or null if pure cd
+			return remainingCommand
+		}
 
-        return trimmedCommand
-    }
+		return trimmedCommand
+	}
 
 //    /**
 //     * Build the actual command to run, prefixed with cd if not in root.
@@ -134,79 +134,79 @@ public class ShellCommandExecutor {
 //        emitAll(exec(process))
 //    }.flowOn(Dispatchers.IO)
 
-    @Suppress("DEPRECATION")
-    public fun runShizuku(commandText: String): Flow<OutputLine> =
-        flow {
-            val actualCommand = handleCdCommand(commandText)
+	@Suppress("DEPRECATION")
+	public fun runShizuku(commandText: String): Flow<OutputLine> =
+		flow {
+			val actualCommand = handleCdCommand(commandText)
 
-            logD(SHIZUKU_TAG) { "Executing shizuku command: $commandText" }
+			logD(SHIZUKU_TAG) { "Executing shizuku command: $commandText" }
 
-            if (actualCommand == null) {
-                // Was a cd command - emit success message
-                emit(OutputLine("Changed directory to: $currentDir", isError = false))
-                return@flow
-            }
+			if (actualCommand == null) {
+				// Was a cd command - emit success message
+				emit(OutputLine("Changed directory to: $currentDir", isError = false))
+				return@flow
+			}
 
-            logD(SHIZUKU_TAG) { "Creating Shizuku process..." }
+			logD(SHIZUKU_TAG) { "Creating Shizuku process..." }
 
-            shizukuProcess =
-                try {
-                    Shizuku.newProcess(arrayOf("sh", "-c", actualCommand), null, currentDir)
-                } catch (e: Exception) {
-                    logE(SHIZUKU_TAG, e) { "Failed to create Shizuku process" }
-                    emit(OutputLine("Failed to start process: ${e.message}", isError = true))
-                    return@flow
-                }
+			shizukuProcess =
+				try {
+					Shizuku.newProcess(arrayOf("sh", "-c", actualCommand), null, currentDir)
+				} catch (e: Exception) {
+					logE(SHIZUKU_TAG, e) { "Failed to create Shizuku process" }
+					emit(OutputLine("Failed to start process: ${e.message}", isError = true))
+					return@flow
+				}
 
-            logD(SHIZUKU_TAG) { "Process created: $shizukuProcess" }
+			logD(SHIZUKU_TAG) { "Process created: $shizukuProcess" }
 
-            shizukuProcess?.let {
-                logD(SHIZUKU_TAG) { "Emitting process output..." }
-                emitAll(execShizukuProcess())
-            } ?: run {
-                logW(SHIZUKU_TAG) { "Process is null after creation" }
-                emit(OutputLine("Process is null", isError = true))
-            }
-        }.flowOn(Dispatchers.IO)
+			shizukuProcess?.let {
+				logD(SHIZUKU_TAG) { "Emitting process output..." }
+				emitAll(execShizukuProcess())
+			} ?: run {
+				logW(SHIZUKU_TAG) { "Process is null after creation" }
+				emit(OutputLine("Process is null", isError = true))
+			}
+		}.flowOn(Dispatchers.IO)
 
-    private fun execShizukuProcess(): Flow<OutputLine> =
-        flow {
-            val reader = BufferedReader(InputStreamReader(shizukuProcess?.inputStream))
-            val errorReader = BufferedReader(InputStreamReader(shizukuProcess?.errorStream))
-            try {
-                while (true) {
-                    val line = reader.readLine() ?: break
-                    emit(OutputLine(line, isError = false))
-                }
+	private fun execShizukuProcess(): Flow<OutputLine> =
+		flow {
+			val reader = BufferedReader(InputStreamReader(shizukuProcess?.inputStream))
+			val errorReader = BufferedReader(InputStreamReader(shizukuProcess?.errorStream))
+			try {
+				while (true) {
+					val line = reader.readLine() ?: break
+					emit(OutputLine(line, isError = false))
+				}
 
-                while (true) {
-                    val errorLine = errorReader.readLine() ?: break
-                    emit(OutputLine(errorLine, isError = true))
-                }
+				while (true) {
+					val errorLine = errorReader.readLine() ?: break
+					emit(OutputLine(errorLine, isError = true))
+				}
 
-                shizukuProcess?.waitFor()
-            } catch (e: InterruptedIOException) {
-                logE(SHIZUKU_TAG, e) { "InterruptedIOException error while executing shizuku command" }
-            } catch (e: IOException) {
-                logE(SHIZUKU_TAG, e) { "IOException error while executing shizuku command" }
+				shizukuProcess?.waitFor()
+			} catch (e: InterruptedIOException) {
+				logE(SHIZUKU_TAG, e) { "InterruptedIOException error while executing shizuku command" }
+			} catch (e: IOException) {
+				logE(SHIZUKU_TAG, e) { "IOException error while executing shizuku command" }
 
-                emit(OutputLine("Error reading process output: ${e.message}", isError = true))
-            } finally {
-                try {
-                    reader.close()
-                    errorReader.close()
-                } catch (_: IOException) {
-                }
+				emit(OutputLine("Error reading process output: ${e.message}", isError = true))
+			} finally {
+				try {
+					reader.close()
+					errorReader.close()
+				} catch (_: IOException) {
+				}
 
-                shizukuProcess?.destroy()
-                shizukuProcess = null
-            }
-        }.flowOn(Dispatchers.IO)
+				shizukuProcess?.destroy()
+				shizukuProcess = null
+			}
+		}.flowOn(Dispatchers.IO)
 
-    public fun stop() {
-        currentProcess?.destroy()
-        currentProcess = null
-        shizukuProcess?.destroy()
-        shizukuProcess = null
-    }
+	public fun stop() {
+		currentProcess?.destroy()
+		currentProcess = null
+		shizukuProcess?.destroy()
+		shizukuProcess = null
+	}
 }

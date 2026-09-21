@@ -24,10 +24,10 @@ import androidx.compose.ui.Modifier
  * when `isSelected` is true.
  */
 inline fun Modifier.conditional(
-    condition: Boolean,
-    block: Modifier.() -> Modifier
+	condition: Boolean,
+	block: Modifier.() -> Modifier
 ): Modifier =
-    if (condition) this.block() else this
+	if (condition) this.block() else this
 
 /**
  * Conditionally appends either [block] or [fallback] to this [Modifier].
@@ -39,11 +39,11 @@ inline fun Modifier.conditional(
  * `this then selectedModifier`
  */
 inline fun Modifier.conditional(
-    condition: Boolean,
-    fallback: Modifier.() -> Modifier,
-    block: Modifier.() -> Modifier
+	condition: Boolean,
+	fallback: Modifier.() -> Modifier,
+	block: Modifier.() -> Modifier
 ): Modifier =
-    if (condition) this.block() else this.fallback()
+	if (condition) this.block() else this.fallback()
 
 /**
  * Conditionally transforms this [Modifier] if [value] is not null.
@@ -61,7 +61,7 @@ inline fun Modifier.conditional(
  * ```
  */
 inline fun <T> Modifier.conditional(
-    value: T?,
-    block: Modifier.(T) -> Modifier
+	value: T?,
+	block: Modifier.(T) -> Modifier
 ): Modifier =
-    value?.let { this.block(it) } ?: this
+	value?.let { this.block(it) } ?: this

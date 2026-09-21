@@ -10,10 +10,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object DatabaseModule {
-    @Provides
-    @Singleton
-    fun provideAppDatabase(
-        @ApplicationContext ctx: Context
-    ): AppDatabase =
-        AppDatabase.getInstance(ctx)
+	@Provides
+	@Singleton
+	fun provideAppDatabase(
+		@ApplicationContext ctx: Context
+	): AppDatabase =
+		AppDatabase.getInstance(ctx)
 }

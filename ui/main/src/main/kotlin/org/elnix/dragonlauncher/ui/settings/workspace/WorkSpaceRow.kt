@@ -30,67 +30,67 @@ import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
 fun ReorderableCollectionItemScope.WorkspaceRow(
-    workspace: Workspace,
-    isDragging: Boolean = false,
-    onClick: () -> Unit,
-    onCheck: (Boolean) -> Unit,
-    onAction: (WorkspaceAction) -> Unit,
-    onDragEnd: () -> Unit
+	workspace: Workspace,
+	isDragging: Boolean = false,
+	onClick: () -> Unit,
+	onCheck: (Boolean) -> Unit,
+	onAction: (WorkspaceAction) -> Unit,
+	onDragEnd: () -> Unit
 ) {
-    val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
-    val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
+	val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
+	val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
 
-    Card(
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(elevation),
-        modifier =
-            Modifier
-                .scale(scale)
-                .longPressDraggableHandle(onDragStopped = onDragEnd)
-                .clickable(onClick = onClick)
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = workspace.enabled,
-                onCheckedChange = { onCheck(it) },
-                colors = AppObjectsColors.checkboxColors()
-            )
+	Card(
+		shape = MaterialTheme.shapes.medium,
+		elevation = CardDefaults.cardElevation(elevation),
+		modifier =
+			Modifier
+				.scale(scale)
+				.longPressDraggableHandle(onDragStopped = onDragEnd)
+				.clickable(onClick = onClick)
+	) {
+		Row(
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.padding(16.dp),
+			horizontalArrangement = Arrangement.spacedBy(12.dp),
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			Checkbox(
+				checked = workspace.enabled,
+				onCheckedChange = { onCheck(it) },
+				colors = AppObjectsColors.checkboxColors()
+			)
 
-            Text(
-                text = workspace.id,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
-            )
+			Text(
+				text = workspace.id,
+				style = MaterialTheme.typography.bodyLarge,
+				modifier = Modifier.weight(1f)
+			)
 
-            Row(
-                modifier = Modifier.padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                DragonIconButton(
-                    icon = WorkspaceAction.Edit.iconEnabled,
-                    contentDescription = WorkspaceAction.Edit.resId
-                ) { onAction(WorkspaceAction.Edit) }
+			Row(
+				modifier = Modifier.padding(8.dp),
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				DragonIconButton(
+					icon = WorkspaceAction.Edit.iconEnabled,
+					contentDescription = WorkspaceAction.Edit.resId
+				) { onAction(WorkspaceAction.Edit) }
 
-                DragonIconButton(
-                    icon = WorkspaceAction.Delete.iconEnabled,
-                    contentDescription = WorkspaceAction.Delete.resId,
-                    isCancel = true
-                ) { onAction(WorkspaceAction.Delete) }
-            }
+				DragonIconButton(
+					icon = WorkspaceAction.Delete.iconEnabled,
+					contentDescription = WorkspaceAction.Delete.resId,
+					isCancel = true
+				) { onAction(WorkspaceAction.Delete) }
+			}
 
-            Icon(
-                painter = painterResource(R.drawable.drag_handle),
-                contentDescription = stringResource(R.string.drag_handle),
-                tint = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.draggableHandle(onDragStopped = onDragEnd)
-            )
-        }
-    }
+			Icon(
+				painter = painterResource(R.drawable.drag_handle),
+				contentDescription = stringResource(R.string.drag_handle),
+				tint = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+				modifier = Modifier.draggableHandle(onDragStopped = onDragEnd)
+			)
+		}
+	}
 }

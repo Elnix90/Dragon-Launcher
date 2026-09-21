@@ -23,9 +23,9 @@ import androidx.graphics.shapes.RoundedPolygon
  */
 @ExperimentalMaterial3ExpressiveApi
 public fun Morph.toPath(
-    progress: Float,
-    path: Path = Path(),
-    startAngle: Int = 0
+	progress: Float,
+	path: Path = Path(),
+	startAngle: Int = 0
 ): Path = this.toPath(path = path, progress = progress, startAngle = startAngle)
 
 /**
@@ -38,7 +38,7 @@ public fun Morph.toPath(
  */
 @ExperimentalMaterial3ExpressiveApi
 public fun RoundedPolygon.toPath(
-    startAngle: Int = 0
+	startAngle: Int = 0
 ): Path = this.toPath(path = Path(), startAngle = startAngle, repeatPath = false, closePath = true)
 
 /**
@@ -51,34 +51,34 @@ public fun RoundedPolygon.toPath(
  */
 @ExperimentalMaterial3ExpressiveApi
 public fun RoundedPolygon.toShape(startAngle: Int = 0): Shape {
-    return object : Shape {
-        // Store the Path we convert from the RoundedPolygon here. The path we will be
-        // manipulating and using on the createOutline would be a copy of this to ensure we
-        // don't mutate the original.
-        private val shapePath: Path = toPath(startAngle = startAngle)
-        private var workPath: Path? = null
-        private var lastSize = Size.Unspecified
+	return object : Shape {
+		// Store the Path we convert from the RoundedPolygon here. The path we will be
+		// manipulating and using on the createOutline would be a copy of this to ensure we
+		// don't mutate the original.
+		private val shapePath: Path = toPath(startAngle = startAngle)
+		private var workPath: Path? = null
+		private var lastSize = Size.Unspecified
 
-        override fun createOutline(
-            size: Size,
-            layoutDirection: LayoutDirection,
-            density: Density
-        ): Outline {
-            if (size != lastSize || workPath == null) {
-                lastSize = size
-                // Create a new Path if the size has changed.
-                workPath = Path()
-            } else {
-                workPath!!.rewind()
-            }
-            val path = workPath!!
-            path.addPath(shapePath)
-            val scaleMatrix = Matrix().apply { scale(x = size.width, y = size.height) }
-            // Scale and translate the path to align its center with the available size
-            // center.
-            path.transform(scaleMatrix)
-            path.translate(size.center - path.getBounds().center)
-            return Outline.Generic(path)
-        }
-    }
+		override fun createOutline(
+			size: Size,
+			layoutDirection: LayoutDirection,
+			density: Density
+		): Outline {
+			if (size != lastSize || workPath == null) {
+				lastSize = size
+				// Create a new Path if the size has changed.
+				workPath = Path()
+			} else {
+				workPath!!.rewind()
+			}
+			val path = workPath!!
+			path.addPath(shapePath)
+			val scaleMatrix = Matrix().apply { scale(x = size.width, y = size.height) }
+			// Scale and translate the path to align its center with the available size
+			// center.
+			path.transform(scaleMatrix)
+			path.translate(size.center - path.getBounds().center)
+			return Outline.Generic(path)
+		}
+	}
 }

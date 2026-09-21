@@ -21,170 +21,170 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.services.SystemControl
 
 internal fun launchAction(
-    ctx: Context,
-    appLaunchViewModel: AppLaunchViewModel,
-    drawerViewModel: DrawerViewModel,
-    action: Action,
-    useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = true,
-    onReselectFile: () -> Unit,
-    onAppSettings: (NavigationRoute) -> Unit,
-    onAppDrawer: (workspaceId: String?) -> Unit,
-    onShizukuCommand: (Action.RunAdbCommand) -> Unit
+	ctx: Context,
+	appLaunchViewModel: AppLaunchViewModel,
+	drawerViewModel: DrawerViewModel,
+	action: Action,
+	useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = true,
+	onReselectFile: () -> Unit,
+	onAppSettings: (NavigationRoute) -> Unit,
+	onAppDrawer: (workspaceId: String?) -> Unit,
+	onShizukuCommand: (Action.RunAdbCommand) -> Unit
 ) {
-    when (action) {
-        is Action.LaunchApp -> {
-            appLaunchViewModel.requestAppLaunch(action)
-        }
+	when (action) {
+		is Action.LaunchApp -> {
+			appLaunchViewModel.requestAppLaunch(action)
+		}
 
-        is Action.LaunchShortcut -> {
-            appLaunchViewModel.launchShortcut(action)
-        }
+		is Action.LaunchShortcut -> {
+			appLaunchViewModel.launchShortcut(action)
+		}
 
-        is Action.OpenUrl -> {
-            val i = Intent(Intent.ACTION_VIEW, action.url.toUri())
-            ctx.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        }
+		is Action.OpenUrl -> {
+			val i = Intent(Intent.ACTION_VIEW, action.url.toUri())
+			ctx.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+		}
 
-        Action.NotificationShade -> {
-            if (!SystemControl.isServiceEnabled(ctx)) {
-                ctx.showToast(ctx.getString(R.string.please_enable_accessibility_services_to_use_that_feature))
-                SystemControl.openServiceSettings(ctx)
-                return
-            }
-            SystemControl.expandNotifications()
-        }
+		Action.NotificationShade -> {
+			if (!SystemControl.isServiceEnabled(ctx)) {
+				ctx.showToast(ctx.getString(R.string.please_enable_accessibility_services_to_use_that_feature))
+				SystemControl.openServiceSettings(ctx)
+				return
+			}
+			SystemControl.expandNotifications()
+		}
 
-        Action.ControlPanel -> {
-            if (useAccessibilityInsteadOfContextToExpandActionPanel) {
-                SystemControl.expandQuickSettings(
-                    ctx
-                )
-            } else {
-                ctx.expandQuickActionsDrawer()
-            }
-        }
+		Action.ControlPanel -> {
+			if (useAccessibilityInsteadOfContextToExpandActionPanel) {
+				SystemControl.expandQuickSettings(
+					ctx
+				)
+			} else {
+				ctx.expandQuickActionsDrawer()
+			}
+		}
 
-        is Action.OpenAppDrawer -> {
-            onAppDrawer(action.workspaceId)
-        }
+		is Action.OpenAppDrawer -> {
+			onAppDrawer(action.workspaceId)
+		}
 
-        is Action.OpenDragonLauncherSettings -> {
-            onAppSettings(action.route)
-        }
+		is Action.OpenDragonLauncherSettings -> {
+			onAppSettings(action.route)
+		}
 
-        Action.Lock -> {
-            if (!SystemControl.isServiceEnabled(ctx)) {
-                ctx.showToast("Please enable accessibility settings to use that feature")
-                SystemControl.openServiceSettings(ctx)
-                return
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                SystemControl.lockScreen(ctx)
-            } else {
-                ctx.showToast(ctx.getString(R.string.not_supported_in_this_android_version))
-            }
-        }
+		Action.Lock -> {
+			if (!SystemControl.isServiceEnabled(ctx)) {
+				ctx.showToast("Please enable accessibility settings to use that feature")
+				SystemControl.openServiceSettings(ctx)
+				return
+			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+				SystemControl.lockScreen(ctx)
+			} else {
+				ctx.showToast(ctx.getString(R.string.not_supported_in_this_android_version))
+			}
+		}
 
-        is Action.OpenFile -> {
-            try {
-                val uri = action.uri.toUri()
+		is Action.OpenFile -> {
+			try {
+				val uri = action.uri.toUri()
 
-                if (!ctx.hasUriReadPermission(uri)) {
-                    ctx.showToast("Please reselect the file to allow access")
-                    onReselectFile()
-                    return
-                }
+				if (!ctx.hasUriReadPermission(uri)) {
+					ctx.showToast("Please reselect the file to allow access")
+					onReselectFile()
+					return
+				}
 
-                val intent =
-                    Intent(Intent.ACTION_VIEW).apply {
-                        setDataAndType(uri, action.mimeType ?: "*/*")
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    }
+				val intent =
+					Intent(Intent.ACTION_VIEW).apply {
+						setDataAndType(uri, action.mimeType ?: "*/*")
+						addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+						addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+					}
 
-                if (intent.resolveActivity(ctx.packageManager) != null) {
-                    ctx.startActivity(intent)
-                } else {
-                    ctx.showToast("No app available to open this file")
-                }
-            } catch (e: Exception) {
-                ctx.showToast("Unable to open file")
-                logE(TAG, e) { "Unable to open file" }
-            }
-        }
+				if (intent.resolveActivity(ctx.packageManager) != null) {
+					ctx.startActivity(intent)
+				} else {
+					ctx.showToast("No app available to open this file")
+				}
+			} catch (e: Exception) {
+				ctx.showToast("Unable to open file")
+				logE(TAG, e) { "Unable to open file" }
+			}
+		}
 
-        Action.ReloadApps -> {
-            drawerViewModel.reloadApps()
-        }
+		Action.ReloadApps -> {
+			drawerViewModel.reloadApps()
+		}
 
-        Action.OpenRecentApps -> {
-            if (!SystemControl.isServiceEnabled(ctx)) {
-                ctx.showToast("Please enable accessibility settings to use that feature")
-                SystemControl.openServiceSettings(ctx)
-                return
-            }
-            SystemControl.openRecentApps(ctx)
-        }
+		Action.OpenRecentApps -> {
+			if (!SystemControl.isServiceEnabled(ctx)) {
+				ctx.showToast("Please enable accessibility settings to use that feature")
+				SystemControl.openServiceSettings(ctx)
+				return
+			}
+			SystemControl.openRecentApps(ctx)
+		}
 
-        is Action.RunAdbCommand -> {
-            onShizukuCommand(action)
-        }
+		is Action.RunAdbCommand -> {
+			onShizukuCommand(action)
+		}
 
-        is Action.ToggleBluetooth -> {
-            onShizukuCommand(
-                Action.RunAdbCommand(
-                    command =
-                        if (ctx.isBluetoothEnabled()) {
-                            action.command.commandDisable
-                        } else {
-                            action.command.commandEnable
-                        },
-                    toast = action.toast == true
-                )
-            )
-        }
+		is Action.ToggleBluetooth -> {
+			onShizukuCommand(
+				Action.RunAdbCommand(
+					command =
+						if (ctx.isBluetoothEnabled()) {
+							action.command.commandDisable
+						} else {
+							action.command.commandEnable
+						},
+					toast = action.toast == true
+				)
+			)
+		}
 
-        is Action.ToggleData -> {
-            onShizukuCommand(
-                Action.RunAdbCommand(
-                    command =
-                        if (ctx.getMobileDataStatus().first) {
-                            action.command.commandDisable
-                        } else {
-                            action.command.commandEnable
-                        },
-                    toast = action.toast == true
-                )
-            )
-        }
+		is Action.ToggleData -> {
+			onShizukuCommand(
+				Action.RunAdbCommand(
+					command =
+						if (ctx.getMobileDataStatus().first) {
+							action.command.commandDisable
+						} else {
+							action.command.commandEnable
+						},
+					toast = action.toast == true
+				)
+			)
+		}
 
-        is Action.ToggleWifi -> {
-            onShizukuCommand(
-                Action.RunAdbCommand(
-                    command =
-                        if (ctx.isWifiEnabled()) {
-                            action.command.commandDisable
-                        } else {
-                            action.command.commandEnable
-                        },
-                    toast = action.toast == true
-                )
-            )
-        }
+		is Action.ToggleWifi -> {
+			onShizukuCommand(
+				Action.RunAdbCommand(
+					command =
+						if (ctx.isWifiEnabled()) {
+							action.command.commandDisable
+						} else {
+							action.command.commandEnable
+						},
+					toast = action.toast == true
+				)
+			)
+		}
 
-        Action.KillLauncher -> {
-            Process.killProcess(Process.myPid())
-        }
+		Action.KillLauncher -> {
+			Process.killProcess(Process.myPid())
+		}
 
 //        TODO fix that on yoann's phone'
 
-        // Handled by the main screen / settings
-        // The widget action isn't meant to be part of the choosable actions, so nothing on launch
-        // None do nothing, pretty straightforward
-        is Action.OpenNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> {
-            error(
-                "Action ${action::class.simpleName} shouldn't be handled here"
-            )
-        }
-    }
+		// Handled by the main screen / settings
+		// The widget action isn't meant to be part of the choosable actions, so nothing on launch
+		// None do nothing, pretty straightforward
+		is Action.OpenNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> {
+			error(
+				"Action ${action::class.simpleName} shouldn't be handled here"
+			)
+		}
+	}
 }

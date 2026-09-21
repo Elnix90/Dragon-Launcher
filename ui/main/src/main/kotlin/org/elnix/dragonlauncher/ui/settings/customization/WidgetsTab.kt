@@ -115,379 +115,379 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WidgetsTab(
-    widgetsViewModel: WidgetsViewModel = activityViewModel(),
-    pointsViewModel: PointsViewModel = activityViewModel(),
-    onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
-    onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
-    onRemoveWidget: (Widget) -> Unit
+	widgetsViewModel: WidgetsViewModel = activityViewModel(),
+	pointsViewModel: PointsViewModel = activityViewModel(),
+	onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
+	onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
+	onRemoveWidget: (Widget) -> Unit
 ) {
-    val navigator = LocalNavigator.current
-    val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
+	val navigator = LocalNavigator.current
+	val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
 
-    val widgetsService = widgetsViewModel.widgetsService
+	val widgetsService = widgetsViewModel.widgetsService
 
-    val widgets by widgetsService.widgets.asState()
-    val scope = rememberCoroutineScope()
+	val widgets by widgetsService.widgets.asState()
+	val scope = rememberCoroutineScope()
 
-    var selected by remember { mutableStateOf<Widget?>(null) }
-    val aWidgetIsSelected = selected != null
+	var selected by remember { mutableStateOf<Widget?>(null) }
+	val aWidgetIsSelected = selected != null
 
-    var snapMove by remember { mutableStateOf(true) }
-    var snapResize by remember { mutableStateOf(true) }
-    var snapRotation by remember { mutableStateOf(true) }
+	var snapMove by remember { mutableStateOf(true) }
+	var snapResize by remember { mutableStateOf(true) }
+	var snapRotation by remember { mutableStateOf(true) }
 
-    var showMoreSheet by remember { mutableStateOf(false) }
-    var showAddDialog by remember { mutableStateOf(false) }
-    var showNestPickerDialog by remember { mutableStateOf(false) }
-    var isPrecisionModeActive by remember { mutableStateOf(false) }
+	var showMoreSheet by remember { mutableStateOf(false) }
+	var showAddDialog by remember { mutableStateOf(false) }
+	var showNestPickerDialog by remember { mutableStateOf(false) }
+	var isPrecisionModeActive by remember { mutableStateOf(false) }
 
-    val nestNavigation = pointsViewModel.nestsNavigationService
-    val nestId by nestNavigation.currentNestId.collectAsState()
+	val nestNavigation = pointsViewModel.nestsNavigationService
+	val nestId by nestNavigation.currentNestId.collectAsState()
 
-    fun removeWidget(widget: Widget) {
-        onRemoveWidget(widget)
-        if (selected == widget) selected = null
-    }
+	fun removeWidget(widget: Widget) {
+		onRemoveWidget(widget)
+		if (selected == widget) selected = null
+	}
 
-    val rowsScrollStates = List(2) { rememberScrollState() }
+	val rowsScrollStates = List(2) { rememberScrollState() }
 
-    val manipulationSystem = retain { ManipulationSystem(Offset.Zero) }
-    val offset = manipulationSystem.offset
-    val zoom = manipulationSystem.zoom
-    val angle = manipulationSystem.angle
+	val manipulationSystem = retain { ManipulationSystem(Offset.Zero) }
+	val offset = manipulationSystem.offset
+	val zoom = manipulationSystem.zoom
+	val angle = manipulationSystem.angle
 
-    SettingsScaffold(
-        title = stringResource(R.string.widgets),
-        onBack = {
-            if (selected != null) {
-                selected = null
-            } else {
-                widgetsService.save()
-                navigator.onBack()
-            }
-        },
-        helpText = stringResource(R.string.widgets_tab_help),
-        resetText = stringResource(R.string.reset_widgets_tab),
-        onReset = { widgetsService.resetAllWidgets() },
-        applyPadding = false,
-        scrollableContent = false,
-        specialSettingsTitleContent = {
-            AnimatedFab(
-                onClick = { showMoreSheet = true },
-                icon = R.drawable.more_horiz
-            )
-        },
-        bottomContent = {
-            RowWithScrollIndicator(rowsScrollStates[0]) {
-                MultiSelectConnectedButtonRow(
-                    entries = WidgetsToolsSnapping.entries,
-                    checked = {
-                        when (it) {
-                            WidgetsToolsSnapping.SnapGrid -> snapMove
-                            WidgetsToolsSnapping.SnapResize -> snapResize
-                            WidgetsToolsSnapping.SnapRotation -> snapRotation
-                        }
-                    }
-                ) { entry ->
-                    when (entry) {
-                        WidgetsToolsSnapping.SnapGrid -> {
-                            snapMove = !snapMove
-                        }
+	SettingsScaffold(
+		title = stringResource(R.string.widgets),
+		onBack = {
+			if (selected != null) {
+				selected = null
+			} else {
+				widgetsService.save()
+				navigator.onBack()
+			}
+		},
+		helpText = stringResource(R.string.widgets_tab_help),
+		resetText = stringResource(R.string.reset_widgets_tab),
+		onReset = { widgetsService.resetAllWidgets() },
+		applyPadding = false,
+		scrollableContent = false,
+		specialSettingsTitleContent = {
+			AnimatedFab(
+				onClick = { showMoreSheet = true },
+				icon = R.drawable.more_horiz
+			)
+		},
+		bottomContent = {
+			RowWithScrollIndicator(rowsScrollStates[0]) {
+				MultiSelectConnectedButtonRow(
+					entries = WidgetsToolsSnapping.entries,
+					checked = {
+						when (it) {
+							WidgetsToolsSnapping.SnapGrid -> snapMove
+							WidgetsToolsSnapping.SnapResize -> snapResize
+							WidgetsToolsSnapping.SnapRotation -> snapRotation
+						}
+					}
+				) { entry ->
+					when (entry) {
+						WidgetsToolsSnapping.SnapGrid -> {
+							snapMove = !snapMove
+						}
 
-                        WidgetsToolsSnapping.SnapResize -> {
-                            snapResize = !snapResize
-                        }
+						WidgetsToolsSnapping.SnapResize -> {
+							snapResize = !snapResize
+						}
 
-                        WidgetsToolsSnapping.SnapRotation -> {
-                            snapRotation = !snapRotation
-                        }
-                    }
-                }
+						WidgetsToolsSnapping.SnapRotation -> {
+							snapRotation = !snapRotation
+						}
+					}
+				}
 
-                Spacer(12.dp)
-                UndoRedoBlock(widgetsService.undoRedo)
-            }
+				Spacer(12.dp)
+				UndoRedoBlock(widgetsService.undoRedo)
+			}
 
-            RowWithScrollIndicator(rowsScrollStates[1]) {
-                AnimatedFab(
-                    onClick = { showAddDialog = true },
-                    icon = R.drawable.add,
-                    minSize = 70.dp,
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
+			RowWithScrollIndicator(rowsScrollStates[1]) {
+				AnimatedFab(
+					onClick = { showAddDialog = true },
+					icon = R.drawable.add,
+					minSize = 70.dp,
+					containerColor = MaterialTheme.colorScheme.secondary
+				)
 
-                MultiSelectConnectedButtonRow(
-                    entries = WidgetsToolsAddNestRemove.entries,
-                    checked = {
-                        when (it) {
-                            WidgetsToolsAddNestRemove.Nests -> true
-                            WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.canReset()
-                            WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
-                        }
-                    },
-                    enabled = {
-                        when (it) {
-                            WidgetsToolsAddNestRemove.Nests -> true
-                            WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.canReset()
-                            WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
-                        }
-                    }
-                ) { entry ->
-                    when (entry) {
-                        WidgetsToolsAddNestRemove.Nests -> {
-                            showNestPickerDialog = true
-                        }
+				MultiSelectConnectedButtonRow(
+					entries = WidgetsToolsAddNestRemove.entries,
+					checked = {
+						when (it) {
+							WidgetsToolsAddNestRemove.Nests -> true
+							WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.canReset()
+							WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
+						}
+					},
+					enabled = {
+						when (it) {
+							WidgetsToolsAddNestRemove.Nests -> true
+							WidgetsToolsAddNestRemove.ResetSystem -> manipulationSystem.canReset()
+							WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
+						}
+					}
+				) { entry ->
+					when (entry) {
+						WidgetsToolsAddNestRemove.Nests -> {
+							showNestPickerDialog = true
+						}
 
-                        WidgetsToolsAddNestRemove.ResetSystem -> {
-                            manipulationSystem.resetAnimated(scope)
-                        }
+						WidgetsToolsAddNestRemove.ResetSystem -> {
+							manipulationSystem.resetAnimated(scope)
+						}
 
-                        WidgetsToolsAddNestRemove.Remove -> {
-                            selected?.let { removeWidget(it) }
-                        }
-                    }
-                }
+						WidgetsToolsAddNestRemove.Remove -> {
+							selected?.let { removeWidget(it) }
+						}
+					}
+				}
 
-                Spacer(12.dp)
+				Spacer(12.dp)
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    MultiSelectConnectedButtonColumn(
-                        entries = WidgetsToolsCenterReset.entries,
-                        showLabel = false,
-                        checked = { true },
-                        enabled = { aWidgetIsSelected }
-                    ) { entry ->
-                        when (entry) {
-                            WidgetsToolsCenterReset.Center -> {
-                                selected?.let {
-                                    widgetsService.centerWidget(it.id)
-                                }
-                            }
+				Row(
+					horizontalArrangement = Arrangement.spacedBy(5.dp),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					MultiSelectConnectedButtonColumn(
+						entries = WidgetsToolsCenterReset.entries,
+						showLabel = false,
+						checked = { true },
+						enabled = { aWidgetIsSelected }
+					) { entry ->
+						when (entry) {
+							WidgetsToolsCenterReset.Center -> {
+								selected?.let {
+									widgetsService.centerWidget(it.id)
+								}
+							}
 
-                            WidgetsToolsCenterReset.Reset -> {
-                                selected?.let {
-                                    if (it.action is Action.OpenWidget) {
-                                        onResetWidgetSize(it.id, (it.action as Action.OpenWidget).widgetId)
-                                    } else {
-                                        widgetsService.resetWidgetSize(it.id)
-                                    }
-                                }
-                            }
-                        }
-                    }
+							WidgetsToolsCenterReset.Reset -> {
+								selected?.let {
+									if (it.action is Action.OpenWidget) {
+										onResetWidgetSize(it.id, (it.action as Action.OpenWidget).widgetId)
+									} else {
+										widgetsService.resetWidgetSize(it.id)
+									}
+								}
+							}
+						}
+					}
 
-                    MultiSelectConnectedButtonColumn(
-                        entries = WidgetsToolsUpDown.entries,
-                        showLabel = false,
-                        checked = { widgets.isNotEmpty() },
-                        enabled = { widgets.isNotEmpty() }
-                    ) { entry ->
-                        when (entry) {
-                            WidgetsToolsUpDown.Up -> {
-                                if (widgets.isNotEmpty()) {
-                                    val idx = widgets.indexOfFirst { it == selected }
-                                    val next = if (idx <= 0) widgets.last() else widgets[idx - 1]
-                                    selected = next
-                                }
-                            }
+					MultiSelectConnectedButtonColumn(
+						entries = WidgetsToolsUpDown.entries,
+						showLabel = false,
+						checked = { widgets.isNotEmpty() },
+						enabled = { widgets.isNotEmpty() }
+					) { entry ->
+						when (entry) {
+							WidgetsToolsUpDown.Up -> {
+								if (widgets.isNotEmpty()) {
+									val idx = widgets.indexOfFirst { it == selected }
+									val next = if (idx <= 0) widgets.last() else widgets[idx - 1]
+									selected = next
+								}
+							}
 
-                            WidgetsToolsUpDown.Down -> {
-                                if (widgets.isNotEmpty()) {
-                                    val idx = widgets.indexOfFirst { it == selected }
-                                    val next = if (idx == -1 || idx == widgets.lastIndex) widgets.first() else widgets[idx + 1]
-                                    selected = next
-                                }
-                            }
-                        }
-                    }
+							WidgetsToolsUpDown.Down -> {
+								if (widgets.isNotEmpty()) {
+									val idx = widgets.indexOfFirst { it == selected }
+									val next = if (idx == -1 || idx == widgets.lastIndex) widgets.first() else widgets[idx + 1]
+									selected = next
+								}
+							}
+						}
+					}
 
-                    val upDownEnabled = aWidgetIsSelected && widgets.size > 1
+					val upDownEnabled = aWidgetIsSelected && widgets.size > 1
 
-                    MultiSelectConnectedButtonColumn(
-                        entries = WidgetsToolsMoveUpDown.entries,
-                        showLabel = false,
-                        enabled = { upDownEnabled },
-                        checked = { upDownEnabled }
-                    ) { entry ->
-                        when (entry) {
-                            WidgetsToolsMoveUpDown.MoveUp -> {
-                                selected?.let {
-                                    widgetsService.moveWidgetDown(it.id)
-                                }
-                            }
+					MultiSelectConnectedButtonColumn(
+						entries = WidgetsToolsMoveUpDown.entries,
+						showLabel = false,
+						enabled = { upDownEnabled },
+						checked = { upDownEnabled }
+					) { entry ->
+						when (entry) {
+							WidgetsToolsMoveUpDown.MoveUp -> {
+								selected?.let {
+									widgetsService.moveWidgetDown(it.id)
+								}
+							}
 
-                            WidgetsToolsMoveUpDown.MoveDown -> {
-                                selected?.let {
-                                    widgetsService.moveWidgetUp(it.id)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+							WidgetsToolsMoveUpDown.MoveDown -> {
+								selected?.let {
+									widgetsService.moveWidgetUp(it.id)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	) {
+		Box(modifier = Modifier.fillMaxSize()) {
             /*
              * The widgets and the grid, displayed first, to keep access to the buttons
              * The pointerInput is used to disable any widgets on click outside
              */
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center)
-                    .pointerInput(Unit) {
-                        detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
-                            val oldScale = zoom.value
-                            val newScale = zoom.value * gestureZoom
+			Box(
+				Modifier
+					.fillMaxSize()
+					.align(Alignment.Center)
+					.pointerInput(Unit) {
+						detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
+							val oldScale = zoom.value
+							val newScale = zoom.value * gestureZoom
 
-                            // For natural zooming and rotating, the centroid of the gesture should
-                            // be the fixed point where zooming and rotating occurs.
-                            // We compute where the centroid was (in the pre-transformed coordinate
-                            // space), and then compute where it will be after this delta.
-                            // We then compute what the new offset should be to keep the centroid
-                            // visually stationary for rotating and zooming, and also apply the pan.
-                            scope.launch {
-                                offset.snapTo(
-                                    (offset.value + centroid / oldScale).rotateBy(gestureRotate) -
-                                        (centroid / newScale + pan / oldScale)
-                                )
-                                zoom.snapTo(newScale)
-                                angle.snapTo(angle.value + gestureRotate)
-                            }
-                        }
-                    }.graphicsLayer {
-                        translationX = -offset.value.x * zoom.value
-                        translationY = -offset.value.y * zoom.value
-                        scaleX = zoom.value
-                        scaleY = zoom.value
-                        rotationZ = angle.value
-                        transformOrigin = TransformOrigin(0f, 0f)
-                    }
-            ) {
-                val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+							// For natural zooming and rotating, the centroid of the gesture should
+							// be the fixed point where zooming and rotating occurs.
+							// We compute where the centroid was (in the pre-transformed coordinate
+							// space), and then compute where it will be after this delta.
+							// We then compute what the new offset should be to keep the centroid
+							// visually stationary for rotating and zooming, and also apply the pan.
+							scope.launch {
+								offset.snapTo(
+									(offset.value + centroid / oldScale).rotateBy(gestureRotate) -
+										(centroid / newScale + pan / oldScale)
+								)
+								zoom.snapTo(newScale)
+								angle.snapTo(angle.value + gestureRotate)
+							}
+						}
+					}.graphicsLayer {
+						translationX = -offset.value.x * zoom.value
+						translationY = -offset.value.y * zoom.value
+						scaleX = zoom.value
+						scaleY = zoom.value
+						rotationZ = angle.value
+						transformOrigin = TransformOrigin(0f, 0f)
+					}
+			) {
+				val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
                 /*
                  * Draw the grid of snapping that fills the entire screen
                  */
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
-                            .conditional(snapMove) {
-                                drawWithCache {
-                                    onDrawBehind {
-                                        backgroundGrid(cellSizeDp, onBackgroundColor)
-                                    }
-                                }
-                            }
-                )
+				Box(
+					modifier =
+						Modifier
+							.fillMaxSize()
+							.border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+							.conditional(snapMove) {
+								drawWithCache {
+									onDrawBehind {
+										backgroundGrid(cellSizeDp, onBackgroundColor)
+									}
+								}
+							}
+				)
 
-                widgets
-                    .filter { it.nestId == nestId }
-                    .forEach { widget ->
-                        DraggableWidget(
-                            widgetsViewModel = widgetsViewModel,
-                            widget = widget,
-                            snapRotation = { snapRotation },
-                            snapMove = { snapMove },
-                            snapResize = { snapResize },
-                            selected = widget.id == selected?.id,
-                            onPrecisionModeChange = { isPrecisionModeActive = it },
-                            onSelect = { selected = widget },
-                            onEdit = { new -> widgetsService.updateWidget(widget.id) { new } }
-                        )
-                    }
-            }
+				widgets
+					.filter { it.nestId == nestId }
+					.forEach { widget ->
+						DraggableWidget(
+							widgetsViewModel = widgetsViewModel,
+							widget = widget,
+							snapRotation = { snapRotation },
+							snapMove = { snapMove },
+							snapResize = { snapResize },
+							selected = widget.id == selected?.id,
+							onPrecisionModeChange = { isPrecisionModeActive = it },
+							onSelect = { selected = widget },
+							onEdit = { new -> widgetsService.updateWidget(widget.id) { new } }
+						)
+					}
+			}
 
-            this@SettingsScaffold.AnimatedVisibility(
-                visible = isPrecisionModeActive,
-                modifier =
-                    Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 32.dp),
-                enter = fadeIn() + slideInVertically { -it },
-                exit = fadeOut() + slideOutVertically { -it }
-            ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                    shape = CircleShape
-                ) {
-                    Text(
-                        text = stringResource(R.string.precision_mode_active),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
+			this@SettingsScaffold.AnimatedVisibility(
+				visible = isPrecisionModeActive,
+				modifier =
+					Modifier
+						.align(Alignment.TopCenter)
+						.padding(top = 32.dp),
+				enter = fadeIn() + slideInVertically { -it },
+				exit = fadeOut() + slideOutVertically { -it }
+			) {
+				Surface(
+					color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+					shape = CircleShape
+				) {
+					Text(
+						text = stringResource(R.string.precision_mode_active),
+						color = MaterialTheme.colorScheme.onSurface,
+						modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+						style = MaterialTheme.typography.bodyMedium
+					)
+				}
+			}
 
-            DebugZone(DebugSettingsStore.widgetsDebugInfo) {
-                widgets.forEach {
-                    Text(it.toString())
-                }
-            }
-        }
-    }
+			DebugZone(DebugSettingsStore.widgetsDebugInfo) {
+				widgets.forEach {
+					Text(it.toString())
+				}
+			}
+		}
+	}
 
-    StatusBar(null)
+	StatusBar(null)
 
-    var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
+	var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
 
-    if (showAddDialog) {
-        ActionPickerDialog(
-            onDismiss = { showAddDialog = false },
-            allowWidgets = true,
-            onActionSelected = { action ->
-                when (action) {
-                    is Action.OpenWidget -> showWidgetPicker = nestId
-                    else -> widgetsService.addWidget(action, nestId = nestId)
-                }
-                showAddDialog = false
-            }
-        )
-    }
+	if (showAddDialog) {
+		ActionPickerDialog(
+			onDismiss = { showAddDialog = false },
+			allowWidgets = true,
+			onActionSelected = { action ->
+				when (action) {
+					is Action.OpenWidget -> showWidgetPicker = nestId
+					else -> widgetsService.addWidget(action, nestId = nestId)
+				}
+				showAddDialog = false
+			}
+		)
+	}
 
-    if (showWidgetPicker != null) {
-        WidgetPickerDialog(
-            onBindCustomWidget = { id, info ->
-                onBindCustomWidget(id, info, showWidgetPicker!!)
-            }
-        ) { showWidgetPicker = null }
-    }
+	if (showWidgetPicker != null) {
+		WidgetPickerDialog(
+			onBindCustomWidget = { id, info ->
+				onBindCustomWidget(id, info, showWidgetPicker!!)
+			}
+		) { showWidgetPicker = null }
+	}
 
-    if (showMoreSheet) {
-        DragonModalBottomSheet(
-            onDismissRequest = { showMoreSheet = false }
-        ) {
-            Text(stringResource(R.string.widget_number_total, widgets.size))
-            Text(stringResource(R.string.widget_number_nest, widgets.count { it.nestId == nestId }))
-            Text(stringResource(R.string.current_nest, nestId))
+	if (showMoreSheet) {
+		DragonModalBottomSheet(
+			onDismissRequest = { showMoreSheet = false }
+		) {
+			Text(stringResource(R.string.widget_number_total, widgets.size))
+			Text(stringResource(R.string.widget_number_nest, widgets.count { it.nestId == nestId }))
+			Text(stringResource(R.string.current_nest, nestId))
 
-            HorizontalDivider()
+			HorizontalDivider()
 
-            Spacer(5.dp)
+			Spacer(5.dp)
 
-            DragonSettingsGroup(R.string.advanced) {
-                Setting(UiSettingsStore.widgetsCellSizeDp)
-            }
-        }
-    }
+			DragonSettingsGroup(R.string.advanced) {
+				Setting(UiSettingsStore.widgetsCellSizeDp)
+			}
+		}
+	}
 
-    if (showNestPickerDialog) {
-        NestManagementSheet(
-            title = stringResource(R.string.pick_a_nest),
-            onSelect = {
-                nestNavigation.goToNest(newNestId = it.id, clearStack = true)
-                selected = null
-                showNestPickerDialog = false
-            }
-        ) { showNestPickerDialog = false }
-    }
+	if (showNestPickerDialog) {
+		NestManagementSheet(
+			title = stringResource(R.string.pick_a_nest),
+			onSelect = {
+				nestNavigation.goToNest(newNestId = it.id, clearStack = true)
+				selected = null
+				showNestPickerDialog = false
+			}
+		) { showNestPickerDialog = false }
+	}
 }
 
 /**
@@ -515,497 +515,497 @@ fun WidgetsTab(
  */
 @Composable
 private fun DraggableWidget(
-    widgetsViewModel: WidgetsViewModel,
-    widget: Widget,
-    selected: Boolean,
-    snapRotation: () -> Boolean,
-    snapMove: () -> Boolean,
-    snapResize: () -> Boolean,
-    onPrecisionModeChange: (Boolean) -> Unit,
-    onSelect: () -> Unit,
-    onEdit: (Widget) -> Unit
+	widgetsViewModel: WidgetsViewModel,
+	widget: Widget,
+	selected: Boolean,
+	snapRotation: () -> Boolean,
+	snapMove: () -> Boolean,
+	snapResize: () -> Boolean,
+	onPrecisionModeChange: (Boolean) -> Unit,
+	onSelect: () -> Unit,
+	onEdit: (Widget) -> Unit
 ) {
-    val haptic = LocalHapticFeedback.current
+	val haptic = LocalHapticFeedback.current
 
-    val widgetsService = widgetsViewModel.widgetsService
-    val cellSizePx by widgetsService.cellSizePx.collectAsState()
-    val dm = widgetsService.dm
+	val widgetsService = widgetsViewModel.widgetsService
+	val cellSizePx by widgetsService.cellSizePx.collectAsState()
+	val dm = widgetsService.dm
 
-    val widthPixels = dm.widthPixels
-    val heightPixels = dm.heightPixels
+	val widthPixels = dm.widthPixels
+	val heightPixels = dm.heightPixels
 
-    val snapScaleX = cellSizePx / widthPixels
-    val snapScaleY = cellSizePx / heightPixels
+	val snapScaleX = cellSizePx / widthPixels
+	val snapScaleY = cellSizePx / heightPixels
 
-    var widgetCenter by remember(selected) { mutableStateOf(Offset.Zero) }
-    var handleCoordinates by remember(selected) { mutableStateOf<LayoutCoordinates?>(null) }
+	var widgetCenter by remember(selected) { mutableStateOf(Offset.Zero) }
+	var handleCoordinates by remember(selected) { mutableStateOf<LayoutCoordinates?>(null) }
 
-    var widgetAngle by remember(widget.angle) { mutableFloatStateOf(widget.angle) }
+	var widgetAngle by remember(widget.angle) { mutableFloatStateOf(widget.angle) }
 
-    var widgetX by remember(widget.x) { mutableFloatStateOf(widget.x) }
-    var widgetY by remember(widget.y) { mutableFloatStateOf(widget.y) }
-    var rawWidgetX by remember(widget.x) { mutableFloatStateOf(widget.x) }
-    var rawWidgetY by remember(widget.y) { mutableFloatStateOf(widget.y) }
+	var widgetX by remember(widget.x) { mutableFloatStateOf(widget.x) }
+	var widgetY by remember(widget.y) { mutableFloatStateOf(widget.y) }
+	var rawWidgetX by remember(widget.x) { mutableFloatStateOf(widget.x) }
+	var rawWidgetY by remember(widget.y) { mutableFloatStateOf(widget.y) }
 
-    var widgetWidth by remember(widget.spanX) { mutableFloatStateOf(widget.spanX) }
-    var widgetHeight by remember(widget.spanY) { mutableFloatStateOf(widget.spanY) }
-    var rawWidgetWidth by remember(widget.spanX) { mutableFloatStateOf(widget.spanX) }
-    var rawWidgetHeight by remember(widget.spanY) { mutableFloatStateOf(widget.spanY) }
+	var widgetWidth by remember(widget.spanX) { mutableFloatStateOf(widget.spanX) }
+	var widgetHeight by remember(widget.spanY) { mutableFloatStateOf(widget.spanY) }
+	var rawWidgetWidth by remember(widget.spanX) { mutableFloatStateOf(widget.spanX) }
+	var rawWidgetHeight by remember(widget.spanY) { mutableFloatStateOf(widget.spanY) }
 
-    var isPrecisionMode by remember { mutableStateOf(false) }
-    var showEditPopup by remember { mutableStateOf(false) }
-    var showShapeEditor by remember { mutableStateOf(false) }
+	var isPrecisionMode by remember { mutableStateOf(false) }
+	var showEditPopup by remember { mutableStateOf(false) }
+	var showShapeEditor by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isPrecisionMode) {
-        onPrecisionModeChange(isPrecisionMode)
-    }
+	LaunchedEffect(isPrecisionMode) {
+		onPrecisionModeChange(isPrecisionMode)
+	}
 
-    fun commitChange(newApp: Widget? = null) {
-        onEdit(
-            newApp ?: widget.copy(
-                spanX = widgetWidth,
-                spanY = widgetHeight,
-                x = widgetX,
-                y = widgetY,
-                angle = widgetAngle
-            )
-        )
-    }
+	fun commitChange(newApp: Widget? = null) {
+		onEdit(
+			newApp ?: widget.copy(
+				spanX = widgetWidth,
+				spanY = widgetHeight,
+				x = widgetX,
+				y = widgetY,
+				angle = widgetAngle
+			)
+		)
+	}
 
-    fun resizeWidget(corner: ResizeSide, dxPx: Float, dyPx: Float) {
-        val deltaSpanX = dxPx / cellSizePx
-        val deltaSpanY = dyPx / cellSizePx
-        val deltaPosX = dxPx / widthPixels
-        val deltaPosY = dyPx / heightPixels
+	fun resizeWidget(corner: ResizeSide, dxPx: Float, dyPx: Float) {
+		val deltaSpanX = dxPx / cellSizePx
+		val deltaSpanY = dyPx / cellSizePx
+		val deltaPosX = dxPx / widthPixels
+		val deltaPosY = dyPx / heightPixels
 
-        val angleRad = Math.toRadians(widgetAngle.toDouble())
-        val cos = cos(angleRad).toFloat()
-        val sin = sin(angleRad).toFloat()
+		val angleRad = Math.toRadians(widgetAngle.toDouble())
+		val cos = cos(angleRad).toFloat()
+		val sin = sin(angleRad).toFloat()
 
-        var localDeltaX = 0f
-        var localDeltaY = 0f
+		var localDeltaX = 0f
+		var localDeltaY = 0f
 
-        when (corner) {
-            ResizeSide.Left -> {
-                rawWidgetWidth = (rawWidgetWidth - deltaSpanX).coerceAtLeast(Widget.MIN_SIZE)
-                localDeltaX = deltaPosX
-            }
+		when (corner) {
+			ResizeSide.Left -> {
+				rawWidgetWidth = (rawWidgetWidth - deltaSpanX).coerceAtLeast(Widget.MIN_SIZE)
+				localDeltaX = deltaPosX
+			}
 
-            ResizeSide.Right -> {
-                rawWidgetWidth = (rawWidgetWidth + deltaSpanX).coerceAtLeast(Widget.MIN_SIZE)
-            }
+			ResizeSide.Right -> {
+				rawWidgetWidth = (rawWidgetWidth + deltaSpanX).coerceAtLeast(Widget.MIN_SIZE)
+			}
 
-            ResizeSide.Top -> {
-                rawWidgetHeight = (rawWidgetHeight - deltaSpanY).coerceAtLeast(Widget.MIN_SIZE)
-                localDeltaY = deltaPosY
-            }
+			ResizeSide.Top -> {
+				rawWidgetHeight = (rawWidgetHeight - deltaSpanY).coerceAtLeast(Widget.MIN_SIZE)
+				localDeltaY = deltaPosY
+			}
 
-            ResizeSide.Bottom -> {
-                rawWidgetHeight = (rawWidgetHeight + deltaSpanY).coerceAtLeast(Widget.MIN_SIZE)
-            }
-        }
+			ResizeSide.Bottom -> {
+				rawWidgetHeight = (rawWidgetHeight + deltaSpanY).coerceAtLeast(Widget.MIN_SIZE)
+			}
+		}
 
-        val worldDeltaX = (localDeltaX * cos - localDeltaY * sin)
-        val worldDeltaY = (localDeltaX * sin + localDeltaY * cos)
+		val worldDeltaX = (localDeltaX * cos - localDeltaY * sin)
+		val worldDeltaY = (localDeltaX * sin + localDeltaY * cos)
 
-        widgetX += worldDeltaX
-        widgetY += worldDeltaY
+		widgetX += worldDeltaX
+		widgetY += worldDeltaY
 
-        widgetWidth =
-            if (snapResize()) {
-                rawWidgetWidth.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
-            } else {
-                rawWidgetWidth
-            }
+		widgetWidth =
+			if (snapResize()) {
+				rawWidgetWidth.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
+			} else {
+				rawWidgetWidth
+			}
 
-        widgetHeight =
-            if (snapResize()) {
-                rawWidgetHeight.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
-            } else {
-                rawWidgetHeight
-            }
-    }
+		widgetHeight =
+			if (snapResize()) {
+				rawWidgetHeight.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
+			} else {
+				rawWidgetHeight
+			}
+	}
 
-    Box(
-        modifier =
-            Modifier
-                .offset {
-                    IntOffset(
-                        x = (widgetX * widthPixels).toInt(),
-                        y = (widgetY * heightPixels).toInt()
-                    )
-                }.size(
-                    width = (widgetWidth * cellSizePx).toDp,
-                    height = (widgetHeight * cellSizePx).toDp
-                )
-                // Used to compute the widget position for rotation computing
-                .onGloballyPositioned { coordinates ->
-                    val rect = coordinates.boundsInRoot()
-                    widgetCenter =
-                        Offset(
-                            rect.left + rect.width / 2f,
-                            rect.top + rect.height / 2f
-                        )
-                }.graphicsLayer {
-                    rotationZ = widgetAngle
-                    transformOrigin = TransformOrigin.Center
-                    clip = false
-                }.border(
-                    width = if (selected) 3.dp else 1.dp,
-                    color = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(selected),
-                    shape = MaterialTheme.shapes.large
-                )
-    ) {
-        // Widget / App content (touch blocked during editing)
-        WidgetHostView(
-            widget = widget,
-            blockTouches = true,
-            cellSizePx = cellSizePx
-        ) { }
+	Box(
+		modifier =
+			Modifier
+				.offset {
+					IntOffset(
+						x = (widgetX * widthPixels).toInt(),
+						y = (widgetY * heightPixels).toInt()
+					)
+				}.size(
+					width = (widgetWidth * cellSizePx).toDp,
+					height = (widgetHeight * cellSizePx).toDp
+				)
+				// Used to compute the widget position for rotation computing
+				.onGloballyPositioned { coordinates ->
+					val rect = coordinates.boundsInRoot()
+					widgetCenter =
+						Offset(
+							rect.left + rect.width / 2f,
+							rect.top + rect.height / 2f
+						)
+				}.graphicsLayer {
+					rotationZ = widgetAngle
+					transformOrigin = TransformOrigin.Center
+					clip = false
+				}.border(
+					width = if (selected) 3.dp else 1.dp,
+					color = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(selected),
+					shape = MaterialTheme.shapes.large
+				)
+	) {
+		// Widget / App content (touch blocked during editing)
+		WidgetHostView(
+			widget = widget,
+			blockTouches = true,
+			cellSizePx = cellSizePx
+		) { }
 
-        // Main interaction overlay (move + tap)
-        Box(
-            modifier =
-                Modifier
-                    .matchParentSize()
-                    .pointerInput(widget.id) {
-                        detectTapGestures(
-                            onPress = {
-                                isPrecisionMode = false
-                                onSelect()
-                                try {
-                                    withTimeout(viewConfiguration.longPressTimeoutMillis.milliseconds) {
-                                        tryAwaitRelease()
-                                    }
-                                } catch (_: TimeoutCancellationException) {
-                                    isPrecisionMode = true
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                }
-                            }
-                        )
-                    }.pointerInput(widget.id, widget.angle, widget.x, widget.y) {
-                        detectDragGestures(
-                            onDragStart = {
-                                onSelect()
-                                rawWidgetX = widgetX
-                                rawWidgetY = widgetY
-                            },
-                            onDrag = { change, dragAmount ->
+		// Main interaction overlay (move + tap)
+		Box(
+			modifier =
+				Modifier
+					.matchParentSize()
+					.pointerInput(widget.id) {
+						detectTapGestures(
+							onPress = {
+								isPrecisionMode = false
+								onSelect()
+								try {
+									withTimeout(viewConfiguration.longPressTimeoutMillis.milliseconds) {
+										tryAwaitRelease()
+									}
+								} catch (_: TimeoutCancellationException) {
+									isPrecisionMode = true
+									haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+								}
+							}
+						)
+					}.pointerInput(widget.id, widget.angle, widget.x, widget.y) {
+						detectDragGestures(
+							onDragStart = {
+								onSelect()
+								rawWidgetX = widgetX
+								rawWidgetY = widgetY
+							},
+							onDrag = { change, dragAmount ->
 
-                                val angleRad = Math.toRadians(widgetAngle.toDouble())
+								val angleRad = Math.toRadians(widgetAngle.toDouble())
 
-                                val cos = cos(angleRad)
-                                val sin = sin(angleRad)
+								val cos = cos(angleRad)
+								val sin = sin(angleRad)
 
-                                val amountX = if (isPrecisionMode) dragAmount.x / 2f else dragAmount.x
-                                val amountY = if (isPrecisionMode) dragAmount.y / 2f else dragAmount.y
+								val amountX = if (isPrecisionMode) dragAmount.x / 2f else dragAmount.x
+								val amountY = if (isPrecisionMode) dragAmount.y / 2f else dragAmount.y
 
-                                val worldDx = (amountX * cos - amountY * sin).toFloat()
-                                val worldDy = (amountX * sin + amountY * cos).toFloat()
+								val worldDx = (amountX * cos - amountY * sin).toFloat()
+								val worldDy = (amountX * sin + amountY * cos).toFloat()
 
-                                rawWidgetX += worldDx / widthPixels
-                                rawWidgetY += worldDy / heightPixels
+								rawWidgetX += worldDx / widthPixels
+								rawWidgetY += worldDy / heightPixels
 
-                                val isSnapMove = snapMove() && !isPrecisionMode
+								val isSnapMove = snapMove() && !isPrecisionMode
 
-                                widgetX =
-                                    if (isSnapMove) {
-                                        (rawWidgetX / snapScaleX).roundToInt() * snapScaleX
-                                    } else {
-                                        rawWidgetX
-                                    }
+								widgetX =
+									if (isSnapMove) {
+										(rawWidgetX / snapScaleX).roundToInt() * snapScaleX
+									} else {
+										rawWidgetX
+									}
 
-                                widgetY =
-                                    if (isSnapMove) {
-                                        (rawWidgetY / snapScaleY).roundToInt() * snapScaleY
-                                    } else {
-                                        rawWidgetY
-                                    }
+								widgetY =
+									if (isSnapMove) {
+										(rawWidgetY / snapScaleY).roundToInt() * snapScaleY
+									} else {
+										rawWidgetY
+									}
 
-                                change.consume()
-                            },
-                            onDragEnd = {
-                                commitChange()
-                                isPrecisionMode = false
-                            },
-                            onDragCancel = {
-                                isPrecisionMode = false
-                            }
-                        )
-                    }
-        )
+								change.consume()
+							},
+							onDragEnd = {
+								commitChange()
+								isPrecisionMode = false
+							},
+							onDragCancel = {
+								isPrecisionMode = false
+							}
+						)
+					}
+		)
 
-        if (selected) {
-            // Rotate drag handle
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.TopCenter)
-                        .offset(y = (-50).dp)
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .onGloballyPositioned { handleCoordinates = it }
-                        .pointerInput(widget.id, widget.angle) {
-                            var dragStartFingerAngle: Float? = null
-                            var dragStartWidgetAngle = 0f
+		if (selected) {
+			// Rotate drag handle
+			Box(
+				modifier =
+					Modifier
+						.align(Alignment.TopCenter)
+						.offset(y = (-50).dp)
+						.size(40.dp)
+						.clip(CircleShape)
+						.onGloballyPositioned { handleCoordinates = it }
+						.pointerInput(widget.id, widget.angle) {
+							var dragStartFingerAngle: Float? = null
+							var dragStartWidgetAngle = 0f
 
-                            detectDragGestures(
-                                onDragStart = { offset ->
+							detectDragGestures(
+								onDragStart = { offset ->
 
-                                    val rootPos =
-                                        handleCoordinates
-                                            ?.localToRoot(offset)
-                                            ?: return@detectDragGestures
+									val rootPos =
+										handleCoordinates
+											?.localToRoot(offset)
+											?: return@detectDragGestures
 
-                                    dragStartFingerAngle =
-                                        Math
-                                            .toDegrees(
-                                                atan2(
-                                                    (rootPos.y - widgetCenter.y).toDouble(),
-                                                    (rootPos.x - widgetCenter.x).toDouble()
-                                                )
-                                            ).toFloat()
+									dragStartFingerAngle =
+										Math
+											.toDegrees(
+												atan2(
+													(rootPos.y - widgetCenter.y).toDouble(),
+													(rootPos.x - widgetCenter.x).toDouble()
+												)
+											).toFloat()
 
-                                    // Initialize here to prevent the widget rotated to do one billion rotations a second
-                                    dragStartWidgetAngle = widgetAngle
-                                },
-                                onDragEnd = {
-                                    dragStartFingerAngle = null
-                                    commitChange()
-                                },
-                                onDragCancel = {
-                                    dragStartFingerAngle = null
-                                }
-                            ) { change, _ ->
+									// Initialize here to prevent the widget rotated to do one billion rotations a second
+									dragStartWidgetAngle = widgetAngle
+								},
+								onDragEnd = {
+									dragStartFingerAngle = null
+									commitChange()
+								},
+								onDragCancel = {
+									dragStartFingerAngle = null
+								}
+							) { change, _ ->
 
-                                val rootPos =
-                                    handleCoordinates
-                                        ?.localToRoot(change.position)
-                                        ?: return@detectDragGestures
+								val rootPos =
+									handleCoordinates
+										?.localToRoot(change.position)
+										?: return@detectDragGestures
 
-                                val currentFingerAngle =
-                                    Math
-                                        .toDegrees(
-                                            atan2(
-                                                (rootPos.y - widgetCenter.y).toDouble(),
-                                                (rootPos.x - widgetCenter.x).toDouble()
-                                            )
-                                        ).toFloat()
+								val currentFingerAngle =
+									Math
+										.toDegrees(
+											atan2(
+												(rootPos.y - widgetCenter.y).toDouble(),
+												(rootPos.x - widgetCenter.x).toDouble()
+											)
+										).toFloat()
 
-                                dragStartFingerAngle?.let { startAngle ->
+								dragStartFingerAngle?.let { startAngle ->
 
-                                    var delta = currentFingerAngle - startAngle
+									var delta = currentFingerAngle - startAngle
 
-                                    if (delta > 180f) delta -= 360f
-                                    if (delta < -180f) delta += 360f
+									if (delta > 180f) delta -= 360f
+									if (delta < -180f) delta += 360f
 
-                                    val newAngle = dragStartWidgetAngle + delta
+									val newAngle = dragStartWidgetAngle + delta
 
-                                    widgetAngle =
-                                        if (snapRotation()) {
-                                            (newAngle / 15f).roundToInt() * 15f
-                                        } else {
-                                            newAngle
-                                        }
-                                }
+									widgetAngle =
+										if (snapRotation()) {
+											(newAngle / 15f).roundToInt() * 15f
+										} else {
+											newAngle
+										}
+								}
 
-                                change.consume()
-                            }
-                        },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.refresh),
-                    contentDescription = stringResource(R.string.rotation),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
+								change.consume()
+							}
+						},
+				contentAlignment = Alignment.Center
+			) {
+				Icon(
+					painter = painterResource(R.drawable.refresh),
+					contentDescription = stringResource(R.string.rotation),
+					tint = MaterialTheme.colorScheme.primary
+				)
+			}
 
-            // Resize handles - only visible when selected
+			// Resize handles - only visible when selected
 
-            val dotSize = 12.dp
-            val hitboxPadding = 20.dp
+			val dotSize = 12.dp
+			val hitboxPadding = 20.dp
 
-            // Top handle
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.TopCenter)
-                        .offset(y = -((dotSize.value / 2 + hitboxPadding.value).dp))
-                        .size(dotSize + hitboxPadding * 2)
-                        .clip(CircleShape)
-                        .background(Color.Transparent)
-                        .pointerInput(ResizeSide.Top, widget.spanX, widget.spanY) {
-                            detectDragGestures(
-                                onDragEnd = ::commitChange
-                            ) { change, dragAmount ->
-                                change.consume()
-                                resizeWidget(ResizeSide.Top, 0f, dragAmount.y)
-                            }
-                        }
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(dotSize)
-                            .align(Alignment.Center)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                )
-            }
+			// Top handle
+			Box(
+				modifier =
+					Modifier
+						.align(Alignment.TopCenter)
+						.offset(y = -((dotSize.value / 2 + hitboxPadding.value).dp))
+						.size(dotSize + hitboxPadding * 2)
+						.clip(CircleShape)
+						.background(Color.Transparent)
+						.pointerInput(ResizeSide.Top, widget.spanX, widget.spanY) {
+							detectDragGestures(
+								onDragEnd = ::commitChange
+							) { change, dragAmount ->
+								change.consume()
+								resizeWidget(ResizeSide.Top, 0f, dragAmount.y)
+							}
+						}
+			) {
+				Box(
+					modifier =
+						Modifier
+							.size(dotSize)
+							.align(Alignment.Center)
+							.background(MaterialTheme.colorScheme.primary, CircleShape)
+				)
+			}
 
-            // Bottom handle
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(y = ((dotSize.value / 2 + hitboxPadding.value).dp))
-                        .size(dotSize + hitboxPadding * 2)
-                        .clip(CircleShape)
-                        .background(Color.Transparent)
-                        .pointerInput(ResizeSide.Bottom, widget.spanX, widget.spanY) {
-                            detectDragGestures(
-                                onDragEnd = ::commitChange
-                            ) { change, dragAmount ->
-                                change.consume()
-                                resizeWidget(ResizeSide.Bottom, 0f, dragAmount.y)
-                            }
-                        }
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(dotSize)
-                            .align(Alignment.Center)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                )
-            }
+			// Bottom handle
+			Box(
+				modifier =
+					Modifier
+						.align(Alignment.BottomCenter)
+						.offset(y = ((dotSize.value / 2 + hitboxPadding.value).dp))
+						.size(dotSize + hitboxPadding * 2)
+						.clip(CircleShape)
+						.background(Color.Transparent)
+						.pointerInput(ResizeSide.Bottom, widget.spanX, widget.spanY) {
+							detectDragGestures(
+								onDragEnd = ::commitChange
+							) { change, dragAmount ->
+								change.consume()
+								resizeWidget(ResizeSide.Bottom, 0f, dragAmount.y)
+							}
+						}
+			) {
+				Box(
+					modifier =
+						Modifier
+							.size(dotSize)
+							.align(Alignment.Center)
+							.background(MaterialTheme.colorScheme.primary, CircleShape)
+				)
+			}
 
-            // Left handle
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.CenterStart)
-                        .offset(x = -((dotSize.value / 2 + hitboxPadding.value).dp))
-                        .size(dotSize + hitboxPadding * 2)
-                        .clip(CircleShape)
-                        .background(Color.Transparent)
-                        .pointerInput(ResizeSide.Left, widget.spanX, widget.spanY) {
-                            detectDragGestures(
-                                onDragEnd = ::commitChange
-                            ) { change, dragAmount ->
-                                change.consume()
-                                resizeWidget(ResizeSide.Left, dragAmount.x, 0f)
-                            }
-                        }
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(dotSize)
-                            .align(Alignment.Center)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                )
-            }
+			// Left handle
+			Box(
+				modifier =
+					Modifier
+						.align(Alignment.CenterStart)
+						.offset(x = -((dotSize.value / 2 + hitboxPadding.value).dp))
+						.size(dotSize + hitboxPadding * 2)
+						.clip(CircleShape)
+						.background(Color.Transparent)
+						.pointerInput(ResizeSide.Left, widget.spanX, widget.spanY) {
+							detectDragGestures(
+								onDragEnd = ::commitChange
+							) { change, dragAmount ->
+								change.consume()
+								resizeWidget(ResizeSide.Left, dragAmount.x, 0f)
+							}
+						}
+			) {
+				Box(
+					modifier =
+						Modifier
+							.size(dotSize)
+							.align(Alignment.Center)
+							.background(MaterialTheme.colorScheme.primary, CircleShape)
+				)
+			}
 
-            // Right handle
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.CenterEnd)
-                        .offset(x = ((dotSize.value / 2 + hitboxPadding.value).dp))
-                        .size(dotSize + hitboxPadding * 2)
-                        .clip(CircleShape)
-                        .background(Color.Transparent)
-                        .pointerInput(ResizeSide.Right, widget.spanX, widget.spanY) {
-                            detectDragGestures(
-                                onDragEnd = ::commitChange
-                            ) { change, dragAmount ->
-                                change.consume()
-                                resizeWidget(ResizeSide.Right, dragAmount.x, 0f)
-                            }
-                        }
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(dotSize)
-                            .align(Alignment.Center)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                )
-            }
+			// Right handle
+			Box(
+				modifier =
+					Modifier
+						.align(Alignment.CenterEnd)
+						.offset(x = ((dotSize.value / 2 + hitboxPadding.value).dp))
+						.size(dotSize + hitboxPadding * 2)
+						.clip(CircleShape)
+						.background(Color.Transparent)
+						.pointerInput(ResizeSide.Right, widget.spanX, widget.spanY) {
+							detectDragGestures(
+								onDragEnd = ::commitChange
+							) { change, dragAmount ->
+								change.consume()
+								resizeWidget(ResizeSide.Right, dragAmount.x, 0f)
+							}
+						}
+			) {
+				Box(
+					modifier =
+						Modifier
+							.size(dotSize)
+							.align(Alignment.Center)
+							.background(MaterialTheme.colorScheme.primary, CircleShape)
+				)
+			}
 
-            // Edit button
-            Box {
-                DragonIconButton(
-                    modifier =
-                        Modifier
-                            .align(Alignment.BottomEnd)
-                            .clip(CircleShape)
-                            .background(Color.Transparent),
-                    icon = R.drawable.edit_rounded,
-                    contentDescription = R.string.edit
-                ) { showEditPopup = true }
+			// Edit button
+			Box {
+				DragonIconButton(
+					modifier =
+						Modifier
+							.align(Alignment.BottomEnd)
+							.clip(CircleShape)
+							.background(Color.Transparent),
+					icon = R.drawable.edit_rounded,
+					contentDescription = R.string.edit
+				) { showEditPopup = true }
 
-                DropdownMenu(
-                    expanded = showEditPopup,
-                    onDismissRequest = { showEditPopup = false }
-                ) {
-                    DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(R.string.ghosted),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp
-                                )
-                            },
-                            leadingIcon = {
-                                Checkbox(
-                                    checked = widget.ghosted == true,
-                                    onCheckedChange = null
-                                )
-                            },
-                            onClick = {
-                                commitChange(widget.copy(ghosted = !(widget.ghosted ?: Widget.defaultGhosted)))
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(R.string.foreground),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp
-                                )
-                            },
-                            leadingIcon = {
-                                Checkbox(
-                                    checked = widget.foreground == true,
-                                    onCheckedChange = null
-                                )
-                            },
-                            onClick = {
-                                commitChange(widget.copy(foreground = !(widget.foreground ?: Widget.defaultForeground)))
-                            }
-                        )
-                        SmallShapeRow(
-                            selected = widget.shape ?: IconShape.RightSquare,
-                            onReset = {
-                                commitChange(widget.copy(shape = null))
-                            }
-                        ) { showShapeEditor = true }
-                    }
-                }
-            }
-        }
-    }
+				DropdownMenu(
+					expanded = showEditPopup,
+					onDismissRequest = { showEditPopup = false }
+				) {
+					DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+						DropdownMenuItem(
+							text = {
+								Text(
+									text = stringResource(R.string.ghosted),
+									color = MaterialTheme.colorScheme.onBackground,
+									fontSize = 12.sp
+								)
+							},
+							leadingIcon = {
+								Checkbox(
+									checked = widget.ghosted == true,
+									onCheckedChange = null
+								)
+							},
+							onClick = {
+								commitChange(widget.copy(ghosted = !(widget.ghosted ?: Widget.defaultGhosted)))
+							}
+						)
+						DropdownMenuItem(
+							text = {
+								Text(
+									text = stringResource(R.string.foreground),
+									color = MaterialTheme.colorScheme.onBackground,
+									fontSize = 12.sp
+								)
+							},
+							leadingIcon = {
+								Checkbox(
+									checked = widget.foreground == true,
+									onCheckedChange = null
+								)
+							},
+							onClick = {
+								commitChange(widget.copy(foreground = !(widget.foreground ?: Widget.defaultForeground)))
+							}
+						)
+						SmallShapeRow(
+							selected = widget.shape ?: IconShape.RightSquare,
+							onReset = {
+								commitChange(widget.copy(shape = null))
+							}
+						) { showShapeEditor = true }
+					}
+				}
+			}
+		}
+	}
 
-    if (showShapeEditor) {
-        ShapePickerDialog(
-            selected = widget.shape ?: IconShape.RightSquare,
-            onDismiss = { showShapeEditor = false }
-        ) {
-            commitChange(widget.copy(shape = it))
-            showShapeEditor = false
-        }
-    }
+	if (showShapeEditor) {
+		ShapePickerDialog(
+			selected = widget.shape ?: IconShape.RightSquare,
+			onDismiss = { showShapeEditor = false }
+		) {
+			commitChange(widget.copy(shape = it))
+			showShapeEditor = false
+		}
+	}
 }

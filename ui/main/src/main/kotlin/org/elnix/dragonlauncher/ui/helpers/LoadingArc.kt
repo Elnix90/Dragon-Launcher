@@ -42,135 +42,135 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
 
 private fun DrawScope.holdTolerance(
-    center: Offset,
-    tolerance: Dp
+	center: Offset,
+	tolerance: Dp
 ) {
-    drawCircle(
-        color = Color.Cyan,
-        center = center,
-        radius = tolerance.toPx(),
-        style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
-    )
+	drawCircle(
+		color = Color.Cyan,
+		center = center,
+		radius = tolerance.toPx(),
+		style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
+	)
 }
 
 @Composable
 fun HoldToActivateArc(
-    center: Offset?,
-    progress: Float,
-    customObject: CustomObject,
-    playAnimation: Boolean = true
+	center: Offset?,
+	progress: Float,
+	customObject: CustomObject,
+	playAnimation: Boolean = true
 ) {
-    if (center == null || progress <= 0f) return
+	if (center == null || progress <= 0f) return
 
-    val ctx = LocalContext.current
-    val extraColors = LocalExtraColors.current
-    val holdSettings = LocalHoldToActivateSettings.current
+	val ctx = LocalContext.current
+	val extraColors = LocalExtraColors.current
+	val holdSettings = LocalHoldToActivateSettings.current
 
-    val rotationsPerSecond = holdSettings.rotationsPerSecond
-    val rgbLoading = holdSettings.holdRgbLoading
-    val holdToActivateSettingsTolerance = holdSettings.holdToActivateSettingsTolerance
-    val showToleranceOnMainScreen = holdSettings.showToleranceOnMainScreen
-    val pulsingRadius = holdSettings.pulsingRadius
-    val pulsingDuration = holdSettings.pulsingRDuration
+	val rotationsPerSecond = holdSettings.rotationsPerSecond
+	val rgbLoading = holdSettings.holdRgbLoading
+	val holdToActivateSettingsTolerance = holdSettings.holdToActivateSettingsTolerance
+	val showToleranceOnMainScreen = holdSettings.showToleranceOnMainScreen
+	val pulsingRadius = holdSettings.pulsingRadius
+	val pulsingDuration = holdSettings.pulsingRDuration
 
-    val color =
-        if (rgbLoading) {
-            Color.hsv(progress * 360f, 1f, 1f)
-        } else {
-            customObject.color ?: extraColors.holdToActivate
-        }
+	val color =
+		if (rgbLoading) {
+			Color.hsv(progress * 360f, 1f, 1f)
+		} else {
+			customObject.color ?: extraColors.holdToActivate
+		}
 
-    // Remembers for each new click the random or not rotation it applies (if -1)
-    val rotationAngleStart =
-        remember(center, customObject.rotation) {
-            customObject.rotation.takeIf { it != -1 } ?: (0..360).random()
-        }
-    // Remembers the shape for each new click, but keeps the same when holding
-    val resolvedShape: Shape = remember(center) { customObject.shape.resolveShape() }
+	// Remembers for each new click the random or not rotation it applies (if -1)
+	val rotationAngleStart =
+		remember(center, customObject.rotation) {
+			customObject.rotation.takeIf { it != -1 } ?: (0..360).random()
+		}
+	// Remembers the shape for each new click, but keeps the same when holding
+	val resolvedShape: Shape = remember(center) { customObject.shape.resolveShape() }
 
-    val infiniteTransition = rememberInfiniteTransition(label = "arc")
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = pulsingRadius,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(pulsingDuration, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-        label = "pulse"
-    )
+	val infiniteTransition = rememberInfiniteTransition(label = "arc")
+	val pulseScale by infiniteTransition.animateFloat(
+		initialValue = 1f,
+		targetValue = pulsingRadius,
+		animationSpec =
+			infiniteRepeatable(
+				animation = tween(pulsingDuration, easing = FastOutSlowInEasing),
+				repeatMode = RepeatMode.Reverse
+			),
+		label = "pulse"
+	)
 
-    val rotationAnimatable = remember { Animatable(0f) }
-    LaunchedEffect(rotationsPerSecond, playAnimation) {
-        if (rotationsPerSecond > 0f && playAnimation) {
-            val animationScale = Settings.Global.getFloat(
-                ctx.contentResolver,
-                Settings.Global.ANIMATOR_DURATION_SCALE,
-                1f
-            )
-            val durationMs = (1000f / rotationsPerSecond / animationScale).toInt().coerceAtLeast(1)
-            while (this@LaunchedEffect.isActive) {
-                rotationAnimatable.animateTo(
-                    targetValue = 360f,
-                    animationSpec = tween(durationMs, easing = LinearEasing)
-                )
-                rotationAnimatable.snapTo(0f)
-            }
-        } else {
-            rotationAnimatable.snapTo(0f)
-        }
-    }
+	val rotationAnimatable = remember { Animatable(0f) }
+	LaunchedEffect(rotationsPerSecond, playAnimation) {
+		if (rotationsPerSecond > 0f && playAnimation) {
+			val animationScale = Settings.Global.getFloat(
+				ctx.contentResolver,
+				Settings.Global.ANIMATOR_DURATION_SCALE,
+				1f
+			)
+			val durationMs = (1000f / rotationsPerSecond / animationScale).toInt().coerceAtLeast(1)
+			while (this@LaunchedEffect.isActive) {
+				rotationAnimatable.animateTo(
+					targetValue = 360f,
+					animationSpec = tween(durationMs, easing = LinearEasing)
+				)
+				rotationAnimatable.snapTo(0f)
+			}
+		} else {
+			rotationAnimatable.snapTo(0f)
+		}
+	}
 
-    val pathMeasurer = remember { PathMeasure() }
-    val destinationPath = remember { Path() }
-    val matrix = remember { Matrix() }
+	val pathMeasurer = remember { PathMeasure() }
+	val destinationPath = remember { Path() }
+	val matrix = remember { Matrix() }
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .drawBehind {
-                    val diameterPx = customObject.size.toPx() * 2
-                    val path = resolvedShape.toPath(Size(diameterPx, diameterPx), this)
+	Box(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.drawBehind {
+					val diameterPx = customObject.size.toPx() * 2
+					val path = resolvedShape.toPath(Size(diameterPx, diameterPx), this)
 
-                    matrix.reset()
-                    matrix.translate(-diameterPx / 2f, -diameterPx / 2f)
-                    path.transform(matrix)
+					matrix.reset()
+					matrix.translate(-diameterPx / 2f, -diameterPx / 2f)
+					path.transform(matrix)
 
-                    pathMeasurer.setPath(path, false)
-                    val totalLength = pathMeasurer.length
-                    destinationPath.reset()
-                    pathMeasurer.getSegment(0f, totalLength * progress, destinationPath)
+					pathMeasurer.setPath(path, false)
+					val totalLength = pathMeasurer.length
+					destinationPath.reset()
+					pathMeasurer.getSegment(0f, totalLength * progress, destinationPath)
 
-                    withTransform({
-                        if (customObject.mirror) mirrorVertically(center)
+					withTransform({
+						if (customObject.mirror) mirrorVertically(center)
 
-                        // Rotate to start to the angle position chosen
-                        rotate(
-                            degrees = rotationAngleStart.toFloat(),
-                            pivot = center
-                        )
+						// Rotate to start to the angle position chosen
+						rotate(
+							degrees = rotationAngleStart.toFloat(),
+							pivot = center
+						)
 
-                        // Rotates with the animation rotation, computed above
-                        if (rotationsPerSecond > 0f && playAnimation) {
-                            rotate(degrees = rotationAnimatable.value, pivot = center)
-                        }
-                        scale(pulseScale, center)
-                        translate(center.x, center.y)
-                    }) {
-                        drawPathGlow(
-                            path = destinationPath,
-                            color = color,
-                            lineStrokeWidth = customObject.stroke,
-                            glow = customObject.glow,
-                            erase = false,
-                            eraseColor = null
-                        )
-                    }
+						// Rotates with the animation rotation, computed above
+						if (rotationsPerSecond > 0f && playAnimation) {
+							rotate(degrees = rotationAnimatable.value, pivot = center)
+						}
+						scale(pulseScale, center)
+						translate(center.x, center.y)
+					}) {
+						drawPathGlow(
+							path = destinationPath,
+							color = color,
+							lineStrokeWidth = customObject.stroke,
+							glow = customObject.glow,
+							erase = false,
+							eraseColor = null
+						)
+					}
 
-                    if (showToleranceOnMainScreen) {
-                        holdTolerance(center, holdToActivateSettingsTolerance)
-                    }
-                }
-    )
+					if (showToleranceOnMainScreen) {
+						holdTolerance(center, holdToActivateSettingsTolerance)
+					}
+				}
+	)
 }

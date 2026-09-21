@@ -14,13 +14,13 @@ import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
 
 @OptIn(ExperimentalSerializationApi::class)
 public suspend fun loadExtensionRegistry(ctx: Context): List<ExtensionModel>? =
-    withContext(Dispatchers.IO) {
-        try {
-            ctx.assets.open("extensions-registry.json").use { inputStream ->
-                json.decodeFromStream<List<ExtensionModel>>(inputStream)
-            }
-        } catch (e: Exception) {
-            logE(EXTENSION_MANAGER_TAG, e) { "Failed to load extensions" }
-            null
-        }
-    }
+	withContext(Dispatchers.IO) {
+		try {
+			ctx.assets.open("extensions-registry.json").use { inputStream ->
+				json.decodeFromStream<List<ExtensionModel>>(inputStream)
+			}
+		} catch (e: Exception) {
+			logE(EXTENSION_MANAGER_TAG, e) { "Failed to load extensions" }
+			null
+		}
+	}

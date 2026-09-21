@@ -9,24 +9,24 @@ import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 
 @Composable
 fun CustomObject.resolveRotation(
-    isStartOrAngle: Boolean,
-    sweep: Int,
-    key: Any? = null
+	isStartOrAngle: Boolean,
+	sweep: Int,
+	key: Any? = null
 ): Int {
-    val startAndAngleShareSameRandomAngle by AngleLineSettingsStore.startAndAngleShareSameRandomAngle.asState()
+	val startAndAngleShareSameRandomAngle by AngleLineSettingsStore.startAndAngleShareSameRandomAngle.asState()
 
-    val baseRotation =
-        remember(this.rotation, key, startAndAngleShareSameRandomAngle) {
-            this.rotation.takeIf { it != -1 } ?: (0..360).random()
-        }
+	val baseRotation =
+		remember(this.rotation, key, startAndAngleShareSameRandomAngle) {
+			this.rotation.takeIf { it != -1 } ?: (0..360).random()
+		}
 
-    return if (this.alignsWithDragAngle) {
-        sweep + baseRotation
-    } else if (startAndAngleShareSameRandomAngle && isStartOrAngle) {
-        remember(key) {
-            (0..360).random()
-        }
-    } else {
-        baseRotation
-    }
+	return if (this.alignsWithDragAngle) {
+		sweep + baseRotation
+	} else if (startAndAngleShareSameRandomAngle && isStartOrAngle) {
+		remember(key) {
+			(0..360).random()
+		}
+	} else {
+		baseRotation
+	}
 }

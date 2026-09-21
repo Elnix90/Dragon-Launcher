@@ -15,51 +15,51 @@ import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
 fun DialogTitle(
-    text: String,
-    modifier: Modifier = Modifier,
-    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
-    resetEnabled: Boolean = true,
-    onReset: (() -> Unit)? = null
+	text: String,
+	modifier: Modifier = Modifier,
+	trailingIcon: (@Composable RowScope.() -> Unit)? = null,
+	resetEnabled: Boolean = true,
+	onReset: (() -> Unit)? = null
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        AutoResizeableText(
-            modifier = modifier,
-            text = text,
-            style = MaterialTheme.typography.headlineSmallEmphasized,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.SpaceBetween,
+		modifier = Modifier.fillMaxWidth()
+	) {
+		AutoResizeableText(
+			modifier = modifier,
+			text = text,
+			style = MaterialTheme.typography.headlineSmallEmphasized,
+			color = MaterialTheme.colorScheme.onSurface
+		)
 
-        if (onReset != null) {
-            ResetIcon(enabled = resetEnabled, onReset = onReset)
-        }
+		if (onReset != null) {
+			ResetIcon(enabled = resetEnabled, onReset = onReset)
+		}
 
-        if (trailingIcon != null) {
-            Spacer(5.dp)
-            trailingIcon()
-        }
-    }
+		if (trailingIcon != null) {
+			Spacer(5.dp)
+			trailingIcon()
+		}
+	}
 }
 
 @Composable
 fun DialogSubTitle(text: String, modifier: Modifier = Modifier) {
-    Text(
-        modifier = modifier,
-        text = text,
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onSurface
-    )
+	Text(
+		modifier = modifier,
+		text = text,
+		style = MaterialTheme.typography.titleLarge,
+		color = MaterialTheme.colorScheme.onSurface
+	)
 }
 
 @Composable
 fun DialogDescription(text: String, modifier: Modifier = Modifier) {
-    Text(
-        modifier = modifier,
-        text = text,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface
-    )
+	Text(
+		modifier = modifier,
+		text = text,
+		style = MaterialTheme.typography.bodyLarge,
+		color = MaterialTheme.colorScheme.onSurface
+	)
 }

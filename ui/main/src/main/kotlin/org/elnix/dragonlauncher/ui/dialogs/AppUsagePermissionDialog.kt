@@ -12,30 +12,30 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Composable
 fun AppUsagePermissionDialog(onDismiss: () -> Unit) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.usage_permission_required)) },
-        text = { Text(stringResource(R.string.usage_permission_description)) },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
-                    ctx.startActivity(
-                        Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                    )
-                }
-            ) {
-                Text(stringResource(R.string.open_settings))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
-    )
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		title = { Text(stringResource(R.string.usage_permission_required)) },
+		text = { Text(stringResource(R.string.usage_permission_description)) },
+		confirmButton = {
+			TextButton(
+				onClick = {
+					onDismiss()
+					ctx.startActivity(
+						Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+							flags = Intent.FLAG_ACTIVITY_NEW_TASK
+						}
+					)
+				}
+			) {
+				Text(stringResource(R.string.open_settings))
+			}
+		},
+		dismissButton = {
+			TextButton(onClick = onDismiss) {
+				Text(stringResource(R.string.cancel))
+			}
+		}
+	)
 }

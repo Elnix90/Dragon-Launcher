@@ -10,38 +10,38 @@ import kotlin.math.roundToInt
 
 public const val TWO_PI_F: Float = (2.0 * PI).toFloat()
 public val Float.Companion.TWO_PI: Float
-    get() = TWO_PI_F
+	get() = TWO_PI_F
 
 private const val PI_F = PI.toFloat()
 public val Float.Companion.PI: Float
-    get() = PI_F
+	get() = PI_F
 
 public inline val Float.radians: Double
-    get() = Math.toRadians(this.toDouble())
+	get() = Math.toRadians(this.toDouble())
 
 public inline val Float.degrees: Double
-    get() = Math.toDegrees(this.toDouble())
+	get() = Math.toDegrees(this.toDouble())
 
 public inline val Int.radians: Double
-    get() = Math.toRadians(this.toDouble())
+	get() = Math.toRadians(this.toDouble())
 
 public inline val Int.degrees: Double
-    get() = Math.toDegrees(this.toDouble())
+	get() = Math.toDegrees(this.toDouble())
 
 public inline val Double.radians: Double
-    get() = Math.toRadians(this)
+	get() = Math.toRadians(this)
 
 public inline val Double.degrees: Double
-    get() = Math.toDegrees(this)
+	get() = Math.toDegrees(this)
 
 public fun Float.round(decimals: Int): Float {
-    if (decimals < 0) throw IllegalArgumentException("decimals must be >= 0")
-    val factor = 10f.pow(decimals)
-    return (this * factor).roundToInt() / factor
+	if (decimals < 0) throw IllegalArgumentException("decimals must be >= 0")
+	val factor = 10f.pow(decimals)
+	return (this * factor).roundToInt() / factor
 }
 
 public val Float.to255: Int
-    get() = (this.coerceIn(0f, 1f) * 255).fastRoundToInt()
+	get() = (this.coerceIn(0f, 1f) * 255).fastRoundToInt()
 
 /**
  * Snaps the value to the nearest integer if it crosses the threshold.
@@ -54,8 +54,8 @@ public fun Int.snapToRound(snapTo: Int, threshold: Int): Int = if (abs(this - sn
  * @param threshold The distance from an integer to trigger snapping
  */
 public fun Float.snapToRound(
-    snapTo: Float,
-    threshold: Float
+	snapTo: Float,
+	threshold: Float
 ): Float = if (abs(this - snapTo) <= threshold) snapTo else this
 
 /**
@@ -70,6 +70,6 @@ public fun Float.snapToRound(
  * @throws IllegalArgumentException if [gridSize] is not positive.
  */
 public fun Float.snapToGrid(gridSize: Float): Float {
-    if (gridSize <= 0f) throw IllegalArgumentException("gridSize must be > 0")
-    return (this / gridSize).fastRoundToInt() * gridSize
+	if (gridSize <= 0f) throw IllegalArgumentException("gridSize must be > 0")
+	return (this / gridSize).fastRoundToInt() * gridSize
 }

@@ -16,50 +16,50 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DragonIconButtonImpl(
-    onClick: () -> Unit,
-    modifier: Modifier,
-    enabled: Boolean,
-    interactionSource: MutableInteractionSource,
-    colors: IconButtonColors,
-    content: @Composable () -> Unit
+	onClick: () -> Unit,
+	modifier: Modifier,
+	enabled: Boolean,
+	interactionSource: MutableInteractionSource,
+	colors: IconButtonColors,
+	content: @Composable () -> Unit
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        colors = colors,
-        interactionSource = interactionSource,
-        shapes = IconButtonDefaults.shapes(),
-        content = content
-    )
+	IconButton(
+		onClick = onClick,
+		modifier = modifier,
+		enabled = enabled,
+		colors = colors,
+		interactionSource = interactionSource,
+		shapes = IconButtonDefaults.shapes(),
+		content = content
+	)
 }
 
 @Composable
 fun DragonIconButton(
-    icon: Int,
-    contentDescription: Int,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    isCancel: Boolean = false,
-    interactionSource: MutableInteractionSource = rememberInteractionSource(),
-    onClick: () -> Unit
+	icon: Int,
+	contentDescription: Int,
+	modifier: Modifier = Modifier,
+	enabled: Boolean = true,
+	isCancel: Boolean = false,
+	interactionSource: MutableInteractionSource = rememberInteractionSource(),
+	onClick: () -> Unit
 ) {
-    val colors = if (isCancel) AppObjectsColors.cancelIconButtonColors() else AppObjectsColors.iconButtonColors()
+	val colors = if (isCancel) AppObjectsColors.cancelIconButtonColors() else AppObjectsColors.iconButtonColors()
 
-    DragonTooltip(contentDescription) {
-        DragonIconButtonImpl(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled,
-            interactionSource = interactionSource,
-            colors = colors
-        ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = stringResource(contentDescription)
-            )
-        }
-    }
+	DragonTooltip(contentDescription) {
+		DragonIconButtonImpl(
+			onClick = onClick,
+			modifier = modifier,
+			enabled = enabled,
+			interactionSource = interactionSource,
+			colors = colors
+		) {
+			Icon(
+				painter = painterResource(icon),
+				contentDescription = stringResource(contentDescription)
+			)
+		}
+	}
 }
 
 // @Composable

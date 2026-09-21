@@ -18,28 +18,28 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
 fun DragonGroupScope.DrawerIconShapePicker() {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val iconShape by DrawerSettingsStore.iconShape.asState()
+	val iconShape by DrawerSettingsStore.iconShape.asState()
 
-    var showShapePickerDialog by remember { mutableStateOf(false) }
+	var showShapePickerDialog by remember { mutableStateOf(false) }
 
-    ShapeRow(
-        selected = iconShape,
-        resetEnabled = iconShape != DrawerSettingsStore.iconShape.default,
-        onReset = { scope.launch { DrawerSettingsStore.iconShape.reset(ctx) } }
-    ) { showShapePickerDialog = true }
+	ShapeRow(
+		selected = iconShape,
+		resetEnabled = iconShape != DrawerSettingsStore.iconShape.default,
+		onReset = { scope.launch { DrawerSettingsStore.iconShape.reset(ctx) } }
+	) { showShapePickerDialog = true }
 
-    if (showShapePickerDialog) {
-        ShapePickerDialog(
-            selected = iconShape,
-            onDismiss = { showShapePickerDialog = false }
-        ) {
-            logD(SHAPES_TAG) { "Picked: $it" }
-            scope.launch {
-                DrawerSettingsStore.iconShape.set(ctx, it)
-            }
-        }
-    }
+	if (showShapePickerDialog) {
+		ShapePickerDialog(
+			selected = iconShape,
+			onDismiss = { showShapePickerDialog = false }
+		) {
+			logD(SHAPES_TAG) { "Picked: $it" }
+			scope.launch {
+				DrawerSettingsStore.iconShape.set(ctx, it)
+			}
+		}
+	}
 }

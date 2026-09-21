@@ -19,29 +19,29 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 
 @Composable
 fun DragonRow(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    interactionSource: MutableInteractionSource = rememberInteractionSource(),
-    enabled: Boolean = true,
-    onLongClick: (() -> Unit)? = null,
-    content: @Composable RowScope.() -> Unit
+	onClick: () -> Unit,
+	modifier: Modifier = Modifier,
+	interactionSource: MutableInteractionSource = rememberInteractionSource(),
+	enabled: Boolean = true,
+	onLongClick: (() -> Unit)? = null,
+	content: @Composable RowScope.() -> Unit
 ) {
-    CompositionLocalProvider(
-        LocalContentColor provides MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
-    ) {
-        Row(
-            modifier =
-                modifier
-                    .shapedClickable(
-                        enabled = enabled,
-                        interactionSource = interactionSource,
-                        onLongClick = onLongClick,
-                        onClick = onClick
-                    ).background(MaterialTheme.colorScheme.surface.semiTransparentIfDisabled(enabled))
-                    .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            content = content
-        )
-    }
+	CompositionLocalProvider(
+		LocalContentColor provides MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
+	) {
+		Row(
+			modifier =
+				modifier
+					.shapedClickable(
+						enabled = enabled,
+						interactionSource = interactionSource,
+						onLongClick = onLongClick,
+						onClick = onClick
+					).background(MaterialTheme.colorScheme.surface.semiTransparentIfDisabled(enabled))
+					.padding(10.dp),
+			horizontalArrangement = Arrangement.SpaceBetween,
+			verticalAlignment = Alignment.CenterVertically,
+			content = content
+		)
+	}
 }

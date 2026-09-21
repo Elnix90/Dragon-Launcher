@@ -8,6 +8,6 @@ import androidx.compose.material3.Shapes
  * My own copy because it's internal in library
  * */
 object ShapeDefaultsClone {
-    /** A fully rounded corner size */
-    internal val CornerFull: CornerSize = CornerSize(100)
+	/** A fully rounded corner size */
+	internal val CornerFull: CornerSize = CornerSize(100)
 }

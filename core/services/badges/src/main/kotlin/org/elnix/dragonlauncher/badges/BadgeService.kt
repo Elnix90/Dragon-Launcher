@@ -13,22 +13,22 @@ import org.elnix.dragonlauncher.notifications.NotificationRepository
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
 public interface BadgeService {
-    public fun getBadge(application: Application): Flow<Badge?>
+	public fun getBadge(application: Application): Flow<Badge?>
 }
 
 internal class BadgeServiceImpl(
-    profileManager: ProfileManager,
-    notificationRepository: NotificationRepository
+	profileManager: ProfileManager,
+	notificationRepository: NotificationRepository
 ) : BadgeService {
-    private val badgeProviders =
-        listOf(
-            ProfileBadgeProvider(profileManager),
-            NotificationBadgeProvider(notificationRepository),
-            SuspendedAppsBadgeProvider()
-        )
+	private val badgeProviders =
+		listOf(
+			ProfileBadgeProvider(profileManager),
+			NotificationBadgeProvider(notificationRepository),
+			SuspendedAppsBadgeProvider()
+		)
 
-    override fun getBadge(application: Application): Flow<Badge?> =
-        combine(badgeProviders.map { it.getBadge(application) }) { it.filterNotNull() }
-            .map { it.combine() }
-            .flowOn(Dispatchers.Default)
+	override fun getBadge(application: Application): Flow<Badge?> =
+		combine(badgeProviders.map { it.getBadge(application) }) { it.filterNotNull() }
+			.map { it.combine() }
+			.flowOn(Dispatchers.Default)
 }

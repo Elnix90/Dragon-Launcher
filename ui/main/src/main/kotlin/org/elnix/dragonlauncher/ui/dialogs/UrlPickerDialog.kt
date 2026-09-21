@@ -19,48 +19,48 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @Composable
 fun UrlInputDialog(
-    onDismiss: () -> Unit,
-    onUrlSelected: (Action.OpenUrl) -> Unit
+	onDismiss: () -> Unit,
+	onUrlSelected: (Action.OpenUrl) -> Unit
 ) {
-    var text by remember { mutableStateOf("https://") }
-    var error by remember { mutableStateOf(false) }
+	var text by remember { mutableStateOf("https://") }
+	var error by remember { mutableStateOf(false) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.enter_url)) },
-        text = {
-            Column {
-                TextField(
-                    value = text,
-                    onValueChange = {
-                        text = it
-                        error = false
-                    },
-                    singleLine = true,
-                    label = { Text("https://example.com") },
-                    colors =
-                        AppObjectsColors.outlinedTextFieldColors(
-                            removeBorder = true,
-                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
-                )
-                if (error) {
-                    Text(stringResource(R.string.invalid_url), color = Color.Red)
-                }
-            }
-        },
-        confirmButton = {
-            ValidateCancelButtons(
-                onCancel = onDismiss
-            ) {
-                val ok = text.startsWith("http://") || text.startsWith("https://")
-                if (!ok) {
-                    error = true
-                    return@ValidateCancelButtons
-                }
-                onUrlSelected(Action.OpenUrl(text))
-                onDismiss()
-            }
-        }
-    )
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		title = { Text(stringResource(R.string.enter_url)) },
+		text = {
+			Column {
+				TextField(
+					value = text,
+					onValueChange = {
+						text = it
+						error = false
+					},
+					singleLine = true,
+					label = { Text("https://example.com") },
+					colors =
+						AppObjectsColors.outlinedTextFieldColors(
+							removeBorder = true,
+							backgroundColor = MaterialTheme.colorScheme.surfaceVariant
+						)
+				)
+				if (error) {
+					Text(stringResource(R.string.invalid_url), color = Color.Red)
+				}
+			}
+		},
+		confirmButton = {
+			ValidateCancelButtons(
+				onCancel = onDismiss
+			) {
+				val ok = text.startsWith("http://") || text.startsWith("https://")
+				if (!ok) {
+					error = true
+					return@ValidateCancelButtons
+				}
+				onUrlSelected(Action.OpenUrl(text))
+				onDismiss()
+			}
+		}
+	)
 }

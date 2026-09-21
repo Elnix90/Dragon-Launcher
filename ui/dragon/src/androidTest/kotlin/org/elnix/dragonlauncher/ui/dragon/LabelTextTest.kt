@@ -25,54 +25,54 @@ import org.junit.Test
  *   (Requires a connected device or emulator)
  */
 class LabelTextTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun labelText_displaysText() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                LabelText(text = "Settings")
-            }
-        }
+	@Test
+	fun labelText_displaysText() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				LabelText(text = "Settings")
+			}
+		}
 
-        composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
+	}
 
-    @Test
-    fun labelText_displaysEmptyString() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                LabelText(text = "")
-            }
-        }
+	@Test
+	fun labelText_displaysEmptyString() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				LabelText(text = "")
+			}
+		}
 
-        // An empty text node still exists in the tree; it just has no visible text.
-        // We verify it doesn't crash and the node is present.
-        composeTestRule.onNodeWithText("").assertExists()
-    }
+		// An empty text node still exists in the tree; it just has no visible text.
+		// We verify it doesn't crash and the node is present.
+		composeTestRule.onNodeWithText("").assertExists()
+	}
 
-    @Test
-    fun labelText_displaysLongText() {
-        val longText = "This is a very long label text that might wrap or truncate depending on available space"
-        composeTestRule.setContent {
-            MaterialTheme {
-                LabelText(text = longText)
-            }
-        }
+	@Test
+	fun labelText_displaysLongText() {
+		val longText = "This is a very long label text that might wrap or truncate depending on available space"
+		composeTestRule.setContent {
+			MaterialTheme {
+				LabelText(text = longText)
+			}
+		}
 
-        composeTestRule.onNodeWithText(longText).assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText(longText).assertIsDisplayed()
+	}
 
-    @Test
-    fun labelText_displaysSpecialCharacters() {
-        val specialText = "Émojis & Spëcial Chârs: @#\$%"
-        composeTestRule.setContent {
-            MaterialTheme {
-                LabelText(text = specialText)
-            }
-        }
+	@Test
+	fun labelText_displaysSpecialCharacters() {
+		val specialText = "Émojis & Spëcial Chârs: @#\$%"
+		composeTestRule.setContent {
+			MaterialTheme {
+				LabelText(text = specialText)
+			}
+		}
 
-        composeTestRule.onNodeWithText(specialText).assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText(specialText).assertIsDisplayed()
+	}
 }

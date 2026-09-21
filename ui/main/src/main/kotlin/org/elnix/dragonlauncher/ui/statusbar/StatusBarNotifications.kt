@@ -27,54 +27,54 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun StatusBarNotifications(
-    element: StatusBar.Notifications,
-    drawerViewModel: DrawerViewModel = activityViewModel()
+	element: StatusBar.Notifications,
+	drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    val notifications = drawerViewModel.notifications
+	val notifications = drawerViewModel.notifications
 
-    val hasNotificationPermission by drawerViewModel.hasPermission(PermissionGroup.Notifications).collectAsState(false)
+	val hasNotificationPermission by drawerViewModel.hasPermission(PermissionGroup.Notifications).collectAsState(false)
 
-    if (!hasNotificationPermission) {
-        Icon(
-            painter = painterResource(R.drawable.notification_important),
-            contentDescription = "Notifications",
-            modifier =
-                Modifier
-                    .size(18.dp)
-                    .clickable { openNotificationSettings(ctx) }
-        )
-        return
-    } else if (notifications.isNullOrEmpty()) {
-        return
-    }
+	if (!hasNotificationPermission) {
+		Icon(
+			painter = painterResource(R.drawable.notification_important),
+			contentDescription = "Notifications",
+			modifier =
+				Modifier
+					.size(18.dp)
+					.clickable { openNotificationSettings(ctx) }
+		)
+		return
+	} else if (notifications.isNullOrEmpty()) {
+		return
+	}
 
-    val maxIcons = element.maxIcons
-    val showMoreNotificationsIcon = notifications.size > maxIcons
+	val maxIcons = element.maxIcons
+	val showMoreNotificationsIcon = notifications.size > maxIcons
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        notifications.take(maxIcons).forEach { notification ->
-            val pkg = notification?.packageName ?: "Unknown"
-            val user = notification?.user ?: Process.myUserHandle()
-            val action = Action.LaunchApp(pkg, Profile.fromUserHandle(ctx, user))
+	Row(
+		horizontalArrangement = Arrangement.spacedBy(2.dp),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		notifications.take(maxIcons).forEach { notification ->
+			val pkg = notification?.packageName ?: "Unknown"
+			val user = notification?.user ?: Process.myUserHandle()
+			val action = Action.LaunchApp(pkg, Profile.fromUserHandle(ctx, user))
 
-            val app by drawerViewModel.findOne(action).collectAsState(null)
+			val app by drawerViewModel.findOne(action).collectAsState(null)
 
-            app?.let {
-                AppIcon(it, 10.dp)
-            }
-        }
+			app?.let {
+				AppIcon(it, 10.dp)
+			}
+		}
 
-        AnimatedVisibility(showMoreNotificationsIcon) {
-            Icon(
-                painter = painterResource(R.drawable.more_horiz),
-                contentDescription = "More notifications",
-                modifier = Modifier.size(18.dp)
-            )
-        }
-    }
+		AnimatedVisibility(showMoreNotificationsIcon) {
+			Icon(
+				painter = painterResource(R.drawable.more_horiz),
+				contentDescription = "More notifications",
+				modifier = Modifier.size(18.dp)
+			)
+		}
+	}
 }

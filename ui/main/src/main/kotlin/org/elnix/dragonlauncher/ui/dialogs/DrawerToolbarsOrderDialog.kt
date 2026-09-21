@@ -45,134 +45,134 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun ToolbarsOrderDialog(onDismiss: () -> Unit) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
-    val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
+	val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
+	val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
 
-    val selectedToolbarItems by DrawerSettingsStore.toolbarsOrder.asState()
-    var toolbarItems by remember { mutableStateOf(selectedToolbarItems.toMutableList()) }
+	val selectedToolbarItems by DrawerSettingsStore.toolbarsOrder.asState()
+	var toolbarItems by remember { mutableStateOf(selectedToolbarItems.toMutableList()) }
 
-    LaunchedEffect(toolbarItems) {
-        if (toolbarItems.size != 3) {
-            // Something went wrong, reset
-            toolbarItems = DrawerToolbar.entries.toMutableList()
-        }
-    }
+	LaunchedEffect(toolbarItems) {
+		if (toolbarItems.size != 3) {
+			// Something went wrong, reset
+			toolbarItems = DrawerToolbar.entries.toMutableList()
+		}
+	}
 
-    LaunchedEffect(selectedToolbarItems) {
-        toolbarItems = selectedToolbarItems.toMutableList()
-    }
+	LaunchedEffect(selectedToolbarItems) {
+		toolbarItems = selectedToolbarItems.toMutableList()
+	}
 
-    val lazyListState = rememberLazyListState()
-    val reorderState =
-        rememberReorderableLazyListState(
-            lazyListState = lazyListState,
-            onMove = { from, to ->
-                toolbarItems =
-                    toolbarItems.toMutableList().apply {
-                        add(to.index, removeAt(from.index))
-                    }
-            }
-        )
+	val lazyListState = rememberLazyListState()
+	val reorderState =
+		rememberReorderableLazyListState(
+			lazyListState = lazyListState,
+			onMove = { from, to ->
+				toolbarItems =
+					toolbarItems.toMutableList().apply {
+						add(to.index, removeAt(from.index))
+					}
+			}
+		)
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        confirmButton = {
-            ValidateCancelButtons(
-                onCancel = onDismiss
-            ) {
-                scope.launch {
-                    DrawerSettingsStore.toolbarsOrder.set(ctx, toolbarItems)
-                }
-                onDismiss()
-            }
-        },
-        title = { Text(stringResource(R.string.choose_action)) },
-        text = {
-            LazyColumn(
-                state = lazyListState
-            ) {
-                items(toolbarItems, key = { it.name }) { item ->
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		containerColor = MaterialTheme.colorScheme.surface,
+		confirmButton = {
+			ValidateCancelButtons(
+				onCancel = onDismiss
+			) {
+				scope.launch {
+					DrawerSettingsStore.toolbarsOrder.set(ctx, toolbarItems)
+				}
+				onDismiss()
+			}
+		},
+		title = { Text(stringResource(R.string.choose_action)) },
+		text = {
+			LazyColumn(
+				state = lazyListState
+			) {
+				items(toolbarItems, key = { it.name }) { item ->
 
-                    ReorderableItem(state = reorderState, key = item.name) { isDragging ->
-                        val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
-                        val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
+					ReorderableItem(state = reorderState, key = item.name) { isDragging ->
+						val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
+						val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
 
-                        ElevatedCard(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                                    .scale(scale)
-                                    .longPressDraggableHandle(),
-                            elevation = elevatedCardElevation(elevation),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                            ) {
-                                if (item == DrawerToolbar.Spacer) {
-                                    @Suppress("DEPRECATION")
-                                    TextDividerOld(
-                                        text = stringResource(item.resId),
-                                        thickness = 5.dp,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                } else {
-                                    val checked =
-                                        if (item == DrawerToolbar.RecentlyUsed) {
-                                            showRecentlyUsedApps
-                                        } else {
-                                            showSearchBar
-                                        }
+						ElevatedCard(
+							modifier =
+								Modifier
+									.fillMaxWidth()
+									.padding(vertical = 4.dp)
+									.scale(scale)
+									.longPressDraggableHandle(),
+							elevation = elevatedCardElevation(elevation),
+							shape = RoundedCornerShape(12.dp)
+						) {
+							Row(
+								verticalAlignment = Alignment.CenterVertically,
+								horizontalArrangement = Arrangement.spacedBy(5.dp),
+								modifier =
+									Modifier
+										.fillMaxWidth()
+										.padding(horizontal = 12.dp, vertical = 8.dp)
+							) {
+								if (item == DrawerToolbar.Spacer) {
+									@Suppress("DEPRECATION")
+									TextDividerOld(
+										text = stringResource(item.resId),
+										thickness = 5.dp,
+										modifier = Modifier.weight(1f)
+									)
+								} else {
+									val checked =
+										if (item == DrawerToolbar.RecentlyUsed) {
+											showRecentlyUsedApps
+										} else {
+											showSearchBar
+										}
 
-                                    Checkbox(
-                                        checked = checked,
-                                        onCheckedChange = {
-                                            scope.launch {
-                                                when (item) {
-                                                    DrawerToolbar.RecentlyUsed -> {
-                                                        DrawerSettingsStore.showRecentlyUsedApps.set(ctx, !showRecentlyUsedApps)
-                                                    }
+									Checkbox(
+										checked = checked,
+										onCheckedChange = {
+											scope.launch {
+												when (item) {
+													DrawerToolbar.RecentlyUsed -> {
+														DrawerSettingsStore.showRecentlyUsedApps.set(ctx, !showRecentlyUsedApps)
+													}
 
-                                                    else -> {
-                                                        DrawerSettingsStore.showSearchBar.set(ctx, !showSearchBar)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    )
+													else -> {
+														DrawerSettingsStore.showSearchBar.set(ctx, !showSearchBar)
+													}
+												}
+											}
+										}
+									)
 
-                                    Icon(
-                                        painter = painterResource(item.iconEnabled),
-                                        contentDescription = null
-                                    )
+									Icon(
+										painter = painterResource(item.iconEnabled),
+										contentDescription = null
+									)
 
-                                    Text(
-                                        text = stringResource(item.resId),
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                }
+									Text(
+										text = stringResource(item.resId),
+										modifier = Modifier.weight(1f)
+									)
+								}
 
-                                Icon(
-                                    painter = painterResource(R.drawable.drag_handle),
-                                    contentDescription = "Drag handle",
-                                    modifier = Modifier.draggableHandle(),
-                                    tint = MaterialTheme.colorScheme.outline
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    )
+								Icon(
+									painter = painterResource(R.drawable.drag_handle),
+									contentDescription = "Drag handle",
+									modifier = Modifier.draggableHandle(),
+									tint = MaterialTheme.colorScheme.outline
+								)
+							}
+						}
+					}
+				}
+			}
+		}
+	)
 }

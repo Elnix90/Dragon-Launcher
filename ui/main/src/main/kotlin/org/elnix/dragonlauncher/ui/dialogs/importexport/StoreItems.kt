@@ -18,57 +18,57 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 
 @Composable
 fun DragonGroupScope.StoreItems(
-    snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>,
-    onAnyAction: () -> Unit = { }
+	snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>,
+	onAnyAction: () -> Unit = { }
 ) {
-    LazyColumnWithScrollIndicator(
-        items = snapshotStateMapStores.toList(),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.heightIn(max = 600.dp)
-    ) { (store, selected) ->
-        StoreItem(selected, store) {
-            snapshotStateMapStores[store] = it
-            onAnyAction()
-        }
-    }
+	LazyColumnWithScrollIndicator(
+		items = snapshotStateMapStores.toList(),
+		verticalArrangement = Arrangement.spacedBy(4.dp),
+		modifier = Modifier.heightIn(max = 600.dp)
+	) { (store, selected) ->
+		StoreItem(selected, store) {
+			snapshotStateMapStores[store] = it
+			onAnyAction()
+		}
+	}
 }
 
 @Composable
 fun DragonGroupScope.StoreItemsNotScrollable(
-    snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>
+	snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>
 ) {
-    snapshotStateMapStores.forEach { (store, selected) ->
-        StoreItem(selected, store) {
-            snapshotStateMapStores[store] = it
-        }
-    }
+	snapshotStateMapStores.forEach { (store, selected) ->
+		StoreItem(selected, store) {
+			snapshotStateMapStores[store] = it
+		}
+	}
 }
 
 @Composable
 private fun DragonGroupScope.StoreItem(
-    selected: Boolean,
-    store: SettingsStore<*, *>,
-    onToggle: (Boolean) -> Unit
+	selected: Boolean,
+	store: SettingsStore<*, *>,
+	onToggle: (Boolean) -> Unit
 ) {
-    val interactionSource = rememberInteractionSource()
-    Row(
-        modifier =
-            Modifier
-                .dragonSettingGroup {
-                    toggleable(
-                        interactionSource = interactionSource,
-                        value = selected,
-                        onValueChange = onToggle
-                    )
-                },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = selected,
-            onCheckedChange = null,
-            interactionSource = interactionSource
-        )
-        Text(store.name)
-    }
+	val interactionSource = rememberInteractionSource()
+	Row(
+		modifier =
+			Modifier
+				.dragonSettingGroup {
+					toggleable(
+						interactionSource = interactionSource,
+						value = selected,
+						onValueChange = onToggle
+					)
+				},
+		horizontalArrangement = Arrangement.spacedBy(8.dp),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Checkbox(
+			checked = selected,
+			onCheckedChange = null,
+			interactionSource = interactionSource
+		)
+		Text(store.name)
+	}
 }

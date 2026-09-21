@@ -13,11 +13,11 @@ import org.elnix.dragonlauncher.widgets.WidgetsService
 @Module
 @InstallIn(SingletonComponent::class)
 internal object SwipeModule {
-    @Provides
-    @Singleton
-    fun provideSwipeService(
-        @ApplicationContext ctx: Context,
-        widgetsService: WidgetsService,
-        nestsNavigationService: NestsNavigationService
-    ): SwipeService = SwipeServiceImpl(ctx, nestsNavigationService, widgetsService)
+	@Provides
+	@Singleton
+	fun provideSwipeService(
+		@ApplicationContext ctx: Context,
+		widgetsService: WidgetsService,
+		nestsNavigationService: NestsNavigationService
+	): SwipeService = SwipeServiceImpl(ctx, nestsNavigationService, widgetsService)
 }

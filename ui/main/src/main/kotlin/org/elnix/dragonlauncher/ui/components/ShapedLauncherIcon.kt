@@ -69,66 +69,66 @@ import android.graphics.Shader as PlatformShader
 
 @Composable
 fun ShapedLauncherIcon(
-    modifier: Modifier = Modifier,
-    size: Dp,
-    icon: () -> LauncherIcon? = { null },
-    badge: () -> Badge? = { null }
+	modifier: Modifier = Modifier,
+	size: Dp,
+	icon: () -> LauncherIcon? = { null },
+	badge: () -> Badge? = { null }
 ) {
-    val sizePxInt = size.px.toInt()
-    if (sizePxInt <= 0) return
+	val sizePxInt = size.px.toInt()
+	if (sizePxInt <= 0) return
 
-    val icon = icon()
-    val drawerSettings = LocalDrawerSettings.current
-    val shape = drawerSettings.iconShape.resolveShape()
+	val icon = icon()
+	val drawerSettings = LocalDrawerSettings.current
+	val shape = drawerSettings.iconShape.resolveShape()
 
-    var currentIcon by remember(icon) {
-        mutableStateOf(
-            when (icon) {
-                is DynamicLauncherIcon -> null
-                is StaticLauncherIcon -> icon
-                else -> null
-            }
-        )
-    }
+	var currentIcon by remember(icon) {
+		mutableStateOf(
+			when (icon) {
+				is DynamicLauncherIcon -> null
+				is StaticLauncherIcon -> icon
+				else -> null
+			}
+		)
+	}
 
-    val iconSettings = drawerSettings.iconSettings
+	val iconSettings = drawerSettings.iconSettings
 
-    var currentBitmap by remember {
-        mutableStateOf(currentIcon?.getCachedBitmap(sizePxInt, iconSettings))
-    }
+	var currentBitmap by remember {
+		mutableStateOf(currentIcon?.getCachedBitmap(sizePxInt, iconSettings))
+	}
 
-    LaunchedEffect(currentIcon, iconSettings, sizePxInt) {
-        currentBitmap = currentIcon?.render(sizePxInt, iconSettings)
-    }
+	LaunchedEffect(currentIcon, iconSettings, sizePxInt) {
+		currentBitmap = currentIcon?.render(sizePxInt, iconSettings)
+	}
 
-    if (icon is DynamicLauncherIcon) {
-        val date = Instant.ofEpochMilli(LocalTime.current).atZone(ZoneId.systemDefault())
-        LaunchedEffect(date.dayOfYear, icon) {
-            currentIcon = icon.getIcon(date.toEpochSecond() * 1000L)
-        }
-    }
+	if (icon is DynamicLauncherIcon) {
+		val date = Instant.ofEpochMilli(LocalTime.current).atZone(ZoneId.systemDefault())
+		LaunchedEffect(date.dayOfYear, icon) {
+			currentIcon = icon.getIcon(date.toEpochSecond() * 1000L)
+		}
+	}
 
-    Box(
-        modifier =
-            modifier
-                .sizeIn(maxWidth = size, maxHeight = size)
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .aspectRatio(1f)
-                    .clip(shape),
-            contentAlignment = Alignment.Center
-        ) {
-            val bmp = currentBitmap
-            val ic = currentIcon
+	Box(
+		modifier =
+			modifier
+				.sizeIn(maxWidth = size, maxHeight = size)
+	) {
+		Box(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.aspectRatio(1f)
+					.clip(shape),
+			contentAlignment = Alignment.Center
+		) {
+			val bmp = currentBitmap
+			val ic = currentIcon
 
-            if (bmp != null && ic != null) {
-                Canvas(modifier = Modifier.requiredSize(size)) {
-                    val brush = BitmapShaderBrush(bmp)
+			if (bmp != null && ic != null) {
+				Canvas(modifier = Modifier.requiredSize(size)) {
+					val brush = BitmapShaderBrush(bmp)
 //                    if (ic.backgroundLayer is TransparentLayer) {
-                    drawRect(brush)
+					drawRect(brush)
 //                    } else {
 //                        val outline =
 //                            shape.createOutline(
@@ -138,125 +138,125 @@ fun ShapedLauncherIcon(
 //                            )
 //                        drawOutline(outline, brush)
 //                    }
-                }
+				}
 
-                // Background layer is always static layer, color layer, or transparent layer
-                when (val fg = ic.foregroundLayer) {
-                    is ClockLayer -> {
-                        ClockLayer(
-                            modifier = Modifier.fillMaxSize(),
-                            sublayers = fg.sublayers,
-                            defaultMinute = fg.defaultMinute,
-                            defaultHour = fg.defaultHour,
-                            defaultSecond = fg.defaultSecond,
-                            scale = fg.scale,
-                            tint = fg.tint
-                        )
-                    }
+				// Background layer is always static layer, color layer, or transparent layer
+				when (val fg = ic.foregroundLayer) {
+					is ClockLayer -> {
+						ClockLayer(
+							modifier = Modifier.fillMaxSize(),
+							sublayers = fg.sublayers,
+							defaultMinute = fg.defaultMinute,
+							defaultHour = fg.defaultHour,
+							defaultSecond = fg.defaultSecond,
+							scale = fg.scale,
+							tint = fg.tint
+						)
+					}
 
-                    is TextLayer -> {
-                        Text(
-                            text = fg.text,
-                            style =
-                                MaterialTheme.typography.headlineSmall.copy(
-                                    fontSize = 20.sp * (size / 48.dp)
-                                ),
-                            color = Color(fg.tint ?: 0)
-                        )
-                    }
+					is TextLayer -> {
+						Text(
+							text = fg.text,
+							style =
+								MaterialTheme.typography.headlineSmall.copy(
+									fontSize = 20.sp * (size / 48.dp)
+								),
+							color = Color(fg.tint ?: 0)
+						)
+					}
 
-                    is VectorLayer -> {
-                        Icon(
-                            painter = painterResource(fg.icon),
-                            contentDescription = null,
-                            tint = Color(fg.tint ?: 0),
-                            modifier = Modifier.size(size / 2f)
-                        )
-                    }
+					is VectorLayer -> {
+						Icon(
+							painter = painterResource(fg.icon),
+							contentDescription = null,
+							tint = Color(fg.tint ?: 0),
+							modifier = Modifier.size(size / 2f)
+						)
+					}
 
-                    else -> {}
-                }
-            } else {
-                val color = MaterialTheme.colorScheme.secondaryContainer
-                Canvas(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    val outline =
-                        shape.createOutline(this.size, layoutDirection, Density(density, fontScale))
-                    drawOutline(outline, color)
-                }
-            }
-        }
-        val badge = badge()
-        if (badge != null) {
-            Surface(
-                tonalElevation = 1.dp,
-                modifier =
-                    Modifier
-                        .size(size * 0.33f)
-                        .align(Alignment.BottomEnd),
-                color = MaterialTheme.colorScheme.tertiary,
-                shape = CircleShape
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    badge.progress?.let {
-                        val progress by animateFloatAsState(it)
-                        CircularProgressIndicator(
-                            modifier = Modifier.fillMaxSize(0.8f),
-                            progress = { progress },
-                            strokeWidth = size / 48,
-                            color = MaterialTheme.colorScheme.onTertiary
-                        )
-                    }
-                    val badgeIcon = badge.icon
+					else -> {}
+				}
+			} else {
+				val color = MaterialTheme.colorScheme.secondaryContainer
+				Canvas(
+					modifier = Modifier.fillMaxSize()
+				) {
+					val outline =
+						shape.createOutline(this.size, layoutDirection, Density(density, fontScale))
+					drawOutline(outline, color)
+				}
+			}
+		}
+		val badge = badge()
+		if (badge != null) {
+			Surface(
+				tonalElevation = 1.dp,
+				modifier =
+					Modifier
+						.size(size * 0.33f)
+						.align(Alignment.BottomEnd),
+				color = MaterialTheme.colorScheme.tertiary,
+				shape = CircleShape
+			) {
+				Box(
+					contentAlignment = Alignment.Center
+				) {
+					badge.progress?.let {
+						val progress by animateFloatAsState(it)
+						CircularProgressIndicator(
+							modifier = Modifier.fillMaxSize(0.8f),
+							progress = { progress },
+							strokeWidth = size / 48,
+							color = MaterialTheme.colorScheme.onTertiary
+						)
+					}
+					val badgeIcon = badge.icon
 
-                    val number = badge.number
-                    if (badgeIcon is BadgeIcon.Vector) {
-                        Icon(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(size / 24),
-                            painter = painterResource(badgeIcon.iconRes),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onTertiary
-                        )
-                    } else if (badgeIcon is BadgeIcon.Drawable) {
-                        Canvas(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(size / 48)
-                        ) {
-                            badgeIcon.drawable.setBounds(
-                                0,
-                                0,
-                                this.size.width.roundToInt(),
-                                this.size.height.roundToInt()
-                            )
-                            drawIntoCanvas {
-                                badgeIcon.drawable.draw(it.nativeCanvas)
-                            }
-                        }
-                    } else if (number != null && number > 0 && number < 100) {
-                        Text(
-                            NumberFormat.getInstance(Locale.current.platformLocale).format(number),
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            style =
-                                MaterialTheme.typography.labelSmall.copy(
-                                    fontSize =
-                                        with(LocalDensity.current) {
-                                            size.toSp() * 0.2f
-                                        }
-                                )
-                        )
-                    }
-                }
-            }
-        }
-    }
+					val number = badge.number
+					if (badgeIcon is BadgeIcon.Vector) {
+						Icon(
+							modifier =
+								Modifier
+									.fillMaxSize()
+									.padding(size / 24),
+							painter = painterResource(badgeIcon.iconRes),
+							contentDescription = null,
+							tint = MaterialTheme.colorScheme.onTertiary
+						)
+					} else if (badgeIcon is BadgeIcon.Drawable) {
+						Canvas(
+							modifier =
+								Modifier
+									.fillMaxSize()
+									.padding(size / 48)
+						) {
+							badgeIcon.drawable.setBounds(
+								0,
+								0,
+								this.size.width.roundToInt(),
+								this.size.height.roundToInt()
+							)
+							drawIntoCanvas {
+								badgeIcon.drawable.draw(it.nativeCanvas)
+							}
+						}
+					} else if (number != null && number > 0 && number < 100) {
+						Text(
+							NumberFormat.getInstance(Locale.current.platformLocale).format(number),
+							color = MaterialTheme.colorScheme.secondaryContainer,
+							style =
+								MaterialTheme.typography.labelSmall.copy(
+									fontSize =
+										with(LocalDensity.current) {
+											size.toSp() * 0.2f
+										}
+								)
+						)
+					}
+				}
+			}
+		}
+	}
 }
 
 // private fun getTone(argb: Int, tone: Int): Int {
@@ -267,64 +267,64 @@ fun ShapedLauncherIcon(
 
 @Composable
 private fun ClockLayer(
-    sublayers: List<ClockSublayer>,
-    defaultMinute: Int,
-    defaultHour: Int,
-    defaultSecond: Int,
-    scale: Float,
-    tint: Int?,
-    modifier: Modifier = Modifier
+	sublayers: List<ClockSublayer>,
+	defaultMinute: Int,
+	defaultHour: Int,
+	defaultSecond: Int,
+	scale: Float,
+	tint: Int?,
+	modifier: Modifier = Modifier
 ) {
-    val time = Instant.ofEpochMilli(LocalTime.current).atZone(ZoneId.systemDefault())
+	val time = Instant.ofEpochMilli(LocalTime.current).atZone(ZoneId.systemDefault())
 
-    val second = time.second
-    val minute = time.minute
-    val hour = time.hour
+	val second = time.second
+	val minute = time.minute
+	val hour = time.hour
 
-    Canvas(modifier = modifier) {
-        val colorFilter =
-            tint?.let {
-                PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
-            }
-        withTransform({
-            this.scale(scale)
-        }) {
-            for (sublayer in sublayers) {
-                when (sublayer.role) {
-                    ClockSublayerRole.Hour -> {
-                        sublayer.drawable.level = (
-                            ((hour - defaultHour + 12) % 12) * 60 +
-                                ((minute) % 60)
-                        )
-                    }
+	Canvas(modifier = modifier) {
+		val colorFilter =
+			tint?.let {
+				PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
+			}
+		withTransform({
+			this.scale(scale)
+		}) {
+			for (sublayer in sublayers) {
+				when (sublayer.role) {
+					ClockSublayerRole.Hour -> {
+						sublayer.drawable.level = (
+							((hour - defaultHour + 12) % 12) * 60 +
+								((minute) % 60)
+						)
+					}
 
-                    ClockSublayerRole.Minute -> {
-                        sublayer.drawable.level =
-                            ((minute - defaultMinute + 60) % 60)
-                    }
+					ClockSublayerRole.Minute -> {
+						sublayer.drawable.level =
+							((minute - defaultMinute + 60) % 60)
+					}
 
-                    ClockSublayerRole.Second -> {
-                        sublayer.drawable.level =
-                            (((second - defaultSecond + 60) % 60) * 10)
-                    }
+					ClockSublayerRole.Second -> {
+						sublayer.drawable.level =
+							(((second - defaultSecond + 60) % 60) * 10)
+					}
 
-                    else -> {}
-                }
-                drawIntoCanvas {
-                    sublayer.drawable.bounds =
-                        run {
-                            val toRect = size.toRect()
-                            Rect(toRect.left.toInt(), toRect.top.toInt(), toRect.right.toInt(), toRect.bottom.toInt())
-                        }
-                    sublayer.drawable.drawWithColorFilter(it.nativeCanvas, colorFilter)
-                }
-            }
-        }
-    }
+					else -> {}
+				}
+				drawIntoCanvas {
+					sublayer.drawable.bounds =
+						run {
+							val toRect = size.toRect()
+							Rect(toRect.left.toInt(), toRect.top.toInt(), toRect.right.toInt(), toRect.bottom.toInt())
+						}
+					sublayer.drawable.drawWithColorFilter(it.nativeCanvas, colorFilter)
+				}
+			}
+		}
+	}
 }
 
 class BitmapShaderBrush(
-    val bitmap: Bitmap
+	val bitmap: Bitmap
 ) : ShaderBrush() {
-    override fun createShader(size: Size): Shader = BitmapShader(bitmap, PlatformShader.TileMode.CLAMP, PlatformShader.TileMode.CLAMP)
+	override fun createShader(size: Size): Shader = BitmapShader(bitmap, PlatformShader.TileMode.CLAMP, PlatformShader.TileMode.CLAMP)
 }

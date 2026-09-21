@@ -9,29 +9,29 @@ import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.base.model.models.Application
 
 public fun Flow<ImmutableList<Application>>.withCustomLabels(
-    appOverridesManager: AppOverridesManager
+	appOverridesManager: AppOverridesManager
 ): Flow<ImmutableList<Application>> =
-    channelFlow {
-        this@withCustomLabels.collectLatest { items ->
-            appOverridesManager.appOverrides.flow.collectLatest { state ->
-                send(
-                    items
-                        .map { item ->
-                            val customLabel = state[item.key]?.customName
-                            val customCategory = state[item.key]?.customCategory
-                            val result =
-                                if (customLabel != null) {
-                                    item.overrideLabel(customLabel)
-                                } else {
-                                    item
-                                }
-                            if (customCategory != null) {
-                                result.overrideCategory(customCategory)
-                            } else {
-                                result
-                            }
-                        }.toImmutableList()
-                )
-            }
-        }
-    }
+	channelFlow {
+		this@withCustomLabels.collectLatest { items ->
+			appOverridesManager.appOverrides.flow.collectLatest { state ->
+				send(
+					items
+						.map { item ->
+							val customLabel = state[item.key]?.customName
+							val customCategory = state[item.key]?.customCategory
+							val result =
+								if (customLabel != null) {
+									item.overrideLabel(customLabel)
+								} else {
+									item
+								}
+							if (customCategory != null) {
+								result.overrideCategory(customCategory)
+							} else {
+								result
+							}
+						}.toImmutableList()
+				)
+			}
+		}
+	}

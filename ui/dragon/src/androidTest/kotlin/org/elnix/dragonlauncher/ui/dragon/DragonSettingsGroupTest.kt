@@ -24,34 +24,34 @@ import org.junit.Test
  * provided via resource ID) renders alongside the content.
  */
 class DragonSettingsGroupTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun settingsGroup_displaysContentWithoutTitle() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonSettingsGroup {
-                    Text("Group content")
-                }
-            }
-        }
+	@Test
+	fun settingsGroup_displaysContentWithoutTitle() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonSettingsGroup {
+					Text("Group content")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Group content").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Group content").assertIsDisplayed()
+	}
 
-    @Test
-    fun settingsGroup_displaysMultipleChildren() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonSettingsGroup {
-                    Text("Setting A")
-                    Text("Setting B")
-                }
-            }
-        }
+	@Test
+	fun settingsGroup_displaysMultipleChildren() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonSettingsGroup {
+					Text("Setting A")
+					Text("Setting B")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Setting A").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Setting B").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Setting A").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Setting B").assertIsDisplayed()
+	}
 }

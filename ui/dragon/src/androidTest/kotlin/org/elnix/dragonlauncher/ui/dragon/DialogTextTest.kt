@@ -26,78 +26,78 @@ import org.junit.Test
  * and don't interfere with each other when placed side by side.
  */
 class DialogTextTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun dialogTitle_displaysText() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DialogTitle(text = "Warning")
-            }
-        }
+	@Test
+	fun dialogTitle_displaysText() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DialogTitle(text = "Warning")
+			}
+		}
 
-        composeTestRule.onNodeWithText("Warning").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Warning").assertIsDisplayed()
+	}
 
-    @Test
-    fun dialogSubTitle_displaysText() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DialogSubTitle(text = "Subtitle")
-            }
-        }
+	@Test
+	fun dialogSubTitle_displaysText() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DialogSubTitle(text = "Subtitle")
+			}
+		}
 
-        composeTestRule.onNodeWithText("Subtitle").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Subtitle").assertIsDisplayed()
+	}
 
-    @Test
-    fun dialogDescription_displaysText() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DialogDescription(text = "This is a description.")
-            }
-        }
+	@Test
+	fun dialogDescription_displaysText() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DialogDescription(text = "This is a description.")
+			}
+		}
 
-        composeTestRule.onNodeWithText("This is a description.").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("This is a description.").assertIsDisplayed()
+	}
 
-    @Test
-    fun allDialogTexts_coexistWithoutConflict() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DialogTitle(text = "Title")
-                DialogSubTitle(text = "Subtitle")
-                DialogDescription(text = "Description")
-            }
-        }
+	@Test
+	fun allDialogTexts_coexistWithoutConflict() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DialogTitle(text = "Title")
+				DialogSubTitle(text = "Subtitle")
+				DialogDescription(text = "Description")
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Subtitle").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Description").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Subtitle").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Description").assertIsDisplayed()
+	}
 
-    @Test
-    fun dialogTitle_displaysLongText() {
-        val longTitle = "Are you sure you want to delete this workspace? This action cannot be undone."
-        composeTestRule.setContent {
-            MaterialTheme {
-                DialogTitle(text = longTitle)
-            }
-        }
+	@Test
+	fun dialogTitle_displaysLongText() {
+		val longTitle = "Are you sure you want to delete this workspace? This action cannot be undone."
+		composeTestRule.setContent {
+			MaterialTheme {
+				DialogTitle(text = longTitle)
+			}
+		}
 
-        composeTestRule.onNodeWithText(longTitle).assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText(longTitle).assertIsDisplayed()
+	}
 
-    @Test
-    fun dialogDescription_displaysMultiLineText() {
-        val multiline = "Line 1\nLine 2\nLine 3"
-        composeTestRule.setContent {
-            MaterialTheme {
-                DialogDescription(text = multiline)
-            }
-        }
+	@Test
+	fun dialogDescription_displaysMultiLineText() {
+		val multiline = "Line 1\nLine 2\nLine 3"
+		composeTestRule.setContent {
+			MaterialTheme {
+				DialogDescription(text = multiline)
+			}
+		}
 
-        composeTestRule.onNodeWithText(multiline).assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText(multiline).assertIsDisplayed()
+	}
 }

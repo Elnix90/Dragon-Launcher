@@ -33,129 +33,129 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
 fun <T> DragonGroupScope.ActionSelectorRow(
-    options: List<T>,
-    selected: T,
-    switchEnabled: Boolean = true,
-    label: String,
-    optionLabel: @Composable (T) -> String = { it.toString() },
-    toggled: Boolean? = null,
-    enabled: Boolean = true,
-    resetEnabled: Boolean,
-    onReset: () -> Unit,
-    onSelected: (T?) -> Unit
+	options: List<T>,
+	selected: T,
+	switchEnabled: Boolean = true,
+	label: String,
+	optionLabel: @Composable (T) -> String = { it.toString() },
+	toggled: Boolean? = null,
+	enabled: Boolean = true,
+	resetEnabled: Boolean,
+	onReset: () -> Unit,
+	onSelected: (T?) -> Unit
 ) {
-    var showSheet by remember { mutableStateOf(false) }
+	var showSheet by remember { mutableStateOf(false) }
 
-    val switchInteractionSource = rememberInteractionSource()
-    val globalInteractionSource = rememberInteractionSource()
+	val switchInteractionSource = rememberInteractionSource()
+	val globalInteractionSource = rememberInteractionSource()
 
-    Row(
-        modifier =
-            Modifier
-                .dragonSettingGroup(enabled) {
-                    clickable(
-                        enabled = enabled,
-                        interactionSource = if (toggled == true) globalInteractionSource else switchInteractionSource
-                    ) { showSheet = true }
-                },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextWithDescription(
-            text = label,
-            description = optionLabel(selected),
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
+	Row(
+		modifier =
+			Modifier
+				.dragonSettingGroup(enabled) {
+					clickable(
+						enabled = enabled,
+						interactionSource = if (toggled == true) globalInteractionSource else switchInteractionSource
+					) { showSheet = true }
+				},
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		TextWithDescription(
+			text = label,
+			description = optionLabel(selected),
+			modifier = Modifier.weight(1f),
+			enabled = enabled
+		)
 
-        if (toggled != null) {
-            VerticalDivider(
-                modifier =
-                    Modifier
-                        .height(50.dp)
-                        .padding(horizontal = 8.dp),
-                color =
-                    MaterialTheme.colorScheme.outline
-                        .alphaMultiplier(0.7f)
-                        .semiTransparentIfDisabled(enabled),
-                thickness = 1.dp
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Switch(
-                checked = toggled,
-                interactionSource = switchInteractionSource,
-                enabled = enabled && switchEnabled,
-                onCheckedChange =
-                    if (toggled) {
-                        { onSelected(null) }
-                    } else {
-                        null
-                    },
-                colors = AppObjectsColors.switchColors()
-            )
-        }
-        ResetIcon(enabled && resetEnabled, onReset)
-    }
+		if (toggled != null) {
+			VerticalDivider(
+				modifier =
+					Modifier
+						.height(50.dp)
+						.padding(horizontal = 8.dp),
+				color =
+					MaterialTheme.colorScheme.outline
+						.alphaMultiplier(0.7f)
+						.semiTransparentIfDisabled(enabled),
+				thickness = 1.dp
+			)
+			Spacer(modifier = Modifier.width(8.dp))
+			Switch(
+				checked = toggled,
+				interactionSource = switchInteractionSource,
+				enabled = enabled && switchEnabled,
+				onCheckedChange =
+					if (toggled) {
+						{ onSelected(null) }
+					} else {
+						null
+					},
+				colors = AppObjectsColors.switchColors()
+			)
+		}
+		ResetIcon(enabled && resetEnabled, onReset)
+	}
 
-    // Options dialog
-    if (showSheet) {
-        ActionSelector(
-            label = label,
-            options = options,
-            optionLabel = optionLabel,
-            selected = selected,
-            onSelected = onSelected,
-            onDismiss = { showSheet = false }
-        )
-    }
+	// Options dialog
+	if (showSheet) {
+		ActionSelector(
+			label = label,
+			options = options,
+			optionLabel = optionLabel,
+			selected = selected,
+			onSelected = onSelected,
+			onDismiss = { showSheet = false }
+		)
+	}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> ActionSelector(
-    label: String?,
-    options: List<T>,
-    optionLabel: @Composable (T) -> String = { it.toString() },
-    selected: T?,
-    onSelected: (T) -> Unit,
-    onDismiss: () -> Unit
+	label: String?,
+	options: List<T>,
+	optionLabel: @Composable (T) -> String = { it.toString() },
+	selected: T?,
+	onSelected: (T) -> Unit,
+	onDismiss: () -> Unit
 ) {
-    val textColor = MaterialTheme.colorScheme.onSurface
+	val textColor = MaterialTheme.colorScheme.onSurface
 
-    DragonModalBottomSheet(
-        onDismissRequest = onDismiss,
-        skipPartiallyExpanded = true
-    ) {
-        DragonSettingsGroup(label) {
-            options.forEach { option ->
-                val isSelected = selected == option
-                val interactionSource = rememberInteractionSource()
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier =
-                        Modifier
-                            .dragonSettingGroup(selected = isSelected) {
-                                clickable(
-                                    interactionSource = interactionSource
-                                ) {
-                                    onSelected(option)
-                                    onDismiss()
-                                }
-                            }.padding(10.dp)
-                ) {
-                    RadioButton(
-                        selected = (isSelected),
-                        onClick = null,
-                        interactionSource = interactionSource
-                    )
+	DragonModalBottomSheet(
+		onDismissRequest = onDismiss,
+		skipPartiallyExpanded = true
+	) {
+		DragonSettingsGroup(label) {
+			options.forEach { option ->
+				val isSelected = selected == option
+				val interactionSource = rememberInteractionSource()
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.spacedBy(10.dp),
+					modifier =
+						Modifier
+							.dragonSettingGroup(selected = isSelected) {
+								clickable(
+									interactionSource = interactionSource
+								) {
+									onSelected(option)
+									onDismiss()
+								}
+							}.padding(10.dp)
+				) {
+					RadioButton(
+						selected = (isSelected),
+						onClick = null,
+						interactionSource = interactionSource
+					)
 
-                    Text(
-                        text = optionLabel(option),
-                        color = textColor,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-    }
+					Text(
+						text = optionLabel(option),
+						color = textColor,
+						style = MaterialTheme.typography.bodyMedium
+					)
+				}
+			}
+		}
+	}
 }

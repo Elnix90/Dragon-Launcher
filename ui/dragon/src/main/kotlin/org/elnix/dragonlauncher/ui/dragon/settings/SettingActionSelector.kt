@@ -13,32 +13,32 @@ import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable
 inline fun <reified T : Enum<T>> DragonGroupScope.Setting(
-    setting: EnumSettingObject<T>,
-    enabled: Boolean = true
+	setting: EnumSettingObject<T>,
+	enabled: Boolean = true
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val state: T by setting.asState()
+	val state: T by setting.asState()
 
-    // If this works, well, I'm a genius
-    val actions: List<T> = T::class.java.enumConstants!!.toList()
+	// If this works, well, I'm a genius
+	val actions: List<T> = T::class.java.enumConstants!!.toList()
 
-    ActionSelectorRow(
-        options = actions,
-        selected = state,
-        label = stringResource(setting.title!!),
-        optionLabel = { it.name },
-        enabled = enabled,
-        resetEnabled = state != setting.default,
-        onReset = {
-            scope.launch {
-                setting.reset(ctx)
-            }
-        }
-    ) {
-        scope.launch {
-            setting.set(ctx, it)
-        }
-    }
+	ActionSelectorRow(
+		options = actions,
+		selected = state,
+		label = stringResource(setting.title!!),
+		optionLabel = { it.name },
+		enabled = enabled,
+		resetEnabled = state != setting.default,
+		onReset = {
+			scope.launch {
+				setting.reset(ctx)
+			}
+		}
+	) {
+		scope.launch {
+			setting.set(ctx, it)
+		}
+	}
 }

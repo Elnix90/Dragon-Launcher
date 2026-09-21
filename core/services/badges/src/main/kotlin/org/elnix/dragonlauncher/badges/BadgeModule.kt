@@ -11,10 +11,10 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 @Module
 @InstallIn(SingletonComponent::class)
 internal object BadgeModule {
-    @Provides
-    @Singleton
-    fun provideBadgeService(
-        profileManager: ProfileManager,
-        notificationRepository: NotificationRepository
-    ): BadgeService = BadgeServiceImpl(profileManager, notificationRepository)
+	@Provides
+	@Singleton
+	fun provideBadgeService(
+		profileManager: ProfileManager,
+		notificationRepository: NotificationRepository
+	): BadgeService = BadgeServiceImpl(profileManager, notificationRepository)
 }

@@ -7,15 +7,15 @@ import org.elnix.dragonlauncher.settings.AllStores
 
 @Composable
 internal fun DebugJsonStoresDialog(
-    defaultStores: Set<SettingsStore<*, *>>,
-    onDismiss: () -> Unit,
-    onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
+	defaultStores: Set<SettingsStore<*, *>>,
+	onDismiss: () -> Unit,
+	onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
-    BaseImportExportDialog(
-        title = R.string.select_stores,
-        availableStores = AllStores,
-        defaultStores = defaultStores,
-        onDismiss = onDismiss,
-        onConfirm = onConfirm
-    )
+	BaseImportExportDialog(
+		title = R.string.select_stores,
+		availableStores = AllStores,
+		defaultStores = defaultStores,
+		onDismiss = onDismiss,
+		onConfirm = onConfirm
+	)
 }

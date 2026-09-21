@@ -76,283 +76,283 @@ import java.io.File
 
 @Composable
 fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
-    val ctx = LocalContext.current
-    val navigator = LocalNavigator.current
+	val ctx = LocalContext.current
+	val navigator = LocalNavigator.current
 
-    val enableLogging by DebugSettingsStore.enableLogging.asState()
+	val enableLogging by DebugSettingsStore.enableLogging.asState()
 
-    var refreshTrigger by remember { mutableIntStateOf(0) }
-    val logFiles by produceState(initialValue = emptyList(), ctx, refreshTrigger) {
-        value = dragonLogViewModel.getAllLogFiles()
-    }
+	var refreshTrigger by remember { mutableIntStateOf(0) }
+	val logFiles by produceState(initialValue = emptyList(), ctx, refreshTrigger) {
+		value = dragonLogViewModel.getAllLogFiles()
+	}
 
-    var showDeleteDialog by remember { mutableStateOf<File?>(null) }
+	var showDeleteDialog by remember { mutableStateOf<File?>(null) }
 
-    val windowInfo = LocalWindowInfo.current
-    val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    val memInfo = ActivityManager.MemoryInfo()
-    am.getMemoryInfo(memInfo)
-    val currentLauncher = ctx.detectSystemLauncher()
-    val isDefault by rememberIsDefaultLauncher()
-    val versionNumber = ctx.getVersionNumber()
-    val codeName = ctx.getCodeName()
-    val versionCode = ctx.getVersionNumber()
-    ""
-    // Build extension list by parsing the registry JSON directly (robust to field names)
-    val finalExtensionText by produceState(initialValue = "No extensions installed", refreshTrigger) {
-        value = buildExtensionText(ctx)
-    }
+	val windowInfo = LocalWindowInfo.current
+	val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+	val memInfo = ActivityManager.MemoryInfo()
+	am.getMemoryInfo(memInfo)
+	val currentLauncher = ctx.detectSystemLauncher()
+	val isDefault by rememberIsDefaultLauncher()
+	val versionNumber = ctx.getVersionNumber()
+	val codeName = ctx.getCodeName()
+	val versionCode = ctx.getVersionNumber()
+	""
+	// Build extension list by parsing the registry JSON directly (robust to field names)
+	val finalExtensionText by produceState(initialValue = "No extensions installed", refreshTrigger) {
+		value = buildExtensionText(ctx)
+	}
 
-    val deviceDetails = remember(finalExtensionText) {
-        buildString {
-            appendLine(" DEVICE DETAILS ")
-            appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
-            appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
-            if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
-                appendLine("Security Patch: ${Build.VERSION.SECURITY_PATCH}")
-            }
-            appendLine("Arch: ${Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"}")
-            appendLine("Display: ${windowInfo.containerSize.width}x${windowInfo.containerSize.height}px")
-            appendLine(
-                "RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
-                    (memInfo.totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
-                    memInfo.totalMem / 1024.0 / 1024 / 1024,
-                    memInfo.availMem * 100 / memInfo.totalMem
-                )
-            )
-            appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
-            appendLine("App version: $versionNumber ($codeName) ($versionCode)")
+	val deviceDetails = remember(finalExtensionText) {
+		buildString {
+			appendLine(" DEVICE DETAILS ")
+			appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
+			appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
+			if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
+				appendLine("Security Patch: ${Build.VERSION.SECURITY_PATCH}")
+			}
+			appendLine("Arch: ${Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"}")
+			appendLine("Display: ${windowInfo.containerSize.width}x${windowInfo.containerSize.height}px")
+			appendLine(
+				"RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
+					(memInfo.totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
+					memInfo.totalMem / 1024.0 / 1024 / 1024,
+					memInfo.availMem * 100 / memInfo.totalMem
+				)
+			)
+			appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
+			appendLine("App version: $versionNumber ($codeName) ($versionCode)")
 
-            appendLine("\n EXTENSIONS ")
-            appendLine(finalExtensionText)
+			appendLine("\n EXTENSIONS ")
+			appendLine(finalExtensionText)
 
-            appendLine("\n PERMISSIONS ")
-            try {
-                val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
-                info.requestedPermissions?.forEachIndexed { index, perm ->
-                    val flags = info.requestedPermissionsFlags
-                    val granted =
-                        (flags != null && (flags[index] and 0x00000002) != 0) ||
-                            ContextCompat.checkSelfPermission(ctx, perm) == PackageManager.PERMISSION_GRANTED
-                    appendLine("${perm.substringAfterLast(".")}: ${if (granted) "✅" else "❌"}")
-                }
-            } catch (e: Exception) {
-                appendLine("Error reading permissions: $e")
-            }
-        }
-    }
+			appendLine("\n PERMISSIONS ")
+			try {
+				val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
+				info.requestedPermissions?.forEachIndexed { index, perm ->
+					val flags = info.requestedPermissionsFlags
+					val granted =
+						(flags != null && (flags[index] and 0x00000002) != 0) ||
+							ContextCompat.checkSelfPermission(ctx, perm) == PackageManager.PERMISSION_GRANTED
+					appendLine("${perm.substringAfterLast(".")}: ${if (granted) "✅" else "❌"}")
+				}
+			} catch (e: Exception) {
+				appendLine("Error reading permissions: $e")
+			}
+		}
+	}
 
-    SettingsScaffold(
-        title = "Logs",
-        helpText = "Logs, need more info?",
-        onReset = null,
-        resetText = null,
-        specialSettingsTitleContent = {
-            AnimatedFab(
-                onClick = {
-                    refreshTrigger++
-                    ctx.showToast("Refreshing...")
-                },
-                icon = R.drawable.refresh
-            )
-        }
-    ) {
-        DragonSettingsGroup {
-            val expandableSectionState =
-                rememberExpandableSection(
-                    title = R.string.device_info,
-                    description = R.string.device_info_desc,
-                    icon = R.drawable.bug_report
-                )
+	SettingsScaffold(
+		title = "Logs",
+		helpText = "Logs, need more info?",
+		onReset = null,
+		resetText = null,
+		specialSettingsTitleContent = {
+			AnimatedFab(
+				onClick = {
+					refreshTrigger++
+					ctx.showToast("Refreshing...")
+				},
+				icon = R.drawable.refresh
+			)
+		}
+	) {
+		DragonSettingsGroup {
+			val expandableSectionState =
+				rememberExpandableSection(
+					title = R.string.device_info,
+					description = R.string.device_info_desc,
+					icon = R.drawable.bug_report
+				)
 
-            ExpandableSection(expandableSectionState) {
-                DialogTitle(
-                    text = stringResource(R.string.device_info),
-                    modifier = Modifier.dragonSettingGroup(),
-                    trailingIcon = {
-                        CopyIcon {
-                            ctx.copyToClipboard(deviceDetails)
-                            ctx.showToast("Device info copied")
-                        }
-                    }
-                )
-                SelectionContainer(
-                    modifier = Modifier.dragonSettingGroup()
-                ) {
-                    Text(
-                        text = deviceDetails,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 11.sp
-                    )
-                }
-            }
+			ExpandableSection(expandableSectionState) {
+				DialogTitle(
+					text = stringResource(R.string.device_info),
+					modifier = Modifier.dragonSettingGroup(),
+					trailingIcon = {
+						CopyIcon {
+							ctx.copyToClipboard(deviceDetails)
+							ctx.showToast("Device info copied")
+						}
+					}
+				)
+				SelectionContainer(
+					modifier = Modifier.dragonSettingGroup()
+				) {
+					Text(
+						text = deviceDetails,
+						style = MaterialTheme.typography.bodySmall,
+						fontFamily = FontFamily.Monospace,
+						fontSize = 11.sp
+					)
+				}
+			}
 
-            Setting(DebugSettingsStore.enableLogging)
-        }
+			Setting(DebugSettingsStore.enableLogging)
+		}
 
-        AnimatedVisibility(enableLogging) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                DragonSettingsGroup(R.string.log_level) {
-                    Setting(
-                        setting = DebugSettingsStore.snackBarLogLevel,
-                        customDesc = { it.logLevelName }
-                    )
+		AnimatedVisibility(enableLogging) {
+			Column(
+				verticalArrangement = Arrangement.spacedBy(10.dp),
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				DragonSettingsGroup(R.string.log_level) {
+					Setting(
+						setting = DebugSettingsStore.snackBarLogLevel,
+						customDesc = { it.logLevelName }
+					)
 
-                    Setting(
-                        setting = DebugSettingsStore.filesLogLevel,
-                        customDesc = { it.logLevelName }
-                    )
+					Setting(
+						setting = DebugSettingsStore.filesLogLevel,
+						customDesc = { it.logLevelName }
+					)
 
-                    Setting(DebugSettingsStore.filterTag)
-                    DragonButton(
-                        onClick = {
-                            dragonLogViewModel.clearLogs()
-                            refreshTrigger++
-                        },
-                        needConfirm = true,
-                        confirmText = "Are you sure you want to delete all logs files?"
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.delete_forever),
-                            contentDescription = "Delete"
-                        )
-                        Spacer(8.dp)
-                        Text("Clear All Logs")
-                    }
-                }
+					Setting(DebugSettingsStore.filterTag)
+					DragonButton(
+						onClick = {
+							dragonLogViewModel.clearLogs()
+							refreshTrigger++
+						},
+						needConfirm = true,
+						confirmText = "Are you sure you want to delete all logs files?"
+					) {
+						Icon(
+							painter = painterResource(R.drawable.delete_forever),
+							contentDescription = "Delete"
+						)
+						Spacer(8.dp)
+						Text("Clear All Logs")
+					}
+				}
 
-                HorizontalDivider()
+				HorizontalDivider()
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 600.dp)
-                ) {
-                    items(logFiles) { file ->
-                        Card(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        navigator.navigate(NavigationRoute.LogsViewer(file.name))
-                                    }
-                        ) {
-                            Row(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    TextWithDescription(
-                                        text = file.name,
-                                        description = "${(file.length() / 1024).toInt()}KB • ${
-                                            file.lastModified().formatDateTime()
-                                        }"
-                                    )
-                                }
+				LazyColumn(
+					verticalArrangement = Arrangement.spacedBy(5.dp),
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.heightIn(max = 600.dp)
+				) {
+					items(logFiles) { file ->
+						Card(
+							modifier =
+								Modifier
+									.fillMaxWidth()
+									.clickable {
+										navigator.navigate(NavigationRoute.LogsViewer(file.name))
+									}
+						) {
+							Row(
+								modifier =
+									Modifier
+										.fillMaxWidth()
+										.padding(8.dp),
+								horizontalArrangement = Arrangement.SpaceBetween,
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								Column(modifier = Modifier.weight(1f)) {
+									TextWithDescription(
+										text = file.name,
+										description = "${(file.length() / 1024).toInt()}KB • ${
+											file.lastModified().formatDateTime()
+										}"
+									)
+								}
 
-                                Row(
-                                    modifier = Modifier.padding(5.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    DragonIconButton(
-                                        icon = R.drawable.delete_forever,
-                                        contentDescription = R.string.delete
-                                    ) { showDeleteDialog = file }
+								Row(
+									modifier = Modifier.padding(5.dp),
+									horizontalArrangement = Arrangement.SpaceBetween,
+									verticalAlignment = Alignment.CenterVertically
+								) {
+									DragonIconButton(
+										icon = R.drawable.delete_forever,
+										contentDescription = R.string.delete
+									) { showDeleteDialog = file }
 
-                                    DragonIconButton(
-                                        onClick = {
-                                            ctx.copyToClipboard(dragonLogViewModel.readLogFile(file))
-                                        },
-                                        icon = R.drawable.copy,
-                                        contentDescription = R.string.copy
-                                    )
+									DragonIconButton(
+										onClick = {
+											ctx.copyToClipboard(dragonLogViewModel.readLogFile(file))
+										},
+										icon = R.drawable.copy,
+										contentDescription = R.string.copy
+									)
 
-                                    DragonIconButton(
-                                        icon = R.drawable.share,
-                                        contentDescription = R.string.export
-                                    ) { exportLogFile(dragonLogViewModel, ctx, file) }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+									DragonIconButton(
+										icon = R.drawable.share,
+										contentDescription = R.string.export
+									) { exportLogFile(dragonLogViewModel, ctx, file) }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
-    if (showDeleteDialog != null) {
-        val fileToDelete = showDeleteDialog!!
+	if (showDeleteDialog != null) {
+		val fileToDelete = showDeleteDialog!!
 
-        UserValidation(
-            title = "Delete file ${fileToDelete.name}",
-            message = "THis can't be undone",
-            onDismiss = { showDeleteDialog = null }
-        ) {
-            dragonLogViewModel.deleteLogFile(fileToDelete)
-            refreshTrigger++
-            showDeleteDialog = null
-        }
-    }
+		UserValidation(
+			title = "Delete file ${fileToDelete.name}",
+			message = "THis can't be undone",
+			onDismiss = { showDeleteDialog = null }
+		) {
+			dragonLogViewModel.deleteLogFile(fileToDelete)
+			refreshTrigger++
+			showDeleteDialog = null
+		}
+	}
 }
 
 private fun exportLogFile(
-    dragonLogViewModel: DragonLogViewModel,
-    ctx: Context,
-    file: File
+	dragonLogViewModel: DragonLogViewModel,
+	ctx: Context,
+	file: File
 ) {
-    try {
-        val (shareFile, uri) = ctx.createShareableFile(file) ?: return
+	try {
+		val (shareFile, uri) = ctx.createShareableFile(file) ?: return
 
-        ctx.shareContent(
-            uri = uri,
-            text = "Dragon Launcher logs",
-            subject = "Dragon Logs - ${shareFile.name}",
-            chooserTitle = "Share ${shareFile.name}"
-        )
+		ctx.shareContent(
+			uri = uri,
+			text = "Dragon Launcher logs",
+			subject = "Dragon Logs - ${shareFile.name}",
+			chooserTitle = "Share ${shareFile.name}"
+		)
 
-        logD(LOGS_TAG) { "Share opened: ${shareFile.name}" }
-    } catch (e: SecurityException) {
-        logE(LOGS_TAG, e) { "FileProvider not configured, falling back to text share" }
+		logD(LOGS_TAG) { "Share opened: ${shareFile.name}" }
+	} catch (e: SecurityException) {
+		logE(LOGS_TAG, e) { "FileProvider not configured, falling back to text share" }
 
-        // Fallback to text sharing
-        val content = dragonLogViewModel.readLogFile(file)
+		// Fallback to text sharing
+		val content = dragonLogViewModel.readLogFile(file)
 
-        ctx.shareContent(
-            text = content,
-            subject = "Dragon Logs - ${file.name}",
-            chooserTitle = "Share logs (text)"
-        )
-    } catch (e: Exception) {
-        logE(LOGS_TAG, e) { "Failed to share log file" }
-    }
+		ctx.shareContent(
+			text = content,
+			subject = "Dragon Logs - ${file.name}",
+			chooserTitle = "Share logs (text)"
+		)
+	} catch (e: Exception) {
+		logE(LOGS_TAG, e) { "Failed to share log file" }
+	}
 }
 
 private suspend fun buildExtensionText(ctx: Context): String {
-    val extensions = loadExtensionRegistry(ctx) ?: return "No extensions installed"
-    val lines =
-        extensions.mapNotNull { extension ->
-            if (ExtensionManager.isExtensionInstalled(ctx, extension.packageName)) {
-                val versionStr =
-                    try {
-                        ctx.packageManager.getPackageInfo(extension.packageName, 0).versionName ?: "unknown"
-                    } catch (_: Exception) {
-                        "unknown"
-                    }
-                "${extension.name} ($versionStr)"
-            } else {
-                null
-            }
-        }
-    return if (lines.isEmpty()) "No extensions installed" else lines.joinToString("\n")
+	val extensions = loadExtensionRegistry(ctx) ?: return "No extensions installed"
+	val lines =
+		extensions.mapNotNull { extension ->
+			if (ExtensionManager.isExtensionInstalled(ctx, extension.packageName)) {
+				val versionStr =
+					try {
+						ctx.packageManager.getPackageInfo(extension.packageName, 0).versionName ?: "unknown"
+					} catch (_: Exception) {
+						"unknown"
+					}
+				"${extension.name} ($versionStr)"
+			} else {
+				null
+			}
+		}
+	return if (lines.isEmpty()) "No extensions installed" else lines.joinToString("\n")
 }

@@ -15,31 +15,31 @@ import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 @Serializable
 @SerialName("CustomGlow")
 public data class CustomGlow(
-    @Serializable(with = DpSerializer::class)
-    val radius: Dp? = null,
-    @Serializable(with = ColorSerializer::class)
-    val color: Color? = null
+	@Serializable(with = DpSerializer::class)
+	val radius: Dp? = null,
+	@Serializable(with = ColorSerializer::class)
+	val color: Color? = null
 ) {
-    override fun toString(): String =
-        "CustomGlow(\n" +
-            "    radius = ${radius?.value?.round(2)}.dp,\n" +
-            "    color = ${color?.toHexWithAlpha}\n" +
-            ")"
+	override fun toString(): String =
+		"CustomGlow(\n" +
+			"    radius = ${radius?.value?.round(2)}.dp,\n" +
+			"    color = ${color?.toHexWithAlpha}\n" +
+			")"
 
-    public companion object {
-        @Stable
-        public val Unspecified: CustomGlow = CustomGlow(null, null)
-    }
+	public companion object {
+		@Stable
+		public val Unspecified: CustomGlow = CustomGlow(null, null)
+	}
 }
 
 public fun CustomGlow?.takeDefaults(default: CustomGlow?, constant: CustomGlow): CustomGlow =
-    CustomGlow(
-        radius = this?.radius ?: default?.radius ?: constant.radius,
-        color = this?.color ?: default?.color ?: constant.color
-    )
+	CustomGlow(
+		radius = this?.radius ?: default?.radius ?: constant.radius,
+		color = this?.color ?: default?.color ?: constant.color
+	)
 
 public val CustomGlow?.isUnSpecified: Boolean
-    get() = this == null || this == CustomGlow.Unspecified
+	get() = this == null || this == CustomGlow.Unspecified
 
 public val CustomGlow?.isSpecified: Boolean
-    get() = !this.isUnSpecified
+	get() = !this.isUnSpecified

@@ -16,22 +16,22 @@ import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 @Module
 @InstallIn(SingletonComponent::class)
 internal object ApplicationsModule {
-    @Provides
-    @Singleton
-    fun provideAppRepository(
-        @ApplicationContext ctx: Context,
-        profileManager: ProfileManager,
-        packageManagerCompat: PackageManagerCompat,
-        appOverridesManager: AppOverridesManager,
-        workspacesManager: WorkspacesManager,
-        stringNormalizer: StringNormalizer
-    ): AppRepository =
-        AppRepositoryImpl(
-            ctx,
-            profileManager,
-            packageManagerCompat,
-            appOverridesManager,
-            workspacesManager,
-            stringNormalizer
-        )
+	@Provides
+	@Singleton
+	fun provideAppRepository(
+		@ApplicationContext ctx: Context,
+		profileManager: ProfileManager,
+		packageManagerCompat: PackageManagerCompat,
+		appOverridesManager: AppOverridesManager,
+		workspacesManager: WorkspacesManager,
+		stringNormalizer: StringNormalizer
+	): AppRepository =
+		AppRepositoryImpl(
+			ctx,
+			profileManager,
+			packageManagerCompat,
+			appOverridesManager,
+			workspacesManager,
+			stringNormalizer
+		)
 }

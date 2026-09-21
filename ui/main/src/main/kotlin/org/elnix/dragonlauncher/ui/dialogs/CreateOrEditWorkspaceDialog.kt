@@ -23,55 +23,55 @@ import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateOrEditWorkspaceDialog(
-    visible: Boolean,
-    title: String,
-    name: String,
-    type: WorkspaceType?,
-    onNameChange: (String) -> Unit,
-    onConfirm: (WorkspaceType) -> Unit,
-    onDismiss: () -> Unit
+	visible: Boolean,
+	title: String,
+	name: String,
+	type: WorkspaceType?,
+	onNameChange: (String) -> Unit,
+	onConfirm: (WorkspaceType) -> Unit,
+	onDismiss: () -> Unit
 ) {
-    if (!visible) return
+	if (!visible) return
 
-    var selectedType by remember { mutableStateOf(type ?: WorkspaceType.Custom) }
+	var selectedType by remember { mutableStateOf(type ?: WorkspaceType.Custom) }
 
-    DragonModalBottomSheet(onDismissRequest = onDismiss) {
-        Text(
-            text = title,
-            modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center
-        )
+	DragonModalBottomSheet(onDismissRequest = onDismiss) {
+		Text(
+			text = title,
+			modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally),
+			textAlign = TextAlign.Center
+		)
 
-        DragonSettingsGroup {
-            TextField(
-                value = name,
-                onValueChange = onNameChange,
-                singleLine = true,
-                placeholder = {
-                    Text(stringResource(R.string.workspace_name))
-                },
-                modifier = Modifier.dragonSettingGroup()
-            )
+		DragonSettingsGroup {
+			TextField(
+				value = name,
+				onValueChange = onNameChange,
+				singleLine = true,
+				placeholder = {
+					Text(stringResource(R.string.workspace_name))
+				},
+				modifier = Modifier.dragonSettingGroup()
+			)
 
-            ActionSelectorRow(
-                options = WorkspaceType.entries,
-                selected = selectedType,
-                switchEnabled = false,
-                label = stringResource(R.string.workspace_type),
-                resetEnabled = selectedType != WorkspaceType.Custom,
-                onReset = {
-                    selectedType = WorkspaceType.Custom
-                }
-            ) {
-                selectedType = it!!
-            }
-        }
+			ActionSelectorRow(
+				options = WorkspaceType.entries,
+				selected = selectedType,
+				switchEnabled = false,
+				label = stringResource(R.string.workspace_type),
+				resetEnabled = selectedType != WorkspaceType.Custom,
+				onReset = {
+					selectedType = WorkspaceType.Custom
+				}
+			) {
+				selectedType = it!!
+			}
+		}
 
-        ValidateCancelButtons(
-            onCancel = onDismiss,
-            onConfirm = {
-                onConfirm(selectedType)
-            }
-        )
-    }
+		ValidateCancelButtons(
+			onCancel = onDismiss,
+			onConfirm = {
+				onConfirm(selectedType)
+			}
+		)
+	}
 }

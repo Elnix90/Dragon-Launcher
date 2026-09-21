@@ -42,132 +42,132 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogDescription
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 private val useLessicons =
-    setOf(
-        R.drawable.shapes,
-        R.drawable.casino,
-        R.drawable.shape_line,
-        R.drawable.visibility,
-        R.drawable.account_circle,
-        R.drawable.android,
-        R.drawable.alternate_email,
-        R.drawable.crop_free,
-        R.drawable.discord_symbol_blurple,
-        R.drawable.check
-    )
+	setOf(
+		R.drawable.shapes,
+		R.drawable.casino,
+		R.drawable.shape_line,
+		R.drawable.visibility,
+		R.drawable.account_circle,
+		R.drawable.android,
+		R.drawable.alternate_email,
+		R.drawable.crop_free,
+		R.drawable.discord_symbol_blurple,
+		R.drawable.check
+	)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun UserValidation(
-    title: String? = null,
-    message: String?,
-    validateText: String = stringResource(R.string.ok),
-    cancelText: String = stringResource(R.string.cancel),
-    doNotRemindMeAgain: ((Boolean) -> Unit)? = null,
-    titleIcon: Int = R.drawable.warning,
-    titleColor: Color = MaterialTheme.colorScheme.onErrorContainer,
-    titleBgColor: Color = MaterialTheme.colorScheme.errorContainer,
-    copy: Boolean = false,
-    properties: DialogProperties = DialogProperties(),
-    onDismiss: (() -> Unit)? = null,
-    onValidate: () -> Unit
+	title: String? = null,
+	message: String?,
+	validateText: String = stringResource(R.string.ok),
+	cancelText: String = stringResource(R.string.cancel),
+	doNotRemindMeAgain: ((Boolean) -> Unit)? = null,
+	titleIcon: Int = R.drawable.warning,
+	titleColor: Color = MaterialTheme.colorScheme.onErrorContainer,
+	titleBgColor: Color = MaterialTheme.colorScheme.errorContainer,
+	copy: Boolean = false,
+	properties: DialogProperties = DialogProperties(),
+	onDismiss: (() -> Unit)? = null,
+	onValidate: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    var doNotRemindMeAgainChecked by remember { mutableStateOf(false) }
+	val ctx = LocalContext.current
+	var doNotRemindMeAgainChecked by remember { mutableStateOf(false) }
 
-    val uselessAnimation = rememberAnimatedIcon()
+	val uselessAnimation = rememberAnimatedIcon()
 
-    AlertDialog(
-        onDismissRequest = onDismiss ?: onValidate,
-        confirmButton = {
-            ValidateCancelButtons(
-                validateText = validateText,
-                cancelText = cancelText,
-                onCancel = onDismiss,
-                onConfirm = onValidate
-            )
-        },
-        properties = properties,
-        icon = {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier =
-                    Modifier
-                        .size(48.dp)
-                        .background(
-                            color = titleBgColor,
-                            shape = MaterialShapes.Pill.toShape()
-                        )
-            ) {
-                var recompose by remember { mutableIntStateOf(0) }
-                val successIcon = remember(recompose) { useLessicons.random() }
-                uselessAnimation.Icon(
-                    defaultIcon = titleIcon,
-                    successIcon = successIcon,
-                    defaultColor = titleColor,
-                    successColor = titleColor,
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    recompose++
-                    uselessAnimation.setSuccess()
-                }
-            }
-        },
-        title = {
-            if (title != null) {
-                DialogTitle(
-                    text = title,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp)
-                            .clip(MaterialTheme.shapes.large)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(8.dp)
-                )
-            }
-        },
-        text = {
-            if (message != null) {
-                Column {
-                    DialogDescription(
-                        text = message,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                    if (doNotRemindMeAgain != null || copy) {
-                        Spacer(15.dp)
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.clip(MaterialTheme.shapes.large)
-                        ) {
-                            if (doNotRemindMeAgain != null) {
-                                Checkbox(
-                                    checked = doNotRemindMeAgainChecked,
-                                    onCheckedChange = {
-                                        doNotRemindMeAgainChecked = !doNotRemindMeAgainChecked
-                                        doNotRemindMeAgain(doNotRemindMeAgainChecked)
-                                    },
-                                    colors = AppObjectsColors.checkboxColors()
-                                )
-                                Text(
-                                    text = stringResource(R.string.do_not_remind_me_again),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.padding(end = 8.dp)
-                                )
-                            }
+	AlertDialog(
+		onDismissRequest = onDismiss ?: onValidate,
+		confirmButton = {
+			ValidateCancelButtons(
+				validateText = validateText,
+				cancelText = cancelText,
+				onCancel = onDismiss,
+				onConfirm = onValidate
+			)
+		},
+		properties = properties,
+		icon = {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier =
+					Modifier
+						.size(48.dp)
+						.background(
+							color = titleBgColor,
+							shape = MaterialShapes.Pill.toShape()
+						)
+			) {
+				var recompose by remember { mutableIntStateOf(0) }
+				val successIcon = remember(recompose) { useLessicons.random() }
+				uselessAnimation.Icon(
+					defaultIcon = titleIcon,
+					successIcon = successIcon,
+					defaultColor = titleColor,
+					successColor = titleColor,
+					modifier = Modifier.size(32.dp)
+				) {
+					recompose++
+					uselessAnimation.setSuccess()
+				}
+			}
+		},
+		title = {
+			if (title != null) {
+				DialogTitle(
+					text = title,
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.padding(bottom = 4.dp)
+							.clip(MaterialTheme.shapes.large)
+							.background(MaterialTheme.colorScheme.surface)
+							.padding(8.dp)
+				)
+			}
+		},
+		text = {
+			if (message != null) {
+				Column {
+					DialogDescription(
+						text = message,
+						modifier = Modifier.padding(top = 8.dp)
+					)
+					if (doNotRemindMeAgain != null || copy) {
+						Spacer(15.dp)
+						Row(
+							verticalAlignment = Alignment.CenterVertically,
+							horizontalArrangement = Arrangement.spacedBy(8.dp),
+							modifier = Modifier.clip(MaterialTheme.shapes.large)
+						) {
+							if (doNotRemindMeAgain != null) {
+								Checkbox(
+									checked = doNotRemindMeAgainChecked,
+									onCheckedChange = {
+										doNotRemindMeAgainChecked = !doNotRemindMeAgainChecked
+										doNotRemindMeAgain(doNotRemindMeAgainChecked)
+									},
+									colors = AppObjectsColors.checkboxColors()
+								)
+								Text(
+									text = stringResource(R.string.do_not_remind_me_again),
+									style = MaterialTheme.typography.bodySmall,
+									color = MaterialTheme.colorScheme.onSurface,
+									modifier = Modifier.padding(end = 8.dp)
+								)
+							}
 
-                            if (copy) {
-                                Spacer(Modifier.weight(1f))
-                                CopyIcon { ctx.copyToClipboard(message) }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 6.dp,
-        shape = MaterialTheme.shapes.large
-    )
+							if (copy) {
+								Spacer(Modifier.weight(1f))
+								CopyIcon { ctx.copyToClipboard(message) }
+							}
+						}
+					}
+				}
+			}
+		},
+		containerColor = MaterialTheme.colorScheme.surface,
+		tonalElevation = 6.dp,
+		shape = MaterialTheme.shapes.large
+	)
 }

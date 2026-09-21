@@ -13,20 +13,20 @@ import androidx.compose.ui.unit.Dp
 
 @Composable
 fun RowScope.Spacer() {
-    Spacer(Modifier.weight(1f))
+	Spacer(Modifier.weight(1f))
 }
 
 @Composable
 fun ColumnScope.Spacer() {
-    Spacer(Modifier.weight(1f))
+	Spacer(Modifier.weight(1f))
 }
 
 @Composable
 fun RowScope.Spacer(width: Dp) {
-    Spacer(Modifier.width(width))
+	Spacer(Modifier.width(width))
 }
 
 @Composable
 fun ColumnScope.Spacer(height: Dp) {
-    Spacer(Modifier.height(height))
+	Spacer(Modifier.height(height))
 }

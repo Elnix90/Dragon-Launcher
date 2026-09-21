@@ -11,62 +11,62 @@ import org.elnix.dragonlauncher.database.entities.IconPackEntity
 
 @Dao
 public interface IconDao {
-    @Insert
-    public suspend fun insertAll(icons: List<IconEntity>)
+	@Insert
+	public suspend fun insertAll(icons: List<IconEntity>)
 
-    @Query(
-        "SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND iconPack = :iconPack AND type IN ('app', 'calendar', 'clock') ORDER BY type DESC LIMIT 1"
-    )
-    public suspend fun getIcon(packageName: String, activityName: String?, iconPack: String): IconEntity?
+	@Query(
+		"SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND iconPack = :iconPack AND type IN ('app', 'calendar', 'clock') ORDER BY type DESC LIMIT 1"
+	)
+	public suspend fun getIcon(packageName: String, activityName: String?, iconPack: String): IconEntity?
 
-    @Query("SELECT * FROM Icons WHERE drawable = :iconName AND iconPack = :iconPack ORDER BY type DESC LIMIT 1")
-    public suspend fun getIcon(iconName: String, iconPack: String): IconEntity?
+	@Query("SELECT * FROM Icons WHERE drawable = :iconName AND iconPack = :iconPack ORDER BY type DESC LIMIT 1")
+	public suspend fun getIcon(iconName: String, iconPack: String): IconEntity?
 
-    @Query(
-        "SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND type IN ('app', 'calendar', 'clock')"
-    )
-    public suspend fun getIconsFromAllPacks(packageName: String, activityName: String): List<IconEntity>
+	@Query(
+		"SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND type IN ('app', 'calendar', 'clock')"
+	)
+	public suspend fun getIconsFromAllPacks(packageName: String, activityName: String): List<IconEntity>
 
-    @Query(
-        "SELECT * FROM Icons WHERE type IN ('app', 'calendar', 'clock') AND (drawable LIKE :drawableQuery OR name LIKE :nameQuery) AND (:iconPack IS NULL OR iconPack = :iconPack) GROUP BY drawable, iconPack, type ORDER BY type DESC, iconPack, drawable LIMIT :limit"
-    )
-    public suspend fun searchIconPackIcons(
-        nameQuery: String,
-        drawableQuery: String,
-        iconPack: String?,
-        limit: Int = 100
-    ): List<IconEntity>
+	@Query(
+		"SELECT * FROM Icons WHERE type IN ('app', 'calendar', 'clock') AND (drawable LIKE :drawableQuery OR name LIKE :nameQuery) AND (:iconPack IS NULL OR iconPack = :iconPack) GROUP BY drawable, iconPack, type ORDER BY type DESC, iconPack, drawable LIMIT :limit"
+	)
+	public suspend fun searchIconPackIcons(
+		nameQuery: String,
+		drawableQuery: String,
+		iconPack: String?,
+		limit: Int = 100
+	): List<IconEntity>
 
-    @Query("DELETE FROM Icons WHERE iconPack = :iconPack")
-    public fun deleteIcons(iconPack: String)
+	@Query("DELETE FROM Icons WHERE iconPack = :iconPack")
+	public fun deleteIcons(iconPack: String)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public fun installIconPack(iconPack: IconPackEntity)
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	public fun installIconPack(iconPack: IconPackEntity)
 
-    @Query("SELECT * FROM IconPack ORDER BY name ASC")
-    public fun getInstalledIconPacks(): Flow<List<IconPackEntity>>
+	@Query("SELECT * FROM IconPack ORDER BY name ASC")
+	public fun getInstalledIconPacks(): Flow<List<IconPackEntity>>
 
-    @Query("SELECT * FROM IconPack WHERE packageName = :packageName LIMIT 1")
-    public suspend fun getIconPack(packageName: String): IconPackEntity?
+	@Query("SELECT * FROM IconPack WHERE packageName = :packageName LIMIT 1")
+	public suspend fun getIconPack(packageName: String): IconPackEntity?
 
-    @Delete
-    public fun deleteIconPack(iconPack: IconPackEntity)
+	@Delete
+	public fun deleteIconPack(iconPack: IconPackEntity)
 
-    @Query("SELECT drawable FROM Icons WHERE iconPack = :pack AND type = 'iconback'")
-    public suspend fun getIconBacks(pack: String): List<String>
+	@Query("SELECT drawable FROM Icons WHERE iconPack = :pack AND type = 'iconback'")
+	public suspend fun getIconBacks(pack: String): List<String>
 
-    @Query("SELECT drawable FROM Icons WHERE iconPack = :pack AND type = 'iconupon'")
-    public suspend fun getIconUpons(pack: String): List<String>
+	@Query("SELECT drawable FROM Icons WHERE iconPack = :pack AND type = 'iconupon'")
+	public suspend fun getIconUpons(pack: String): List<String>
 
-    @Query("SELECT drawable FROM Icons WHERE iconPack = :pack AND type = 'iconmask'")
-    public suspend fun getIconMasks(pack: String): List<String>
+	@Query("SELECT drawable FROM Icons WHERE iconPack = :pack AND type = 'iconmask'")
+	public suspend fun getIconMasks(pack: String): List<String>
 
-    @Query("SELECT scale FROM IconPack WHERE packageName = :pack")
-    public suspend fun getScale(pack: String): Float?
+	@Query("SELECT scale FROM IconPack WHERE packageName = :pack")
+	public suspend fun getScale(pack: String): Float?
 
-    @Query("DELETE FROM Icons WHERE iconPack NOT IN (:keep)")
-    public suspend fun deleteIconsNotIn(keep: List<String>)
+	@Query("DELETE FROM Icons WHERE iconPack NOT IN (:keep)")
+	public suspend fun deleteIconsNotIn(keep: List<String>)
 
-    @Query("DELETE FROM IconPack WHERE packageName NOT IN (:keep)")
-    public suspend fun deleteIconPacksNotIn(keep: List<String>)
+	@Query("DELETE FROM IconPack WHERE packageName NOT IN (:keep)")
+	public suspend fun deleteIconPacksNotIn(keep: List<String>)
 }

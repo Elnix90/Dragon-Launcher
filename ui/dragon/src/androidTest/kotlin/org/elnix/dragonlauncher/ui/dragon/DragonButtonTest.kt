@@ -38,86 +38,86 @@ import org.junit.Test
  * Focus on the basic interaction pattern.
  */
 class DragonButtonTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Composable
-    fun TestTheme(content: @Composable DragonGroupScope.() -> Unit) {
-        MaterialTheme {
-            CompositionLocalProvider(
-                LocalUseCustomColorChannels provides true,
-                LocalDisableHapticFeedbackGlobally provides false
-            ) {
-                DragonSettingsGroup {
-                    content()
-                }
-            }
-        }
-    }
+	@Composable
+	fun TestTheme(content: @Composable DragonGroupScope.() -> Unit) {
+		MaterialTheme {
+			CompositionLocalProvider(
+				LocalUseCustomColorChannels provides true,
+				LocalDisableHapticFeedbackGlobally provides false
+			) {
+				DragonSettingsGroup {
+					content()
+				}
+			}
+		}
+	}
 
-    @Test
-    fun dragonButton_displaysContent() {
-        composeTestRule.setContent {
-            TestTheme {
-                DragonButton(onClick = {}) {
-                    Text("Press Me")
-                }
-            }
-        }
+	@Test
+	fun dragonButton_displaysContent() {
+		composeTestRule.setContent {
+			TestTheme {
+				DragonButton(onClick = {}) {
+					Text("Press Me")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Press Me").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Press Me").assertIsDisplayed()
+	}
 
-    @Test
-    fun dragonButton_clickTriggersCallback() {
-        var clicked = false
+	@Test
+	fun dragonButton_clickTriggersCallback() {
+		var clicked = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                DragonButton(onClick = { clicked = true }) {
-                    Text("Click")
-                }
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				DragonButton(onClick = { clicked = true }) {
+					Text("Click")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Click").performClick()
-        assertTrue("onClick should have been called", clicked)
-    }
+		composeTestRule.onNodeWithText("Click").performClick()
+		assertTrue("onClick should have been called", clicked)
+	}
 
-    @Test
-    fun dragonButton_multipleClicks() {
-        var count = 0
+	@Test
+	fun dragonButton_multipleClicks() {
+		var count = 0
 
-        composeTestRule.setContent {
-            TestTheme {
-                DragonButton(onClick = { count++ }) {
-                    Text("Tap")
-                }
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				DragonButton(onClick = { count++ }) {
+					Text("Tap")
+				}
+			}
+		}
 
-        val button = composeTestRule.onNodeWithText("Tap")
-        button.performClick()
-        button.performClick()
-        assertTrue("Should have been clicked twice", count == 2)
-    }
+		val button = composeTestRule.onNodeWithText("Tap")
+		button.performClick()
+		button.performClick()
+		assertTrue("Should have been clicked twice", count == 2)
+	}
 
-    @Test
-    fun dragonButton_disabledDoesNotTriggerCallback() {
-        var clicked = false
+	@Test
+	fun dragonButton_disabledDoesNotTriggerCallback() {
+		var clicked = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                DragonButton(
-                    onClick = { clicked = true },
-                    enabled = false
-                ) {
-                    Text("Disabled")
-                }
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				DragonButton(
+					onClick = { clicked = true },
+					enabled = false
+				) {
+					Text("Disabled")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Disabled").assertIsDisplayed()
-        assertFalse("onClick should NOT have been called on disabled button", clicked)
-    }
+		composeTestRule.onNodeWithText("Disabled").assertIsDisplayed()
+		assertFalse("onClick should NOT have been called on disabled button", clicked)
+	}
 }

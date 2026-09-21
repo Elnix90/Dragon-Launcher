@@ -23,9 +23,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 /** Container for the produced gesture state. */
 data class HoldGestureState(
-    val pointerModifier: Modifier,
-    val progress: Float,
-    val center: Offset?
+	val pointerModifier: Modifier,
+	val progress: Float,
+	val center: Offset?
 )
 
 /**
@@ -38,84 +38,84 @@ data class HoldGestureState(
  */
 @Composable
 fun rememberHoldToOpenSettings(
-    onSettings: (Offset) -> Unit,
-    holdDelay: Long,
-    loadDuration: Long
+	onSettings: (Offset) -> Unit,
+	holdDelay: Long,
+	loadDuration: Long
 ): HoldGestureState {
-    val scope = rememberCoroutineScope()
-    val tolerance = LocalHoldToActivateSettings.current.holdToActivateSettingsTolerance
-    val tolerancePx = tolerance.px
+	val scope = rememberCoroutineScope()
+	val tolerance = LocalHoldToActivateSettings.current.holdToActivateSettingsTolerance
+	val tolerancePx = tolerance.px
 
-    var anchor: Offset? by remember { mutableStateOf(null) }
-    val progress: Animatable<Float, AnimationVector1D> =
-        remember {
-            Animatable(0f)
-        }
+	var anchor: Offset? by remember { mutableStateOf(null) }
+	val progress: Animatable<Float, AnimationVector1D> =
+		remember {
+			Animatable(0f)
+		}
 
-    fun reset() {
-        anchor = null
-        scope.launch {
-            progress.snapTo(0f)
-        }
-    }
+	fun reset() {
+		anchor = null
+		scope.launch {
+			progress.snapTo(0f)
+		}
+	}
 
-    val pointerModifier =
-        remember(holdDelay, loadDuration, tolerance, onSettings) {
-            Modifier.pointerInput(Unit) {
-                awaitEachGesture {
-                    val down = awaitFirstDown()
-                    anchor = down.position
+	val pointerModifier =
+		remember(holdDelay, loadDuration, tolerance, onSettings) {
+			Modifier.pointerInput(Unit) {
+				awaitEachGesture {
+					val down = awaitFirstDown()
+					anchor = down.position
 
-                    val holdJob =
-                        scope.launch {
-                            progress.snapTo(0f)
+					val holdJob =
+						scope.launch {
+							progress.snapTo(0f)
 
-                            delay(holdDelay.milliseconds)
+							delay(holdDelay.milliseconds)
 
-                            progress.animateTo(
-                                targetValue = 1f,
-                                animationSpec =
-                                    tween(
-                                        durationMillis = loadDuration.toInt(),
-                                        easing = LinearEasing
-                                    )
-                            )
+							progress.animateTo(
+								targetValue = 1f,
+								animationSpec =
+									tween(
+										durationMillis = loadDuration.toInt(),
+										easing = LinearEasing
+									)
+							)
 
-                            onSettings(down.position)
-                            reset()
-                        }
+							onSettings(down.position)
+							reset()
+						}
 
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.firstOrNull { it.id == down.id }
+					while (true) {
+						val event = awaitPointerEvent()
+						val change = event.changes.firstOrNull { it.id == down.id }
 
-                        if (change == null || !change.pressed) {
-                            holdJob.cancel()
-                            reset()
-                            break
-                        }
+						if (change == null || !change.pressed) {
+							holdJob.cancel()
+							reset()
+							break
+						}
 
-                        // Check drag distance
-                        val dist =
-                            anchor?.let {
-                                (change.position - it).getDistance()
-                            } ?: 999f
+						// Check drag distance
+						val dist =
+							anchor?.let {
+								(change.position - it).getDistance()
+							} ?: 999f
 
-                        if (dist > tolerancePx) {
-                            holdJob.cancel()
-                            reset()
-                            break
-                        }
+						if (dist > tolerancePx) {
+							holdJob.cancel()
+							reset()
+							break
+						}
 
-                        change.consume()
-                    }
-                }
-            }
-        }
+						change.consume()
+					}
+				}
+			}
+		}
 
-    return HoldGestureState(
-        pointerModifier = pointerModifier,
-        progress = progress.value,
-        center = anchor
-    )
+	return HoldGestureState(
+		pointerModifier = pointerModifier,
+		progress = progress.value,
+		center = anchor
+	)
 }

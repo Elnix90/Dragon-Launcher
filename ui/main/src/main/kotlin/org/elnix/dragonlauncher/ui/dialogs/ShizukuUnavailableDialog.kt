@@ -25,54 +25,54 @@ import org.elnix.dragonlauncher.ui.svg.vectors.undraw404Error
 
 @Composable
 fun ShizukuUnavailableDialog(
-    modifier: Modifier = Modifier,
-    onDismiss: () -> Unit = {},
-    onConfirm: () -> Unit = {}
+	modifier: Modifier = Modifier,
+	onDismiss: () -> Unit = {},
+	onConfirm: () -> Unit = {}
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Column(
-                modifier =
-                    modifier
-                        .padding(24.dp)
-                        .widthIn(min = 280.dp)
-            ) {
-                Image(
-                    imageVector = undraw404Error(),
-                    contentDescription = null,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		title = {
+			Column(
+				modifier =
+					modifier
+						.padding(24.dp)
+						.widthIn(min = 280.dp)
+			) {
+				Image(
+					imageVector = undraw404Error(),
+					contentDescription = null,
+					modifier = Modifier.padding(horizontal = 20.dp)
+				)
 
-                Spacer(modifier = Modifier.height(24.dp))
+				Spacer(modifier = Modifier.height(24.dp))
 
-                AutoResizeableText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.shizuku_unavailable),
-                    style = MaterialTheme.typography.titleLargeEmphasized,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
-                )
+				AutoResizeableText(
+					modifier = Modifier.fillMaxWidth(),
+					text = stringResource(R.string.shizuku_unavailable),
+					style = MaterialTheme.typography.titleLargeEmphasized,
+					color = MaterialTheme.colorScheme.onSurface,
+					textAlign = TextAlign.Center
+				)
 
-                Spacer(modifier = Modifier.height(15.dp))
+				Spacer(modifier = Modifier.height(15.dp))
 
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.shizuku_unavailable_message),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
-                )
+				Text(
+					modifier = Modifier.fillMaxWidth(),
+					text = stringResource(R.string.shizuku_unavailable_message),
+					style = MaterialTheme.typography.bodySmall,
+					color = MaterialTheme.colorScheme.onSurface,
+					textAlign = TextAlign.Center
+				)
 
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-        },
-        confirmButton = {
-            ValidateCancelButtons(
-                validateText = stringResource(R.string.shizuku),
-                onConfirm = onConfirm,
-                onCancel = onDismiss
-            )
-        }
-    )
+				Spacer(modifier = Modifier.height(24.dp))
+			}
+		},
+		confirmButton = {
+			ValidateCancelButtons(
+				validateText = stringResource(R.string.shizuku),
+				onConfirm = onConfirm,
+				onCancel = onDismiss
+			)
+		}
+	)
 }

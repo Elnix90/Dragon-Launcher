@@ -27,65 +27,65 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
 @Composable
 fun DisabledCategoriesDialog(
-    onDismiss: () -> Unit
+	onDismiss: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val disabledCategories by DrawerSettingsStore.disabledSystemCategories.asState()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+	val disabledCategories by DrawerSettingsStore.disabledSystemCategories.asState()
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(R.string.disabled_system_categories),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
-        text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(0.dp)
-            ) {
-                items(AppCategory.entries) { category ->
-                    val isDisabled = category.name in disabledCategories
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		title = {
+			Text(
+				text = stringResource(R.string.disabled_system_categories),
+				color = MaterialTheme.colorScheme.onSurface
+			)
+		},
+		text = {
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(0.dp)
+			) {
+				items(AppCategory.entries) { category ->
+					val isDisabled = category.name in disabledCategories
 
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Checkbox(
-                            checked = isDisabled,
-                            onCheckedChange = { checked ->
-                                val newDisabled =
-                                    if (checked) {
-                                        disabledCategories + category.name
-                                    } else {
-                                        disabledCategories - category.name
-                                    }
-                                scope.launch {
-                                    DrawerSettingsStore.disabledSystemCategories.set(ctx, newDisabled)
-                                }
-                            }
-                        )
-                        Text(
-                            text = category.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.ok))
-            }
-        },
-        dismissButton = {},
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.large
-    )
+					Row(
+						modifier =
+							Modifier
+								.fillMaxWidth()
+								.padding(vertical = 2.dp),
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						Checkbox(
+							checked = isDisabled,
+							onCheckedChange = { checked ->
+								val newDisabled =
+									if (checked) {
+										disabledCategories + category.name
+									} else {
+										disabledCategories - category.name
+									}
+								scope.launch {
+									DrawerSettingsStore.disabledSystemCategories.set(ctx, newDisabled)
+								}
+							}
+						)
+						Text(
+							text = category.name,
+							style = MaterialTheme.typography.bodyLarge,
+							color = MaterialTheme.colorScheme.onSurface
+						)
+					}
+				}
+			}
+		},
+		confirmButton = {
+			TextButton(onClick = onDismiss) {
+				Text(stringResource(R.string.ok))
+			}
+		},
+		dismissButton = {},
+		containerColor = MaterialTheme.colorScheme.surface,
+		shape = MaterialTheme.shapes.large
+	)
 }

@@ -42,116 +42,116 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
 @Composable
 fun WorkspaceDetailScreen(
-    workspaceId: String,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    profilesViewModel: ProfilesViewModel = activityViewModel()
+	workspaceId: String,
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	profilesViewModel: ProfilesViewModel = activityViewModel()
 ) {
-    val ctx = LocalContext.current
-    val workspaceManager = drawerViewModel.workspaceManager
-    val workspaces by workspaceManager.workspaces.asState()
-    val workspace = workspaces.first { it.id == workspaceId }
+	val ctx = LocalContext.current
+	val workspaceManager = drawerViewModel.workspaceManager
+	val workspaces by workspaceManager.workspaces.asState()
+	val workspace = workspaces.first { it.id == workspaceId }
 
-    var workspaceViewMode by remember { mutableStateOf(WorkspaceViewMode.Default) }
-    var showAppPicker by remember { mutableStateOf(false) }
+	var workspaceViewMode by remember { mutableStateOf(WorkspaceViewMode.Default) }
+	var showAppPicker by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        drawerViewModel.clearSearchQuery()
+	LaunchedEffect(Unit) {
+		drawerViewModel.clearSearchQuery()
 
-        // This way, the remove from workspace and add to workspace will work, otherwise they add and remove apps to the real last workspace used
-        DrawerSettingsStore.lastWorkspaceUsed.set(ctx, workspaceId)
-    }
+		// This way, the remove from workspace and add to workspace will work, otherwise they add and remove apps to the real last workspace used
+		DrawerSettingsStore.lastWorkspaceUsed.set(ctx, workspaceId)
+	}
 
-    val apps by drawerViewModel
-        .search(workspace, workspaceViewMode)
-        .collectAsState(initial = emptyList())
+	val apps by drawerViewModel
+		.search(workspace, workspaceViewMode)
+		.collectAsState(initial = emptyList())
 
-    Box(Modifier.fillMaxSize()) {
-        SettingsScaffold(
-            title = "${stringResource(R.string.workspace)}: ${workspace.id}",
-            scrollableContent = false,
-            helpText = stringResource(R.string.workspace_detail_help),
-            onReset = { workspaceManager.resetWorkspace(workspaceId) },
-            resetTitle = stringResource(R.string.reset_workspace),
-            resetText = stringResource(R.string.reset_this_workspace_to_default_apps)
-        ) {
-            Box(Modifier.fillMaxSize()) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    SingleSelectConnectedButtonRow(
-                        entries = WorkspaceViewMode.entries,
-                        checked = { it == workspaceViewMode }
-                    ) { workspaceViewMode = it }
+	Box(Modifier.fillMaxSize()) {
+		SettingsScaffold(
+			title = "${stringResource(R.string.workspace)}: ${workspace.id}",
+			scrollableContent = false,
+			helpText = stringResource(R.string.workspace_detail_help),
+			onReset = { workspaceManager.resetWorkspace(workspaceId) },
+			resetTitle = stringResource(R.string.reset_workspace),
+			resetText = stringResource(R.string.reset_this_workspace_to_default_apps)
+		) {
+			Box(Modifier.fillMaxSize()) {
+				Column(
+					verticalArrangement = Arrangement.spacedBy(16.dp),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					modifier = Modifier.fillMaxSize()
+				) {
+					SingleSelectConnectedButtonRow(
+						entries = WorkspaceViewMode.entries,
+						checked = { it == workspaceViewMode }
+					) { workspaceViewMode = it }
 
-                    val profiles by profilesViewModel.profiles.collectAsState(emptyList())
-                    val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
+					val profiles by profilesViewModel.profiles.collectAsState(emptyList())
+					val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
 
-                    val workspace = workspaces.first { it.id == workspaceId }
+					val workspace = workspaces.first { it.id == workspaceId }
 
-                    val workspaceProfileType =
-                        when (workspace.type) {
-                            WorkspaceType.Work -> Profile.Type.Work
-                            WorkspaceType.Private -> Profile.Type.Private
-                            else -> Profile.Type.Personal
-                        }
+					val workspaceProfileType =
+						when (workspace.type) {
+							WorkspaceType.Work -> Profile.Type.Work
+							WorkspaceType.Private -> Profile.Type.Private
+							else -> Profile.Type.Personal
+						}
 
-                    val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
+					val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
-                    val workspaceLocked =
-                        when (workspaceProfileType) {
-                            Profile.Type.Personal -> false
-                            Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
-                            Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
-                        }
+					val workspaceLocked =
+						when (workspaceProfileType) {
+							Profile.Type.Personal -> false
+							Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+							Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
+						}
 
-                    when {
-                        workspaceProfile == null -> {
-                            WorkspaceUnavailableContent(workspace.type)
-                        }
+					when {
+						workspaceProfile == null -> {
+							WorkspaceUnavailableContent(workspace.type)
+						}
 
-                        workspaceLocked -> {
-                            WorkspaceLockedContent(workspaceProfile, true)
-                        }
+						workspaceLocked -> {
+							WorkspaceLockedContent(workspaceProfile, true)
+						}
 
-                        else -> {
-                            CompositionLocalProvider(LocalWorkspaceViewMode provides workspaceViewMode) {
-                                AppGrid(
-                                    apps = apps.sortedBy { it.label },
-                                    longPressPopup = true,
-                                    onClick = null
-                                )
-                            }
-                        }
-                    }
-                }
+						else -> {
+							CompositionLocalProvider(LocalWorkspaceViewMode provides workspaceViewMode) {
+								AppGrid(
+									apps = apps.sortedBy { it.label },
+									longPressPopup = true,
+									onClick = null
+								)
+							}
+						}
+					}
+				}
 
-                AnimatedFab(
-                    icon = R.drawable.add,
-                    onClick = { showAppPicker = true },
-                    minSize = 70.dp,
-                    modifier =
-                        Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(16.dp),
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-                DebugZone(DebugSettingsStore.workspacesDebugInfo) {
-                    Text(workspace.toString())
-                }
-            }
-        }
-    }
+				AnimatedFab(
+					icon = R.drawable.add,
+					onClick = { showAppPicker = true },
+					minSize = 70.dp,
+					modifier =
+						Modifier
+							.align(Alignment.BottomEnd)
+							.padding(16.dp),
+					containerColor = MaterialTheme.colorScheme.primary
+				)
+				DebugZone(DebugSettingsStore.workspacesDebugInfo) {
+					Text(workspace.toString())
+				}
+			}
+		}
+	}
 
-    if (showAppPicker) {
-        AppPickerSheet(
-            onDismiss = { showAppPicker = false },
-            onAppSelected = { app ->
-                workspaceManager.addAppToWorkspace(workspaceId, app.key)
-            }
-        ) { apps ->
-            workspaceManager.addAppsToWorkspace(workspaceId, apps.mapTo(mutableSetOf()) { it.key })
-        }
-    }
+	if (showAppPicker) {
+		AppPickerSheet(
+			onDismiss = { showAppPicker = false },
+			onAppSelected = { app ->
+				workspaceManager.addAppToWorkspace(workspaceId, app.key)
+			}
+		) { apps ->
+			workspaceManager.addAppsToWorkspace(workspaceId, apps.mapTo(mutableSetOf()) { it.key })
+		}
+	}
 }

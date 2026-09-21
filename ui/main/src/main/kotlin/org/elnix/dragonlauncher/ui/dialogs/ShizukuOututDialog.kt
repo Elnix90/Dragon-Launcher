@@ -14,27 +14,27 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
 fun ShizukuOutputDialog(
-    shizukuViewModel: ShizukuViewModel = activityViewModel()
+	shizukuViewModel: ShizukuViewModel = activityViewModel()
 ) {
-    val output by shizukuViewModel.outputValue.asState()
+	val output by shizukuViewModel.outputValue.asState()
 
-    output?.let { output ->
-        CustomAlertDialog(
-            scroll = false,
-            onDismissRequest = {
-                shizukuViewModel.clearOutput()
-            },
-            title = { Text(stringResource(R.string.command_output)) },
-            text = {
-                Column {
-                    val errorText = if (output.isError) "Error occurred" else null
+	output?.let { output ->
+		CustomAlertDialog(
+			scroll = false,
+			onDismissRequest = {
+				shizukuViewModel.clearOutput()
+			},
+			title = { Text(stringResource(R.string.command_output)) },
+			text = {
+				Column {
+					val errorText = if (output.isError) "Error occurred" else null
 
-                    TextWithDescription(
-                        text = output.text,
-                        description = errorText
-                    )
-                }
-            }
-        )
-    }
+					TextWithDescription(
+						text = output.text,
+						description = errorText
+					)
+				}
+			}
+		)
+	}
 }

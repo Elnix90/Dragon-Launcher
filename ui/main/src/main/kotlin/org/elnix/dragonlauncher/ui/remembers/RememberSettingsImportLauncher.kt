@@ -23,57 +23,57 @@ import org.json.JSONObject
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun rememberSettingsImportLauncher(
-    backupViewModel: BackupViewModel = activityViewModel(),
-    onJsonReady: (JSONObject) -> Unit
+	backupViewModel: BackupViewModel = activityViewModel(),
+	onJsonReady: (JSONObject) -> Unit
 ): ManagedActivityResultLauncher<Array<String>, Uri?> {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    fun onError(msg: String) {
-        backupViewModel.result.value =
-            BackupResult(
-                export = false,
-                error = true,
-                title = ctx.getString(R.string.import_failed),
-                message = msg
-            )
-    }
+	fun onError(msg: String) {
+		backupViewModel.result.value =
+			BackupResult(
+				export = false,
+				error = true,
+				title = ctx.getString(R.string.import_failed),
+				message = msg
+			)
+	}
 
-    return rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) { uri ->
+	return rememberLauncherForActivityResult(
+		ActivityResultContracts.OpenDocument()
+	) { uri ->
 
-        logD(BACKUP_TAG) { "File picked: $uri" }
+		logD(BACKUP_TAG) { "File picked: $uri" }
 
-        if (uri == null) {
-            return@rememberLauncherForActivityResult
-        }
+		if (uri == null) {
+			return@rememberLauncherForActivityResult
+		}
 
-        ctx.contentResolver.takePersistableUriPermission(
-            uri,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-        )
+		ctx.contentResolver.takePersistableUriPermission(
+			uri,
+			Intent.FLAG_GRANT_READ_URI_PERMISSION or
+				Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+		)
 
-        scope.launch {
-            try {
-                val jsonString =
-                    withContext(Dispatchers.IO) {
-                        ctx.contentResolver
-                            .openInputStream(uri)
-                            ?.bufferedReader()
-                            ?.use { it.readText() }
-                    }
+		scope.launch {
+			try {
+				val jsonString =
+					withContext(Dispatchers.IO) {
+						ctx.contentResolver
+							.openInputStream(uri)
+							?.bufferedReader()
+							?.use { it.readText() }
+					}
 
-                if (jsonString.isNullOrBlank()) {
-                    onError("Invalid or empty backup file")
-                    return@launch
-                }
+				if (jsonString.isNullOrBlank()) {
+					onError("Invalid or empty backup file")
+					return@launch
+				}
 
-                onJsonReady(JSONObject(jsonString))
-            } catch (e: Exception) {
-                onError("Failed to read backup file: $e")
-            }
-        }
-    }
+				onJsonReady(JSONObject(jsonString))
+			} catch (e: Exception) {
+				onError("Failed to read backup file: $e")
+			}
+		}
+	}
 }

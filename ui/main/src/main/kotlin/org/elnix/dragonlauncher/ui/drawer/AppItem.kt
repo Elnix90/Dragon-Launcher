@@ -32,135 +32,135 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 
 @Composable
 fun AppItemHorizontal(
-    app: Application,
-    selected: Boolean,
-    onLongClick: (() -> Unit)?,
-    longPressPopup: Boolean,
-    onClick: (() -> Unit)?
+	app: Application,
+	selected: Boolean,
+	onLongClick: (() -> Unit)?,
+	longPressPopup: Boolean,
+	onClick: (() -> Unit)?
 ) {
-    require(!((onLongClick != null) && longPressPopup)) {
-        "Long press action, or popup, or neither, but not both!"
-    }
+	require(!((onLongClick != null) && longPressPopup)) {
+		"Long press action, or popup, or neither, but not both!"
+	}
 
-    val drawerSettings = LocalDrawerSettings.current
+	val drawerSettings = LocalDrawerSettings.current
 
-    var showLongPressPopup by remember { mutableStateOf(false) }
+	var showLongPressPopup by remember { mutableStateOf(false) }
 
-    val alignment =
-        when (drawerSettings.horizontalAlignment) {
-            HorizontalAlignment.Start -> Arrangement.Start
-            HorizontalAlignment.Center -> Arrangement.Center
-            HorizontalAlignment.End -> Arrangement.End
-        }
+	val alignment =
+		when (drawerSettings.horizontalAlignment) {
+			HorizontalAlignment.Start -> Arrangement.Start
+			HorizontalAlignment.Center -> Arrangement.Center
+			HorizontalAlignment.End -> Arrangement.End
+		}
 
-    Box {
-        Row(
-            horizontalArrangement = alignment,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.large)
-                    .conditional(selected) {
-                        background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-                    }.combinedClickable(
-                        onLongClick = {
-                            if (longPressPopup) {
-                                showLongPressPopup = true
-                            } else {
-                                onLongClick?.invoke()
-                            }
-                        },
-                        onClick = { onClick?.invoke() }
-                    ).padding(5.dp)
-        ) {
-            if (drawerSettings.showAppIconsInDrawer) {
-                AppIcon(app, drawerSettings.iconSize)
-            }
+	Box {
+		Row(
+			horizontalArrangement = alignment,
+			verticalAlignment = Alignment.CenterVertically,
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.clip(MaterialTheme.shapes.large)
+					.conditional(selected) {
+						background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+					}.combinedClickable(
+						onLongClick = {
+							if (longPressPopup) {
+								showLongPressPopup = true
+							} else {
+								onLongClick?.invoke()
+							}
+						},
+						onClick = { onClick?.invoke() }
+					).padding(5.dp)
+		) {
+			if (drawerSettings.showAppIconsInDrawer) {
+				AppIcon(app, drawerSettings.iconSize)
+			}
 
-            if (drawerSettings.showAppLabelsInDrawer) {
-                Spacer(drawerSettings.iconsSpacingHorizontal)
-                Text(
-                    text = app.label,
-                    color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-        DragonDropDownMenu(
-            expanded = showLongPressPopup,
-            onDismissRequest = { showLongPressPopup = false }
-        ) {
-            AppLongPressPopup(
-                app = app,
-                onOpenApp = { onClick?.invoke() }
-            ) { showLongPressPopup = false }
-        }
-    }
+			if (drawerSettings.showAppLabelsInDrawer) {
+				Spacer(drawerSettings.iconsSpacingHorizontal)
+				Text(
+					text = app.label,
+					color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
+					style = MaterialTheme.typography.labelSmall,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
+			}
+		}
+		DragonDropDownMenu(
+			expanded = showLongPressPopup,
+			onDismissRequest = { showLongPressPopup = false }
+		) {
+			AppLongPressPopup(
+				app = app,
+				onOpenApp = { onClick?.invoke() }
+			) { showLongPressPopup = false }
+		}
+	}
 }
 
 @Composable
 fun AppItemGrid(
-    app: Application,
-    selected: Boolean,
-    onLongClick: (() -> Unit)?,
-    longPressPopup: Boolean,
-    onClick: (() -> Unit)?
+	app: Application,
+	selected: Boolean,
+	onLongClick: (() -> Unit)?,
+	longPressPopup: Boolean,
+	onClick: (() -> Unit)?
 ) {
-    require(!((onLongClick != null) && longPressPopup)) {
-        "Long press action, or popup, or neither, but not both!"
-    }
+	require(!((onLongClick != null) && longPressPopup)) {
+		"Long press action, or popup, or neither, but not both!"
+	}
 
-    val drawerSettings = LocalDrawerSettings.current
+	val drawerSettings = LocalDrawerSettings.current
 
-    var showLongPressPopup by remember { mutableStateOf(false) }
+	var showLongPressPopup by remember { mutableStateOf(false) }
 
-    Box {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.large)
-                    .conditional(selected) {
-                        background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-                    }.combinedClickable(
-                        onLongClick = {
-                            if (longPressPopup) {
-                                showLongPressPopup = true
-                            } else {
-                                onLongClick?.invoke()
-                            }
-                        },
-                        onClick = { onClick?.invoke() }
-                    ).padding(5.dp)
-        ) {
-            if (drawerSettings.showAppIconsInDrawer) {
-                AppIcon(app, drawerSettings.iconSize)
-            }
+	Box {
+		Column(
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.spacedBy(5.dp),
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.clip(MaterialTheme.shapes.large)
+					.conditional(selected) {
+						background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+					}.combinedClickable(
+						onLongClick = {
+							if (longPressPopup) {
+								showLongPressPopup = true
+							} else {
+								onLongClick?.invoke()
+							}
+						},
+						onClick = { onClick?.invoke() }
+					).padding(5.dp)
+		) {
+			if (drawerSettings.showAppIconsInDrawer) {
+				AppIcon(app, drawerSettings.iconSize)
+			}
 
-            if (drawerSettings.showAppLabelsInDrawer) {
-                Text(
-                    text = app.label,
-                    color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
+			if (drawerSettings.showAppLabelsInDrawer) {
+				Text(
+					text = app.label,
+					color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
+					style = MaterialTheme.typography.labelSmall,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
+			}
+		}
 
-        DragonDropDownMenu(
-            expanded = showLongPressPopup,
-            onDismissRequest = { showLongPressPopup = false }
-        ) {
-            AppLongPressPopup(
-                app = app,
-                onOpenApp = { onClick?.invoke() }
-            ) { showLongPressPopup = false }
-        }
-    }
+		DragonDropDownMenu(
+			expanded = showLongPressPopup,
+			onDismissRequest = { showLongPressPopup = false }
+		) {
+			AppLongPressPopup(
+				app = app,
+				onOpenApp = { onClick?.invoke() }
+			) { showLongPressPopup = false }
+		}
+	}
 }

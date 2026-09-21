@@ -35,8 +35,8 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import java.util.Locale
 
 private data class AppLocale(
-    val locale: Locale,
-    val name: String
+	val locale: Locale,
+	val name: String
 )
 
 // yeeted from nsh04/Tomato
@@ -44,116 +44,116 @@ private data class AppLocale(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LocalePickerSheet(onDismissRequest: () -> Unit) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val currentLocales =
-        remember {
-            if (Build.VERSION.SDK_INT >= 33) {
-                ctx.getSystemService(LocaleManager::class.java).applicationLocales
-            } else {
-                LocaleList.getEmptyLocaleList()
-            }
-        }
+	val currentLocales =
+		remember {
+			if (Build.VERSION.SDK_INT >= 33) {
+				ctx.getSystemService(LocaleManager::class.java).applicationLocales
+			} else {
+				LocaleList.getEmptyLocaleList()
+			}
+		}
 
-    val supportedLocaleList: List<AppLocale>? =
-        remember {
-            if (Build.VERSION.SDK_INT >= 33) {
-                val supportedLocales = LocaleConfig(ctx).supportedLocales
-                if (supportedLocales != null) {
-                    buildList {
-                        for (i in 0 until supportedLocales.size()) {
-                            val locale = supportedLocales.get(i)
-                            add(
-                                AppLocale(
-                                    locale,
-                                    locale.getDisplayName(locale).replaceFirstChar {
-                                        it.uppercase()
-                                    }
-                                )
-                            )
-                        }
-                    }.sortedBy { it.name }
-                } else {
-                    null
-                }
-            } else {
-                null
-            }
-        }
+	val supportedLocaleList: List<AppLocale>? =
+		remember {
+			if (Build.VERSION.SDK_INT >= 33) {
+				val supportedLocales = LocaleConfig(ctx).supportedLocales
+				if (supportedLocales != null) {
+					buildList {
+						for (i in 0 until supportedLocales.size()) {
+							val locale = supportedLocales.get(i)
+							add(
+								AppLocale(
+									locale,
+									locale.getDisplayName(locale).replaceFirstChar {
+										it.uppercase()
+									}
+								)
+							)
+						}
+					}.sortedBy { it.name }
+				} else {
+					null
+				}
+			} else {
+				null
+			}
+		}
 
-    val supportedLocalesSize = supportedLocaleList?.size ?: 0
+	val supportedLocalesSize = supportedLocaleList?.size ?: 0
 
-    DragonModalBottomSheet(onDismissRequest = onDismissRequest) {
-        if (supportedLocaleList != null) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                contentPadding = PaddingValues(bottom = 60.dp),
-                modifier = Modifier.heightIn(max = 600.dp).clip(shapes.large)
-            ) {
-                item {
-                    SegmentedListItem(
-                        onClick = {
-                            scope
-                                .launch {
-                                    if (Build.VERSION.SDK_INT >= 33) {
-                                        ctx
-                                            .getSystemService(LocaleManager::class.java)
-                                            .applicationLocales = LocaleList()
-                                    }
-                                }.invokeOnCompletion { onDismissRequest() }
-                        },
-                        selected = currentLocales.isEmpty,
-                        colors = listItemColors(),
-                        shapes = segmentedListItemShapes(0, 1),
-                        content = { Text(stringResource(R.string.system_default)) },
-                        trailingContent = {
-                            if (currentLocales.isEmpty) {
-                                Icon(
-                                    painter = painterResource(R.drawable.check_circle),
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                    )
-                }
+	DragonModalBottomSheet(onDismissRequest = onDismissRequest) {
+		if (supportedLocaleList != null) {
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(2.dp),
+				contentPadding = PaddingValues(bottom = 60.dp),
+				modifier = Modifier.heightIn(max = 600.dp).clip(shapes.large)
+			) {
+				item {
+					SegmentedListItem(
+						onClick = {
+							scope
+								.launch {
+									if (Build.VERSION.SDK_INT >= 33) {
+										ctx
+											.getSystemService(LocaleManager::class.java)
+											.applicationLocales = LocaleList()
+									}
+								}.invokeOnCompletion { onDismissRequest() }
+						},
+						selected = currentLocales.isEmpty,
+						colors = listItemColors(),
+						shapes = segmentedListItemShapes(0, 1),
+						content = { Text(stringResource(R.string.system_default)) },
+						trailingContent = {
+							if (currentLocales.isEmpty) {
+								Icon(
+									painter = painterResource(R.drawable.check_circle),
+									contentDescription = null
+								)
+							}
+						}
+					)
+				}
 
-                item { Spacer(12.dp) }
+				item { Spacer(12.dp) }
 
-                itemsIndexed(
-                    items = supportedLocaleList,
-                    key = { _: Int, it: AppLocale -> it.name }
-                ) { index, item ->
-                    val selected = !currentLocales.isEmpty && item.locale == currentLocales.get(0)
+				itemsIndexed(
+					items = supportedLocaleList,
+					key = { _: Int, it: AppLocale -> it.name }
+				) { index, item ->
+					val selected = !currentLocales.isEmpty && item.locale == currentLocales.get(0)
 
-                    SegmentedListItem(
-                        onClick = {
-                            scope
-                                .launch {
-                                    if (Build.VERSION.SDK_INT >= 33) {
-                                        ctx
-                                            .getSystemService(LocaleManager::class.java)
-                                            .applicationLocales = LocaleList(item.locale)
-                                    }
-                                }.invokeOnCompletion { onDismissRequest() }
-                        },
-                        selected = selected,
-                        content = { Text(item.name) },
-                        trailingContent = {
-                            if (selected) {
-                                Icon(
-                                    painter = painterResource(R.drawable.check_circle),
-                                    contentDescription = null
-                                )
-                            }
-                        },
-                        shapes = segmentedListItemShapes(index, supportedLocalesSize),
-                        colors = listItemColors()
-                    )
-                }
-            }
-        }
-    }
+					SegmentedListItem(
+						onClick = {
+							scope
+								.launch {
+									if (Build.VERSION.SDK_INT >= 33) {
+										ctx
+											.getSystemService(LocaleManager::class.java)
+											.applicationLocales = LocaleList(item.locale)
+									}
+								}.invokeOnCompletion { onDismissRequest() }
+						},
+						selected = selected,
+						content = { Text(item.name) },
+						trailingContent = {
+							if (selected) {
+								Icon(
+									painter = painterResource(R.drawable.check_circle),
+									contentDescription = null
+								)
+							}
+						},
+						shapes = segmentedListItemShapes(index, supportedLocalesSize),
+						colors = listItemColors()
+					)
+				}
+			}
+		}
+	}
 }
 
 @Composable
@@ -162,19 +162,19 @@ fun listItemColors(): ListItemColors = ListItemDefaults.colors(containerColor = 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun segmentedListItemShapes(
-    index: Int,
-    count: Int,
-    singleElement: Boolean = count == 1
+	index: Int,
+	count: Int,
+	singleElement: Boolean = count == 1
 ): ListItemShapes =
-    ListItemDefaults.segmentedShapes(
-        index,
-        count,
-        ListItemDefaults.shapes(
-            shape = if (singleElement) shapes.large else shapes.extraSmall,
-            selectedShape = shapes.extraLargeIncreased,
-            pressedShape = shapes.extraLargeIncreased,
-            focusedShape = shapes.large,
-            hoveredShape = shapes.extraLarge,
-            draggedShape = shapes.extraLargeIncreased
-        )
-    )
+	ListItemDefaults.segmentedShapes(
+		index,
+		count,
+		ListItemDefaults.shapes(
+			shape = if (singleElement) shapes.large else shapes.extraSmall,
+			selectedShape = shapes.extraLargeIncreased,
+			pressedShape = shapes.extraLargeIncreased,
+			focusedShape = shapes.large,
+			hoveredShape = shapes.extraLarge,
+			draggedShape = shapes.extraLargeIncreased
+		)
+	)

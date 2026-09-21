@@ -21,85 +21,85 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
  */
 @Composable
 fun PointIcon(
-    point: Point,
-    center: Offset,
-    eraseColor: Color,
-    modifier: Modifier = Modifier,
-    depth: Int = 1,
-    selected: Boolean = false,
-    pointSettingsDisplay: Boolean = false,
-    hideShapes: Boolean = false
+	point: Point,
+	center: Offset,
+	eraseColor: Color,
+	modifier: Modifier = Modifier,
+	depth: Int = 1,
+	selected: Boolean = false,
+	pointSettingsDisplay: Boolean = false,
+	hideShapes: Boolean = false
 ) {
-    val drawParams =
-        rememberDrawParams(
-            eraseColor = eraseColor,
-            isDefaultEditing = false,
-            pointSettingsDisplay = pointSettingsDisplay,
-            showCancelZone = false,
-            allowShowPointCenter = false,
-            hideShapes = hideShapes,
-            skipSelected = false
-        )
+	val drawParams =
+		rememberDrawParams(
+			eraseColor = eraseColor,
+			isDefaultEditing = false,
+			pointSettingsDisplay = pointSettingsDisplay,
+			showCancelZone = false,
+			allowShowPointCenter = false,
+			hideShapes = hideShapes,
+			skipSelected = false
+		)
 
-    Canvas(
-        modifier =
-            modifier
-                .graphicsLayer {
-                    compositingStrategy = CompositingStrategy.Offscreen
-                }
-    ) {
-        this.PointIcon(
-            point = point,
-            depth = depth,
-            center = center,
-            selected = selected,
-            drawParams = drawParams
-        )
-    }
+	Canvas(
+		modifier =
+			modifier
+				.graphicsLayer {
+					compositingStrategy = CompositingStrategy.Offscreen
+				}
+	) {
+		this.PointIcon(
+			point = point,
+			depth = depth,
+			center = center,
+			selected = selected,
+			drawParams = drawParams
+		)
+	}
 }
 
 @Suppress("FunctionName")
 fun DrawScope.PointIcon(
-    point: Point,
-    depth: Int,
-    center: Offset,
-    selected: Boolean,
-    drawParams: DrawParams
+	point: Point,
+	depth: Int,
+	center: Offset,
+	selected: Boolean,
+	drawParams: DrawParams
 ) {
-    require(depth > 0)
+	require(depth > 0)
 
-    val action = point.action
+	val action = point.action
 
-    if (
-        action is Action.OpenNest &&
-        point.customIcon == null &&
-        depth < drawParams.maxNestsDepth &&
-        !drawParams.preventDrawingSubNests
-    ) {
-        val nest = drawParams.pointsService.findNestById(action.nestId)
-        val scaleFactor = nest.getPreviewScaleFactor(drawParams.pointsService.defaultNest.value, drawParams.isDefaultEditing)
+	if (
+		action is Action.OpenNest &&
+		point.customIcon == null &&
+		depth < drawParams.maxNestsDepth &&
+		!drawParams.preventDrawingSubNests
+	) {
+		val nest = drawParams.pointsService.findNestById(action.nestId)
+		val scaleFactor = nest.getPreviewScaleFactor(drawParams.pointsService.defaultNest.value, drawParams.isDefaultEditing)
 
-        val newDepth = depth + 1
-        val newScale = 1f / (newDepth * scaleFactor)
+		val newDepth = depth + 1
+		val newScale = 1f / (newDepth * scaleFactor)
 
-        scale(
-            scale = newScale,
-            pivot = center
-        ) {
-            NestOverlay(
-                nest = nest,
-                depth = newDepth,
-                center = center,
-                drawParams = drawParams,
-                selectedAll = selected
-            )
-        }
-    } else {
-        PointBg(
-            point = point,
-            selected = selected,
-            center = center,
-            drawParams = drawParams
-        )
-    }
+		scale(
+			scale = newScale,
+			pivot = center
+		) {
+			NestOverlay(
+				nest = nest,
+				depth = newDepth,
+				center = center,
+				drawParams = drawParams,
+				selectedAll = selected
+			)
+		}
+	} else {
+		PointBg(
+			point = point,
+			selected = selected,
+			center = center,
+			drawParams = drawParams
+		)
+	}
 }

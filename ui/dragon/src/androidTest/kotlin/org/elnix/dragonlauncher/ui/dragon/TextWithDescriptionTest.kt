@@ -24,111 +24,111 @@ import org.junit.Test
  * shown when non-null. We verify both the presence and absence of text nodes.
  */
 class TextWithDescriptionTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    //  Single description overload
+	//  Single description overload
 
-    @Test
-    fun textWithDescription_showsTitle() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextWithDescription(text = "Title", description = null)
-            }
-        }
+	@Test
+	fun textWithDescription_showsTitle() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextWithDescription(text = "Title", description = null)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+	}
 
-    @Test
-    fun textWithDescription_showsDescriptionWhenProvided() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextWithDescription(text = "Title", description = "Description text")
-            }
-        }
+	@Test
+	fun textWithDescription_showsDescriptionWhenProvided() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextWithDescription(text = "Title", description = "Description text")
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Description text").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Description text").assertIsDisplayed()
+	}
 
-    @Test
-    fun textWithDescription_hidesDescriptionWhenNull() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextWithDescription(text = "Title", description = null)
-            }
-        }
+	@Test
+	fun textWithDescription_hidesDescriptionWhenNull() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextWithDescription(text = "Title", description = null)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Some description").assertDoesNotExist()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Some description").assertDoesNotExist()
+	}
 
-    //  Dual description overload
+	//  Dual description overload
 
-    @Test
-    fun textWithDescription_dual_showsBothDescriptions() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextWithDescription(
-                    text = "Title",
-                    description1 = "First description",
-                    description2 = "Second description"
-                )
-            }
-        }
+	@Test
+	fun textWithDescription_dual_showsBothDescriptions() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextWithDescription(
+					text = "Title",
+					description1 = "First description",
+					description2 = "Second description"
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-        composeTestRule.onNodeWithText("First description").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Second description").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+		composeTestRule.onNodeWithText("First description").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Second description").assertIsDisplayed()
+	}
 
-    @Test
-    fun textWithDescription_dual_hidesFirstWhenNull() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextWithDescription(
-                    text = "Title",
-                    description1 = null,
-                    description2 = "Second description"
-                )
-            }
-        }
+	@Test
+	fun textWithDescription_dual_hidesFirstWhenNull() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextWithDescription(
+					text = "Title",
+					description1 = null,
+					description2 = "Second description"
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Second description").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Second description").assertIsDisplayed()
+	}
 
-    @Test
-    fun textWithDescription_dual_hidesSecondWhenNull() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextWithDescription(
-                    text = "Title",
-                    description1 = "First description",
-                    description2 = null
-                )
-            }
-        }
+	@Test
+	fun textWithDescription_dual_hidesSecondWhenNull() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextWithDescription(
+					text = "Title",
+					description1 = "First description",
+					description2 = null
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-        composeTestRule.onNodeWithText("First description").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+		composeTestRule.onNodeWithText("First description").assertIsDisplayed()
+	}
 
-    @Test
-    fun textWithDescription_dual_hidesBothWhenNull() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                TextWithDescription(
-                    text = "Title",
-                    description1 = null,
-                    description2 = null
-                )
-            }
-        }
+	@Test
+	fun textWithDescription_dual_hidesBothWhenNull() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				TextWithDescription(
+					text = "Title",
+					description1 = null,
+					description2 = null
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-        composeTestRule.onNodeWithText("First").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Second").assertDoesNotExist()
-    }
+		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+		composeTestRule.onNodeWithText("First").assertDoesNotExist()
+		composeTestRule.onNodeWithText("Second").assertDoesNotExist()
+	}
 }

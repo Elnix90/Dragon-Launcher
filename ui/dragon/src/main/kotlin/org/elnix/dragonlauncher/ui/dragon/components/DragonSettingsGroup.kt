@@ -42,9 +42,9 @@ import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 // private val singleShape = RoundedCornerShape(bigRounding)
 
 class DragonGroupScope
-    internal constructor(
-        columnScope: ColumnScope
-    ) : ColumnScope by columnScope { // OMG I DISCOVERED THIS SYNTAX TODAY AND ITS WAY TOO COOOOL
+	internal constructor(
+		columnScope: ColumnScope
+	) : ColumnScope by columnScope { // OMG I DISCOVERED THIS SYNTAX TODAY AND ITS WAY TOO COOOOL
 
 //    private val itemList: MutableList<DragonSettingGroupItems> = mutableListOf()
 
@@ -111,73 +111,73 @@ class DragonGroupScope
 //        return getShapeFromIndex(index)
 //    }
 
-        @SuppressLint("UnnecessaryComposedModifier")
-        fun Modifier.dragonSettingGroup(
-            enabled: Boolean = true,
-            selected: Boolean = false,
-            clickModifier: (Modifier.() -> Modifier)? = null
-        ): Modifier =
-            composed {
-                val animatedBgColor by animateColorAsState(
-                    if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
-                )
+		@SuppressLint("UnnecessaryComposedModifier")
+		fun Modifier.dragonSettingGroup(
+			enabled: Boolean = true,
+			selected: Boolean = false,
+			clickModifier: (Modifier.() -> Modifier)? = null
+		): Modifier =
+			composed {
+				val animatedBgColor by animateColorAsState(
+					if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
+				)
 
-                this
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.extraSmall)
-                    .background(animatedBgColor.semiTransparentIfDisabled(enabled))
-                    .conditional(clickModifier) { it() }
-                    .padding(10.dp)
-            }
-    }
+				this
+					.fillMaxWidth()
+					.clip(MaterialTheme.shapes.extraSmall)
+					.background(animatedBgColor.semiTransparentIfDisabled(enabled))
+					.conditional(clickModifier) { it() }
+					.padding(10.dp)
+			}
+	}
 
 @Composable
 fun DragonSettingsGroup(
-    @StringRes
-    title: Int?,
-    modifier: Modifier = Modifier,
-    @DrawableRes
-    icon: Int? = null,
-    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
-    content: @Composable DragonGroupScope.() -> Unit
+	@StringRes
+	title: Int?,
+	modifier: Modifier = Modifier,
+	@DrawableRes
+	icon: Int? = null,
+	trailingIcon: (@Composable RowScope.() -> Unit)? = null,
+	content: @Composable DragonGroupScope.() -> Unit
 ) {
-    DragonSettingsGroup(
-        title = title?.let { stringResource(title) },
-        modifier = modifier,
-        icon = icon,
-        trailingIcon = trailingIcon,
-        content = content
-    )
+	DragonSettingsGroup(
+		title = title?.let { stringResource(title) },
+		modifier = modifier,
+		icon = icon,
+		trailingIcon = trailingIcon,
+		content = content
+	)
 }
 
 @Composable
 fun DragonSettingsGroup(
-    title: String? = null,
-    @DrawableRes
-    icon: Int? = null,
-    @SuppressLint("ModifierParameter")
-    modifier: Modifier = Modifier,
-    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
-    content: @Composable DragonGroupScope.() -> Unit
+	title: String? = null,
+	@DrawableRes
+	icon: Int? = null,
+	@SuppressLint("ModifierParameter")
+	modifier: Modifier = Modifier,
+	trailingIcon: (@Composable RowScope.() -> Unit)? = null,
+	content: @Composable DragonGroupScope.() -> Unit
 ) {
-    CompositionLocalProvider(
-        LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
-    ) {
-        SettingsWithTitle(title, modifier, icon, trailingIcon) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.largeIncreased)
-            ) {
-                val dragonGroupScope =
-                    remember {
-                        DragonGroupScope(this)
-                    }
-                content(dragonGroupScope)
-            }
-        }
-    }
+	CompositionLocalProvider(
+		LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
+	) {
+		SettingsWithTitle(title, modifier, icon, trailingIcon) {
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.spacedBy(4.dp),
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.clip(MaterialTheme.shapes.largeIncreased)
+			) {
+				val dragonGroupScope =
+					remember {
+						DragonGroupScope(this)
+					}
+				content(dragonGroupScope)
+			}
+		}
+	}
 }

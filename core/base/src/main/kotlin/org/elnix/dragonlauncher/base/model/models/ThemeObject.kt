@@ -5,7 +5,7 @@ import org.json.JSONObject
 
 @Immutable
 public data class ThemeObject(
-    val name: String,
-    val json: JSONObject,
-    val imageAssetPath: String?
+	val name: String,
+	val json: JSONObject,
+	val imageAssetPath: String?
 )

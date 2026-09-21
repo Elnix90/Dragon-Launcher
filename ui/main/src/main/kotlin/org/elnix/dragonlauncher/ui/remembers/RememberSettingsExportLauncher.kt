@@ -19,78 +19,78 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun rememberSettingsExportLauncher(
-    selectedStoresForExport: Set<SettingsStore<*, *>>,
-    backupViewModel: BackupViewModel = activityViewModel()
+	selectedStoresForExport: Set<SettingsStore<*, *>>,
+	backupViewModel: BackupViewModel = activityViewModel()
 ): ManagedActivityResultLauncher<String, Uri?> {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val exportCancelledText = stringResource(R.string.export_cancelled)
-    val exportSuccessfulText = stringResource(R.string.export_successful)
-    val exportFailedText = stringResource(R.string.export_failed)
+	val exportCancelledText = stringResource(R.string.export_cancelled)
+	val exportSuccessfulText = stringResource(R.string.export_successful)
+	val exportFailedText = stringResource(R.string.export_failed)
 
-    val settingsExportLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            if (uri == null) {
-                backupViewModel.result.value =
-                    BackupResult(
-                        export = true,
-                        error = true,
-                        title = exportCancelledText
-                    )
+	val settingsExportLauncher =
+		rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+			if (uri == null) {
+				backupViewModel.result.value =
+					BackupResult(
+						export = true,
+						error = true,
+						title = exportCancelledText
+					)
 
-                return@rememberLauncherForActivityResult
-            }
+				return@rememberLauncherForActivityResult
+			}
 
-            scope.launch {
-                try {
-                    SettingsBackupManager.exportSettings(ctx, uri, selectedStoresForExport)
-                    backupViewModel.result.value =
-                        BackupResult(
-                            export = true,
-                            error = false,
-                            title = exportSuccessfulText
-                        )
-                } catch (e: Exception) {
-                    backupViewModel.result.value =
-                        BackupResult(
-                            export = true,
-                            error = true,
-                            title = exportFailedText,
-                            message = e.message ?: ""
-                        )
-                }
-            }
-        }
-    return settingsExportLauncher
+			scope.launch {
+				try {
+					SettingsBackupManager.exportSettings(ctx, uri, selectedStoresForExport)
+					backupViewModel.result.value =
+						BackupResult(
+							export = true,
+							error = false,
+							title = exportSuccessfulText
+						)
+				} catch (e: Exception) {
+					backupViewModel.result.value =
+						BackupResult(
+							export = true,
+							error = true,
+							title = exportFailedText,
+							message = e.message ?: ""
+						)
+				}
+			}
+		}
+	return settingsExportLauncher
 }
 
 @Composable
 fun rememberSafeSettingsExportLauncher(
-    selectedStoresForExport: Set<SettingsStore<*, *>>
+	selectedStoresForExport: Set<SettingsStore<*, *>>
 ): ManagedActivityResultLauncher<String, Uri?> {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val exportCancelledText = stringResource(R.string.export_cancelled)
-    val exportSuccessfulText = stringResource(R.string.export_successful)
-    val exportFailedText = stringResource(R.string.export_failed)
+	val exportCancelledText = stringResource(R.string.export_cancelled)
+	val exportSuccessfulText = stringResource(R.string.export_successful)
+	val exportFailedText = stringResource(R.string.export_failed)
 
-    val settingsExportLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            if (uri == null) {
-                ctx.showToast(exportCancelledText)
-                return@rememberLauncherForActivityResult
-            }
+	val settingsExportLauncher =
+		rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+			if (uri == null) {
+				ctx.showToast(exportCancelledText)
+				return@rememberLauncherForActivityResult
+			}
 
-            scope.launch {
-                try {
-                    SettingsBackupManager.exportSettings(ctx, uri, selectedStoresForExport)
-                    ctx.showToast(exportSuccessfulText)
-                } catch (e: Exception) {
-                    ctx.showToast("$exportFailedText: $e")
-                }
-            }
-        }
-    return settingsExportLauncher
+			scope.launch {
+				try {
+					SettingsBackupManager.exportSettings(ctx, uri, selectedStoresForExport)
+					ctx.showToast(exportSuccessfulText)
+				} catch (e: Exception) {
+					ctx.showToast("$exportFailedText: $e")
+				}
+			}
+		}
+	return settingsExportLauncher
 }

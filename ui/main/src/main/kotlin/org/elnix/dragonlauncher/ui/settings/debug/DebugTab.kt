@@ -64,349 +64,349 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
 @Composable
 fun DebugTab(
-    securityViewModel: SecurityViewModel = activityViewModel()
+	securityViewModel: SecurityViewModel = activityViewModel()
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val storeResetSectionState =
-        rememberExpandableSection(
-            R.string.store_reset,
-            description = R.string.store_reset,
-            icon = R.drawable.delete_forever
-        )
+	val storeResetSectionState =
+		rememberExpandableSection(
+			R.string.store_reset,
+			description = R.string.store_reset,
+			icon = R.drawable.delete_forever
+		)
 
-    var packageResult by remember { mutableStateOf<String?>(null) }
-    var showPermissionDialog by remember { mutableStateOf(false) }
+	var packageResult by remember { mutableStateOf<String?>(null) }
+	var showPermissionDialog by remember { mutableStateOf(false) }
 
-    SettingsScaffold(
-        title = stringResource(R.string.debug),
-        helpText = "Advanced developer tools and system overrides.",
-        onReset = null,
-        resetText = null
-    ) {
-        DragonSettingsGroup { Setting(DebugSettingsStore.debugEnabled) }
+	SettingsScaffold(
+		title = stringResource(R.string.debug),
+		helpText = "Advanced developer tools and system overrides.",
+		onReset = null,
+		resetText = null
+	) {
+		DragonSettingsGroup { Setting(DebugSettingsStore.debugEnabled) }
 
-        DragonSettingsGroup(R.string.more) {
-            RouteItem(NavigationRoute.Logs)
-            RouteItem(NavigationRoute.SettingsJson)
-        }
+		DragonSettingsGroup(R.string.more) {
+			RouteItem(NavigationRoute.Logs)
+			RouteItem(NavigationRoute.SettingsJson)
+		}
 
-        DragonSettingsGroup(R.string.ui_flow_and_debug) {
-            DragonButton(
-                onClick = {
-                    scope.launch {
-                        PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx)
-                    }
-                }
-            ) {
-                Text(text = "Show What's New sheet")
-            }
+		DragonSettingsGroup(R.string.ui_flow_and_debug) {
+			DragonButton(
+				onClick = {
+					scope.launch {
+						PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx)
+					}
+				}
+			) {
+				Text(text = "Show What's New sheet")
+			}
 
-            DragonButton(
-                onClick = {
-                    scope.launch {
-                        PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx)
-                        DebugSettingsStore.showGoogleLockDownWarning.reset(ctx)
-                    }
-                    GoogleWarningManager.updateWarningDialog(true)
-                }
-            ) {
-                Text(text = "Show Google lockdown warning")
-            }
+			DragonButton(
+				onClick = {
+					scope.launch {
+						PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx)
+						DebugSettingsStore.showGoogleLockDownWarning.reset(ctx)
+					}
+					GoogleWarningManager.updateWarningDialog(true)
+				}
+			) {
+				Text(text = "Show Google lockdown warning")
+			}
 
-            DragonButton(
-                onClick = {
-                    scope.launch {
-                        PrivateSettingsStore.hasSeenWelcomeScreen.reset(ctx)
-                    }
-                }
-            ) {
-                Text(text = "Show Welcome Screen")
-            }
+			DragonButton(
+				onClick = {
+					scope.launch {
+						PrivateSettingsStore.hasSeenWelcomeScreen.reset(ctx)
+					}
+				}
+			) {
+				Text(text = "Show Welcome Screen")
+			}
 
-            val signatureMatched by securityViewModel.signatureMatched.asState()
-            // The old has seen welcome toggle, only show when in signed debug version (only I should be able to have it)
-            if (ctx.getBuildType() == "debug" && signatureMatched) {
-                Setting(PrivateSettingsStore.hasSeenWelcome)
-            }
+			val signatureMatched by securityViewModel.signatureMatched.asState()
+			// The old has seen welcome toggle, only show when in signed debug version (only I should be able to have it)
+			if (ctx.getBuildType() == "debug" && signatureMatched) {
+				Setting(PrivateSettingsStore.hasSeenWelcome)
+			}
 
-            Setting(DebugSettingsStore.forceAppLanguageSelector)
-            Setting(PrivateSettingsStore.hideBetaVersionWarning)
-            Setting(PrivateSettingsStore.showSetDefaultLauncherBanner)
-            Setting(PrivateSettingsStore.showReselectBackupBanner)
-            Setting(DebugSettingsStore.showFps)
-            Setting(DebugSettingsStore.showGoogleLockDownWarning)
-            Setting(DebugSettingsStore.showKillLauncherActionInActionPicker)
-            Setting(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
-        }
+			Setting(DebugSettingsStore.forceAppLanguageSelector)
+			Setting(PrivateSettingsStore.hideBetaVersionWarning)
+			Setting(PrivateSettingsStore.showSetDefaultLauncherBanner)
+			Setting(PrivateSettingsStore.showReselectBackupBanner)
+			Setting(DebugSettingsStore.showFps)
+			Setting(DebugSettingsStore.showGoogleLockDownWarning)
+			Setting(DebugSettingsStore.showKillLauncherActionInActionPicker)
+			Setting(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
+		}
 
-        DragonSettingsGroup(R.string.debug_infos) {
-            Setting(DebugSettingsStore.mainScreenDebugInfos)
-            Setting(DebugSettingsStore.nestDebugInfo)
-            Setting(DebugSettingsStore.nestDebugOverlay)
+		DragonSettingsGroup(R.string.debug_infos) {
+			Setting(DebugSettingsStore.mainScreenDebugInfos)
+			Setting(DebugSettingsStore.nestDebugInfo)
+			Setting(DebugSettingsStore.nestDebugOverlay)
 //            Setting(DebugSettingsStore.cachesDebugOverlay)
-            Setting(DebugSettingsStore.settingsDebugInfo)
-            Setting(DebugSettingsStore.widgetsDebugInfo)
-            Setting(DebugSettingsStore.workspacesDebugInfo)
-        }
+			Setting(DebugSettingsStore.settingsDebugInfo)
+			Setting(DebugSettingsStore.widgetsDebugInfo)
+			Setting(DebugSettingsStore.workspacesDebugInfo)
+		}
 
-        DragonSettingsGroup(R.string.package_search) {
-            val focusManager = LocalFocusManager.current
-            val animatedIcon = rememberAnimatedIcon()
-            var packageQuery by remember { mutableStateOf("") }
+		DragonSettingsGroup(R.string.package_search) {
+			val focusManager = LocalFocusManager.current
+			val animatedIcon = rememberAnimatedIcon()
+			var packageQuery by remember { mutableStateOf("") }
 
-            fun searchPackage() {
-                packageResult =
-                    try {
-                        val info = ctx.packageManager.getPackageInfo(packageQuery.trim(), 0)
-                        animatedIcon.setSuccess()
-                        buildString {
-                            appendLine("Package: ${info.packageName}")
+			fun searchPackage() {
+				packageResult =
+					try {
+						val info = ctx.packageManager.getPackageInfo(packageQuery.trim(), 0)
+						animatedIcon.setSuccess()
+						buildString {
+							appendLine("Package: ${info.packageName}")
 
-                            val versionCode =
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                    info.longVersionCode
-                                } else {
-                                    @Suppress("DEPRECATION")
-                                    info.versionCode
-                                }
-                            appendLine("Version: ${info.versionName} ($versionCode)")
+							val versionCode =
+								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+									info.longVersionCode
+								} else {
+									@Suppress("DEPRECATION")
+									info.versionCode
+								}
+							appendLine("Version: ${info.versionName} ($versionCode)")
 
-                            appendLine("Enabled: ${info.applicationInfo?.enabled ?: "unknown"}")
-                            appendLine("Data Dir: ${info.applicationInfo?.dataDir ?: "unknown"}")
-                        }
-                    } catch (e: Exception) {
-                        animatedIcon.setError()
-                        "Not found or error: $e"
-                    }
-            }
+							appendLine("Enabled: ${info.applicationInfo?.enabled ?: "unknown"}")
+							appendLine("Data Dir: ${info.applicationInfo?.dataDir ?: "unknown"}")
+						}
+					} catch (e: Exception) {
+						animatedIcon.setError()
+						"Not found or error: $e"
+					}
+			}
 
-            TextField(
-                value = packageQuery,
-                onValueChange = { packageQuery = it },
-                placeholder = { Text("Search package") },
-                colors =
-                    AppObjectsColors.outlinedTextFieldColors(
-                        removeBorder = true
-                    ),
-                shape = CircleShape,
-                modifier = Modifier.dragonSettingGroup(),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        imeAction = ImeAction.Done
-                    ),
-                keyboardActions =
-                    KeyboardActions(
-                        onDone = {
-                            searchPackage()
-                            focusManager.clearFocus()
-                        }
-                    ),
-                trailingIcon = {
-                    animatedIcon.Icon(
-                        defaultIcon = R.drawable.search,
-                        enabled = packageQuery.isNotEmpty()
-                    ) {
-                        focusManager.clearFocus()
-                        searchPackage()
-                    }
-                }
-            )
+			TextField(
+				value = packageQuery,
+				onValueChange = { packageQuery = it },
+				placeholder = { Text("Search package") },
+				colors =
+					AppObjectsColors.outlinedTextFieldColors(
+						removeBorder = true
+					),
+				shape = CircleShape,
+				modifier = Modifier.dragonSettingGroup(),
+				singleLine = true,
+				keyboardOptions =
+					KeyboardOptions(
+						imeAction = ImeAction.Done
+					),
+				keyboardActions =
+					KeyboardActions(
+						onDone = {
+							searchPackage()
+							focusManager.clearFocus()
+						}
+					),
+				trailingIcon = {
+					animatedIcon.Icon(
+						defaultIcon = R.drawable.search,
+						enabled = packageQuery.isNotEmpty()
+					) {
+						focusManager.clearFocus()
+						searchPackage()
+					}
+				}
+			)
 
-            packageResult?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.dragonSettingGroup()
-                )
-            }
-        }
+			packageResult?.let {
+				Text(
+					text = it,
+					style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					modifier = Modifier.dragonSettingGroup()
+				)
+			}
+		}
 
-        DragonSettingsGroup(R.string.accessibility) {
-            Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
-            Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
+		DragonSettingsGroup(R.string.accessibility) {
+			Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
+			Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
 
-            this.DragonButton(onClick = { SystemControl.openServiceSettings((ctx)) }) {
-                Text("Open Accessibility Services")
-            }
-        }
+			this.DragonButton(onClick = { SystemControl.openServiceSettings((ctx)) }) {
+				Text("Open Accessibility Services")
+			}
+		}
 
-        DragonSettingsGroup(R.string.system) {
-            val focusManager = LocalFocusManager.current
-            val animatedIcon = rememberAnimatedIcon()
+		DragonSettingsGroup(R.string.system) {
+			val focusManager = LocalFocusManager.current
+			val animatedIcon = rememberAnimatedIcon()
 
-            var customSystemPackage by remember { mutableStateOf("") }
+			var customSystemPackage by remember { mutableStateOf("") }
 
-            fun setSystemPackage() {
-                scope.launch {
-                    DebugSettingsStore.systemLauncherPackageName.set(ctx, customSystemPackage)
-                }
-                animatedIcon.setSuccess()
-            }
+			fun setSystemPackage() {
+				scope.launch {
+					DebugSettingsStore.systemLauncherPackageName.set(ctx, customSystemPackage)
+				}
+				animatedIcon.setSuccess()
+			}
 
-            val systemLauncherPackageNameSetting by DebugSettingsStore.systemLauncherPackageName.asState()
-            val systemLauncherPackageName = remember { ctx.detectSystemLauncher() }
+			val systemLauncherPackageNameSetting by DebugSettingsStore.systemLauncherPackageName.asState()
+			val systemLauncherPackageName = remember { ctx.detectSystemLauncher() }
 
-            val setButtonEnabled = systemLauncherPackageName != systemLauncherPackageNameSetting
-            DragonButton(
-                onClick = {
-                    scope.launch {
-                        DebugSettingsStore.systemLauncherPackageName.set(ctx, systemLauncherPackageName)
-                    }
-                },
-                enabled = setButtonEnabled
-            ) {
-                AnimatedContent(setButtonEnabled) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (it) {
-                            Icon(
-                                painter = painterResource(R.drawable.save),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
-                            Spacer(5.dp)
-                            Text("Set Detected Launcher")
-                        } else {
-                            Icon(
-                                painter = painterResource(R.drawable.check),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(5.dp)
-                            Text("Detected In use!")
-                        }
-                    }
-                }
-            }
+			val setButtonEnabled = systemLauncherPackageName != systemLauncherPackageNameSetting
+			DragonButton(
+				onClick = {
+					scope.launch {
+						DebugSettingsStore.systemLauncherPackageName.set(ctx, systemLauncherPackageName)
+					}
+				},
+				enabled = setButtonEnabled
+			) {
+				AnimatedContent(setButtonEnabled) {
+					Row(
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						if (it) {
+							Icon(
+								painter = painterResource(R.drawable.save),
+								contentDescription = null,
+								tint = MaterialTheme.colorScheme.onPrimary
+							)
+							Spacer(5.dp)
+							Text("Set Detected Launcher")
+						} else {
+							Icon(
+								painter = painterResource(R.drawable.check),
+								contentDescription = null,
+								tint = MaterialTheme.colorScheme.primary
+							)
+							Spacer(5.dp)
+							Text("Detected In use!")
+						}
+					}
+				}
+			}
 
-            TextWithDescription(
-                text = "Detected system launcher:",
-                description = systemLauncherPackageName ?: "unknown",
-                modifier = Modifier.dragonSettingGroup()
-            )
+			TextWithDescription(
+				text = "Detected system launcher:",
+				description = systemLauncherPackageName ?: "unknown",
+				modifier = Modifier.dragonSettingGroup()
+			)
 
-            TextField(
-                value = customSystemPackage,
-                onValueChange = { customSystemPackage = it },
-                placeholder = { Text("System launcher package") },
-                colors =
-                    AppObjectsColors.outlinedTextFieldColors(
-                        removeBorder = true
-                    ),
-                shape = CircleShape,
-                modifier = Modifier.dragonSettingGroup(),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        imeAction = ImeAction.Done
-                    ),
-                keyboardActions =
-                    KeyboardActions(
-                        onDone = {
-                            setSystemPackage()
-                            focusManager.clearFocus()
-                        }
-                    ),
-                trailingIcon = {
-                    animatedIcon.Icon(
-                        defaultIcon = R.drawable.search,
-                        enabled = customSystemPackage.isNotEmpty()
-                    ) {
-                        setSystemPackage()
-                        focusManager.clearFocus()
-                    }
-                }
-            )
-        }
+			TextField(
+				value = customSystemPackage,
+				onValueChange = { customSystemPackage = it },
+				placeholder = { Text("System launcher package") },
+				colors =
+					AppObjectsColors.outlinedTextFieldColors(
+						removeBorder = true
+					),
+				shape = CircleShape,
+				modifier = Modifier.dragonSettingGroup(),
+				singleLine = true,
+				keyboardOptions =
+					KeyboardOptions(
+						imeAction = ImeAction.Done
+					),
+				keyboardActions =
+					KeyboardActions(
+						onDone = {
+							setSystemPackage()
+							focusManager.clearFocus()
+						}
+					),
+				trailingIcon = {
+					animatedIcon.Icon(
+						defaultIcon = R.drawable.search,
+						enabled = customSystemPackage.isNotEmpty()
+					) {
+						setSystemPackage()
+						focusManager.clearFocus()
+					}
+				}
+			)
+		}
 
-        DragonSettingsGroup(R.string.test_overlays) {
-            this.DragonButton(
-                onClick = {
-                    if (!Settings.canDrawOverlays(ctx)) {
-                        showPermissionDialog = true
-                        ctx.showToast("Overlay permission not granted")
-                        return@DragonButton
-                    }
-                    OverlayReminderService.show(
-                        ctx = ctx,
-                        appName = "(Fuck) TikTok",
-                        sessionTime = "15 min",
-                        todayTime = "42 min",
-                        remainingTime = "10 min",
-                        hasLimit = true,
-                        mode = "reminder"
-                    )
-                }
-            ) {
-                Text(text = "Test: Reminder overlay")
-            }
+		DragonSettingsGroup(R.string.test_overlays) {
+			this.DragonButton(
+				onClick = {
+					if (!Settings.canDrawOverlays(ctx)) {
+						showPermissionDialog = true
+						ctx.showToast("Overlay permission not granted")
+						return@DragonButton
+					}
+					OverlayReminderService.show(
+						ctx = ctx,
+						appName = "(Fuck) TikTok",
+						sessionTime = "15 min",
+						todayTime = "42 min",
+						remainingTime = "10 min",
+						hasLimit = true,
+						mode = "reminder"
+					)
+				}
+			) {
+				Text(text = "Test: Reminder overlay")
+			}
 
-            this.DragonButton(
-                onClick = {
-                    if (!Settings.canDrawOverlays(ctx)) {
-                        showPermissionDialog = true
-                        ctx.showToast("Overlay permission not granted")
-                        return@DragonButton
-                    }
-                    OverlayReminderService.show(
-                        ctx = ctx,
-                        appName = "(Fuck) TikTok",
-                        sessionTime = "25 min",
-                        todayTime = "58 min",
-                        remainingTime = "5 min",
-                        hasLimit = true,
-                        mode = "time_warning"
-                    )
-                }
-            ) {
-                Text(text = "Test: Limit overlay")
-            }
-        }
+			this.DragonButton(
+				onClick = {
+					if (!Settings.canDrawOverlays(ctx)) {
+						showPermissionDialog = true
+						ctx.showToast("Overlay permission not granted")
+						return@DragonButton
+					}
+					OverlayReminderService.show(
+						ctx = ctx,
+						appName = "(Fuck) TikTok",
+						sessionTime = "25 min",
+						todayTime = "58 min",
+						remainingTime = "5 min",
+						hasLimit = true,
+						mode = "time_warning"
+					)
+				}
+			) {
+				Text(text = "Test: Limit overlay")
+			}
+		}
 
-        DragonSettingsGroup(R.string.risky) {
-            this.DragonButton(
-                onClick = {
-                    @Suppress("DIVISION_BY_ZERO")
-                    5 / 0
-                }
-            ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
+		DragonSettingsGroup(R.string.risky) {
+			this.DragonButton(
+				onClick = {
+					@Suppress("DIVISION_BY_ZERO")
+					5 / 0
+				}
+			) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
 
-            this.DragonButton(onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }) { Text("Close app (gently)") }
-            this.DragonButton(onClick = { kill(9, 9) }) { Text("☠\uFE0F Kill Process") }
-        }
+			this.DragonButton(onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }) { Text("Close app (gently)") }
+			this.DragonButton(onClick = { kill(9, 9) }) { Text("☠\uFE0F Kill Process") }
+		}
 
-        DragonSettingsGroup(R.string.dangerous_actions) {
-            this.DragonButton(
-                onClick = {
-                    ctx.startActivity(
-                        Intent(Intent.ACTION_DELETE).apply {
-                            data = "package:${ctx.packageName}".toUri()
-                        }
-                    )
-                }
-            ) { Text("☠\uFE0F Uninstall Launcher") }
+		DragonSettingsGroup(R.string.dangerous_actions) {
+			this.DragonButton(
+				onClick = {
+					ctx.startActivity(
+						Intent(Intent.ACTION_DELETE).apply {
+							data = "package:${ctx.packageName}".toUri()
+						}
+					)
+				}
+			) { Text("☠\uFE0F Uninstall Launcher") }
 
-            Setting(DebugSettingsStore.disableExtensionSignatureCheck)
+			Setting(DebugSettingsStore.disableExtensionSignatureCheck)
 
-            ExpandableSection(storeResetSectionState) {
-                AllStores.forEach { store ->
-                    DragonButton(
-                        onClick = { scope.launch { store.resetAll(ctx) } },
-                        isCancel = true
-                    ) {
-                        Text("Reset ${store.name}")
-                    }
-                }
-            }
-        }
-    }
+			ExpandableSection(storeResetSectionState) {
+				AllStores.forEach { store ->
+					DragonButton(
+						onClick = { scope.launch { store.resetAll(ctx) } },
+						isCancel = true
+					) {
+						Text("Reset ${store.name}")
+					}
+				}
+			}
+		}
+	}
 
-    if (showPermissionDialog) {
-        AppUsagePermissionDialog { showPermissionDialog = false }
-    }
+	if (showPermissionDialog) {
+		AppUsagePermissionDialog { showPermissionDialog = false }
+	}
 }

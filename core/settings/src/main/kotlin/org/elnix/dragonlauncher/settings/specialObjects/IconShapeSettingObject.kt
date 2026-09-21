@@ -9,38 +9,38 @@ import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 
 public data class IconShapeSettingObject(
-    override val key: String,
-    override val default: IconShape,
-    override val title: Int?,
-    override val description: Int?,
-    override val icon: Int?,
-    override var onChanged: (() -> Unit)?,
-    override val backupable: Boolean,
-    override val settingsStore: SettingsStore<*, *>
+	override val key: String,
+	override val default: IconShape,
+	override val title: Int?,
+	override val description: Int?,
+	override val icon: Int?,
+	override var onChanged: (() -> Unit)?,
+	override val backupable: Boolean,
+	override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<IconShape, String>() {
-    override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
+	override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
 
-    override fun encode(value: IconShape): String? = IconShape.Companion.IconShapeJson.encode(value)
+	override fun encode(value: IconShape): String? = IconShape.Companion.IconShapeJson.encode(value)
 
-    override fun decode(raw: Any?): IconShape = IconShape.Companion.IconShapeJson.decode(raw, default)
+	override fun decode(raw: Any?): IconShape = IconShape.Companion.IconShapeJson.decode(raw, default)
 }
 
 public fun MapSettingsStore.shape(
-    default: IconShape,
-    title: Int? = null,
-    description: Int? = null,
-    icon: Int? = null,
-    key: String = "",
-    onChanged: (() -> Unit)? = null,
-    backupable: Boolean = true
+	default: IconShape,
+	title: Int? = null,
+	description: Int? = null,
+	icon: Int? = null,
+	key: String = "",
+	onChanged: (() -> Unit)? = null,
+	backupable: Boolean = true
 ): IconShapeSettingObject =
-    IconShapeSettingObject(
-        key = key.isNotBlankKey,
-        title = title,
-        description = description,
-        icon = icon,
-        default = default,
-        onChanged = onChanged,
-        backupable = backupable,
-        settingsStore = this
-    )
+	IconShapeSettingObject(
+		key = key.isNotBlankKey,
+		title = title,
+		description = description,
+		icon = icon,
+		default = default,
+		onChanged = onChanged,
+		backupable = backupable,
+		settingsStore = this
+	)

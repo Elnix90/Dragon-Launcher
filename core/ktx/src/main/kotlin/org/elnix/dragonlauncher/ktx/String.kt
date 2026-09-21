@@ -12,14 +12,14 @@ package org.elnix.dragonlauncher.ktx
  * that does not fully validate JSON syntax.
  */
 public inline val String?.isBlankJson: Boolean
-    get() {
-        if (this == null) return true
-        val trimmed = trim()
-        if (trimmed.isEmpty()) return true
+	get() {
+		if (this == null) return true
+		val trimmed = trim()
+		if (trimmed.isEmpty()) return true
 
-        // Match {} or [] with optional internal whitespace
-        return trimmed.matches(Regex("""^\{\s*\}$|^\[\s*\]$"""))
-    }
+		// Match {} or [] with optional internal whitespace
+		return trimmed.matches(Regex("""^\{\s*\}$|^\[\s*\]$"""))
+	}
 
 /**
  * Returns `true` if this string represents a non-empty JSON object.
@@ -32,4 +32,4 @@ public inline val String?.isBlankJson: Boolean
  * whether the string is well-formed JSON.
  */
 public inline val String?.isNotBlankJson: Boolean
-    get() = !isBlankJson
+	get() = !isBlankJson

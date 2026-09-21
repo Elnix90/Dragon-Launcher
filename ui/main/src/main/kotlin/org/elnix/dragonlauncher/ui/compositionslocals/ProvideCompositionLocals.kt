@@ -23,41 +23,41 @@ import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 
 @Composable
 fun ProvideGlobalCompositionLocals(
-    content: @Composable () -> Unit
+	content: @Composable () -> Unit
 ) {
-    val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
-    val fullscreen by UiSettingsStore.fullScreen.asState()
+	val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
+	val fullscreen by UiSettingsStore.fullScreen.asState()
 
-    val elementsJson by StatusBarJsonSettingsStore.jsonSetting.asState()
+	val elementsJson by StatusBarJsonSettingsStore.jsonSetting.asState()
 
-    val elements by remember(elementsJson) {
-        derivedStateOf {
-            StatusBarJson.decode<List<StatusBar>>(elementsJson, emptyList())
-        }
-    }
+	val elements by remember(elementsJson) {
+		derivedStateOf {
+			StatusBarJson.decode<List<StatusBar>>(elementsJson, emptyList())
+		}
+	}
 
-    val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
+	val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
 
-    val colorPickerMode by ColorModesSettingsStore.colorPickerMode.asState()
+	val colorPickerMode by ColorModesSettingsStore.colorPickerMode.asState()
 
     /*
      * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
      * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
      */
-    CompositionLocalProvider(
-        LocalTextMeasurer provides rememberTextMeasurer(),
-        LocalStatusBarElements provides elements,
-        LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
-        LocalFullscreen provides fullscreen,
-        LocalNestDebugOverlay provides nestDebugOverlay,
-        LocalColorPickerMode provides colorPickerMode
-    ) {
-        ProvideCurrentTime {
-            ProvideDrawerSettings {
-                ProvideHoldToActivateSettings {
-                    content()
-                }
-            }
-        }
-    }
+	CompositionLocalProvider(
+		LocalTextMeasurer provides rememberTextMeasurer(),
+		LocalStatusBarElements provides elements,
+		LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
+		LocalFullscreen provides fullscreen,
+		LocalNestDebugOverlay provides nestDebugOverlay,
+		LocalColorPickerMode provides colorPickerMode
+	) {
+		ProvideCurrentTime {
+			ProvideDrawerSettings {
+				ProvideHoldToActivateSettings {
+					content()
+				}
+			}
+		}
+	}
 }

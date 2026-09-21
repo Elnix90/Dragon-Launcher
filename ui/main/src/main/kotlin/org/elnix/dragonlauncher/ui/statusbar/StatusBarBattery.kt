@@ -21,57 +21,57 @@ import org.elnix.dragonlauncher.ktx.showToast
 
 @Composable
 fun StatusBarBattery(
-    element: StatusBar.Battery
+	element: StatusBar.Battery
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    // Get initial battery level from sticky intent
-    val initialLevel =
-        remember {
-            val intent = ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-            val lvl = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-            val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
-            if (lvl >= 0 && scale > 0) (lvl * 100) / scale else 100
-        }
+	// Get initial battery level from sticky intent
+	val initialLevel =
+		remember {
+			val intent = ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+			val lvl = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+			val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+			if (lvl >= 0 && scale > 0) (lvl * 100) / scale else 100
+		}
 
-    var level by remember { mutableIntStateOf(initialLevel) }
+	var level by remember { mutableIntStateOf(initialLevel) }
 
-    DisposableEffect(ctx) {
-        val receiver =
-            object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    val lvl = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-                    val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-                    if (lvl >= 0 && scale > 0) {
-                        level = (lvl * 100) / scale
-                    }
-                }
-            }
+	DisposableEffect(ctx) {
+		val receiver =
+			object : BroadcastReceiver() {
+				override fun onReceive(context: Context, intent: Intent) {
+					val lvl = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+					val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+					if (lvl >= 0 && scale > 0) {
+						level = (lvl * 100) / scale
+					}
+				}
+			}
 
-        ctx.registerReceiver(
-            receiver,
-            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-        )
+		ctx.registerReceiver(
+			receiver,
+			IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+		)
 
-        onDispose {
-            try {
-                ctx.unregisterReceiver(receiver)
-            } catch (e: Exception) {
-                // Ignore if already unregistered
-            }
-        }
-    }
+		onDispose {
+			try {
+				ctx.unregisterReceiver(receiver)
+			} catch (e: Exception) {
+				// Ignore if already unregistered
+			}
+		}
+	}
 
-    AnimatedVisibility(element.showPercentage) {
-        Text(
-            text = "$level%",
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+	AnimatedVisibility(element.showPercentage) {
+		Text(
+			text = "$level%",
+			style = MaterialTheme.typography.bodyMedium
+		)
+	}
 
-    LaunchedEffect(element.showIcon) {
-        if (element.showIcon) {
-            ctx.showToast("Not implemented yet") // TODO
-        }
-    }
+	LaunchedEffect(element.showIcon) {
+		if (element.showIcon) {
+			ctx.showToast("Not implemented yet") // TODO
+		}
+	}
 }

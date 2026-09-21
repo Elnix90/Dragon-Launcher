@@ -39,93 +39,93 @@ import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 
 @Composable
 fun ColorPickerButton(
-    button: EnumSettingObject<ColorPickerButtonAction>,
-    enabled: Boolean,
-    currentColor: Color?,
-    defaultColor: Color?,
-    onColorPicked: (Color?) -> Unit
+	button: EnumSettingObject<ColorPickerButtonAction>,
+	enabled: Boolean,
+	currentColor: Color?,
+	defaultColor: Color?,
+	onColorPicked: (Color?) -> Unit
 ) {
-    val ctx = LocalContext.current
-    var button by button.asMutableState()
+	val ctx = LocalContext.current
+	var button by button.asMutableState()
 
-    var showSelector by remember { mutableStateOf(false) }
-    LaunchedEffect(enabled) {
-        if (!enabled) {
-            showSelector = false
-        }
-    }
+	var showSelector by remember { mutableStateOf(false) }
+	LaunchedEffect(enabled) {
+		if (!enabled) {
+			showSelector = false
+		}
+	}
 
-    val buttonEnabled =
-        enabled &&
-            when (button) {
-                Reset -> currentColor != defaultColor
-                Random, Copy, Paste -> true
-            }
+	val buttonEnabled =
+		enabled &&
+			when (button) {
+				Reset -> currentColor != defaultColor
+				Random, Copy, Paste -> true
+			}
 
-    Box {
-        Icon(
-            painter = painterResource(button.iconEnabled),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(buttonEnabled),
-            modifier =
-                Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh.semiTransparentIfDisabled(buttonEnabled))
-                    .combinedClickable(
-                        enabled = enabled,
-                        onLongClick = { showSelector = true }
-                    ) {
-                        if (buttonEnabled) {
-                            when (button) {
-                                Random -> {
-                                    onColorPicked(randomColor(minLuminance = 0.2f))
-                                }
+	Box {
+		Icon(
+			painter = painterResource(button.iconEnabled),
+			contentDescription = null,
+			tint = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(buttonEnabled),
+			modifier =
+				Modifier
+					.clip(CircleShape)
+					.background(MaterialTheme.colorScheme.surfaceContainerHigh.semiTransparentIfDisabled(buttonEnabled))
+					.combinedClickable(
+						enabled = enabled,
+						onLongClick = { showSelector = true }
+					) {
+						if (buttonEnabled) {
+							when (button) {
+								Random -> {
+									onColorPicked(randomColor(minLuminance = 0.2f))
+								}
 
-                                Reset -> {
-                                    onColorPicked(null)
-                                }
+								Reset -> {
+									onColorPicked(null)
+								}
 
-                                Copy -> {
-                                    if (currentColor != null) ctx.copyToClipboard(currentColor.toHexWithAlpha)
-                                }
+								Copy -> {
+									if (currentColor != null) ctx.copyToClipboard(currentColor.toHexWithAlpha)
+								}
 
-                                Paste -> {
-                                    val newColor = pasteColorHexFromClipboard(ctx)
-                                    newColor?.let { pasted ->
-                                        onColorPicked(pasted)
-                                    }
-                                }
-                            }
-                        }
-                    }.padding(5.dp)
-        )
+								Paste -> {
+									val newColor = pasteColorHexFromClipboard(ctx)
+									newColor?.let { pasted ->
+										onColorPicked(pasted)
+									}
+								}
+							}
+						}
+					}.padding(5.dp)
+		)
 
-        DropdownMenu(
-            expanded = showSelector,
-            onDismissRequest = { showSelector = false },
-            containerColor = MaterialTheme.colorScheme.background,
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ColorPickerButtonAction.entries.forEach {
-                    Icon(
-                        painter = painterResource(it.iconEnabled),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier =
-                            Modifier
-                                .aspectRatio(1.8f)
-                                .clip(CircleShape)
-                                .clickable {
-                                    button = it
-                                    showSelector = false
-                                }.padding(8.dp)
-                    )
-                }
-            }
-        }
-    }
+		DropdownMenu(
+			expanded = showSelector,
+			onDismissRequest = { showSelector = false },
+			containerColor = MaterialTheme.colorScheme.background,
+			shape = MaterialTheme.shapes.large
+		) {
+			Column(
+				verticalArrangement = Arrangement.spacedBy(2.dp),
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				ColorPickerButtonAction.entries.forEach {
+					Icon(
+						painter = painterResource(it.iconEnabled),
+						contentDescription = null,
+						tint = MaterialTheme.colorScheme.onSurface,
+						modifier =
+							Modifier
+								.aspectRatio(1.8f)
+								.clip(CircleShape)
+								.clickable {
+									button = it
+									showSelector = false
+								}.padding(8.dp)
+					)
+				}
+			}
+		}
+	}
 }

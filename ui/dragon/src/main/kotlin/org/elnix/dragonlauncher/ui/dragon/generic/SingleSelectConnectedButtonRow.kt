@@ -24,64 +24,64 @@ import org.elnix.dragonlauncher.ui.base.withHapticParam
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
-    entries: List<T>,
-    modifier: Modifier = Modifier,
-    checked: (T) -> Boolean,
-    enabled: Boolean = true,
-    onCheck: (T) -> Unit
+	entries: List<T>,
+	modifier: Modifier = Modifier,
+	checked: (T) -> Boolean,
+	enabled: Boolean = true,
+	onCheck: (T) -> Unit
 ) {
-    val interactionSources = List(entries.size) { rememberInteractionSource() }
+	val interactionSources = List(entries.size) { rememberInteractionSource() }
 
-    ButtonGroup(
-        overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
-        modifier = modifier.padding(horizontal = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-    ) {
-        entries.forEachIndexed { idx, entry ->
+	ButtonGroup(
+		overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+		modifier = modifier.padding(horizontal = 10.dp),
+		horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+	) {
+		entries.forEachIndexed { idx, entry ->
 
-            val checked = checked(entry)
+			val checked = checked(entry)
 
-            customItem(
-                buttonGroupContent = {
-                    ToggleButton(
-                        checked = checked,
-                        onCheckedChange = withHapticParam { onCheck(entry) },
-                        interactionSource = interactionSources[idx],
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .animateWidth(interactionSources[idx]),
-                        enabled = enabled,
-                        shapes =
-                            when (idx) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            }
-                    ) {
-                        entry.iconResId?.let { icon ->
-                            Icon(
-                                painter = painterResource(icon),
-                                contentDescription = null
-                            )
-                        }
+			customItem(
+				buttonGroupContent = {
+					ToggleButton(
+						checked = checked,
+						onCheckedChange = withHapticParam { onCheck(entry) },
+						interactionSource = interactionSources[idx],
+						modifier =
+							Modifier
+								.weight(1f)
+								.animateWidth(interactionSources[idx]),
+						enabled = enabled,
+						shapes =
+							when (idx) {
+								0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+								entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+								else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+							}
+					) {
+						entry.iconResId?.let { icon ->
+							Icon(
+								painter = painterResource(icon),
+								contentDescription = null
+							)
+						}
 
-                        if (entry.resId != null && entry.iconResId != null) {
-                            Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
-                        }
+						if (entry.resId != null && entry.iconResId != null) {
+							Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+						}
 
-                        entry.resId?.let { res ->
-                            Text(
-                                stringResource(res),
-                                maxLines = 1,
-                                softWrap = false,
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                    }
-                },
-                menuContent = { }
-            )
-        }
-    }
+						entry.resId?.let { res ->
+							Text(
+								stringResource(res),
+								maxLines = 1,
+								softWrap = false,
+								style = MaterialTheme.typography.labelSmall
+							)
+						}
+					}
+				},
+				menuContent = { }
+			)
+		}
+	}
 }

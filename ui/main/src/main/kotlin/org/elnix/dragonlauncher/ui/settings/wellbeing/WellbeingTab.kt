@@ -46,207 +46,207 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun WellbeingTab(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
-    viewModel: WellbeingViewModel = hiltViewModel()
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
+	viewModel: WellbeingViewModel = hiltViewModel()
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
-    val pausedApps by WellbeingSettingsStore.pausedApps.asState()
-    val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
-    val reminderMode by WellbeingSettingsStore.reminderMode.asState()
+	val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
+	val pausedApps by WellbeingSettingsStore.pausedApps.asState()
+	val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
+	val reminderMode by WellbeingSettingsStore.reminderMode.asState()
 
-    val showAppPicker by viewModel.showAppPicker
-    val showPermissionDialog by viewModel.showPermissionDialog
-    val showOverlayPermissionDialog by viewModel.showOverlayPermissionDialog
+	val showAppPicker by viewModel.showAppPicker
+	val showPermissionDialog by viewModel.showPermissionDialog
+	val showOverlayPermissionDialog by viewModel.showOverlayPermissionDialog
 
-    val allApps by drawerViewModel.allApps.collectAsState()
-    val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
+	val allApps by drawerViewModel.allApps.collectAsState()
+	val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
-    val canShowOverlay = Settings.canDrawOverlays(ctx)
-    LaunchedEffect(reminderEnabled, reminderMode, canShowOverlay) {
-        viewModel.syncOverlayState(reminderEnabled, reminderMode, canShowOverlay)
-    }
+	val canShowOverlay = Settings.canDrawOverlays(ctx)
+	LaunchedEffect(reminderEnabled, reminderMode, canShowOverlay) {
+		viewModel.syncOverlayState(reminderEnabled, reminderMode, canShowOverlay)
+	}
 
-    SettingsScaffold(
-        title = stringResource(R.string.wellbeing),
-        helpText = stringResource(R.string.wellbeing_help),
-        resetTitle = stringResource(R.string.reset_default_settings),
-        resetText = stringResource(R.string.reset_settings_in_this_tab),
-        onReset = viewModel::onResetSettings
-    ) {
-        DragonSettingsGroup(R.string.social_media_pause) {
-            Setting(WellbeingSettingsStore.socialMediaPauseEnabled)
-            Setting(
-                WellbeingSettingsStore.guiltModeEnabled,
-                enabled = socialMediaPauseEnabled
-            ) { newValue ->
-                viewModel.onGuiltToggle(newValue, hasUsageStatsPermission)
-            }
-            Setting(WellbeingSettingsStore.pauseDurationSeconds, enabled = socialMediaPauseEnabled)
-        }
+	SettingsScaffold(
+		title = stringResource(R.string.wellbeing),
+		helpText = stringResource(R.string.wellbeing_help),
+		resetTitle = stringResource(R.string.reset_default_settings),
+		resetText = stringResource(R.string.reset_settings_in_this_tab),
+		onReset = viewModel::onResetSettings
+	) {
+		DragonSettingsGroup(R.string.social_media_pause) {
+			Setting(WellbeingSettingsStore.socialMediaPauseEnabled)
+			Setting(
+				WellbeingSettingsStore.guiltModeEnabled,
+				enabled = socialMediaPauseEnabled
+			) { newValue ->
+				viewModel.onGuiltToggle(newValue, hasUsageStatsPermission)
+			}
+			Setting(WellbeingSettingsStore.pauseDurationSeconds, enabled = socialMediaPauseEnabled)
+		}
 
-        DragonSettingsGroup(R.string.reminder_mode_title) {
-            Setting(
-                setting = WellbeingSettingsStore.reminderEnabled,
-                enabled = socialMediaPauseEnabled
-            ) { newValue ->
-                viewModel.onReminderToggle(newValue, reminderMode)
-            }
+		DragonSettingsGroup(R.string.reminder_mode_title) {
+			Setting(
+				setting = WellbeingSettingsStore.reminderEnabled,
+				enabled = socialMediaPauseEnabled
+			) { newValue ->
+				viewModel.onReminderToggle(newValue, reminderMode)
+			}
 
-            Setting(WellbeingSettingsStore.reminderIntervalMinutes, enabled = socialMediaPauseEnabled && reminderEnabled)
-        }
+			Setting(WellbeingSettingsStore.reminderIntervalMinutes, enabled = socialMediaPauseEnabled && reminderEnabled)
+		}
 
-        DragonSettingsGroup(R.string.popup_display_title) {
-            Setting(WellbeingSettingsStore.reminderMode, enabled = socialMediaPauseEnabled && reminderEnabled)
+		DragonSettingsGroup(R.string.popup_display_title) {
+			Setting(WellbeingSettingsStore.reminderMode, enabled = socialMediaPauseEnabled && reminderEnabled)
 
-            val enabled = reminderMode == ReminderMode.Overlay && socialMediaPauseEnabled && reminderEnabled
-            Setting(WellbeingSettingsStore.popupShowSessionTime, enabled = enabled)
-            Setting(WellbeingSettingsStore.popupShowTodayTime, enabled = enabled)
-            Setting(WellbeingSettingsStore.popupShowRemainingTime, enabled = enabled)
-        }
+			val enabled = reminderMode == ReminderMode.Overlay && socialMediaPauseEnabled && reminderEnabled
+			Setting(WellbeingSettingsStore.popupShowSessionTime, enabled = enabled)
+			Setting(WellbeingSettingsStore.popupShowTodayTime, enabled = enabled)
+			Setting(WellbeingSettingsStore.popupShowRemainingTime, enabled = enabled)
+		}
 
-        DragonSettingsGroup(R.string.other) {
-            Setting(WellbeingSettingsStore.returnToLauncherEnabled, enabled = socialMediaPauseEnabled)
-        }
+		DragonSettingsGroup(R.string.other) {
+			Setting(WellbeingSettingsStore.returnToLauncherEnabled, enabled = socialMediaPauseEnabled)
+		}
 
-        DragonSettingsGroup(R.string.paused_apps) {
-            val interactionSources = remember { List(2) { MutableInteractionSource() } }
+		DragonSettingsGroup(R.string.paused_apps) {
+			val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
-            ButtonGroup(
-                overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
-                modifier = Modifier.dragonSettingGroup()
-            ) {
-                customItem(
-                    buttonGroupContent = {
-                        DragonButton(
-                            onClick = { viewModel.showAppPicker.value = true },
-                            interactionSource = interactionSources[0],
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .animateWidth(interactionSources[0])
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.add),
-                                contentDescription = null
-                            )
-                            Spacer(5.dp)
-                            Text(stringResource(R.string.add_app))
-                        }
-                    },
-                    menuContent = {}
-                )
+			ButtonGroup(
+				overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+				modifier = Modifier.dragonSettingGroup()
+			) {
+				customItem(
+					buttonGroupContent = {
+						DragonButton(
+							onClick = { viewModel.showAppPicker.value = true },
+							interactionSource = interactionSources[0],
+							modifier =
+								Modifier
+									.weight(1f)
+									.animateWidth(interactionSources[0])
+						) {
+							Icon(
+								painter = painterResource(R.drawable.add),
+								contentDescription = null
+							)
+							Spacer(5.dp)
+							Text(stringResource(R.string.add_app))
+						}
+					},
+					menuContent = {}
+				)
 
-                customItem(
-                    buttonGroupContent = {
-                        DragonButton(
-                            onClick = {
-                                viewModel.onAddSocialMedia(
-                                    allApps.map { it.packageName }.toSet(),
-                                    pausedApps
-                                )
-                            },
-                            interactionSource = interactionSources[1],
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .animateWidth(interactionSources[1])
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.apps),
-                                contentDescription = null
-                            )
-                            Spacer(5.dp)
-                            Text(stringResource(R.string.add_social_media))
-                        }
-                    },
-                    menuContent = {}
-                )
-            }
+				customItem(
+					buttonGroupContent = {
+						DragonButton(
+							onClick = {
+								viewModel.onAddSocialMedia(
+									allApps.map { it.packageName }.toSet(),
+									pausedApps
+								)
+							},
+							interactionSource = interactionSources[1],
+							modifier =
+								Modifier
+									.weight(1f)
+									.animateWidth(interactionSources[1])
+						) {
+							Icon(
+								painter = painterResource(R.drawable.apps),
+								contentDescription = null
+							)
+							Spacer(5.dp)
+							Text(stringResource(R.string.add_social_media))
+						}
+					},
+					menuContent = {}
+				)
+			}
 
-            if (pausedApps.isNotEmpty()) {
-                pausedApps.forEach { packageName ->
-                    val app = allApps.find { it.packageName == packageName }
+			if (pausedApps.isNotEmpty()) {
+				pausedApps.forEach { packageName ->
+					val app = allApps.find { it.packageName == packageName }
 
-                    app?.let {
-                        PausedAppItem(
-                            app = app,
-                            onRemove = { viewModel.onRemovePausedApp(packageName, pausedApps) }
-                        )
-                    }
-                }
-            } else {
-                Text(
-                    text = stringResource(R.string.no_paused_apps),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.dragonSettingGroup()
-                )
-            }
-        }
-    }
+					app?.let {
+						PausedAppItem(
+							app = app,
+							onRemove = { viewModel.onRemovePausedApp(packageName, pausedApps) }
+						)
+					}
+				}
+			} else {
+				Text(
+					text = stringResource(R.string.no_paused_apps),
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+					textAlign = TextAlign.Center,
+					modifier = Modifier.dragonSettingGroup()
+				)
+			}
+		}
+	}
 
-    if (showAppPicker) {
-        AppPickerSheet(
-            onDismiss = { viewModel.showAppPicker.value = false },
-            onAppSelected = { app ->
-                viewModel.onAppPicked(app.packageName, pausedApps)
-            },
-            onMultipleAppsSelected = { apps ->
-                viewModel.onMultipleAppsPicked(apps.map { it.packageName }.toSet(), pausedApps)
-            }
-        )
-    }
+	if (showAppPicker) {
+		AppPickerSheet(
+			onDismiss = { viewModel.showAppPicker.value = false },
+			onAppSelected = { app ->
+				viewModel.onAppPicked(app.packageName, pausedApps)
+			},
+			onMultipleAppsSelected = { apps ->
+				viewModel.onMultipleAppsPicked(apps.map { it.packageName }.toSet(), pausedApps)
+			}
+		)
+	}
 
-    if (showPermissionDialog) {
-        AppUsagePermissionDialog { viewModel.showPermissionDialog.value = false }
-    }
+	if (showPermissionDialog) {
+		AppUsagePermissionDialog { viewModel.showPermissionDialog.value = false }
+	}
 
-    if (showOverlayPermissionDialog) {
-        AlertDialog(
-            onDismissRequest = viewModel::onOverlayDialogDismiss,
-            title = { Text(stringResource(R.string.overlay_permission_required)) },
-            text = { Text(stringResource(R.string.overlay_permission_description)) },
-            confirmButton = {
-                TextButton(onClick = viewModel::onOverlayDialogConfirm) {
-                    Text(stringResource(R.string.open_settings))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = viewModel::onOverlayDialogDismiss) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
-    }
+	if (showOverlayPermissionDialog) {
+		AlertDialog(
+			onDismissRequest = viewModel::onOverlayDialogDismiss,
+			title = { Text(stringResource(R.string.overlay_permission_required)) },
+			text = { Text(stringResource(R.string.overlay_permission_description)) },
+			confirmButton = {
+				TextButton(onClick = viewModel::onOverlayDialogConfirm) {
+					Text(stringResource(R.string.open_settings))
+				}
+			},
+			dismissButton = {
+				TextButton(onClick = viewModel::onOverlayDialogDismiss) {
+					Text(stringResource(R.string.cancel))
+				}
+			}
+		)
+	}
 }
 
 @Composable
 private fun DragonGroupScope.PausedAppItem(
-    app: Application,
-    onRemove: () -> Unit
+	app: Application,
+	onRemove: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.dragonSettingGroup(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        AppIcon(app, 30.dp)
+	Row(
+		modifier = Modifier.dragonSettingGroup(),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(12.dp)
+	) {
+		AppIcon(app, 30.dp)
 
-        TextWithDescription(
-            text = app.label,
-            description = app.packageName,
-            modifier = Modifier.weight(1f)
-        )
+		TextWithDescription(
+			text = app.label,
+			description = app.packageName,
+			modifier = Modifier.weight(1f)
+		)
 
-        DragonIconButton(
-            icon = R.drawable.close,
-            contentDescription = R.string.remove,
-            onClick = onRemove,
-            isCancel = true
-        )
-    }
+		DragonIconButton(
+			icon = R.drawable.close,
+			contentDescription = R.string.remove,
+			onClick = onRemove,
+			isCancel = true
+		)
+	}
 }

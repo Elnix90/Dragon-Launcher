@@ -13,27 +13,27 @@ import kotlin.math.sin
 
 /** Euclidean distance from [this@distance] to [b] in pixels. */
 public inline infix fun Offset.distanceTo(b: Offset): Float =
-    hypot(b.x - x, b.y - y)
+	hypot(b.x - x, b.y - y)
 
 /**
  * Return the distance squared to the receiver [Offset] of [other]
  * Use this to avoid computing the square root when you only need to compare offsets lengths together
  */
 public inline infix fun Offset.distanceSquaredTo(other: Offset): Float =
-    (other.x - x).pow(2) + (other.y - y).pow(2)
+	(other.x - x).pow(2) + (other.y - y).pow(2)
 
 public fun angle360FromOffset(center: Offset, offset: Offset): Float {
-    if (center == offset) return 0f
-    return (offset - center).angleDeg()
+	if (center == offset) return 0f
+	return (offset - center).angleDeg()
 }
 
 public fun Offset.angleRad(): Float = atan2(y, x)
 
 /** Angle 0..360 from [this] (east = 0, clockwise). */
 public inline fun Offset.angleDeg(): Float {
-    var deg = this.angleRad().degrees.toFloat()
-    if (deg < 0f) deg += 360f
-    return deg
+	var deg = this.angleRad().degrees.toFloat()
+	if (deg < 0f) deg += 360f
+	return deg
 }
 
 /**
@@ -45,18 +45,18 @@ public inline fun Offset.angleDeg(): Float {
  * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
  */
 public inline fun Offset.rotateBy(angle: Float): Offset {
-    if (angle == 0f || angle == 360f) return this
+	if (angle == 0f || angle == 360f) return this
 
-    val angleInRadians: Double = angle.radians
-    val cos: Double = cos(angleInRadians)
-    val sin: Double = sin(angleInRadians)
+	val angleInRadians: Double = angle.radians
+	val cos: Double = cos(angleInRadians)
+	val sin: Double = sin(angleInRadians)
 
-    // AHAHAHAH FUCK IT, IT WORKS I SPEND TOO MUCH TIME ON THAT SHIT, THANKS MR ROUX
+	// AHAHAHAH FUCK IT, IT WORKS I SPEND TOO MUCH TIME ON THAT SHIT, THANKS MR ROUX
 
-    return Offset(
-        x = (x * cos - y * sin).toFloat(),
-        y = (x * sin + y * cos).toFloat()
-    )
+	return Offset(
+		x = (x * cos - y * sin).toFloat(),
+		y = (x * sin + y * cos).toFloat()
+	)
 }
 
 /**
@@ -66,9 +66,9 @@ public inline fun Offset.rotateBy(angle: Float): Offset {
  * If you put undo rotation first, it'll break the whole chain for some reason.
  */
 public inline fun Offset.applyTransformations(
-    zoom: Float,
-    offset: Offset,
-    angle: Float
+	zoom: Float,
+	offset: Offset,
+	angle: Float
 ): Offset = div(zoom).plus(offset).rotateBy(-angle)
 
 /**
@@ -78,9 +78,9 @@ public inline fun Offset.applyTransformations(
  * If you put undo rotation first, it'll break the whole chain for some reason.
  */
 public inline fun Offset.undoTransformations(
-    angle: Float,
-    zoom: Float,
-    offset: Offset
+	angle: Float,
+	zoom: Float,
+	offset: Offset
 ): Offset = rotateBy(angle).minus(offset).times(zoom)
 
 /**
@@ -88,20 +88,20 @@ public inline fun Offset.undoTransformations(
  * @param threshold The distance from an integer to trigger snapping
  */
 public fun Offset.snapToRound(snapTo: Offset, threshold: Float): Offset =
-    Offset(
-        x = x.snapToRound(snapTo.x, threshold),
-        y = y.snapToRound(snapTo.y, threshold)
-    )
+	Offset(
+		x = x.snapToRound(snapTo.x, threshold),
+		y = y.snapToRound(snapTo.y, threshold)
+	)
 
 /**
  * Snaps both x and y of the Offset to the closest multiple of [cellSizePx].
  * @param cellSizePx The size of the virtual grid to be snapped on
  */
 public fun Offset.snapToGrid(cellSizePx: Float): Offset =
-    Offset(
-        x = this.x.snapToGrid(cellSizePx),
-        y = this.y.snapToGrid(cellSizePx)
-    )
+	Offset(
+		x = this.x.snapToGrid(cellSizePx),
+		y = this.y.snapToGrid(cellSizePx)
+	)
 
 /**
  * Outputs a receiver [Offset] to a string, well formatted and human-readable in the `"x ; y"` format:
@@ -109,7 +109,7 @@ public fun Offset.snapToGrid(cellSizePx: Float): Offset =
  * @return the formatter string
  */
 public fun Offset.cleanString(): String =
-    "${x.fastRoundToInt()} ; ${y.fastRoundToInt()}"
+	"${x.fastRoundToInt()} ; ${y.fastRoundToInt()}"
 
 /**
  * Quick ktx to create a [Offset] whose [x][Offset.x] and [y][Offset.y] values are equals
@@ -118,7 +118,7 @@ public fun Offset.cleanString(): String =
  * @return the newly created offset
  */
 public inline fun Offset.Companion.rect(size: Float): Offset =
-    Offset(size, size)
+	Offset(size, size)
 
 /**
  * Quick ktx to create a [IntOffset] whose [x][IntOffset.x] and [y][IntOffset.y] values are equals
@@ -127,4 +127,4 @@ public inline fun Offset.Companion.rect(size: Float): Offset =
  * @return the newly created offset
  */
 public inline fun IntOffset.Companion.rect(size: Int): IntOffset =
-    IntOffset(size, size)
+	IntOffset(size, size)

@@ -40,48 +40,48 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutHorizontalBouncy
  */
 @Composable
 fun <T> LazyRowWithScrollIndicator(
-    items: List<T>,
-    modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(5.dp),
-    content: @Composable LazyItemScope.(T) -> Unit
+	items: List<T>,
+	modifier: Modifier = Modifier,
+	state: LazyListState = rememberLazyListState(),
+	horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(5.dp),
+	content: @Composable LazyItemScope.(T) -> Unit
 ) {
-    Box {
-        LazyRow(
-            horizontalArrangement = horizontalArrangement,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier,
-            state = state
-        ) {
-            items(
-                items = items,
-                key = { it.hashCode() }
-            ) { type ->
-                content(type)
-            }
-        }
-        HorizontalScrollIndicator(state.canScrollForward)
-    }
+	Box {
+		LazyRow(
+			horizontalArrangement = horizontalArrangement,
+			verticalAlignment = Alignment.CenterVertically,
+			modifier = modifier,
+			state = state
+		) {
+			items(
+				items = items,
+				key = { it.hashCode() }
+			) { type ->
+				content(type)
+			}
+		}
+		HorizontalScrollIndicator(state.canScrollForward)
+	}
 }
 
 @Composable
 fun RowWithScrollIndicator(
-    scrollState: ScrollState = rememberScrollState(),
-    content: @Composable RowScope.() -> Unit
+	scrollState: ScrollState = rememberScrollState(),
+	content: @Composable RowScope.() -> Unit
 ) {
-    Box {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(scrollState)
-        ) {
-            content()
-        }
-        HorizontalScrollIndicator(scrollState.canScrollForward)
-    }
+	Box {
+		Row(
+			horizontalArrangement = Arrangement.SpaceEvenly,
+			verticalAlignment = Alignment.CenterVertically,
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.horizontalScroll(scrollState)
+		) {
+			content()
+		}
+		HorizontalScrollIndicator(scrollState.canScrollForward)
+	}
 }
 
 /**
@@ -94,16 +94,16 @@ fun RowWithScrollIndicator(
  */
 @Composable
 fun BoxScope.HorizontalScrollIndicator(visible: Boolean) {
-    AnimatedVisibility(
-        visible = visible,
-        modifier = Modifier.align(Alignment.CenterEnd),
-        enter = slideInHorizontalBouncy,
-        exit = slideOutHorizontalBouncy
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.arrow_right),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.outline
-        )
-    }
+	AnimatedVisibility(
+		visible = visible,
+		modifier = Modifier.align(Alignment.CenterEnd),
+		enter = slideInHorizontalBouncy,
+		exit = slideOutHorizontalBouncy
+	) {
+		Icon(
+			painter = painterResource(R.drawable.arrow_right),
+			contentDescription = null,
+			tint = MaterialTheme.colorScheme.outline
+		)
+	}
 }

@@ -57,194 +57,194 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun IconsTab(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    iconsViewModel: IconsViewModel = activityViewModel()
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	iconsViewModel: IconsViewModel = activityViewModel()
 ) {
-    val ctx = LocalContext.current
-    val navigator = LocalNavigator.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val navigator = LocalNavigator.current
+	val scope = rememberCoroutineScope()
 
-    val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
-    val packs by drawerViewModel.getInstalledIconPacks().collectAsState(emptyList())
+	val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
+	val packs by drawerViewModel.getInstalledIconPacks().collectAsState(emptyList())
 
-    val iconSettings by iconsViewModel.iconSettings.collectAsState()
-    val selectedPack = iconSettings.iconPack
+	val iconSettings by iconsViewModel.iconSettings.collectAsState()
+	val selectedPack = iconSettings.iconPack
 
-    SettingsScaffold(
-        title = stringResource(NavigationRoute.Icons.resId),
-        onBack = {
-            iconsViewModel.reloadAllPointsIcons()
-            navigator.onBack()
-        },
-        helpText = stringResource(R.string.icon_pack_help),
-        resetText = stringResource(R.string.reset_icon_packs_tab),
-        onReset = {
-            scope.launch {
-                IconsSettingsStore.resetAll(ctx)
-            }
-        },
-        topContent = {
-            LazyRowWithScrollIndicator(
-                items = apps,
-                modifier = Modifier.height(70.dp)
-            ) { app ->
-                AppIcon(app, size = 56.dp)
-            }
-        }
-    ) {
-        // because of the icons in top content
-        Spacer(30.dp)
+	SettingsScaffold(
+		title = stringResource(NavigationRoute.Icons.resId),
+		onBack = {
+			iconsViewModel.reloadAllPointsIcons()
+			navigator.onBack()
+		},
+		helpText = stringResource(R.string.icon_pack_help),
+		resetText = stringResource(R.string.reset_icon_packs_tab),
+		onReset = {
+			scope.launch {
+				IconsSettingsStore.resetAll(ctx)
+			}
+		},
+		topContent = {
+			LazyRowWithScrollIndicator(
+				items = apps,
+				modifier = Modifier.height(70.dp)
+			) { app ->
+				AppIcon(app, size = 56.dp)
+			}
+		}
+	) {
+		// because of the icons in top content
+		Spacer(30.dp)
 
-        DragonSettingsGroup(R.string.colors_and_icons) {
-            Setting(IconsSettingsStore.useIconTint)
+		DragonSettingsGroup(R.string.colors_and_icons) {
+			Setting(IconsSettingsStore.useIconTint)
 
-            val useIconTint by IconsSettingsStore.useIconTint.asState()
-            Setting(IconsSettingsStore.onlyTintIconPack, enabled = useIconTint) {
-                iconsViewModel.reinstallAllIconPacks()
-            }
-            Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
-                iconsViewModel.reinstallAllIconPacks()
-            }
+			val useIconTint by IconsSettingsStore.useIconTint.asState()
+			Setting(IconsSettingsStore.onlyTintIconPack, enabled = useIconTint) {
+				iconsViewModel.reinstallAllIconPacks()
+			}
+			Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
+				iconsViewModel.reinstallAllIconPacks()
+			}
 
-            Setting(IconsSettingsStore.renderForeground)
-            Setting(IconsSettingsStore.renderBackground)
+			Setting(IconsSettingsStore.renderForeground)
+			Setting(IconsSettingsStore.renderBackground)
 
-            Setting(IconsSettingsStore.themedIcons)
+			Setting(IconsSettingsStore.themedIcons)
 
-            val themedIcons by IconsSettingsStore.themedIcons.asState()
-            Setting(IconsSettingsStore.forceThemed, enabled = themedIcons)
+			val themedIcons by IconsSettingsStore.themedIcons.asState()
+			Setting(IconsSettingsStore.forceThemed, enabled = themedIcons)
 
-            Setting(IconsSettingsStore.adaptify)
+			Setting(IconsSettingsStore.adaptify)
 
-            DrawerIconShapePicker()
-        }
+			DrawerIconShapePicker()
+		}
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.icon_packs_found, packs.size),
-                style = MaterialTheme.typography.bodyLargeEmphasized
-            )
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(16.dp),
+			modifier = Modifier.padding(vertical = 8.dp)
+		) {
+			Text(
+				text = stringResource(R.string.icon_packs_found, packs.size),
+				style = MaterialTheme.typography.bodyLargeEmphasized
+			)
 
-            var isLoading by remember { mutableStateOf(false) }
+			var isLoading by remember { mutableStateOf(false) }
 
-            LaunchedEffect(isLoading) {
-                delay(2000.milliseconds)
-                isLoading = false
-            }
+			LaunchedEffect(isLoading) {
+				delay(2000.milliseconds)
+				isLoading = false
+			}
 
-            AnimatedContent(isLoading) {
-                if (it) {
-                    LoadingIndicator()
-                } else {
-                    DragonIconButton(
-                        icon = R.drawable.refresh,
-                        contentDescription = R.string.reload
-                    ) {
-                        isLoading = true
-                        iconsViewModel.updateIconPacks()
-                    }
-                }
-            }
-        }
+			AnimatedContent(isLoading) {
+				if (it) {
+					LoadingIndicator()
+				} else {
+					DragonIconButton(
+						icon = R.drawable.refresh,
+						contentDescription = R.string.reload
+					) {
+						isLoading = true
+						iconsViewModel.updateIconPacks()
+					}
+				}
+			}
+		}
 
-        DragonSettingsGroup(R.string.icon_packs) {
-            packs.forEach { pack ->
-                val packPkg = pack.packageName
-                val packAction = Action.LaunchApp(packPkg, Profile.dummy())
-                val packApp by drawerViewModel.findOne(packAction).collectAsState(null)
+		DragonSettingsGroup(R.string.icon_packs) {
+			packs.forEach { pack ->
+				val packPkg = pack.packageName
+				val packAction = Action.LaunchApp(packPkg, Profile.dummy())
+				val packApp by drawerViewModel.findOne(packAction).collectAsState(null)
 
-                PackItem(
-                    selected = selectedPack == packPkg,
-                    text = pack.name,
-                    description = pack.packageName,
-                    onClick = {
-                        scope.launch {
-                            IconsSettingsStore.selectedIconPack.set(ctx, pack.packageName)
-                        }
-                    }
-                ) {
-                    if (packApp != null) {
-                        AppIcon(packApp!!, size = 50.dp)
-                    } else {
-                        Icon(
-                            painter = painterResource(R.drawable.palette),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(56.dp)
-                        )
-                    }
-                }
-            }
+				PackItem(
+					selected = selectedPack == packPkg,
+					text = pack.name,
+					description = pack.packageName,
+					onClick = {
+						scope.launch {
+							IconsSettingsStore.selectedIconPack.set(ctx, pack.packageName)
+						}
+					}
+				) {
+					if (packApp != null) {
+						AppIcon(packApp!!, size = 50.dp)
+					} else {
+						Icon(
+							painter = painterResource(R.drawable.palette),
+							contentDescription = null,
+							tint = MaterialTheme.colorScheme.onSurface,
+							modifier = Modifier.size(56.dp)
+						)
+					}
+				}
+			}
 
-            PackItem(
-                selected = selectedPack.isNullOrEmpty(),
-                text = stringResource(R.string.default_text),
-                description = stringResource(R.string.use_original_app_icon),
-                onClick = {
-                    scope.launch {
-                        IconsSettingsStore.selectedIconPack.reset(ctx)
-                    }
-                }
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.close),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.size(50.dp)
-                )
-            }
-        }
-    }
+			PackItem(
+				selected = selectedPack.isNullOrEmpty(),
+				text = stringResource(R.string.default_text),
+				description = stringResource(R.string.use_original_app_icon),
+				onClick = {
+					scope.launch {
+						IconsSettingsStore.selectedIconPack.reset(ctx)
+					}
+				}
+			) {
+				Icon(
+					painter = painterResource(R.drawable.close),
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.tertiary,
+					modifier = Modifier.size(50.dp)
+				)
+			}
+		}
+	}
 }
 
 @Composable
 private fun DragonGroupScope.PackItem(
-    selected: Boolean,
-    text: String,
-    description: String,
-    onClick: () -> Unit,
-    icon: @Composable () -> Unit
+	selected: Boolean,
+	text: String,
+	description: String,
+	onClick: () -> Unit,
+	icon: @Composable () -> Unit
 ) {
-    Row(
-        modifier =
-            Modifier
-                .dragonSettingGroup(selected = selected) {
-                    clickable(onClick = onClick)
-                },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        icon()
-        Spacer(12.dp)
-        TextWithDescription(
-            text = text,
-            description = description,
-            modifier = Modifier.weight(1f)
-        )
+	Row(
+		modifier =
+			Modifier
+				.dragonSettingGroup(selected = selected) {
+					clickable(onClick = onClick)
+				},
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		icon()
+		Spacer(12.dp)
+		TextWithDescription(
+			text = text,
+			description = description,
+			modifier = Modifier.weight(1f)
+		)
 
-        val scale by animateFloatAsState(
-            targetValue = if (selected) 1f else 0f,
-            animationSpec = tween(durationMillis = 300),
-            label = "Check Scale Animation"
-        )
+		val scale by animateFloatAsState(
+			targetValue = if (selected) 1f else 0f,
+			animationSpec = tween(durationMillis = 300),
+			label = "Check Scale Animation"
+		)
 
-        Box(
-            modifier =
-                Modifier
-                    .size(40.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            if (scale > 0f) {
-                Icon(
-                    painter = painterResource(R.drawable.check),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.scale(scale)
-                )
-            }
-        }
-    }
+		Box(
+			modifier =
+				Modifier
+					.size(40.dp),
+			contentAlignment = Alignment.Center
+		) {
+			if (scale > 0f) {
+				Icon(
+					painter = painterResource(R.drawable.check),
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.onPrimaryContainer,
+					modifier = Modifier.scale(scale)
+				)
+			}
+		}
+	}
 }

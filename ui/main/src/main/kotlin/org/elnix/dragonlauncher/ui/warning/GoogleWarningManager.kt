@@ -10,18 +10,18 @@ import kotlin.time.Clock
 // Cloned from https://github.com/shub39/Grit/blob/89c2bb9a8c3b9bc66262ced9e378a8103a6d7a61/app/src/main/java/com/shub39/grit/warning/WarningManager.kt
 
 object GoogleWarningManager {
-    fun showWarning(): Boolean = (getDaysLeft() >= 0)
+	fun showWarning(): Boolean = (getDaysLeft() >= 0)
 
-    val showWarningDialog: SettingFlow<Boolean> = SettingFlow(showWarning())
+	val showWarningDialog: SettingFlow<Boolean> = SettingFlow(showWarning())
 
-    fun updateWarningDialog(newValue: Boolean) {
-        showWarningDialog.update { newValue }
-    }
+	fun updateWarningDialog(newValue: Boolean) {
+		showWarningDialog.update { newValue }
+	}
 
-    fun getDaysLeft(): Int =
-        Clock.System
-            .now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .date
-            .daysUntil(LocalDate(year = 2027, month = 1, day = 1))
+	fun getDaysLeft(): Int =
+		Clock.System
+			.now()
+			.toLocalDateTime(TimeZone.currentSystemDefault())
+			.date
+			.daysUntil(LocalDate(year = 2027, month = 1, day = 1))
 }

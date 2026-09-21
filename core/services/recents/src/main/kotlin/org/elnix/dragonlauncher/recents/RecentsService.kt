@@ -18,63 +18,63 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 // TODO track correctly app launches in recent apps profile aware
 
 public interface RecentsService {
-    public fun touch(application: Application)
+	public fun touch(application: Application)
 
-    public fun getRecentApps(count: Int): StateFlow<List<Application>>
+	public fun getRecentApps(count: Int): StateFlow<List<Application>>
 }
 
 internal class RecentsServiceImpl(
-    private val ctx: Context,
-    private val applicationRepository: AppRepository
+	private val ctx: Context,
+	private val applicationRepository: AppRepository
 ) : RecentsService {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val recentlyUsedPackages = MutableStateFlow<List<String>>(emptyList())
+	private val recentlyUsedPackages = MutableStateFlow<List<String>>(emptyList())
 
-    init {
-        scope.launch {
-            loadRecentlyUsedApps()
-        }
-    }
+	init {
+		scope.launch {
+			loadRecentlyUsedApps()
+		}
+	}
 
-    private suspend fun loadRecentlyUsedApps() =
-        withContext(Dispatchers.IO) {
-            val json = DrawerSettingsStore.recentlyUsedPackages.get(ctx)
-            if (json.isNotEmpty()) {
-                try {
-                    recentlyUsedPackages.value = json.toList()
-                } catch (_: Exception) {
-                    recentlyUsedPackages.value = emptyList()
-                }
-            }
-        }
+	private suspend fun loadRecentlyUsedApps() =
+		withContext(Dispatchers.IO) {
+			val json = DrawerSettingsStore.recentlyUsedPackages.get(ctx)
+			if (json.isNotEmpty()) {
+				try {
+					recentlyUsedPackages.value = json.toList()
+				} catch (_: Exception) {
+					recentlyUsedPackages.value = emptyList()
+				}
+			}
+		}
 
-    override fun touch(application: Application) {
-        val packageName = application.packageName
-        val maxStored = 30 // store more than display, user can raise the count later
-        val current = recentlyUsedPackages.value.toMutableList()
-        current.remove(packageName)
-        current.add(0, packageName)
-        val trimmed = current.take(maxStored)
-        recentlyUsedPackages.value = trimmed
-        scope.launch {
-            DrawerSettingsStore.recentlyUsedPackages.set(ctx, trimmed)
-        }
-    }
+	override fun touch(application: Application) {
+		val packageName = application.packageName
+		val maxStored = 30 // store more than display, user can raise the count later
+		val current = recentlyUsedPackages.value.toMutableList()
+		current.remove(packageName)
+		current.add(0, packageName)
+		val trimmed = current.take(maxStored)
+		recentlyUsedPackages.value = trimmed
+		scope.launch {
+			DrawerSettingsStore.recentlyUsedPackages.set(ctx, trimmed)
+		}
+	}
 
-    /**
-     * Returns the recently used [Application]s, resolved from the current app list.
-     * Uses combine to reactively update when either apps or recent packages change.
-     * @param count max number of recent apps to return
-     */
-    override fun getRecentApps(
-        count: Int
-    ): StateFlow<List<Application>> =
-        recentlyUsedPackages
-            .combine(applicationRepository.getAllApps()) { packages, apps ->
-                val allApps = apps.associateBy { it.packageName }
-                packages
-                    .take(count)
-                    .mapNotNull { pkg -> allApps[pkg] }
-            }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+	/**
+	 * Returns the recently used [Application]s, resolved from the current app list.
+	 * Uses combine to reactively update when either apps or recent packages change.
+	 * @param count max number of recent apps to return
+	 */
+	override fun getRecentApps(
+		count: Int
+	): StateFlow<List<Application>> =
+		recentlyUsedPackages
+			.combine(applicationRepository.getAllApps()) { packages, apps ->
+				val allApps = apps.associateBy { it.packageName }
+				packages
+					.take(count)
+					.mapNotNull { pkg -> allApps[pkg] }
+			}.stateIn(scope, SharingStarted.Eagerly, emptyList())
 }

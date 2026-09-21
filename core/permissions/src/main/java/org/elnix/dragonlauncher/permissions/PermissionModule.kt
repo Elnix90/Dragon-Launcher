@@ -11,9 +11,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object PermissionModule {
-    @Provides
-    @Singleton
-    fun providePermissionManager(
-        @ApplicationContext ctx: Context
-    ): PermissionsManager = PermissionsManagerImpl(ctx)
+	@Provides
+	@Singleton
+	fun providePermissionManager(
+		@ApplicationContext ctx: Context
+	): PermissionsManager = PermissionsManagerImpl(ctx)
 }

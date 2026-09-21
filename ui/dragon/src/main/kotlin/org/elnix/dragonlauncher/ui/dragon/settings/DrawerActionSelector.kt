@@ -14,34 +14,34 @@ import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable
 fun DragonGroupScope.DrawerActionSelector(
-    setting: EnumSettingObject<DrawerActions>,
-    allowNone: Boolean = false
+	setting: EnumSettingObject<DrawerActions>,
+	allowNone: Boolean = false
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val state by setting.asState()
+	val state by setting.asState()
 
-    val actions =
-        DrawerActions.entries
-            .filter { it != DrawerActions.Disabled }
-            .filter { if (!allowNone) it != DrawerActions.None else true }
+	val actions =
+		DrawerActions.entries
+			.filter { it != DrawerActions.Disabled }
+			.filter { if (!allowNone) it != DrawerActions.None else true }
 
-    ActionSelectorRow(
-        options = actions,
-        selected = state,
-        label = stringResource(setting.title!!),
-        optionLabel = { stringResource(it.resId) },
-        toggled = state != DrawerActions.Disabled,
-        resetEnabled = state != setting.default,
-        onReset = {
-            scope.launch {
-                setting.reset(ctx)
-            }
-        }
-    ) {
-        scope.launch {
-            setting.set(ctx, it)
-        }
-    }
+	ActionSelectorRow(
+		options = actions,
+		selected = state,
+		label = stringResource(setting.title!!),
+		optionLabel = { stringResource(it.resId) },
+		toggled = state != DrawerActions.Disabled,
+		resetEnabled = state != setting.default,
+		onReset = {
+			scope.launch {
+				setting.reset(ctx)
+			}
+		}
+	) {
+		scope.launch {
+			setting.set(ctx, it)
+		}
+	}
 }

@@ -17,75 +17,75 @@ import java.time.Instant
 import java.time.ZoneId
 
 internal class ThemedDynamicCalendarIcon(
-    val resources: Resources,
-    val resourceIds: IntArray,
-    val tint: Int?,
-    private var transformations: List<LauncherIconTransformation> = emptyList()
+	val resources: Resources,
+	val resourceIds: IntArray,
+	val tint: Int?,
+	private var transformations: List<LauncherIconTransformation> = emptyList()
 ) : DynamicLauncherIcon,
-    TransformableDynamicLauncherIcon {
-    override suspend fun getIcon(time: Long): StaticLauncherIcon =
-        withContext(Dispatchers.IO) {
-            val day = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).dayOfMonth
-            val resId = resourceIds[day - 1]
+	TransformableDynamicLauncherIcon {
+	override suspend fun getIcon(time: Long): StaticLauncherIcon =
+		withContext(Dispatchers.IO) {
+			val day = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).dayOfMonth
+			val resId = resourceIds[day - 1]
 
-            val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, resId)
+			val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, resId)
 
-            if (adaptiveIconCompat != null) {
-                var icon = adaptiveIconCompat.toLauncherIcon(themed = true, tint = tint)
-                for (transformation in transformations) {
-                    icon = transformation.transform(icon)
-                }
-                return@withContext icon
-            }
+			if (adaptiveIconCompat != null) {
+				var icon = adaptiveIconCompat.toLauncherIcon(themed = true, tint = tint)
+				for (transformation in transformations) {
+					icon = transformation.transform(icon)
+				}
+				return@withContext icon
+			}
 
-            val drawable =
-                try {
-                    ResourcesCompat.getDrawable(resources, resId, null)
-                } catch (e: Resources.NotFoundException) {
-                    null
-                } ?: return@withContext StaticLauncherIcon(
-                    foregroundLayer =
-                        TextLayer(
-                            text = day.toString(),
-                            tint = tint
-                        ),
-                    backgroundLayer = TransparentLayer
-                )
+			val drawable =
+				try {
+					ResourcesCompat.getDrawable(resources, resId, null)
+				} catch (e: Resources.NotFoundException) {
+					null
+				} ?: return@withContext StaticLauncherIcon(
+					foregroundLayer =
+						TextLayer(
+							text = day.toString(),
+							tint = tint
+						),
+					backgroundLayer = TransparentLayer
+				)
 
-            var icon =
-                when (drawable) {
-                    is AdaptiveIconDrawable -> {
-                        StaticLauncherIcon(
-                            foregroundLayer =
-                                StaticIconLayer(
-                                    icon = drawable.foreground,
-                                    scale = 1.5f,
-                                    tint = tint
-                                ),
-                            backgroundLayer = TransparentLayer
-                        )
-                    }
+			var icon =
+				when (drawable) {
+					is AdaptiveIconDrawable -> {
+						StaticLauncherIcon(
+							foregroundLayer =
+								StaticIconLayer(
+									icon = drawable.foreground,
+									scale = 1.5f,
+									tint = tint
+								),
+							backgroundLayer = TransparentLayer
+						)
+					}
 
-                    else -> {
-                        StaticLauncherIcon(
-                            foregroundLayer =
-                                StaticIconLayer(
-                                    icon = drawable,
-                                    scale = 0.65f,
-                                    tint = tint
-                                ),
-                            backgroundLayer = TransparentLayer
-                        )
-                    }
-                }
+					else -> {
+						StaticLauncherIcon(
+							foregroundLayer =
+								StaticIconLayer(
+									icon = drawable,
+									scale = 0.65f,
+									tint = tint
+								),
+							backgroundLayer = TransparentLayer
+						)
+					}
+				}
 
-            for (transformation in transformations) {
-                icon = transformation.transform(icon)
-            }
-            return@withContext icon
-        }
+			for (transformation in transformations) {
+				icon = transformation.transform(icon)
+			}
+			return@withContext icon
+		}
 
-    override fun setTransformations(transformations: List<LauncherIconTransformation>) {
-        this.transformations = transformations
-    }
+	override fun setTransformations(transformations: List<LauncherIconTransformation>) {
+		this.transformations = transformations
+	}
 }

@@ -21,19 +21,19 @@ import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeed
  */
 @Composable
 fun withHaptic(
-    type: HapticFeedbackType = HapticFeedbackType.ContextClick,
-    block: () -> Unit
+	type: HapticFeedbackType = HapticFeedbackType.ContextClick,
+	block: () -> Unit
 ): () -> Unit {
-    val haptic = LocalHapticFeedback.current
-    val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
-    val latestBlock = rememberUpdatedState(block)
+	val haptic = LocalHapticFeedback.current
+	val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
+	val latestBlock = rememberUpdatedState(block)
 
-    return retain(type, haptic, disableHapticFeedbackGlobally) {
-        {
-            if (!disableHapticFeedbackGlobally) haptic.performHapticFeedback(type)
-            latestBlock.value()
-        }
-    }
+	return retain(type, haptic, disableHapticFeedbackGlobally) {
+		{
+			if (!disableHapticFeedbackGlobally) haptic.performHapticFeedback(type)
+			latestBlock.value()
+		}
+	}
 }
 
 /**
@@ -61,11 +61,11 @@ fun withHaptic(
  */
 @Composable
 fun <T> withHapticParam(
-    type: HapticFeedbackType = HapticFeedbackType.ContextClick,
-    block: () -> Unit
+	type: HapticFeedbackType = HapticFeedbackType.ContextClick,
+	block: () -> Unit
 ): (T) -> Unit {
-    val inner = withHaptic(type, block)
-    return retain(inner) {
-        { _: T -> inner() }
-    }
+	val inner = withHaptic(type, block)
+	return retain(inner) {
+		{ _: T -> inner() }
+	}
 }

@@ -14,32 +14,32 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
 
 @Composable
 fun WallpaperDim(dimAmount: Float) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background.copy(dimAmount))
-    )
+	Box(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.background(MaterialTheme.colorScheme.background.copy(dimAmount))
+	)
 }
 
 @Composable
 fun CustomDim(
-    customDim: MainScreenLayer.CustomDim
+	customDim: MainScreenLayer.CustomDim
 ) {
-    val bgColor = MaterialTheme.colorScheme.background
-    val color =
-        remember {
-            Animatable(Color.Transparent)
-        }
+	val bgColor = MaterialTheme.colorScheme.background
+	val color =
+		remember {
+			Animatable(Color.Transparent)
+		}
 
-    LaunchedEffect(Unit) {
-        color.animateTo(bgColor.copy(customDim.dimAmount))
-    }
+	LaunchedEffect(Unit) {
+		color.animateTo(bgColor.copy(customDim.dimAmount))
+	}
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(color.value)
-    )
+	Box(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.background(color.value)
+	)
 }

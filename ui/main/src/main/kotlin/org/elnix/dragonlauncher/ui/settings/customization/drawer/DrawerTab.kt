@@ -52,285 +52,285 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 
 @Composable
 fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val apps by drawerViewModel.userApps.collectAsState()
+	val apps by drawerViewModel.userApps.collectAsState()
 
-    val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
-    val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
-    val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
-    val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
+	val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
+	val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
+	val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
+	val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
 
-    val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
-    val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
-    val useCategory by DrawerSettingsStore.useCategory.asState()
+	val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
+	val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
+	val useCategory by DrawerSettingsStore.useCategory.asState()
 
-    var leftWidth by remember { mutableStateOf(leftDrawerWidth) }
-    var rightWidth by remember { mutableStateOf(rightDrawerWidth) }
+	var leftWidth by remember { mutableStateOf(leftDrawerWidth) }
+	var rightWidth by remember { mutableStateOf(rightDrawerWidth) }
 
-    LaunchedEffect(leftDrawerWidth, rightDrawerWidth) {
-        leftWidth = leftDrawerWidth
-        rightWidth = rightDrawerWidth
-    }
+	LaunchedEffect(leftDrawerWidth, rightDrawerWidth) {
+		leftWidth = leftDrawerWidth
+		rightWidth = rightDrawerWidth
+	}
 
-    var showToolbarsOrderDialog by remember { mutableStateOf(false) }
-    var showDisabledCategoriesDialog by remember { mutableStateOf(false) }
+	var showToolbarsOrderDialog by remember { mutableStateOf(false) }
+	var showDisabledCategoriesDialog by remember { mutableStateOf(false) }
 
-    SettingsScaffold(
-        title = stringResource(R.string.app_drawer),
-        helpText = stringResource(R.string.drawer_tab_text),
-        resetText = stringResource(R.string.reset_drawer),
-        onReset = {
-            scope.launch {
-                DrawerSettingsStore.resetAll(ctx)
-            }
-        }
-    ) {
-        DragonSettingsGroup(R.string.workspaces) {
-            RouteItem(NavigationRoute.Workspace)
-            RouteItem(NavigationRoute.Icons)
-        }
+	SettingsScaffold(
+		title = stringResource(R.string.app_drawer),
+		helpText = stringResource(R.string.drawer_tab_text),
+		resetText = stringResource(R.string.reset_drawer),
+		onReset = {
+			scope.launch {
+				DrawerSettingsStore.resetAll(ctx)
+			}
+		}
+	) {
+		DragonSettingsGroup(R.string.workspaces) {
+			RouteItem(NavigationRoute.Workspace)
+			RouteItem(NavigationRoute.Icons)
+		}
 
-        DragonSettingsGroup(R.string.behavior) {
-            Setting(DrawerSettingsStore.autoOpenSingleMatch)
-            Setting(DrawerSettingsStore.disableAutoLaunchWhenFirstCharIs, enabled = autoOpenSingleMatch, singleChar = true)
-            Setting(DrawerSettingsStore.searchAllWorkspacesOnlyWhenFirstCharIs, singleChar = true)
-            Setting(DrawerSettingsStore.autoShowKeyboardOnDrawer)
-            Setting(DrawerSettingsStore.autoAskToUnlockProfile)
-            Setting(DrawerSettingsStore.imePadding)
-        }
+		DragonSettingsGroup(R.string.behavior) {
+			Setting(DrawerSettingsStore.autoOpenSingleMatch)
+			Setting(DrawerSettingsStore.disableAutoLaunchWhenFirstCharIs, enabled = autoOpenSingleMatch, singleChar = true)
+			Setting(DrawerSettingsStore.searchAllWorkspacesOnlyWhenFirstCharIs, singleChar = true)
+			Setting(DrawerSettingsStore.autoShowKeyboardOnDrawer)
+			Setting(DrawerSettingsStore.autoAskToUnlockProfile)
+			Setting(DrawerSettingsStore.imePadding)
+		}
 
-        DragonSettingsGroup(R.string.drawer_pull_down_settings) {
-            Setting(DrawerSettingsStore.pullDownAnimations)
-            Setting(DrawerSettingsStore.pullDownWallPaperDim)
-            Setting(DrawerSettingsStore.pullDownScaleIn)
-        }
+		DragonSettingsGroup(R.string.drawer_pull_down_settings) {
+			Setting(DrawerSettingsStore.pullDownAnimations)
+			Setting(DrawerSettingsStore.pullDownWallPaperDim)
+			Setting(DrawerSettingsStore.pullDownScaleIn)
+		}
 
-        DragonSettingsGroup(R.string.recently_used_apps) {
-            Setting(DrawerSettingsStore.showRecentlyUsedApps)
+		DragonSettingsGroup(R.string.recently_used_apps) {
+			Setting(DrawerSettingsStore.showRecentlyUsedApps)
 
-            AnimatedVisibility(showRecentlyUsed) {
-                Setting(DrawerSettingsStore.recentlyUsedAppsCount)
-            }
-        }
+			AnimatedVisibility(showRecentlyUsed) {
+				Setting(DrawerSettingsStore.recentlyUsedAppsCount)
+			}
+		}
 
-        DragonSettingsGroup(R.string.appearance) {
-            SettingsItem(
-                title = stringResource(R.string.toolbars_order),
-                icon = R.drawable._123
-            ) { showToolbarsOrderDialog = true }
+		DragonSettingsGroup(R.string.appearance) {
+			SettingsItem(
+				title = stringResource(R.string.toolbars_order),
+				icon = R.drawable._123
+			) { showToolbarsOrderDialog = true }
 
-            Setting(DrawerSettingsStore.showAppIconsInDrawer)
-            Setting(DrawerSettingsStore.showAppLabelsInDrawer)
-            Setting(DrawerSettingsStore.labelTextColor)
-            Setting(DrawerSettingsStore.drawerAlign)
-            DrawerIconShapePicker()
-        }
+			Setting(DrawerSettingsStore.showAppIconsInDrawer)
+			Setting(DrawerSettingsStore.showAppLabelsInDrawer)
+			Setting(DrawerSettingsStore.labelTextColor)
+			Setting(DrawerSettingsStore.drawerAlign)
+			DrawerIconShapePicker()
+		}
 
-        DragonSettingsGroup(R.string.category_settings) {
-            Setting(DrawerSettingsStore.useCategory)
-            Setting(DrawerSettingsStore.showCategoryName, enabled = useCategory)
-            Setting(DrawerSettingsStore.categoryCells, enabled = useCategory)
-            Setting(DrawerSettingsStore.categoryGridCells, enabled = useCategory)
-            Setting(DrawerSettingsStore.categoryColor, enabled = useCategory)
-            SettingsItem(
-                title = stringResource(R.string.disabled_system_categories),
-                icon = R.drawable.filter_alt,
-                enabled = useCategory
-            ) { showDisabledCategoriesDialog = true }
-        }
+		DragonSettingsGroup(R.string.category_settings) {
+			Setting(DrawerSettingsStore.useCategory)
+			Setting(DrawerSettingsStore.showCategoryName, enabled = useCategory)
+			Setting(DrawerSettingsStore.categoryCells, enabled = useCategory)
+			Setting(DrawerSettingsStore.categoryGridCells, enabled = useCategory)
+			Setting(DrawerSettingsStore.categoryColor, enabled = useCategory)
+			SettingsItem(
+				title = stringResource(R.string.disabled_system_categories),
+				icon = R.drawable.filter_alt,
+				enabled = useCategory
+			) { showDisabledCategoriesDialog = true }
+		}
 
-        DragonSettingsGroup(R.string.grid_settings) {
-            Setting(DrawerSettingsStore.gridSize)
-            Setting(DrawerSettingsStore.iconSize) { value ->
-                if (value == 0.dp) {
-                    stringResource(R.string.not_showed)
-                } else {
-                    null
-                }
-            }
-            Setting(DrawerSettingsStore.iconsSpacingHorizontal)
-            Setting(DrawerSettingsStore.iconsSpacingVertical)
+		DragonSettingsGroup(R.string.grid_settings) {
+			Setting(DrawerSettingsStore.gridSize)
+			Setting(DrawerSettingsStore.iconSize) { value ->
+				if (value == 0.dp) {
+					stringResource(R.string.not_showed)
+				} else {
+					null
+				}
+			}
+			Setting(DrawerSettingsStore.iconsSpacingHorizontal)
+			Setting(DrawerSettingsStore.iconsSpacingVertical)
 
-            val gridSize by DrawerSettingsStore.gridSize.asState()
-            val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
+			val gridSize by DrawerSettingsStore.gridSize.asState()
+			val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
 
-            AnimatedVisibility(gridSize == 1) {
-                MultiSelectConnectedButtonRow(
-                    entries = HorizontalAlignment.entries,
-                    checked = { horizontalAlignment == it }
-                ) {
-                    scope.launch { DrawerSettingsStore.horizontalAlignment.set(ctx, it) }
-                }
-            }
+			AnimatedVisibility(gridSize == 1) {
+				MultiSelectConnectedButtonRow(
+					entries = HorizontalAlignment.entries,
+					checked = { horizontalAlignment == it }
+				) {
+					scope.launch { DrawerSettingsStore.horizontalAlignment.set(ctx, it) }
+				}
+			}
 
-            Box(
-                modifier =
-                    Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(MaterialTheme.shapes.large)
-                        .border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
-            ) {
-                AppGrid(
-                    apps = apps.shuffled().take(if (gridSize == 1) 3 else gridSize * 2),
-                    longPressPopup = false,
-                    onClick = null
-                )
-            }
-        }
+			Box(
+				modifier =
+					Modifier
+						.padding(10.dp)
+						.fillMaxWidth()
+						.height(200.dp)
+						.clip(MaterialTheme.shapes.large)
+						.border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+			) {
+				AppGrid(
+					apps = apps.shuffled().take(if (gridSize == 1) 3 else gridSize * 2),
+					longPressPopup = false,
+					onClick = null
+				)
+			}
+		}
 
-        DragonSettingsGroup(R.string.drawer_actions) {
-            DrawerActionSelector(DrawerSettingsStore.drawerScrollUpAction)
-            DrawerActionSelector(DrawerSettingsStore.drawerScrollDownAction)
-            DrawerActionSelector(DrawerSettingsStore.tapEmptySpaceAction)
-            DrawerActionSelector(DrawerSettingsStore.drawerBackAction)
-            DrawerActionSelector(DrawerSettingsStore.drawerEnterAction)
-            DrawerActionSelector(DrawerSettingsStore.drawerHomeAction)
-            DrawerActionSelector(DrawerSettingsStore.drawerClickSearchIconAction)
-        }
+		DragonSettingsGroup(R.string.drawer_actions) {
+			DrawerActionSelector(DrawerSettingsStore.drawerScrollUpAction)
+			DrawerActionSelector(DrawerSettingsStore.drawerScrollDownAction)
+			DrawerActionSelector(DrawerSettingsStore.tapEmptySpaceAction)
+			DrawerActionSelector(DrawerSettingsStore.drawerBackAction)
+			DrawerActionSelector(DrawerSettingsStore.drawerEnterAction)
+			DrawerActionSelector(DrawerSettingsStore.drawerHomeAction)
+			DrawerActionSelector(DrawerSettingsStore.drawerClickSearchIconAction)
+		}
 
-        DragonSettingsGroup(R.string.width_actions_settings) {
-            DrawerActionSelector(DrawerSettingsStore.leftDrawerAction, allowNone = true)
-            DrawerActionSelector(DrawerSettingsStore.rightDrawerAction, allowNone = true)
-        }
+		DragonSettingsGroup(R.string.width_actions_settings) {
+			DrawerActionSelector(DrawerSettingsStore.leftDrawerAction, allowNone = true)
+			DrawerActionSelector(DrawerSettingsStore.rightDrawerAction, allowNone = true)
+		}
 
-        AnimatedVisibility(leftDrawerAction.notDisabled || rightDrawerAction.notDisabled) {
-            DragonSettingsGroup(
-                R.string.drawer_actions_width,
-                trailingIcon = {
-                    ResetIcon(
-                        leftWidth != DrawerSettingsStore.leftDrawerWidth.default || rightWidth != DrawerSettingsStore.rightDrawerWidth.default
-                    ) {
-                        scope.launch {
-                            DrawerSettingsStore.leftDrawerWidth.reset(ctx)
-                            DrawerSettingsStore.rightDrawerWidth.reset(ctx)
-                        }
-                    }
-                }
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                ) {
-                    if (leftDrawerAction.notDisabled) {
-                        Row(
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .fillMaxHeight()
-                                        .width(leftWidth)
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .semiTransparentIfDisabled(leftDrawerAction.notNone),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (leftDrawerAction.notNone) {
-                                    Icon(
-                                        painter = painterResource(leftDrawerAction.iconEnabled),
-                                        contentDescription = stringResource(R.string.left_drawer_action),
-                                        tint = MaterialTheme.colorScheme.outline
-                                    )
-                                }
-                            }
-                            DragHandle()
-                        }
-                    }
+		AnimatedVisibility(leftDrawerAction.notDisabled || rightDrawerAction.notDisabled) {
+			DragonSettingsGroup(
+				R.string.drawer_actions_width,
+				trailingIcon = {
+					ResetIcon(
+						leftWidth != DrawerSettingsStore.leftDrawerWidth.default || rightWidth != DrawerSettingsStore.rightDrawerWidth.default
+					) {
+						scope.launch {
+							DrawerSettingsStore.leftDrawerWidth.reset(ctx)
+							DrawerSettingsStore.rightDrawerWidth.reset(ctx)
+						}
+					}
+				}
+			) {
+				Box(
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.height(50.dp)
+				) {
+					if (leftDrawerAction.notDisabled) {
+						Row(
+							modifier = Modifier.align(Alignment.CenterStart)
+						) {
+							Box(
+								modifier =
+									Modifier
+										.fillMaxHeight()
+										.width(leftWidth)
+										.background(MaterialTheme.colorScheme.primary)
+										.semiTransparentIfDisabled(leftDrawerAction.notNone),
+								contentAlignment = Alignment.Center
+							) {
+								if (leftDrawerAction.notNone) {
+									Icon(
+										painter = painterResource(leftDrawerAction.iconEnabled),
+										contentDescription = stringResource(R.string.left_drawer_action),
+										tint = MaterialTheme.colorScheme.outline
+									)
+								}
+							}
+							DragHandle()
+						}
+					}
 
-                    if (rightDrawerAction.notDisabled) {
-                        Row(
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
-                            DragHandle()
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .fillMaxHeight()
-                                        .width(rightWidth)
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .semiTransparentIfDisabled(rightDrawerAction.notNone),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (rightDrawerAction.notNone) {
-                                    Icon(
-                                        painter = painterResource(rightDrawerAction.iconEnabled),
-                                        contentDescription = stringResource(R.string.right_drawer_action),
-                                        tint = MaterialTheme.colorScheme.outline
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+					if (rightDrawerAction.notDisabled) {
+						Row(
+							modifier = Modifier.align(Alignment.CenterEnd)
+						) {
+							DragHandle()
+							Box(
+								modifier =
+									Modifier
+										.fillMaxHeight()
+										.width(rightWidth)
+										.background(MaterialTheme.colorScheme.primary)
+										.semiTransparentIfDisabled(rightDrawerAction.notNone),
+								contentAlignment = Alignment.Center
+							) {
+								if (rightDrawerAction.notNone) {
+									Icon(
+										painter = painterResource(rightDrawerAction.iconEnabled),
+										contentDescription = stringResource(R.string.right_drawer_action),
+										tint = MaterialTheme.colorScheme.outline
+									)
+								}
+							}
+						}
+					}
+				}
 
-                SliderWithLabel(
-                    label = stringResource(DrawerSettingsStore.leftDrawerWidth.title!!),
-                    value = leftWidth,
-                    valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange,
-                    enabled = leftDrawerAction.notDisabled,
-                    resetEnabled = leftWidth != DrawerSettingsStore.leftDrawerWidth.default,
-                    onReset = {
-                        leftWidth = leftDrawerWidth
-                        scope.launch {
-                            DrawerSettingsStore.leftDrawerWidth.reset(ctx)
-                        }
-                    },
-                    onDragStateChange = { isDragging ->
-                        if (!isDragging) {
-                            scope.launch {
-                                DrawerSettingsStore.leftDrawerWidth.set(ctx, leftWidth)
-                            }
-                        }
-                    }
-                ) { leftWidth = it }
+				SliderWithLabel(
+					label = stringResource(DrawerSettingsStore.leftDrawerWidth.title!!),
+					value = leftWidth,
+					valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange,
+					enabled = leftDrawerAction.notDisabled,
+					resetEnabled = leftWidth != DrawerSettingsStore.leftDrawerWidth.default,
+					onReset = {
+						leftWidth = leftDrawerWidth
+						scope.launch {
+							DrawerSettingsStore.leftDrawerWidth.reset(ctx)
+						}
+					},
+					onDragStateChange = { isDragging ->
+						if (!isDragging) {
+							scope.launch {
+								DrawerSettingsStore.leftDrawerWidth.set(ctx, leftWidth)
+							}
+						}
+					}
+				) { leftWidth = it }
 
-                SliderWithLabel(
-                    label = stringResource(R.string.right_drawer_width),
-                    value = rightWidth,
-                    valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange,
-                    enabled = rightDrawerAction.notDisabled,
-                    resetEnabled = rightWidth != DrawerSettingsStore.rightDrawerWidth.default,
-                    onReset = {
-                        rightWidth = rightDrawerWidth
-                        scope.launch {
-                            DrawerSettingsStore.rightDrawerWidth.reset(ctx)
-                        }
-                    },
-                    onDragStateChange = { isDragging ->
-                        if (!isDragging) {
-                            scope.launch {
-                                DrawerSettingsStore.rightDrawerWidth.set(ctx, rightWidth)
-                            }
-                        }
-                    }
-                ) { rightWidth = it }
-            }
-        }
-    }
+				SliderWithLabel(
+					label = stringResource(R.string.right_drawer_width),
+					value = rightWidth,
+					valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange,
+					enabled = rightDrawerAction.notDisabled,
+					resetEnabled = rightWidth != DrawerSettingsStore.rightDrawerWidth.default,
+					onReset = {
+						rightWidth = rightDrawerWidth
+						scope.launch {
+							DrawerSettingsStore.rightDrawerWidth.reset(ctx)
+						}
+					},
+					onDragStateChange = { isDragging ->
+						if (!isDragging) {
+							scope.launch {
+								DrawerSettingsStore.rightDrawerWidth.set(ctx, rightWidth)
+							}
+						}
+					}
+				) { rightWidth = it }
+			}
+		}
+	}
 
-    if (showToolbarsOrderDialog) {
-        ToolbarsOrderDialog { showToolbarsOrderDialog = false }
-    }
+	if (showToolbarsOrderDialog) {
+		ToolbarsOrderDialog { showToolbarsOrderDialog = false }
+	}
 
-    if (showDisabledCategoriesDialog) {
-        DisabledCategoriesDialog(
-            onDismiss = { showDisabledCategoriesDialog = false }
-        )
-    }
+	if (showDisabledCategoriesDialog) {
+		DisabledCategoriesDialog(
+			onDismiss = { showDisabledCategoriesDialog = false }
+		)
+	}
 }
 
 @Composable
 private fun DragHandle() {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxHeight()
-                .width(6.dp)
-                .background(MaterialTheme.colorScheme.outline)
-    )
+	Box(
+		modifier =
+			Modifier
+				.fillMaxHeight()
+				.width(6.dp)
+				.background(MaterialTheme.colorScheme.outline)
+	)
 }

@@ -23,50 +23,50 @@ import org.elnix.dragonlauncher.ktx.showToast
  * [LauncherApps.ACTION_CONFIRM_PIN_SHORTCUT] to this activity.
  */
 class PinnedShortcutActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
 
-        val launcherApps = getSystemService(LauncherApps::class.java)
-        if (launcherApps == null) {
-            logW(PINNED_SHORTCUTS) { "LauncherApps service not available" }
-            finish()
-            return
-        }
+		val launcherApps = getSystemService(LauncherApps::class.java)
+		if (launcherApps == null) {
+			logW(PINNED_SHORTCUTS) { "LauncherApps service not available" }
+			finish()
+			return
+		}
 
-        val request = launcherApps.getPinItemRequest(intent)
-        if (request == null) {
-            logW(PINNED_SHORTCUTS) { "No pin item request found in intent" }
-            finish()
-            return
-        }
+		val request = launcherApps.getPinItemRequest(intent)
+		if (request == null) {
+			logW(PINNED_SHORTCUTS) { "No pin item request found in intent" }
+			finish()
+			return
+		}
 
-        val shortcutInfo = request.shortcutInfo
-        if (shortcutInfo == null) {
-            logW(PINNED_SHORTCUTS) { "Pin request does not contain a shortcut (maybe a widget?)" }
-            // For now, we don't handle widget pin requests
-            finish()
-            return
-        }
+		val shortcutInfo = request.shortcutInfo
+		if (shortcutInfo == null) {
+			logW(PINNED_SHORTCUTS) { "Pin request does not contain a shortcut (maybe a widget?)" }
+			// For now, we don't handle widget pin requests
+			finish()
+			return
+		}
 
-        val packageName = shortcutInfo.`package`
-        val shortcutId = shortcutInfo.id
-        val shortLabel = shortcutInfo.shortLabel?.toString() ?: shortcutId
+		val packageName = shortcutInfo.`package`
+		val shortcutId = shortcutInfo.id
+		val shortLabel = shortcutInfo.shortLabel?.toString() ?: shortcutId
 
-        logD(PINNED_SHORTCUTS) { "Received pin request: $packageName / $shortcutId ($shortLabel)" }
+		logD(PINNED_SHORTCUTS) { "Received pin request: $packageName / $shortcutId ($shortLabel)" }
 
-        // Accept the pin request - this tells the system the shortcut is pinned
-        val accepted = request.accept()
-        if (!accepted) {
-            logW(PINNED_SHORTCUTS) { "Failed to accept pin request for $packageName / $shortcutId" }
-            showToast(getString(R.string.pinned_shortcut_failed))
-            finish()
-            return
-        }
+		// Accept the pin request - this tells the system the shortcut is pinned
+		val accepted = request.accept()
+		if (!accepted) {
+			logW(PINNED_SHORTCUTS) { "Failed to accept pin request for $packageName / $shortcutId" }
+			showToast(getString(R.string.pinned_shortcut_failed))
+			finish()
+			return
+		}
 
-        logD(PINNED_SHORTCUTS) { "Pin request accepted for $packageName / $shortcutId" }
+		logD(PINNED_SHORTCUTS) { "Pin request accepted for $packageName / $shortcutId" }
 
-        // Add the shortcut as a new swipe point on circle 0, nest 0
-        lifecycleScope.launch {
+		// Add the shortcut as a new swipe point on circle 0, nest 0
+		lifecycleScope.launch {
 //            TODO make it send intent to add a point
 //            try {
 //                val existingPoints = SwipeSettingsStore.getPoints(this@PinnedShortcutActivity)
@@ -117,7 +117,7 @@ class PinnedShortcutActivity : ComponentActivity() {
 //                showToast(getString(R.string.pinned_shortcut_failed))
 //            }
 
-            finish()
-        }
-    }
+			finish()
+		}
+	}
 }

@@ -41,135 +41,135 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 @SuppressLint("LocalContextResourcesRead", "LocalContextGetResourceValueCall")
 @Composable
 fun WallpaperTab() {
-    val ctx = LocalContext.current
-    val window = LocalWindowInfo.current
-    val screenWidthPx = window.containerSize.width.toFloat()
-    val screenHeightPx = window.containerSize.height.toFloat()
+	val ctx = LocalContext.current
+	val window = LocalWindowInfo.current
+	val screenWidthPx = window.containerSize.width.toFloat()
+	val screenHeightPx = window.containerSize.height.toFloat()
 
-    val scope = rememberCoroutineScope()
+	val scope = rememberCoroutineScope()
 
-    val wallpaperHelper = remember { WallpaperHelper(ctx) }
+	val wallpaperHelper = remember { WallpaperHelper(ctx) }
 
-    var originalBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var showTargetDialog by remember { mutableStateOf(false) }
+	var originalBitmap by remember { mutableStateOf<Bitmap?>(null) }
+	var showTargetDialog by remember { mutableStateOf(false) }
 
-    val bgColor = MaterialTheme.colorScheme.background
-    var plainColor by remember { mutableStateOf(bgColor) }
+	val bgColor = MaterialTheme.colorScheme.background
+	var plainColor by remember { mutableStateOf(bgColor) }
 
-    val wallpaperDimMainScreen by UiSettingsStore.wallpaperDimMainScreen.asState()
-    val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
+	val wallpaperDimMainScreen by UiSettingsStore.wallpaperDimMainScreen.asState()
+	val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
 
-    fun applyWallpaper(target: WallpaperTarget) {
-        val bitmap = wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
-        scope.launch {
-            wallpaperHelper.setWallpaper(bitmap, target.flags)
+	fun applyWallpaper(target: WallpaperTarget) {
+		val bitmap = wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
+		scope.launch {
+			wallpaperHelper.setWallpaper(bitmap, target.flags)
 
-            ctx.showToast("Wallpaper applied")
-            showTargetDialog = false
-        }
-    }
+			ctx.showToast("Wallpaper applied")
+			showTargetDialog = false
+		}
+	}
 
-    val mainTriangle =
-        remember(screenHeightPx, screenWidthPx) {
-            Path().apply {
-                lineTo(screenWidthPx, 0f)
-                lineTo(0f, screenHeightPx)
-                close()
-            }
-        }
-    val mainColor = MaterialTheme.colorScheme.background.alphaMultiplier(wallpaperDimMainScreen)
+	val mainTriangle =
+		remember(screenHeightPx, screenWidthPx) {
+			Path().apply {
+				lineTo(screenWidthPx, 0f)
+				lineTo(0f, screenHeightPx)
+				close()
+			}
+		}
+	val mainColor = MaterialTheme.colorScheme.background.alphaMultiplier(wallpaperDimMainScreen)
 
-    val drawerTriangle =
-        remember(screenHeightPx, screenWidthPx) {
-            Path().apply {
-                moveTo(screenWidthPx, 0f)
-                lineTo(screenWidthPx, screenHeightPx)
-                lineTo(0f, screenHeightPx)
-                close()
-            }
-        }
-    val drawerColor = MaterialTheme.colorScheme.background.alphaMultiplier(wallpaperDimDrawerScreen)
+	val drawerTriangle =
+		remember(screenHeightPx, screenWidthPx) {
+			Path().apply {
+				moveTo(screenWidthPx, 0f)
+				lineTo(screenWidthPx, screenHeightPx)
+				lineTo(0f, screenHeightPx)
+				close()
+			}
+		}
+	val drawerColor = MaterialTheme.colorScheme.background.alphaMultiplier(wallpaperDimDrawerScreen)
 
-    Canvas(Modifier.fillMaxSize()) {
-        drawPath(
-            path = mainTriangle,
-            color = mainColor,
-            style = Fill
-        )
-        drawPath(
-            path = drawerTriangle,
-            color = drawerColor,
-            style = Fill
-        )
-    }
+	Canvas(Modifier.fillMaxSize()) {
+		drawPath(
+			path = mainTriangle,
+			color = mainColor,
+			style = Fill
+		)
+		drawPath(
+			path = drawerTriangle,
+			color = drawerColor,
+			style = Fill
+		)
+	}
 
-    SettingsScaffold(
-        title = stringResource(R.string.wallpaper),
-        helpText = stringResource(R.string.wallpaper_help),
-        onReset = null,
-        resetText = null
-    ) {
-        DragonSettingsGroup(R.string.custom_wallpaper) {
-            DragonButton(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_SET_WALLPAPER)
-                    ctx.startActivity(
-                        Intent.createChooser(
-                            intent,
-                            ctx.getString(R.string.select_image)
-                        )
-                    )
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.set_wallpaper),
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
+	SettingsScaffold(
+		title = stringResource(R.string.wallpaper),
+		helpText = stringResource(R.string.wallpaper_help),
+		onReset = null,
+		resetText = null
+	) {
+		DragonSettingsGroup(R.string.custom_wallpaper) {
+			DragonButton(
+				onClick = {
+					val intent = Intent(Intent.ACTION_SET_WALLPAPER)
+					ctx.startActivity(
+						Intent.createChooser(
+							intent,
+							ctx.getString(R.string.select_image)
+						)
+					)
+				}
+			) {
+				Text(
+					text = stringResource(R.string.set_wallpaper),
+					textAlign = TextAlign.Center
+				)
+			}
+		}
 
-        DragonSettingsGroup(R.string.plain_wallpaper) {
-            this.DragonButton(
-                onClick = {
-                    originalBitmap =
-                        wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
-                    showTargetDialog = true
-                }
-            ) {
-                Text(
-                    stringResource(R.string.set_plain_wallpaper),
-                    textAlign = TextAlign.Center
-                )
-            }
+		DragonSettingsGroup(R.string.plain_wallpaper) {
+			this.DragonButton(
+				onClick = {
+					originalBitmap =
+						wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
+					showTargetDialog = true
+				}
+			) {
+				Text(
+					stringResource(R.string.set_plain_wallpaper),
+					textAlign = TextAlign.Center
+				)
+			}
 
-            ColorPickerRow(
-                title = stringResource(R.string.plain_wallpaper_color),
-                description = null,
-                currentColor = plainColor,
-                defaultColor = null
-            ) {
-                if (it != null) plainColor = it
-            }
-        }
+			ColorPickerRow(
+				title = stringResource(R.string.plain_wallpaper_color),
+				description = null,
+				currentColor = plainColor,
+				defaultColor = null
+			) {
+				if (it != null) plainColor = it
+			}
+		}
 
-        DragonSettingsGroup(R.string.wallpaper_dim) {
-            Setting(UiSettingsStore.wallpaperDimMainScreen)
-            Setting(UiSettingsStore.wallpaperDimDrawerScreen)
-        }
+		DragonSettingsGroup(R.string.wallpaper_dim) {
+			Setting(UiSettingsStore.wallpaperDimMainScreen)
+			Setting(UiSettingsStore.wallpaperDimDrawerScreen)
+		}
 
-        DragonSettingsGroup {
-            Setting(UiSettingsStore.pointsScreensTransparency)
-        }
-    }
-    StatusBar(null)
+		DragonSettingsGroup {
+			Setting(UiSettingsStore.pointsScreensTransparency)
+		}
+	}
+	StatusBar(null)
 
-    if (showTargetDialog && originalBitmap != null) {
-        ActionSelector(
-            label = stringResource(R.string.apply_wallpaper_to),
-            options = WallpaperTarget.entries,
-            selected = null,
-            onSelected = ::applyWallpaper,
-            onDismiss = { showTargetDialog = false }
-        )
-    }
+	if (showTargetDialog && originalBitmap != null) {
+		ActionSelector(
+			label = stringResource(R.string.apply_wallpaper_to),
+			options = WallpaperTarget.entries,
+			selected = null,
+			onSelected = ::applyWallpaper,
+			onDismiss = { showTargetDialog = false }
+		)
+	}
 }

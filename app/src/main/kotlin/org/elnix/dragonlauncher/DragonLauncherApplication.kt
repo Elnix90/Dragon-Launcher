@@ -22,69 +22,69 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class DragonLauncherApplication : Application() {
-    @SuppressLint("LogNotTimber")
-    override fun onCreate() {
-        super.onCreate()
-        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+	@SuppressLint("LogNotTimber")
+	override fun onCreate() {
+		super.onCreate()
+		val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
 
-        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            Log.e("DragonCrash", "FATAL CRASH on thread ${thread.name}: ${throwable.message}", throwable)
+		Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+			Log.e("DragonCrash", "FATAL CRASH on thread ${thread.name}: ${throwable.message}", throwable)
 
-            runBlocking {
-                PrivateSettingsStore.lastCrashStackTrace.set(
-                    this@DragonLauncherApplication,
-                    throwable.stackTraceToString()
-                )
-            }
+			runBlocking {
+				PrivateSettingsStore.lastCrashStackTrace.set(
+					this@DragonLauncherApplication,
+					throwable.stackTraceToString()
+				)
+			}
 
-            defaultHandler?.uncaughtException(thread, throwable)
-        }
+			defaultHandler?.uncaughtException(thread, throwable)
+		}
 
-        Timber.plant(Timber.DebugTree())
+		Timber.plant(Timber.DebugTree())
 
-        initializeAllStores()
+		initializeAllStores()
 
-        CoroutineScope(Dispatchers.Default).launch {
-            val tag = LanguageSettingsStore.keyLang.get(this@DragonLauncherApplication)
-            if (tag.isNotEmpty()) {
-                AppCompatDelegate.setApplicationLocales(
-                    LocaleListCompat.forLanguageTags(tag)
-                )
-            }
-        }
-    }
+		CoroutineScope(Dispatchers.Default).launch {
+			val tag = LanguageSettingsStore.keyLang.get(this@DragonLauncherApplication)
+			if (tag.isNotEmpty()) {
+				AppCompatDelegate.setApplicationLocales(
+					LocaleListCompat.forLanguageTags(tag)
+				)
+			}
+		}
+	}
 
-    private fun initializeAllStores() {
-        var totalSettings = 0
-        var totalJsonObject = 0
-        var totalJsonArray = 0
+	private fun initializeAllStores() {
+		var totalSettings = 0
+		var totalJsonObject = 0
+		var totalJsonArray = 0
 
-        AllStores.forEach { store ->
+		AllStores.forEach { store ->
 
-            when (store) {
-                is JsonArraySettingsStore -> {
-                    logI(SETTINGS_TAG) { "Initializing ${store.name} (jsonArray)" }
-                    totalJsonArray++
-                }
+			when (store) {
+				is JsonArraySettingsStore -> {
+					logI(SETTINGS_TAG) { "Initializing ${store.name} (jsonArray)" }
+					totalJsonArray++
+				}
 
-                is JsonObjectSettingsStore -> {
-                    logI(SETTINGS_TAG) { "Initializing ${store.name} (jsonObject)" }
-                    totalJsonObject++
-                }
+				is JsonObjectSettingsStore -> {
+					logI(SETTINGS_TAG) { "Initializing ${store.name} (jsonObject)" }
+					totalJsonObject++
+				}
 
-                is MapSettingsStore -> {
-                    val settingsNumber = store.ALL.size
-                    totalSettings += settingsNumber
-                    logI(SETTINGS_TAG) { "Initializing ${store.name} ($settingsNumber settings)" }
-                    store.ALL.forEach {
-                        logD(SETTINGS_TAG) { "    - ${it.key}" }
-                    }
-                }
-            }
-        }
+				is MapSettingsStore -> {
+					val settingsNumber = store.ALL.size
+					totalSettings += settingsNumber
+					logI(SETTINGS_TAG) { "Initializing ${store.name} ($settingsNumber settings)" }
+					store.ALL.forEach {
+						logD(SETTINGS_TAG) { "    - ${it.key}" }
+					}
+				}
+			}
+		}
 
-        logI(SETTINGS_TAG) {
-            "Finished initializing settings;${AllStores.size} total stores, with: $totalSettings different settings and $totalJsonObject JsonObject and $totalJsonArray JsonArray stores"
-        }
-    }
+		logI(SETTINGS_TAG) {
+			"Finished initializing settings;${AllStores.size} total stores, with: $totalSettings different settings and $totalJsonObject JsonObject and $totalJsonArray JsonArray stores"
+		}
+	}
 }

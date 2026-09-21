@@ -8,6 +8,6 @@ import io.github.elnix90.core.stores.MapSettingsStore
 
 @SettingsStore
 public object LanguageSettingsStore : MapSettingsStore() {
-    @SettingKey
-    public val keyLang: StringSettingObject = string("")
+	@SettingKey
+	public val keyLang: StringSettingObject = string("")
 }

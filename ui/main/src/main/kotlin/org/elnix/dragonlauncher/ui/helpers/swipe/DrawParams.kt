@@ -28,31 +28,31 @@ import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
  * is duplicated inside the DrawScope drawing functions.
  */
 data class DrawParams(
-    val ctx: Context,
-    val pointsService: PointsService,
-    val extraColors: ExtraColors,
-    val colorScheme: ColorScheme,
-    val iconShape: IconShape,
-    val maxNestsDepth: Int,
-    val isDefaultEditing: Boolean,
-    /** Settings Screen only */
-    val eraseColor: Color,
-    /** Settings Screen only */
-    val preventDrawingSubNests: Boolean,
-    /** Settings Screen only */
-    val pointSettingsDisplay: Boolean,
-    /** Settings Screen only */
-    val hideShapes: Boolean,
-    val skipSelected: Boolean,
-    val showCurrentPoint: Boolean,
-    val showAllPointsInCurrentShape: Boolean,
-    val showAllPointsInCurrentNest: Boolean,
-    val showPointPreviewCenterStartPosition: Boolean,
-    val nestDebugOverlay: Boolean,
-    val showCancelZone: Boolean,
-    val showShape: Boolean,
-    val showAllShapesInNest: Boolean,
-    val textMeasurer: TextMeasurer
+	val ctx: Context,
+	val pointsService: PointsService,
+	val extraColors: ExtraColors,
+	val colorScheme: ColorScheme,
+	val iconShape: IconShape,
+	val maxNestsDepth: Int,
+	val isDefaultEditing: Boolean,
+	/** Settings Screen only */
+	val eraseColor: Color,
+	/** Settings Screen only */
+	val preventDrawingSubNests: Boolean,
+	/** Settings Screen only */
+	val pointSettingsDisplay: Boolean,
+	/** Settings Screen only */
+	val hideShapes: Boolean,
+	val skipSelected: Boolean,
+	val showCurrentPoint: Boolean,
+	val showAllPointsInCurrentShape: Boolean,
+	val showAllPointsInCurrentNest: Boolean,
+	val showPointPreviewCenterStartPosition: Boolean,
+	val nestDebugOverlay: Boolean,
+	val showCancelZone: Boolean,
+	val showShape: Boolean,
+	val showAllShapesInNest: Boolean,
+	val textMeasurer: TextMeasurer
 )
 
 /**
@@ -67,76 +67,76 @@ data class DrawParams(
  */
 @Composable
 fun rememberDrawParams(
-    eraseColor: Color,
-    isDefaultEditing: Boolean,
-    allowShowPointCenter: Boolean,
-    pointSettingsDisplay: Boolean,
-    showCancelZone: Boolean,
-    hideShapes: Boolean,
-    skipSelected: Boolean,
-    pointsViewModel: PointsViewModel = activityViewModel()
+	eraseColor: Color,
+	isDefaultEditing: Boolean,
+	allowShowPointCenter: Boolean,
+	pointSettingsDisplay: Boolean,
+	showCancelZone: Boolean,
+	hideShapes: Boolean,
+	skipSelected: Boolean,
+	pointsViewModel: PointsViewModel = activityViewModel()
 ): DrawParams {
-    val ctx = LocalContext.current
-    val extraColors = LocalExtraColors.current
-    val colorScheme = MaterialTheme.colorScheme
+	val ctx = LocalContext.current
+	val extraColors = LocalExtraColors.current
+	val colorScheme = MaterialTheme.colorScheme
 
-    val showCurrentPoint by UiSettingsStore.showLaunchingAppIcon.asState()
-    val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
+	val showCurrentPoint by UiSettingsStore.showLaunchingAppIcon.asState()
+	val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
 
-    val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
-    val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
+	val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
+	val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
 
-    val showPointPreviewCenterStartPosition by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
+	val showPointPreviewCenterStartPosition by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
 
-    val showShape by UiSettingsStore.showCurrentShape.asState()
-    val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
+	val showShape by UiSettingsStore.showCurrentShape.asState()
+	val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
 
-    val textMeasurer = rememberTextMeasurer()
-    val nestDebugOverlay = LocalNestDebugOverlay.current
+	val textMeasurer = rememberTextMeasurer()
+	val nestDebugOverlay = LocalNestDebugOverlay.current
 
-    val iconShape by DrawerSettingsStore.iconShape.asState()
+	val iconShape by DrawerSettingsStore.iconShape.asState()
 
-    return remember(
-        extraColors,
-        colorScheme,
-        maxNestsDepth,
-        eraseColor,
-        pointSettingsDisplay,
-        hideShapes,
-        skipSelected,
-        showCurrentPoint,
-        showAllPointsInCurrentShape,
-        showAllPointsInCurrentNest,
-        allowShowPointCenter,
-        showPointPreviewCenterStartPosition,
-        nestDebugOverlay,
-        showCancelZone,
-        showShape,
-        showAllShapesInNest,
-        textMeasurer
-    ) {
-        DrawParams(
-            ctx = ctx,
-            pointsService = pointsViewModel.pointsService,
-            extraColors = extraColors,
-            colorScheme = colorScheme,
-            iconShape = iconShape,
-            maxNestsDepth = maxNestsDepth,
-            isDefaultEditing = isDefaultEditing,
-            eraseColor = eraseColor,
-            preventDrawingSubNests = false,
-            pointSettingsDisplay = pointSettingsDisplay,
-            hideShapes = hideShapes,
-            skipSelected = skipSelected,
-            showCurrentPoint = showCurrentPoint,
-            showAllPointsInCurrentShape = showAllPointsInCurrentShape,
-            showAllPointsInCurrentNest = showAllPointsInCurrentNest,
-            showPointPreviewCenterStartPosition = allowShowPointCenter && showPointPreviewCenterStartPosition,
-            nestDebugOverlay = nestDebugOverlay,
-            showCancelZone = showCancelZone,
-            showShape = showShape,
-            showAllShapesInNest = showAllShapesInNest,
-            textMeasurer = textMeasurer
-        )
-    }
+	return remember(
+		extraColors,
+		colorScheme,
+		maxNestsDepth,
+		eraseColor,
+		pointSettingsDisplay,
+		hideShapes,
+		skipSelected,
+		showCurrentPoint,
+		showAllPointsInCurrentShape,
+		showAllPointsInCurrentNest,
+		allowShowPointCenter,
+		showPointPreviewCenterStartPosition,
+		nestDebugOverlay,
+		showCancelZone,
+		showShape,
+		showAllShapesInNest,
+		textMeasurer
+	) {
+		DrawParams(
+			ctx = ctx,
+			pointsService = pointsViewModel.pointsService,
+			extraColors = extraColors,
+			colorScheme = colorScheme,
+			iconShape = iconShape,
+			maxNestsDepth = maxNestsDepth,
+			isDefaultEditing = isDefaultEditing,
+			eraseColor = eraseColor,
+			preventDrawingSubNests = false,
+			pointSettingsDisplay = pointSettingsDisplay,
+			hideShapes = hideShapes,
+			skipSelected = skipSelected,
+			showCurrentPoint = showCurrentPoint,
+			showAllPointsInCurrentShape = showAllPointsInCurrentShape,
+			showAllPointsInCurrentNest = showAllPointsInCurrentNest,
+			showPointPreviewCenterStartPosition = allowShowPointCenter && showPointPreviewCenterStartPosition,
+			nestDebugOverlay = nestDebugOverlay,
+			showCancelZone = showCancelZone,
+			showShape = showShape,
+			showAllShapesInNest = showAllShapesInNest,
+			textMeasurer = textMeasurer
+		)
+	}
 }

@@ -37,92 +37,92 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 @OptIn(ExperimentalGridApi::class)
 @Composable
 fun WelcomePageTutorial() {
-    val uriHandler = LocalUriHandler.current
+	val uriHandler = LocalUriHandler.current
 
-    WelcomePagerHeader {
-        Grid(
-            config = {
-                column(1.fr)
-                column(1.fr)
-                row(1.fr)
-                row(1.fr)
-                row(1.fr)
+	WelcomePagerHeader {
+		Grid(
+			config = {
+				column(1.fr)
+				column(1.fr)
+				row(1.fr)
+				row(1.fr)
+				row(1.fr)
 
-                gap(10.dp)
-            }
-        ) {
-            TutorialEntry(R.mipmap.long_click_to_access_settings, R.string.long_click_to_access_settings)
-            TutorialEntry(R.mipmap.configure_apps, R.string.configure_your_apps)
-            TutorialEntry(R.mipmap.swipe_to_open_app, R.string.swipe_to_open_app)
-            TutorialEntry(R.mipmap.customize_hold_settings, R.string.customize_hold_settings)
-            TutorialEntry(R.mipmap.customize_angle_line, R.string.customize_angle_line)
-            TutorialEntry(
-                R.drawable.discord_symbol_blurple,
-                R.string.share_your_config_in_the_discord,
-                MaterialTheme.colorScheme.surfaceContainerHighest,
-                70.dp
-            ) {
-                uriHandler.openUri(DISCORD_INVITE_LINK)
-            }
-        }
-    }
+				gap(10.dp)
+			}
+		) {
+			TutorialEntry(R.mipmap.long_click_to_access_settings, R.string.long_click_to_access_settings)
+			TutorialEntry(R.mipmap.configure_apps, R.string.configure_your_apps)
+			TutorialEntry(R.mipmap.swipe_to_open_app, R.string.swipe_to_open_app)
+			TutorialEntry(R.mipmap.customize_hold_settings, R.string.customize_hold_settings)
+			TutorialEntry(R.mipmap.customize_angle_line, R.string.customize_angle_line)
+			TutorialEntry(
+				R.drawable.discord_symbol_blurple,
+				R.string.share_your_config_in_the_discord,
+				MaterialTheme.colorScheme.surfaceContainerHighest,
+				70.dp
+			) {
+				uriHandler.openUri(DISCORD_INVITE_LINK)
+			}
+		}
+	}
 }
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalGridApi::class)
 @Composable
 private fun TutorialEntry(
-    painterResId: Int,
-    titleResId: Int,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    imageMaxSize: Dp = 150.dp,
-    onCLick: (() -> Unit)? = null
+	painterResId: Int,
+	titleResId: Int,
+	backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+	imageMaxSize: Dp = 150.dp,
+	onCLick: (() -> Unit)? = null
 ) {
-    val ctx = LocalContext.current
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .clip(MaterialTheme.shapes.extraLarge)
-            .background(backgroundColor)
-            .padding(top = 20.dp)
-            .clickable {
-                if (onCLick == null) {
-                    ctx.showToast(ctx.getString(R.string.finish_setup_first))
-                } else {
-                    onCLick()
-                }
-            }
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-        ) {
-            Image(
-                painter = painterResource(painterResId),
-                contentDescription = stringResource(titleResId),
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.large)
-                    .size(imageMaxSize)
-            )
-        }
+	val ctx = LocalContext.current
+	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		modifier = Modifier
+			.fillMaxSize()
+			.clip(MaterialTheme.shapes.extraLarge)
+			.background(backgroundColor)
+			.padding(top = 20.dp)
+			.clickable {
+				if (onCLick == null) {
+					ctx.showToast(ctx.getString(R.string.finish_setup_first))
+				} else {
+					onCLick()
+				}
+			}
+	) {
+		Box(
+			contentAlignment = Alignment.Center,
+			modifier = Modifier
+				.fillMaxWidth()
+				.aspectRatio(1f)
+		) {
+			Image(
+				painter = painterResource(painterResId),
+				contentDescription = stringResource(titleResId),
+				modifier = Modifier
+					.clip(MaterialTheme.shapes.large)
+					.size(imageMaxSize)
+			)
+		}
 
-        Spacer(12.dp)
+		Spacer(12.dp)
 
-        Text(
-            text = stringResource(titleResId),
-            style = MaterialTheme.typography.labelMediumEmphasized,
-            color = contentColorFor(backgroundColor),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(5.dp)
-        )
-    }
+		Text(
+			text = stringResource(titleResId),
+			style = MaterialTheme.typography.labelMediumEmphasized,
+			color = contentColorFor(backgroundColor),
+			textAlign = TextAlign.Center,
+			modifier = Modifier.padding(5.dp)
+		)
+	}
 }
 
 @Composable
 @Preview
 private fun WelcomePageTutorialPreview() {
-    WelcomePageTutorial()
+	WelcomePageTutorial()
 }

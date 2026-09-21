@@ -14,112 +14,112 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 
 public data class SystemApp(
-    private val ctx: Context,
-    private val applicationInfo: ApplicationInfo,
-    override val versionName: String?,
-    override val labelOverride: String? = null,
-    override val categoryOverride: String? = null,
-    override val profile: Profile,
-    override val isSuspended: Boolean
+	private val ctx: Context,
+	private val applicationInfo: ApplicationInfo,
+	override val versionName: String?,
+	override val labelOverride: String? = null,
+	override val categoryOverride: String? = null,
+	override val profile: Profile,
+	override val isSuspended: Boolean
 ) : Application() {
-    override val isSystem: Boolean = true
-    override val isLaunchable: Boolean = false
+	override val isSystem: Boolean = true
+	override val isLaunchable: Boolean = false
 
-    override val label: String
-        get() = labelOverride ?: defaultLabel
+	override val label: String
+		get() = labelOverride ?: defaultLabel
 
-    override val defaultLabel: String by lazy {
-        applicationInfo.loadLabel(ctx.packageManager).toString()
-    }
+	override val defaultLabel: String by lazy {
+		applicationInfo.loadLabel(ctx.packageManager).toString()
+	}
 
-    override fun overrideLabel(label: String): Application = this.copy(labelOverride = label)
+	override fun overrideLabel(label: String): Application = this.copy(labelOverride = label)
 
-    override fun overrideCategory(categoryName: String?): Application = this.copy(categoryOverride = categoryName)
+	override fun overrideCategory(categoryName: String?): Application = this.copy(categoryOverride = categoryName)
 
-    override val componentName: ComponentName
-        get() = buildFakeComponentName(applicationInfo.packageName)
+	override val componentName: ComponentName
+		get() = buildFakeComponentName(applicationInfo.packageName)
 
-    /**
-     * Cached result of the normalized label.
-     * First string is the normalizer ID
-     * Second string is the normalized label
-     */
-    override var cachedNormalizerResult: Pair<String, String>? = null
+	/**
+	 * Cached result of the normalized label.
+	 * First string is the normalizer ID
+	 * Second string is the normalized label
+	 */
+	override var cachedNormalizerResult: Pair<String, String>? = null
 
-    override val packageName: String
-        get() = applicationInfo.packageName
+	override val packageName: String
+		get() = applicationInfo.packageName
 
-    override val category: AppCategory = AppCategory.Other
+	override val category: AppCategory = AppCategory.Other
 
-    override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? {
-        return try {
-            val icon =
-                withContext(Dispatchers.IO) {
-                    applicationInfo.loadIcon(ctx.packageManager)
-                } ?: return null
+	override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? {
+		return try {
+			val icon =
+				withContext(Dispatchers.IO) {
+					applicationInfo.loadIcon(ctx.packageManager)
+				} ?: return null
 
-            when (icon) {
-                is AdaptiveIconDrawable -> {
-                    if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
-                        StaticLauncherIcon(
-                            foregroundLayer =
-                                StaticIconLayer(
-                                    scale = 1.5f,
-                                    icon = icon.monochrome!!,
-                                    tint = tint
-                                ),
-                            backgroundLayer = TransparentLayer
-                        )
-                    } else {
-                        StaticLauncherIcon(
-                            foregroundLayer =
-                                icon.foreground?.let {
-                                    StaticIconLayer(
-                                        icon = it,
-                                        scale = 1.5f,
-                                        tint = tint
-                                    )
-                                } ?: TransparentLayer,
-                            backgroundLayer =
-                                icon.background?.let {
-                                    StaticIconLayer(
-                                        icon = it,
-                                        scale = 1.5f,
-                                        tint = tint
-                                    )
-                                } ?: TransparentLayer
-                        )
-                    }
-                }
+			when (icon) {
+				is AdaptiveIconDrawable -> {
+					if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
+						StaticLauncherIcon(
+							foregroundLayer =
+								StaticIconLayer(
+									scale = 1.5f,
+									icon = icon.monochrome!!,
+									tint = tint
+								),
+							backgroundLayer = TransparentLayer
+						)
+					} else {
+						StaticLauncherIcon(
+							foregroundLayer =
+								icon.foreground?.let {
+									StaticIconLayer(
+										icon = it,
+										scale = 1.5f,
+										tint = tint
+									)
+								} ?: TransparentLayer,
+							backgroundLayer =
+								icon.background?.let {
+									StaticIconLayer(
+										icon = it,
+										scale = 1.5f,
+										tint = tint
+									)
+								} ?: TransparentLayer
+						)
+					}
+				}
 
-                else -> {
-                    StaticLauncherIcon(
-                        foregroundLayer =
-                            StaticIconLayer(
-                                icon = icon,
-                                scale = 1f,
-                                tint = tint
-                            ),
-                        backgroundLayer = TransparentLayer
-                    )
-                }
-            }
-        } catch (_: Exception) {
-            null
-        }
-    }
+				else -> {
+					StaticLauncherIcon(
+						foregroundLayer =
+							StaticIconLayer(
+								icon = icon,
+								scale = 1f,
+								tint = tint
+							),
+						backgroundLayer = TransparentLayer
+					)
+				}
+			}
+		} catch (_: Exception) {
+			null
+		}
+	}
 
-    override fun getStoreDetails(ctx: Context): StoreLink? {
-        // System apps don't have store links
-        return null
-    }
+	override fun getStoreDetails(ctx: Context): StoreLink? {
+		// System apps don't have store links
+		return null
+	}
 }
 
 public fun buildFakeComponentName(
-    packageName: String
+	packageName: String
 ): ComponentName {
-    // System apps don't have a launcher activity, create a synthetic one
-    val packageName = packageName
-    val shortClassName = ".MainActivity" // Fallback class name
-    return ComponentName(packageName, packageName + shortClassName)
+	// System apps don't have a launcher activity, create a synthetic one
+	val packageName = packageName
+	val shortClassName = ".MainActivity" // Fallback class name
+	return ComponentName(packageName, packageName + shortClassName)
 }

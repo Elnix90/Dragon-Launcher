@@ -23,78 +23,78 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomAlertDialog(
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    imePadding: Boolean = true,
-    scroll: Boolean = true,
-    alignment: Alignment = Alignment.BottomCenter,
-    confirmButton: @Composable (() -> Unit)? = null,
-    dismissButton: @Composable (() -> Unit)? = null,
-    icon: @Composable (() -> Unit)? = null,
-    title: @Composable (() -> Unit)? = null,
-    text: @Composable (() -> Unit)? = null
+	onDismissRequest: () -> Unit,
+	modifier: Modifier = Modifier,
+	imePadding: Boolean = true,
+	scroll: Boolean = true,
+	alignment: Alignment = Alignment.BottomCenter,
+	confirmButton: @Composable (() -> Unit)? = null,
+	dismissButton: @Composable (() -> Unit)? = null,
+	icon: @Composable (() -> Unit)? = null,
+	title: @Composable (() -> Unit)? = null,
+	text: @Composable (() -> Unit)? = null
 ) {
-    @SuppressLint("ConfigurationScreenWidthHeight")
-    val maxDialogHeight = LocalConfiguration.current.screenHeightDp.dp * 0.9f
+	@SuppressLint("ConfigurationScreenWidthHeight")
+	val maxDialogHeight = LocalConfiguration.current.screenHeightDp.dp * 0.9f
 
-    CompositionLocalProvider(
-        LocalContentColor provides MaterialTheme.colorScheme.onSurface
-    ) {
-        FullScreenOverlay(
-            onDismissRequest = onDismissRequest,
-            imePadding = imePadding,
-            alignment = alignment
-        ) {
-            Column(
-                modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .heightIn(max = maxDialogHeight)
-                        .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        .padding(top = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(15.dp)
-            ) {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    icon?.invoke()
-                    title?.invoke()
-                }
+	CompositionLocalProvider(
+		LocalContentColor provides MaterialTheme.colorScheme.onSurface
+	) {
+		FullScreenOverlay(
+			onDismissRequest = onDismissRequest,
+			imePadding = imePadding,
+			alignment = alignment
+		) {
+			Column(
+				modifier =
+					modifier
+						.fillMaxWidth()
+						.heightIn(max = maxDialogHeight)
+						.clip(MaterialTheme.shapes.large)
+						.background(MaterialTheme.colorScheme.surfaceContainerLow)
+						.padding(top = 15.dp),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.spacedBy(15.dp)
+			) {
+				Row(
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.padding(horizontal = 15.dp),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.Center
+				) {
+					icon?.invoke()
+					title?.invoke()
+				}
 
-                Box(
-                    Modifier
-                        .padding(horizontal = 15.dp)
-                        .weight(1f, fill = false)
-                        .then(
-                            if (scroll) {
-                                Modifier.verticalScroll(rememberScrollState())
-                            } else {
-                                Modifier
-                            }
-                        )
-                ) {
-                    text?.invoke()
-                }
+				Box(
+					Modifier
+						.padding(horizontal = 15.dp)
+						.weight(1f, fill = false)
+						.then(
+							if (scroll) {
+								Modifier.verticalScroll(rememberScrollState())
+							} else {
+								Modifier
+							}
+						)
+				) {
+					text?.invoke()
+				}
 
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    dismissButton?.invoke()
-                    confirmButton?.invoke()
-                }
-            }
-        }
-    }
+				Row(
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.padding(horizontal = 15.dp),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.Center
+				) {
+					dismissButton?.invoke()
+					confirmButton?.invoke()
+				}
+			}
+		}
+	}
 }

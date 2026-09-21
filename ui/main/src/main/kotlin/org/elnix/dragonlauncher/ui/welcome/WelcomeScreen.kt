@@ -37,124 +37,124 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WelcomeScreen(
-    welcomeViewModel: WelcomeViewModel,
-    initializationViewModel: InitializationViewModel = activityViewModel()
+	welcomeViewModel: WelcomeViewModel,
+	initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
-    val navigator = LocalNavigator.current
+	val navigator = LocalNavigator.current
 
-    val pagerState = welcomeViewModel.pagerState
+	val pagerState = welcomeViewModel.pagerState
 
-    var showScrollIndicator by remember { mutableStateOf(false) }
-    var showShapesScrollBar by remember { mutableStateOf(false) }
+	var showScrollIndicator by remember { mutableStateOf(false) }
+	var showShapesScrollBar by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        delay(500.milliseconds)
-        showShapesScrollBar = true
-    }
+	LaunchedEffect(Unit) {
+		delay(500.milliseconds)
+		showShapesScrollBar = true
+	}
 
-    LaunchedEffect(pagerState.currentPage) {
-        val pageId = pagerState.currentPage
+	LaunchedEffect(pagerState.currentPage) {
+		val pageId = pagerState.currentPage
 
-        // When the page is the first one
-        if (pageId == 0) {
-            launch {
-                delay(500.milliseconds)
-                showScrollIndicator = true
-            }
-        } else {
-            showScrollIndicator = false
-        }
-    }
+		// When the page is the first one
+		if (pageId == 0) {
+			launch {
+				delay(500.milliseconds)
+				showScrollIndicator = true
+			}
+		} else {
+			showScrollIndicator = false
+		}
+	}
 
-    // Prevent the user to quit
-    BackHandler { }
+	// Prevent the user to quit
+	BackHandler { }
 
-    val currentPage = pagerState.currentPage
-    val pagerTransparency = when {
-        currentPage < PAGES_NUMBER - 2 -> {
-            1f
-        }
+	val currentPage = pagerState.currentPage
+	val pagerTransparency = when {
+		currentPage < PAGES_NUMBER - 2 -> {
+			1f
+		}
 
-        currentPage == PAGES_NUMBER - 1 -> {
-            0f
-        }
+		currentPage == PAGES_NUMBER - 1 -> {
+			0f
+		}
 
-        else -> {
-            1f - pagerState.currentPageOffsetFraction * 2
-        }
-    }
+		else -> {
+			1f - pagerState.currentPageOffsetFraction * 2
+		}
+	}
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                // Here I purposely use the .copy method instead of the .alphaMultiplier, in order to force the full transparency of the background
-                .background(MaterialTheme.colorScheme.background.copy(pagerTransparency))
-    ) {
-        VerticalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
-        ) { displayPage ->
-            when (displayPage) {
-                0 -> {
-                    WelcomePageIntro(pagerState.currentPage < 2, welcomeViewModel::setAsSeen)
-                }
+	Box(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				// Here I purposely use the .copy method instead of the .alphaMultiplier, in order to force the full transparency of the background
+				.background(MaterialTheme.colorScheme.background.copy(pagerTransparency))
+	) {
+		VerticalPager(
+			state = pagerState,
+			modifier = Modifier
+				.fillMaxSize()
+				.padding(horizontal = 24.dp)
+		) { displayPage ->
+			when (displayPage) {
+				0 -> {
+					WelcomePageIntro(pagerState.currentPage < 2, welcomeViewModel::setAsSeen)
+				}
 
-                1 -> {
-                    WelcomePageTutorial()
-                }
+				1 -> {
+					WelcomePageTutorial()
+				}
 
-                2 -> {
-                    WelcomePageSettings(
-                        onEnterSettings = {
-                            welcomeViewModel.setAsSeen()
+				2 -> {
+					WelcomePageSettings(
+						onEnterSettings = {
+							welcomeViewModel.setAsSeen()
 
-                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
-                            initializationViewModel.checkLauncherInitialization()
-                            navigator.popBackMainScreen()
-                            navigator.go(NavigationRoute.PointsSettings)
-                        }
-                    )
-                }
+							// Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+							initializationViewModel.checkLauncherInitialization()
+							navigator.popBackMainScreen()
+							navigator.go(NavigationRoute.PointsSettings)
+						}
+					)
+				}
 
-                3 -> {
-                    LaunchedEffect(pagerState.currentPage) {
-                        if (pagerState.currentPage == PAGES_NUMBER - 1) {
-                            welcomeViewModel.setAsSeen()
+				3 -> {
+					LaunchedEffect(pagerState.currentPage) {
+						if (pagerState.currentPage == PAGES_NUMBER - 1) {
+							welcomeViewModel.setAsSeen()
 
-                            showShapesScrollBar = false
+							showShapesScrollBar = false
 
-                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
-                            initializationViewModel.checkLauncherInitialization()
+							// Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+							initializationViewModel.checkLauncherInitialization()
 
-                            navigator.onBack()
-                        }
-                    }
-                }
-            }
-        }
+							navigator.onBack()
+						}
+					}
+				}
+			}
+		}
 
-        AnimatedVisibility(
-            visible = showShapesScrollBar,
-            enter = slideInHorizontalBouncy,
-            exit = slideOutHorizontalBouncy,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 12.dp)
-        ) {
-            ShapeIndicatorColumn(
-                pagerState = pagerState,
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                shuffleShapes = true,
-                overflow = ShapeIndicatorDefaults.overflow(maxVisibleItems = PAGES_NUMBER)
-            )
-        }
+		AnimatedVisibility(
+			visible = showShapesScrollBar,
+			enter = slideInHorizontalBouncy,
+			exit = slideOutHorizontalBouncy,
+			modifier = Modifier
+				.align(Alignment.CenterEnd)
+				.padding(end = 12.dp)
+		) {
+			ShapeIndicatorColumn(
+				pagerState = pagerState,
+				verticalArrangement = Arrangement.spacedBy(10.dp),
+				shuffleShapes = true,
+				overflow = ShapeIndicatorDefaults.overflow(maxVisibleItems = PAGES_NUMBER)
+			)
+		}
 
-        VerticalScrollIndicator(
-            visible = showScrollIndicator,
-            modifier = Modifier.padding(bottom = 50.dp)
-        )
-    }
+		VerticalScrollIndicator(
+			visible = showScrollIndicator,
+			modifier = Modifier.padding(bottom = 50.dp)
+		)
+	}
 }

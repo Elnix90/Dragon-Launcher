@@ -11,18 +11,18 @@ import org.json.JSONObject
 
 @Composable
 fun ThemeJsonPopup(
-    json: JSONObject,
-    onDismiss: () -> Unit
+	json: JSONObject,
+	onDismiss: () -> Unit
 ) {
-    val themeString: String = json.toString(2)
+	val themeString: String = json.toString(2)
 
-    CustomAlertDialog(
-        modifier = Modifier.padding(15.dp),
-        alignment = Alignment.Center,
-        onDismissRequest = onDismiss,
-        scroll = false,
-        text = {
-            MonospaceScrollableText(themeString.lines())
-        }
-    )
+	CustomAlertDialog(
+		modifier = Modifier.padding(15.dp),
+		alignment = Alignment.Center,
+		onDismissRequest = onDismiss,
+		scroll = false,
+		text = {
+			MonospaceScrollableText(themeString.lines())
+		}
+	)
 }

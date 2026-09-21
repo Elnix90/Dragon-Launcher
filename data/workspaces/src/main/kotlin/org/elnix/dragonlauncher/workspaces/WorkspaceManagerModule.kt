@@ -11,10 +11,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object WorkspaceManagerModule {
-    @Provides
-    @Singleton
-    fun provideWorkspaceManager(
-        @ApplicationContext ctx: Context
-    ): WorkspacesManager =
-        WorkspacesManager(ctx)
+	@Provides
+	@Singleton
+	fun provideWorkspaceManager(
+		@ApplicationContext ctx: Context
+	): WorkspacesManager =
+		WorkspacesManager(ctx)
 }

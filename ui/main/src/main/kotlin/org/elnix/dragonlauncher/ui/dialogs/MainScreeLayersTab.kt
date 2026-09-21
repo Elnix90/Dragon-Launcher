@@ -46,207 +46,207 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun MainScreeLayersTab(
-    swipeViewModel: SwipeViewModel = activityViewModel()
+	swipeViewModel: SwipeViewModel = activityViewModel()
 ) {
-    val navigator = LocalNavigator.current
-    val swipeService = swipeViewModel.swipeService
+	val navigator = LocalNavigator.current
+	val swipeService = swipeViewModel.swipeService
 
-    val order by swipeService.mainScreenLayerOrder.asState()
+	val order by swipeService.mainScreenLayerOrder.asState()
 
-    val lazyListState = rememberLazyListState()
-    val reorderState =
-        rememberReorderableLazyListState(
-            lazyListState = lazyListState,
-            onMove = { from, to ->
-                swipeService.mainScreenLayerOrder.value =
-                    order.toMutableList().apply {
-                        add(to.index, removeAt(from.index))
-                    }
-            }
-        )
+	val lazyListState = rememberLazyListState()
+	val reorderState =
+		rememberReorderableLazyListState(
+			lazyListState = lazyListState,
+			onMove = { from, to ->
+				swipeService.mainScreenLayerOrder.value =
+					order.toMutableList().apply {
+						add(to.index, removeAt(from.index))
+					}
+			}
+		)
 
-    SettingsScaffold(
-        title = stringResource(R.string.main_screen_layers),
-        helpText = stringResource(R.string.main_screen_layers_help),
-        onReset = {
-            swipeService.resetMainScreenLayers()
-        },
-        onBack = {
-            swipeService.saveMainScreenLayers()
-            navigator.onBack()
-        },
-        lasyListState = lazyListState,
-        resetTitle = stringResource(R.string.main_screen_layers_reset_title),
-        resetText = stringResource(R.string.main_screen_layers_reset),
-        lazyContent = {
-            items(order, key = { it.toString() }) { item ->
+	SettingsScaffold(
+		title = stringResource(R.string.main_screen_layers),
+		helpText = stringResource(R.string.main_screen_layers_help),
+		onReset = {
+			swipeService.resetMainScreenLayers()
+		},
+		onBack = {
+			swipeService.saveMainScreenLayers()
+			navigator.onBack()
+		},
+		lasyListState = lazyListState,
+		resetTitle = stringResource(R.string.main_screen_layers_reset_title),
+		resetText = stringResource(R.string.main_screen_layers_reset),
+		lazyContent = {
+			items(order, key = { it.toString() }) { item ->
 
-                ReorderableItem(
-                    state = reorderState,
-                    key = item.toString()
-                ) { isDragging ->
+				ReorderableItem(
+					state = reorderState,
+					key = item.toString()
+				) { isDragging ->
 
-                    val scale by animateFloatAsState(
-                        if (isDragging) 1.03f else 1f
-                    )
+					val scale by animateFloatAsState(
+						if (isDragging) 1.03f else 1f
+					)
 
-                    val elevation by animateDpAsState(
-                        if (isDragging) 16.dp else 0.dp
-                    )
+					val elevation by animateDpAsState(
+						if (isDragging) 16.dp else 0.dp
+					)
 
-                    ElevatedCard(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .scale(scale)
-                                .longPressDraggableHandle(),
-                        elevation = elevatedCardElevation(elevation),
-                        shape = CardDefaults.shape
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(5.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        horizontal = 12.dp,
-                                        vertical = 10.dp
-                                    )
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Checkbox(
-                                    onCheckedChange = {
-                                        swipeService.mainScreenLayerOrder.value =
-                                            order.map {
-                                                if (it == item) it.copyWithEnabled(!it.enabled) else it
-                                            }
-                                    },
-                                    checked = item.enabled
-                                )
+					ElevatedCard(
+						modifier =
+							Modifier
+								.fillMaxWidth()
+								.scale(scale)
+								.longPressDraggableHandle(),
+						elevation = elevatedCardElevation(elevation),
+						shape = CardDefaults.shape
+					) {
+						Column(
+							verticalArrangement = Arrangement.spacedBy(5.dp),
+							horizontalAlignment = Alignment.CenterHorizontally,
+							modifier =
+								Modifier
+									.fillMaxWidth()
+									.padding(
+										horizontal = 12.dp,
+										vertical = 10.dp
+									)
+						) {
+							Row(verticalAlignment = Alignment.CenterVertically) {
+								Checkbox(
+									onCheckedChange = {
+										swipeService.mainScreenLayerOrder.value =
+											order.map {
+												if (it == item) it.copyWithEnabled(!it.enabled) else it
+											}
+									},
+									checked = item.enabled
+								)
 
-                                Text(
-                                    text = item.label,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.weight(1f)
-                                )
+								Text(
+									text = item.label,
+									style = MaterialTheme.typography.bodyLarge,
+									modifier = Modifier.weight(1f)
+								)
 
-                                Icon(
-                                    painter = painterResource(R.drawable.drag_handle),
-                                    contentDescription = null,
-                                    modifier = Modifier.draggableHandle()
-                                )
-                            }
+								Icon(
+									painter = painterResource(R.drawable.drag_handle),
+									contentDescription = null,
+									modifier = Modifier.draggableHandle()
+								)
+							}
 
-                            @Suppress("UnusedExpression")
-                            when (item) {
-                                is MainScreenLayer.CustomDim -> {
-                                    AnimatedVisibility(item.enabled) {
-                                        var tempShowAfter by remember { mutableIntStateOf(item.showAfterMs) }
-                                        var tempDimAmount by remember { mutableFloatStateOf(item.dimAmount) }
+							@Suppress("UnusedExpression")
+							when (item) {
+								is MainScreenLayer.CustomDim -> {
+									AnimatedVisibility(item.enabled) {
+										var tempShowAfter by remember { mutableIntStateOf(item.showAfterMs) }
+										var tempDimAmount by remember { mutableFloatStateOf(item.dimAmount) }
 
-                                        DragonSettingsGroup {
-                                            SliderWithLabel(
-                                                value = tempShowAfter,
-                                                valueRange = 0..5000,
-                                                label = stringResource(R.string.show_after),
-                                                description = stringResource(R.string.show_after_help),
-                                                resetEnabled = tempShowAfter != MainScreenLayer.CustomDim.defaultShowAfterMs,
-                                                onReset = {
-                                                    swipeService.mainScreenLayerOrder.value =
-                                                        order.map {
-                                                            if (it is MainScreenLayer.CustomDim) {
-                                                                it.copy(
-                                                                    showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs
-                                                                )
-                                                            } else {
-                                                                it
-                                                            }
-                                                        }
-                                                },
-                                                onDragStateChange = { isDragging ->
-                                                    if (!isDragging) {
-                                                        swipeService.mainScreenLayerOrder.value =
-                                                            order.map {
-                                                                if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
-                                                            }
-                                                    }
-                                                }
-                                            ) { newValue ->
-                                                tempShowAfter = newValue
-                                            }
+										DragonSettingsGroup {
+											SliderWithLabel(
+												value = tempShowAfter,
+												valueRange = 0..5000,
+												label = stringResource(R.string.show_after),
+												description = stringResource(R.string.show_after_help),
+												resetEnabled = tempShowAfter != MainScreenLayer.CustomDim.defaultShowAfterMs,
+												onReset = {
+													swipeService.mainScreenLayerOrder.value =
+														order.map {
+															if (it is MainScreenLayer.CustomDim) {
+																it.copy(
+																	showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs
+																)
+															} else {
+																it
+															}
+														}
+												},
+												onDragStateChange = { isDragging ->
+													if (!isDragging) {
+														swipeService.mainScreenLayerOrder.value =
+															order.map {
+																if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
+															}
+													}
+												}
+											) { newValue ->
+												tempShowAfter = newValue
+											}
 
-                                            SliderWithLabel(
-                                                value = tempDimAmount,
-                                                valueRange = 0f..1f,
-                                                label = stringResource(R.string.dim_amount),
-                                                description = stringResource(R.string.dim_amount_help),
-                                                resetEnabled = tempDimAmount != MainScreenLayer.CustomDim.defaultDimAmount,
-                                                onReset = {
-                                                    swipeService.mainScreenLayerOrder.value =
-                                                        order.map {
-                                                            if (it is MainScreenLayer.CustomDim) {
-                                                                it.copy(
-                                                                    dimAmount = MainScreenLayer.CustomDim.defaultDimAmount
-                                                                )
-                                                            } else {
-                                                                it
-                                                            }
-                                                        }
-                                                },
-                                                onDragStateChange = { isDragging ->
-                                                    if (!isDragging) {
-                                                        swipeService.mainScreenLayerOrder.value =
-                                                            order.map {
-                                                                if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
-                                                            }
-                                                    }
-                                                }
-                                            ) { newValue ->
-                                                tempDimAmount = newValue
-                                            }
-                                        }
-                                    }
-                                }
+											SliderWithLabel(
+												value = tempDimAmount,
+												valueRange = 0f..1f,
+												label = stringResource(R.string.dim_amount),
+												description = stringResource(R.string.dim_amount_help),
+												resetEnabled = tempDimAmount != MainScreenLayer.CustomDim.defaultDimAmount,
+												onReset = {
+													swipeService.mainScreenLayerOrder.value =
+														order.map {
+															if (it is MainScreenLayer.CustomDim) {
+																it.copy(
+																	dimAmount = MainScreenLayer.CustomDim.defaultDimAmount
+																)
+															} else {
+																it
+															}
+														}
+												},
+												onDragStateChange = { isDragging ->
+													if (!isDragging) {
+														swipeService.mainScreenLayerOrder.value =
+															order.map {
+																if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
+															}
+													}
+												}
+											) { newValue ->
+												tempDimAmount = newValue
+											}
+										}
+									}
+								}
 
-                                is MainScreenLayer.DragOverlay -> {
-                                    AnimatedVisibility(item.enabled) {
-                                        @Suppress("SimplifyBooleanWithConstants")
-                                        DragonSettingsGroup {
-                                            SwitchRow(
-                                                state = item.lineBeforeNests,
-                                                title = R.string.line_before_nests,
-                                                resetEnabled = item.lineBeforeNests != MainScreenLayer.DragOverlay.defaultLineBeforeNests,
-                                                onReset = {
-                                                    swipeService.mainScreenLayerOrder.value =
-                                                        order.map {
-                                                            if (it is MainScreenLayer.DragOverlay) {
-                                                                it.copy(
-                                                                    lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests
-                                                                )
-                                                            } else {
-                                                                it
-                                                            }
-                                                        }
-                                                }
-                                            ) { newValue ->
-                                                swipeService.mainScreenLayerOrder.value =
-                                                    order.map {
-                                                        if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
-                                                    }
-                                            }
-                                        }
-                                    }
-                                }
+								is MainScreenLayer.DragOverlay -> {
+									AnimatedVisibility(item.enabled) {
+										@Suppress("SimplifyBooleanWithConstants")
+										DragonSettingsGroup {
+											SwitchRow(
+												state = item.lineBeforeNests,
+												title = R.string.line_before_nests,
+												resetEnabled = item.lineBeforeNests != MainScreenLayer.DragOverlay.defaultLineBeforeNests,
+												onReset = {
+													swipeService.mainScreenLayerOrder.value =
+														order.map {
+															if (it is MainScreenLayer.DragOverlay) {
+																it.copy(
+																	lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests
+																)
+															} else {
+																it
+															}
+														}
+												}
+											) { newValue ->
+												swipeService.mainScreenLayerOrder.value =
+													order.map {
+														if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
+													}
+											}
+										}
+									}
+								}
 
-                                else -> {
-                                    null
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    )
+								else -> {
+									null
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	)
 }

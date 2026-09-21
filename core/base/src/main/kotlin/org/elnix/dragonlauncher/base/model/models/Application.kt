@@ -34,238 +34,238 @@ import java.text.Collator
 
 @Immutable
 public abstract class Application : Comparable<Application> {
-    public abstract val label: String
-    public abstract val defaultLabel: String
-    public abstract val labelOverride: String?
+	public abstract val label: String
+	public abstract val defaultLabel: String
+	public abstract val labelOverride: String?
 
-    public abstract fun overrideLabel(label: String): Application
+	public abstract fun overrideLabel(label: String): Application
 
-    public abstract val category: AppCategory
+	public abstract val category: AppCategory
 
-    public abstract val categoryOverride: String?
+	public abstract val categoryOverride: String?
 
-    public abstract fun overrideCategory(categoryName: String?): Application
+	public abstract fun overrideCategory(categoryName: String?): Application
 
-    public val effectiveCategory: String
-        get() = categoryOverride ?: category.name
+	public val effectiveCategory: String
+		get() = categoryOverride ?: category.name
 
-    public abstract val profile: Profile
-    public val userSerialNumber: Long
-        get() = profile.serial
-    public val user: UserHandle
-        get() = profile.userHandle
+	public abstract val profile: Profile
+	public val userSerialNumber: Long
+		get() = profile.serial
+	public val user: UserHandle
+		get() = profile.userHandle
 
-    public abstract val isSystem: Boolean
-    public abstract val isLaunchable: Boolean
+	public abstract val isSystem: Boolean
+	public abstract val isLaunchable: Boolean
 
-    public abstract val isSuspended: Boolean
-    public abstract val componentName: ComponentName
+	public abstract val isSuspended: Boolean
+	public abstract val componentName: ComponentName
 
-    public abstract val packageName: String
+	public abstract val packageName: String
 
-    public abstract val versionName: String?
+	public abstract val versionName: String?
 
-    public val isPrivate: Boolean
-        get() = profile.type == Profile.Type.Private
+	public val isPrivate: Boolean
+		get() = profile.type == Profile.Type.Private
 
-    public val isWork: Boolean
-        get() = profile.type == Profile.Type.Work
+	public val isWork: Boolean
+		get() = profile.type == Profile.Type.Work
 
-    /**
-     * Cached result of the normalized label.
-     * First string is the normalizer ID
-     * Second string is the normalized label
-     */
-    public abstract var cachedNormalizerResult: Pair<String, String>?
+	/**
+	 * Cached result of the normalized label.
+	 * First string is the normalizer ID
+	 * Second string is the normalized label
+	 */
+	public abstract var cachedNormalizerResult: Pair<String, String>?
 
-    public val action: Action.LaunchApp by lazy {
-        Action.LaunchApp(packageName, profile)
-    }
+	public val action: Action.LaunchApp by lazy {
+		Action.LaunchApp(packageName, profile)
+	}
 
-    public val key: CacheKey by lazy {
-        CacheKey(this)
-    }
+	public val key: CacheKey by lazy {
+		CacheKey(this)
+	}
 
-    public abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
+	public abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
 
-    public fun launch(ctx: Context, options: Bundle?): Boolean {
-        val launcherApps = ctx.getSystemService<LauncherApps>()!!
-        if (isAtLeastApiLevel(31)) {
-            options?.putInt("android.activity.splashScreenStyle", 1)
-        }
-        try {
-            launcherApps.startMainActivity(
-                componentName,
-                user,
-                null,
-                options
-            )
-        } catch (e: SecurityException) {
-            logE(APP_LAUNCH_TAG, e) { "Could not launch app" }
-            return false
-        } catch (e: ActivityNotFoundException) {
-            logE(APP_LAUNCH_TAG, e) { "Could not launch app" }
-            return false
-        }
-        return true
-    }
+	public fun launch(ctx: Context, options: Bundle?): Boolean {
+		val launcherApps = ctx.getSystemService<LauncherApps>()!!
+		if (isAtLeastApiLevel(31)) {
+			options?.putInt("android.activity.splashScreenStyle", 1)
+		}
+		try {
+			launcherApps.startMainActivity(
+				componentName,
+				user,
+				null,
+				options
+			)
+		} catch (e: SecurityException) {
+			logE(APP_LAUNCH_TAG, e) { "Could not launch app" }
+			return false
+		} catch (e: ActivityNotFoundException) {
+			logE(APP_LAUNCH_TAG, e) { "Could not launch app" }
+			return false
+		}
+		return true
+	}
 
-    public fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon =
-        StaticLauncherIcon(
-            foregroundLayer =
-                StaticIconLayer(
-                    icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
-                    scale = 0.65f,
-                    tint = 0xff3dda84.toInt()
-                ),
-            backgroundLayer = ColorLayer(0xff3dda84.toInt())
-        )
+	public fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon =
+		StaticLauncherIcon(
+			foregroundLayer =
+				StaticIconLayer(
+					icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
+					scale = 0.65f,
+					tint = 0xff3dda84.toInt()
+				),
+			backgroundLayer = ColorLayer(0xff3dda84.toInt())
+		)
 
-    public abstract fun getStoreDetails(ctx: Context): StoreLink?
+	public abstract fun getStoreDetails(ctx: Context): StoreLink?
 
-    public fun uninstall(ctx: Context) {
-        val intent = Intent(Intent.ACTION_DELETE)
-        intent.data = "package:$packageName".toUri()
-        ctx.startActivity(intent)
-    }
+	public fun uninstall(ctx: Context) {
+		val intent = Intent(Intent.ACTION_DELETE)
+		intent.data = "package:$packageName".toUri()
+		ctx.startActivity(intent)
+	}
 
-    public fun openAppDetails(ctx: Context) {
-        val launcherApps = ctx.getSystemService<LauncherApps>()!!
+	public fun openAppDetails(ctx: Context) {
+		val launcherApps = ctx.getSystemService<LauncherApps>()!!
 
-        launcherApps.startAppDetailsActivity(
-            componentName,
-            user,
-            null,
-            null
-        )
-    }
+		launcherApps.startAppDetailsActivity(
+			componentName,
+			user,
+			null,
+			null
+		)
+	}
 
-    public suspend fun shareApkFile(ctx: Context) {
-        val launcherApps = ctx.getSystemService<LauncherApps>()!!
-        val fileCopy =
-            File(
-                ctx.cacheDir,
-                "$packageName-$versionName.apk"
-            )
-        withContext(Dispatchers.IO) {
-            try {
-                val info = launcherApps.getApplicationInfo(packageName, 0, user)
-                val file = File(info.publicSourceDir)
+	public suspend fun shareApkFile(ctx: Context) {
+		val launcherApps = ctx.getSystemService<LauncherApps>()!!
+		val fileCopy =
+			File(
+				ctx.cacheDir,
+				"$packageName-$versionName.apk"
+			)
+		withContext(Dispatchers.IO) {
+			try {
+				val info = launcherApps.getApplicationInfo(packageName, 0, user)
+				val file = File(info.publicSourceDir)
 
-                try {
-                    file.copyTo(fileCopy, false)
-                } catch (_: FileAlreadyExistsException) {
-                    // Do nothing. If the file is already there we don't have to copy it again.
-                }
-            } catch (_: PackageManager.NameNotFoundException) {
-            }
-        }
-        val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        val uri =
-            FileProvider.getUriForFile(
-                ctx,
-                ctx.applicationContext.packageName + ".fileprovider",
-                fileCopy
-            )
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-        shareIntent.type = "application/vnd.android.package-archive"
-        withContext(Dispatchers.Main) {
-            ctx.startActivity(Intent.createChooser(shareIntent, null))
-        }
-    }
+				try {
+					file.copyTo(fileCopy, false)
+				} catch (_: FileAlreadyExistsException) {
+					// Do nothing. If the file is already there we don't have to copy it again.
+				}
+			} catch (_: PackageManager.NameNotFoundException) {
+			}
+		}
+		val shareIntent = Intent(Intent.ACTION_SEND)
+		shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+		val uri =
+			FileProvider.getUriForFile(
+				ctx,
+				ctx.applicationContext.packageName + ".fileprovider",
+				fileCopy
+			)
+		shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+		shareIntent.type = "application/vnd.android.package-archive"
+		withContext(Dispatchers.Main) {
+			ctx.startActivity(Intent.createChooser(shareIntent, null))
+		}
+	}
 
-    public fun getActivityInfo(ctx: Context): ActivityInfo? =
-        try {
-            ctx.packageManager.getActivityInfo(componentName, 0)
-        } catch (_: PackageManager.NameNotFoundException) {
-            null
-        }
+	public fun getActivityInfo(ctx: Context): ActivityInfo? =
+		try {
+			ctx.packageManager.getActivityInfo(componentName, 0)
+		} catch (_: PackageManager.NameNotFoundException) {
+			null
+		}
 
-    override fun compareTo(other: Application): Int {
-        val label1 = labelOverride ?: label
-        val label2 = other.labelOverride ?: other.label
-        return Collator
-            .getInstance()
-            .apply { strength = Collator.SECONDARY }
-            .compare(label1, label2)
-    }
+	override fun compareTo(other: Application): Int {
+		val label1 = labelOverride ?: label
+		val label2 = other.labelOverride ?: other.label
+		return Collator
+			.getInstance()
+			.apply { strength = Collator.SECONDARY }
+			.compare(label1, label2)
+	}
 
-    public companion object {
-        public fun Application.getStoreLinkForInstaller(
-            installerPackage: String?
-        ): StoreLink? =
-            when (installerPackage) {
-                "de.amazon.mShop.android", "com.amazon.venezia" -> {
-                    StoreLink(
-                        label = "Amazon App Shop",
-                        url = "http://www.amazon.com/gp/mas/dl/android?p=$packageName",
-                        icon = R.drawable.amazon
-                    )
-                }
+	public companion object {
+		public fun Application.getStoreLinkForInstaller(
+			installerPackage: String?
+		): StoreLink? =
+			when (installerPackage) {
+				"de.amazon.mShop.android", "com.amazon.venezia" -> {
+					StoreLink(
+						label = "Amazon App Shop",
+						url = "http://www.amazon.com/gp/mas/dl/android?p=$packageName",
+						icon = R.drawable.amazon
+					)
+				}
 
-                "dev.imranr.obtainium", "dev.imranr.obtainium.fdroid" -> {
-                    StoreLink(
-                        label = "Obtainium",
-                        url = "https://obtainium.imranr.dev/app/$packageName",
-                        icon = R.drawable.obtainium
-                    )
-                }
+				"dev.imranr.obtainium", "dev.imranr.obtainium.fdroid" -> {
+					StoreLink(
+						label = "Obtainium",
+						url = "https://obtainium.imranr.dev/app/$packageName",
+						icon = R.drawable.obtainium
+					)
+				}
 
-                "com.android.vending" -> {
-                    StoreLink(
-                        label = "Google Play Store",
-                        url = "https://play.google.com/store/apps/details?id=$packageName",
-                        icon = R.drawable.play_store
-                    )
-                }
+				"com.android.vending" -> {
+					StoreLink(
+						label = "Google Play Store",
+						url = "https://play.google.com/store/apps/details?id=$packageName",
+						icon = R.drawable.play_store
+					)
+				}
 
-                "org.fdroid.fdroid" -> {
-                    StoreLink(
-                        label = "F-Droid",
-                        url = "https://f-droid.org/packages/$packageName",
-                        icon = R.drawable.f_droid
-                    )
-                }
+				"org.fdroid.fdroid" -> {
+					StoreLink(
+						label = "F-Droid",
+						url = "https://f-droid.org/packages/$packageName",
+						icon = R.drawable.f_droid
+					)
+				}
 
-                "com.aurora.store", "com.aurora.adroid" -> {
-                    StoreLink(
-                        label = "Aurora Store",
-                        url = "https://play.google.com/store/apps/details?id=$packageName",
-                        icon = R.drawable.aurora_store
-                    )
-                }
+				"com.aurora.store", "com.aurora.adroid" -> {
+					StoreLink(
+						label = "Aurora Store",
+						url = "https://play.google.com/store/apps/details?id=$packageName",
+						icon = R.drawable.aurora_store
+					)
+				}
 
-                else -> {
-                    null
-                }
-            }
+				else -> {
+					null
+				}
+			}
 
-        public fun getPackageVersionName(ctx: Context, packageName: String): String? =
-            try {
-                ctx.packageManager.getPackageInfo(packageName, 0).versionName
-            } catch (_: PackageManager.NameNotFoundException) {
-                null
-            }
+		public fun getPackageVersionName(ctx: Context, packageName: String): String? =
+			try {
+				ctx.packageManager.getPackageInfo(packageName, 0).versionName
+			} catch (_: PackageManager.NameNotFoundException) {
+				null
+			}
 
-        public fun isSuspended(ctx: Context, packageName: String): Boolean =
-            try {
-                ctx.packageManager
-                    .getApplicationInfo(
-                        packageName,
-                        0
-                    ).flags and ApplicationInfo.FLAG_SUSPENDED != 0
-            } catch (_: PackageManager.NameNotFoundException) {
-                false
-            }
+		public fun isSuspended(ctx: Context, packageName: String): Boolean =
+			try {
+				ctx.packageManager
+					.getApplicationInfo(
+						packageName,
+						0
+					).flags and ApplicationInfo.FLAG_SUSPENDED != 0
+			} catch (_: PackageManager.NameNotFoundException) {
+				false
+			}
 
-        public fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
-    }
+		public fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
+	}
 }
 
 public data class StoreLink(
-    val label: String,
-    val url: String,
-    @DrawableRes
-    val icon: Int
+	val label: String,
+	val url: String,
+	@DrawableRes
+	val icon: Int
 )

@@ -11,8 +11,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
  * @property isInCancelZone True when [targetCircle] == -1.
  */
 public data class HitResult(
-    val selectedPoint: Point?,
-    val isOutsideBounds: Boolean,
-    val isInCancelZone: Boolean,
-    val angle360: Float
+	val selectedPoint: Point?,
+	val isOutsideBounds: Boolean,
+	val isInCancelZone: Boolean,
+	val angle360: Float
 )

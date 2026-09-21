@@ -43,143 +43,143 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun WelcomePageIntro(
-    isVisible: Boolean,
-    setAsSeen: () -> Unit
+	isVisible: Boolean,
+	setAsSeen: () -> Unit
 ) {
-    val navigator = LocalNavigator.current
+	val navigator = LocalNavigator.current
 
-    val hasSeenWelcomeOriginal by PrivateSettingsStore.hasSeenWelcome.asState()
+	val hasSeenWelcomeOriginal by PrivateSettingsStore.hasSeenWelcome.asState()
 
-    val headlinesAlpha =
-        remember(isVisible) {
-            List(3) { Animatable(initialValue = 0f) }
-        }
+	val headlinesAlpha =
+		remember(isVisible) {
+			List(3) { Animatable(initialValue = 0f) }
+		}
 
-    LaunchedEffect(isVisible) {
-        delay(500.milliseconds)
-        for (i in 0..2) {
-            headlinesAlpha[i].animateTo(
-                targetValue = 1f,
-                animationSpec = tween(750)
-            )
-        }
-    }
+	LaunchedEffect(isVisible) {
+		delay(500.milliseconds)
+		for (i in 0..2) {
+			headlinesAlpha[i].animateTo(
+				targetValue = 1f,
+				animationSpec = tween(750)
+			)
+		}
+	}
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Spacer(Modifier.weight(1f))
+	Column(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.padding(horizontal = 16.dp),
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center
+	) {
+		Spacer(Modifier.weight(1f))
 
-        Image(
-            painter = painterResource(R.mipmap.dragon_launcher_foreground),
-            contentDescription = stringResource(R.string.app_name),
-            modifier = Modifier.size(260.dp)
-        )
+		Image(
+			painter = painterResource(R.mipmap.dragon_launcher_foreground),
+			contentDescription = stringResource(R.string.app_name),
+			modifier = Modifier.size(260.dp)
+		)
 
-        Spacer(32.dp)
+		Spacer(32.dp)
 
-        Text(
-            stringResource(id = R.string.welcome_to_dragon_launcher),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLargeEmphasized,
-            fontSize = 26.sp,
-            textAlign = TextAlign.Center
-        )
+		Text(
+			stringResource(id = R.string.welcome_to_dragon_launcher),
+			color = MaterialTheme.colorScheme.onBackground,
+			style = MaterialTheme.typography.bodyLargeEmphasized,
+			fontSize = 26.sp,
+			textAlign = TextAlign.Center
+		)
 
-        Spacer(12.dp)
+		Spacer(12.dp)
 
-        Text(
-            stringResource(id = R.string.app_tagline),
-            color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.bodyLargeEmphasized,
-            textAlign = TextAlign.Center
-        )
+		Text(
+			stringResource(id = R.string.app_tagline),
+			color = MaterialTheme.colorScheme.secondary,
+			style = MaterialTheme.typography.bodyLargeEmphasized,
+			textAlign = TextAlign.Center
+		)
 
-        Spacer(20.dp)
+		Spacer(20.dp)
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            VersionNumberChip()
-            CodeNameChip()
-            BuildTypeChip()
-            VersionCodeChip()
-        }
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(15.dp)
+		) {
+			VersionNumberChip()
+			CodeNameChip()
+			BuildTypeChip()
+			VersionCodeChip()
+		}
 
-        Spacer(15.dp)
+		Spacer(15.dp)
 
-        repeat(3) { i ->
-            val text =
-                stringResource(
-                    when (i) {
-                        0 -> R.string.fast
-                        1 -> R.string.powerful_gestures
-                        else -> R.string.infinite_custom
-                    }
-                )
+		repeat(3) { i ->
+			val text =
+				stringResource(
+					when (i) {
+						0 -> R.string.fast
+						1 -> R.string.powerful_gestures
+						else -> R.string.infinite_custom
+					}
+				)
 
-            Text(
-                text = text,
-                color = MaterialTheme.colorScheme.tertiary.copy(alpha = headlinesAlpha[i].value),
-                textAlign = TextAlign.Center,
-                fontSize = 18.sp
-            )
-        }
+			Text(
+				text = text,
+				color = MaterialTheme.colorScheme.tertiary.copy(alpha = headlinesAlpha[i].value),
+				textAlign = TextAlign.Center,
+				fontSize = 18.sp
+			)
+		}
 
-        if (hasSeenWelcomeOriginal) {
-            val uriHandler = LocalUriHandler.current
-            Spacer(30.dp)
-            Text(
-                text = stringResource(R.string.if_you_see_this_thats_because_i_wanted_to_show_old_users_the_new_welcome_screen),
-                style = MaterialTheme.typography.labelMediumEmphasized,
-                color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.Center
-            )
-            Spacer(5.dp)
-            Text(
-                text = stringResource(R.string.thank_you_for_using_dragon_for_so_long),
-                style = MaterialTheme.typography.labelSmallEmphasized,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
-            Spacer(5.dp)
-            Text(
-                text = stringResource(R.string.if_you_click_this_link_youll_get_a_special_role_on_discord),
-                style = MaterialTheme.typography.labelSmallEmphasized,
-                color = Color.Cyan,
-                textAlign = TextAlign.Center,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable {
-                    uriHandler.openUri("https://discord.gg/Dv84wW3xfD")
-                }
-            )
-        }
+		if (hasSeenWelcomeOriginal) {
+			val uriHandler = LocalUriHandler.current
+			Spacer(30.dp)
+			Text(
+				text = stringResource(R.string.if_you_see_this_thats_because_i_wanted_to_show_old_users_the_new_welcome_screen),
+				style = MaterialTheme.typography.labelMediumEmphasized,
+				color = MaterialTheme.colorScheme.error,
+				textAlign = TextAlign.Center
+			)
+			Spacer(5.dp)
+			Text(
+				text = stringResource(R.string.thank_you_for_using_dragon_for_so_long),
+				style = MaterialTheme.typography.labelSmallEmphasized,
+				color = MaterialTheme.colorScheme.onBackground,
+				textAlign = TextAlign.Center
+			)
+			Spacer(5.dp)
+			Text(
+				text = stringResource(R.string.if_you_click_this_link_youll_get_a_special_role_on_discord),
+				style = MaterialTheme.typography.labelSmallEmphasized,
+				color = Color.Cyan,
+				textAlign = TextAlign.Center,
+				textDecoration = TextDecoration.Underline,
+				modifier = Modifier.clickable {
+					uriHandler.openUri("https://discord.gg/Dv84wW3xfD")
+				}
+			)
+		}
 
-        Spacer(Modifier.weight(1f))
+		Spacer(Modifier.weight(1f))
 
-        ImportBackupButton(
-            onConfirm = {
-                setAsSeen()
-                // Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
-                navigator.onBack()
-            }
-        ) {
-            TextButton(
-                onClick = it
-            ) {
-                Text(
-                    text = stringResource(R.string.import_settings),
-                    color = MaterialTheme.colorScheme.onBackground.copy(0.5f),
-                    textDecoration = TextDecoration.Underline,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-    }
+		ImportBackupButton(
+			onConfirm = {
+				setAsSeen()
+				// Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
+				navigator.onBack()
+			}
+		) {
+			TextButton(
+				onClick = it
+			) {
+				Text(
+					text = stringResource(R.string.import_settings),
+					color = MaterialTheme.colorScheme.onBackground.copy(0.5f),
+					textDecoration = TextDecoration.Underline,
+					textAlign = TextAlign.Center
+				)
+			}
+		}
+	}
 }

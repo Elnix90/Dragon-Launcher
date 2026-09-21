@@ -28,27 +28,27 @@ import org.elnix.dragonlauncher.PROFILES_TAG
  * ([UserHandle.CREATOR], [Parcel.writeInt]).
  */
 internal object UserHandleSerializer : KSerializer<UserHandle> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("UserHandle", PrimitiveKind.INT)
+	override val descriptor: SerialDescriptor =
+		PrimitiveSerialDescriptor("UserHandle", PrimitiveKind.INT)
 
-    override fun serialize(encoder: Encoder, value: UserHandle) {
-        encoder.encodeInt(value.hashCode())
-    }
+	override fun serialize(encoder: Encoder, value: UserHandle) {
+		encoder.encodeInt(value.hashCode())
+	}
 
-    override fun deserialize(decoder: Decoder): UserHandle {
-        val userId = decoder.decodeInt()
-        return try {
-            val parcel = Parcel.obtain()
-            try {
-                parcel.writeInt(userId)
-                parcel.setDataPosition(0)
-                return UserHandle.CREATOR.createFromParcel(parcel)
-            } finally {
-                parcel.recycle()
-            }
-        } catch (e: Throwable) {
-            logE(PROFILES_TAG, e) { "Unable to get UserHandle from user id $userId" }
-            Process.myUserHandle()
-        }
-    }
+	override fun deserialize(decoder: Decoder): UserHandle {
+		val userId = decoder.decodeInt()
+		return try {
+			val parcel = Parcel.obtain()
+			try {
+				parcel.writeInt(userId)
+				parcel.setDataPosition(0)
+				return UserHandle.CREATOR.createFromParcel(parcel)
+			} finally {
+				parcel.recycle()
+			}
+		} catch (e: Throwable) {
+			logE(PROFILES_TAG, e) { "Unable to get UserHandle from user id $userId" }
+			Process.myUserHandle()
+		}
+	}
 }

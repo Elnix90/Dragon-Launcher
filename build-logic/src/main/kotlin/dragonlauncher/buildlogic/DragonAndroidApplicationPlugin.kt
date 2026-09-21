@@ -6,97 +6,97 @@ import org.gradle.api.Project
 
 @Suppress("unused")
 class DragonAndroidApplicationPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            pluginManager.apply("com.android.application")
-            pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
-            pluginManager.apply("com.google.devtools.ksp")
-            pluginManager.apply("com.google.dagger.hilt.android")
-            pluginManager.apply("com.autonomousapps.dependency-analysis")
+	override fun apply(target: Project) {
+		with(target) {
+			pluginManager.apply("com.android.application")
+			pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+			pluginManager.apply("com.google.devtools.ksp")
+			pluginManager.apply("com.google.dagger.hilt.android")
+			pluginManager.apply("com.autonomousapps.dependency-analysis")
 
-            configureKotlinAndroid(
-                enableExplicitApi = false,
-                enablePropertyParamAnnotationFlag = false
-            )
-            forceKotlinMetadataResolution()
+			configureKotlinAndroid(
+				enableExplicitApi = false,
+				enablePropertyParamAnnotationFlag = false
+			)
+			forceKotlinMetadataResolution()
 
-            extensions.configure(ApplicationExtension::class.java) {
-                compileSdk {
-                    version = release(COMPILE_SDK)
-                }
+			extensions.configure(ApplicationExtension::class.java) {
+				compileSdk {
+					version = release(COMPILE_SDK)
+				}
 
-                defaultConfig {
-                    minSdk = MIN_SDK
-                    targetSdk = TARGET_SDK
-                }
+				defaultConfig {
+					minSdk = MIN_SDK
+					targetSdk = TARGET_SDK
+				}
 
-                lint {
-                    checkReleaseBuilds = false
-                    abortOnError = true
-                }
+				lint {
+					checkReleaseBuilds = false
+					abortOnError = true
+				}
 
-                buildTypes {
-                    release {
-                        isMinifyEnabled = true
-                        isShrinkResources = true
-                        versionNameSuffix = " ($CODE_NAME)"
-                        proguardFiles(
-                            getDefaultProguardFile("proguard-android-optimize.txt"),
-                            "proguard-rules.pro"
-                        )
-                    }
+				buildTypes {
+					release {
+						isMinifyEnabled = true
+						isShrinkResources = true
+						versionNameSuffix = " ($CODE_NAME)"
+						proguardFiles(
+							getDefaultProguardFile("proguard-android-optimize.txt"),
+							"proguard-rules.pro"
+						)
+					}
 
-                    create("beta") {
-                        isMinifyEnabled = true
-                        applicationIdSuffix = ".beta"
-                        versionNameSuffix = " ($CODE_NAME)-beta"
-                        proguardFiles(
-                            getDefaultProguardFile("proguard-android-optimize.txt"),
-                            "proguard-rules.pro"
-                        )
-                    }
+					create("beta") {
+						isMinifyEnabled = true
+						applicationIdSuffix = ".beta"
+						versionNameSuffix = " ($CODE_NAME)-beta"
+						proguardFiles(
+							getDefaultProguardFile("proguard-android-optimize.txt"),
+							"proguard-rules.pro"
+						)
+					}
 
-                    debug {
-                        isDebuggable = true
-                        isMinifyEnabled = false
-                        applicationIdSuffix = ".debug"
-                        versionNameSuffix = " ($CODE_NAME)-debug"
-                    }
-                }
+					debug {
+						isDebuggable = true
+						isMinifyEnabled = false
+						applicationIdSuffix = ".debug"
+						versionNameSuffix = " ($CODE_NAME)-debug"
+					}
+				}
 
-                compileOptions {
-                    sourceCompatibility = JAVA_VERSION
-                    targetCompatibility = JAVA_VERSION
-                }
+				compileOptions {
+					sourceCompatibility = JAVA_VERSION
+					targetCompatibility = JAVA_VERSION
+				}
 
-                buildFeatures {
-                    compose = true
-                    buildConfig = true
-                    resValues = true
-                }
+				buildFeatures {
+					compose = true
+					buildConfig = true
+					resValues = true
+				}
 
-                packaging {
-                    jniLibs.keepDebugSymbols.add("**/*.so")
-                }
+				packaging {
+					jniLibs.keepDebugSymbols.add("**/*.so")
+				}
 
-                dependenciesInfo {
-                    includeInApk = false
-                    includeInBundle = false
-                }
-            }
+				dependenciesInfo {
+					includeInApk = false
+					includeInBundle = false
+				}
+			}
 
-            val androidTestDir = file("src/androidTest")
-            val hasAndroidTestSources =
-                androidTestDir.exists() &&
-                    androidTestDir.walkTopDown().any { it.isFile && (it.extension == "kt" || it.extension == "java") }
+			val androidTestDir = file("src/androidTest")
+			val hasAndroidTestSources =
+				androidTestDir.exists() &&
+					androidTestDir.walkTopDown().any { it.isFile && (it.extension == "kt" || it.extension == "java") }
 
-            if (!hasAndroidTestSources) {
-                tasks.configureEach {
-                    if (name.startsWith("connected") && name.endsWith("AndroidTest")) {
-                        enabled = false
-                    }
-                }
-            }
-        }
-    }
+			if (!hasAndroidTestSources) {
+				tasks.configureEach {
+					if (name.startsWith("connected") && name.endsWith("AndroidTest")) {
+						enabled = false
+					}
+				}
+			}
+		}
+	}
 }

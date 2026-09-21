@@ -71,413 +71,413 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HapticFeedbackEditor(
-    initial: CustomHapticFeedback?,
-    default: CustomHapticFeedback?,
-    onDismiss: (CustomHapticFeedback?) -> Unit
+	initial: CustomHapticFeedback?,
+	default: CustomHapticFeedback?,
+	onDismiss: (CustomHapticFeedback?) -> Unit
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val lazyListState = rememberLazyListState()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+	val lazyListState = rememberLazyListState()
 
-    val entries =
-        remember(initial) {
-            mutableStateListOf<HapticEntry>().apply { addAll(initial?.haptics ?: default?.haptics ?: emptyList()) }
-        }
+	val entries =
+		remember(initial) {
+			mutableStateListOf<HapticEntry>().apply { addAll(initial?.haptics ?: default?.haptics ?: emptyList()) }
+		}
 
-    val reorderState =
-        rememberReorderableLazyListState(
-            lazyListState = lazyListState,
-            onMove = { from, to ->
-                entries.add(to.index, entries.removeAt(from.index))
-            }
-        )
+	val reorderState =
+		rememberReorderableLazyListState(
+			lazyListState = lazyListState,
+			onMove = { from, to ->
+				entries.add(to.index, entries.removeAt(from.index))
+			}
+		)
 
-    fun currentEditingSnapshot(): CustomHapticFeedback? {
-        val snapshot =
-            if (entries.isEmpty()) {
-                null
-            } else {
-                CustomHapticFeedback(entries.toList())
-            }
-        return snapshot
-    }
+	fun currentEditingSnapshot(): CustomHapticFeedback? {
+		val snapshot =
+			if (entries.isEmpty()) {
+				null
+			} else {
+				CustomHapticFeedback(entries.toList())
+			}
+		return snapshot
+	}
 
-    fun playTest() {
-        scope.launch {
-            currentEditingSnapshot()?.perform(ctx)
-        }
-    }
+	fun playTest() {
+		scope.launch {
+			currentEditingSnapshot()?.perform(ctx)
+		}
+	}
 
-    fun selectPreset(customFeedback: CustomHapticFeedback) {
-        scope.launch {
-            entries.clear()
-            customFeedback.haptics.forEach { (isVibration, duration) ->
-                entries.add(
-                    HapticEntry(
-                        isVibration = isVibration,
-                        durationMs = duration
-                    )
-                )
-            }
-            playTest()
-        }
-    }
+	fun selectPreset(customFeedback: CustomHapticFeedback) {
+		scope.launch {
+			entries.clear()
+			customFeedback.haptics.forEach { (isVibration, duration) ->
+				entries.add(
+					HapticEntry(
+						isVibration = isVibration,
+						durationMs = duration
+					)
+				)
+			}
+			playTest()
+		}
+	}
 
-    fun copyToClipboard() {
-        val current = currentEditingSnapshot() ?: return
-        val encoded = json.encodeToString(current)
-        ctx.copyToClipboard(encoded)
-    }
+	fun copyToClipboard() {
+		val current = currentEditingSnapshot() ?: return
+		val encoded = json.encodeToString(current)
+		ctx.copyToClipboard(encoded)
+	}
 
-    fun importFromClipboard() {
-        val clipboardContent = ctx.pasteClipboard()
-        try {
-            clipboardContent ?: throw IllegalStateException("<empty>")
-            val decoded = json.decodeFromString<CustomHapticFeedback>(clipboardContent)
+	fun importFromClipboard() {
+		val clipboardContent = ctx.pasteClipboard()
+		try {
+			clipboardContent ?: throw IllegalStateException("<empty>")
+			val decoded = json.decodeFromString<CustomHapticFeedback>(clipboardContent)
 
-            selectPreset(decoded)
-            ctx.showToast("✅ Successfully imported!")
-        } catch (e: IllegalStateException) {
-            logE(HAPTIC_TAG, e) { "Clipboard if empty" }
-            ctx.showToast("❌  Clipboard if empty")
-        } catch (e: Exception) {
-            logE(HAPTIC_TAG, e) { "Failed to decode '$clipboardContent' from clipboard" }
-            ctx.showToast("❌ Failed to decode '$clipboardContent' from clipboard: $e")
-        }
-    }
+			selectPreset(decoded)
+			ctx.showToast("✅ Successfully imported!")
+		} catch (e: IllegalStateException) {
+			logE(HAPTIC_TAG, e) { "Clipboard if empty" }
+			ctx.showToast("❌  Clipboard if empty")
+		} catch (e: Exception) {
+			logE(HAPTIC_TAG, e) { "Failed to decode '$clipboardContent' from clipboard" }
+			ctx.showToast("❌ Failed to decode '$clipboardContent' from clipboard: $e")
+		}
+	}
 
-    DragonModalBottomSheet(
-        onDismissRequest = { onDismiss(currentEditingSnapshot()) }
-    ) {
-        DialogTitle(
-            text = stringResource(R.string.haptic_feedback_editor),
-            trailingIcon = {
-                var showPopup by remember { mutableStateOf(false) }
-                Box {
-                    DragonIconButton(
-                        icon = R.drawable.more_vert,
-                        contentDescription = R.string.more
-                    ) { showPopup = true }
+	DragonModalBottomSheet(
+		onDismissRequest = { onDismiss(currentEditingSnapshot()) }
+	) {
+		DialogTitle(
+			text = stringResource(R.string.haptic_feedback_editor),
+			trailingIcon = {
+				var showPopup by remember { mutableStateOf(false) }
+				Box {
+					DragonIconButton(
+						icon = R.drawable.more_vert,
+						contentDescription = R.string.more
+					) { showPopup = true }
 
-                    DragonDropDownMenu(showPopup, { showPopup = false }) {
-                        DropdownMenuGroup(
-                            shapes = MenuDefaults.groupShapes()
-                        ) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(stringResource(R.string.copy_to_clipboard))
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.copy),
-                                        contentDescription = null
-                                    )
-                                },
-                                onClick = ::copyToClipboard
-                            )
-                            DropdownMenuItem(
-                                text = {
-                                    Text(stringResource(R.string.import_from_clipboard))
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.paste),
-                                        contentDescription = null
-                                    )
-                                },
-                                onClick = ::importFromClipboard
-                            )
-                        }
-                    }
-                }
-            },
-            resetEnabled = entries.toList() != default?.haptics?.toList(),
-            onReset = {
-                entries.clear()
-                default?.haptics?.let { entries.addAll(it) }
-            }
-        )
+					DragonDropDownMenu(showPopup, { showPopup = false }) {
+						DropdownMenuGroup(
+							shapes = MenuDefaults.groupShapes()
+						) {
+							DropdownMenuItem(
+								text = {
+									Text(stringResource(R.string.copy_to_clipboard))
+								},
+								leadingIcon = {
+									Icon(
+										painter = painterResource(R.drawable.copy),
+										contentDescription = null
+									)
+								},
+								onClick = ::copyToClipboard
+							)
+							DropdownMenuItem(
+								text = {
+									Text(stringResource(R.string.import_from_clipboard))
+								},
+								leadingIcon = {
+									Icon(
+										painter = painterResource(R.drawable.paste),
+										contentDescription = null
+									)
+								},
+								onClick = ::importFromClipboard
+							)
+						}
+					}
+				}
+			},
+			resetEnabled = entries.toList() != default?.haptics?.toList(),
+			onReset = {
+				entries.clear()
+				default?.haptics?.let { entries.addAll(it) }
+			}
+		)
 
-        Spacer(5.dp)
+		Spacer(5.dp)
 
-        DragonSettingsGroup(R.string.presets) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                CustomHapticFeedback.allPresets.forEach { (name, preset) ->
-                    DragonButton(
-                        onClick = { selectPreset(preset) },
-                        modifier = Modifier // Do not use the DragonSettingsGroup overload
-                    ) {
-                        Text(
-                            text = stringResource(name),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-            }
-        }
+		DragonSettingsGroup(R.string.presets) {
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(5.dp),
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.horizontalScroll(rememberScrollState())
+						.background(MaterialTheme.colorScheme.surfaceVariant)
+			) {
+				CustomHapticFeedback.allPresets.forEach { (name, preset) ->
+					DragonButton(
+						onClick = { selectPreset(preset) },
+						modifier = Modifier // Do not use the DragonSettingsGroup overload
+					) {
+						Text(
+							text = stringResource(name),
+							style = MaterialTheme.typography.labelSmall
+						)
+					}
+				}
+			}
+		}
 
-        DragonSettingsGroup(R.string.steps) {
-            Row(
-                modifier =
-                    Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                AddStepButton(
-                    label = stringResource(R.string.vibration),
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.haptic),
-                            contentDescription = null
-                        )
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    entries.add(
-                        HapticEntry(
-                            isVibration = true,
-                            durationMs = defaultHapticDuration
-                        )
-                    )
-                }
+		DragonSettingsGroup(R.string.steps) {
+			Row(
+				modifier =
+					Modifier
+						.padding(10.dp)
+						.fillMaxWidth(),
+				horizontalArrangement = Arrangement.spacedBy(8.dp)
+			) {
+				AddStepButton(
+					label = stringResource(R.string.vibration),
+					icon = {
+						Icon(
+							painter = painterResource(R.drawable.haptic),
+							contentDescription = null
+						)
+					},
+					modifier = Modifier.weight(1f)
+				) {
+					entries.add(
+						HapticEntry(
+							isVibration = true,
+							durationMs = defaultHapticDuration
+						)
+					)
+				}
 
-                AddStepButton(
-                    label = stringResource(R.string.delay),
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = null
-                        )
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    entries.add(
-                        HapticEntry(
-                            isVibration = false,
-                            durationMs = defaultVibrationDuration
-                        )
-                    )
-                }
+				AddStepButton(
+					label = stringResource(R.string.delay),
+					icon = {
+						Icon(
+							painter = painterResource(R.drawable.timer),
+							contentDescription = null
+						)
+					},
+					modifier = Modifier.weight(1f)
+				) {
+					entries.add(
+						HapticEntry(
+							isVibration = false,
+							durationMs = defaultVibrationDuration
+						)
+					)
+				}
 
-                RotatingPlayIcon(enabled = entries.isNotEmpty(), onClick = ::playTest)
-            }
-        }
+				RotatingPlayIcon(enabled = entries.isNotEmpty(), onClick = ::playTest)
+			}
+		}
 
-        if (entries.isEmpty()) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
-                        .padding(24.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.no_steps_yet_add_a_vibration_or_delay),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                state = lazyListState,
-                modifier = Modifier.heightIn(max = 600.dp)
-            ) {
-                items(entries, key = { it.id }) { entry ->
-                    val index = entries.indexOf(entry)
+		if (entries.isEmpty()) {
+			Box(
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.clip(MaterialTheme.shapes.large)
+						.background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
+						.padding(24.dp),
+				contentAlignment = Alignment.Center
+			) {
+				Text(
+					text = stringResource(R.string.no_steps_yet_add_a_vibration_or_delay),
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.onSurfaceVariant
+				)
+			}
+		} else {
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(4.dp),
+				state = lazyListState,
+				modifier = Modifier.heightIn(max = 600.dp)
+			) {
+				items(entries, key = { it.id }) { entry ->
+					val index = entries.indexOf(entry)
 
-                    ReorderableItem(
-                        state = reorderState,
-                        key = entry.id
-                    ) { isDragging ->
+					ReorderableItem(
+						state = reorderState,
+						key = entry.id
+					) { isDragging ->
 
-                        val scale by animateFloatAsState(
-                            if (isDragging) 1.03f else 1f
-                        )
-                        val elevation by animateDpAsState(
-                            if (isDragging) 16.dp else 0.dp
-                        )
-                        DragonSettingsGroup(
-                            modifier =
-                                Modifier
-                                    .scale(scale)
-                                    .shadow(elevation)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Checkbox(
-                                    checked = entry.isVibration,
-                                    onCheckedChange = { checked ->
-                                        entries[index] = entry.copy(isVibration = checked)
-                                    },
-                                    colors =
-                                        CheckboxDefaults.colors(
-                                            checkedColor = MaterialTheme.colorScheme.primary
-                                        )
-                                )
+						val scale by animateFloatAsState(
+							if (isDragging) 1.03f else 1f
+						)
+						val elevation by animateDpAsState(
+							if (isDragging) 16.dp else 0.dp
+						)
+						DragonSettingsGroup(
+							modifier =
+								Modifier
+									.scale(scale)
+									.shadow(elevation)
+						) {
+							Row(
+								verticalAlignment = Alignment.CenterVertically,
+								modifier = Modifier.fillMaxWidth()
+							) {
+								Checkbox(
+									checked = entry.isVibration,
+									onCheckedChange = { checked ->
+										entries[index] = entry.copy(isVibration = checked)
+									},
+									colors =
+										CheckboxDefaults.colors(
+											checkedColor = MaterialTheme.colorScheme.primary
+										)
+								)
 
-                                Icon(
-                                    painter =
-                                        painterResource(
-                                            if (entry.isVibration) {
-                                                R.drawable.haptic
-                                            } else {
-                                                R.drawable.timer
-                                            }
-                                        ),
-                                    contentDescription = null,
-                                    tint =
-                                        if (entry.isVibration) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.secondary
-                                        }
-                                )
+								Icon(
+									painter =
+										painterResource(
+											if (entry.isVibration) {
+												R.drawable.haptic
+											} else {
+												R.drawable.timer
+											}
+										),
+									contentDescription = null,
+									tint =
+										if (entry.isVibration) {
+											MaterialTheme.colorScheme.primary
+										} else {
+											MaterialTheme.colorScheme.secondary
+										}
+								)
 
-                                Spacer(8.dp)
+								Spacer(8.dp)
 
-                                Text(
-                                    text = stringResource(if (entry.isVibration) R.string.vibration else R.string.delay),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.weight(1f)
-                                )
+								Text(
+									text = stringResource(if (entry.isVibration) R.string.vibration else R.string.delay),
+									style = MaterialTheme.typography.bodyLarge,
+									modifier = Modifier.weight(1f)
+								)
 
-                                DragonIconButton(
-                                    onClick = {
-                                        entries.add(index + 1, entries[index].copy())
-                                    },
-                                    icon = R.drawable.copy,
-                                    contentDescription = R.string.copy
-                                )
+								DragonIconButton(
+									onClick = {
+										entries.add(index + 1, entries[index].copy())
+									},
+									icon = R.drawable.copy,
+									contentDescription = R.string.copy
+								)
 
-                                DragonIconButton(
-                                    icon = R.drawable.delete_forever,
-                                    isCancel = true,
-                                    contentDescription = R.string.remove
-                                ) { entries.removeAt(index) }
+								DragonIconButton(
+									icon = R.drawable.delete_forever,
+									isCancel = true,
+									contentDescription = R.string.remove
+								) { entries.removeAt(index) }
 
-                                Icon(
-                                    painter = painterResource(R.drawable.drag_handle),
-                                    contentDescription = stringResource(R.string.drag_handle),
-                                    tint = MaterialTheme.colorScheme.outline,
-                                    modifier = Modifier.draggableHandle()
-                                )
-                            }
+								Icon(
+									painter = painterResource(R.drawable.drag_handle),
+									contentDescription = stringResource(R.string.drag_handle),
+									tint = MaterialTheme.colorScheme.outline,
+									modifier = Modifier.draggableHandle()
+								)
+							}
 
-                            SliderWithLabel(
-                                label = stringResource(R.string.duration_ms),
-                                value = entry.durationMs,
-                                valueRange = 0..1000,
-                                resetEnabled = entry.resetEnabled,
-                                onReset = {
-                                    entries[index] =
-                                        entry.copy(
-                                            durationMs = if (entry.isVibration) 50 else 100
-                                        )
-                                }
-                            ) { newValue ->
-                                entries[index] = entry.copy(durationMs = newValue)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+							SliderWithLabel(
+								label = stringResource(R.string.duration_ms),
+								value = entry.durationMs,
+								valueRange = 0..1000,
+								resetEnabled = entry.resetEnabled,
+								onReset = {
+									entries[index] =
+										entry.copy(
+											durationMs = if (entry.isVibration) 50 else 100
+										)
+								}
+							) { newValue ->
+								entries[index] = entry.copy(durationMs = newValue)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 @Composable
 private fun RotatingPlayIcon(
-    enabled: Boolean = true,
-    onClick: () -> Unit
+	enabled: Boolean = true,
+	onClick: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val playIconRotation =
-        remember {
-            Animatable(
-                initialValue = 0f
-            )
-        }
+	val scope = rememberCoroutineScope()
+	val playIconRotation =
+		remember {
+			Animatable(
+				initialValue = 0f
+			)
+		}
 
-    DragonIconButton(
-        modifier = Modifier.rotate(playIconRotation.value),
-        enabled = enabled,
-        icon = R.drawable.play_arrow,
-        contentDescription = R.string.play
-    ) {
-        scope.launch {
-            playIconRotation.animateTo(
-                targetValue = playIconRotation.value + 360f,
-                animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
-            )
-            playIconRotation.snapTo(0f)
-        }
-        onClick()
-    }
+	DragonIconButton(
+		modifier = Modifier.rotate(playIconRotation.value),
+		enabled = enabled,
+		icon = R.drawable.play_arrow,
+		contentDescription = R.string.play
+	) {
+		scope.launch {
+			playIconRotation.animateTo(
+				targetValue = playIconRotation.value + 360f,
+				animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
+			)
+			playIconRotation.snapTo(0f)
+		}
+		onClick()
+	}
 }
 
 @Composable
 private fun AddStepButton(
-    label: String,
-    icon: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
+	label: String,
+	icon: @Composable () -> Unit,
+	modifier: Modifier = Modifier,
+	onClick: () -> Unit
 ) {
-    DragonButton(
-        onClick = onClick,
-        modifier = modifier
-    ) {
-        icon()
-        Spacer(5.dp)
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall
-        )
-    }
+	DragonButton(
+		onClick = onClick,
+		modifier = modifier
+	) {
+		icon()
+		Spacer(5.dp)
+		Text(
+			text = label,
+			style = MaterialTheme.typography.labelSmall
+		)
+	}
 }
 
 @Composable
 fun DragonGroupScope.HapticFeedBackEditorButtonWithPlayTest(
-    customHapticFeedback: CustomHapticFeedback,
-    titleExt: String = "",
-    onClick: () -> Unit
+	customHapticFeedback: CustomHapticFeedback,
+	titleExt: String = "",
+	onClick: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-    Row(
-        modifier = Modifier.dragonSettingGroup(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        DragonButton(
-            onClick = onClick,
-            modifier = Modifier.weight(1f)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.haptic),
-                contentDescription = stringResource(R.string.haptic_feedback_editor)
-            )
-            Spacer(5.dp)
-            Text("${stringResource(R.string.haptic_feedback_editor)}$titleExt")
-        }
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+	Row(
+		modifier = Modifier.dragonSettingGroup(),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(5.dp)
+	) {
+		DragonButton(
+			onClick = onClick,
+			modifier = Modifier.weight(1f)
+		) {
+			Icon(
+				painter = painterResource(R.drawable.haptic),
+				contentDescription = stringResource(R.string.haptic_feedback_editor)
+			)
+			Spacer(5.dp)
+			Text("${stringResource(R.string.haptic_feedback_editor)}$titleExt")
+		}
 
-        RotatingPlayIcon {
-            scope.launch {
-                customHapticFeedback.perform(ctx)
-            }
-        }
-    }
+		RotatingPlayIcon {
+			scope.launch {
+				customHapticFeedback.perform(ctx)
+			}
+		}
+	}
 }

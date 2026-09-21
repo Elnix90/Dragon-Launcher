@@ -18,48 +18,48 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
 fun DragonGroupScope.Setting(
-    setting: BooleanSettingObject,
-    enabled: Boolean = true,
-    needValidationToEnable: Boolean = false,
-    needValidationToDisable: Boolean = false,
-    confirmText: Int = R.string.are_you_sure,
-    onCheck: ((Boolean) -> Unit)? = null
+	setting: BooleanSettingObject,
+	enabled: Boolean = true,
+	needValidationToEnable: Boolean = false,
+	needValidationToDisable: Boolean = false,
+	confirmText: Int = R.string.are_you_sure,
+	onCheck: ((Boolean) -> Unit)? = null
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val state by setting.asState()
+	val state by setting.asState()
 
-    var showConfirmPopup by remember { mutableStateOf<Boolean?>(null) }
+	var showConfirmPopup by remember { mutableStateOf<Boolean?>(null) }
 
-    fun toggle(state: Boolean) {
-        onCheck?.invoke(state)
-        scope.launch {
-            setting.set(ctx, state)
-        }
-    }
+	fun toggle(state: Boolean) {
+		onCheck?.invoke(state)
+		scope.launch {
+			setting.set(ctx, state)
+		}
+	}
 
-    SwitchRow(
-        state = state,
-        title = setting.title!!,
-        description = setting.description!!, // Keep the !! to enforce all boolean settings to have a desc
-        icon = setting.icon,
-        enabled = enabled
-    ) { clicked ->
-        when {
-            clicked && needValidationToEnable -> showConfirmPopup = true
-            !clicked && needValidationToDisable -> showConfirmPopup = false
-            else -> toggle(clicked)
-        }
-    }
+	SwitchRow(
+		state = state,
+		title = setting.title!!,
+		description = setting.description!!, // Keep the !! to enforce all boolean settings to have a desc
+		icon = setting.icon,
+		enabled = enabled
+	) { clicked ->
+		when {
+			clicked && needValidationToEnable -> showConfirmPopup = true
+			!clicked && needValidationToDisable -> showConfirmPopup = false
+			else -> toggle(clicked)
+		}
+	}
 
-    if (showConfirmPopup != null) {
-        UserValidation(
-            message = stringResource(confirmText),
-            onDismiss = { showConfirmPopup = null }
-        ) {
-            toggle(showConfirmPopup!!)
-            showConfirmPopup = null
-        }
-    }
+	if (showConfirmPopup != null) {
+		UserValidation(
+			message = stringResource(confirmText),
+			onDismiss = { showConfirmPopup = null }
+		) {
+			toggle(showConfirmPopup!!)
+			showConfirmPopup = null
+		}
+	}
 }

@@ -11,13 +11,13 @@ import jakarta.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object PointsModule {
-    @Provides
-    @Singleton
-    fun providePointsService(
-        @ApplicationContext ctx: Context
-    ): PointsService = PointsServiceImpl(ctx)
+	@Provides
+	@Singleton
+	fun providePointsService(
+		@ApplicationContext ctx: Context
+	): PointsService = PointsServiceImpl(ctx)
 
-    @Provides
-    @Singleton
-    fun provideNestsService(pointsService: PointsService): NestsNavigationService = NestsNavigationServiceImpl(pointsService)
+	@Provides
+	@Singleton
+	fun provideNestsService(pointsService: PointsService): NestsNavigationService = NestsNavigationServiceImpl(pointsService)
 }

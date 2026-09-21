@@ -27,76 +27,76 @@ import org.elnix.dragonlauncher.ktx.alphaMultiplier
 
 @Composable
 fun MonospaceScrollableText(
-    lines: List<String>,
-    modifier: Modifier = Modifier,
-    useDragonLogsColoration: Boolean = false
+	lines: List<String>,
+	modifier: Modifier = Modifier,
+	useDragonLogsColoration: Boolean = false
 ) {
-    val lazyListState = rememberLazyListState()
-    val horizontalScrollState = rememberScrollState()
+	val lazyListState = rememberLazyListState()
+	val horizontalScrollState = rememberScrollState()
 
-    val thumbColor = MaterialTheme.colorScheme.primary
+	val thumbColor = MaterialTheme.colorScheme.primary
 
-    val scrollBar =
-        remember(thumbColor) {
-            ScrollbarSettings(
-                alwaysShowScrollbar = true,
-                thumbThickness = 10.dp,
-                thumbUnselectedColor = thumbColor.alphaMultiplier(0.5f),
-                thumbSelectedColor = thumbColor,
-                selectionMode = ScrollbarSelectionMode.Full
-            )
-        }
+	val scrollBar =
+		remember(thumbColor) {
+			ScrollbarSettings(
+				alwaysShowScrollbar = true,
+				thumbThickness = 10.dp,
+				thumbUnselectedColor = thumbColor.alphaMultiplier(0.5f),
+				thumbSelectedColor = thumbColor,
+				selectionMode = ScrollbarSelectionMode.Full
+			)
+		}
 
-    fun lineColor(idx: Int): Color? {
-        if (idx !in lines.indices) return null
+	fun lineColor(idx: Int): Color? {
+		if (idx !in lines.indices) return null
 
-        for (i in idx downTo 0) {
-            val line = lines[i]
+		for (i in idx downTo 0) {
+			val line = lines[i]
 
-            if (
-                line.length > 27 &&
-                line.startsWith("[") &&
-                line[26].toString() in allLetters
-            ) {
-                return line[26].toString().logLevel!!.logLevelColor
-            }
-        }
-        return null
-    }
+			if (
+				line.length > 27 &&
+				line.startsWith("[") &&
+				line[26].toString() in allLetters
+			) {
+				return line[26].toString().logLevel!!.logLevelColor
+			}
+		}
+		return null
+	}
 
-    Box(modifier = modifier.fillMaxWidth()) {
-        SelectionContainer {
-            LazyColumnScrollbar(
-                state = lazyListState,
-                settings = scrollBar
-            ) {
-                LazyColumn(
-                    state = lazyListState,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(horizontalScrollState)
-                ) {
-                    itemsIndexed(lines) { idx, line ->
+	Box(modifier = modifier.fillMaxWidth()) {
+		SelectionContainer {
+			LazyColumnScrollbar(
+				state = lazyListState,
+				settings = scrollBar
+			) {
+				LazyColumn(
+					state = lazyListState,
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.horizontalScroll(horizontalScrollState)
+				) {
+					itemsIndexed(lines) { idx, line ->
 
-                        val color =
-                            if (useDragonLogsColoration) {
-                                lineColor(idx)
-                            } else {
-                                null
-                            }
+						val color =
+							if (useDragonLogsColoration) {
+								lineColor(idx)
+							} else {
+								null
+							}
 
-                        Text(
-                            text = line,
-                            color = color ?: Color.Unspecified,
-                            softWrap = false,
-                            fontSize = 10.sp,
-                            lineHeight = 10.sp,
-                            fontFamily = FontFamily.Monospace
-                        )
-                    }
-                }
-            }
-        }
-    }
+						Text(
+							text = line,
+							color = color ?: Color.Unspecified,
+							softWrap = false,
+							fontSize = 10.sp,
+							lineHeight = 10.sp,
+							fontFamily = FontFamily.Monospace
+						)
+					}
+				}
+			}
+		}
+	}
 }

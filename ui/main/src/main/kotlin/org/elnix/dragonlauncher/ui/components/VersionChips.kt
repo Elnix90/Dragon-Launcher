@@ -20,61 +20,61 @@ import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionNumber
 
 @Composable
 fun BaseVersionChip(
-    text: String,
-    color: Color,
-    modifier: Modifier = Modifier
+	text: String,
+	color: Color,
+	modifier: Modifier = Modifier
 ) {
-    Text(
-        text = text,
-        color = contentColorFor(color),
-        style = MaterialTheme.typography.labelMediumEmphasized,
-        fontFamily = FontFamily.Monospace,
-        modifier =
-            Modifier
-                .wrapContentSize()
-                .clip(MaterialTheme.shapes.small)
-                .background(color)
-                .then(modifier)
-                .padding(6.dp)
-    )
+	Text(
+		text = text,
+		color = contentColorFor(color),
+		style = MaterialTheme.typography.labelMediumEmphasized,
+		fontFamily = FontFamily.Monospace,
+		modifier =
+			Modifier
+				.wrapContentSize()
+				.clip(MaterialTheme.shapes.small)
+				.background(color)
+				.then(modifier)
+				.padding(6.dp)
+	)
 }
 
 @Composable
 fun VersionNumberChip(modifier: Modifier = Modifier) {
-    val versionNumber = LocalContext.current.getVersionNumber()
-    BaseVersionChip(
-        text = versionNumber,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = modifier
-    )
+	val versionNumber = LocalContext.current.getVersionNumber()
+	BaseVersionChip(
+		text = versionNumber,
+		color = MaterialTheme.colorScheme.primary,
+		modifier = modifier
+	)
 }
 
 @Composable
 fun CodeNameChip(modifier: Modifier = Modifier) {
-    val codeName = LocalContext.current.getCodeName()
-    BaseVersionChip(
-        text = codeName,
-        color = MaterialTheme.colorScheme.secondary,
-        modifier = modifier
-    )
+	val codeName = LocalContext.current.getCodeName()
+	BaseVersionChip(
+		text = codeName,
+		color = MaterialTheme.colorScheme.secondary,
+		modifier = modifier
+	)
 }
 
 @Composable
 fun VersionCodeChip(modifier: Modifier = Modifier) {
-    val versionCode = LocalContext.current.getVersionCode()
-    BaseVersionChip(
-        text = versionCode.toString(),
-        color = MaterialTheme.colorScheme.tertiary,
-        modifier = modifier
-    )
+	val versionCode = LocalContext.current.getVersionCode()
+	BaseVersionChip(
+		text = versionCode.toString(),
+		color = MaterialTheme.colorScheme.tertiary,
+		modifier = modifier
+	)
 }
 
 @Composable
 fun BuildTypeChip(modifier: Modifier = Modifier) {
-    val buildType = LocalContext.current.getBuildType()
-    BaseVersionChip(
-        text = buildType,
-        color = MaterialTheme.colorScheme.tertiaryFixed,
-        modifier = modifier
-    )
+	val buildType = LocalContext.current.getBuildType()
+	BaseVersionChip(
+		text = buildType,
+		color = MaterialTheme.colorScheme.tertiaryFixed,
+		modifier = modifier
+	)
 }

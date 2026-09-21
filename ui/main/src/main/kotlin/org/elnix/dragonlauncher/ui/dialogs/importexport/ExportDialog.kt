@@ -11,17 +11,17 @@ import org.elnix.dragonlauncher.settings.toSettingsStoreList
 
 @Composable
 internal fun ExportDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
+	onDismiss: () -> Unit,
+	onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
-    val defaultStoresStringSet by BackupSettingsStore.backupStores.asState()
-    val defaultStores = defaultStoresStringSet.toSettingsStoreList()
+	val defaultStoresStringSet by BackupSettingsStore.backupStores.asState()
+	val defaultStores = defaultStoresStringSet.toSettingsStoreList()
 
-    BaseImportExportDialog(
-        title = R.string.select_settings_to_export,
-        availableStores = backupableStores,
-        defaultStores = backupableStores,
-        onDismiss = onDismiss,
-        onConfirm = onConfirm
-    )
+	BaseImportExportDialog(
+		title = R.string.select_settings_to_export,
+		availableStores = backupableStores,
+		defaultStores = backupableStores,
+		onDismiss = onDismiss,
+		onConfirm = onConfirm
+	)
 }

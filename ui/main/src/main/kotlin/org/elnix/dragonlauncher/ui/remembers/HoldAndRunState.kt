@@ -18,8 +18,8 @@ import kotlin.time.Duration.Companion.milliseconds
  * @property clear Resets all state; call it from the overlay release guard.
  */
 data class HoldAndRunState(
-    val firedThisGesture: Boolean,
-    val clear: () -> Unit
+	val firedThisGesture: Boolean,
+	val clear: () -> Unit
 )
 
 /**
@@ -41,36 +41,36 @@ data class HoldAndRunState(
  */
 @Composable
 fun rememberHoldAndRunController(
-    currentPoint: Point?,
-    isDragging: Boolean,
-    onFire: (point: Point) -> Unit
+	currentPoint: Point?,
+	isDragging: Boolean,
+	onFire: (point: Point) -> Unit
 ): HoldAndRunState {
-    var firedThisGesture by remember { mutableStateOf(false) }
+	var firedThisGesture by remember { mutableStateOf(false) }
 
-    LaunchedEffect(currentPoint?.id, isDragging) {
-        // Always reset when the point changes or drag ends.
-        firedThisGesture = false
+	LaunchedEffect(currentPoint?.id, isDragging) {
+		// Always reset when the point changes or drag ends.
+		firedThisGesture = false
 
-        if (!isDragging || currentPoint == null) return@LaunchedEffect
+		if (!isDragging || currentPoint == null) return@LaunchedEffect
 
-        val delayMs = currentPoint.holdAndRunDelayMs?.toLong() ?: return@LaunchedEffect
+		val delayMs = currentPoint.holdAndRunDelayMs?.toLong() ?: return@LaunchedEffect
 
-        delay(delayMs.milliseconds)
+		delay(delayMs.milliseconds)
 
-        // Guard: still on the same point and not yet fired (safety for rapid transitions).
-        if (!firedThisGesture) {
-            firedThisGesture = true
-            val override = currentPoint.holdAndRunAction
-            val pointToLaunch =
-                if (override != null) currentPoint.copy(action = override) else currentPoint
-            onFire(pointToLaunch)
-        }
-    }
+		// Guard: still on the same point and not yet fired (safety for rapid transitions).
+		if (!firedThisGesture) {
+			firedThisGesture = true
+			val override = currentPoint.holdAndRunAction
+			val pointToLaunch =
+				if (override != null) currentPoint.copy(action = override) else currentPoint
+			onFire(pointToLaunch)
+		}
+	}
 
-    val clear: () -> Unit = remember { { firedThisGesture = false } }
+	val clear: () -> Unit = remember { { firedThisGesture = false } }
 
-    return HoldAndRunState(
-        firedThisGesture = firedThisGesture,
-        clear = clear
-    )
+	return HoldAndRunState(
+		firedThisGesture = firedThisGesture,
+		clear = clear
+	)
 }

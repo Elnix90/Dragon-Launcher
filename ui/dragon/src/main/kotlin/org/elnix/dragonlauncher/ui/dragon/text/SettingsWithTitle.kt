@@ -18,44 +18,44 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
 fun SettingsWithTitle(
-    title: String?,
-    modifier: Modifier = Modifier,
-    @DrawableRes
-    icon: Int? = null,
-    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
-    content: @Composable () -> Unit
+	title: String?,
+	modifier: Modifier = Modifier,
+	@DrawableRes
+	icon: Int? = null,
+	trailingIcon: (@Composable RowScope.() -> Unit)? = null,
+	content: @Composable () -> Unit
 ) {
-    Column(modifier = modifier) {
-        if (title != null) {
-            Row(
-                modifier =
-                    Modifier
-                        .padding(start = 10.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
-                        .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (icon != null) {
-                    Icon(
-                        painter = painterResource(icon),
-                        contentDescription = title,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                    Spacer(12.dp)
-                }
+	Column(modifier = modifier) {
+		if (title != null) {
+			Row(
+				modifier =
+					Modifier
+						.padding(start = 10.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
+						.fillMaxWidth(),
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				if (icon != null) {
+					Icon(
+						painter = painterResource(icon),
+						contentDescription = title,
+						tint = MaterialTheme.colorScheme.secondary
+					)
+					Spacer(12.dp)
+				}
 
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.titleMediumEmphasized
-                )
+				Text(
+					text = title,
+					color = MaterialTheme.colorScheme.secondary,
+					style = MaterialTheme.typography.titleMediumEmphasized
+				)
 
-                Spacer()
+				Spacer()
 
-                if (trailingIcon != null) {
-                    trailingIcon()
-                }
-            }
-        }
-        content()
-    }
+				if (trailingIcon != null) {
+					trailingIcon()
+				}
+			}
+		}
+		content()
+	}
 }

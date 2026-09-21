@@ -25,40 +25,40 @@ import java.time.ZoneId
  */
 @Composable
 fun ProvideCurrentTime(content: @Composable () -> Unit) {
-    val lifecycleOwner = LocalLifecycleOwner.current
+	val lifecycleOwner = LocalLifecycleOwner.current
 
-    var time by remember { mutableLongStateOf(System.currentTimeMillis()) }
+	var time by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
-    LaunchedEffect(null) {
-        val handler = Handler(Looper.getMainLooper())
-        val runnable =
-            object : Runnable {
-                override fun run() {
-                    val dateTime = Instant.now().atZone(ZoneId.systemDefault())
+	LaunchedEffect(null) {
+		val handler = Handler(Looper.getMainLooper())
+		val runnable =
+			object : Runnable {
+				override fun run() {
+					val dateTime = Instant.now().atZone(ZoneId.systemDefault())
 
-                    time = dateTime.toEpochSecond() * 1000
+					time = dateTime.toEpochSecond() * 1000
 
-                    val millis = dateTime.nano / 1000000L
-                    var next = 1000L - millis
-                    if (next <= 200L) next += 1000L
+					val millis = dateTime.nano / 1000000L
+					var next = 1000L - millis
+					if (next <= 200L) next += 1000L
 
-                    handler.postDelayed(this, 1000 - millis)
-                }
-            }
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            handler.post(runnable)
-            try {
-                awaitCancellation()
-            } catch (e: CancellationException) {
-                handler.removeCallbacks(runnable)
-            }
-        }
-    }
+					handler.postDelayed(this, 1000 - millis)
+				}
+			}
+		lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+			handler.post(runnable)
+			try {
+				awaitCancellation()
+			} catch (e: CancellationException) {
+				handler.removeCallbacks(runnable)
+			}
+		}
+	}
 
-    CompositionLocalProvider(
-        LocalTime provides time,
-        content = content
-    )
+	CompositionLocalProvider(
+		LocalTime provides time,
+		content = content
+	)
 }
 
 val LocalTime: ProvidableCompositionLocal<Long> = compositionLocalOf { System.currentTimeMillis() }

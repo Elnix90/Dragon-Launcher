@@ -26,69 +26,69 @@ import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 
 @Composable
 fun SettingsTitle(
-    title: String,
-    onBack: () -> Unit,
-    moreOptions: ((() -> Unit) -> List<MoreOptions>)?,
-    specialContent: @Composable RowScope.() -> Unit
+	title: String,
+	onBack: () -> Unit,
+	moreOptions: ((() -> Unit) -> List<MoreOptions>)?,
+	specialContent: @Composable RowScope.() -> Unit
 ) {
-    val interactionSource = rememberInteractionSource()
-    var showBurgerMenu by remember { mutableStateOf(false) }
-    val dismiss = { showBurgerMenu = false }
+	val interactionSource = rememberInteractionSource()
+	var showBurgerMenu by remember { mutableStateOf(false) }
+	val dismiss = { showBurgerMenu = false }
 
-    val actions = moreOptions?.invoke(dismiss)
+	val actions = moreOptions?.invoke(dismiss)
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .clickable(
-                        indication = null,
-                        interactionSource = interactionSource,
-                        onClick = onBack
-                    ).padding(horizontal = 10.dp, vertical = 20.dp)
-        ) {
-            AnimatedFab(
-                onClick = onBack,
-                interactionSource = interactionSource,
-                icon = R.drawable.back
-            )
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(12.dp),
+		modifier = Modifier.fillMaxWidth()
+	) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(12.dp),
+			modifier =
+				Modifier
+					.weight(1f)
+					.clickable(
+						indication = null,
+						interactionSource = interactionSource,
+						onClick = onBack
+					).padding(horizontal = 10.dp, vertical = 20.dp)
+		) {
+			AnimatedFab(
+				onClick = onBack,
+				interactionSource = interactionSource,
+				icon = R.drawable.back
+			)
 
-            Text(
-                text = title,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleLarge,
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .basicMarquee(iterations = 2)
-            )
-        }
+			Text(
+				text = title,
+				color = MaterialTheme.colorScheme.onBackground,
+				style = MaterialTheme.typography.titleLarge,
+				modifier =
+					Modifier
+						.weight(1f)
+						.basicMarquee(iterations = 2)
+			)
+		}
 
-        actions?.let {
-            Box {
-                AnimatedFab(R.drawable.more_vert) { showBurgerMenu = true }
+		actions?.let {
+			Box {
+				AnimatedFab(R.drawable.more_vert) { showBurgerMenu = true }
 
-                BurgerListAction(
-                    isExpanded = showBurgerMenu,
-                    onDismissRequest = dismiss,
-                    actions = it
-                )
-            }
-        }
+				BurgerListAction(
+					isExpanded = showBurgerMenu,
+					onDismissRequest = dismiss,
+					actions = it
+				)
+			}
+		}
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier.padding(end = 10.dp)
-        ) {
-            specialContent()
-        }
-    }
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(5.dp),
+			modifier = Modifier.padding(end = 10.dp)
+		) {
+			specialContent()
+		}
+	}
 }

@@ -29,67 +29,67 @@ import org.junit.Test
  * to compile.
  */
 class DragonRowTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun clickableRow_displaysContent() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonRow(onClick = {}) {
-                    Text("Row Content")
-                }
-            }
-        }
+	@Test
+	fun clickableRow_displaysContent() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonRow(onClick = {}) {
+					Text("Row Content")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Row Content").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Row Content").assertIsDisplayed()
+	}
 
-    @Test
-    fun clickableRow_clickTriggersCallback() {
-        var clicked = false
+	@Test
+	fun clickableRow_clickTriggersCallback() {
+		var clicked = false
 
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonRow(onClick = { clicked = true }) {
-                    Text("Click me")
-                }
-            }
-        }
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonRow(onClick = { clicked = true }) {
+					Text("Click me")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Click me").performClick()
-        assertTrue("onClick should have been called", clicked)
-    }
+		composeTestRule.onNodeWithText("Click me").performClick()
+		assertTrue("onClick should have been called", clicked)
+	}
 
-    @Test
-    fun clickableRow_multipleClicksTriggerMultipleCallbacks() {
-        var clickCount = 0
+	@Test
+	fun clickableRow_multipleClicksTriggerMultipleCallbacks() {
+		var clickCount = 0
 
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonRow(onClick = { clickCount++ }) {
-                    Text("Tap")
-                }
-            }
-        }
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonRow(onClick = { clickCount++ }) {
+					Text("Tap")
+				}
+			}
+		}
 
-        val node = composeTestRule.onNodeWithText("Tap")
-        node.performClick()
-        node.performClick()
-        node.performClick()
-        assertTrue("onClick should have been called 3 times", clickCount == 3)
-    }
+		val node = composeTestRule.onNodeWithText("Tap")
+		node.performClick()
+		node.performClick()
+		node.performClick()
+		assertTrue("onClick should have been called 3 times", clickCount == 3)
+	}
 
-    @Test
-    fun nonClickableRow_displaysContent() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonRow({}) {
-                    Text("Static Row")
-                }
-            }
-        }
+	@Test
+	fun nonClickableRow_displaysContent() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonRow({}) {
+					Text("Static Row")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Static Row").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Static Row").assertIsDisplayed()
+	}
 }

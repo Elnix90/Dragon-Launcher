@@ -11,9 +11,9 @@ import jakarta.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object ColorsModule {
-    @Provides
-    @Singleton
-    fun provideColorService(
-        @ApplicationContext ctx: Context
-    ): ColorService = ColorServiceImpl(ctx)
+	@Provides
+	@Singleton
+	fun provideColorService(
+		@ApplicationContext ctx: Context
+	): ColorService = ColorServiceImpl(ctx)
 }

@@ -7,6 +7,6 @@ package org.elnix.dragonlauncher.shizuku
  * @property isError Indicates whether this line originated from the error stream.
  */
 public class OutputLine(
-    public val text: String,
-    public val isError: Boolean = false
+	public val text: String,
+	public val isError: Boolean = false
 )

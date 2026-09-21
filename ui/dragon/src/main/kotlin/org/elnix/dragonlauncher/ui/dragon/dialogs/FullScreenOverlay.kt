@@ -14,45 +14,45 @@ import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun FullScreenOverlay(
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.BottomCenter,
-    imePadding: Boolean = true,
-    content: @Composable () -> Unit
+	onDismissRequest: () -> Unit,
+	modifier: Modifier = Modifier,
+	alignment: Alignment = Alignment.BottomCenter,
+	imePadding: Boolean = true,
+	content: @Composable () -> Unit
 ) {
-    Dialog(
-        onDismissRequest = onDismissRequest,
-        properties =
-            DialogProperties(
-                usePlatformDefaultWidth = false,
-                decorFitsSystemWindows = true
-            )
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.4f))
-                    .clickable(
-                        indication = null,
-                        interactionSource = null,
-                        onClick = onDismissRequest
-                    ),
-            contentAlignment = alignment
-        ) {
-            Box(
-                modifier =
-                    modifier
-                        .then(if (imePadding) Modifier.imePadding() else Modifier)
-                        // Consume clicks so they don't reach the scrim
-                        // WTF
-                        .clickable(
-                            indication = null,
-                            interactionSource = null
-                        ) { }
-            ) {
-                content()
-            }
-        }
-    }
+	Dialog(
+		onDismissRequest = onDismissRequest,
+		properties =
+			DialogProperties(
+				usePlatformDefaultWidth = false,
+				decorFitsSystemWindows = true
+			)
+	) {
+		Box(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.background(Color.Black.copy(alpha = 0.4f))
+					.clickable(
+						indication = null,
+						interactionSource = null,
+						onClick = onDismissRequest
+					),
+			contentAlignment = alignment
+		) {
+			Box(
+				modifier =
+					modifier
+						.then(if (imePadding) Modifier.imePadding() else Modifier)
+						// Consume clicks so they don't reach the scrim
+						// WTF
+						.clickable(
+							indication = null,
+							interactionSource = null
+						) { }
+			) {
+				content()
+			}
+		}
+	}
 }

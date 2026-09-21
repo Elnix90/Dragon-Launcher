@@ -26,53 +26,53 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
 fun WorkspaceUnavailableContent(
-    workspaceType: WorkspaceType
+	workspaceType: WorkspaceType
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-        contentAlignment = Alignment.Center
-    ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    painter = painterResource(workspaceType.icon),
-                    contentDescription = "Workspace icon",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(50.dp)
-                )
-                Spacer(10.dp)
+	Box(
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.verticalScroll(rememberScrollState()),
+		contentAlignment = Alignment.Center
+	) {
+		CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				Icon(
+					painter = painterResource(workspaceType.icon),
+					contentDescription = "Workspace icon",
+					tint = MaterialTheme.colorScheme.primary,
+					modifier = Modifier.size(50.dp)
+				)
+				Spacer(10.dp)
 
-                Text(
-                    text = stringResource(R.string.no_profile_found),
-                    style = MaterialTheme.typography.bodyLargeEmphasized
-                )
+				Text(
+					text = stringResource(R.string.no_profile_found),
+					style = MaterialTheme.typography.bodyLargeEmphasized
+				)
 
-                if (workspaceType == WorkspaceType.Work || workspaceType == WorkspaceType.Private) {
-                    val ctx = LocalContext.current
-                    Spacer(5.dp)
+				if (workspaceType == WorkspaceType.Work || workspaceType == WorkspaceType.Private) {
+					val ctx = LocalContext.current
+					Spacer(5.dp)
 
-                    Text(
-                        text = stringResource(R.string.need_to_be_default_launcher_to_access_profile),
-                        style = MaterialTheme.typography.labelMedium
-                    )
+					Text(
+						text = stringResource(R.string.need_to_be_default_launcher_to_access_profile),
+						style = MaterialTheme.typography.labelMedium
+					)
 
-                    DragonButton(
-                        onClick = {
-                            ctx.openDefaultLauncherSettings()
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.set_default_launcher),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-            }
-        }
-    }
+					DragonButton(
+						onClick = {
+							ctx.openDefaultLauncherSettings()
+						}
+					) {
+						Text(
+							text = stringResource(R.string.set_default_launcher),
+							style = MaterialTheme.typography.labelSmall
+						)
+					}
+				}
+			}
+		}
+	}
 }

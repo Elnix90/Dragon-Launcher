@@ -14,25 +14,25 @@ import androidx.compose.ui.platform.LocalView
  */
 @Composable
 fun isKeyboardVisible(): State<Boolean> {
-    val rootView = LocalView.current
-    val keyboardVisible = remember { mutableStateOf(false) }
+	val rootView = LocalView.current
+	val keyboardVisible = remember { mutableStateOf(false) }
 
-    DisposableEffect(rootView) {
-        val listener =
-            ViewTreeObserver.OnGlobalLayoutListener {
-                val rect = Rect()
-                rootView.getWindowVisibleDisplayFrame(rect)
-                val screenHeight = rootView.rootView.height
-                val keypadHeight = screenHeight - rect.bottom
+	DisposableEffect(rootView) {
+		val listener =
+			ViewTreeObserver.OnGlobalLayoutListener {
+				val rect = Rect()
+				rootView.getWindowVisibleDisplayFrame(rect)
+				val screenHeight = rootView.rootView.height
+				val keypadHeight = screenHeight - rect.bottom
 
-                keyboardVisible.value = keypadHeight > screenHeight * 0.15
-            }
+				keyboardVisible.value = keypadHeight > screenHeight * 0.15
+			}
 
-        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
-        onDispose {
-            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
+		rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
+		onDispose {
+			rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+		}
+	}
 
-    return keyboardVisible
+	return keyboardVisible
 }

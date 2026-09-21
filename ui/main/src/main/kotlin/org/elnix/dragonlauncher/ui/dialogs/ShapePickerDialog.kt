@@ -19,38 +19,38 @@ import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShapePickerDialog(
-    selected: IconShape,
-    allowedShapes: Set<IconShape>? = null,
-    onDismiss: () -> Unit,
-    onPicked: (IconShape) -> Unit
+	selected: IconShape,
+	allowedShapes: Set<IconShape>? = null,
+	onDismiss: () -> Unit,
+	onPicked: (IconShape) -> Unit
 ) {
-    val filteredShapes =
-        remember(allowedShapes) {
-            if (allowedShapes != null) {
-                allShapes.filter { it in allowedShapes }
-            } else {
-                allShapes.toList()
-            }
-        }
+	val filteredShapes =
+		remember(allowedShapes) {
+			if (allowedShapes != null) {
+				allShapes.filter { it in allowedShapes }
+			} else {
+				allShapes.toList()
+			}
+		}
 
-    DragonModalBottomSheet(onDismissRequest = onDismiss) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            verticalArrangement = Arrangement.Center,
-            horizontalArrangement = Arrangement.Center,
-            contentPadding = PaddingValues(top = 10.dp, bottom = 50.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(filteredShapes) { shape ->
-                ShapePreview(
-                    iconShape = shape,
-                    size = 70.dp,
-                    selected = shape == selected
-                ) {
-                    onPicked(shape)
-                    onDismiss()
-                }
-            }
-        }
-    }
+	DragonModalBottomSheet(onDismissRequest = onDismiss) {
+		LazyVerticalGrid(
+			columns = GridCells.Fixed(4),
+			verticalArrangement = Arrangement.Center,
+			horizontalArrangement = Arrangement.Center,
+			contentPadding = PaddingValues(top = 10.dp, bottom = 50.dp),
+			modifier = Modifier.fillMaxWidth()
+		) {
+			items(filteredShapes) { shape ->
+				ShapePreview(
+					iconShape = shape,
+					size = 70.dp,
+					selected = shape == selected
+				) {
+					onPicked(shape)
+					onDismiss()
+				}
+			}
+		}
+	}
 }

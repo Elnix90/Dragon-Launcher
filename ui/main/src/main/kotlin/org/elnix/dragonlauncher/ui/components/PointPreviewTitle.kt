@@ -38,75 +38,75 @@ import org.elnix.dragonlauncher.ui.actions.actionLabel
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PointPreviewTitle(
-    point: Point?,
-    topPadding: Dp = 60.dp,
-    showLabel: Boolean,
-    showIcon: Boolean
+	point: Point?,
+	topPadding: Dp = 60.dp,
+	showLabel: Boolean,
+	showIcon: Boolean
 ) {
-    if (point == null) return
+	if (point == null) return
 
-    val extraColors = LocalExtraColors.current
+	val extraColors = LocalExtraColors.current
 
-    val label = point.customName ?: actionLabel(point.action)
+	val label = point.customName ?: actionLabel(point.action)
 
-    val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
-    val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
+	val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
+	val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
-    val alpha = remember { Animatable(initialValue = 0f) }
-    val offsetY = remember { Animatable(initialValue = -20f) }
+	val alpha = remember { Animatable(initialValue = 0f) }
+	val offsetY = remember { Animatable(initialValue = -20f) }
 
-    LaunchedEffect(point.id) {
-        alpha.snapTo(0f)
-        alpha.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(150)
-        )
-    }
+	LaunchedEffect(point.id) {
+		alpha.snapTo(0f)
+		alpha.animateTo(
+			targetValue = 1f,
+			animationSpec = tween(150)
+		)
+	}
 
-    LaunchedEffect(point.id) {
-        offsetY.snapTo(-20f)
-        offsetY.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(150)
-        )
-    }
+	LaunchedEffect(point.id) {
+		offsetY.snapTo(-20f)
+		offsetY.animateTo(
+			targetValue = 0f,
+			animationSpec = tween(150)
+		)
+	}
 
-    val action = point.action
-    if (showIcon || showLabel) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .offset(y = offsetY.value.dp)
-                .padding(top = topPadding)
-                .alpha(alpha.value),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (showIcon) {
-                    FinalPointIcon(point, size = appIconOverlaySize)
-                }
+	val action = point.action
+	if (showIcon || showLabel) {
+		Box(
+			Modifier
+				.fillMaxWidth()
+				.offset(y = offsetY.value.dp)
+				.padding(top = topPadding)
+				.alpha(alpha.value),
+			contentAlignment = Alignment.TopCenter
+		) {
+			Row(
+				horizontalArrangement = Arrangement.spacedBy(5.dp),
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				if (showIcon) {
+					FinalPointIcon(point, size = appIconOverlaySize)
+				}
 
-                if (showLabel) {
-                    Text(
-                        text = label,
-                        style =
-                            TextStyle(
-                                color = action.actionColor(extraColors, point.customActionColor),
-                                fontSize = appLabelOverlaySize.sp,
-                                fontWeight = FontWeight.Bold,
-                                shadow =
-                                    Shadow(
-                                        color = Color.Black.copy(alpha = 0.48f),
-                                        offset = Offset(0f, 1f),
-                                        blurRadius = 5f
-                                    )
-                            )
-                    )
-                }
-            }
-        }
-    }
+				if (showLabel) {
+					Text(
+						text = label,
+						style =
+							TextStyle(
+								color = action.actionColor(extraColors, point.customActionColor),
+								fontSize = appLabelOverlaySize.sp,
+								fontWeight = FontWeight.Bold,
+								shadow =
+									Shadow(
+										color = Color.Black.copy(alpha = 0.48f),
+										offset = Offset(0f, 1f),
+										blurRadius = 5f
+									)
+							)
+					)
+				}
+			}
+		}
+	}
 }

@@ -22,56 +22,56 @@ import org.junit.Test
  * content is properly shown and hidden.
  */
 class DragonDropDownMenuTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun dropDownMenu_showsContentWhenExpanded() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonDropDownMenu(
-                    expanded = true,
-                    onDismissRequest = {}
-                ) {
-                    Text("Option 1")
-                    Text("Option 2")
-                }
-            }
-        }
+	@Test
+	fun dropDownMenu_showsContentWhenExpanded() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonDropDownMenu(
+					expanded = true,
+					onDismissRequest = {}
+				) {
+					Text("Option 1")
+					Text("Option 2")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Option 1").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Option 2").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Option 1").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Option 2").assertIsDisplayed()
+	}
 
-    @Test
-    fun dropDownMenu_hidesContentWhenCollapsed() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonDropDownMenu(
-                    expanded = false,
-                    onDismissRequest = {}
-                ) {
-                    Text("Hidden Option")
-                }
-            }
-        }
+	@Test
+	fun dropDownMenu_hidesContentWhenCollapsed() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonDropDownMenu(
+					expanded = false,
+					onDismissRequest = {}
+				) {
+					Text("Hidden Option")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Hidden Option").assertDoesNotExist()
-    }
+		composeTestRule.onNodeWithText("Hidden Option").assertDoesNotExist()
+	}
 
-    @Test
-    fun dropDownMenu_displaysSingleItem() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                DragonDropDownMenu(
-                    expanded = true,
-                    onDismissRequest = {}
-                ) {
-                    Text("Only option")
-                }
-            }
-        }
+	@Test
+	fun dropDownMenu_displaysSingleItem() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				DragonDropDownMenu(
+					expanded = true,
+					onDismissRequest = {}
+				) {
+					Text("Only option")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Only option").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Only option").assertIsDisplayed()
+	}
 }

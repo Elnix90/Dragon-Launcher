@@ -16,87 +16,87 @@ import java.lang.ref.WeakReference
 
 @AndroidEntryPoint
 public class NotificationService : NotificationListenerService() {
-    @Inject
-    public lateinit var notificationRepository: NotificationRepository
+	@Inject
+	public lateinit var notificationRepository: NotificationRepository
 
-    @Inject
-    public lateinit var permissionsManager: PermissionsManager
+	@Inject
+	public lateinit var permissionsManager: PermissionsManager
 
-    private val scope = CoroutineScope(Job() + Dispatchers.Default)
+	private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
+	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 
-    override fun onListenerConnected() {
-        super.onListenerConnected()
+	override fun onListenerConnected() {
+		super.onListenerConnected()
 
-        logD(NOTIFICATIONS_TAG) { "Notification listener connected" }
-        permissionsManager.reportNotificationListenerState(true)
-        instance = WeakReference(this)
+		logD(NOTIFICATIONS_TAG) { "Notification listener connected" }
+		permissionsManager.reportNotificationListenerState(true)
+		instance = WeakReference(this)
 
-        scope.launch {
-            val statusBarNotifications = getNotifications().sortedBy { it.postTime }
-            val ranking = Ranking()
-            val rankingMap = currentRanking
+		scope.launch {
+			val statusBarNotifications = getNotifications().sortedBy { it.postTime }
+			val ranking = Ranking()
+			val rankingMap = currentRanking
 
-            val notifications =
-                statusBarNotifications.map {
-                    rankingMap.getRanking(it.key, ranking)
-                    Notification(it, ranking)
-                }
+			val notifications =
+				statusBarNotifications.map {
+					rankingMap.getRanking(it.key, ranking)
+					Notification(it, ranking)
+				}
 
-            notificationRepository.setNotifications(notifications)
-        }
-    }
+			notificationRepository.setNotifications(notifications)
+		}
+	}
 
-    override fun onNotificationRankingUpdate(rankingMap: RankingMap?) {
-        super.onNotificationRankingUpdate(rankingMap)
-        scope.launch {
-            val notifications = notificationRepository.getNotifications()
+	override fun onNotificationRankingUpdate(rankingMap: RankingMap?) {
+		super.onNotificationRankingUpdate(rankingMap)
+		scope.launch {
+			val notifications = notificationRepository.getNotifications()
 
-            val ranking = Ranking()
-            val updatedNotifications =
-                notifications.map {
-                    rankingMap?.getRanking(it.key, ranking)
-                    Notification(it, ranking)
-                }
+			val ranking = Ranking()
+			val updatedNotifications =
+				notifications.map {
+					rankingMap?.getRanking(it.key, ranking)
+					Notification(it, ranking)
+				}
 
-            notificationRepository.setNotifications(updatedNotifications)
-        }
-    }
+			notificationRepository.setNotifications(updatedNotifications)
+		}
+	}
 
-    private fun getNotifications(): Array<StatusBarNotification> =
-        try {
-            activeNotifications
-        } catch (_: SecurityException) {
-            emptyArray()
-        }
+	private fun getNotifications(): Array<StatusBarNotification> =
+		try {
+			activeNotifications
+		} catch (_: SecurityException) {
+			emptyArray()
+		}
 
-    override fun onNotificationRemoved(sbn: StatusBarNotification) {
-        super.onNotificationRemoved(sbn)
-        notificationRepository.onNotificationRemoved(sbn.key)
-    }
+	override fun onNotificationRemoved(sbn: StatusBarNotification) {
+		super.onNotificationRemoved(sbn)
+		notificationRepository.onNotificationRemoved(sbn.key)
+	}
 
-    override fun onNotificationPosted(sbn: StatusBarNotification, rankingMap: RankingMap) {
-        super.onNotificationPosted(sbn, rankingMap)
+	override fun onNotificationPosted(sbn: StatusBarNotification, rankingMap: RankingMap) {
+		super.onNotificationPosted(sbn, rankingMap)
 
-        val ranking = Ranking()
-        rankingMap.getRanking(sbn.key, ranking)
-        val notification = Notification(sbn, ranking)
+		val ranking = Ranking()
+		rankingMap.getRanking(sbn.key, ranking)
+		val notification = Notification(sbn, ranking)
 
-        notificationRepository.onNotificationPosted(notification)
-    }
+		notificationRepository.onNotificationPosted(notification)
+	}
 
-    override fun onListenerDisconnected() {
-        super.onListenerDisconnected()
-        permissionsManager.reportNotificationListenerState(false)
-        notificationRepository.setNotifications(emptyList())
+	override fun onListenerDisconnected() {
+		super.onListenerDisconnected()
+		permissionsManager.reportNotificationListenerState(false)
+		notificationRepository.setNotifications(emptyList())
 
-        logD(NOTIFICATIONS_TAG) { "Notification listener disconnected" }
-    }
+		logD(NOTIFICATIONS_TAG) { "Notification listener disconnected" }
+	}
 
-    public companion object {
-        private var instance: WeakReference<NotificationService>? = null
+	public companion object {
+		private var instance: WeakReference<NotificationService>? = null
 
-        public fun getInstance(): NotificationService? = instance?.get()
-    }
+		public fun getInstance(): NotificationService? = instance?.get()
+	}
 }

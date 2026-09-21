@@ -31,74 +31,74 @@ import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShapePreview(
-    iconShape: IconShape,
-    modifier: Modifier = Modifier,
-    size: Dp = 30.dp,
-    selected: Boolean = false,
-    onLongClick: (() -> Unit)? = null,
-    onClick: (() -> Unit)? = null
+	iconShape: IconShape,
+	modifier: Modifier = Modifier,
+	size: Dp = 30.dp,
+	selected: Boolean = false,
+	onLongClick: (() -> Unit)? = null,
+	onClick: (() -> Unit)? = null
 ) {
-    val bgColor by animateColorAsState(
-        if (selected) {
-            MaterialTheme.colorScheme.secondary
-        } else {
-            Color.Transparent
-        }
-    )
+	val bgColor by animateColorAsState(
+		if (selected) {
+			MaterialTheme.colorScheme.secondary
+		} else {
+			Color.Transparent
+		}
+	)
 
-    val borderColor by animateColorAsState(
-        if (selected) {
-            MaterialTheme.colorScheme.secondary
-        } else {
-            MaterialTheme.colorScheme.primaryContainer
-        }
-    )
+	val borderColor by animateColorAsState(
+		if (selected) {
+			MaterialTheme.colorScheme.secondary
+		} else {
+			MaterialTheme.colorScheme.primaryContainer
+		}
+	)
 
-    Box(
-        modifier =
-            modifier
-                .aspectRatio(1f, true)
-                .size(size)
-                .clip(MaterialTheme.shapes.extraLarge)
-                .conditional(onClick) {
-                    combinedClickable(onLongClick = onLongClick, onClick = it)
-                },
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(size / 5)
-        ) {
-            when (iconShape) {
-                is IconShape.Random -> {
-                    Icon(
-                        painter = painterResource(R.drawable.shuffle),
-                        contentDescription = stringResource(R.string.random_shape),
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .clip(MaterialTheme.shapes.large)
-                                .background(bgColor.alphaMultiplier(0.5f))
-                                .border(1.dp, borderColor, MaterialTheme.shapes.large)
-                    )
-                }
+	Box(
+		modifier =
+			modifier
+				.aspectRatio(1f, true)
+				.size(size)
+				.clip(MaterialTheme.shapes.extraLarge)
+				.conditional(onClick) {
+					combinedClickable(onLongClick = onLongClick, onClick = it)
+				},
+		contentAlignment = Alignment.Center
+	) {
+		Box(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.padding(size / 5)
+		) {
+			when (iconShape) {
+				is IconShape.Random -> {
+					Icon(
+						painter = painterResource(R.drawable.shuffle),
+						contentDescription = stringResource(R.string.random_shape),
+						tint = MaterialTheme.colorScheme.primary,
+						modifier =
+							Modifier
+								.fillMaxSize()
+								.clip(MaterialTheme.shapes.large)
+								.background(bgColor.alphaMultiplier(0.5f))
+								.border(1.dp, borderColor, MaterialTheme.shapes.large)
+					)
+				}
 
-                else -> {
-                    val shape = iconShape.resolveShape()
+				else -> {
+					val shape = iconShape.resolveShape()
 
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .clip(shape)
-                                .background(bgColor.alphaMultiplier(0.5f))
-                                .border(1.dp, borderColor, shape)
-                    )
-                }
-            }
-        }
-    }
+					Box(
+						modifier =
+							Modifier
+								.fillMaxSize()
+								.clip(shape)
+								.background(bgColor.alphaMultiplier(0.5f))
+								.border(1.dp, borderColor, shape)
+					)
+				}
+			}
+		}
+	}
 }

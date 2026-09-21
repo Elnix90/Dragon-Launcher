@@ -31,99 +31,99 @@ import org.elnix.dragonlauncher.ui.dragon.generic.connectedTrailingButtonShapes
 
 @Composable
 fun UndoRedoBlock(undoRedo: UndoRedoManager) {
-    val undoButtonEnabled by undoRedo.canUndo.collectAsState()
-    val redoButtonEnabled by undoRedo.canRedo.collectAsState()
+	val undoButtonEnabled by undoRedo.canUndo.collectAsState()
+	val redoButtonEnabled by undoRedo.canRedo.collectAsState()
 
-    val interactionSources = List(4) { rememberInteractionSource() }
+	val interactionSources = List(4) { rememberInteractionSource() }
 
-    val debugInfos by DebugSettingsStore.settingsDebugInfo.asState()
+	val debugInfos by DebugSettingsStore.settingsDebugInfo.asState()
 
-    ButtonGroup(
-        overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-    ) {
-        UndRedoEditTools.entries.forEachIndexed { idx, entry ->
+	ButtonGroup(
+		overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+		horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+	) {
+		UndRedoEditTools.entries.forEachIndexed { idx, entry ->
 
-            val checked =
-                when (entry) {
-                    UndRedoEditTools.UndoAll -> undoButtonEnabled
-                    UndRedoEditTools.Undo -> undoButtonEnabled
-                    UndRedoEditTools.Redo -> redoButtonEnabled
-                    UndRedoEditTools.RedoAll -> redoButtonEnabled
-                }
+			val checked =
+				when (entry) {
+					UndRedoEditTools.UndoAll -> undoButtonEnabled
+					UndRedoEditTools.Undo -> undoButtonEnabled
+					UndRedoEditTools.Redo -> redoButtonEnabled
+					UndRedoEditTools.RedoAll -> redoButtonEnabled
+				}
 
-            customItem(
-                buttonGroupContent = {
-                    IconToggleButton(
-                        checked = checked,
-                        onCheckedChange =
-                            withHapticParam {
-                                when (entry) {
-                                    UndRedoEditTools.UndoAll -> undoRedo.undoAll()
-                                    UndRedoEditTools.Undo -> undoRedo.undo()
-                                    UndRedoEditTools.Redo -> undoRedo.redo()
-                                    UndRedoEditTools.RedoAll -> undoRedo.redoAll()
-                                }
-                            },
-                        interactionSource = interactionSources[idx],
-                        modifier =
-                            Modifier
-                                .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-                                .animateWidth(interactionSources[idx]),
-                        enabled =
-                            when (entry) {
-                                UndRedoEditTools.UndoAll -> undoButtonEnabled
-                                UndRedoEditTools.Undo -> undoButtonEnabled
-                                UndRedoEditTools.Redo -> redoButtonEnabled
-                                UndRedoEditTools.RedoAll -> redoButtonEnabled
-                            },
-                        colors = AppObjectsColors.iconToggleButtonColors(),
-                        shapes =
-                            when (idx) {
-                                0 -> connectedLeadingButtonShapes()
-                                3 -> connectedTrailingButtonShapes()
-                                else -> connectedMiddleButtonShapes()
-                            }
-                    ) {
-                        entry.iconEnabled.let { iconEnabled ->
-                            DragonTooltip(entry.resId ?: -1) {
-                                Crossfade(!checked) { notChecked ->
-                                    BadgedBox(
-                                        badge = {
-                                            if (debugInfos) {
-                                                val undoSize by undoRedo.undoSize.collectAsState()
-                                                val redoSize by undoRedo.redoSize.collectAsState()
+			customItem(
+				buttonGroupContent = {
+					IconToggleButton(
+						checked = checked,
+						onCheckedChange =
+							withHapticParam {
+								when (entry) {
+									UndRedoEditTools.UndoAll -> undoRedo.undoAll()
+									UndRedoEditTools.Undo -> undoRedo.undo()
+									UndRedoEditTools.Redo -> undoRedo.redo()
+									UndRedoEditTools.RedoAll -> undoRedo.redoAll()
+								}
+							},
+						interactionSource = interactionSources[idx],
+						modifier =
+							Modifier
+								.size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+								.animateWidth(interactionSources[idx]),
+						enabled =
+							when (entry) {
+								UndRedoEditTools.UndoAll -> undoButtonEnabled
+								UndRedoEditTools.Undo -> undoButtonEnabled
+								UndRedoEditTools.Redo -> redoButtonEnabled
+								UndRedoEditTools.RedoAll -> redoButtonEnabled
+							},
+						colors = AppObjectsColors.iconToggleButtonColors(),
+						shapes =
+							when (idx) {
+								0 -> connectedLeadingButtonShapes()
+								3 -> connectedTrailingButtonShapes()
+								else -> connectedMiddleButtonShapes()
+							}
+					) {
+						entry.iconEnabled.let { iconEnabled ->
+							DragonTooltip(entry.resId ?: -1) {
+								Crossfade(!checked) { notChecked ->
+									BadgedBox(
+										badge = {
+											if (debugInfos) {
+												val undoSize by undoRedo.undoSize.collectAsState()
+												val redoSize by undoRedo.redoSize.collectAsState()
 
-                                                val text =
-                                                    when (entry) {
-                                                        UndRedoEditTools.UndoAll -> undoSize.takeIf { it > 0 }
-                                                        UndRedoEditTools.Undo -> null
-                                                        UndRedoEditTools.Redo -> null
-                                                        UndRedoEditTools.RedoAll -> redoSize.takeIf { it > 0 }
-                                                    }
+												val text =
+													when (entry) {
+														UndRedoEditTools.UndoAll -> undoSize.takeIf { it > 0 }
+														UndRedoEditTools.Undo -> null
+														UndRedoEditTools.Redo -> null
+														UndRedoEditTools.RedoAll -> redoSize.takeIf { it > 0 }
+													}
 
-                                                text?.let {
-                                                    Text(
-                                                        text = it.toString(),
-                                                        fontSize = 6.sp,
-                                                        modifier = Modifier.align(Alignment.BottomEnd)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                menuContent = { }
-            )
-        }
-    }
+												text?.let {
+													Text(
+														text = it.toString(),
+														fontSize = 6.sp,
+														modifier = Modifier.align(Alignment.BottomEnd)
+													)
+												}
+											}
+										}
+									) {
+										Icon(
+											painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
+											contentDescription = null
+										)
+									}
+								}
+							}
+						}
+					}
+				},
+				menuContent = { }
+			)
+		}
+	}
 }

@@ -17,72 +17,72 @@ import androidx.navigation3.ui.NavDisplay
 import org.elnix.dragonlauncher.ui.base.animation.navigationBouncySpec
 
 val verticalMetadata: Map<String, Any> =
-    NavDisplay.transitionSpec {
-        slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
-    }
+	NavDisplay.transitionSpec {
+		slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
+	}
 
 val horizontalMetadata: Map<String, Any> =
-    metadata {
-        put(NavDisplay.TransitionKey) {
-            slideInHorizontally { it / 2 } + scaleIn(initialScale = 0.9f) + fadeIn() togetherWith slideOutHorizontally { -it / 4 } + fadeOut()
-        }
+	metadata {
+		put(NavDisplay.TransitionKey) {
+			slideInHorizontally { it / 2 } + scaleIn(initialScale = 0.9f) + fadeIn() togetherWith slideOutHorizontally { -it / 4 } + fadeOut()
+		}
 
-        put(NavDisplay.PopTransitionKey) {
-            slideInHorizontally { -it / 4 } + fadeIn() togetherWith slideOutHorizontally { it / 2 } + scaleOut(targetScale = 0.9f) + fadeOut()
-        }
+		put(NavDisplay.PopTransitionKey) {
+			slideInHorizontally { -it / 4 } + fadeIn() togetherWith slideOutHorizontally { it / 2 } + scaleOut(targetScale = 0.9f) + fadeOut()
+		}
 
-        put(NavDisplay.PredictivePopTransitionKey) {
-            slideInHorizontally { -it / 4 } + fadeIn() togetherWith slideOutHorizontally { it / 2 } + scaleOut(targetScale = 0.9f) + fadeOut()
-        }
-    }
+		put(NavDisplay.PredictivePopTransitionKey) {
+			slideInHorizontally { -it / 4 } + fadeIn() togetherWith slideOutHorizontally { it / 2 } + scaleOut(targetScale = 0.9f) + fadeOut()
+		}
+	}
 
 val drawerMetadata: Map<String, Any> =
-    metadata {
-        put(NavDisplay.TransitionKey) {
-            // Slide new content up, keeping the old content in place underneath
-            slideInVertically(
-                initialOffsetY = { it },
-                animationSpec = tween(250)
-            ) togetherWith ExitTransition.KeepUntilTransitionsFinished
-        }
-        put(NavDisplay.PopTransitionKey) {
-            // Slide old content down, revealing the new content in place underneath
-            EnterTransition.None togetherWith
-                slideOutVertically(
-                    targetOffsetY = { it },
-                    animationSpec = tween(250)
-                )
-        }
-        put(NavDisplay.PredictivePopTransitionKey) {
-            // Slide old content down, revealing the new content in place underneath
-            EnterTransition.None togetherWith
-                slideOutVertically(
-                    targetOffsetY = { it },
-                    animationSpec = tween(250)
-                )
-        }
-    }
+	metadata {
+		put(NavDisplay.TransitionKey) {
+			// Slide new content up, keeping the old content in place underneath
+			slideInVertically(
+				initialOffsetY = { it },
+				animationSpec = tween(250)
+			) togetherWith ExitTransition.KeepUntilTransitionsFinished
+		}
+		put(NavDisplay.PopTransitionKey) {
+			// Slide old content down, revealing the new content in place underneath
+			EnterTransition.None togetherWith
+				slideOutVertically(
+					targetOffsetY = { it },
+					animationSpec = tween(250)
+				)
+		}
+		put(NavDisplay.PredictivePopTransitionKey) {
+			// Slide old content down, revealing the new content in place underneath
+			EnterTransition.None togetherWith
+				slideOutVertically(
+					targetOffsetY = { it },
+					animationSpec = tween(250)
+				)
+		}
+	}
 
 val welcomeMetadata: Map<String, Any> =
-    metadata {
-        put(NavDisplay.TransitionKey) {
-            // Slide new content up, keeping the old content in place underneath
-            slideInVertically(
-                initialOffsetY = { it }
-            ) togetherWith ExitTransition.KeepUntilTransitionsFinished
-        }
-        put(NavDisplay.PopTransitionKey) {
-            // Slide old content down, revealing the new content in place underneath
-            EnterTransition.None togetherWith
-                slideOutVertically(
-                    targetOffsetY = { -it }
-                )
-        }
-        put(NavDisplay.PredictivePopTransitionKey) {
-            // Slide old content down, revealing the new content in place underneath
-            EnterTransition.None togetherWith
-                slideOutVertically(
-                    targetOffsetY = { -it }
-                )
-        }
-    }
+	metadata {
+		put(NavDisplay.TransitionKey) {
+			// Slide new content up, keeping the old content in place underneath
+			slideInVertically(
+				initialOffsetY = { it }
+			) togetherWith ExitTransition.KeepUntilTransitionsFinished
+		}
+		put(NavDisplay.PopTransitionKey) {
+			// Slide old content down, revealing the new content in place underneath
+			EnterTransition.None togetherWith
+				slideOutVertically(
+					targetOffsetY = { -it }
+				)
+		}
+		put(NavDisplay.PredictivePopTransitionKey) {
+			// Slide old content down, revealing the new content in place underneath
+			EnterTransition.None togetherWith
+				slideOutVertically(
+					targetOffsetY = { -it }
+				)
+		}
+	}

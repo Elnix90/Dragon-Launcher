@@ -12,10 +12,10 @@ import org.elnix.dragonlauncher.applications.AppRepository
 @Module
 @InstallIn(SingletonComponent::class)
 internal object RecentsModule {
-    @Provides
-    @Singleton
-    fun provideRecentsService(
-        @ApplicationContext ctx: Context,
-        applicationRepository: AppRepository
-    ): RecentsService = RecentsServiceImpl(ctx, applicationRepository)
+	@Provides
+	@Singleton
+	fun provideRecentsService(
+		@ApplicationContext ctx: Context,
+		applicationRepository: AppRepository
+	): RecentsService = RecentsServiceImpl(ctx, applicationRepository)
 }

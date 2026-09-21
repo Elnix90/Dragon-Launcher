@@ -80,27 +80,27 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private val colorPickerMaterialShapes: Set<RoundedPolygon> =
-    setOf(
-        MaterialShapes.Slanted,
-        MaterialShapes.Arrow,
-        MaterialShapes.Oval,
-        MaterialShapes.Pill,
-        MaterialShapes.Triangle,
-        MaterialShapes.Diamond,
-        MaterialShapes.Pentagon,
-        MaterialShapes.Gem,
-        MaterialShapes.Cookie4Sided,
-        MaterialShapes.Cookie7Sided,
-        MaterialShapes.Cookie9Sided,
-        MaterialShapes.Cookie12Sided,
-        MaterialShapes.SoftBurst,
-        MaterialShapes.Cookie12Sided,
-        MaterialShapes.Flower,
-        MaterialShapes.Clover4Leaf,
-        MaterialShapes.Sunny,
-        MaterialShapes.VerySunny,
-        MaterialShapes.Clover4Leaf
-    )
+	setOf(
+		MaterialShapes.Slanted,
+		MaterialShapes.Arrow,
+		MaterialShapes.Oval,
+		MaterialShapes.Pill,
+		MaterialShapes.Triangle,
+		MaterialShapes.Diamond,
+		MaterialShapes.Pentagon,
+		MaterialShapes.Gem,
+		MaterialShapes.Cookie4Sided,
+		MaterialShapes.Cookie7Sided,
+		MaterialShapes.Cookie9Sided,
+		MaterialShapes.Cookie12Sided,
+		MaterialShapes.SoftBurst,
+		MaterialShapes.Cookie12Sided,
+		MaterialShapes.Flower,
+		MaterialShapes.Clover4Leaf,
+		MaterialShapes.Sunny,
+		MaterialShapes.VerySunny,
+		MaterialShapes.Clover4Leaf
+	)
 
 /**
  * Color picker row
@@ -115,298 +115,298 @@ private val colorPickerMaterialShapes: Set<RoundedPolygon> =
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DragonGroupScope.ColorPickerRow(
-    title: String,
-    description: String?,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    currentColor: Color?,
-    defaultColor: Color?,
-    onColorPicked: (Color?) -> Unit
+	title: String,
+	description: String?,
+	modifier: Modifier = Modifier,
+	enabled: Boolean = true,
+	currentColor: Color?,
+	defaultColor: Color?,
+	onColorPicked: (Color?) -> Unit
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    // The picker must never animate or draw [Color.Unspecified]. It packs to the sentinel
-    // value 0x10L whose color-space id (16) is rejected by [android.graphics.Paint.setColor]
-    // on API 29+, throwing "Invalid ID, must be in the range [0..16)". Fall back to a real
-    // color so the preview, the hex text and the animations always render something valid.
-    val initialColorNotNull = currentColor.specifiedOrNull() ?: Color.Transparent
+	// The picker must never animate or draw [Color.Unspecified]. It packs to the sentinel
+	// value 0x10L whose color-space id (16) is rejected by [android.graphics.Paint.setColor]
+	// on API 29+, throwing "Invalid ID, must be in the range [0..16)". Fall back to a real
+	// color so the preview, the hex text and the animations always render something valid.
+	val initialColorNotNull = currentColor.specifiedOrNull() ?: Color.Transparent
 
-    var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
+	var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
 
-    var currentMode by ColorModesSettingsStore.colorPickerMode.asMutableState()
-    var previewBoxShape by remember { mutableStateOf(colorPickerMaterialShapes.random()) }
+	var currentMode by ColorModesSettingsStore.colorPickerMode.asMutableState()
+	var previewBoxShape by remember { mutableStateOf(colorPickerMaterialShapes.random()) }
 
-    var showPicker by remember { mutableStateOf(false) }
-    LaunchedEffect(showPicker) {
-        if (showPicker) {
-            delay(50.milliseconds)
-            previewBoxShape = colorPickerMaterialShapes.random()
-        }
-    }
+	var showPicker by remember { mutableStateOf(false) }
+	LaunchedEffect(showPicker) {
+		if (showPicker) {
+			delay(50.milliseconds)
+			previewBoxShape = colorPickerMaterialShapes.random()
+		}
+	}
 
-    var hexText by remember { mutableStateOf(actualColor.toHexWithAlpha) }
-    LaunchedEffect(actualColor) {
-        hexText = actualColor.toHexWithAlpha
-    }
+	var hexText by remember { mutableStateOf(actualColor.toHexWithAlpha) }
+	LaunchedEffect(actualColor) {
+		hexText = actualColor.toHexWithAlpha
+	}
 
-    Row(
-        modifier =
-            modifier
-                .dragonSettingGroup(enabled = enabled) {
-                    clickable(enabled) { showPicker = true }
-                },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextWithDescription(
-            text = title,
-            description = description,
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
+	Row(
+		modifier =
+			modifier
+				.dragonSettingGroup(enabled = enabled) {
+					clickable(enabled) { showPicker = true }
+				},
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		TextWithDescription(
+			text = title,
+			description = description,
+			modifier = Modifier.weight(1f),
+			enabled = enabled
+		)
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
-            ColorPickerButton(
-                button = ColorModesSettingsStore.colorPickerButtonOne,
-                enabled = enabled,
-                currentColor = currentColor,
-                defaultColor = defaultColor,
-                onColorPicked = onColorPicked
-            )
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.End
+		) {
+			ColorPickerButton(
+				button = ColorModesSettingsStore.colorPickerButtonOne,
+				enabled = enabled,
+				currentColor = currentColor,
+				defaultColor = defaultColor,
+				onColorPicked = onColorPicked
+			)
 
-            ColorPickerButton(
-                button = ColorModesSettingsStore.colorPickerButtonTwo,
-                enabled = enabled,
-                currentColor = currentColor,
-                defaultColor = defaultColor,
-                onColorPicked = onColorPicked
-            )
+			ColorPickerButton(
+				button = ColorModesSettingsStore.colorPickerButtonTwo,
+				enabled = enabled,
+				currentColor = currentColor,
+				defaultColor = defaultColor,
+				onColorPicked = onColorPicked
+			)
 
-            Spacer(12.dp)
+			Spacer(12.dp)
 
-            ColorCirclePreview(initialColorNotNull, previewBoxShape.toShape())
-        }
-    }
+			ColorCirclePreview(initialColorNotNull, previewBoxShape.toShape())
+		}
+	}
 
-    if (showPicker) {
-        DragonModalBottomSheet(
-            skipPartiallyExpanded = true,
-            onDismissRequest = {
-                onColorPicked(actualColor)
-                showPicker = false
-            }
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(bottom = 16.dp)
-            ) {
-                DialogTitle(title)
+	if (showPicker) {
+		DragonModalBottomSheet(
+			skipPartiallyExpanded = true,
+			onDismissRequest = {
+				onColorPicked(actualColor)
+				showPicker = false
+			}
+		) {
+			Column(
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.verticalScroll(rememberScrollState())
+						.padding(bottom = 16.dp)
+			) {
+				DialogTitle(title)
 
-                MultiSelectConnectedButtonRow(
-                    entries = ColorActions.entries,
-                    enabled = {
-                        when (it) {
-                            Reset -> actualColor != defaultColor
-                            Random, Copy, Paste -> true
-                        }
-                    }
-                ) {
-                    when (it) {
-                        Reset -> {
-                            // Reset to the provided default. When no default exists, fall back
-                            // to the color the picker opened with instead of [Color.Unspecified],
-                            // which cannot be drawn or animated safely.
-                            actualColor = defaultColor.specifiedOrNull() ?: initialColorNotNull
-                        }
+				MultiSelectConnectedButtonRow(
+					entries = ColorActions.entries,
+					enabled = {
+						when (it) {
+							Reset -> actualColor != defaultColor
+							Random, Copy, Paste -> true
+						}
+					}
+				) {
+					when (it) {
+						Reset -> {
+							// Reset to the provided default. When no default exists, fall back
+							// to the color the picker opened with instead of [Color.Unspecified],
+							// which cannot be drawn or animated safely.
+							actualColor = defaultColor.specifiedOrNull() ?: initialColorNotNull
+						}
 
-                        Random -> {
-                            actualColor = randomColor()
-                        }
+						Random -> {
+							actualColor = randomColor()
+						}
 
-                        Copy -> {
-                            ctx.copyToClipboard(hexText)
-                        }
+						Copy -> {
+							ctx.copyToClipboard(hexText)
+						}
 
-                        Paste -> {
-                            val newColor = pasteColorHexFromClipboard(ctx)
-                            newColor?.let { pasted ->
-                                hexText = pasted.toHexWithAlpha
-                                actualColor = pasted
-                            }
-                        }
-                    }
-                }
+						Paste -> {
+							val newColor = pasteColorHexFromClipboard(ctx)
+							newColor?.let { pasted ->
+								hexText = pasted.toHexWithAlpha
+								actualColor = pasted
+							}
+						}
+					}
+				}
 
-                SingleSelectConnectedButtonRow(
-                    entries = ColorPickerMode.entries,
-                    checked = { currentMode == it },
-                    modifier = Modifier.fillMaxWidth()
-                ) { currentMode = it }
+				SingleSelectConnectedButtonRow(
+					entries = ColorPickerMode.entries,
+					checked = { currentMode == it },
+					modifier = Modifier.fillMaxWidth()
+				) { currentMode = it }
 
-                Spacer(5.dp)
+				Spacer(5.dp)
 
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .background(
-                                color = actualColor,
-                                shape = MaterialTheme.shapes.medium
-                            ).border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outline,
-                                shape = MaterialTheme.shapes.medium
-                            ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val textBoxColor = if (actualColor.luminance() > 0.4) Color.Black else Color.White
+				Box(
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.height(60.dp)
+							.background(
+								color = actualColor,
+								shape = MaterialTheme.shapes.medium
+							).border(
+								width = 1.dp,
+								color = MaterialTheme.colorScheme.outline,
+								shape = MaterialTheme.shapes.medium
+							),
+					contentAlignment = Alignment.Center
+				) {
+					Row(
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						val textBoxColor = if (actualColor.luminance() > 0.4) Color.Black else Color.White
 
-                        TextField(
-                            value = hexText,
-                            onValueChange = {
-                                if (it.length <= 9) hexText = it
-                                runCatching {
-                                    if (it.startsWith("#") && it.length == 9) {
-                                        actualColor = Color(it.toColorInt())
-                                    }
-                                }
-                            },
-                            label = {
-                                Text(
-                                    text = "HEX - AARRGGBB",
-                                    color = textBoxColor
-                                )
-                            },
-                            colors =
-                                AppObjectsColors.outlinedTextFieldColors(
-                                    backgroundColor = Color.Transparent,
-                                    onBackgroundColor = textBoxColor,
-                                    removeBorder = true
-                                ),
-                            singleLine = true,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
+						TextField(
+							value = hexText,
+							onValueChange = {
+								if (it.length <= 9) hexText = it
+								runCatching {
+									if (it.startsWith("#") && it.length == 9) {
+										actualColor = Color(it.toColorInt())
+									}
+								}
+							},
+							label = {
+								Text(
+									text = "HEX - AARRGGBB",
+									color = textBoxColor
+								)
+							},
+							colors =
+								AppObjectsColors.outlinedTextFieldColors(
+									backgroundColor = Color.Transparent,
+									onBackgroundColor = textBoxColor,
+									removeBorder = true
+								),
+							singleLine = true,
+							modifier = Modifier.weight(1f)
+						)
+					}
+				}
 
-                Spacer(15.dp)
+				Spacer(15.dp)
 
-                when (currentMode) {
-                    ColorPickerMode.Default -> {
-                        DefaultColorPicker(
-                            actualColor = actualColor,
-                            onColorSelected = { actualColor = it }
-                        )
-                    }
+				when (currentMode) {
+					ColorPickerMode.Default -> {
+						DefaultColorPicker(
+							actualColor = actualColor,
+							onColorSelected = { actualColor = it }
+						)
+					}
 
-                    ColorPickerMode.Slider -> {
-                        SliderColorPicker(
-                            actualColor = actualColor,
-                            initialColor = initialColorNotNull,
-                            onColorSelected = { actualColor = it }
-                        )
-                    }
+					ColorPickerMode.Slider -> {
+						SliderColorPicker(
+							actualColor = actualColor,
+							initialColor = initialColorNotNull,
+							onColorSelected = { actualColor = it }
+						)
+					}
 
-                    ColorPickerMode.Gradient -> {
-                        GradientColorPicker(
-                            actualColor = actualColor,
-                            onColorSelected = { actualColor = it }
-                        )
-                    }
-                }
+					ColorPickerMode.Gradient -> {
+						GradientColorPicker(
+							actualColor = actualColor,
+							onColorSelected = { actualColor = it }
+						)
+					}
+				}
 
-                Spacer(12.dp)
+				Spacer(12.dp)
 
-                DragonSettingsGroup {
-                    SliderWithLabel(
-                        label = stringResource(R.string.transparency),
-                        value = actualColor.alpha,
-                        valueRange = 0f..1f,
-                        resetEnabled = actualColor.alpha != initialColorNotNull.alpha,
-                        onReset = {
-                            actualColor = actualColor.copy(alpha = actualColor.alpha)
-                        }
-                    ) { alpha -> actualColor = (actualColor.copy(alpha = alpha)) }
-                }
-            }
-        }
-    }
+				DragonSettingsGroup {
+					SliderWithLabel(
+						label = stringResource(R.string.transparency),
+						value = actualColor.alpha,
+						valueRange = 0f..1f,
+						resetEnabled = actualColor.alpha != initialColorNotNull.alpha,
+						onReset = {
+							actualColor = actualColor.copy(alpha = actualColor.alpha)
+						}
+					) { alpha -> actualColor = (actualColor.copy(alpha = alpha)) }
+				}
+			}
+		}
+	}
 }
 
 fun pasteColorHexFromClipboard(ctx: Context): Color? {
-    ctx.pasteClipboard()?.let { pasted ->
-        try {
-            if (pasted.startsWith("#") && pasted.length == 9) {
-                return Color(pasted.toColorInt())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ctx.showToast("Error while parsing clipboard color")
-            return null
-        }
-    }
-    return null
+	ctx.pasteClipboard()?.let { pasted ->
+		try {
+			if (pasted.startsWith("#") && pasted.length == 9) {
+				return Color(pasted.toColorInt())
+			}
+		} catch (e: Exception) {
+			e.printStackTrace()
+			ctx.showToast("Error while parsing clipboard color")
+			return null
+		}
+	}
+	return null
 }
 
 @Composable
 fun ColorCirclePreview(
-    color: Color,
-    shape: Shape
+	color: Color,
+	shape: Shape
 ) {
-    Box(
-        modifier =
-            Modifier
-                .size(50.dp)
-                .clip(shape)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = shape
-                ).drawBehind {
-                    pngBackgroundTexture(color)
-                }
-    )
+	Box(
+		modifier =
+			Modifier
+				.size(50.dp)
+				.clip(shape)
+				.border(
+					width = 1.dp,
+					color = MaterialTheme.colorScheme.outline,
+					shape = shape
+				).drawBehind {
+					pngBackgroundTexture(color)
+				}
+	)
 }
 
 private fun DrawScope.pngBackgroundTexture(
-    color: Color,
-    gridSize: Dp = 8.dp
+	color: Color,
+	gridSize: Dp = 8.dp
 ) {
-    val cellSizePx = gridSize.toPx()
+	val cellSizePx = gridSize.toPx()
 
-    // [color] may be [Color.Unspecified] when no color is saved yet. Drawing it calls
-    // android.graphics.Paint.setColor with an invalid color-space id and crashes with
-    // "Invalid ID, must be in the range [0..16)", so fall back to transparent.
-    val drawColor = color.specifiedOrNull() ?: Color.Transparent
+	// [color] may be [Color.Unspecified] when no color is saved yet. Drawing it calls
+	// android.graphics.Paint.setColor with an invalid color-space id and crashes with
+	// "Invalid ID, must be in the range [0..16)", so fall back to transparent.
+	val drawColor = color.specifiedOrNull() ?: Color.Transparent
 
-    val size = (this.size.width / cellSizePx).roundToInt()
-    var count = 0
+	val size = (this.size.width / cellSizePx).roundToInt()
+	var count = 0
 
-    repeat(size) { y ->
-        repeat(size) { x ->
-            drawRect(
-                color = if (count % 2 == 0) Color.White else Color.Gray,
-                size = Size.rect(cellSizePx),
-                blendMode = BlendMode.Src,
-                topLeft =
-                    Offset(
-                        x = cellSizePx * x,
-                        y = cellSizePx * y
-                    )
-            )
-            count++
-        }
-        if (size % 2 == 0) count++
-    }
+	repeat(size) { y ->
+		repeat(size) { x ->
+			drawRect(
+				color = if (count % 2 == 0) Color.White else Color.Gray,
+				size = Size.rect(cellSizePx),
+				blendMode = BlendMode.Src,
+				topLeft =
+					Offset(
+						x = cellSizePx * x,
+						y = cellSizePx * y
+					)
+			)
+			count++
+		}
+		if (size % 2 == 0) count++
+	}
 
-    drawRect(drawColor)
+	drawRect(drawColor)
 }

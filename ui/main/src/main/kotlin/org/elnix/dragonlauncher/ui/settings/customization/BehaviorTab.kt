@@ -42,141 +42,141 @@ import kotlin.time.Duration.Companion.seconds
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun BehaviorTab() {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val leftPadding by BehaviorSettingsStore.leftPadding.asState()
-    val rightPadding by BehaviorSettingsStore.rightPadding.asState()
-    val topPadding by BehaviorSettingsStore.topPadding.asState()
-    val bottomPadding by BehaviorSettingsStore.bottomPadding.asState()
+	val leftPadding by BehaviorSettingsStore.leftPadding.asState()
+	val rightPadding by BehaviorSettingsStore.rightPadding.asState()
+	val topPadding by BehaviorSettingsStore.topPadding.asState()
+	val bottomPadding by BehaviorSettingsStore.bottomPadding.asState()
 
-    val lockMethod by PrivateSettingsStore.lockMethod.asState()
-    val superWarningModeEnabled = lockMethod != None
+	val lockMethod by PrivateSettingsStore.lockMethod.asState()
+	val superWarningModeEnabled = lockMethod != None
 
-    val superWarningState =
-        rememberExpandableSection(
-            title = R.string.super_warning_mode,
-            description = R.string.super_warning_mode_desc,
-            icon = R.drawable.lock,
-            enabled = superWarningModeEnabled
-        )
+	val superWarningState =
+		rememberExpandableSection(
+			title = R.string.super_warning_mode,
+			description = R.string.super_warning_mode_desc,
+			icon = R.drawable.lock,
+			enabled = superWarningModeEnabled
+		)
 
-    var showPaddingBox by remember { mutableStateOf(false) }
-    var showLockMethodPicker by remember { mutableStateOf(false) }
-    var hasEnabledSecretUnlockButton by remember { mutableStateOf(false) }
-    LaunchedEffect(hasEnabledSecretUnlockButton) {
-        if (!hasEnabledSecretUnlockButton) return@LaunchedEffect
-        delay(1.seconds)
-        hasEnabledSecretUnlockButton = false
-    }
+	var showPaddingBox by remember { mutableStateOf(false) }
+	var showLockMethodPicker by remember { mutableStateOf(false) }
+	var hasEnabledSecretUnlockButton by remember { mutableStateOf(false) }
+	LaunchedEffect(hasEnabledSecretUnlockButton) {
+		if (!hasEnabledSecretUnlockButton) return@LaunchedEffect
+		delay(1.seconds)
+		hasEnabledSecretUnlockButton = false
+	}
 
-    Box {
-        SettingsScaffold(
-            title = stringResource(R.string.behavior),
-            helpText = stringResource(R.string.behavior_help),
-            resetText = stringResource(R.string.reset_behavior_tab),
-            onReset = {
-                scope.launch {
-                    BehaviorSettingsStore.resetAll(ctx)
-                }
-            }
-        ) {
-            DragonSettingsGroup(R.string.action_settings) {
-                SettingActionSelector(BehaviorSettingsStore.backAction)
-                SettingActionSelector(BehaviorSettingsStore.doubleClickAction)
-                SettingActionSelector(BehaviorSettingsStore.homeAction)
-            }
+	Box {
+		SettingsScaffold(
+			title = stringResource(R.string.behavior),
+			helpText = stringResource(R.string.behavior_help),
+			resetText = stringResource(R.string.reset_behavior_tab),
+			onReset = {
+				scope.launch {
+					BehaviorSettingsStore.resetAll(ctx)
+				}
+			}
+		) {
+			DragonSettingsGroup(R.string.action_settings) {
+				SettingActionSelector(BehaviorSettingsStore.backAction)
+				SettingActionSelector(BehaviorSettingsStore.doubleClickAction)
+				SettingActionSelector(BehaviorSettingsStore.homeAction)
+			}
 
-            DragonSettingsGroup(R.string.common_settings) {
-                Setting(BehaviorSettingsStore.keepScreenOn)
-                Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
-                Setting(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
-                Setting(BehaviorSettingsStore.openRootNestEachTime)
-                Setting(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
-                Setting(BehaviorSettingsStore.offScreenTimeout)
-            }
+			DragonSettingsGroup(R.string.common_settings) {
+				Setting(BehaviorSettingsStore.keepScreenOn)
+				Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
+				Setting(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
+				Setting(BehaviorSettingsStore.openRootNestEachTime)
+				Setting(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
+				Setting(BehaviorSettingsStore.offScreenTimeout)
+			}
 
-            DragonSettingsGroup(R.string.padding) {
-                SwitchRow(
-                    state = showPaddingBox,
-                    title = R.string.show_padding_box,
-                    icon = R.drawable.visibility
-                ) { showPaddingBox = it }
+			DragonSettingsGroup(R.string.padding) {
+				SwitchRow(
+					state = showPaddingBox,
+					title = R.string.show_padding_box,
+					icon = R.drawable.visibility
+				) { showPaddingBox = it }
 
-                Setting(BehaviorSettingsStore.rightPadding)
-                Setting(BehaviorSettingsStore.leftPadding)
-                Setting(BehaviorSettingsStore.topPadding)
-                Setting(BehaviorSettingsStore.bottomPadding)
-            }
+				Setting(BehaviorSettingsStore.rightPadding)
+				Setting(BehaviorSettingsStore.leftPadding)
+				Setting(BehaviorSettingsStore.topPadding)
+				Setting(BehaviorSettingsStore.bottomPadding)
+			}
 
-            DragonSettingsGroup(R.string.security) {
-                SettingsItem(
-                    title = stringResource(R.string.lock_method),
-                    description =
-                        when (lockMethod) {
-                            None -> stringResource(R.string.lock_none)
-                            Pin -> stringResource(R.string.lock_pin)
-                            Device -> stringResource(R.string.lock_device_unlock)
-                            Pattern -> stringResource(R.string.pattern)
-                        },
-                    icon = R.drawable.lock
-                ) { showLockMethodPicker = true }
+			DragonSettingsGroup(R.string.security) {
+				SettingsItem(
+					title = stringResource(R.string.lock_method),
+					description =
+						when (lockMethod) {
+							None -> stringResource(R.string.lock_none)
+							Pin -> stringResource(R.string.lock_pin)
+							Device -> stringResource(R.string.lock_device_unlock)
+							Pattern -> stringResource(R.string.pattern)
+						},
+					icon = R.drawable.lock
+				) { showLockMethodPicker = true }
 
-                Setting(BehaviorSettingsStore.secretUnlockButton, enabled = lockMethod != None) { hasEnabledSecretUnlockButton = it }
+				Setting(BehaviorSettingsStore.secretUnlockButton, enabled = lockMethod != None) { hasEnabledSecretUnlockButton = it }
 
-                ExpandableSection(superWarningState) {
-                    Setting(
-                        setting = BehaviorSettingsStore.superWarningMode,
-                        enabled = superWarningModeEnabled
-                    )
+				ExpandableSection(superWarningState) {
+					Setting(
+						setting = BehaviorSettingsStore.superWarningMode,
+						enabled = superWarningModeEnabled
+					)
 
-                    Setting(
-                        setting = BehaviorSettingsStore.vibrateOnError,
-                        enabled = superWarningModeEnabled
-                    )
+					Setting(
+						setting = BehaviorSettingsStore.vibrateOnError,
+						enabled = superWarningModeEnabled
+					)
 
-                    Setting(
-                        setting = BehaviorSettingsStore.alarmSound,
-                        enabled = superWarningModeEnabled
-                    )
+					Setting(
+						setting = BehaviorSettingsStore.alarmSound,
+						enabled = superWarningModeEnabled
+					)
 
-                    Setting(
-                        setting = BehaviorSettingsStore.metalPipesSound,
-                        enabled = superWarningModeEnabled
-                    )
+					Setting(
+						setting = BehaviorSettingsStore.metalPipesSound,
+						enabled = superWarningModeEnabled
+					)
 
-                    Setting(
-                        setting = BehaviorSettingsStore.superWarningModeSound,
-                        enabled = superWarningModeEnabled
-                    )
-                }
-            }
-        }
+					Setting(
+						setting = BehaviorSettingsStore.superWarningModeSound,
+						enabled = superWarningModeEnabled
+					)
+				}
+			}
+		}
 
-        if (hasEnabledSecretUnlockButton) {
-            SecretUnlockButton(false)
-        }
-    }
+		if (hasEnabledSecretUnlockButton) {
+			SecretUnlockButton(false)
+		}
+	}
 
-    if (showPaddingBox) {
-        Canvas(Modifier.fillMaxSize()) {
-            drawRect(
-                color = Color(0x40FF0000),
-                topLeft =
-                    Offset(
-                        leftPadding.toFloat(),
-                        topPadding.toFloat()
-                    ),
-                size =
-                    Size(
-                        size.width - leftPadding - rightPadding.toFloat(),
-                        size.height - topPadding - bottomPadding.toFloat()
-                    )
-            )
-        }
-    }
+	if (showPaddingBox) {
+		Canvas(Modifier.fillMaxSize()) {
+			drawRect(
+				color = Color(0x40FF0000),
+				topLeft =
+					Offset(
+						leftPadding.toFloat(),
+						topPadding.toFloat()
+					),
+				size =
+					Size(
+						size.width - leftPadding - rightPadding.toFloat(),
+						size.height - topPadding - bottomPadding.toFloat()
+					)
+			)
+		}
+	}
 
-    if (showLockMethodPicker) {
-        LockMethodDialog { showLockMethodPicker = false }
-    }
+	if (showLockMethodPicker) {
+		LockMethodDialog { showLockMethodPicker = false }
+	}
 }

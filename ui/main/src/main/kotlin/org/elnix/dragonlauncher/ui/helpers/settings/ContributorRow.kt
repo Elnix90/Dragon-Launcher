@@ -24,41 +24,41 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DragonGroupScope.ContributorItem(
-    name: String,
-    shape: RoundedPolygon,
-    @DrawableRes imageRes: Int,
-    description: String? = null,
-    vararg socialLinks: SocialLink
+	name: String,
+	shape: RoundedPolygon,
+	@DrawableRes imageRes: Int,
+	description: String? = null,
+	vararg socialLinks: SocialLink
 ) {
-    val uriHandler = LocalUriHandler.current
+	val uriHandler = LocalUriHandler.current
 
-    Row(
-        modifier = Modifier.dragonSettingGroup(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        Image(
-            painter = painterResource(imageRes),
-            contentDescription = "$name profile picture",
-            modifier =
-                Modifier
-                    .size(48.dp)
-                    .clip(shape.toShape()),
-            contentScale = ContentScale.Fit
-        )
+	Row(
+		modifier = Modifier.dragonSettingGroup(),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(14.dp)
+	) {
+		Image(
+			painter = painterResource(imageRes),
+			contentDescription = "$name profile picture",
+			modifier =
+				Modifier
+					.size(48.dp)
+					.clip(shape.toShape()),
+			contentScale = ContentScale.Fit
+		)
 
-        TextWithDescription(
-            text = name,
-            description = description,
-            modifier =
-                Modifier
-                    .weight(1f)
-        )
+		TextWithDescription(
+			text = name,
+			description = description,
+			modifier =
+				Modifier
+					.weight(1f)
+		)
 
-        socialLinks.forEach {
-            BoxedIcon(it.icon) {
-                uriHandler.openUri(it.url)
-            }
-        }
-    }
+		socialLinks.forEach {
+			BoxedIcon(it.icon) {
+				uriHandler.openUri(it.url)
+			}
+		}
+	}
 }

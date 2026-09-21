@@ -18,89 +18,89 @@ import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 
 @Composable
 fun FinalPointIcon(
-    point: Point,
-    size: Dp?,
-    modifier: Modifier = Modifier,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointsViewModel: PointsViewModel = activityViewModel()
+	point: Point,
+	size: Dp?,
+	modifier: Modifier = Modifier,
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	pointsViewModel: PointsViewModel = activityViewModel()
 ) {
-    val pointsService = pointsViewModel.pointsService
-    val defaultPoint by pointsService.defaultPoint.asState()
+	val pointsService = pointsViewModel.pointsService
+	val defaultPoint by pointsService.defaultPoint.asState()
 
-    val pointSize = size ?: point.getSize(defaultPoint, false)
+	val pointSize = size ?: point.getSize(defaultPoint, false)
 
-    when (val action = point.action) {
-        is Action.LaunchApp -> {
-            val app by drawerViewModel.findOne(action).collectAsState(null)
-            if (app != null) {
-                AppIcon(
-                    app = app!!,
-                    size = pointSize,
-                    modifier = modifier
-                )
-            }
-        }
+	when (val action = point.action) {
+		is Action.LaunchApp -> {
+			val app by drawerViewModel.findOne(action).collectAsState(null)
+			if (app != null) {
+				AppIcon(
+					app = app!!,
+					size = pointSize,
+					modifier = modifier
+				)
+			}
+		}
 
-        is Action.LaunchShortcut -> {
-            ShortcutIcon(action, pointSize)
-        }
+		is Action.LaunchShortcut -> {
+			ShortcutIcon(action, pointSize)
+		}
 
-        else -> {
-            ActionIcon(
-                action = action,
-                size = pointSize,
-                modifier = modifier
-            )
-        }
-    }
+		else -> {
+			ActionIcon(
+				action = action,
+				size = pointSize,
+				modifier = modifier
+			)
+		}
+	}
 }
 
 @Composable
 fun AppIcon(
-    app: Application,
-    size: Dp,
-    modifier: Modifier = Modifier,
-    iconsViewModel: IconsViewModel = activityViewModel()
+	app: Application,
+	size: Dp,
+	modifier: Modifier = Modifier,
+	iconsViewModel: IconsViewModel = activityViewModel()
 ) {
-    val badge by iconsViewModel.getBadge(app).collectAsStateWithLifecycle()
-    val icon by iconsViewModel.getIcon(app).collectAsStateWithLifecycle()
+	val badge by iconsViewModel.getBadge(app).collectAsStateWithLifecycle()
+	val icon by iconsViewModel.getIcon(app).collectAsStateWithLifecycle()
 
-    ShapedLauncherIcon(
-        modifier = modifier,
-        size = size,
-        icon = { icon },
-        badge = { badge }
-    )
+	ShapedLauncherIcon(
+		modifier = modifier,
+		size = size,
+		icon = { icon },
+		badge = { badge }
+	)
 }
 
 @Composable
 fun ShortcutIcon(
-    shortcut: Action.LaunchShortcut,
-    size: Dp,
-    modifier: Modifier = Modifier,
-    iconsViewModel: IconsViewModel = activityViewModel()
+	shortcut: Action.LaunchShortcut,
+	size: Dp,
+	modifier: Modifier = Modifier,
+	iconsViewModel: IconsViewModel = activityViewModel()
 ) {
-    val icon by iconsViewModel.getIcon(shortcut).collectAsStateWithLifecycle()
+	val icon by iconsViewModel.getIcon(shortcut).collectAsStateWithLifecycle()
 
-    ShapedLauncherIcon(
-        modifier = modifier,
-        size = size,
-        icon = { icon }
-    )
+	ShapedLauncherIcon(
+		modifier = modifier,
+		size = size,
+		icon = { icon }
+	)
 }
 
 @Composable
 fun ActionIcon(
-    action: Action,
-    size: Dp,
-    modifier: Modifier = Modifier,
-    iconsViewModel: IconsViewModel = activityViewModel()
+	action: Action,
+	size: Dp,
+	modifier: Modifier = Modifier,
+	iconsViewModel: IconsViewModel = activityViewModel()
 ) {
-    val icon by iconsViewModel.getIcon(action).collectAsStateWithLifecycle()
+	val icon by iconsViewModel.getIcon(action).collectAsStateWithLifecycle()
 
-    ShapedLauncherIcon(
-        modifier = modifier,
-        size = size,
-        icon = { icon }
-    )
+	ShapedLauncherIcon(
+		modifier = modifier,
+		size = size,
+		icon = { icon }
+	)
 }

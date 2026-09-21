@@ -21,30 +21,30 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun VerticalDragZone(onDrag: (amount: Float) -> Unit) {
-    var isDragging by remember { mutableStateOf(false) }
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .pointerInput(Unit) {
-                    detectVerticalDragGestures(
-                        onDragStart = { isDragging = true },
-                        onDragEnd = { isDragging = false },
-                        onDragCancel = { isDragging = false },
-                        onVerticalDrag = { _, dragAmount ->
-                            onDrag(dragAmount)
-                        }
-                    )
-                },
-        contentAlignment = Alignment.Center
-    ) {
-        val animatedHeight by animateDpAsState(if (isDragging) 2.dp else 4.dp)
-        Box(
-            Modifier
-                .size(width = 32.dp, height = animatedHeight)
-                .clip(MaterialTheme.shapes.extraLarge)
-                .background(MaterialTheme.colorScheme.outline)
-        )
-    }
+	var isDragging by remember { mutableStateOf(false) }
+	Box(
+		modifier =
+			Modifier
+				.fillMaxWidth()
+				.height(40.dp)
+				.pointerInput(Unit) {
+					detectVerticalDragGestures(
+						onDragStart = { isDragging = true },
+						onDragEnd = { isDragging = false },
+						onDragCancel = { isDragging = false },
+						onVerticalDrag = { _, dragAmount ->
+							onDrag(dragAmount)
+						}
+					)
+				},
+		contentAlignment = Alignment.Center
+	) {
+		val animatedHeight by animateDpAsState(if (isDragging) 2.dp else 4.dp)
+		Box(
+			Modifier
+				.size(width = 32.dp, height = animatedHeight)
+				.clip(MaterialTheme.shapes.extraLarge)
+				.background(MaterialTheme.colorScheme.outline)
+		)
+	}
 }

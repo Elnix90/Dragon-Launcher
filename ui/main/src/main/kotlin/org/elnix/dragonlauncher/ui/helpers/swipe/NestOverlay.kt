@@ -28,207 +28,207 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShape
  */
 @Composable
 fun NestOverlay(
-    nest: Nest,
-    center: Offset,
-    modifier: Modifier = Modifier,
-    depth: Int = 1,
-    eraseColor: Color,
-    allowShowPointCenter: Boolean = false,
-    pointSettingsDisplay: Boolean = false,
-    showCancelZone: Boolean = false,
-    hideShapes: Boolean = false,
-    skipSelected: Boolean = false
+	nest: Nest,
+	center: Offset,
+	modifier: Modifier = Modifier,
+	depth: Int = 1,
+	eraseColor: Color,
+	allowShowPointCenter: Boolean = false,
+	pointSettingsDisplay: Boolean = false,
+	showCancelZone: Boolean = false,
+	hideShapes: Boolean = false,
+	skipSelected: Boolean = false
 ) {
-    val drawParams =
-        rememberDrawParams(
-            eraseColor = eraseColor,
-            isDefaultEditing = false,
-            allowShowPointCenter = allowShowPointCenter,
-            showCancelZone = showCancelZone,
-            pointSettingsDisplay = pointSettingsDisplay,
-            hideShapes = hideShapes,
-            skipSelected = skipSelected
-        )
-    val iconTrigger by PointStableCache.cacheTrigger.asState()
+	val drawParams =
+		rememberDrawParams(
+			eraseColor = eraseColor,
+			isDefaultEditing = false,
+			allowShowPointCenter = allowShowPointCenter,
+			showCancelZone = showCancelZone,
+			pointSettingsDisplay = pointSettingsDisplay,
+			hideShapes = hideShapes,
+			skipSelected = skipSelected
+		)
+	val iconTrigger by PointStableCache.cacheTrigger.asState()
 
-    // The key is actually useful, I tried to remove it, but it messed up the drawing in the PointSettingScreen
-    key(iconTrigger) {
-        Canvas(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .then(modifier)
-        ) {
-            this.NestOverlay(
-                nest = nest,
-                depth = depth,
-                center = center,
-                drawParams = drawParams,
-                selectedAll = false
-            )
-        }
-    }
+	// The key is actually useful, I tried to remove it, but it messed up the drawing in the PointSettingScreen
+	key(iconTrigger) {
+		Canvas(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.then(modifier)
+		) {
+			this.NestOverlay(
+				nest = nest,
+				depth = depth,
+				center = center,
+				drawParams = drawParams,
+				selectedAll = false
+			)
+		}
+	}
 }
 
 @Suppress("FunctionName")
 fun DrawScope.NestOverlay(
-    nest: Nest,
-    depth: Int,
-    center: Offset,
-    drawParams: DrawParams,
-    selectedAll: Boolean = false,
-    lockedPoint: Point? = null
+	nest: Nest,
+	depth: Int,
+	center: Offset,
+	drawParams: DrawParams,
+	selectedAll: Boolean = false,
+	lockedPoint: Point? = null
 ) {
-    require(depth > 0)
+	require(depth > 0)
 
-    val isSettingDisplay = drawParams.pointSettingsDisplay
+	val isSettingDisplay = drawParams.pointSettingsDisplay
 
-    val defaultNest = drawParams.pointsService.defaultNest.value
-    val interSectionShapes = nest.getInterSectionShapes(defaultNest, drawParams.isDefaultEditing)
-    val defaultShape = drawParams.pointsService.defaultIntersectionShape.value
+	val defaultNest = drawParams.pointsService.defaultNest.value
+	val interSectionShapes = nest.getInterSectionShapes(defaultNest, drawParams.isDefaultEditing)
+	val defaultShape = drawParams.pointsService.defaultIntersectionShape.value
 
-    val selectedPointsIds = drawParams.pointsService.getSelectedPoints(lockedPoint)
-    val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id, lockedPoint)
+	val selectedPointsIds = drawParams.pointsService.getSelectedPoints(lockedPoint)
+	val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id, lockedPoint)
 
-    if (!drawParams.hideShapes) {
-        repeat(2) { pass ->
-            interSectionShapes.forEach { shape ->
-                if (pass == 0 && depth == 1) return@forEach
+	if (!drawParams.hideShapes) {
+		repeat(2) { pass ->
+			interSectionShapes.forEach { shape ->
+				if (pass == 0 && depth == 1) return@forEach
 
-                val showShape =
-                    depth > 1 ||
-                        isSettingDisplay ||
-                        (
-                            nest.getShowAllShapes(
-                                defaultNest,
-                                drawParams.showAllShapesInNest,
-                                drawParams.isDefaultEditing
-                            ) &&
-                                selectedPointsIds.isNotEmpty()
-                        ) ||
-                        (
-                            nest.getShowCurrentShape(defaultNest, drawParams.showShape, drawParams.isDefaultEditing) &&
-                                (shape.id in selectedShapes)
-                        )
+				val showShape =
+					depth > 1 ||
+						isSettingDisplay ||
+						(
+							nest.getShowAllShapes(
+								defaultNest,
+								drawParams.showAllShapesInNest,
+								drawParams.isDefaultEditing
+							) &&
+								selectedPointsIds.isNotEmpty()
+						) ||
+						(
+							nest.getShowCurrentShape(defaultNest, drawParams.showShape, drawParams.isDefaultEditing) &&
+								(shape.id in selectedShapes)
+						)
 
-                if (showShape) {
-                    val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
+				if (showShape) {
+					val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
 
-                    this.IntersectionShape(
-                        path = path,
-                        shape = shape,
-                        defaultShape = defaultShape,
-                        center = center,
-                        extraColors = drawParams.extraColors,
-                        erase = pass == 0,
-                        isDefaultEditing = drawParams.isDefaultEditing,
-                        eraseColor = drawParams.eraseColor
-                    )
-                }
-            }
-        }
-    }
+					this.IntersectionShape(
+						path = path,
+						shape = shape,
+						defaultShape = defaultShape,
+						center = center,
+						extraColors = drawParams.extraColors,
+						erase = pass == 0,
+						isDefaultEditing = drawParams.isDefaultEditing,
+						eraseColor = drawParams.eraseColor
+					)
+				}
+			}
+		}
+	}
 
-    if (drawParams.showCancelZone) {
-        drawCircle(
-            brush =
-                Brush.sweepGradient(
-                    colors =
-                        listOf(
-                            Color.Red,
-                            Color.Yellow,
-                            Color.Green,
-                            Color.Cyan,
-                            Color.Blue,
-                            Color.Magenta
-                        )
-                ),
-            radius = nest.getCancelZone(defaultNest, drawParams.isDefaultEditing).toPx(),
-            center = center,
-            style = Stroke(Stroke.HairlineWidth)
-        )
-    }
+	if (drawParams.showCancelZone) {
+		drawCircle(
+			brush =
+				Brush.sweepGradient(
+					colors =
+						listOf(
+							Color.Red,
+							Color.Yellow,
+							Color.Green,
+							Color.Cyan,
+							Color.Blue,
+							Color.Magenta
+						)
+				),
+			radius = nest.getCancelZone(defaultNest, drawParams.isDefaultEditing).toPx(),
+			center = center,
+			style = Stroke(Stroke.HairlineWidth)
+		)
+	}
 
-    if (isSettingDisplay) {
-        centerOfNest(center)
-    }
+	if (isSettingDisplay) {
+		centerOfNest(center)
+	}
 
-    val filteredPoints =
-        drawParams
-            .pointsService
-            .getPointsForNest(nestId = nest.id, skipSelected = drawParams.skipSelected && depth == 1)
-            .filter { (id, point) ->
-                when {
-                    depth > 1 -> {
-                        true
-                    }
+	val filteredPoints =
+		drawParams
+			.pointsService
+			.getPointsForNest(nestId = nest.id, skipSelected = drawParams.skipSelected && depth == 1)
+			.filter { (id, point) ->
+				when {
+					depth > 1 -> {
+						true
+					}
 
-                    isSettingDisplay -> {
-                        true
-                    }
+					isSettingDisplay -> {
+						true
+					}
 
-                    selectedPointsIds.isEmpty() -> {
-                        false
-                    }
+					selectedPointsIds.isEmpty() -> {
+						false
+					}
 
-                    nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest, drawParams.isDefaultEditing) -> {
-                        true
-                    }
+					nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest, drawParams.isDefaultEditing) -> {
+						true
+					}
 
-                    else -> {
-                        (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
-                            (
-                                nest.getShowAllPointsInCurrentNest(
-                                    defaultNest = defaultNest,
-                                    showAllPointsInCurrentNestSettings = drawParams.showAllPointsInCurrentShape,
-                                    isDefaultEditing = drawParams.isDefaultEditing
-                                ) &&
-                                    (point.shapeId in selectedShapes)
-                            )
-                    }
-                }
-            }
+					else -> {
+						(drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
+							(
+								nest.getShowAllPointsInCurrentNest(
+									defaultNest = defaultNest,
+									showAllPointsInCurrentNestSettings = drawParams.showAllPointsInCurrentShape,
+									isDefaultEditing = drawParams.isDefaultEditing
+								) &&
+									(point.shapeId in selectedShapes)
+							)
+					}
+				}
+			}
 
-    filteredPoints.forEach { (id, p) ->
-        val drawPoint: Point = filteredPoints[id] ?: p
-        val pointOffset = center + p.getPos()
+	filteredPoints.forEach { (id, p) ->
+		val drawPoint: Point = filteredPoints[id] ?: p
+		val pointOffset = center + p.getPos()
 
-        if (drawParams.nestDebugOverlay) {
-            val endOffset: Offset =
-                if (drawPoint.shapeId == null) {
-                    center
-                } else {
-                    interSectionShapes.firstOrNull { it.id == drawPoint.shapeId }?.let { shape ->
-                        center + shape.getOffset(defaultShape, drawParams.isDefaultEditing)
-                    } ?: center
-                }
+		if (drawParams.nestDebugOverlay) {
+			val endOffset: Offset =
+				if (drawPoint.shapeId == null) {
+					center
+				} else {
+					interSectionShapes.firstOrNull { it.id == drawPoint.shapeId }?.let { shape ->
+						center + shape.getOffset(defaultShape, drawParams.isDefaultEditing)
+					} ?: center
+				}
 
-            drawLine(
-                color = Color.White,
-                start = endOffset,
-                end = pointOffset
-            )
-        }
+			drawLine(
+				color = Color.White,
+				start = endOffset,
+				end = pointOffset
+			)
+		}
 
-        PointIcon(
-            depth = depth,
-            point = drawPoint,
-            center = pointOffset,
-            selected = selectedAll || (p.id in selectedPointsIds),
-            drawParams = drawParams
-        )
-    }
+		PointIcon(
+			depth = depth,
+			point = drawPoint,
+			center = pointOffset,
+			selected = selectedAll || (p.id in selectedPointsIds),
+			drawParams = drawParams
+		)
+	}
 
-    if (drawParams.showPointPreviewCenterStartPosition && selectedPointsIds.size == 1) {
-        val id = selectedPointsIds.firstOrNull() ?: return
-        val point = filteredPoints[id] ?: return
+	if (drawParams.showPointPreviewCenterStartPosition && selectedPointsIds.size == 1) {
+		val id = selectedPointsIds.firstOrNull() ?: return
+		val point = filteredPoints[id] ?: return
 
-        PointIcon(
-            point = point,
-            depth = depth,
-            center = center,
-            selected = true,
-            drawParams = drawParams.copy(showPointPreviewCenterStartPosition = false)
-        )
-    }
+		PointIcon(
+			point = point,
+			depth = depth,
+			center = center,
+			selected = true,
+			drawParams = drawParams.copy(showPointPreviewCenterStartPosition = false)
+		)
+	}
 }

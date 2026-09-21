@@ -35,78 +35,78 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSafeSettingsExportLauncher
 
 @Composable
 fun CrashScreen(
-    stackTrace: String,
-    onDismiss: () -> Unit
+	stackTrace: String,
+	onDismiss: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val lines = remember(stackTrace) { stackTrace.lines() }
-    val settingsExportLauncher = rememberSafeSettingsExportLauncher(backupableStores)
+	val ctx = LocalContext.current
+	val lines = remember(stackTrace) { stackTrace.lines() }
+	val settingsExportLauncher = rememberSafeSettingsExportLauncher(backupableStores)
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .windowInsetsPadding(WindowInsets.safeContent)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.warning),
-                    contentDescription = null,
-                    tint = Color.Red
-                )
+	Column(
+		verticalArrangement = Arrangement.spacedBy(5.dp),
+		horizontalAlignment = Alignment.CenterHorizontally,
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.background(Color.Black)
+				.windowInsetsPadding(WindowInsets.safeContent)
+	) {
+		Row(
+			horizontalArrangement = Arrangement.SpaceBetween,
+			modifier = Modifier.fillMaxWidth()
+		) {
+			Row(
+				horizontalArrangement = Arrangement.spacedBy(12.dp),
+				verticalAlignment = Alignment.CenterVertically,
+				modifier = Modifier.padding(8.dp)
+			) {
+				Icon(
+					painter = painterResource(R.drawable.warning),
+					contentDescription = null,
+					tint = Color.Red
+				)
 
-                Text(
-                    text = stringResource(R.string.crash),
-                    color = Color.Red,
-                    fontSize = 30.sp
-                )
-            }
+				Text(
+					text = stringResource(R.string.crash),
+					color = Color.Red,
+					fontSize = 30.sp
+				)
+			}
 
-            IconButton(
-                onClick = { ctx.copyToClipboard(stackTrace) }
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.copy),
-                    contentDescription = stringResource(R.string.copy),
-                    tint = Color.White
-                )
-            }
-        }
+			IconButton(
+				onClick = { ctx.copyToClipboard(stackTrace) }
+			) {
+				Icon(
+					painter = painterResource(R.drawable.copy),
+					contentDescription = stringResource(R.string.copy),
+					tint = Color.White
+				)
+			}
+		}
 
-        CompositionLocalProvider(
-            LocalContentColor provides Color.White
-        ) {
-            Box(Modifier.weight(1f)) {
-                MonospaceScrollableText(lines)
-            }
+		CompositionLocalProvider(
+			LocalContentColor provides Color.White
+		) {
+			Box(Modifier.weight(1f)) {
+				MonospaceScrollableText(lines)
+			}
 
-            // These 2 buttons are here because I want to avoid loading anything
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    settingsExportLauncher.launch("panic_backup.json")
-                }
-            ) {
-                Text(stringResource(R.string.export_settings))
-            }
+			// These 2 buttons are here because I want to avoid loading anything
+			Button(
+				modifier = Modifier.fillMaxWidth(),
+				onClick = {
+					settingsExportLauncher.launch("panic_backup.json")
+				}
+			) {
+				Text(stringResource(R.string.export_settings))
+			}
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onDismiss
-            ) {
-                Text(stringResource(R.string.access_app))
-            }
-        }
-    }
+			Button(
+				modifier = Modifier.fillMaxWidth(),
+				onClick = onDismiss
+			) {
+				Text(stringResource(R.string.access_app))
+			}
+		}
+	}
 }

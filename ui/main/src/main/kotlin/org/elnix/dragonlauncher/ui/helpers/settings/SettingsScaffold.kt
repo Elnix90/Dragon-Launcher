@@ -49,142 +49,142 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScaffold(
-    title: String,
-    helpText: String?,
-    resetTitle: String = stringResource(R.string.reset_default_settings),
-    resetText: String?,
-    onReset: (() -> Unit)?,
-    onBack: (() -> Unit)? = null,
-    moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
-    horizontalPadding: Dp = 16.dp,
-    applyPadding: Boolean = true,
-    scrollableContent: Boolean = true,
-    imePadding: Boolean = true,
-    lasyListState: LazyListState? = null,
-    scrollState: ScrollState? = null,
-    topContent: @Composable (ColumnScope.() -> Unit)? = null,
-    bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
-    specialSettingsTitleContent: @Composable (RowScope.() -> Unit)? = null,
-    lazyContent: (LazyListScope.() -> Unit)? = null,
-    content: @Composable (ColumnScope.() -> Unit)? = null
+	title: String,
+	helpText: String?,
+	resetTitle: String = stringResource(R.string.reset_default_settings),
+	resetText: String?,
+	onReset: (() -> Unit)?,
+	onBack: (() -> Unit)? = null,
+	moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
+	horizontalPadding: Dp = 16.dp,
+	applyPadding: Boolean = true,
+	scrollableContent: Boolean = true,
+	imePadding: Boolean = true,
+	lasyListState: LazyListState? = null,
+	scrollState: ScrollState? = null,
+	topContent: @Composable (ColumnScope.() -> Unit)? = null,
+	bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
+	specialSettingsTitleContent: @Composable (RowScope.() -> Unit)? = null,
+	lazyContent: (LazyListScope.() -> Unit)? = null,
+	content: @Composable (ColumnScope.() -> Unit)? = null
 ) {
-    var showHelpDialog by remember { mutableStateOf(false) }
-    var showResetDialog by remember { mutableStateOf(false) }
+	var showHelpDialog by remember { mutableStateOf(false) }
+	var showResetDialog by remember { mutableStateOf(false) }
 
-    requireNotNull(
-        content ?: lazyContent
-    ) { "Must provide exactly one of content or lazyContent, not both or neither" }
+	requireNotNull(
+		content ?: lazyContent
+	) { "Must provide exactly one of content or lazyContent, not both or neither" }
 
-    val navigator = LocalNavigator.current
-    val handleBack = onBack ?: { navigator.onBack() }
-    BackHandler(onBack = handleBack)
+	val navigator = LocalNavigator.current
+	val handleBack = onBack ?: { navigator.onBack() }
+	BackHandler(onBack = handleBack)
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .conditional(imePadding) {
-                    imePadding()
-                },
-        contentWindowInsets =
-            WindowInsets.safeDrawing.add(
-                WindowInsets(
-                    top = 8.dp,
-                    left = horizontalPadding,
-                    right = horizontalPadding
-                )
-            ),
-        bottomBar = {
-            val insets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .windowInsetsPadding(insets)
-            ) {
-                if (bottomContent != null) {
-                    bottomContent()
-                    Spacer(5.dp)
-                }
+	Scaffold(
+		containerColor = Color.Transparent,
+		modifier =
+			Modifier
+				.fillMaxSize()
+				.conditional(imePadding) {
+					imePadding()
+				},
+		contentWindowInsets =
+			WindowInsets.safeDrawing.add(
+				WindowInsets(
+					top = 8.dp,
+					left = horizontalPadding,
+					right = horizontalPadding
+				)
+			),
+		bottomBar = {
+			val insets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
+			Column(
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.windowInsetsPadding(insets)
+			) {
+				if (bottomContent != null) {
+					bottomContent()
+					Spacer(5.dp)
+				}
 
-                SettingsTitle(
-                    title = title,
-                    moreOptions = moreOptions,
-                    onBack = handleBack
-                ) {
-                    specialSettingsTitleContent?.invoke(this)
+				SettingsTitle(
+					title = title,
+					moreOptions = moreOptions,
+					onBack = handleBack
+				) {
+					specialSettingsTitleContent?.invoke(this)
 
-                    if (onReset != null) {
-                        ResetIcon { showResetDialog = true }
-                    }
+					if (onReset != null) {
+						ResetIcon { showResetDialog = true }
+					}
 
-                    if (helpText != null) {
-                        DragonIconButton(
-                            onClick = { showHelpDialog = true },
-                            icon = R.drawable.help,
-                            contentDescription = R.string.help
-                        )
-                    }
-                }
-            }
-        }
-    ) { paddingValues ->
+					if (helpText != null) {
+						DragonIconButton(
+							onClick = { showHelpDialog = true },
+							icon = R.drawable.help,
+							contentDescription = R.string.help
+						)
+					}
+				}
+			}
+		}
+	) { paddingValues ->
 
-        Column(
-            modifier =
-                Modifier
-                    .conditional(applyPadding) {
-                        padding(paddingValues)
-                            .fillMaxSize()
-                    }
-        ) {
-            if (topContent != null) {
-                topContent()
-            }
+		Column(
+			modifier =
+				Modifier
+					.conditional(applyPadding) {
+						padding(paddingValues)
+							.fillMaxSize()
+					}
+		) {
+			if (topContent != null) {
+				topContent()
+			}
 
-            if (lazyContent != null) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize(),
-                    state = lasyListState ?: rememberLazyListState()
-                ) { lazyContent() }
-            } else {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .conditional(scrollableContent) {
-                                verticalScroll(scrollState ?: rememberScrollState())
-                            }
-                ) { content!!() }
-            }
-        }
-    }
+			if (lazyContent != null) {
+				LazyColumn(
+					verticalArrangement = Arrangement.spacedBy(16.dp),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					modifier = Modifier.fillMaxSize(),
+					state = lasyListState ?: rememberLazyListState()
+				) { lazyContent() }
+			} else {
+				Column(
+					verticalArrangement = Arrangement.spacedBy(16.dp),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					modifier =
+						Modifier
+							.fillMaxSize()
+							.conditional(scrollableContent) {
+								verticalScroll(scrollState ?: rememberScrollState())
+							}
+				) { content!!() }
+			}
+		}
+	}
 
-    if (showHelpDialog) {
-        UserValidation(
-            title = "$title ${stringResource(R.string.help)}",
-            message = helpText,
-            validateText = stringResource(R.string.close),
-            titleIcon = R.drawable.help,
-            titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            titleBgColor = MaterialTheme.colorScheme.surfaceVariant
-        ) {
-            showHelpDialog = false
-        }
-    }
-    if (showResetDialog && resetText != null && onReset != null) {
-        UserValidation(
-            title = resetTitle,
-            message = resetText,
-            onDismiss = { showResetDialog = false }
-        ) {
-            onReset()
-            showResetDialog = false
-        }
-    }
+	if (showHelpDialog) {
+		UserValidation(
+			title = "$title ${stringResource(R.string.help)}",
+			message = helpText,
+			validateText = stringResource(R.string.close),
+			titleIcon = R.drawable.help,
+			titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
+			titleBgColor = MaterialTheme.colorScheme.surfaceVariant
+		) {
+			showHelpDialog = false
+		}
+	}
+	if (showResetDialog && resetText != null && onReset != null) {
+		UserValidation(
+			title = resetTitle,
+			message = resetText,
+			onDismiss = { showResetDialog = false }
+		) {
+			onReset()
+			showResetDialog = false
+		}
+	}
 }

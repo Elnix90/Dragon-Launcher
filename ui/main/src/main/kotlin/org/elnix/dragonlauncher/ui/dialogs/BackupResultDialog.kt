@@ -13,28 +13,28 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
 fun BackupResultDialog(
-    backupViewModel: BackupViewModel = activityViewModel()
+	backupViewModel: BackupViewModel = activityViewModel()
 ) {
-    val result by backupViewModel.result.asState()
+	val result by backupViewModel.result.asState()
 
-    result?.let { res ->
-        val isError = res.error
-        val isExport = res.export
-        val errorMessage = res.message
+	result?.let { res ->
+		val isError = res.error
+		val isExport = res.export
+		val errorMessage = res.message
 
-        UserValidation(
-            title = res.title,
-            message =
-                when {
-                    isError -> errorMessage.ifBlank { stringResource(R.string.unknown_error) }
-                    isExport -> stringResource(R.string.export_successful)
-                    else -> null
-                },
-            titleIcon = if (isError) R.drawable.warning else R.drawable.check,
-            titleColor = if (isError) MaterialTheme.colorScheme.onErrorContainer else Color.Green,
-            titleBgColor = if (isError) MaterialTheme.colorScheme.errorContainer else Color(0xFF167E16),
-            copy = isError,
-            onValidate = { backupViewModel.result.value = null }
-        )
-    }
+		UserValidation(
+			title = res.title,
+			message =
+				when {
+					isError -> errorMessage.ifBlank { stringResource(R.string.unknown_error) }
+					isExport -> stringResource(R.string.export_successful)
+					else -> null
+				},
+			titleIcon = if (isError) R.drawable.warning else R.drawable.check,
+			titleColor = if (isError) MaterialTheme.colorScheme.onErrorContainer else Color.Green,
+			titleBgColor = if (isError) MaterialTheme.colorScheme.errorContainer else Color(0xFF167E16),
+			copy = isError,
+			onValidate = { backupViewModel.result.value = null }
+		)
+	}
 }

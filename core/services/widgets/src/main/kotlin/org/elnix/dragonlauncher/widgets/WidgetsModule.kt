@@ -11,9 +11,9 @@ import jakarta.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object WidgetsModule {
-    @Provides
-    @Singleton
-    fun provideWidgetService(
-        @ApplicationContext ctx: Context
-    ): WidgetsService = WidgetServiceImpl(ctx)
+	@Provides
+	@Singleton
+	fun provideWidgetService(
+		@ApplicationContext ctx: Context
+	): WidgetsService = WidgetServiceImpl(ctx)
 }

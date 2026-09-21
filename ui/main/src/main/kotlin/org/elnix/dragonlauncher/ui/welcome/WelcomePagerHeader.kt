@@ -14,14 +14,14 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun WelcomePagerHeader(
-    content: @Composable ColumnScope.() -> Unit
+	content: @Composable ColumnScope.() -> Unit
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        content = content
-    )
+	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.padding(24.dp),
+		content = content
+	)
 }

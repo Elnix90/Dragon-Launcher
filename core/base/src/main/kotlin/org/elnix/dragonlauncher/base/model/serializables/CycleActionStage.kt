@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("CycleActionStage")
 public data class CycleActionStage(
-    val triggerTimeMs: Int,
-    val action: Action,
-    val hapticFeedback: CustomHapticFeedback? = null
+	val triggerTimeMs: Int,
+	val action: Action,
+	val hapticFeedback: CustomHapticFeedback? = null
 )

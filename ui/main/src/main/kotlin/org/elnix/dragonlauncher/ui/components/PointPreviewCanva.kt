@@ -33,104 +33,104 @@ import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 
 @Composable
 fun PointPreviewCanvas(
-    editPoint: Point,
-    modifier: Modifier = Modifier,
-    backgroundColor: Color,
-    isDefaultEditing: Boolean,
-    pointsViewModel: PointsViewModel = activityViewModel(),
-    onClick: ((SelectedUnselectedViewMode) -> Unit)? = null
+	editPoint: Point,
+	modifier: Modifier = Modifier,
+	backgroundColor: Color,
+	isDefaultEditing: Boolean,
+	pointsViewModel: PointsViewModel = activityViewModel(),
+	onClick: ((SelectedUnselectedViewMode) -> Unit)? = null
 ) {
-    val pointsService = pointsViewModel.pointsService
-    val defaultPoint by pointsService.defaultPoint.asState()
+	val pointsService = pointsViewModel.pointsService
+	val defaultPoint by pointsService.defaultPoint.asState()
 
-    val height =
-        when (editPoint.action) {
-            is Action.OpenNest -> 100.dp
-            else -> editPoint.getSize(defaultPoint, isDefaultEditing) + editPoint.getInnerPadding(defaultPoint, isDefaultEditing) * 2
-        }
+	val height =
+		when (editPoint.action) {
+			is Action.OpenNest -> 100.dp
+			else -> editPoint.getSize(defaultPoint, isDefaultEditing) + editPoint.getInnerPadding(defaultPoint, isDefaultEditing) * 2
+		}
 
-    val pointSize = editPoint.getSize(defaultPoint, isDefaultEditing).px
+	val pointSize = editPoint.getSize(defaultPoint, isDefaultEditing).px
 
-    BoxWithConstraints(
-        modifier =
-            modifier
-                .height(height + 40.dp)
-    ) {
-        val width = this.maxWidth
-        val height = this.maxHeight
+	BoxWithConstraints(
+		modifier =
+			modifier
+				.height(height + 40.dp)
+	) {
+		val width = this.maxWidth
+		val height = this.maxHeight
 
-        val centerY = (height / 2f).px
-        val leftX = (width * 0.25f).px
-        val rightX = (width * 0.75f).px
+		val centerY = (height / 2f).px
+		val leftX = (width * 0.25f).px
+		val rightX = (width * 0.75f).px
 
-        val leftCenter = Offset(leftX, centerY)
-        val rightCenter = Offset(rightX, centerY)
+		val leftCenter = Offset(leftX, centerY)
+		val rightCenter = Offset(rightX, centerY)
 
-        val drawParams =
-            rememberDrawParams(
-                eraseColor = backgroundColor,
-                isDefaultEditing = isDefaultEditing,
-                pointSettingsDisplay = false,
-                showCancelZone = false,
-                allowShowPointCenter = false,
-                hideShapes = false,
-                skipSelected = false
-            )
+		val drawParams =
+			rememberDrawParams(
+				eraseColor = backgroundColor,
+				isDefaultEditing = isDefaultEditing,
+				pointSettingsDisplay = false,
+				showCancelZone = false,
+				allowShowPointCenter = false,
+				hideShapes = false,
+				skipSelected = false
+			)
 
-        val selected = rememberCustomText(stringResource(R.string.selected_text), pointSize)
-        val unselected = rememberCustomText(stringResource(R.string.unselected), pointSize)
-        val textColor = MaterialTheme.colorScheme.onSurface
+		val selected = rememberCustomText(stringResource(R.string.selected_text), pointSize)
+		val unselected = rememberCustomText(stringResource(R.string.unselected), pointSize)
+		val textColor = MaterialTheme.colorScheme.onSurface
 
-        Canvas(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        compositingStrategy = CompositingStrategy.Offscreen
-                    }
-        ) {
-            drawText(
-                textLayoutResult = unselected.offsetTextLayoutResult,
-                color = textColor,
-                topLeft = leftCenter - unselected.topLeft
-            )
-            drawText(
-                textLayoutResult = selected.offsetTextLayoutResult,
-                color = textColor,
-                topLeft = rightCenter - selected.topLeft
-            )
+		Canvas(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.graphicsLayer {
+						compositingStrategy = CompositingStrategy.Offscreen
+					}
+		) {
+			drawText(
+				textLayoutResult = unselected.offsetTextLayoutResult,
+				color = textColor,
+				topLeft = leftCenter - unselected.topLeft
+			)
+			drawText(
+				textLayoutResult = selected.offsetTextLayoutResult,
+				color = textColor,
+				topLeft = rightCenter - selected.topLeft
+			)
 
-            this.PointIcon(
-                point = editPoint,
-                depth = Int.MAX_VALUE,
-                center = leftCenter,
-                selected = false,
-                drawParams = drawParams
-            )
-            this.PointIcon(
-                point = editPoint,
-                depth = Int.MAX_VALUE,
-                center = rightCenter,
-                selected = true,
-                drawParams = drawParams
-            )
-        }
+			this.PointIcon(
+				point = editPoint,
+				depth = Int.MAX_VALUE,
+				center = leftCenter,
+				selected = false,
+				drawParams = drawParams
+			)
+			this.PointIcon(
+				point = editPoint,
+				depth = Int.MAX_VALUE,
+				center = rightCenter,
+				selected = true,
+				drawParams = drawParams
+			)
+		}
 
-        if (onClick != null) {
-            Row(Modifier.fillMaxSize()) {
-                Box(
-                    Modifier
-                        .fillMaxHeight()
-                        .weight(1f)
-                        .clickable { onClick(SelectedUnselectedViewMode.Unselected) }
-                )
-                Box(
-                    Modifier
-                        .fillMaxHeight()
-                        .weight(1f)
-                        .clickable { onClick(SelectedUnselectedViewMode.Selected) }
-                )
-            }
-        }
-    }
+		if (onClick != null) {
+			Row(Modifier.fillMaxSize()) {
+				Box(
+					Modifier
+						.fillMaxHeight()
+						.weight(1f)
+						.clickable { onClick(SelectedUnselectedViewMode.Unselected) }
+				)
+				Box(
+					Modifier
+						.fillMaxHeight()
+						.weight(1f)
+						.clickable { onClick(SelectedUnselectedViewMode.Selected) }
+				)
+			}
+		}
+	}
 }

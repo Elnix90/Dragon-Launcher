@@ -65,416 +65,416 @@ import kotlin.time.Duration.Companion.seconds
 
 @Immutable
 private data class MutableCategory(
-    val categoryName: String,
-    val apps: List<Application>
+	val categoryName: String,
+	val apps: List<Application>
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppGrid(
-    apps: List<Application>,
-    modifier: Modifier = Modifier,
-    fillMaxSize: Boolean = true,
-    gridState: LazyGridState? = null,
-    categoryGridState: LazyGridState? = null,
-    listState: LazyListState? = null,
-    paddingValues: PaddingValues = PaddingValues(),
-    // Multi select things
-    isMultiSelectMode: Boolean = false,
-    selectedPackages: List<Application> = emptyList(),
-    onEnterMultiSelect: ((Application) -> Unit)? = null,
-    onToggleSelect: ((Application) -> Unit)? = null,
-    onReload: (() -> Unit)? = null,
-    onTopStateChange: ((Boolean) -> Unit)? = null,
-    longPressPopup: Boolean,
-    onClick: ((Application) -> Unit)?
+	apps: List<Application>,
+	modifier: Modifier = Modifier,
+	fillMaxSize: Boolean = true,
+	gridState: LazyGridState? = null,
+	categoryGridState: LazyGridState? = null,
+	listState: LazyListState? = null,
+	paddingValues: PaddingValues = PaddingValues(),
+	// Multi select things
+	isMultiSelectMode: Boolean = false,
+	selectedPackages: List<Application> = emptyList(),
+	onEnterMultiSelect: ((Application) -> Unit)? = null,
+	onToggleSelect: ((Application) -> Unit)? = null,
+	onReload: (() -> Unit)? = null,
+	onTopStateChange: ((Boolean) -> Unit)? = null,
+	longPressPopup: Boolean,
+	onClick: ((Application) -> Unit)?
 ) {
-    val drawerSettings = LocalDrawerSettings.current
-    val useCategory = drawerSettings.useCategory
-    val gridSize = drawerSettings.gridSize
-    val iconsSpacingVertical = drawerSettings.iconsSpacingVertical
-    val iconsSpacingHorizontal = drawerSettings.iconsSpacingHorizontal
+	val drawerSettings = LocalDrawerSettings.current
+	val useCategory = drawerSettings.useCategory
+	val gridSize = drawerSettings.gridSize
+	val iconsSpacingVertical = drawerSettings.iconsSpacingVertical
+	val iconsSpacingHorizontal = drawerSettings.iconsSpacingHorizontal
 
-    var openedCategory by remember { mutableStateOf<String?>(null) }
+	var openedCategory by remember { mutableStateOf<String?>(null) }
 
-    val visibleApps by remember(apps) {
-        derivedStateOf {
-            if (useCategory) {
-                apps.filter { openedCategory?.let { cat -> cat == it.effectiveCategory } ?: true }
-            } else {
-                apps
-            }
-        }
-    }
+	val visibleApps by remember(apps) {
+		derivedStateOf {
+			if (useCategory) {
+				apps.filter { openedCategory?.let { cat -> cat == it.effectiveCategory } ?: true }
+			} else {
+				apps
+			}
+		}
+	}
 
-    BackHandler(openedCategory != null) {
-        openedCategory = null
-    }
+	BackHandler(openedCategory != null) {
+		openedCategory = null
+	}
 
-    val modifier = if (fillMaxSize) modifier.fillMaxSize() else modifier
+	val modifier = if (fillMaxSize) modifier.fillMaxSize() else modifier
 
-    /**
-     * This value defines when the scroll state can be dragged from the top of the screen to the bottom.
-     * When the drawer aligns top to bottom, this uses the intuitive direction: if the user cannot scroll backwards (reached the top of the screen)
-     * When the drawer aligns bottom to top, this uses the opposite direction: if the user cannot scroll down more (reached end on the apps)
-     *
-     * IT is used by the [org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen] to provide an animated down drop animation in the drawer
-     */
-    val isAtTop by remember {
-        derivedStateOf {
-            when (drawerSettings.drawerAlign) {
-                DrawerAlign.Top -> {
-                    when {
-                        gridSize == 1 && listState != null -> {
-                            !listState.canScrollBackward
-                        }
+	/**
+	 * This value defines when the scroll state can be dragged from the top of the screen to the bottom.
+	 * When the drawer aligns top to bottom, this uses the intuitive direction: if the user cannot scroll backwards (reached the top of the screen)
+	 * When the drawer aligns bottom to top, this uses the opposite direction: if the user cannot scroll down more (reached end on the apps)
+	 *
+	 * IT is used by the [org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen] to provide an animated down drop animation in the drawer
+	 */
+	val isAtTop by remember {
+		derivedStateOf {
+			when (drawerSettings.drawerAlign) {
+				DrawerAlign.Top -> {
+					when {
+						gridSize == 1 && listState != null -> {
+							!listState.canScrollBackward
+						}
 
-                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null -> {
-                            !categoryGridState.canScrollBackward
-                        }
+						useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null -> {
+							!categoryGridState.canScrollBackward
+						}
 
-                        gridState != null -> {
-                            !gridState.canScrollBackward
-                        }
+						gridState != null -> {
+							!gridState.canScrollBackward
+						}
 
-                        else -> {
-                            false
-                        }
-                    }
-                }
+						else -> {
+							false
+						}
+					}
+				}
 
-                DrawerAlign.Bottom -> {
-                    when {
-                        gridSize == 1 && listState != null -> {
-                            !listState.canScrollForward
-                        }
+				DrawerAlign.Bottom -> {
+					when {
+						gridSize == 1 && listState != null -> {
+							!listState.canScrollForward
+						}
 
-                        useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null -> {
-                            !categoryGridState.canScrollForward
-                        }
+						useCategory && openedCategory == null && !isMultiSelectMode && categoryGridState != null -> {
+							!categoryGridState.canScrollForward
+						}
 
-                        gridState != null -> {
-                            !gridState.canScrollForward
-                        }
+						gridState != null -> {
+							!gridState.canScrollForward
+						}
 
-                        else -> {
-                            false
-                        }
-                    }
-                }
-            }
-        }
-    }
+						else -> {
+							false
+						}
+					}
+				}
+			}
+		}
+	}
 
-    LaunchedEffect(isAtTop) {
-        onTopStateChange?.invoke(isAtTop)
-    }
+	LaunchedEffect(isAtTop) {
+		onTopStateChange?.invoke(isAtTop)
+	}
 
-    when {
-        visibleApps.isEmpty() -> {
-            LazyColumn(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = paddingValues,
-                state = listState ?: rememberLazyListState()
-            ) {
-                item {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(15.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = stringResource(R.string.no_apps),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
+	when {
+		visibleApps.isEmpty() -> {
+			LazyColumn(
+				modifier = modifier.fillMaxSize(),
+				verticalArrangement = Arrangement.Center,
+				horizontalAlignment = Alignment.CenterHorizontally,
+				contentPadding = paddingValues,
+				state = listState ?: rememberLazyListState()
+			) {
+				item {
+					Column(
+						verticalArrangement = Arrangement.spacedBy(15.dp),
+						horizontalAlignment = Alignment.CenterHorizontally
+					) {
+						Text(
+							text = stringResource(R.string.no_apps),
+							color = MaterialTheme.colorScheme.onBackground
+						)
 
-                        if (onReload != null) {
-                            var isLoading by remember { mutableStateOf(false) }
+						if (onReload != null) {
+							var isLoading by remember { mutableStateOf(false) }
 
-                            Crossfade(isLoading) { showLoadingIcon ->
-                                if (showLoadingIcon) {
-                                    LoadingIndicator()
-                                    LaunchedEffect(Unit) {
-                                        delay(1.seconds)
-                                        isLoading = false
-                                    }
-                                } else {
-                                    DragonIconButton(
-                                        icon = R.drawable.refresh,
-                                        contentDescription = R.string.reload_apps
-                                    ) {
-                                        onReload()
-                                        isLoading = true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+							Crossfade(isLoading) { showLoadingIcon ->
+								if (showLoadingIcon) {
+									LoadingIndicator()
+									LaunchedEffect(Unit) {
+										delay(1.seconds)
+										isLoading = false
+									}
+								} else {
+									DragonIconButton(
+										icon = R.drawable.refresh,
+										contentDescription = R.string.reload_apps
+									) {
+										onReload()
+										isLoading = true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 
-        // Can't use categories with multi-select mode cause it's too annoying to implement
-        useCategory && openedCategory == null && !isMultiSelectMode -> {
-            val ctx = LocalContext.current
-            val scope = rememberCoroutineScope()
-            val disabledSystemCategories = drawerSettings.disabledSystemCategories
-            val categoryOrder = drawerSettings.categoryOrder
+		// Can't use categories with multi-select mode cause it's too annoying to implement
+		useCategory && openedCategory == null && !isMultiSelectMode -> {
+			val ctx = LocalContext.current
+			val scope = rememberCoroutineScope()
+			val disabledSystemCategories = drawerSettings.disabledSystemCategories
+			val categoryOrder = drawerSettings.categoryOrder
 
-            // That's shitty code, and it should move to a viewmodel, but I don't care about the categories anyway
+			// That's shitty code, and it should move to a viewmodel, but I don't care about the categories anyway
 
-            val allCategoryNames: Set<String> =
-                remember(visibleApps, disabledSystemCategories, categoryOrder) {
-                    val systemCategories =
-                        AppCategory.entries
-                            .filter { it.name !in disabledSystemCategories }
-                            .mapTo(mutableSetOf()) { it.name }
+			val allCategoryNames: Set<String> =
+				remember(visibleApps, disabledSystemCategories, categoryOrder) {
+					val systemCategories =
+						AppCategory.entries
+							.filter { it.name !in disabledSystemCategories }
+							.mapTo(mutableSetOf()) { it.name }
 
-                    val customCategories =
-                        visibleApps.mapNotNullTo(mutableSetOf()) { it.categoryOverride }
+					val customCategories =
+						visibleApps.mapNotNullTo(mutableSetOf()) { it.categoryOverride }
 
-                    customCategories + systemCategories
-                }
+					customCategories + systemCategories
+				}
 
-            val mutableCategoryNames: SnapshotStateList<MutableCategory> = remember(allCategoryNames, categoryOrder) {
-                mutableStateListOf<MutableCategory>().apply {
-                    val allCategories = if (categoryOrder.isNotEmpty()) {
-                        allCategoryNames.sortedBy { name ->
-                            val idx = categoryOrder.indexOf(name)
-                            if (idx >= 0) idx else Int.MAX_VALUE
-                        }
-                    } else {
-                        allCategoryNames.toList()
-                    }
+			val mutableCategoryNames: SnapshotStateList<MutableCategory> = remember(allCategoryNames, categoryOrder) {
+				mutableStateListOf<MutableCategory>().apply {
+					val allCategories = if (categoryOrder.isNotEmpty()) {
+						allCategoryNames.sortedBy { name ->
+							val idx = categoryOrder.indexOf(name)
+							if (idx >= 0) idx else Int.MAX_VALUE
+						}
+					} else {
+						allCategoryNames.toList()
+					}
 
-                    allCategories.forEach { categoryName ->
-                        val apps = visibleApps.filter { it.effectiveCategory == categoryName }
-                        if (apps.isNotEmpty()) {
-                            add(
-                                MutableCategory(
-                                    categoryName = categoryName,
-                                    apps = apps
-                                )
-                            )
-                        }
-                    }
-                }
-            }
+					allCategories.forEach { categoryName ->
+						val apps = visibleApps.filter { it.effectiveCategory == categoryName }
+						if (apps.isNotEmpty()) {
+							add(
+								MutableCategory(
+									categoryName = categoryName,
+									apps = apps
+								)
+							)
+						}
+					}
+				}
+			}
 
-            fun saveOrder() {
-                scope.launch {
-                    DrawerSettingsStore.categoryOrder.set(ctx, mutableCategoryNames.map { it.categoryName })
-                }
-            }
+			fun saveOrder() {
+				scope.launch {
+					DrawerSettingsStore.categoryOrder.set(ctx, mutableCategoryNames.map { it.categoryName })
+				}
+			}
 
-            val gridState = categoryGridState ?: rememberLazyGridState()
-            val reorderState =
-                rememberReorderableLazyGridState(
-                    lazyGridState = gridState,
-                    onMove = { from, to ->
-                        mutableCategoryNames.apply {
-                            add(to.index, removeAt(from.index))
-                        }
-                    }
-                )
+			val gridState = categoryGridState ?: rememberLazyGridState()
+			val reorderState =
+				rememberReorderableLazyGridState(
+					lazyGridState = gridState,
+					onMove = { from, to ->
+						mutableCategoryNames.apply {
+							add(to.index, removeAt(from.index))
+						}
+					}
+				)
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(drawerSettings.categoryCells),
-                modifier = modifier,
-                state = gridState,
-                contentPadding = paddingValues,
-                reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment())
-            ) {
-                items(
-                    items = mutableCategoryNames,
-                    key = { it.categoryName }
-                ) { category ->
-                    ReorderableItem(state = reorderState, key = category.categoryName) {
-                        CategoryGrid(
-                            categoryName = category.categoryName,
-                            apps = category.apps,
-                            modifier = Modifier.longPressDraggableHandle(
-                                onDragStopped = ::saveOrder
-                            ),
-                            longPressPopup = longPressPopup,
-                            onClick = onClick
-                        ) {
-                            openedCategory = category.categoryName
-                        }
-                    }
-                }
-            }
-        }
+			LazyVerticalGrid(
+				columns = GridCells.Fixed(drawerSettings.categoryCells),
+				modifier = modifier,
+				state = gridState,
+				contentPadding = paddingValues,
+				reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
+				verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment())
+			) {
+				items(
+					items = mutableCategoryNames,
+					key = { it.categoryName }
+				) { category ->
+					ReorderableItem(state = reorderState, key = category.categoryName) {
+						CategoryGrid(
+							categoryName = category.categoryName,
+							apps = category.apps,
+							modifier = Modifier.longPressDraggableHandle(
+								onDragStopped = ::saveOrder
+							),
+							longPressPopup = longPressPopup,
+							onClick = onClick
+						) {
+							openedCategory = category.categoryName
+						}
+					}
+				}
+			}
+		}
 
-        gridSize == 1 -> {
-            LazyColumn(
-                modifier = modifier,
-                state = listState ?: rememberLazyListState(),
-                contentPadding = paddingValues,
-                reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment())
-            ) {
-                items(visibleApps, key = { it.key.cacheKey }) { app ->
-                    AppItemHorizontal(
-                        app = app,
-                        selected = app in selectedPackages,
-                        onLongClick =
-                            if (onEnterMultiSelect != null && onToggleSelect != null) {
-                                {
-                                    if (!isMultiSelectMode) {
-                                        onEnterMultiSelect(app)
-                                    } else {
-                                        onToggleSelect(app)
-                                    }
-                                }
-                            } else {
-                                null
-                            },
-                        longPressPopup = longPressPopup,
-                        onClick = {
-                            if (isMultiSelectMode && onToggleSelect != null) {
-                                onToggleSelect(app)
-                            } else {
-                                onClick?.invoke(app)
-                            }
-                        }
-                    )
-                }
-            }
-        }
+		gridSize == 1 -> {
+			LazyColumn(
+				modifier = modifier,
+				state = listState ?: rememberLazyListState(),
+				contentPadding = paddingValues,
+				reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
+				verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment())
+			) {
+				items(visibleApps, key = { it.key.cacheKey }) { app ->
+					AppItemHorizontal(
+						app = app,
+						selected = app in selectedPackages,
+						onLongClick =
+							if (onEnterMultiSelect != null && onToggleSelect != null) {
+								{
+									if (!isMultiSelectMode) {
+										onEnterMultiSelect(app)
+									} else {
+										onToggleSelect(app)
+									}
+								}
+							} else {
+								null
+							},
+						longPressPopup = longPressPopup,
+						onClick = {
+							if (isMultiSelectMode && onToggleSelect != null) {
+								onToggleSelect(app)
+							} else {
+								onClick?.invoke(app)
+							}
+						}
+					)
+				}
+			}
+		}
 
-        else -> {
-            LazyVerticalGrid(
-                modifier = modifier,
-                state = gridState ?: rememberLazyGridState(),
-                columns = GridCells.Fixed(gridSize),
-                contentPadding = paddingValues,
-                reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment()),
-                horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
-            ) {
-                items(items = visibleApps, key = { it.key.cacheKey }) { app ->
-                    AppItemGrid(
-                        app = app,
-                        selected = app in selectedPackages,
-                        onLongClick =
-                            if (onEnterMultiSelect != null && onToggleSelect != null) {
-                                {
-                                    if (!isMultiSelectMode) {
-                                        onEnterMultiSelect(app)
-                                    } else {
-                                        onToggleSelect(app)
-                                    }
-                                }
-                            } else {
-                                null
-                            },
-                        longPressPopup = longPressPopup,
-                        onClick = {
-                            if (isMultiSelectMode && onToggleSelect != null) {
-                                onToggleSelect(app)
-                            } else {
-                                onClick?.invoke(app)
-                            }
-                        }
-                    )
-                }
-            }
-        }
-    }
+		else -> {
+			LazyVerticalGrid(
+				modifier = modifier,
+				state = gridState ?: rememberLazyGridState(),
+				columns = GridCells.Fixed(gridSize),
+				contentPadding = paddingValues,
+				reverseLayout = drawerSettings.drawerAlign == DrawerAlign.Bottom,
+				verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical, drawerSettings.drawerAlign.toAlignment()),
+				horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
+			) {
+				items(items = visibleApps, key = { it.key.cacheKey }) { app ->
+					AppItemGrid(
+						app = app,
+						selected = app in selectedPackages,
+						onLongClick =
+							if (onEnterMultiSelect != null && onToggleSelect != null) {
+								{
+									if (!isMultiSelectMode) {
+										onEnterMultiSelect(app)
+									} else {
+										onToggleSelect(app)
+									}
+								}
+							} else {
+								null
+							},
+						longPressPopup = longPressPopup,
+						onClick = {
+							if (isMultiSelectMode && onToggleSelect != null) {
+								onToggleSelect(app)
+							} else {
+								onClick?.invoke(app)
+							}
+						}
+					)
+				}
+			}
+		}
+	}
 }
 
 @Composable
 private fun CategoryGrid(
-    categoryName: String,
-    apps: List<Application>,
-    modifier: Modifier,
-    longPressPopup: Boolean,
-    onClick: ((Application) -> Unit)?,
-    onOpenCategory: () -> Unit
+	categoryName: String,
+	apps: List<Application>,
+	modifier: Modifier,
+	longPressPopup: Boolean,
+	onClick: ((Application) -> Unit)?,
+	onOpenCategory: () -> Unit
 ) {
-    val showCategoryName by DrawerSettingsStore.showCategoryName.asState()
+	val showCategoryName by DrawerSettingsStore.showCategoryName.asState()
 
-    val drawerSettings = LocalDrawerSettings.current
-    val gridCells = drawerSettings.categoryGridCells
+	val drawerSettings = LocalDrawerSettings.current
+	val gridCells = drawerSettings.categoryGridCells
 
-    CompositionLocalProvider(
-        LocalDrawerSettings provides
-            drawerSettings.copy(showAppLabelsInDrawer = false)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier =
-                    modifier
-                        .aspectRatio(1f)
-                        .padding(10.dp)
-            ) {
-                var appIndex = 0
+	CompositionLocalProvider(
+		LocalDrawerSettings provides
+			drawerSettings.copy(showAppLabelsInDrawer = false)
+	) {
+		Column(
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			Box(
+				modifier =
+					modifier
+						.aspectRatio(1f)
+						.padding(10.dp)
+			) {
+				var appIndex = 0
 
-                val appNumber = apps.size
-                val maxAppNumber = gridCells * gridCells - 1
-                val sanitizedAppNumber = min(appNumber, maxAppNumber)
+				val appNumber = apps.size
+				val maxAppNumber = gridCells * gridCells - 1
+				val sanitizedAppNumber = min(appNumber, maxAppNumber)
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(MaterialTheme.shapes.medium)
-                        .clickable(onClick = onOpenCategory)
-                        .background(drawerSettings.categoryColor)
-                ) {
-                    repeat(gridCells) {
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            repeat(gridCells) {
-                                Box(
-                                    modifier = Modifier.weight(1f),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (appIndex < sanitizedAppNumber) {
-                                        val app = apps[appIndex]
+				Column(
+					modifier = Modifier
+						.fillMaxSize()
+						.clip(MaterialTheme.shapes.medium)
+						.clickable(onClick = onOpenCategory)
+						.background(drawerSettings.categoryColor)
+				) {
+					repeat(gridCells) {
+						Row(
+							modifier = Modifier.weight(1f),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							repeat(gridCells) {
+								Box(
+									modifier = Modifier.weight(1f),
+									contentAlignment = Alignment.Center
+								) {
+									if (appIndex < sanitizedAppNumber) {
+										val app = apps[appIndex]
 
-                                        AppItemGrid(
-                                            app = app,
-                                            selected = false,
-                                            onLongClick = null,
-                                            longPressPopup = longPressPopup,
-                                            onClick = { onClick?.invoke(app) }
-                                        )
-                                    } else if (appIndex == maxAppNumber) {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.more_horiz),
-                                                contentDescription = "More",
-                                                tint = contentColorFor(drawerSettings.categoryColor)
-                                            )
-                                        }
-                                    }
-                                }
-                                appIndex++
-                            }
-                        }
-                    }
-                }
-            }
+										AppItemGrid(
+											app = app,
+											selected = false,
+											onLongClick = null,
+											longPressPopup = longPressPopup,
+											onClick = { onClick?.invoke(app) }
+										)
+									} else if (appIndex == maxAppNumber) {
+										Box(
+											modifier = Modifier.fillMaxSize(),
+											contentAlignment = Alignment.Center
+										) {
+											Icon(
+												painter = painterResource(R.drawable.more_horiz),
+												contentDescription = "More",
+												tint = contentColorFor(drawerSettings.categoryColor)
+											)
+										}
+									}
+								}
+								appIndex++
+							}
+						}
+					}
+				}
+			}
 
-            if (showCategoryName) {
-                Text(
-                    text = categoryName,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-        }
-    }
+			if (showCategoryName) {
+				Text(
+					text = categoryName,
+					color = MaterialTheme.colorScheme.onBackground,
+					style = MaterialTheme.typography.labelSmall
+				)
+			}
+		}
+	}
 }
 
 // @OptIn(ExperimentalMaterial3ExpressiveApi::class)

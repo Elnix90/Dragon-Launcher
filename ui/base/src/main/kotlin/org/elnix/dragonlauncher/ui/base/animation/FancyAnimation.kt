@@ -21,81 +21,81 @@ import androidx.graphics.shapes.RoundedPolygon
 import org.elnix.dragonlauncher.animation.bouncySpec
 
 data class FancyAnimation(
-    val rotation: Float,
-    val outerRotation: Float,
-    val scale: Float,
-    val shape: Shape
+	val rotation: Float,
+	val outerRotation: Float,
+	val scale: Float,
+	val shape: Shape
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun rememberFancyAnimations(
-    isPressed: Boolean,
-    normalShape: RoundedPolygon,
-    pressedShape: RoundedPolygon
+	isPressed: Boolean,
+	normalShape: RoundedPolygon,
+	pressedShape: RoundedPolygon
 ): FancyAnimation {
-    val morph = remember { Morph(start = normalShape, end = pressedShape) }
+	val morph = remember { Morph(start = normalShape, end = pressedShape) }
 
-    val outerRotation by animateFloatAsState(
-        targetValue = if (isPressed) 360f else 0f,
-        label = "infinite rotation",
-        animationSpec =
-            if (isPressed) {
-                infiniteRepeatable(
-                    animation = tween(10000, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                )
-            } else {
-                tween(300)
-            }
-    )
+	val outerRotation by animateFloatAsState(
+		targetValue = if (isPressed) 360f else 0f,
+		label = "infinite rotation",
+		animationSpec =
+			if (isPressed) {
+				infiniteRepeatable(
+					animation = tween(10000, easing = LinearEasing),
+					repeatMode = RepeatMode.Restart
+				)
+			} else {
+				tween(300)
+			}
+	)
 
-    val animatedScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.8f else 1f,
-        label = "scale",
-        animationSpec = bouncySpec()
-    )
+	val animatedScale by animateFloatAsState(
+		targetValue = if (isPressed) 0.8f else 1f,
+		label = "scale",
+		animationSpec = bouncySpec()
+	)
 
-    val animatedRotation by animateFloatAsState(
-        targetValue = if (isPressed) 180f else 0f,
-        label = "rotation",
-        animationSpec = bouncySpec()
-    )
+	val animatedRotation by animateFloatAsState(
+		targetValue = if (isPressed) 180f else 0f,
+		label = "rotation",
+		animationSpec = bouncySpec()
+	)
 
-    val animatedProgress by animateFloatAsState(
-        targetValue = if (isPressed) 1f else 0f,
-        label = "progress",
-        animationSpec = bouncySpec()
-    )
+	val animatedProgress by animateFloatAsState(
+		targetValue = if (isPressed) 1f else 0f,
+		label = "progress",
+		animationSpec = bouncySpec()
+	)
 
-    val shape =
-        remember(morph, animatedProgress) {
-            MorphPolygonShape(morph, animatedProgress)
-        }
+	val shape =
+		remember(morph, animatedProgress) {
+			MorphPolygonShape(morph, animatedProgress)
+		}
 
-    return FancyAnimation(
-        rotation = animatedRotation,
-        outerRotation = outerRotation,
-        scale = animatedScale,
-        shape = shape
-    )
+	return FancyAnimation(
+		rotation = animatedRotation,
+		outerRotation = outerRotation,
+		scale = animatedScale,
+		shape = shape
+	)
 }
 
 class MorphPolygonShape(
-    private val morph: Morph,
-    private val percentage: Float
+	private val morph: Morph,
+	private val percentage: Float
 ) : Shape {
-    private val matrix = Matrix()
+	private val matrix = Matrix()
 
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        matrix.scale(size.width, size.height)
-        val path = morph.toPath(progress = percentage)
-        path.transform(matrix)
-        return Outline.Generic(path)
-    }
+	@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+	override fun createOutline(
+		size: Size,
+		layoutDirection: LayoutDirection,
+		density: Density
+	): Outline {
+		matrix.scale(size.width, size.height)
+		val path = morph.toPath(progress = percentage)
+		path.transform(matrix)
+		return Outline.Generic(path)
+	}
 }

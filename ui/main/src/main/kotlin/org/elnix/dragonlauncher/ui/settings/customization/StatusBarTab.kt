@@ -25,52 +25,52 @@ import org.elnix.dragonlauncher.ui.statusbar.showStatusBar
 
 @Composable
 fun StatusBarTab() {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var showStatusBar by showStatusBar()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+	var showStatusBar by showStatusBar()
 
-    SettingsScaffold(
-        title = stringResource(R.string.status_bar),
-        helpText = stringResource(R.string.status_bar_tab_text),
-        resetText = stringResource(R.string.reset_status_bar),
-        onReset = {
-            scope.launch {
-                StatusBarSettingsStore.resetAll(ctx)
-                StatusBarJsonSettingsStore.resetAll(ctx)
-                showStatusBar = false
-            }
-        },
-        topContent = {
-            if (showStatusBar) {
-                Spacer()
-            }
-        }
-    ) {
-        DragonSettingsGroup(R.string.show_status_bar) {
-            SwitchRow(
-                title = R.string.show_status_bar,
-                description = R.string.show_status_bar_desc,
-                state = showStatusBar
-            ) { showStatusBar = it }
-        }
+	SettingsScaffold(
+		title = stringResource(R.string.status_bar),
+		helpText = stringResource(R.string.status_bar_tab_text),
+		resetText = stringResource(R.string.reset_status_bar),
+		onReset = {
+			scope.launch {
+				StatusBarSettingsStore.resetAll(ctx)
+				StatusBarJsonSettingsStore.resetAll(ctx)
+				showStatusBar = false
+			}
+		},
+		topContent = {
+			if (showStatusBar) {
+				Spacer()
+			}
+		}
+	) {
+		DragonSettingsGroup(R.string.show_status_bar) {
+			SwitchRow(
+				title = R.string.show_status_bar,
+				description = R.string.show_status_bar_desc,
+				state = showStatusBar
+			) { showStatusBar = it }
+		}
 
-        AnimatedVisibility(showStatusBar) {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                EditStatusBar()
+		AnimatedVisibility(showStatusBar) {
+			Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+				EditStatusBar()
 
-                DragonSettingsGroup(R.string.color) {
-                    Setting(StatusBarSettingsStore.barBackgroundColor)
-                    Setting(StatusBarSettingsStore.barTextColor)
-                }
+				DragonSettingsGroup(R.string.color) {
+					Setting(StatusBarSettingsStore.barBackgroundColor)
+					Setting(StatusBarSettingsStore.barTextColor)
+				}
 
-                DragonSettingsGroup(R.string.padding) {
-                    Setting(StatusBarSettingsStore.leftPadding)
-                    Setting(StatusBarSettingsStore.rightPadding)
-                    Setting(StatusBarSettingsStore.topPadding)
-                    Setting(StatusBarSettingsStore.bottomPadding)
-                }
-            }
-        }
-    }
-    StatusBar(null)
+				DragonSettingsGroup(R.string.padding) {
+					Setting(StatusBarSettingsStore.leftPadding)
+					Setting(StatusBarSettingsStore.rightPadding)
+					Setting(StatusBarSettingsStore.topPadding)
+					Setting(StatusBarSettingsStore.bottomPadding)
+				}
+			}
+		}
+	}
+	StatusBar(null)
 }

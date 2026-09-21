@@ -5,7 +5,7 @@ import org.gradle.api.Project
 
 @Suppress("unused")
 class DragonAndroidSerializationPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        target.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
-    }
+	override fun apply(target: Project) {
+		target.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
+	}
 }

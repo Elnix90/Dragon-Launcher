@@ -22,34 +22,34 @@ import java.io.File
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun LogsViewerScreen(
-    filename: String,
-    dragonLogViewModel: DragonLogViewModel = activityViewModel()
+	filename: String,
+	dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    val file = File(ctx.filesDir, "logs/$filename")
-    var logs: String by remember(filename) { mutableStateOf("") }
-    LaunchedEffect(Unit) {
-        logs = dragonLogViewModel.readLogFile(file)
-    }
-    val lines by remember(logs) { derivedStateOf { logs.lines() } }
+	val file = File(ctx.filesDir, "logs/$filename")
+	var logs: String by remember(filename) { mutableStateOf("") }
+	LaunchedEffect(Unit) {
+		logs = dragonLogViewModel.readLogFile(file)
+	}
+	val lines by remember(logs) { derivedStateOf { logs.lines() } }
 
-    SettingsScaffold(
-        title = filename,
-        helpText = "Viewing logs from the log file: $filename\n - ${lines.size} total lines\n - ${logs.length} total chars",
-        onReset = null,
-        resetText = null,
-        scrollableContent = false,
-        specialSettingsTitleContent = {
-            AnimatedFab(
-                onClick = {
-                    ctx.copyToClipboard(logs)
-                    ctx.showToast(ctx.getString(R.string.copied_to_clipboard))
-                },
-                icon = R.drawable.copy
-            )
-        }
-    ) {
-        MonospaceScrollableText(lines, useDragonLogsColoration = true)
-    }
+	SettingsScaffold(
+		title = filename,
+		helpText = "Viewing logs from the log file: $filename\n - ${lines.size} total lines\n - ${logs.length} total chars",
+		onReset = null,
+		resetText = null,
+		scrollableContent = false,
+		specialSettingsTitleContent = {
+			AnimatedFab(
+				onClick = {
+					ctx.copyToClipboard(logs)
+					ctx.showToast(ctx.getString(R.string.copied_to_clipboard))
+				},
+				icon = R.drawable.copy
+			)
+		}
+	) {
+		MonospaceScrollableText(lines, useDragonLogsColoration = true)
+	}
 }

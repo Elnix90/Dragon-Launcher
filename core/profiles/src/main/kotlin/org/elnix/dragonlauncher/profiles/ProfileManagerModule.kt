@@ -12,10 +12,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object ProfileManagerModule {
-    @Provides
-    @Singleton
-    fun provideProfileManager(
-        @ApplicationContext ctx: Context,
-        permissionsManager: PermissionsManager
-    ): ProfileManager = ProfileManager(ctx, permissionsManager)
+	@Provides
+	@Singleton
+	fun provideProfileManager(
+		@ApplicationContext ctx: Context,
+		permissionsManager: PermissionsManager
+	): ProfileManager = ProfileManager(ctx, permissionsManager)
 }

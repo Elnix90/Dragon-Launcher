@@ -48,82 +48,82 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
-    entries: List<T>,
-    modifier: Modifier = Modifier,
-    enabled: (T) -> Boolean = { true },
-    checked: (T) -> Boolean = { true },
-    onCheck: (T) -> Unit
+	entries: List<T>,
+	modifier: Modifier = Modifier,
+	enabled: (T) -> Boolean = { true },
+	checked: (T) -> Boolean = { true },
+	onCheck: (T) -> Unit
 ) {
-    val interactionSources = List(entries.size) { rememberInteractionSource() }
+	val interactionSources = List(entries.size) { rememberInteractionSource() }
 
-    ButtonGroup(
-        modifier = modifier,
-        overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-    ) {
-        entries.forEachIndexed { idx, entry ->
+	ButtonGroup(
+		modifier = modifier,
+		overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+		horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+	) {
+		entries.forEachIndexed { idx, entry ->
 
-            val checked = checked(entry)
-            customItem(
-                buttonGroupContent = {
-                    IconToggleButton(
-                        checked = checked,
-                        onCheckedChange = withHapticParam { onCheck(entry) },
-                        interactionSource = interactionSources[idx],
-                        modifier =
-                            Modifier
-                                .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-                                .animateWidth(interactionSources[idx]),
-                        enabled = enabled(entry),
-                        colors = AppObjectsColors.iconToggleButtonColors(),
-                        shapes =
-                            when (idx) {
-                                0 -> connectedLeadingButtonShapes()
-                                entries.lastIndex -> connectedTrailingButtonShapes()
-                                else -> connectedMiddleButtonShapes()
-                            }
-                    ) {
-                        entry.iconEnabled?.let { iconEnabled ->
-                            DragonTooltip(entry.resId ?: -1) {
-                                Crossfade(!checked) { notChecked ->
-                                    Icon(
-                                        painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        }
-                    }
-                },
-                menuContent = { }
-            )
-        }
-    }
+			val checked = checked(entry)
+			customItem(
+				buttonGroupContent = {
+					IconToggleButton(
+						checked = checked,
+						onCheckedChange = withHapticParam { onCheck(entry) },
+						interactionSource = interactionSources[idx],
+						modifier =
+							Modifier
+								.size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+								.animateWidth(interactionSources[idx]),
+						enabled = enabled(entry),
+						colors = AppObjectsColors.iconToggleButtonColors(),
+						shapes =
+							when (idx) {
+								0 -> connectedLeadingButtonShapes()
+								entries.lastIndex -> connectedTrailingButtonShapes()
+								else -> connectedMiddleButtonShapes()
+							}
+					) {
+						entry.iconEnabled?.let { iconEnabled ->
+							DragonTooltip(entry.resId ?: -1) {
+								Crossfade(!checked) { notChecked ->
+									Icon(
+										painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
+										contentDescription = null
+									)
+								}
+							}
+						}
+					}
+				},
+				menuContent = { }
+			)
+		}
+	}
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedLeadingButtonShapes(
-    shape: Shape = connectedLeadingButtonShape,
-    pressedShape: Shape = connectedLeadingButtonPressShape,
-    checkedShape: Shape = connectedButtonCheckedShape
+	shape: Shape = connectedLeadingButtonShape,
+	pressedShape: Shape = connectedLeadingButtonPressShape,
+	checkedShape: Shape = connectedButtonCheckedShape
 ): IconToggleButtonShapes =
-    IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
+	IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedMiddleButtonShapes(
-    shape: Shape = ShapeDefaults.Small,
-    pressedShape: Shape = connectedMiddleButtonPressShape,
-    checkedShape: Shape = connectedButtonCheckedShape
+	shape: Shape = ShapeDefaults.Small,
+	pressedShape: Shape = connectedMiddleButtonPressShape,
+	checkedShape: Shape = connectedButtonCheckedShape
 ): IconToggleButtonShapes =
-    IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
+	IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedTrailingButtonShapes(
-    shape: Shape = connectedTrailingButtonShape,
-    pressedShape: Shape = connectedTrailingButtonPressShape,
-    checkedShape: Shape = connectedButtonCheckedShape
+	shape: Shape = connectedTrailingButtonShape,
+	pressedShape: Shape = connectedTrailingButtonPressShape,
+	checkedShape: Shape = connectedButtonCheckedShape
 ): IconToggleButtonShapes =
-    IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
+	IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)

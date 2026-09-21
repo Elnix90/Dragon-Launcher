@@ -15,133 +15,133 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import java.security.MessageDigest
 
 public interface SecurityService {
-    /**
-     * Hashes a PIN using SHA-256.
-     */
-    public fun hash(pin: String): String
+	/**
+	 * Hashes a PIN using SHA-256.
+	 */
+	public fun hash(pin: String): String
 
-    /**
-     * Verifies a PIN against the stored hash
-     */
-    public suspend fun verify(pin: String): Boolean
+	/**
+	 * Verifies a PIN against the stored hash
+	 */
+	public suspend fun verify(pin: String): Boolean
 
-    /**
-     * Checks if device unlock (biometric or device credentials) is available.
-     */
-    public fun isDeviceUnlockAvailable(ctx: Context): Boolean
+	/**
+	 * Checks if device unlock (biometric or device credentials) is available.
+	 */
+	public fun isDeviceUnlockAvailable(ctx: Context): Boolean
 
-    /**
-     * Shows a device unlock prompt that supports biometric (fingerprint/face)
-     * with automatic fallback to device credentials (PIN/pattern/password).
-     */
-    public fun showDeviceUnlockPrompt(
-        activity: FragmentActivity,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit,
-        onFailed: () -> Unit
-    )
+	/**
+	 * Shows a device unlock prompt that supports biometric (fingerprint/face)
+	 * with automatic fallback to device credentials (PIN/pattern/password).
+	 */
+	public fun showDeviceUnlockPrompt(
+		activity: FragmentActivity,
+		onSuccess: () -> Unit,
+		onError: (String) -> Unit,
+		onFailed: () -> Unit
+	)
 }
 
 /**
  * Utility object for settings lock security operations.
  */
 internal class SecurityServiceImpl(
-    ctx: Context
+	ctx: Context
 ) : SecurityService {
-    private val digest = MessageDigest.getInstance("SHA-256")
+	private val digest = MessageDigest.getInstance("SHA-256")
 
-    private val storedHash = PrivateSettingsStore.settingsHash.flow(ctx)
+	private val storedHash = PrivateSettingsStore.settingsHash.flow(ctx)
 
-    override fun hash(pin: String): String {
-        val hashBytes = digest.digest(pin.toByteArray(Charsets.UTF_8))
-        return hashBytes.joinToString("") { "%02x".format(it) }
-    }
+	override fun hash(pin: String): String {
+		val hashBytes = digest.digest(pin.toByteArray(Charsets.UTF_8))
+		return hashBytes.joinToString("") { "%02x".format(it) }
+	}
 
-    override suspend fun verify(pin: String): Boolean = hash(pin) == storedHash.first()
+	override suspend fun verify(pin: String): Boolean = hash(pin) == storedHash.first()
 
-    override fun isDeviceUnlockAvailable(ctx: Context): Boolean {
-        val biometricManager = BiometricManager.from(ctx)
+	override fun isDeviceUnlockAvailable(ctx: Context): Boolean {
+		val biometricManager = BiometricManager.from(ctx)
 
-        logD(SECURITY_SERVICE) { "Checking device unlock availability, SDK=${Build.VERSION.SDK_INT}" }
+		logD(SECURITY_SERVICE) { "Checking device unlock availability, SDK=${Build.VERSION.SDK_INT}" }
 
-        // On API 30+ we can safely use BIOMETRIC_STRONG | DEVICE_CREDENTIAL
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val canAuth =
-                biometricManager.canAuthenticate(
-                    BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                )
-            logD(SECURITY_SERVICE) { "API 30+: canAuthenticate(STRONG|DEVICE_CREDENTIAL) = $canAuth" }
-            if (canAuth == BiometricManager.BIOMETRIC_SUCCESS) return true
-        }
+		// On API 30+ we can safely use BIOMETRIC_STRONG | DEVICE_CREDENTIAL
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+			val canAuth =
+				biometricManager.canAuthenticate(
+					BiometricManager.Authenticators.BIOMETRIC_STRONG or
+						BiometricManager.Authenticators.DEVICE_CREDENTIAL
+				)
+			logD(SECURITY_SERVICE) { "API 30+: canAuthenticate(STRONG|DEVICE_CREDENTIAL) = $canAuth" }
+			if (canAuth == BiometricManager.BIOMETRIC_SUCCESS) return true
+		}
 
-        // On API 28-29, BIOMETRIC_STRONG | DEVICE_CREDENTIAL is not supported.
-        // Use BIOMETRIC_WEAK | DEVICE_CREDENTIAL instead.
-        val canAuthWeak =
-            biometricManager.canAuthenticate(
-                BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
-            )
-        logD(SECURITY_SERVICE) { "canAuthenticate(WEAK|DEVICE_CREDENTIAL) = $canAuthWeak" }
-        if (canAuthWeak == BiometricManager.BIOMETRIC_SUCCESS) return true
+		// On API 28-29, BIOMETRIC_STRONG | DEVICE_CREDENTIAL is not supported.
+		// Use BIOMETRIC_WEAK | DEVICE_CREDENTIAL instead.
+		val canAuthWeak =
+			biometricManager.canAuthenticate(
+				BiometricManager.Authenticators.BIOMETRIC_WEAK or
+					BiometricManager.Authenticators.DEVICE_CREDENTIAL
+			)
+		logD(SECURITY_SERVICE) { "canAuthenticate(WEAK|DEVICE_CREDENTIAL) = $canAuthWeak" }
+		if (canAuthWeak == BiometricManager.BIOMETRIC_SUCCESS) return true
 
-        // Final fallback: check if a screen lock (PIN/pattern/password) is set
-        val keyguardManager = ctx.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        val isDeviceSecure = keyguardManager.isDeviceSecure
-        logD(SECURITY_SERVICE) { "KeyguardManager.isDeviceSecure = $isDeviceSecure" }
-        return isDeviceSecure
-    }
+		// Final fallback: check if a screen lock (PIN/pattern/password) is set
+		val keyguardManager = ctx.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+		val isDeviceSecure = keyguardManager.isDeviceSecure
+		logD(SECURITY_SERVICE) { "KeyguardManager.isDeviceSecure = $isDeviceSecure" }
+		return isDeviceSecure
+	}
 
-    override fun showDeviceUnlockPrompt(
-        activity: FragmentActivity,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit,
-        onFailed: () -> Unit
-    ) {
-        val executor = ContextCompat.getMainExecutor(activity)
+	override fun showDeviceUnlockPrompt(
+		activity: FragmentActivity,
+		onSuccess: () -> Unit,
+		onError: (String) -> Unit,
+		onFailed: () -> Unit
+	) {
+		val executor = ContextCompat.getMainExecutor(activity)
 
-        val callback =
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    onSuccess()
-                }
+		val callback =
+			object : BiometricPrompt.AuthenticationCallback() {
+				override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+					super.onAuthenticationSucceeded(result)
+					onSuccess()
+				}
 
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    if (errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
-                        errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
-                        errorCode == BiometricPrompt.ERROR_CANCELED
-                    ) {
-                        onFailed()
-                    } else {
-                        onError(errString.toString())
-                    }
-                }
+				override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+					super.onAuthenticationError(errorCode, errString)
+					if (errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
+						errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
+						errorCode == BiometricPrompt.ERROR_CANCELED
+					) {
+						onFailed()
+					} else {
+						onError(errString.toString())
+					}
+				}
 
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    onFailed()
-                }
-            }
+				override fun onAuthenticationFailed() {
+					super.onAuthenticationFailed()
+					onFailed()
+				}
+			}
 
-        val biometricPrompt = BiometricPrompt(activity, executor, callback)
+		val biometricPrompt = BiometricPrompt(activity, executor, callback)
 
-        val promptInfo =
-            BiometricPrompt.PromptInfo
-                .Builder()
-                .setTitle(activity.getString(R.string.biometric_prompt_title))
-                .setSubtitle(activity.getString(R.string.biometric_prompt_subtitle))
-                .setAllowedAuthenticators(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                            BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                    } else {
-                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                            BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                    }
-                ).build()
+		val promptInfo =
+			BiometricPrompt.PromptInfo
+				.Builder()
+				.setTitle(activity.getString(R.string.biometric_prompt_title))
+				.setSubtitle(activity.getString(R.string.biometric_prompt_subtitle))
+				.setAllowedAuthenticators(
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+						BiometricManager.Authenticators.BIOMETRIC_STRONG or
+							BiometricManager.Authenticators.DEVICE_CREDENTIAL
+					} else {
+						BiometricManager.Authenticators.BIOMETRIC_WEAK or
+							BiometricManager.Authenticators.DEVICE_CREDENTIAL
+					}
+				).build()
 
-        biometricPrompt.authenticate(promptInfo)
-    }
+		biometricPrompt.authenticate(promptInfo)
+	}
 }

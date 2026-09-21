@@ -32,139 +32,139 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun StatusBarConnectivity(
-    element: StatusBar.Connectivity,
-    modifier: Modifier = Modifier,
-    previewMode: Boolean = false
+	element: StatusBar.Connectivity,
+	modifier: Modifier = Modifier,
+	previewMode: Boolean = false
 ) {
-    val ctx = LocalContext.current
-    var connectivityState by remember {
-        mutableStateOf(
-            if (previewMode) {
-                ConnectivityState(
-                    isWifiEnabled = true,
-                    isBluetoothEnabled = true,
-                    isMobileDataEnabled = true,
-                    isUsbConnected = true
-                )
-            } else {
-                ConnectivityState()
-            }
-        )
-    }
+	val ctx = LocalContext.current
+	var connectivityState by remember {
+		mutableStateOf(
+			if (previewMode) {
+				ConnectivityState(
+					isWifiEnabled = true,
+					isBluetoothEnabled = true,
+					isMobileDataEnabled = true,
+					isUsbConnected = true
+				)
+			} else {
+				ConnectivityState()
+			}
+		)
+	}
 
-    // USB Detection via BroadcastReceiver
-    if (!previewMode) {
-        DisposableEffect(Unit) {
-            val receiver =
-                object : android.content.BroadcastReceiver() {
-                    override fun onReceive(context: Context, intent: Intent) {
-                        if (intent.action == "android.hardware.usb.action.USB_STATE") {
-                            val connected = intent.extras?.getBoolean("connected") ?: false
-                            connectivityState = connectivityState.copy(isUsbConnected = connected)
-                        }
-                    }
-                }
-            ctx.registerReceiver(receiver, IntentFilter("android.hardware.usb.action.USB_STATE"))
-            onDispose {
-                ctx.unregisterReceiver(receiver)
-            }
-        }
-    }
+	// USB Detection via BroadcastReceiver
+	if (!previewMode) {
+		DisposableEffect(Unit) {
+			val receiver =
+				object : android.content.BroadcastReceiver() {
+					override fun onReceive(context: Context, intent: Intent) {
+						if (intent.action == "android.hardware.usb.action.USB_STATE") {
+							val connected = intent.extras?.getBoolean("connected") ?: false
+							connectivityState = connectivityState.copy(isUsbConnected = connected)
+						}
+					}
+				}
+			ctx.registerReceiver(receiver, IntentFilter("android.hardware.usb.action.USB_STATE"))
+			onDispose {
+				ctx.unregisterReceiver(receiver)
+			}
+		}
+	}
 
-    // Periodic updates
-    if (!previewMode) {
-        LaunchedEffect(element.updateFrequency) {
-            while (true) {
-                connectivityState = readConnectivityState(ctx, connectivityState)
-                delay((element.updateFrequency * 1000L).milliseconds)
-            }
-        }
-    }
+	// Periodic updates
+	if (!previewMode) {
+		LaunchedEffect(element.updateFrequency) {
+			while (true) {
+				connectivityState = readConnectivityState(ctx, connectivityState)
+				delay((element.updateFrequency * 1000L).milliseconds)
+			}
+		}
+	}
 
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (connectivityState.isAirplaneMode && element.showAirplaneMode) {
-            Icon(
-                painter = painterResource(R.drawable.flight),
-                contentDescription = "Airplane",
-                modifier = Modifier.size(14.dp)
-            )
-        }
-        if (connectivityState.isWifiEnabled && element.showWifi) {
-            Icon(
-                painter = painterResource(R.drawable.wifi),
-                contentDescription = "WiFi on",
-                modifier = Modifier.size(14.dp)
-            )
-        }
+	Row(
+		modifier = modifier,
+		horizontalArrangement = Arrangement.spacedBy(2.dp),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		if (connectivityState.isAirplaneMode && element.showAirplaneMode) {
+			Icon(
+				painter = painterResource(R.drawable.flight),
+				contentDescription = "Airplane",
+				modifier = Modifier.size(14.dp)
+			)
+		}
+		if (connectivityState.isWifiEnabled && element.showWifi) {
+			Icon(
+				painter = painterResource(R.drawable.wifi),
+				contentDescription = "WiFi on",
+				modifier = Modifier.size(14.dp)
+			)
+		}
 
-        if (connectivityState.isBluetoothEnabled && element.showBluetooth) {
-            Icon(
-                painter = painterResource(R.drawable.bluetooth),
-                contentDescription = "Bluetooth",
-                modifier = Modifier.size(14.dp)
-            )
-        }
+		if (connectivityState.isBluetoothEnabled && element.showBluetooth) {
+			Icon(
+				painter = painterResource(R.drawable.bluetooth),
+				contentDescription = "Bluetooth",
+				modifier = Modifier.size(14.dp)
+			)
+		}
 
-        if (connectivityState.isUsbConnected && element.showUsb) {
-            Icon(
-                painter = painterResource(R.drawable.usb),
-                contentDescription = "USB Connected",
-                modifier = Modifier.size(14.dp)
-            )
-        }
+		if (connectivityState.isUsbConnected && element.showUsb) {
+			Icon(
+				painter = painterResource(R.drawable.usb),
+				contentDescription = "USB Connected",
+				modifier = Modifier.size(14.dp)
+			)
+		}
 
-        if (connectivityState.isVpnEnabled && element.showVpn) {
-            Icon(
-                painter = painterResource(R.drawable.vpn_key),
-                contentDescription = "VPN",
-                modifier = Modifier.size(14.dp)
-            )
-        }
+		if (connectivityState.isVpnEnabled && element.showVpn) {
+			Icon(
+				painter = painterResource(R.drawable.vpn_key),
+				contentDescription = "VPN",
+				modifier = Modifier.size(14.dp)
+			)
+		}
 
-        if (!connectivityState.isAirplaneMode && connectivityState.isMobileDataEnabled && element.showMobileData) {
-            Icon(
-                painter = painterResource(R.drawable.cellular_icon),
-                contentDescription = connectivityState.mobileDataStatus,
-                modifier = Modifier.size(14.dp)
-            )
-        }
+		if (!connectivityState.isAirplaneMode && connectivityState.isMobileDataEnabled && element.showMobileData) {
+			Icon(
+				painter = painterResource(R.drawable.cellular_icon),
+				contentDescription = connectivityState.mobileDataStatus,
+				modifier = Modifier.size(14.dp)
+			)
+		}
 
-        if (connectivityState.isHotspotEnabled && element.showHotspot) {
-            Icon(
-                painter = painterResource(R.drawable.wifi_tethering),
-                contentDescription = "Hotspot",
-                modifier = Modifier.size(14.dp)
-            )
-        }
-    }
+		if (connectivityState.isHotspotEnabled && element.showHotspot) {
+			Icon(
+				painter = painterResource(R.drawable.wifi_tethering),
+				contentDescription = "Hotspot",
+				modifier = Modifier.size(14.dp)
+			)
+		}
+	}
 }
 
 data class ConnectivityState(
-    val isAirplaneMode: Boolean = false,
-    val isWifiEnabled: Boolean = false,
-    val isVpnEnabled: Boolean = false,
-    val isBluetoothEnabled: Boolean = false,
-    val isHotspotEnabled: Boolean = false,
-    val isMobileDataEnabled: Boolean = false,
-    val isUsbConnected: Boolean = false,
-    val mobileDataStatus: String = ""
+	val isAirplaneMode: Boolean = false,
+	val isWifiEnabled: Boolean = false,
+	val isVpnEnabled: Boolean = false,
+	val isBluetoothEnabled: Boolean = false,
+	val isHotspotEnabled: Boolean = false,
+	val isMobileDataEnabled: Boolean = false,
+	val isUsbConnected: Boolean = false,
+	val mobileDataStatus: String = ""
 )
 
 private fun readConnectivityState(ctx: Context, currentState: ConnectivityState = ConnectivityState()): ConnectivityState {
-    val (mobileDataEnabled, mobileDataStatus) = ctx.getMobileDataStatus()
+	val (mobileDataEnabled, mobileDataStatus) = ctx.getMobileDataStatus()
 
-    return ConnectivityState(
-        isAirplaneMode = ctx.isAirplaneMode(),
-        isWifiEnabled = ctx.isWifiEnabled(),
-        isVpnEnabled = ctx.isVpnEnabled(),
-        isBluetoothEnabled = ctx.isBluetoothEnabled(),
-        isHotspotEnabled = ctx.isHotspotEnabled(),
-        isMobileDataEnabled = mobileDataEnabled,
-        isUsbConnected = currentState.isUsbConnected, // Preserved from BroadcastReceiver
-        mobileDataStatus = mobileDataStatus
-    )
+	return ConnectivityState(
+		isAirplaneMode = ctx.isAirplaneMode(),
+		isWifiEnabled = ctx.isWifiEnabled(),
+		isVpnEnabled = ctx.isVpnEnabled(),
+		isBluetoothEnabled = ctx.isBluetoothEnabled(),
+		isHotspotEnabled = ctx.isHotspotEnabled(),
+		isMobileDataEnabled = mobileDataEnabled,
+		isUsbConnected = currentState.isUsbConnected, // Preserved from BroadcastReceiver
+		mobileDataStatus = mobileDataStatus
+	)
 }

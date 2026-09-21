@@ -59,175 +59,175 @@ import kotlin.math.min
 
 @Composable
 fun WidgetHostView(
-    widget: Widget,
-    cellSizePx: Float,
-    modifier: Modifier = Modifier,
-    blockTouches: Boolean = false,
-    widgetsViewModel: WidgetsViewModel = activityViewModel(),
-    onLaunchAction: () -> Unit
+	widget: Widget,
+	cellSizePx: Float,
+	modifier: Modifier = Modifier,
+	blockTouches: Boolean = false,
+	widgetsViewModel: WidgetsViewModel = activityViewModel(),
+	onLaunchAction: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val density = LocalDensity.current.density
-    val currentView = LocalView.current
+	val ctx = LocalContext.current
+	val density = LocalDensity.current.density
+	val currentView = LocalView.current
 
-    if (widget.action is Action.OpenWidget) {
-        val launcherWidgetHolder = remember(ctx) { LauncherWidgetHolder.getInstance(ctx) }
-        val appWidgetId = widget.appWidgetId
+	if (widget.action is Action.OpenWidget) {
+		val launcherWidgetHolder = remember(ctx) { LauncherWidgetHolder.getInstance(ctx) }
+		val appWidgetId = widget.appWidgetId
 
-        val hostView =
-            remember(appWidgetId, currentView) {
-                if (appWidgetId == null) return@remember null
-                val info = launcherWidgetHolder.getAppWidgetInfo(appWidgetId)
-                if (info != null) {
-                    launcherWidgetHolder.createView(appWidgetId, info)
-                } else {
-                    null
-                }
-            } ?: run {
-                CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
-                    Column(
-                        modifier =
-                            modifier
-                                .fillMaxSize()
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = MaterialTheme.shapes.large
-                                ),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.question_mark),
-                            contentDescription = stringResource(R.string.widget_not_found)
-                        )
-                        Spacer(5.dp)
-                        Text(
-                            text = stringResource(R.string.widget_not_found),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontSize = 11.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-                return
-            }
+		val hostView =
+			remember(appWidgetId, currentView) {
+				if (appWidgetId == null) return@remember null
+				val info = launcherWidgetHolder.getAppWidgetInfo(appWidgetId)
+				if (info != null) {
+					launcherWidgetHolder.createView(appWidgetId, info)
+				} else {
+					null
+				}
+			} ?: run {
+				CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
+					Column(
+						modifier =
+							modifier
+								.fillMaxSize()
+								.border(
+									width = 1.dp,
+									color = MaterialTheme.colorScheme.primary,
+									shape = MaterialTheme.shapes.large
+								),
+						verticalArrangement = Arrangement.Center,
+						horizontalAlignment = Alignment.CenterHorizontally
+					) {
+						Icon(
+							painter = painterResource(R.drawable.question_mark),
+							contentDescription = stringResource(R.string.widget_not_found)
+						)
+						Spacer(5.dp)
+						Text(
+							text = stringResource(R.string.widget_not_found),
+							style = MaterialTheme.typography.labelSmall,
+							fontSize = 11.sp,
+							textAlign = TextAlign.Center
+						)
+					}
+				}
+				return
+			}
 
-        // Apply size options when span changes
-        DisposableEffect(widget.spanX, widget.spanY) {
-            val widthDp = (widget.spanX * cellSizePx / density).toInt()
-            val heightDp = (widget.spanY * cellSizePx / density).toInt()
+		// Apply size options when span changes
+		DisposableEffect(widget.spanX, widget.spanY) {
+			val widthDp = (widget.spanX * cellSizePx / density).toInt()
+			val heightDp = (widget.spanY * cellSizePx / density).toInt()
 
-            val options =
-                Bundle().apply {
-                    putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widthDp)
-                    putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
-                    putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widthDp)
-                    putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
-                }
-            // Non nullability ensured by the remember block that returns if its is null
-            launcherWidgetHolder.updateAppWidgetOptions(appWidgetId!!, options)
-            onDispose { }
-        }
+			val options =
+				Bundle().apply {
+					putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widthDp)
+					putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
+					putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widthDp)
+					putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
+				}
+			// Non nullability ensured by the remember block that returns if its is null
+			launcherWidgetHolder.updateAppWidgetOptions(appWidgetId!!, options)
+			onDispose { }
+		}
 
-        AndroidView(
-            modifier =
-                modifier
-                    .fillMaxSize()
-                    .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
-                    .pointerInteropFilter { blockTouches },
-            factory = {
-                // Remove from previous parent if any (Compose safe re-attachment)
-                (hostView.parent as? ViewGroup)?.removeView(hostView)
+		AndroidView(
+			modifier =
+				modifier
+					.fillMaxSize()
+					.clip(widget.shape.resolveShape(default = IconShape.RightSquare))
+					.pointerInteropFilter { blockTouches },
+			factory = {
+				// Remove from previous parent if any (Compose safe re-attachment)
+				(hostView.parent as? ViewGroup)?.removeView(hostView)
 
-                hostView.setPadding(0, 0, 0, 0)
+				hostView.setPadding(0, 0, 0, 0)
 
-                FrameLayout(it).apply {
-                    clipChildren = true
-                    clipToPadding = true
-                    addView(
-                        hostView,
-                        FrameLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                    )
-                }
-            },
-            update = {
-                // Visual update if needed (re-bind is handled by HostView updates)
-            }
-        )
-    } else {
-        val sizeDp = min((widget.spanX * cellSizePx), (widget.spanY * cellSizePx)).toDp
+				FrameLayout(it).apply {
+					clipChildren = true
+					clipToPadding = true
+					addView(
+						hostView,
+						FrameLayout.LayoutParams(
+							ViewGroup.LayoutParams.MATCH_PARENT,
+							ViewGroup.LayoutParams.MATCH_PARENT
+						)
+					)
+				}
+			},
+			update = {
+				// Visual update if needed (re-bind is handled by HostView updates)
+			}
+		)
+	} else {
+		val sizeDp = min((widget.spanX * cellSizePx), (widget.spanY * cellSizePx)).toDp
 
-        when (val action = widget.action) {
-            is Action.LaunchApp -> {
-                val app by widgetsViewModel.findOne(action).collectAsStateWithLifecycle(null)
-                app?.let {
-                    AppIcon(
-                        app = it,
-                        size = sizeDp,
-                        modifier =
-                            modifier.conditional(!blockTouches) {
-                                clickable(onClick = onLaunchAction)
-                            }
-                    )
-                }
-            }
+		when (val action = widget.action) {
+			is Action.LaunchApp -> {
+				val app by widgetsViewModel.findOne(action).collectAsStateWithLifecycle(null)
+				app?.let {
+					AppIcon(
+						app = it,
+						size = sizeDp,
+						modifier =
+							modifier.conditional(!blockTouches) {
+								clickable(onClick = onLaunchAction)
+							}
+					)
+				}
+			}
 
-            is Action.OpenNest -> {
-                val editPoint =
-                    Point(
-                        offset = Offset.Zero,
-                        action = Action.OpenNest(action.nestId),
-                        id = -2
-                    )
+			is Action.OpenNest -> {
+				val editPoint =
+					Point(
+						offset = Offset.Zero,
+						action = Action.OpenNest(action.nestId),
+						id = -2
+					)
 
-                BoxWithConstraints(
-                    modifier =
-                        modifier
-                            .size(sizeDp)
-                            .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
-                            .conditional(!blockTouches) {
-                                clickable(onClick = onLaunchAction)
-                            }
-                ) {
-                    val center = constraints.getCenter()
+				BoxWithConstraints(
+					modifier =
+						modifier
+							.size(sizeDp)
+							.clip(widget.shape.resolveShape(default = IconShape.RightSquare))
+							.conditional(!blockTouches) {
+								clickable(onClick = onLaunchAction)
+							}
+				) {
+					val center = constraints.getCenter()
 
-                    PointIcon(
-                        selected = false,
-                        eraseColor = Color.Transparent,
-                        point = editPoint,
-                        center = center
-                    )
-                }
-            }
+					PointIcon(
+						selected = false,
+						eraseColor = Color.Transparent,
+						point = editPoint,
+						center = center
+					)
+				}
+			}
 
-            is Action.LaunchShortcut -> {
-                ShortcutIcon(
-                    shortcut = action,
-                    size = sizeDp,
-                    modifier =
-                        modifier.conditional(!blockTouches) {
-                            clickable(onClick = onLaunchAction)
-                        }
-                )
-            }
+			is Action.LaunchShortcut -> {
+				ShortcutIcon(
+					shortcut = action,
+					size = sizeDp,
+					modifier =
+						modifier.conditional(!blockTouches) {
+							clickable(onClick = onLaunchAction)
+						}
+				)
+			}
 
-            else -> {
-                ActionIcon(
-                    action = action,
-                    size = sizeDp,
-                    modifier =
-                        modifier
-                            .fillMaxSize()
-                            .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
-                            .conditional(!blockTouches) {
-                                clickable(onClick = onLaunchAction)
-                            }
-                )
-            }
-        }
-    }
+			else -> {
+				ActionIcon(
+					action = action,
+					size = sizeDp,
+					modifier =
+						modifier
+							.fillMaxSize()
+							.clip(widget.shape.resolveShape(default = IconShape.RightSquare))
+							.conditional(!blockTouches) {
+								clickable(onClick = onLaunchAction)
+							}
+				)
+			}
+		}
+	}
 }

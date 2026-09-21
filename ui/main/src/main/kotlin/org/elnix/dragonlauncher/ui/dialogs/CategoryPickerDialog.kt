@@ -34,125 +34,125 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryPickerDialog(
-    app: Application,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    existingCustomCategories: List<String>,
-    onDismissRequest: () -> Unit
+	app: Application,
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	existingCustomCategories: List<String>,
+	onDismissRequest: () -> Unit
 ) {
-    val appOverridesManager = drawerViewModel.appOverrideManager
+	val appOverridesManager = drawerViewModel.appOverrideManager
 
-    var showCreateNew by remember { mutableStateOf(false) }
+	var showCreateNew by remember { mutableStateOf(false) }
 
-    val currentCategory = app.categoryOverride
+	val currentCategory = app.categoryOverride
 
-    val systemCategoryNames = AppCategory.entries.map { it.name }
-    val allCategoryNames =
-        remember(existingCustomCategories, systemCategoryNames) {
-            systemCategoryNames + existingCustomCategories.filter { it !in systemCategoryNames }
-        }
+	val systemCategoryNames = AppCategory.entries.map { it.name }
+	val allCategoryNames =
+		remember(existingCustomCategories, systemCategoryNames) {
+			systemCategoryNames + existingCustomCategories.filter { it !in systemCategoryNames }
+		}
 
-    fun set(category: String?) {
-        appOverridesManager.setCustomCategory(app.key, category)
-        onDismissRequest()
-    }
+	fun set(category: String?) {
+		appOverridesManager.setCustomCategory(app.key, category)
+		onDismissRequest()
+	}
 
-    DragonModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        true
-    ) {
-        DialogTitle(
-            text = stringResource(R.string.set_category),
-            resetEnabled = currentCategory != null
-        ) { set(null) }
+	DragonModalBottomSheet(
+		onDismissRequest = onDismissRequest,
+		true
+	) {
+		DialogTitle(
+			text = stringResource(R.string.set_category),
+			resetEnabled = currentCategory != null
+		) { set(null) }
 
-        Spacer(5.dp)
-        DragonSettingsGroup {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                item {
-                    Row(
-                        modifier =
-                            Modifier
-                                .dragonSettingGroup(selected = currentCategory == null) {
-                                    clickable { set(null) }
-                                }.padding(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        RadioButton(
-                            selected = currentCategory == null,
-                            onClick = null
-                        )
-                        Text(
-                            text = stringResource(R.string.use_default_category),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
+		Spacer(5.dp)
+		DragonSettingsGroup {
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(4.dp)
+			) {
+				item {
+					Row(
+						modifier =
+							Modifier
+								.dragonSettingGroup(selected = currentCategory == null) {
+									clickable { set(null) }
+								}.padding(10.dp),
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						RadioButton(
+							selected = currentCategory == null,
+							onClick = null
+						)
+						Text(
+							text = stringResource(R.string.use_default_category),
+							style = MaterialTheme.typography.bodyLarge,
+							color = MaterialTheme.colorScheme.onSurface
+						)
+					}
+				}
 
-                items(allCategoryNames) { categoryName ->
-                    val selected = currentCategory == categoryName
-                    Row(
-                        modifier =
-                            Modifier
-                                .dragonSettingGroup(selected = selected) {
-                                    clickable { set(categoryName) }
-                                }.padding(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        RadioButton(
-                            selected = selected,
-                            onClick = null
-                        )
-                        Text(
-                            text = "$categoryName ${if (app.category.name == categoryName) "(${stringResource(R.string.default_text)})" else ""}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-            }
-        }
+				items(allCategoryNames) { categoryName ->
+					val selected = currentCategory == categoryName
+					Row(
+						modifier =
+							Modifier
+								.dragonSettingGroup(selected = selected) {
+									clickable { set(categoryName) }
+								}.padding(10.dp),
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						RadioButton(
+							selected = selected,
+							onClick = null
+						)
+						Text(
+							text = "$categoryName ${if (app.category.name == categoryName) "(${stringResource(R.string.default_text)})" else ""}",
+							style = MaterialTheme.typography.bodyLarge,
+							color = MaterialTheme.colorScheme.onSurface
+						)
+					}
+				}
+			}
+		}
 
-        Spacer(5.dp)
+		Spacer(5.dp)
 
-        DragonSettingsGroup(R.string.custom_name) {
-            Row(
-                modifier =
-                    Modifier
-                        .dragonSettingGroup {
-                            clickable { showCreateNew = true }
-                        }.padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.add),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = stringResource(R.string.create_category),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+		DragonSettingsGroup(R.string.custom_name) {
+			Row(
+				modifier =
+					Modifier
+						.dragonSettingGroup {
+							clickable { showCreateNew = true }
+						}.padding(10.dp),
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(8.dp)
+			) {
+				Icon(
+					painter = painterResource(R.drawable.add),
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.primary
+				)
+				Text(
+					text = stringResource(R.string.create_category),
+					style = MaterialTheme.typography.bodyLarge,
+					color = MaterialTheme.colorScheme.primary
+				)
+			}
+		}
 
-        if (showCreateNew) {
-            TextEditorDialog(
-                title = { stringResource(R.string.category_name) },
-                placeHolder = { stringResource(R.string.category_name) },
-                defaultText = "",
-                initialText = "",
-                onDismiss = { showCreateNew = false },
-                onValidate = { newCategoryName ->
-                    set(newCategoryName)
-                }
-            )
-        }
-    }
+		if (showCreateNew) {
+			TextEditorDialog(
+				title = { stringResource(R.string.category_name) },
+				placeHolder = { stringResource(R.string.category_name) },
+				defaultText = "",
+				initialText = "",
+				onDismiss = { showCreateNew = false },
+				onValidate = { newCategoryName ->
+					set(newCategoryName)
+				}
+			)
+		}
+	}
 }

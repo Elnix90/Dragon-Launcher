@@ -43,134 +43,134 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppAliasesDialog(
-    app: Application,
-    workspaceViewModel: DrawerViewModel = activityViewModel(),
-    onDismiss: () -> Unit
+	app: Application,
+	workspaceViewModel: DrawerViewModel = activityViewModel(),
+	onDismiss: () -> Unit
 ) {
-    val hapticFeedback = LocalHapticFeedback.current
+	val hapticFeedback = LocalHapticFeedback.current
 
-    var showAliasEditScreen by remember { mutableStateOf<String?>(null) }
-    val cacheKey = app.key
+	var showAliasEditScreen by remember { mutableStateOf<String?>(null) }
+	val cacheKey = app.key
 
-    val appOverridesManager = workspaceViewModel.appOverrideManager
-    val aliases by appOverridesManager.getAliasesForApp(app).collectAsState(emptySet())
+	val appOverridesManager = workspaceViewModel.appOverrideManager
+	val aliases by appOverridesManager.getAliasesForApp(app).collectAsState(emptySet())
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            DialogTitle(
-                stringResource(id = R.string.app_aliases),
-                resetEnabled = aliases.isNotEmpty()
-            ) { appOverridesManager.resetAliasForApp(cacheKey) }
-        },
-        text = {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 700.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    AnimatedFab(
-                        icon = R.drawable.add,
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    ) { showAliasEditScreen = "" }
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		title = {
+			DialogTitle(
+				stringResource(id = R.string.app_aliases),
+				resetEnabled = aliases.isNotEmpty()
+			) { appOverridesManager.resetAliasForApp(cacheKey) }
+		},
+		text = {
+			Column(
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.heightIn(max = 700.dp),
+				verticalArrangement = Arrangement.spacedBy(6.dp)
+			) {
+				FlowRow(
+					modifier = Modifier.fillMaxWidth(),
+					horizontalArrangement = Arrangement.spacedBy(2.dp),
+					verticalArrangement = Arrangement.Center
+				) {
+					AnimatedFab(
+						icon = R.drawable.add,
+						containerColor = MaterialTheme.colorScheme.secondary
+					) { showAliasEditScreen = "" }
 
-                    aliases.forEach { alias ->
-                        val interactionSource = rememberInteractionSource()
-                        val isPressed by interactionSource.collectIsPressedAsState()
+					aliases.forEach { alias ->
+						val interactionSource = rememberInteractionSource()
+						val isPressed by interactionSource.collectIsPressedAsState()
 
-                        var canDelete by remember { mutableStateOf(false) }
-                        LaunchedEffect(isPressed) {
-                            if (isPressed) {
-                                delay(250.milliseconds)
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                                canDelete = true
-                            } else {
-                                canDelete = false
-                            }
-                        }
+						var canDelete by remember { mutableStateOf(false) }
+						LaunchedEffect(isPressed) {
+							if (isPressed) {
+								delay(250.milliseconds)
+								hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+								canDelete = true
+							} else {
+								canDelete = false
+							}
+						}
 
-                        val containerColor by animateColorAsState(
-                            if (canDelete) {
-                                MaterialTheme.colorScheme.errorContainer
-                            } else {
-                                MaterialTheme.colorScheme.primaryContainer
-                            }
-                        )
+						val containerColor by animateColorAsState(
+							if (canDelete) {
+								MaterialTheme.colorScheme.errorContainer
+							} else {
+								MaterialTheme.colorScheme.primaryContainer
+							}
+						)
 
-                        Button(
-                            onClick = {
-                                if (canDelete) {
-                                    appOverridesManager.removeAliasFromApp(cacheKey, alias)
-                                } else {
-                                    showAliasEditScreen = alias
-                                }
-                            },
-                            interactionSource = interactionSource,
-                            shapes = ButtonDefaults.shapes(),
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = containerColor,
-                                    contentColor = contentColorFor(containerColor)
-                                )
-                        ) {
-                            AnimatedContent(canDelete) {
-                                if (!it) {
-                                    Text(alias)
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.delete_forever),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            ValidateCancelButtons(
-                validateText = stringResource(R.string.ok),
-                onConfirm = onDismiss
-            )
-        },
-        dismissButton = {},
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.large
-    )
+						Button(
+							onClick = {
+								if (canDelete) {
+									appOverridesManager.removeAliasFromApp(cacheKey, alias)
+								} else {
+									showAliasEditScreen = alias
+								}
+							},
+							interactionSource = interactionSource,
+							shapes = ButtonDefaults.shapes(),
+							colors =
+								ButtonDefaults.buttonColors(
+									containerColor = containerColor,
+									contentColor = contentColorFor(containerColor)
+								)
+						) {
+							AnimatedContent(canDelete) {
+								if (!it) {
+									Text(alias)
+								} else {
+									Icon(
+										painter = painterResource(R.drawable.delete_forever),
+										contentDescription = null
+									)
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		confirmButton = {
+			ValidateCancelButtons(
+				validateText = stringResource(R.string.ok),
+				onConfirm = onDismiss
+			)
+		},
+		dismissButton = {},
+		containerColor = MaterialTheme.colorScheme.surface,
+		shape = MaterialTheme.shapes.large
+	)
 
-    if (showAliasEditScreen != null) {
-        val old = showAliasEditScreen!!
-        val isCreateAlias = old == ""
+	if (showAliasEditScreen != null) {
+		val old = showAliasEditScreen!!
+		val isCreateAlias = old == ""
 
-        TextEditorDialog(
-            title = {
-                if (isCreateAlias) {
-                    stringResource(R.string.create_alias)
-                } else {
-                    stringResource(R.string.edit_alias)
-                }
-            },
-            placeHolder = { stringResource(R.string.alias) },
-            initialText = old,
-            defaultText = old,
-            onDismiss = { showAliasEditScreen = null }
-        ) { new ->
+		TextEditorDialog(
+			title = {
+				if (isCreateAlias) {
+					stringResource(R.string.create_alias)
+				} else {
+					stringResource(R.string.edit_alias)
+				}
+			},
+			placeHolder = { stringResource(R.string.alias) },
+			initialText = old,
+			defaultText = old,
+			onDismiss = { showAliasEditScreen = null }
+		) { new ->
 
-            when {
-                new == null -> appOverridesManager.removeAliasFromApp(cacheKey, old)
-                isCreateAlias -> appOverridesManager.addAliasToApp(new, cacheKey)
-                else -> appOverridesManager.updateAliasToApp(old, new, cacheKey)
-            }
+			when {
+				new == null -> appOverridesManager.removeAliasFromApp(cacheKey, old)
+				isCreateAlias -> appOverridesManager.addAliasToApp(new, cacheKey)
+				else -> appOverridesManager.updateAliasToApp(old, new, cacheKey)
+			}
 
-            showAliasEditScreen = null
-        }
-    }
+			showAliasEditScreen = null
+		}
+	}
 }

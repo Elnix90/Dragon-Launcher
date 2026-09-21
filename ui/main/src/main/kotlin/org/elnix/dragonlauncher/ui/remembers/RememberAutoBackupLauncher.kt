@@ -18,42 +18,42 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun rememberAutoBackupLauncher(
-    backupViewModel: BackupViewModel = activityViewModel()
+	backupViewModel: BackupViewModel = activityViewModel()
 ): ManagedActivityResultLauncher<String, Uri?> {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    return rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("application/json")
-    ) { uri ->
-        if (uri != null) {
-            try {
-                ctx.contentResolver.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
-                // Proceed only if successful
-                scope.launch {
-                    BackupSettingsStore.autoBackupUri.set(ctx, uri.toString())
-                    BackupSettingsStore.autoBackupEnabled.set(ctx, true)
-                }
-                backupViewModel.result.value =
-                    BackupResult(
-                        export = true,
-                        error = false,
-                        title = "Auto-backup enabled"
-                    )
-            } catch (e: SecurityException) {
-                // Fallback: Store non-persistable URI or notify user
-                backupViewModel.result.value =
-                    BackupResult(
-                        export = true,
-                        error = true,
-                        title = "Backup saved (limited persistence)"
-                    )
+	return rememberLauncherForActivityResult(
+		ActivityResultContracts.CreateDocument("application/json")
+	) { uri ->
+		if (uri != null) {
+			try {
+				ctx.contentResolver.takePersistableUriPermission(
+					uri,
+					Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+				)
+				// Proceed only if successful
+				scope.launch {
+					BackupSettingsStore.autoBackupUri.set(ctx, uri.toString())
+					BackupSettingsStore.autoBackupEnabled.set(ctx, true)
+				}
+				backupViewModel.result.value =
+					BackupResult(
+						export = true,
+						error = false,
+						title = "Auto-backup enabled"
+					)
+			} catch (e: SecurityException) {
+				// Fallback: Store non-persistable URI or notify user
+				backupViewModel.result.value =
+					BackupResult(
+						export = true,
+						error = true,
+						title = "Backup saved (limited persistence)"
+					)
 
-                logE(BACKUP_TAG, e) { "Persistable permission not available for URI: $uri" }
-            }
-        }
-    }
+				logE(BACKUP_TAG, e) { "Persistable permission not available for URI: $uri" }
+			}
+		}
+	}
 }

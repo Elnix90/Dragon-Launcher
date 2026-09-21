@@ -10,18 +10,18 @@ import org.json.JSONObject
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ImportSettingsDialog(
-    backupJson: JSONObject,
-    onDismiss: () -> Unit,
-    onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
+	backupJson: JSONObject,
+	onDismiss: () -> Unit,
+	onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
-    /** Filter stores that exist in backup JSON */
-    val availableStores = backupableStores.filter { backupJson.has(it.name) }.toSet()
+	/** Filter stores that exist in backup JSON */
+	val availableStores = backupableStores.filter { backupJson.has(it.name) }.toSet()
 
-    BaseImportExportDialog(
-        title = R.string.select_settings_to_import,
-        availableStores = availableStores,
-        defaultStores = availableStores, // By default, all stores are selected
-        onDismiss = onDismiss,
-        onConfirm = onConfirm
-    )
+	BaseImportExportDialog(
+		title = R.string.select_settings_to_import,
+		availableStores = availableStores,
+		defaultStores = availableStores, // By default, all stores are selected
+		onDismiss = onDismiss,
+		onConfirm = onConfirm
+	)
 }

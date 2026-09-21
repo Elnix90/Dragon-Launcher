@@ -5,6 +5,6 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.text.TextMeasurer
 
 val LocalTextMeasurer: ProvidableCompositionLocal<TextMeasurer> =
-    compositionLocalOf {
-        error("No LocalTextMeasurer provided")
-    }
+	compositionLocalOf {
+		error("No LocalTextMeasurer provided")
+	}

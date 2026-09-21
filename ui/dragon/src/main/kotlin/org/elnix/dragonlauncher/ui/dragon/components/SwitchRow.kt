@@ -16,57 +16,57 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
 fun DragonGroupScope.SwitchRow(
-    state: Boolean?,
-    title: Int,
-    description: Int? = null,
-    icon: Int? = null,
-    enabled: Boolean = true,
-    resetEnabled: Boolean = true,
-    defaultValue: Boolean = false,
-    onReset: (() -> Unit)? = null,
-    onCheck: (Boolean) -> Unit
+	state: Boolean?,
+	title: Int,
+	description: Int? = null,
+	icon: Int? = null,
+	enabled: Boolean = true,
+	resetEnabled: Boolean = true,
+	defaultValue: Boolean = false,
+	onReset: (() -> Unit)? = null,
+	onCheck: (Boolean) -> Unit
 ) {
-    val checked = state ?: defaultValue
+	val checked = state ?: defaultValue
 
-    val interactionSource = rememberInteractionSource()
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            Modifier
-                .dragonSettingGroup(enabled = enabled) {
-                    clickable(
-                        enabled = enabled,
-                        onClick = { onCheck(!checked) },
-                        interactionSource = interactionSource
-                    )
-                }
-    ) {
-        if (icon != null) {
-            BoxedIcon(icon, enabled)
-            Spacer(8.dp)
-        }
+	val interactionSource = rememberInteractionSource()
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		modifier =
+			Modifier
+				.dragonSettingGroup(enabled = enabled) {
+					clickable(
+						enabled = enabled,
+						onClick = { onCheck(!checked) },
+						interactionSource = interactionSource
+					)
+				}
+	) {
+		if (icon != null) {
+			BoxedIcon(icon, enabled)
+			Spacer(8.dp)
+		}
 
-        TextWithDescription(
-            text = stringResource(title),
-            description = description?.let { stringResource(description) },
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
+		TextWithDescription(
+			text = stringResource(title),
+			description = description?.let { stringResource(description) },
+			modifier = Modifier.weight(1f),
+			enabled = enabled
+		)
 
-        Spacer(5.dp)
-        Switch(
-            checked = checked,
-            enabled = enabled,
-            interactionSource = interactionSource,
-            onCheckedChange = null,
-            colors = AppObjectsColors.switchColors()
-        )
+		Spacer(5.dp)
+		Switch(
+			checked = checked,
+			enabled = enabled,
+			interactionSource = interactionSource,
+			onCheckedChange = null,
+			colors = AppObjectsColors.switchColors()
+		)
 
-        if (onReset != null) {
-            ResetIcon(
-                enabled = enabled && resetEnabled,
-                onReset = onReset
-            )
-        }
-    }
+		if (onReset != null) {
+			ResetIcon(
+				enabled = enabled && resetEnabled,
+				onReset = onReset
+			)
+		}
+	}
 }

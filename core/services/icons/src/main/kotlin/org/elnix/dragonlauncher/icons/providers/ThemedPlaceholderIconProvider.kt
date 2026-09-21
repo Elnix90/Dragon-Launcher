@@ -14,28 +14,28 @@ import org.elnix.dragonlauncher.base.icons.VectorLayer
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
 internal class ThemedPlaceholderIconProvider(
-    private val appRepository: AppRepository,
-    private val ctx: Context
+	private val appRepository: AppRepository,
+	private val ctx: Context
 ) : IconProvider {
-    override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
-        if (action !is Action.LaunchApp) return null
+	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
+		if (action !is Action.LaunchApp) return null
 
-        val application = appRepository.fromAction(action) ?: return null
-        val icon = application.getPlaceholderIcon(ctx)
+		val application = appRepository.fromAction(action) ?: return null
+		val icon = application.getPlaceholderIcon(ctx)
 
-        return StaticLauncherIcon(
-            foregroundLayer = asThemed(icon.foregroundLayer),
-            backgroundLayer = asThemed(icon.backgroundLayer)
-        )
-    }
+		return StaticLauncherIcon(
+			foregroundLayer = asThemed(icon.foregroundLayer),
+			backgroundLayer = asThemed(icon.backgroundLayer)
+		)
+	}
 
-    private fun asThemed(layer: LauncherIconLayer): LauncherIconLayer =
-        when (layer) {
-            is ColorLayer -> layer.copy(tint = 0)
-            is VectorLayer -> layer.copy(tint = 0)
-            is TextLayer -> layer.copy(tint = 0)
-            is StaticIconLayer -> layer.copy(tint = 0)
-            is ClockLayer -> layer.copy(tint = 0)
-            is TransparentLayer -> layer
-        }
+	private fun asThemed(layer: LauncherIconLayer): LauncherIconLayer =
+		when (layer) {
+			is ColorLayer -> layer.copy(tint = 0)
+			is VectorLayer -> layer.copy(tint = 0)
+			is TextLayer -> layer.copy(tint = 0)
+			is StaticIconLayer -> layer.copy(tint = 0)
+			is ClockLayer -> layer.copy(tint = 0)
+			is TransparentLayer -> layer
+		}
 }

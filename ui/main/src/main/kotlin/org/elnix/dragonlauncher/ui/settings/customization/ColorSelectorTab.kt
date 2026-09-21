@@ -86,463 +86,463 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ColorSelectorTab() {
-    val navigator = LocalNavigator.current
-    val scope = rememberCoroutineScope()
+	val navigator = LocalNavigator.current
+	val scope = rememberCoroutineScope()
 
-    val defaultTheme by ColorModesSettingsStore.defaultTheme.asStateNull()
-    val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
+	val defaultTheme by ColorModesSettingsStore.defaultTheme.asStateNull()
+	val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
 
-    val primarySectionState =
-        rememberExpandableSection(
-            title = R.string.primary_colors_section,
-            description = R.string.primary_colors_section_desc,
-            customLeadingContent = {
-                with(MaterialTheme.colorScheme) {
-                    PalettePreview(primary, onPrimary, primaryContainer, onPrimaryContainer)
-                }
-            },
-            icon = null
-        )
+	val primarySectionState =
+		rememberExpandableSection(
+			title = R.string.primary_colors_section,
+			description = R.string.primary_colors_section_desc,
+			customLeadingContent = {
+				with(MaterialTheme.colorScheme) {
+					PalettePreview(primary, onPrimary, primaryContainer, onPrimaryContainer)
+				}
+			},
+			icon = null
+		)
 
-    val secondarySectionState =
-        rememberExpandableSection(
-            title = R.string.secondary_colors_section,
-            description = R.string.secondary_colors_section_desc,
-            customLeadingContent = {
-                with(MaterialTheme.colorScheme) {
-                    PalettePreview(secondary, onSecondary, secondaryContainer, onSecondaryContainer)
-                }
-            },
-            icon = null
-        )
+	val secondarySectionState =
+		rememberExpandableSection(
+			title = R.string.secondary_colors_section,
+			description = R.string.secondary_colors_section_desc,
+			customLeadingContent = {
+				with(MaterialTheme.colorScheme) {
+					PalettePreview(secondary, onSecondary, secondaryContainer, onSecondaryContainer)
+				}
+			},
+			icon = null
+		)
 
-    val tertiarySectionState =
-        rememberExpandableSection(
-            title = R.string.tertiary_colors_section,
-            description = R.string.tertiary_colors_section_desc,
-            customLeadingContent = {
-                with(MaterialTheme.colorScheme) {
-                    PalettePreview(tertiary, onTertiary, tertiaryContainer, onTertiaryContainer)
-                }
-            },
-            icon = null
-        )
+	val tertiarySectionState =
+		rememberExpandableSection(
+			title = R.string.tertiary_colors_section,
+			description = R.string.tertiary_colors_section_desc,
+			customLeadingContent = {
+				with(MaterialTheme.colorScheme) {
+					PalettePreview(tertiary, onTertiary, tertiaryContainer, onTertiaryContainer)
+				}
+			},
+			icon = null
+		)
 
-    val backgroundSectionState =
-        rememberExpandableSection(
-            title = R.string.background_surface_colors_section,
-            description = R.string.background_surface_colors_section_desc,
-            customLeadingContent = {
-                with(MaterialTheme.colorScheme) {
-                    PalettePreview(background, onBackground, surface, onSecondary)
-                }
-            },
-            icon = null
-        )
-    val errorSectionState =
-        rememberExpandableSection(
-            title = R.string.error_colors_section,
-            description = R.string.error_colors_section_desc,
-            customLeadingContent = {
-                with(MaterialTheme.colorScheme) {
-                    PalettePreview(error, onError, errorContainer, onErrorContainer)
-                }
-            },
-            icon = null
-        )
-    val outlineSectionState =
-        rememberExpandableSection(
-            title = R.string.outline_colors_section,
-            description = R.string.outline_colors_section_desc,
-            customLeadingContent = {
-                with(MaterialTheme.colorScheme) {
-                    PalettePreview(outline, outlineVariant, scrim, Color.Transparent)
-                }
-            },
-            icon = null
-        )
-    val surfaceContainerSectionState =
-        rememberExpandableSection(
-            title = R.string.surface_container_colors_section,
-            description = R.string.surface_container_colors_section_desc,
-            customLeadingContent = {
-                with(MaterialTheme.colorScheme) {
-                    PalettePreview(surfaceContainer, surfaceContainerHigh, surfaceContainerHighest, surfaceContainerLow)
-                }
-            },
-            icon = null
-        )
+	val backgroundSectionState =
+		rememberExpandableSection(
+			title = R.string.background_surface_colors_section,
+			description = R.string.background_surface_colors_section_desc,
+			customLeadingContent = {
+				with(MaterialTheme.colorScheme) {
+					PalettePreview(background, onBackground, surface, onSecondary)
+				}
+			},
+			icon = null
+		)
+	val errorSectionState =
+		rememberExpandableSection(
+			title = R.string.error_colors_section,
+			description = R.string.error_colors_section_desc,
+			customLeadingContent = {
+				with(MaterialTheme.colorScheme) {
+					PalettePreview(error, onError, errorContainer, onErrorContainer)
+				}
+			},
+			icon = null
+		)
+	val outlineSectionState =
+		rememberExpandableSection(
+			title = R.string.outline_colors_section,
+			description = R.string.outline_colors_section_desc,
+			customLeadingContent = {
+				with(MaterialTheme.colorScheme) {
+					PalettePreview(outline, outlineVariant, scrim, Color.Transparent)
+				}
+			},
+			icon = null
+		)
+	val surfaceContainerSectionState =
+		rememberExpandableSection(
+			title = R.string.surface_container_colors_section,
+			description = R.string.surface_container_colors_section_desc,
+			customLeadingContent = {
+				with(MaterialTheme.colorScheme) {
+					PalettePreview(surfaceContainer, surfaceContainerHigh, surfaceContainerHighest, surfaceContainerLow)
+				}
+			},
+			icon = null
+		)
 
-    val customColorsSection =
-        rememberExpandableSection(
-            title = R.string.custom_colors,
-            description = R.string.custom_colors_desc,
-            customLeadingContent = {
-                with(LocalExtraColors.current) {
-                    PalettePreview(launchApp, angleLine, shapes, openAppDrawer)
-                }
-            },
-            icon = null
-        )
+	val customColorsSection =
+		rememberExpandableSection(
+			title = R.string.custom_colors,
+			description = R.string.custom_colors_desc,
+			customLeadingContent = {
+				with(LocalExtraColors.current) {
+					PalettePreview(launchApp, angleLine, shapes, openAppDrawer)
+				}
+			},
+			icon = null
+		)
 
-    var showResetValidation by remember { mutableStateOf(false) }
-    var showBurgerMenu by remember { mutableStateOf(false) }
-    var showRandomColorsValidation by remember { mutableStateOf(false) }
-    var showAllColorsValidation by remember { mutableStateOf(false) }
-    var showExitTestValidation by remember { mutableStateOf(false) }
+	var showResetValidation by remember { mutableStateOf(false) }
+	var showBurgerMenu by remember { mutableStateOf(false) }
+	var showRandomColorsValidation by remember { mutableStateOf(false) }
+	var showAllColorsValidation by remember { mutableStateOf(false) }
+	var showExitTestValidation by remember { mutableStateOf(false) }
 
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    val soundPool =
-        remember {
-            SoundPool
-                .Builder()
-                .setMaxStreams(1)
-                .setAudioAttributes(
-                    AudioAttributes
-                        .Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
-                ).build()
-        }
-    var flashbangLSoundLoaded by remember { mutableStateOf(false) }
-    val flashbangSoundId = remember { soundPool.load(ctx, R.raw.flashbang, 1) }
+	val soundPool =
+		remember {
+			SoundPool
+				.Builder()
+				.setMaxStreams(1)
+				.setAudioAttributes(
+					AudioAttributes
+						.Builder()
+						.setUsage(AudioAttributes.USAGE_MEDIA)
+						.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+						.build()
+				).build()
+		}
+	var flashbangLSoundLoaded by remember { mutableStateOf(false) }
+	val flashbangSoundId = remember { soundPool.load(ctx, R.raw.flashbang, 1) }
 
-    DisposableEffect(Unit) {
-        soundPool.setOnLoadCompleteListener { _, sampleId, status ->
-            if (status == 0) {
-                if (sampleId == flashbangSoundId) flashbangLSoundLoaded = true
-            }
-        }
+	DisposableEffect(Unit) {
+		soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+			if (status == 0) {
+				if (sampleId == flashbangSoundId) flashbangLSoundLoaded = true
+			}
+		}
 
-        onDispose { soundPool.release() }
-    }
+		onDispose { soundPool.release() }
+	}
 
-    LaunchedEffect(defaultTheme) {
-        if (defaultTheme == Light) {
-            val audioManager =
-                ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+	LaunchedEffect(defaultTheme) {
+		if (defaultTheme == Light) {
+			val audioManager =
+				ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-            val maxVolume =
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+			val maxVolume =
+				audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
-            audioManager.setStreamVolume(
-                AudioManager.STREAM_MUSIC,
-                maxVolume / 2,
-                0
-            )
+			audioManager.setStreamVolume(
+				AudioManager.STREAM_MUSIC,
+				maxVolume / 2,
+				0
+			)
 
-            soundPool.play(flashbangSoundId, 1f, 1f, 1, 0, 1f)
-        }
-    }
+			soundPool.play(flashbangSoundId, 1f, 1f, 1, 0, 1f)
+		}
+	}
 
-    SettingsScaffold(
-        title = stringResource(R.string.color_selector),
-        helpText = stringResource(R.string.color_selector_text),
-        resetText = stringResource(R.string.reset_colors_tab),
-        onReset = {
-            scope.launch {
-                ColorSettingsStore.resetAll(ctx)
-                ColorModesSettingsStore.resetAll(ctx)
-            }
-        },
-        specialSettingsTitleContent = {
-            Box {
-                AnimatedFab(
-                    icon = R.drawable.more_vert
-                ) { showBurgerMenu = true }
+	SettingsScaffold(
+		title = stringResource(R.string.color_selector),
+		helpText = stringResource(R.string.color_selector_text),
+		resetText = stringResource(R.string.reset_colors_tab),
+		onReset = {
+			scope.launch {
+				ColorSettingsStore.resetAll(ctx)
+				ColorModesSettingsStore.resetAll(ctx)
+			}
+		},
+		specialSettingsTitleContent = {
+			Box {
+				AnimatedFab(
+					icon = R.drawable.more_vert
+				) { showBurgerMenu = true }
 
-                BurgerListAction(
-                    actions =
-                        listOf(
-                            MoreOptions(
-                                onClick = {
-                                    showRandomColorsValidation = true
-                                    showBurgerMenu = false
-                                },
-                                icon = R.drawable.shuffle,
-                                text = { stringResource(R.string.make_every_colors_random) }
-                            ),
-                            MoreOptions(
-                                onClick = {
-                                    showAllColorsValidation = true
-                                    showBurgerMenu = false
-                                },
-                                icon = R.drawable.select_all,
-                                text = { stringResource(R.string.make_all_colors_identical) }
-                            ),
-                            MoreOptions(
-                                onClick = {
-                                    scope.launch {
-                                        ColorSettingsStore.backupColors(ctx)
-                                        ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                        navigator.onBack()
-                                    }
-                                },
-                                icon = R.drawable.colorize,
-                                text = { stringResource(R.string.test_colors) }
-                            )
-                        ),
-                    isExpanded = showBurgerMenu,
-                    onDismissRequest = { showBurgerMenu = false }
-                )
-            }
-        }
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Max)
-                    .background(
-                        color = MaterialTheme.colorScheme.surface,
-                        shape = MaterialTheme.shapes.large
-                    ).padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            DefaultThemes.entries.filter { it != Amoled }.forEach {
-                val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
+				BurgerListAction(
+					actions =
+						listOf(
+							MoreOptions(
+								onClick = {
+									showRandomColorsValidation = true
+									showBurgerMenu = false
+								},
+								icon = R.drawable.shuffle,
+								text = { stringResource(R.string.make_every_colors_random) }
+							),
+							MoreOptions(
+								onClick = {
+									showAllColorsValidation = true
+									showBurgerMenu = false
+								},
+								icon = R.drawable.select_all,
+								text = { stringResource(R.string.make_all_colors_identical) }
+							),
+							MoreOptions(
+								onClick = {
+									scope.launch {
+										ColorSettingsStore.backupColors(ctx)
+										ColorModesSettingsStore.colorTestMode.set(ctx, true)
+										navigator.onBack()
+									}
+								},
+								icon = R.drawable.colorize,
+								text = { stringResource(R.string.test_colors) }
+							)
+						),
+					isExpanded = showBurgerMenu,
+					onDismissRequest = { showBurgerMenu = false }
+				)
+			}
+		}
+	) {
+		Row(
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.height(IntrinsicSize.Max)
+					.background(
+						color = MaterialTheme.colorScheme.surface,
+						shape = MaterialTheme.shapes.large
+					).padding(12.dp),
+			horizontalArrangement = Arrangement.SpaceEvenly
+		) {
+			DefaultThemes.entries.filter { it != Amoled }.forEach {
+				val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
 
-                Column(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clip(MaterialTheme.shapes.large)
-                            .conditional(selected) {
-                                background(MaterialTheme.colorScheme.surfaceDim)
-                            }.clickable {
-                                scope.launch {
-                                    ColorModesSettingsStore.defaultTheme.set(ctx, it)
-                                }
-                            }.padding(5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val background =
-                        when (it) {
-                            Amoled -> {
-                                null
-                            }
+				Column(
+					modifier =
+						Modifier
+							.weight(1f)
+							.fillMaxHeight()
+							.clip(MaterialTheme.shapes.large)
+							.conditional(selected) {
+								background(MaterialTheme.colorScheme.surfaceDim)
+							}.clickable {
+								scope.launch {
+									ColorModesSettingsStore.defaultTheme.set(ctx, it)
+								}
+							}.padding(5.dp),
+					horizontalAlignment = Alignment.CenterHorizontally
+				) {
+					val background =
+						when (it) {
+							Amoled -> {
+								null
+							}
 
-                            Dark -> {
-                                Color.DarkGray
-                            }
+							Dark -> {
+								Color.DarkGray
+							}
 
-                            Light -> {
-                                Color.White
-                            }
+							Light -> {
+								Color.White
+							}
 
-                            System -> {
-                                Brush.horizontalGradient(
-                                    colors =
-                                        listOf(
-                                            Color.White,
-                                            Color.Black
-                                        )
-                                )
-                            }
+							System -> {
+								Brush.horizontalGradient(
+									colors =
+										listOf(
+											Color.White,
+											Color.Black
+										)
+								)
+							}
 
-                            Custom -> {
-                                Brush.linearGradient(
-                                    colors =
-                                        listOf(
-                                            Color.Red,
-                                            Color.Yellow,
-                                            Color.Green,
-                                            Color.Cyan,
-                                            Color.Blue,
-                                            Color.Magenta
-                                        )
-                                )
-                            }
-                        }
+							Custom -> {
+								Brush.linearGradient(
+									colors =
+										listOf(
+											Color.Red,
+											Color.Yellow,
+											Color.Green,
+											Color.Cyan,
+											Color.Blue,
+											Color.Magenta
+										)
+								)
+							}
+						}
 
-                    // I like this simple animation I made, I think I've changed my mind about animations
-                    val shapeCorners by animateIntAsState(
-                        targetValue = if (selected) 12 else 50,
-                        animationSpec = bouncySpec()
-                    )
+					// I like this simple animation I made, I think I've changed my mind about animations
+					val shapeCorners by animateIntAsState(
+						targetValue = if (selected) 12 else 50,
+						animationSpec = bouncySpec()
+					)
 
-                    val scale by animateFloatAsState(
-                        targetValue = if (selected) 1.2f else 1f,
-                        animationSpec = bouncySpec()
-                    )
+					val scale by animateFloatAsState(
+						targetValue = if (selected) 1.2f else 1f,
+						animationSpec = bouncySpec()
+					)
 
-                    val boxShape = RoundedCornerShape(shapeCorners)
+					val boxShape = RoundedCornerShape(shapeCorners)
 
-                    if (background != null) {
-                        Box((Modifier.scale(scale))) {
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .size(40.dp)
-                                        .clip(boxShape)
-                                        .then(
-                                            when (background) {
-                                                is Color -> Modifier.background(background)
-                                                is Brush -> Modifier.background(background)
-                                                else -> Modifier
-                                            }
-                                        ).border(
-                                            1.dp,
-                                            MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                            boxShape
-                                        )
-                            )
-                        }
-                    }
+					if (background != null) {
+						Box((Modifier.scale(scale))) {
+							Box(
+								modifier =
+									Modifier
+										.size(40.dp)
+										.clip(boxShape)
+										.then(
+											when (background) {
+												is Color -> Modifier.background(background)
+												is Brush -> Modifier.background(background)
+												else -> Modifier
+											}
+										).border(
+											1.dp,
+											MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+											boxShape
+										)
+							)
+						}
+					}
 
-                    Spacer(5.dp)
+					Spacer(5.dp)
 
-                    Text(
-                        text = stringResource(it.resId),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
+					Text(
+						text = stringResource(it.resId),
+						color = MaterialTheme.colorScheme.onSurface,
+						style = MaterialTheme.typography.labelSmall,
+						textAlign = TextAlign.Center
+					)
+				}
+			}
+		}
 
-        DragonSettingsGroup(R.string.special_options) {
-            Setting(ColorModesSettingsStore.useCustomColorChannels)
+		DragonSettingsGroup(R.string.special_options) {
+			Setting(ColorModesSettingsStore.useCustomColorChannels)
 
-            AnimatedVisibility(defaultTheme == Dark || defaultTheme == Amoled) {
-                SwitchRow(
-                    state = defaultTheme == Amoled,
-                    title = R.string.amoled_theme,
-                    description = R.string.use_pure_black_background,
-                    icon = R.drawable.opacity
-                ) {
-                    scope.launch {
-                        ColorModesSettingsStore.defaultTheme.set(ctx, if (it) Amoled else Dark)
-                    }
-                }
-            }
+			AnimatedVisibility(defaultTheme == Dark || defaultTheme == Amoled) {
+				SwitchRow(
+					state = defaultTheme == Amoled,
+					title = R.string.amoled_theme,
+					description = R.string.use_pure_black_background,
+					icon = R.drawable.opacity
+				) {
+					scope.launch {
+						ColorModesSettingsStore.defaultTheme.set(ctx, if (it) Amoled else Dark)
+					}
+				}
+			}
 
-            // Only show the dynamic colors switch when in SYSTEM view
-            AnimatedVisibility(defaultTheme == System) {
-                Setting(ColorModesSettingsStore.dynamicColors)
-            }
+			// Only show the dynamic colors switch when in SYSTEM view
+			AnimatedVisibility(defaultTheme == System) {
+				Setting(ColorModesSettingsStore.dynamicColors)
+			}
 
-            AnimatedVisibility(colorTestMode) {
-                DragonButton(onClick = { showExitTestValidation = true }) {
-                    Text(stringResource(R.string.exit_test_mode))
-                }
-            }
+			AnimatedVisibility(colorTestMode) {
+				DragonButton(onClick = { showExitTestValidation = true }) {
+					Text(stringResource(R.string.exit_test_mode))
+				}
+			}
 
-            ExpandableSection(customColorsSection) {
-                Setting(ColorSettingsStore.holdToActivateColor)
-                Setting(ColorSettingsStore.angleLineColor)
-                Setting(ColorSettingsStore.shapesColor)
-                Setting(ColorSettingsStore.launchAppColor)
-                Setting(ColorSettingsStore.openUrlColor)
-                Setting(ColorSettingsStore.notificationShadeColor)
-                Setting(ColorSettingsStore.controlPanelColor)
-                Setting(ColorSettingsStore.openAppDrawerColor)
-                Setting(ColorSettingsStore.launcherSettingsColor)
-                Setting(ColorSettingsStore.lockColor)
-                Setting(ColorSettingsStore.openFileColor)
-                Setting(ColorSettingsStore.reloadColor)
-                Setting(ColorSettingsStore.openRecentAppsColor)
-                Setting(ColorSettingsStore.openCircleNestColor)
-                Setting(ColorSettingsStore.goParentNestColor)
-                Setting(ColorSettingsStore.toggleWifi)
-                Setting(ColorSettingsStore.toggleBluetooth)
-                Setting(ColorSettingsStore.toggleData)
-                Setting(ColorSettingsStore.runAdbCommand)
-            }
-        }
+			ExpandableSection(customColorsSection) {
+				Setting(ColorSettingsStore.holdToActivateColor)
+				Setting(ColorSettingsStore.angleLineColor)
+				Setting(ColorSettingsStore.shapesColor)
+				Setting(ColorSettingsStore.launchAppColor)
+				Setting(ColorSettingsStore.openUrlColor)
+				Setting(ColorSettingsStore.notificationShadeColor)
+				Setting(ColorSettingsStore.controlPanelColor)
+				Setting(ColorSettingsStore.openAppDrawerColor)
+				Setting(ColorSettingsStore.launcherSettingsColor)
+				Setting(ColorSettingsStore.lockColor)
+				Setting(ColorSettingsStore.openFileColor)
+				Setting(ColorSettingsStore.reloadColor)
+				Setting(ColorSettingsStore.openRecentAppsColor)
+				Setting(ColorSettingsStore.openCircleNestColor)
+				Setting(ColorSettingsStore.goParentNestColor)
+				Setting(ColorSettingsStore.toggleWifi)
+				Setting(ColorSettingsStore.toggleBluetooth)
+				Setting(ColorSettingsStore.toggleData)
+				Setting(ColorSettingsStore.runAdbCommand)
+			}
+		}
 
-        AnimatedVisibility(defaultTheme == Custom) {
-            DragonSettingsGroup {
-                ColorsGroup(
-                    expandableSectionState = primarySectionState,
-                    colors =
-                        listOf(
-                            ColorSettingsStore.primaryColor,
-                            ColorSettingsStore.onPrimaryColor,
-                            ColorSettingsStore.primaryContainerColor,
-                            ColorSettingsStore.onPrimaryContainerColor,
-                            ColorSettingsStore.inversePrimaryColor
-                        )
-                )
+		AnimatedVisibility(defaultTheme == Custom) {
+			DragonSettingsGroup {
+				ColorsGroup(
+					expandableSectionState = primarySectionState,
+					colors =
+						listOf(
+							ColorSettingsStore.primaryColor,
+							ColorSettingsStore.onPrimaryColor,
+							ColorSettingsStore.primaryContainerColor,
+							ColorSettingsStore.onPrimaryContainerColor,
+							ColorSettingsStore.inversePrimaryColor
+						)
+				)
 
-                ColorsGroup(
-                    expandableSectionState = secondarySectionState,
-                    colors =
-                        listOf(
-                            ColorSettingsStore.secondaryColor,
-                            ColorSettingsStore.onSecondaryColor,
-                            ColorSettingsStore.secondaryContainerColor,
-                            ColorSettingsStore.onSecondaryContainerColor
-                        )
-                )
+				ColorsGroup(
+					expandableSectionState = secondarySectionState,
+					colors =
+						listOf(
+							ColorSettingsStore.secondaryColor,
+							ColorSettingsStore.onSecondaryColor,
+							ColorSettingsStore.secondaryContainerColor,
+							ColorSettingsStore.onSecondaryContainerColor
+						)
+				)
 
-                ColorsGroup(
-                    expandableSectionState = tertiarySectionState,
-                    colors =
-                        listOf(
-                            ColorSettingsStore.tertiaryColor,
-                            ColorSettingsStore.onTertiaryColor,
-                            ColorSettingsStore.tertiaryContainerColor,
-                            ColorSettingsStore.onTertiaryContainerColor
-                        )
-                )
+				ColorsGroup(
+					expandableSectionState = tertiarySectionState,
+					colors =
+						listOf(
+							ColorSettingsStore.tertiaryColor,
+							ColorSettingsStore.onTertiaryColor,
+							ColorSettingsStore.tertiaryContainerColor,
+							ColorSettingsStore.onTertiaryContainerColor
+						)
+				)
 
-                ColorsGroup(
-                    expandableSectionState = backgroundSectionState,
-                    colors =
-                        listOf(
-                            ColorSettingsStore.backgroundColor,
-                            ColorSettingsStore.onBackgroundColor,
-                            ColorSettingsStore.surfaceColor,
-                            ColorSettingsStore.onSurfaceColor,
-                            ColorSettingsStore.surfaceVariantColor,
-                            ColorSettingsStore.onSurfaceVariantColor,
-                            ColorSettingsStore.surfaceTintColor,
-                            ColorSettingsStore.inverseSurfaceColor,
-                            ColorSettingsStore.inverseOnSurfaceColor
-                        )
-                )
+				ColorsGroup(
+					expandableSectionState = backgroundSectionState,
+					colors =
+						listOf(
+							ColorSettingsStore.backgroundColor,
+							ColorSettingsStore.onBackgroundColor,
+							ColorSettingsStore.surfaceColor,
+							ColorSettingsStore.onSurfaceColor,
+							ColorSettingsStore.surfaceVariantColor,
+							ColorSettingsStore.onSurfaceVariantColor,
+							ColorSettingsStore.surfaceTintColor,
+							ColorSettingsStore.inverseSurfaceColor,
+							ColorSettingsStore.inverseOnSurfaceColor
+						)
+				)
 
-                ColorsGroup(
-                    expandableSectionState = errorSectionState,
-                    colors =
-                        listOf(
-                            ColorSettingsStore.errorColor,
-                            ColorSettingsStore.onErrorColor,
-                            ColorSettingsStore.errorContainerColor,
-                            ColorSettingsStore.onErrorContainerColor
-                        )
-                )
+				ColorsGroup(
+					expandableSectionState = errorSectionState,
+					colors =
+						listOf(
+							ColorSettingsStore.errorColor,
+							ColorSettingsStore.onErrorColor,
+							ColorSettingsStore.errorContainerColor,
+							ColorSettingsStore.onErrorContainerColor
+						)
+				)
 
-                ColorsGroup(
-                    expandableSectionState = outlineSectionState,
-                    colors =
-                        listOf(
-                            ColorSettingsStore.outlineColor,
-                            ColorSettingsStore.outlineVariantColor,
-                            ColorSettingsStore.scrimColor
-                        )
-                )
+				ColorsGroup(
+					expandableSectionState = outlineSectionState,
+					colors =
+						listOf(
+							ColorSettingsStore.outlineColor,
+							ColorSettingsStore.outlineVariantColor,
+							ColorSettingsStore.scrimColor
+						)
+				)
 
-                ColorsGroup(
-                    expandableSectionState = surfaceContainerSectionState,
-                    colors =
-                        listOf(
-                            ColorSettingsStore.surfaceBrightColor,
-                            ColorSettingsStore.surfaceContainerColor,
-                            ColorSettingsStore.surfaceContainerHighColor,
-                            ColorSettingsStore.surfaceContainerHighestColor,
-                            ColorSettingsStore.surfaceContainerLowColor,
-                            ColorSettingsStore.surfaceContainerLowestColor,
-                            ColorSettingsStore.surfaceDimColor
-                        )
-                )
+				ColorsGroup(
+					expandableSectionState = surfaceContainerSectionState,
+					colors =
+						listOf(
+							ColorSettingsStore.surfaceBrightColor,
+							ColorSettingsStore.surfaceContainerColor,
+							ColorSettingsStore.surfaceContainerHighColor,
+							ColorSettingsStore.surfaceContainerHighestColor,
+							ColorSettingsStore.surfaceContainerLowColor,
+							ColorSettingsStore.surfaceContainerLowestColor,
+							ColorSettingsStore.surfaceDimColor
+						)
+				)
 
-                // Removed the fixed colors as I don't use them personally, but I may add them in the future
+				// Removed the fixed colors as I don't use them personally, but I may add them in the future
 //                                ColorsGroup(
 //                                    expandableSectionState = fixedSectionState,
 //                                    colors = listOf(
@@ -560,144 +560,144 @@ fun ColorSelectorTab() {
 //                                        ColorSettingsStore.onTertiaryFixedVariantColor
 //                                    )
 //                                )
-            }
-        }
-    }
+			}
+		}
+	}
 
-    if (showResetValidation) {
-        UserValidation(
-            title = stringResource(R.string.reset_to_default_colors),
-            message = stringResource(R.string.reset_to_default_colors_explanation),
-            onDismiss = { showResetValidation = false }
-        ) {
-            scope.launch {
-                ColorSettingsStore.resetAll(ctx)
-                showResetValidation = false
-            }
-        }
-    }
-    if (showRandomColorsValidation) {
-        UserValidation(
-            title = stringResource(R.string.make_every_colors_random),
-            message = stringResource(R.string.make_every_colors_random_explanation),
-            onDismiss = { showRandomColorsValidation = false }
-        ) {
-            scope.launch {
-                ColorSettingsStore.setAllRandomColors(ctx)
-                showRandomColorsValidation = false
-            }
-        }
-    }
+	if (showResetValidation) {
+		UserValidation(
+			title = stringResource(R.string.reset_to_default_colors),
+			message = stringResource(R.string.reset_to_default_colors_explanation),
+			onDismiss = { showResetValidation = false }
+		) {
+			scope.launch {
+				ColorSettingsStore.resetAll(ctx)
+				showResetValidation = false
+			}
+		}
+	}
+	if (showRandomColorsValidation) {
+		UserValidation(
+			title = stringResource(R.string.make_every_colors_random),
+			message = stringResource(R.string.make_every_colors_random_explanation),
+			onDismiss = { showRandomColorsValidation = false }
+		) {
+			scope.launch {
+				ColorSettingsStore.setAllRandomColors(ctx)
+				showRandomColorsValidation = false
+			}
+		}
+	}
 
-    if (showAllColorsValidation) {
-        var applyColor by remember { mutableStateOf(Color.Black) }
-        AlertDialog(
-            onDismissRequest = { showAllColorsValidation = false },
-            confirmButton = {
-                ValidateCancelButtons(
-                    validateText = stringResource(R.string.apply),
-                    onCancel = { showAllColorsValidation = false }
-                ) {
-                    scope.launch {
-                        ColorSettingsStore.setAllSameColors(ctx, applyColor)
-                        showAllColorsValidation = false
-                    }
-                }
-            },
-            title = {
-                DragonSettingsGroup {
-                    ColorPickerRow(
-                        description = null,
-                        title = stringResource(R.string.color_mode_all),
-                        currentColor = applyColor,
-                        defaultColor = null
-                    ) {
-                        if (it != null) applyColor = it
-                    }
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = MaterialTheme.shapes.large
-        )
-    }
+	if (showAllColorsValidation) {
+		var applyColor by remember { mutableStateOf(Color.Black) }
+		AlertDialog(
+			onDismissRequest = { showAllColorsValidation = false },
+			confirmButton = {
+				ValidateCancelButtons(
+					validateText = stringResource(R.string.apply),
+					onCancel = { showAllColorsValidation = false }
+				) {
+					scope.launch {
+						ColorSettingsStore.setAllSameColors(ctx, applyColor)
+						showAllColorsValidation = false
+					}
+				}
+			},
+			title = {
+				DragonSettingsGroup {
+					ColorPickerRow(
+						description = null,
+						title = stringResource(R.string.color_mode_all),
+						currentColor = applyColor,
+						defaultColor = null
+					) {
+						if (it != null) applyColor = it
+					}
+				}
+			},
+			containerColor = MaterialTheme.colorScheme.surface,
+			shape = MaterialTheme.shapes.large
+		)
+	}
 
-    if (showExitTestValidation) {
-        UserValidation(
-            title = stringResource(R.string.exit_test_mode),
-            message = stringResource(R.string.exit_test_mode_message),
-            validateText = stringResource(R.string.test_mode_validate),
-            cancelText = stringResource(R.string.test_mode_cancel),
-            properties =
-                DialogProperties(
-                    dismissOnClickOutside = false
-                ),
-            onDismiss = {
-                scope.launch {
-                    ColorSettingsStore.restoreColors(ctx)
-                    ColorModesSettingsStore.colorTestMode.set(ctx, false)
-                    showExitTestValidation = false
-                }
-            },
-            onValidate = {
-                scope.launch {
-                    ColorModesSettingsStore.colorTestMode.set(ctx, false)
-                    showExitTestValidation = false
-                }
-            }
-        )
-    }
+	if (showExitTestValidation) {
+		UserValidation(
+			title = stringResource(R.string.exit_test_mode),
+			message = stringResource(R.string.exit_test_mode_message),
+			validateText = stringResource(R.string.test_mode_validate),
+			cancelText = stringResource(R.string.test_mode_cancel),
+			properties =
+				DialogProperties(
+					dismissOnClickOutside = false
+				),
+			onDismiss = {
+				scope.launch {
+					ColorSettingsStore.restoreColors(ctx)
+					ColorModesSettingsStore.colorTestMode.set(ctx, false)
+					showExitTestValidation = false
+				}
+			},
+			onValidate = {
+				scope.launch {
+					ColorModesSettingsStore.colorTestMode.set(ctx, false)
+					showExitTestValidation = false
+				}
+			}
+		)
+	}
 }
 
 @Composable
 private fun DragonGroupScope.ColorsGroup(
-    expandableSectionState: ExpandableSectionState,
-    colors: List<ColorSettingObject>,
-    examples: @Composable (ColumnScope.() -> Unit)? = null
+	expandableSectionState: ExpandableSectionState,
+	colors: List<ColorSettingObject>,
+	examples: @Composable (ColumnScope.() -> Unit)? = null
 ) {
-    ExpandableSection(expandableSectionState) {
-        examples?.let { it() }
-        DragonSettingsGroup(expandableSectionState.title) {
-            colors.forEach {
-                this@ColorsGroup.Setting(it)
-            }
-        }
-    }
+	ExpandableSection(expandableSectionState) {
+		examples?.let { it() }
+		DragonSettingsGroup(expandableSectionState.title) {
+			colors.forEach {
+				this@ColorsGroup.Setting(it)
+			}
+		}
+	}
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PalettePreview(
-    color1: Color,
-    color2: Color,
-    color3: Color,
-    color4: Color
+	color1: Color,
+	color2: Color,
+	color3: Color,
+	color4: Color
 ) {
-    Box(
-        modifier =
-            Modifier
-                .size(50.dp)
-                .clip(MaterialShapes.Clover4Leaf.toShape())
-    ) {
-        Column {
-            Row(Modifier.weight(1f)) {
-                PaletteColor(color1)
-                PaletteColor(color2)
-            }
-            Row(Modifier.weight(1f)) {
-                PaletteColor(color3)
-                PaletteColor(color4)
-            }
-        }
-    }
+	Box(
+		modifier =
+			Modifier
+				.size(50.dp)
+				.clip(MaterialShapes.Clover4Leaf.toShape())
+	) {
+		Column {
+			Row(Modifier.weight(1f)) {
+				PaletteColor(color1)
+				PaletteColor(color2)
+			}
+			Row(Modifier.weight(1f)) {
+				PaletteColor(color3)
+				PaletteColor(color4)
+			}
+		}
+	}
 }
 
 @Composable
 private fun RowScope.PaletteColor(color: Color) {
-    Box(
-        modifier =
-            Modifier
-                .weight(1f)
-                .fillMaxSize()
-                .background(color)
-    )
+	Box(
+		modifier =
+			Modifier
+				.weight(1f)
+				.fillMaxSize()
+				.background(color)
+	)
 }

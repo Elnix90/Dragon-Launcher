@@ -35,28 +35,28 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncyUp
  */
 @Composable
 fun <T> LazyColumnWithScrollIndicator(
-    items: List<T>,
-    modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    content: @Composable (T) -> Unit
+	items: List<T>,
+	modifier: Modifier = Modifier,
+	verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+	content: @Composable (T) -> Unit
 ) {
-    val state = rememberLazyListState()
+	val state = rememberLazyListState()
 
-    Box {
-        LazyColumn(
-            modifier = modifier,
-            verticalArrangement = verticalArrangement,
-            state = state
-        ) {
-            items(
-                items = items,
-                key = { it.hashCode() }
-            ) { type ->
-                content(type)
-            }
-        }
-        VerticalScrollIndicator(state.canScrollForward)
-    }
+	Box {
+		LazyColumn(
+			modifier = modifier,
+			verticalArrangement = verticalArrangement,
+			state = state
+		) {
+			items(
+				items = items,
+				key = { it.hashCode() }
+			) { type ->
+				content(type)
+			}
+		}
+		VerticalScrollIndicator(state.canScrollForward)
+	}
 }
 
 /**
@@ -69,21 +69,21 @@ fun <T> LazyColumnWithScrollIndicator(
  */
 @Composable
 fun BoxScope.VerticalScrollIndicator(
-    visible: Boolean,
-    modifier: Modifier = Modifier
+	visible: Boolean,
+	modifier: Modifier = Modifier
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        modifier = modifier.align(Alignment.BottomCenter),
-        enter = slideInVerticalBouncy,
-        exit = slideOutVerticalBouncy
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.arrow_down),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.outline
-        )
-    }
+	AnimatedVisibility(
+		visible = visible,
+		modifier = modifier.align(Alignment.BottomCenter),
+		enter = slideInVerticalBouncy,
+		exit = slideOutVerticalBouncy
+	) {
+		Icon(
+			painter = painterResource(R.drawable.arrow_down),
+			contentDescription = null,
+			tint = MaterialTheme.colorScheme.outline
+		)
+	}
 }
 
 /**
@@ -97,23 +97,23 @@ fun BoxScope.VerticalScrollIndicator(
  */
 @Composable
 fun BoxScope.VerticalScrollIndicator(
-    visible: Boolean,
-    isTop: Boolean
+	visible: Boolean,
+	isTop: Boolean
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        modifier = Modifier.align(Alignment.TopCenter),
-        enter = slideInVerticalBouncyUp,
-        exit = slideOutVerticalBouncyUp
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.arrow_down),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.outline,
-            modifier =
-                Modifier.graphicsLayer {
-                    rotationZ = 180f
-                }
-        )
-    }
+	AnimatedVisibility(
+		visible = visible,
+		modifier = Modifier.align(Alignment.TopCenter),
+		enter = slideInVerticalBouncyUp,
+		exit = slideOutVerticalBouncyUp
+	) {
+		Icon(
+			painter = painterResource(R.drawable.arrow_down),
+			contentDescription = null,
+			tint = MaterialTheme.colorScheme.outline,
+			modifier =
+				Modifier.graphicsLayer {
+					rotationZ = 180f
+				}
+		)
+	}
 }

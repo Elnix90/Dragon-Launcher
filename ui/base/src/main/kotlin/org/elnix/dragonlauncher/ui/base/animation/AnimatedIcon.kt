@@ -36,9 +36,9 @@ import kotlin.time.Duration.Companion.milliseconds
  *  [Default], [Success] and [Error]
  */
 enum class AnimatedIconStatus {
-    Default,
-    Success,
-    Error
+	Default,
+	Success,
+	Error
 }
 
 /**
@@ -50,44 +50,44 @@ enum class AnimatedIconStatus {
  * @param scope CoroutineScope for launching state change animations
  */
 class AnimatedIcon
-    internal constructor(
-        private val scope: CoroutineScope
-    ) {
-        val status: SettingFlow<AnimatedIconStatus> = SettingFlow(Default)
+	internal constructor(
+		private val scope: CoroutineScope
+	) {
+		val status: SettingFlow<AnimatedIconStatus> = SettingFlow(Default)
 
-        private var job: Job? = null
+		private var job: Job? = null
 
-        /**
-         * Sets icon to [AnimatedIconStatus.Error] state.
-         *
-         * Shows [AnimatedIconStatus.Error] icon for 500ms then returns to [AnimatedIconStatus.Default].
-         * Cancels any previous pending state change.
-         */
-        fun setError() {
-            job?.cancel()
-            job =
-                scope.launch {
-                    status.value = Error
-                    delay(500.milliseconds)
-                    status.value = Default
-                }
-        }
+		/**
+		 * Sets icon to [AnimatedIconStatus.Error] state.
+		 *
+		 * Shows [AnimatedIconStatus.Error] icon for 500ms then returns to [AnimatedIconStatus.Default].
+		 * Cancels any previous pending state change.
+		 */
+		fun setError() {
+			job?.cancel()
+			job =
+				scope.launch {
+					status.value = Error
+					delay(500.milliseconds)
+					status.value = Default
+				}
+		}
 
-        /**
-         * Sets icon to [AnimatedIconStatus.Success] state.
-         *
-         * Shows [AnimatedIconStatus.Success] icon for 500ms then returns to [AnimatedIconStatus.Default].
-         * Cancels any previous pending state change.
-         */
-        fun setSuccess() {
-            job =
-                scope.launch {
-                    status.value = Success
-                    delay(500.milliseconds)
-                    status.value = Default
-                }
-        }
-    }
+		/**
+		 * Sets icon to [AnimatedIconStatus.Success] state.
+		 *
+		 * Shows [AnimatedIconStatus.Success] icon for 500ms then returns to [AnimatedIconStatus.Default].
+		 * Cancels any previous pending state change.
+		 */
+		fun setSuccess() {
+			job =
+				scope.launch {
+					status.value = Success
+					delay(500.milliseconds)
+					status.value = Default
+				}
+		}
+	}
 
 /**
  * Returns the appropriate painter for this status.
@@ -97,20 +97,20 @@ class AnimatedIcon
  */
 @Composable
 private fun AnimatedIconStatus.icon(
-    @DrawableRes
-    defaultIcon: Int,
-    @DrawableRes
-    successIcon: Int,
-    @DrawableRes
-    errorIcon: Int
+	@DrawableRes
+	defaultIcon: Int,
+	@DrawableRes
+	successIcon: Int,
+	@DrawableRes
+	errorIcon: Int
 ): Painter =
-    painterResource(
-        when (this) {
-            Default -> defaultIcon
-            Success -> successIcon
-            Error -> errorIcon
-        }
-    )
+	painterResource(
+		when (this) {
+			Default -> defaultIcon
+			Success -> successIcon
+			Error -> errorIcon
+		}
+	)
 
 /**
  * Creates and remembers an [AnimatedIcon] controller.
@@ -121,8 +121,8 @@ private fun AnimatedIconStatus.icon(
  */
 @Composable
 fun rememberAnimatedIcon(): AnimatedIcon {
-    val scope = rememberCoroutineScope()
-    return remember { AnimatedIcon(scope) }
+	val scope = rememberCoroutineScope()
+	return remember { AnimatedIcon(scope) }
 }
 
 /**
@@ -136,40 +136,40 @@ fun rememberAnimatedIcon(): AnimatedIcon {
  */
 @Composable
 fun AnimatedIcon.Icon(
-    @DrawableRes
-    defaultIcon: Int,
-    modifier: Modifier = Modifier,
-    defaultColor: Color = MaterialTheme.colorScheme.onBackground,
-    successIcon: Int = R.drawable.check,
-    successColor: Color = MaterialTheme.colorScheme.secondary,
-    @DrawableRes
-    errorIcon: Int = R.drawable.close,
-    errorColor: Color = MaterialTheme.colorScheme.error,
-    enabled: Boolean = true,
-    onClick: () -> Unit
+	@DrawableRes
+	defaultIcon: Int,
+	modifier: Modifier = Modifier,
+	defaultColor: Color = MaterialTheme.colorScheme.onBackground,
+	successIcon: Int = R.drawable.check,
+	successColor: Color = MaterialTheme.colorScheme.secondary,
+	@DrawableRes
+	errorIcon: Int = R.drawable.close,
+	errorColor: Color = MaterialTheme.colorScheme.error,
+	enabled: Boolean = true,
+	onClick: () -> Unit
 ) {
-    val status by this.status.asState()
+	val status by this.status.asState()
 
-    AnimatedContent(
-        targetState = status,
-        transitionSpec = { barsContentTransform }
-    ) { status ->
-        val painter = status.icon(defaultIcon, successIcon, errorIcon)
+	AnimatedContent(
+		targetState = status,
+		transitionSpec = { barsContentTransform }
+	) { status ->
+		val painter = status.icon(defaultIcon, successIcon, errorIcon)
 
-        Icon(
-            painter = painter,
-            contentDescription = null,
-            tint =
-                when (status) {
-                    Default -> defaultColor
-                    Success -> successColor
-                    Error -> errorColor
-                }.semiTransparentIfDisabled(enabled),
-            modifier =
-                modifier
-                    .clip(RoundedCornerShape(5.dp))
-                    .clickable(enabled = enabled, onClick = onClick)
-                    .padding(5.dp)
-        )
-    }
+		Icon(
+			painter = painter,
+			contentDescription = null,
+			tint =
+				when (status) {
+					Default -> defaultColor
+					Success -> successColor
+					Error -> errorColor
+				}.semiTransparentIfDisabled(enabled),
+			modifier =
+				modifier
+					.clip(RoundedCornerShape(5.dp))
+					.clickable(enabled = enabled, onClick = onClick)
+					.padding(5.dp)
+		)
+	}
 }

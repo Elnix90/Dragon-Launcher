@@ -28,49 +28,49 @@ import org.junit.Test
  * which are app-specific.
  */
 class SettingsWithTitleTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun settingsWithTitle_rendersContent() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                SettingsWithTitle(title = null) {
-                    Text("Settings content")
-                }
-            }
-        }
+	@Test
+	fun settingsWithTitle_rendersContent() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				SettingsWithTitle(title = null) {
+					Text("Settings content")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Settings content").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Settings content").assertIsDisplayed()
+	}
 
-    @Test
-    fun settingsWithTitle_withNullTitle_rendersContentOnly() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                SettingsWithTitle(title = null) {
-                    Text("Content without title")
-                }
-            }
-        }
+	@Test
+	fun settingsWithTitle_withNullTitle_rendersContentOnly() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				SettingsWithTitle(title = null) {
+					Text("Content without title")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Content without title").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Content without title").assertIsDisplayed()
+	}
 
-    @Test
-    fun settingsWithTitle_withMultipleChildren() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                SettingsWithTitle(title = null) {
-                    Text("Child 1")
-                    Text("Child 2")
-                    Text("Child 3")
-                }
-            }
-        }
+	@Test
+	fun settingsWithTitle_withMultipleChildren() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				SettingsWithTitle(title = null) {
+					Text("Child 1")
+					Text("Child 2")
+					Text("Child 3")
+				}
+			}
+		}
 
-        composeTestRule.onNodeWithText("Child 1").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Child 2").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Child 3").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Child 1").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Child 2").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Child 3").assertIsDisplayed()
+	}
 }

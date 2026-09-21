@@ -25,50 +25,50 @@ import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 
 @Composable
 fun rememberCurrentColorScheme(
-    colorsViewModel: ColorsViewModel = activityViewModel()
+	colorsViewModel: ColorsViewModel = activityViewModel()
 ): State<ColorScheme> {
-    val defaultTheme by ColorModesSettingsStore.defaultTheme.asState()
-    val customScheme by colorsViewModel.colorscheme.collectAsState()
-    val systemScheme = systemColorScheme()
+	val defaultTheme by ColorModesSettingsStore.defaultTheme.asState()
+	val customScheme by colorsViewModel.colorscheme.collectAsState()
+	val systemScheme = systemColorScheme()
 
-    return remember(
-        defaultTheme,
-        systemScheme,
-        customScheme
-    ) {
-        derivedStateOf {
-            when (defaultTheme) {
-                DefaultThemes.Light -> LightDragonColorScheme
-                DefaultThemes.Dark -> DarkDragonColorScheme
-                DefaultThemes.Amoled -> AmoledDragonColorScheme
-                DefaultThemes.System -> systemScheme
-                DefaultThemes.Custom -> customScheme
-            }
-        }
-    }
+	return remember(
+		defaultTheme,
+		systemScheme,
+		customScheme
+	) {
+		derivedStateOf {
+			when (defaultTheme) {
+				DefaultThemes.Light -> LightDragonColorScheme
+				DefaultThemes.Dark -> DarkDragonColorScheme
+				DefaultThemes.Amoled -> AmoledDragonColorScheme
+				DefaultThemes.System -> systemScheme
+				DefaultThemes.Custom -> customScheme
+			}
+		}
+	}
 }
 
 @Composable
 fun DragonLauncherTheme(
-    fontViewModel: FontViewModel = activityViewModel(),
-    colorsViewModel: ColorsViewModel = activityViewModel(),
-    content: @Composable () -> Unit
+	fontViewModel: FontViewModel = activityViewModel(),
+	colorsViewModel: ColorsViewModel = activityViewModel(),
+	content: @Composable () -> Unit
 ) {
-    val useCustomColorChannels by ColorModesSettingsStore.useCustomColorChannels.asState()
+	val useCustomColorChannels by ColorModesSettingsStore.useCustomColorChannels.asState()
 
-    val extraColors by colorsViewModel.extraColors.collectAsState(DefaultExtraColors)
-    val typography by fontViewModel.typography.collectAsState()
-    val colorScheme by rememberCurrentColorScheme()
+	val extraColors by colorsViewModel.extraColors.collectAsState(DefaultExtraColors)
+	val typography by fontViewModel.typography.collectAsState()
+	val colorScheme by rememberCurrentColorScheme()
 
-    CompositionLocalProvider(
-        LocalExtraColors provides extraColors,
-        LocalUseCustomColorChannels provides useCustomColorChannels
-    ) {
-        MaterialExpressiveTheme(
-            colorScheme = colorScheme,
-            motionScheme = MotionScheme.expressive(),
-            typography = typography,
-            content = content
-        )
-    }
+	CompositionLocalProvider(
+		LocalExtraColors provides extraColors,
+		LocalUseCustomColorChannels provides useCustomColorChannels
+	) {
+		MaterialExpressiveTheme(
+			colorScheme = colorScheme,
+			motionScheme = MotionScheme.expressive(),
+			typography = typography,
+			content = content
+		)
+	}
 }

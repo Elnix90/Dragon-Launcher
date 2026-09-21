@@ -45,149 +45,149 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MigrationDialog(
-    migrate: () -> Unit,
-    onDismiss: () -> Unit,
-    canDisagree: Boolean,
-    backupViewModel: BackupViewModel = activityViewModel()
+	migrate: () -> Unit,
+	onDismiss: () -> Unit,
+	canDisagree: Boolean,
+	backupViewModel: BackupViewModel = activityViewModel()
 ) {
-    val migrationResult by backupViewModel.migrationResult.asState()
-    var showMigrationAcceptDialog by remember { mutableStateOf(true) }
-    var showMigrationResult by remember { mutableStateOf(false) }
+	val migrationResult by backupViewModel.migrationResult.asState()
+	var showMigrationAcceptDialog by remember { mutableStateOf(true) }
+	var showMigrationResult by remember { mutableStateOf(false) }
 
-    fun triggerMigration() {
-        showMigrationAcceptDialog = false
-        migrate()
-    }
+	fun triggerMigration() {
+		showMigrationAcceptDialog = false
+		migrate()
+	}
 
-    val progressAnimatable = remember { Animatable(0f) }
+	val progressAnimatable = remember { Animatable(0f) }
 
-    LaunchedEffect(migrationResult) {
-        if (migrationResult != null && !showMigrationAcceptDialog) {
-            val randomDuration = (2..5).random()
-            progressAnimatable.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(randomDuration * 1000, 200)
-            )
-            showMigrationResult = true
-        }
-    }
+	LaunchedEffect(migrationResult) {
+		if (migrationResult != null && !showMigrationAcceptDialog) {
+			val randomDuration = (2..5).random()
+			progressAnimatable.animateTo(
+				targetValue = 1f,
+				animationSpec = tween(randomDuration * 1000, 200)
+			)
+			showMigrationResult = true
+		}
+	}
 
-    when {
-        showMigrationAcceptDialog -> {
-            UserValidation(
-                title = stringResource(R.string.migrate_from_322),
-                message = stringResource(if (canDisagree) R.string.migrate_from_322_desc else R.string.migrate_from_322_desc_forced),
-                titleIcon = R.drawable.database_upload,
-                titleColor = MaterialTheme.colorScheme.onTertiary,
-                titleBgColor = MaterialTheme.colorScheme.tertiary,
-                onDismiss = if (canDisagree) onDismiss else null,
-                onValidate = ::triggerMigration
-            )
-        }
+	when {
+		showMigrationAcceptDialog -> {
+			UserValidation(
+				title = stringResource(R.string.migrate_from_322),
+				message = stringResource(if (canDisagree) R.string.migrate_from_322_desc else R.string.migrate_from_322_desc_forced),
+				titleIcon = R.drawable.database_upload,
+				titleColor = MaterialTheme.colorScheme.onTertiary,
+				titleBgColor = MaterialTheme.colorScheme.tertiary,
+				onDismiss = if (canDisagree) onDismiss else null,
+				onValidate = ::triggerMigration
+			)
+		}
 
-        migrationResult != null && showMigrationResult -> {
-            val result = migrationResult!!
-            UserValidation(
-                title = stringResource(if (result.success) R.string.migration_complete else R.string.migration_had_issues),
-                message = result.message,
-                titleIcon = if (result.success) R.drawable.check else R.drawable.warning,
-                titleColor = if (result.success) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.error,
-                titleBgColor = if (result.success) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer,
-                onValidate = {
-                    backupViewModel.migrationResult.value = null
-                    onDismiss()
-                }
-            )
-        }
+		migrationResult != null && showMigrationResult -> {
+			val result = migrationResult!!
+			UserValidation(
+				title = stringResource(if (result.success) R.string.migration_complete else R.string.migration_had_issues),
+				message = result.message,
+				titleIcon = if (result.success) R.drawable.check else R.drawable.warning,
+				titleColor = if (result.success) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.error,
+				titleBgColor = if (result.success) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer,
+				onValidate = {
+					backupViewModel.migrationResult.value = null
+					onDismiss()
+				}
+			)
+		}
 
-        else -> {
-            FullScreenOverlay(
-                onDismissRequest = {},
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(Color.Black)
-                        .background(MaterialTheme.colorScheme.background)
-            ) {
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer()
+		else -> {
+			FullScreenOverlay(
+				onDismissRequest = {},
+				modifier =
+					Modifier
+						.fillMaxSize()
+						.background(Color.Black)
+						.background(MaterialTheme.colorScheme.background)
+			) {
+				Column(
+					modifier =
+						Modifier
+							.fillMaxSize()
+							.padding(horizontal = 16.dp),
+					verticalArrangement = Arrangement.spacedBy(5.dp),
+					horizontalAlignment = Alignment.CenterHorizontally
+				) {
+					Spacer()
 
-                    var random by remember { mutableStateOf(Random.nextBoolean()) }
-                    AnimatedContent(
-                        targetState = random,
-                        modifier =
-                            Modifier
-                                .height(200.dp)
-                                .clickable(interactionSource = null, indication = null) {
-                                    random = !random
-                                },
-                        transitionSpec = { barsContentTransform }
-                    ) {
-                        Image(
-                            imageVector = if (it) UndrawFilesMissing else UndrawAlgorithmExecution,
-                            contentDescription = null,
-                            modifier = Modifier
-                        )
-                    }
+					var random by remember { mutableStateOf(Random.nextBoolean()) }
+					AnimatedContent(
+						targetState = random,
+						modifier =
+							Modifier
+								.height(200.dp)
+								.clickable(interactionSource = null, indication = null) {
+									random = !random
+								},
+						transitionSpec = { barsContentTransform }
+					) {
+						Image(
+							imageVector = if (it) UndrawFilesMissing else UndrawAlgorithmExecution,
+							contentDescription = null,
+							modifier = Modifier
+						)
+					}
 
-                    Text(
-                        text = stringResource(R.string.migrating_settings),
-                        style = MaterialTheme.typography.headlineSmallEmphasized,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier =
-                            Modifier
-                                .wrapContentWidth()
-                                .clip(MaterialTheme.shapes.large)
-                                .background(MaterialTheme.colorScheme.secondaryContainer)
-                                .padding(12.dp)
-                    )
+					Text(
+						text = stringResource(R.string.migrating_settings),
+						style = MaterialTheme.typography.headlineSmallEmphasized,
+						color = MaterialTheme.colorScheme.onSecondaryContainer,
+						modifier =
+							Modifier
+								.wrapContentWidth()
+								.clip(MaterialTheme.shapes.large)
+								.background(MaterialTheme.colorScheme.secondaryContainer)
+								.padding(12.dp)
+					)
 
-                    Spacer(24.dp)
+					Spacer(24.dp)
 
-                    Text(
-                        text = stringResource(R.string.migrating_settings_desc),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        modifier =
-                            Modifier
-                                .wrapContentWidth()
-                                .clip(MaterialTheme.shapes.largeIncreased)
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                .padding(15.dp)
-                    )
+					Text(
+						text = stringResource(R.string.migrating_settings_desc),
+						style = MaterialTheme.typography.bodyMedium,
+						color = MaterialTheme.colorScheme.onSurface,
+						textAlign = TextAlign.Center,
+						modifier =
+							Modifier
+								.wrapContentWidth()
+								.clip(MaterialTheme.shapes.largeIncreased)
+								.background(MaterialTheme.colorScheme.surfaceContainerLow)
+								.padding(15.dp)
+					)
 
-                    Spacer(30.dp)
+					Spacer(30.dp)
 
-                    CircularWavyProgressIndicator(
-                        progress = { progressAnimatable.value },
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.secondary.alphaMultiplier(0.2f)
-                    )
+					CircularWavyProgressIndicator(
+						progress = { progressAnimatable.value },
+						color = MaterialTheme.colorScheme.secondary,
+						trackColor = MaterialTheme.colorScheme.secondary.alphaMultiplier(0.2f)
+					)
 
-                    Spacer()
+					Spacer()
 
-                    Text(
-                        text = stringResource(R.string.migrating_settings_desc_kidding),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        modifier =
-                            Modifier
-                                .wrapContentWidth()
-                                .clip(MaterialTheme.shapes.large)
-                                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                                .padding(10.dp)
-                    )
-                }
-            }
-        }
-    }
+					Text(
+						text = stringResource(R.string.migrating_settings_desc_kidding),
+						style = MaterialTheme.typography.labelSmall,
+						color = MaterialTheme.colorScheme.onSurface,
+						textAlign = TextAlign.Center,
+						modifier =
+							Modifier
+								.wrapContentWidth()
+								.clip(MaterialTheme.shapes.large)
+								.background(MaterialTheme.colorScheme.surfaceContainerLowest)
+								.padding(10.dp)
+					)
+				}
+			}
+		}
+	}
 }

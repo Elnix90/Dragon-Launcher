@@ -49,172 +49,172 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NestShapesManagementEditor(
-    shapesInternal: SnapshotStateMap<Int, IntersectionShape>,
-    triggerUpdate: () -> Unit,
-    defaultShapes: Set<IntersectionShape>,
-    isDefaultEditing: Boolean,
-    defaultShape: IntersectionShape,
-    modifier: Modifier = Modifier,
-    onDismiss: (newShapes: Set<IntersectionShape>) -> Unit
+	shapesInternal: SnapshotStateMap<Int, IntersectionShape>,
+	triggerUpdate: () -> Unit,
+	defaultShapes: Set<IntersectionShape>,
+	isDefaultEditing: Boolean,
+	defaultShape: IntersectionShape,
+	modifier: Modifier = Modifier,
+	onDismiss: (newShapes: Set<IntersectionShape>) -> Unit
 ) {
-    fun updateShape(id: Int, newShape: (IntersectionShape) -> IntersectionShape) {
-        val oldShape = shapesInternal[id] ?: return
-        shapesInternal[id] = newShape(oldShape)
-        triggerUpdate()
-    }
+	fun updateShape(id: Int, newShape: (IntersectionShape) -> IntersectionShape) {
+		val oldShape = shapesInternal[id] ?: return
+		shapesInternal[id] = newShape(oldShape)
+		triggerUpdate()
+	}
 
-    var showDetails by remember { mutableStateOf<Int?>(null) }
+	var showDetails by remember { mutableStateOf<Int?>(null) }
 
-    DragonModalBottomSheet(
-        onDismissRequest = {
-            onDismiss(shapesInternal.values.toSet())
-        }
-    ) {
-        DialogTitle(
-            text = stringResource(R.string.shapes_management),
-            resetEnabled = shapesInternal.values.toSet() != defaultShapes,
-            onReset = {
-                shapesInternal.clear()
-                defaultShapes.forEach {
-                    shapesInternal[it.id] = it
-                }
-                triggerUpdate()
-            }
-        )
+	DragonModalBottomSheet(
+		onDismissRequest = {
+			onDismiss(shapesInternal.values.toSet())
+		}
+	) {
+		DialogTitle(
+			text = stringResource(R.string.shapes_management),
+			resetEnabled = shapesInternal.values.toSet() != defaultShapes,
+			onReset = {
+				shapesInternal.clear()
+				defaultShapes.forEach {
+					shapesInternal[it.id] = it
+				}
+				triggerUpdate()
+			}
+		)
 
-        Spacer(5.dp)
+		Spacer(5.dp)
 
-        DragonButton(
-            onClick = {
-                val newId = shapesInternal.keys.getNextId()
-                shapesInternal[newId] = IntersectionShape(newId)
-                triggerUpdate()
-            },
-            modifier = modifier.selfAlignHorizontally()
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.add),
-                contentDescription = null
-            )
-            Spacer(5.dp)
-            Text(stringResource(R.string.add_shape))
-        }
+		DragonButton(
+			onClick = {
+				val newId = shapesInternal.keys.getNextId()
+				shapesInternal[newId] = IntersectionShape(newId)
+				triggerUpdate()
+			},
+			modifier = modifier.selfAlignHorizontally()
+		) {
+			Icon(
+				painter = painterResource(R.drawable.add),
+				contentDescription = null
+			)
+			Spacer(5.dp)
+			Text(stringResource(R.string.add_shape))
+		}
 
-        Spacer(10.dp)
+		Spacer(10.dp)
 
-        DragonSettingsGroup {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier.heightIn(max = 600.dp)
-            ) {
-                items(shapesInternal.values.toList()) { shape ->
-                    ShapeItem(
-                        shape = shape,
-                        isDefaultEditing = isDefaultEditing,
-                        defaultShape = defaultShape,
-                        onChangeShape = { newShape ->
-                            updateShape(shape.id) { old ->
-                                old.copy(shape = newShape)
-                            }
-                        },
-                        onClone = {
-                            val id = shapesInternal.keys.getNextId()
-                            shapesInternal[id] = shape.copy(id = id)
-                            triggerUpdate()
-                        },
-                        onDelete = {
-                            shapesInternal.remove(shape.id)
-                            triggerUpdate()
-                        },
-                        oClick = { showDetails = shape.id }
-                    )
-                }
-            }
-        }
-    }
+		DragonSettingsGroup {
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(5.dp),
+				modifier = Modifier.heightIn(max = 600.dp)
+			) {
+				items(shapesInternal.values.toList()) { shape ->
+					ShapeItem(
+						shape = shape,
+						isDefaultEditing = isDefaultEditing,
+						defaultShape = defaultShape,
+						onChangeShape = { newShape ->
+							updateShape(shape.id) { old ->
+								old.copy(shape = newShape)
+							}
+						},
+						onClone = {
+							val id = shapesInternal.keys.getNextId()
+							shapesInternal[id] = shape.copy(id = id)
+							triggerUpdate()
+						},
+						onDelete = {
+							shapesInternal.remove(shape.id)
+							triggerUpdate()
+						},
+						oClick = { showDetails = shape.id }
+					)
+				}
+			}
+		}
+	}
 
-    if (showDetails != null) {
-        val shapeId = showDetails!!
-        val shape = shapesInternal[shapeId] ?: IntersectionShape(shapeId)
+	if (showDetails != null) {
+		val shapeId = showDetails!!
+		val shape = shapesInternal[shapeId] ?: IntersectionShape(shapeId)
 
-        IntersectionShapeEditor(
-            shape = shape,
-            isDefaultEditing = isDefaultEditing,
-            defaultShape = defaultShape,
-            onChangeShape = { new ->
-                updateShape(shapeId) { _ -> new }
-            },
-            onReset = {
-                updateShape(shapeId) {
-                    IntersectionShape(shapeId)
-                }
-            }
-        ) { showDetails = null }
-    }
+		IntersectionShapeEditor(
+			shape = shape,
+			isDefaultEditing = isDefaultEditing,
+			defaultShape = defaultShape,
+			onChangeShape = { new ->
+				updateShape(shapeId) { _ -> new }
+			},
+			onReset = {
+				updateShape(shapeId) {
+					IntersectionShape(shapeId)
+				}
+			}
+		) { showDetails = null }
+	}
 }
 
 @Composable
 private fun DragonGroupScope.ShapeItem(
-    shape: IntersectionShape,
-    defaultShape: IntersectionShape,
-    isDefaultEditing: Boolean,
-    onChangeShape: (newShape: IconShape) -> Unit,
-    onClone: () -> Unit,
-    onDelete: () -> Unit,
-    oClick: () -> Unit
+	shape: IntersectionShape,
+	defaultShape: IntersectionShape,
+	isDefaultEditing: Boolean,
+	onChangeShape: (newShape: IconShape) -> Unit,
+	onClone: () -> Unit,
+	onDelete: () -> Unit,
+	oClick: () -> Unit
 ) {
-    var showShapeDialog by remember { mutableStateOf(false) }
+	var showShapeDialog by remember { mutableStateOf(false) }
 
-    DragonRow(
-        onClick = oClick,
-        modifier = Modifier.dragonSettingGroup()
-    ) {
-        IntersectionShapePreview(
-            shape = shape,
-            defaultShape = defaultShape,
-            size = 50.dp,
-            isDefaultEditing = isDefaultEditing
-        ) { showShapeDialog = true }
+	DragonRow(
+		onClick = oClick,
+		modifier = Modifier.dragonSettingGroup()
+	) {
+		IntersectionShapePreview(
+			shape = shape,
+			defaultShape = defaultShape,
+			size = 50.dp,
+			isDefaultEditing = isDefaultEditing
+		) { showShapeDialog = true }
 
-        Spacer(12.dp)
+		Spacer(12.dp)
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            Text(
-                text = "${stringResource(R.string.shape_offset)}: ${shape.getOffset(defaultShape, isDefaultEditing).cleanString()}",
-                style = MaterialTheme.typography.labelSmall
-            )
-            Text(
-                text = stringResource(R.string.shape_scale, shape.getScale(defaultShape, isDefaultEditing)),
-                style = MaterialTheme.typography.labelSmall
-            )
-            Text(
-                text = stringResource(R.string.rotation_arg, shape.getRotation(defaultShape, isDefaultEditing)),
-                style = MaterialTheme.typography.labelSmall
-            )
-        }
+		Column(
+			verticalArrangement = Arrangement.spacedBy(5.dp)
+		) {
+			Text(
+				text = "${stringResource(R.string.shape_offset)}: ${shape.getOffset(defaultShape, isDefaultEditing).cleanString()}",
+				style = MaterialTheme.typography.labelSmall
+			)
+			Text(
+				text = stringResource(R.string.shape_scale, shape.getScale(defaultShape, isDefaultEditing)),
+				style = MaterialTheme.typography.labelSmall
+			)
+			Text(
+				text = stringResource(R.string.rotation_arg, shape.getRotation(defaultShape, isDefaultEditing)),
+				style = MaterialTheme.typography.labelSmall
+			)
+		}
 
-        Spacer()
+		Spacer()
 
-        CopyIcon(onCopy = onClone)
+		CopyIcon(onCopy = onClone)
 
-        DragonIconButton(
-            icon = R.drawable.close,
-            contentDescription = R.string.remove,
-            isCancel = true,
-            onClick = onDelete
-        )
-    }
+		DragonIconButton(
+			icon = R.drawable.close,
+			contentDescription = R.string.remove,
+			isCancel = true,
+			onClick = onDelete
+		)
+	}
 
-    if (showShapeDialog) {
-        ShapePickerDialog(
-            selected = shape.getShape(defaultShape, isDefaultEditing),
-            allowedShapes = IconShape.allowedNestShapes,
-            onDismiss = { showShapeDialog = false }
-        ) {
-            onChangeShape(it)
-            showShapeDialog = false
-        }
-    }
+	if (showShapeDialog) {
+		ShapePickerDialog(
+			selected = shape.getShape(defaultShape, isDefaultEditing),
+			allowedShapes = IconShape.allowedNestShapes,
+			onDismiss = { showShapeDialog = false }
+		) {
+			onChangeShape(it)
+			showShapeDialog = false
+		}
+	}
 }

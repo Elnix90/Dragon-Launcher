@@ -29,98 +29,98 @@ import org.elnix.dragonlauncher.ui.wellbeing.FloatingParticles
 
 @Composable
 fun WelcomePageSettings(
-    onEnterSettings: () -> Unit
+	onEnterSettings: () -> Unit
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    Box {
-        FloatingParticles()
+	Box {
+		FloatingParticles()
 
-        WelcomePagerHeader {
-            androidx.compose.foundation.layout
-                .Spacer(Modifier.weight(1f))
+		WelcomePagerHeader {
+			androidx.compose.foundation.layout
+				.Spacer(Modifier.weight(1f))
 
-            DragonSettingsGroup(
-                title = R.string.set_default_launcher,
-                icon = R.drawable.rocket_launch
-            ) {
-                val isDefaultLauncher by rememberIsDefaultLauncher()
+			DragonSettingsGroup(
+				title = R.string.set_default_launcher,
+				icon = R.drawable.rocket_launch
+			) {
+				val isDefaultLauncher by rememberIsDefaultLauncher()
 
-                DragonButton(
-                    enabled = !isDefaultLauncher,
-                    onClick = { ctx.openDefaultLauncherSettings() }
-                ) {
-                    Text(
-                        text = if (isDefaultLauncher) {
-                            stringResource(R.string.already_default_launcher)
-                        } else {
-                            stringResource(R.string.open_default_launcher_settings)
-                        }
-                    )
-                }
-            }
+				DragonButton(
+					enabled = !isDefaultLauncher,
+					onClick = { ctx.openDefaultLauncherSettings() }
+				) {
+					Text(
+						text = if (isDefaultLauncher) {
+							stringResource(R.string.already_default_launcher)
+						} else {
+							stringResource(R.string.open_default_launcher_settings)
+						}
+					)
+				}
+			}
 
-            Spacer(60.dp)
+			Spacer(60.dp)
 
-            DragonSettingsGroup(
-                title = R.string.backup,
-                icon = R.drawable.cloud_upload
-            ) {
-                val scope = rememberCoroutineScope()
+			DragonSettingsGroup(
+				title = R.string.backup,
+				icon = R.drawable.cloud_upload
+			) {
+				val scope = rememberCoroutineScope()
 
-                Setting(BackupSettingsStore.autoBackupEnabled) {
-                    // If the user disabled the backup, also remove the uri
-                    if (!it) {
-                        scope.launch {
-                            BackupSettingsStore.autoBackupUri.reset(ctx)
-                        }
-                    }
-                }
+				Setting(BackupSettingsStore.autoBackupEnabled) {
+					// If the user disabled the backup, also remove the uri
+					if (!it) {
+						scope.launch {
+							BackupSettingsStore.autoBackupUri.reset(ctx)
+						}
+					}
+				}
 
-                val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
-                val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
-                val autoBackupUri = autoBackupUriString?.toUri()
+				val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
+				val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
+				val autoBackupUri = autoBackupUriString?.toUri()
 
-                val autoBackupLauncher = rememberAutoBackupLauncher()
+				val autoBackupLauncher = rememberAutoBackupLauncher()
 
-                DragonButton(
-                    enabled = autoBackupEnabled,
-                    onClick = {
-                        autoBackupLauncher.launch("dragonlauncher-auto-backup.json")
-                    }
-                ) {
-                    Text(
-                        text =
-                            if (autoBackupUri != null) {
-                                stringResource(R.string.choose_a_auto_backup_file)
-                            } else {
-                                stringResource(R.string.open_default_launcher_settings)
-                            }
-                    )
-                }
-            }
+				DragonButton(
+					enabled = autoBackupEnabled,
+					onClick = {
+						autoBackupLauncher.launch("dragonlauncher-auto-backup.json")
+					}
+				) {
+					Text(
+						text =
+							if (autoBackupUri != null) {
+								stringResource(R.string.choose_a_auto_backup_file)
+							} else {
+								stringResource(R.string.open_default_launcher_settings)
+							}
+					)
+				}
+			}
 
-            Spacer(60.dp)
-            DragonSettingsGroup(
-                title = R.string.start_your_journey,
-                icon = R.drawable.check
-            ) {
-                DragonButton(
-                    onClick = onEnterSettings
-                ) {
-                    Text(stringResource(R.string.customize_apps))
-                }
-            }
+			Spacer(60.dp)
+			DragonSettingsGroup(
+				title = R.string.start_your_journey,
+				icon = R.drawable.check
+			) {
+				DragonButton(
+					onClick = onEnterSettings
+				) {
+					Text(stringResource(R.string.customize_apps))
+				}
+			}
 
-            androidx.compose.foundation.layout
-                .Spacer(Modifier.weight(1f))
+			androidx.compose.foundation.layout
+				.Spacer(Modifier.weight(1f))
 
-            Text(
-                text = stringResource(R.string.swipe_up_to_start_using_directly),
-                color = MaterialTheme.colorScheme.onBackground.copy(0.5f),
-                textDecoration = TextDecoration.Underline,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
+			Text(
+				text = stringResource(R.string.swipe_up_to_start_using_directly),
+				color = MaterialTheme.colorScheme.onBackground.copy(0.5f),
+				textDecoration = TextDecoration.Underline,
+				textAlign = TextAlign.Center
+			)
+		}
+	}
 }

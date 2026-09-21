@@ -29,75 +29,75 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun StatusBarNextAlarm(
-    element: StatusBar.NextAlarm,
-    // used only for preview in settings, so I don't use the element property
-    forceShowIcon: Boolean = false
+	element: StatusBar.NextAlarm,
+	// used only for preview in settings, so I don't use the element property
+	forceShowIcon: Boolean = false
 ) {
-    val ctx = LocalContext.current
-    var nextAlarm by remember { mutableStateOf<NextAlarmInfo?>(null) }
+	val ctx = LocalContext.current
+	var nextAlarm by remember { mutableStateOf<NextAlarmInfo?>(null) }
 
-    val formatter = element.formatter
-    val dateFormat =
-        remember(formatter) {
-            try {
-                DateTimeFormatter.ofPattern(formatter)
-            } catch (_: Exception) {
-                println("⚠️ Invalid time format '$formatter'")
-                DateTimeFormatter.ofPattern("HH:mm")
-            }
-        }
+	val formatter = element.formatter
+	val dateFormat =
+		remember(formatter) {
+			try {
+				DateTimeFormatter.ofPattern(formatter)
+			} catch (_: Exception) {
+				println("⚠️ Invalid time format '$formatter'")
+				DateTimeFormatter.ofPattern("HH:mm")
+			}
+		}
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            nextAlarm = getNextAlarm(ctx, dateFormat)
-            delay(60_000L.milliseconds)
-        }
-    }
+	LaunchedEffect(Unit) {
+		while (true) {
+			nextAlarm = getNextAlarm(ctx, dateFormat)
+			delay(60_000L.milliseconds)
+		}
+	}
 
-    if (nextAlarm != null || forceShowIcon) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.alarm),
-                contentDescription = null,
-                modifier = Modifier.size(14.dp)
-            )
-            nextAlarm?.let { alarm ->
-                Text(
-                    text = alarm.formattedTime,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-    }
+	if (nextAlarm != null || forceShowIcon) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(4.dp)
+		) {
+			Icon(
+				painter = painterResource(R.drawable.alarm),
+				contentDescription = null,
+				modifier = Modifier.size(14.dp)
+			)
+			nextAlarm?.let { alarm ->
+				Text(
+					text = alarm.formattedTime,
+					style = MaterialTheme.typography.bodyMedium
+				)
+			}
+		}
+	}
 }
 
 data class NextAlarmInfo(
-    val formattedTime: String,
-    val label: String
+	val formattedTime: String,
+	val label: String
 )
 
 private fun getNextAlarm(ctx: Context, formatter: DateTimeFormatter): NextAlarmInfo? {
-    return try {
-        val alarmManager = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val nextAlarm = alarmManager.nextAlarmClock?.triggerTime ?: return null
+	return try {
+		val alarmManager = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+		val nextAlarm = alarmManager.nextAlarmClock?.triggerTime ?: return null
 
-        val time =
-            Instant
-                .ofEpochMilli(nextAlarm)
-                .atZone(ZoneId.systemDefault())
-                .toLocalTime()
+		val time =
+			Instant
+				.ofEpochMilli(nextAlarm)
+				.atZone(ZoneId.systemDefault())
+				.toLocalTime()
 
-        val formatted = time.format(formatter)
+		val formatted = time.format(formatter)
 
-        NextAlarmInfo(
-            formattedTime = formatted,
-            label = ctx.getString(R.string.next_alarm_at, formatted)
-        )
-    } catch (_: Exception) {
-        println("Alarm read failed")
-        null
-    }
+		NextAlarmInfo(
+			formattedTime = formatted,
+			label = ctx.getString(R.string.next_alarm_at, formatted)
+		)
+	} catch (_: Exception) {
+		println("Alarm read failed")
+		null
+	}
 }

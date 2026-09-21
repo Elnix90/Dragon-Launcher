@@ -10,11 +10,11 @@ import javax.inject.Inject
 @Stable
 @HiltViewModel
 public class PermissionsViewModel
-    @Inject
-    constructor(
-        public val permissionsManager: PermissionsManager
-    ) : ViewModel() {
-        init {
-            viewModelInitialized()
-        }
-    }
+	@Inject
+	constructor(
+		public val permissionsManager: PermissionsManager
+	) : ViewModel() {
+		init {
+			viewModelInitialized()
+		}
+	}

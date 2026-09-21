@@ -12,45 +12,45 @@ import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
 fun <T> DragonGroupScope.SelectedActionRow(
-    snapshotStateMapStores: SnapshotStateMap<T, Boolean>
+	snapshotStateMapStores: SnapshotStateMap<T, Boolean>
 ) {
-    val totalNumber = snapshotStateMapStores.size
-    val selectedCount = snapshotStateMapStores.count { it.value }
+	val totalNumber = snapshotStateMapStores.size
+	val selectedCount = snapshotStateMapStores.count { it.value }
 
-    Row(
-        modifier = Modifier.dragonSettingGroup(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        MultiSelectConnectedButtonRow(
-            entries = BackupSelectStoresButtons.entries,
-            enabled = { entry ->
-                when (entry) {
-                    BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
-                    BackupSelectStoresButtons.SelectAll -> selectedCount < totalNumber
-                    BackupSelectStoresButtons.Invert -> true
-                }
-            }
-        ) {
-            when (it) {
-                BackupSelectStoresButtons.DeselectAll -> {
-                    snapshotStateMapStores.forEach { (store, _) ->
-                        snapshotStateMapStores[store] = false
-                    }
-                }
+	Row(
+		modifier = Modifier.dragonSettingGroup(),
+		horizontalArrangement = Arrangement.Center,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		MultiSelectConnectedButtonRow(
+			entries = BackupSelectStoresButtons.entries,
+			enabled = { entry ->
+				when (entry) {
+					BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
+					BackupSelectStoresButtons.SelectAll -> selectedCount < totalNumber
+					BackupSelectStoresButtons.Invert -> true
+				}
+			}
+		) {
+			when (it) {
+				BackupSelectStoresButtons.DeselectAll -> {
+					snapshotStateMapStores.forEach { (store, _) ->
+						snapshotStateMapStores[store] = false
+					}
+				}
 
-                BackupSelectStoresButtons.SelectAll -> {
-                    snapshotStateMapStores.forEach { (store, _) ->
-                        snapshotStateMapStores[store] = true
-                    }
-                }
+				BackupSelectStoresButtons.SelectAll -> {
+					snapshotStateMapStores.forEach { (store, _) ->
+						snapshotStateMapStores[store] = true
+					}
+				}
 
-                BackupSelectStoresButtons.Invert -> {
-                    snapshotStateMapStores.forEach { (store, isSelected) ->
-                        snapshotStateMapStores[store] = !isSelected
-                    }
-                }
-            }
-        }
-    }
+				BackupSelectStoresButtons.Invert -> {
+					snapshotStateMapStores.forEach { (store, isSelected) ->
+						snapshotStateMapStores[store] = !isSelected
+					}
+				}
+			}
+		}
+	}
 }

@@ -32,99 +32,99 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppShortcutSearch
 
 private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): Boolean {
-    if (q.isBlank()) return true
-    return appName.contains(q, ignoreCase = true) ||
-        `package`.contains(q, ignoreCase = true) ||
-        (shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-        (longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-        id.contains(q, ignoreCase = true)
+	if (q.isBlank()) return true
+	return appName.contains(q, ignoreCase = true) ||
+		`package`.contains(q, ignoreCase = true) ||
+		(shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+		(longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+		id.contains(q, ignoreCase = true)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppShortcutPickerDialog(
-    app: Application,
-    shortcuts: List<ShortcutInfo>,
-    onDismiss: () -> Unit,
-    onShortcutSelected: (shortcut: ShortcutInfo) -> Unit,
-    onAppSelected: () -> Unit
+	app: Application,
+	shortcuts: List<ShortcutInfo>,
+	onDismiss: () -> Unit,
+	onShortcutSelected: (shortcut: ShortcutInfo) -> Unit,
+	onAppSelected: () -> Unit
 ) {
-    val appName = app.label
-    var searchQuery by remember { mutableStateOf("") }
+	val appName = app.label
+	var searchQuery by remember { mutableStateOf("") }
 
-    val filteredShortcuts =
-        remember(searchQuery, shortcuts, appName) {
-            if (searchQuery.isBlank()) {
-                shortcuts
-            } else {
-                shortcuts.filter { it.matchesAppShortcutSearch(appName, searchQuery) }
-            }
-        }
+	val filteredShortcuts =
+		remember(searchQuery, shortcuts, appName) {
+			if (searchQuery.isBlank()) {
+				shortcuts
+			} else {
+				shortcuts.filter { it.matchesAppShortcutSearch(appName, searchQuery) }
+			}
+		}
 
-    DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
-        DialogTitle(stringResource(R.string.select_shortcut_action_title, appName))
-        Spacer(10.dp)
-        Column(
-            modifier =
-                Modifier
-                    .heightIn(max = 600.dp)
-                    .verticalScroll(rememberScrollState())
-        ) {
-            AppShortcutSearch(searchQuery) { searchQuery = it }
+	DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
+		DialogTitle(stringResource(R.string.select_shortcut_action_title, appName))
+		Spacer(10.dp)
+		Column(
+			modifier =
+				Modifier
+					.heightIn(max = 600.dp)
+					.verticalScroll(rememberScrollState())
+		) {
+			AppShortcutSearch(searchQuery) { searchQuery = it }
 
-            when {
-                shortcuts.isEmpty() -> {
-                    Text(
-                        text = stringResource(R.string.no_extra_shortcuts),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
+			when {
+				shortcuts.isEmpty() -> {
+					Text(
+						text = stringResource(R.string.no_extra_shortcuts),
+						style = MaterialTheme.typography.bodyLarge
+					)
+				}
 
-                filteredShortcuts.isEmpty() && searchQuery.isNotEmpty() -> {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            stringResource(R.string.no_search_match),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+				filteredShortcuts.isEmpty() && searchQuery.isNotEmpty() -> {
+					Box(
+						modifier =
+							Modifier
+								.fillMaxWidth()
+								.padding(vertical = 16.dp),
+						contentAlignment = Alignment.Center
+					) {
+						Text(
+							stringResource(R.string.no_search_match),
+							style = MaterialTheme.typography.bodyLarge,
+							color = MaterialTheme.colorScheme.onSurfaceVariant
+						)
+					}
+				}
 
-                else -> {
-                    DragonSettingsGroup(R.string.pinned_shortcuts) {
-                        filteredShortcuts.forEach { shortcut ->
-                            ShortcutItem(shortcut) {
-                                onShortcutSelected(shortcut)
-                            }
-                        }
-                    }
-                }
-            }
+				else -> {
+					DragonSettingsGroup(R.string.pinned_shortcuts) {
+						filteredShortcuts.forEach { shortcut ->
+							ShortcutItem(shortcut) {
+								onShortcutSelected(shortcut)
+							}
+						}
+					}
+				}
+			}
 
-            Spacer(10.dp)
-            DragonSettingsGroup {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier =
-                        Modifier
-                            .dragonSettingGroup {
-                                clickable(onClick = onAppSelected)
-                            }
-                ) {
-                    AppIcon(app, size = 30.dp)
-                    Spacer(8.dp)
-                    Text(
-                        text = stringResource(R.string.just_open_app, appName),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
-    }
+			Spacer(10.dp)
+			DragonSettingsGroup {
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					modifier =
+						Modifier
+							.dragonSettingGroup {
+								clickable(onClick = onAppSelected)
+							}
+				) {
+					AppIcon(app, size = 30.dp)
+					Spacer(8.dp)
+					Text(
+						text = stringResource(R.string.just_open_app, appName),
+						style = MaterialTheme.typography.bodyLarge
+					)
+				}
+			}
+		}
+	}
 }

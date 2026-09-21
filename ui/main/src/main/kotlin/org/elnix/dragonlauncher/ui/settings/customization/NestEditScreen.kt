@@ -106,42 +106,42 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
-    val navigator = LocalNavigator.current
-    val density = LocalDensity.current
-    val scope = rememberCoroutineScope()
+	val navigator = LocalNavigator.current
+	val density = LocalDensity.current
+	val scope = rememberCoroutineScope()
 
-    val pointsService = pointsViewModel.pointsService
+	val pointsService = pointsViewModel.pointsService
 
-    val points by pointsService.points.collectAsState()
-    val nestNavigation = pointsViewModel.nestsNavigationService
+	val points by pointsService.points.collectAsState()
+	val nestNavigation = pointsViewModel.nestsNavigationService
 
-    val defaultShape by pointsService.defaultIntersectionShape.asState()
-    val defaultNest by pointsService.defaultNest.asState()
+	val defaultShape by pointsService.defaultIntersectionShape.asState()
+	val defaultNest by pointsService.defaultNest.asState()
 
-    val nestId by nestNavigation.currentNestId.collectAsState()
-    val currentNest = pointsService.findNestById(nestId)
+	val nestId by nestNavigation.currentNestId.collectAsState()
+	val currentNest = pointsService.findNestById(nestId)
 
-    var snapShapesOffset by UiSettingsStore.snapShapesOffset.asMutableState()
-    var snapShapesCenter by UiSettingsStore.snapShapesCenter.asMutableState()
+	var snapShapesOffset by UiSettingsStore.snapShapesOffset.asMutableState()
+	var snapShapesCenter by UiSettingsStore.snapShapesCenter.asMutableState()
 //    var snapShapesScale by UiSettingsStore.snapShapesScale.asMutableState()
-    var snapShapeAngle by UiSettingsStore.snapShapeAngle.asMutableState()
+	var snapShapeAngle by UiSettingsStore.snapShapeAngle.asMutableState()
 
-    val snapOffsetThreshold = 30.dp.px
+	val snapOffsetThreshold = 30.dp.px
 
-    val cellSizeDp by UiSettingsStore.nestsCellSizeDp.asState()
-    val cellSizePx = cellSizeDp.px
-    val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
+	val cellSizeDp by UiSettingsStore.nestsCellSizeDp.asState()
+	val cellSizePx = cellSizeDp.px
+	val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
 
-    fun IntersectionShape.snap(): IntersectionShape {
-        val offset = this.getOffset(defaultShape, false)
+	fun IntersectionShape.snap(): IntersectionShape {
+		val offset = this.getOffset(defaultShape, false)
 
-        val newOffset =
-            when {
-                snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-                snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-                snapShapesOffset -> offset.snapToGrid(cellSizePx)
-                else -> offset
-            }
+		val newOffset =
+			when {
+				snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+				snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+				snapShapesOffset -> offset.snapToGrid(cellSizePx)
+				else -> offset
+			}
 //        val newScale = if (snapShapesScale) {
 //            val oldScale = this.scale
 //            val newScale = oldScale.snapToRound(1f, 0.5f)
@@ -155,624 +155,624 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 //            this.scale
 //        }
 
-        val newRotation = if (snapShapeAngle) this.getRotation(defaultShape, false).snapToRound(0, 20) else this.rotation
+		val newRotation = if (snapShapeAngle) this.getRotation(defaultShape, false).snapToRound(0, 20) else this.rotation
 
-        return this.copy(
-            offset = newOffset.takeIf { it != (defaultShape.offset ?: IntersectionShape.defaultOffset) },
+		return this.copy(
+			offset = newOffset.takeIf { it != (defaultShape.offset ?: IntersectionShape.defaultOffset) },
 //            scale = newScale,
-            rotation = newRotation.takeIf { it != (defaultShape.rotation ?: IntersectionShape.defaultRotation) }
-        )
-    }
+			rotation = newRotation.takeIf { it != (defaultShape.rotation ?: IntersectionShape.defaultRotation) }
+		)
+	}
 
-    var showEditCurrentNestSheet by remember { mutableStateOf(false) }
-    var showMoreSheet by remember { mutableStateOf(false) }
-    var showEditDefaultNestSheet by remember { mutableStateOf(false) }
-    var showEditDefaultShapeDialog by remember { mutableStateOf(false) }
+	var showEditCurrentNestSheet by remember { mutableStateOf(false) }
+	var showMoreSheet by remember { mutableStateOf(false) }
+	var showEditDefaultNestSheet by remember { mutableStateOf(false) }
+	var showEditDefaultShapeDialog by remember { mutableStateOf(false) }
 
-    var showNestManagementDialog by remember { mutableStateOf(false) }
-    var center by remember { mutableStateOf(Offset.Zero) }
+	var showNestManagementDialog by remember { mutableStateOf(false) }
+	var center by remember { mutableStateOf(Offset.Zero) }
 
-    var selectedShapeId: Int? by remember { mutableStateOf(null) }
-    val isInDragAroundMode: Boolean = selectedShapeId == null
+	var selectedShapeId: Int? by remember { mutableStateOf(null) }
+	val isInDragAroundMode: Boolean = selectedShapeId == null
 
-    var tempCancelZone by remember { mutableStateOf(currentNest.getCancelZone(defaultNest, false)) }
+	var tempCancelZone by remember { mutableStateOf(currentNest.getCancelZone(defaultNest, false)) }
 
-    val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
+	val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
 
-    fun addPath(shape: IntersectionShape) {
-        paths[shape] = shape.getShape(defaultShape, false).resolveShape().toPath(shape.getSize(density.density, defaultShape, false), density)
-    }
+	fun addPath(shape: IntersectionShape) {
+		paths[shape] = shape.getShape(defaultShape, false).resolveShape().toPath(shape.getSize(density.density, defaultShape, false), density)
+	}
 
-    LaunchedEffect(defaultShape.offset, defaultShape, defaultNest.intersectionShapes, currentNest.intersectionShapes) {
-        paths.clear()
-        currentNest.getInterSectionShapes(defaultNest, false).forEach { shape ->
-            addPath(shape)
-        }
-        // Reset the selected shape. if you only added new ones, it'll resolve to the same as before, but if you removed the current selected one, it'll deselect cause it won't find it
-        selectedShapeId = paths.keys.find { it.id == selectedShapeId }?.id
-    }
+	LaunchedEffect(defaultShape.offset, defaultShape, defaultNest.intersectionShapes, currentNest.intersectionShapes) {
+		paths.clear()
+		currentNest.getInterSectionShapes(defaultNest, false).forEach { shape ->
+			addPath(shape)
+		}
+		// Reset the selected shape. if you only added new ones, it'll resolve to the same as before, but if you removed the current selected one, it'll deselect cause it won't find it
+		selectedShapeId = paths.keys.find { it.id == selectedShapeId }?.id
+	}
 
-    var witnessShape: IntersectionShape? by remember { mutableStateOf(null) }
-    var netOffsetChange by remember { mutableStateOf(Offset.Zero) }
+	var witnessShape: IntersectionShape? by remember { mutableStateOf(null) }
+	var netOffsetChange by remember { mutableStateOf(Offset.Zero) }
 
-    fun saveCurrentNest() {
-        pointsService.updateNest(nestId) { old ->
-            old.copy(
-                intersectionShapes =
-                    paths.keys
-                        .mapTo(mutableSetOf()) { it.snap() }
-                        .takeIf { it != (defaultNest.intersectionShapes ?: Nest.defaultIntersectionShapes) }
-            )
-        }
-    }
+	fun saveCurrentNest() {
+		pointsService.updateNest(nestId) { old ->
+			old.copy(
+				intersectionShapes =
+					paths.keys
+						.mapTo(mutableSetOf()) { it.snap() }
+						.takeIf { it != (defaultNest.intersectionShapes ?: Nest.defaultIntersectionShapes) }
+			)
+		}
+	}
 
-    var recomposeTrigger by pointsService.recomposeTrigger.asMutableState()
+	var recomposeTrigger by pointsService.recomposeTrigger.asMutableState()
 
-    val manipulationSystem = remember { ManipulationSystem(center) }
-    LaunchedEffect(center) {
-        manipulationSystem.center = center
-    }
+	val manipulationSystem = remember { ManipulationSystem(center) }
+	LaunchedEffect(center) {
+		manipulationSystem.center = center
+	}
 
-    val offset: Animatable<Offset, AnimationVector2D> = manipulationSystem.offset
-    val angle: Animatable<Float, AnimationVector1D> = manipulationSystem.angle
-    val zoom: Animatable<Float, AnimationVector1D> = manipulationSystem.zoom
+	val offset: Animatable<Offset, AnimationVector2D> = manipulationSystem.offset
+	val angle: Animatable<Float, AnimationVector1D> = manipulationSystem.angle
+	val zoom: Animatable<Float, AnimationVector1D> = manipulationSystem.zoom
 
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
-    val extraColors = LocalExtraColors.current
-    val config = LocalResources.current.configuration
+	val primaryColor = MaterialTheme.colorScheme.primary
+	val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+	val extraColors = LocalExtraColors.current
+	val config = LocalResources.current.configuration
 
-    /**
-     * I am soooooooooooooo proud of this thing actually
-     */
-    val cellNumber =
-        remember(cellSizePx, zoom.value, offset.value) {
-            val dist = offset.value.getDistance()
-            val screenMaxDimension =
-                with(density) {
-                    maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
-                }
+	/**
+	 * I am soooooooooooooo proud of this thing actually
+	 */
+	val cellNumber =
+		remember(cellSizePx, zoom.value, offset.value) {
+			val dist = offset.value.getDistance()
+			val screenMaxDimension =
+				with(density) {
+					maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
+				}
 
-            (((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
-        }
+			(((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
+		}
 
-    SettingsScaffold(
-        title = stringResource(R.string.edit_nest_arg, nestId),
-        onBack = {
-            if (selectedShapeId != null) {
-                selectedShapeId = null
-            } else {
-                saveCurrentNest()
-                pointsService.persist()
-                navigator.onBack()
-            }
-        },
-        onReset = { pointsService.resetNest(nestId) },
-        helpText = stringResource(R.string.edit_nest_help),
-        resetText = stringResource(R.string.reset_nest_desc),
-        resetTitle = stringResource(R.string.reset_nest),
-        horizontalPadding = 0.dp,
-        scrollableContent = false,
-        moreOptions = { dismiss ->
-            listOf(
-                MoreOptions(
-                    text = { stringResource(R.string.edit_default_nest) },
-                    onClick = {
-                        showEditDefaultNestSheet = true
-                        dismiss()
-                    },
-                    icon = R.drawable.edit_rounded
-                ),
-                MoreOptions(
-                    text = { stringResource(R.string.edit_default_shape) },
-                    onClick = {
-                        showEditDefaultShapeDialog = true
-                        dismiss()
-                    },
-                    icon = R.drawable.edit_rounded
-                ),
-                MoreOptions(
-                    text = { stringResource(R.string.more) },
-                    onClick = {
-                        showMoreSheet = true
-                        dismiss()
-                    },
-                    icon = R.drawable.add_circle
-                )
-            )
-        },
-        bottomContent = {
-            RowWithScrollIndicator(rememberScrollState()) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AnimatedFab(
-                        onClick = { showEditCurrentNestSheet = true },
-                        icon = R.drawable.edit_rounded,
-                        minSize = 70.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
+	SettingsScaffold(
+		title = stringResource(R.string.edit_nest_arg, nestId),
+		onBack = {
+			if (selectedShapeId != null) {
+				selectedShapeId = null
+			} else {
+				saveCurrentNest()
+				pointsService.persist()
+				navigator.onBack()
+			}
+		},
+		onReset = { pointsService.resetNest(nestId) },
+		helpText = stringResource(R.string.edit_nest_help),
+		resetText = stringResource(R.string.reset_nest_desc),
+		resetTitle = stringResource(R.string.reset_nest),
+		horizontalPadding = 0.dp,
+		scrollableContent = false,
+		moreOptions = { dismiss ->
+			listOf(
+				MoreOptions(
+					text = { stringResource(R.string.edit_default_nest) },
+					onClick = {
+						showEditDefaultNestSheet = true
+						dismiss()
+					},
+					icon = R.drawable.edit_rounded
+				),
+				MoreOptions(
+					text = { stringResource(R.string.edit_default_shape) },
+					onClick = {
+						showEditDefaultShapeDialog = true
+						dismiss()
+					},
+					icon = R.drawable.edit_rounded
+				),
+				MoreOptions(
+					text = { stringResource(R.string.more) },
+					onClick = {
+						showMoreSheet = true
+						dismiss()
+					},
+					icon = R.drawable.add_circle
+				)
+			)
+		},
+		bottomContent = {
+			RowWithScrollIndicator(rememberScrollState()) {
+				Row(
+					horizontalArrangement = Arrangement.Center,
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					AnimatedFab(
+						onClick = { showEditCurrentNestSheet = true },
+						icon = R.drawable.edit_rounded,
+						minSize = 70.dp,
+						containerColor = MaterialTheme.colorScheme.secondary
+					)
 
-                    val interactionSource = rememberInteractionSource()
-                    val isPressed by interactionSource.collectIsPressedAsState()
+					val interactionSource = rememberInteractionSource()
+					val isPressed by interactionSource.collectIsPressedAsState()
 
-                    val fabAnimation = rememberFancyAnimations(
-                        isPressed = isPressed,
-                        normalShape = MaterialShapes.Cookie9Sided,
-                        pressedShape = MaterialShapes.Cookie7Sided
-                    )
+					val fabAnimation = rememberFancyAnimations(
+						isPressed = isPressed,
+						normalShape = MaterialShapes.Cookie9Sided,
+						pressedShape = MaterialShapes.Cookie7Sided
+					)
 
-                    var showDropDownMenu by remember { mutableStateOf(false) }
+					var showDropDownMenu by remember { mutableStateOf(false) }
 
-                    Box {
-                        AnimatedFab(
-                            onClick = { showDropDownMenu = true },
-                            enabled = paths.isNotEmpty(),
-                            icon = {
-                                AnimatedContent(isInDragAroundMode) { isInDragAroundMode ->
-                                    val selectedShape =
-                                        if (isInDragAroundMode) {
-                                            null
-                                        } else {
-                                            selectedShapeId?.let { shapeId ->
-                                                paths.keys.firstOrNull { shape -> shape.id == shapeId }
-                                            }
-                                        }
+					Box {
+						AnimatedFab(
+							onClick = { showDropDownMenu = true },
+							enabled = paths.isNotEmpty(),
+							icon = {
+								AnimatedContent(isInDragAroundMode) { isInDragAroundMode ->
+									val selectedShape =
+										if (isInDragAroundMode) {
+											null
+										} else {
+											selectedShapeId?.let { shapeId ->
+												paths.keys.firstOrNull { shape -> shape.id == shapeId }
+											}
+										}
 
-                                    if (selectedShape == null) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.drag_pan),
-                                            contentDescription = stringResource(R.string.move_around_mode)
-                                        )
-                                    } else {
-                                        IntersectionShapePreview(
-                                            shape = selectedShape,
-                                            defaultShape = defaultShape,
-                                            size = 30.dp,
-                                            isDefaultEditing = false
-                                        )
-                                    }
-                                }
-                            },
-                            interactionSource = interactionSource,
-                            fabAnimation = fabAnimation,
-                            minSize = 70.dp,
-                            containerColor = MaterialTheme.colorScheme.tertiary
-                        )
+									if (selectedShape == null) {
+										Icon(
+											painter = painterResource(R.drawable.drag_pan),
+											contentDescription = stringResource(R.string.move_around_mode)
+										)
+									} else {
+										IntersectionShapePreview(
+											shape = selectedShape,
+											defaultShape = defaultShape,
+											size = 30.dp,
+											isDefaultEditing = false
+										)
+									}
+								}
+							},
+							interactionSource = interactionSource,
+							fabAnimation = fabAnimation,
+							minSize = 70.dp,
+							containerColor = MaterialTheme.colorScheme.tertiary
+						)
 
-                        DragonDropDownMenu(
-                            expanded = showDropDownMenu,
-                            onDismissRequest = { showDropDownMenu = false }
-                        ) {
-                            DropdownMenuGroup(
-                                shapes = MenuDefaults.groupShapes()
-                            ) {
-                                val filteredShapes = paths.keys.filter { it.id != selectedShapeId }
-                                filteredShapes
-                                    .sortedBy { it.id }
-                                    .forEachIndexed { idx, shape ->
-                                        DropdownMenuItem(
-                                            text = {},
-                                            leadingIcon = {
-                                                IntersectionShapePreview(
-                                                    shape = shape,
-                                                    defaultShape = defaultShape,
-                                                    size = 25.dp,
-                                                    isDefaultEditing = false
-                                                )
-                                            },
-                                            trailingContent = {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.drag_indicator),
-                                                    contentDescription = stringResource(R.string.drag_handle)
-                                                )
-                                            },
-                                            onClick = {
-                                                selectedShapeId = shape.id
-                                                showDropDownMenu = false
-                                            },
-                                            shape =
-                                                when (idx) {
-                                                    0 -> MenuDefaults.leadingItemShape
-                                                    filteredShapes.size if selectedShapeId != null -> MenuDefaults.trailingItemShape
-                                                    else -> MenuDefaults.middleItemShape
-                                                }
-                                        )
-                                    }
+						DragonDropDownMenu(
+							expanded = showDropDownMenu,
+							onDismissRequest = { showDropDownMenu = false }
+						) {
+							DropdownMenuGroup(
+								shapes = MenuDefaults.groupShapes()
+							) {
+								val filteredShapes = paths.keys.filter { it.id != selectedShapeId }
+								filteredShapes
+									.sortedBy { it.id }
+									.forEachIndexed { idx, shape ->
+										DropdownMenuItem(
+											text = {},
+											leadingIcon = {
+												IntersectionShapePreview(
+													shape = shape,
+													defaultShape = defaultShape,
+													size = 25.dp,
+													isDefaultEditing = false
+												)
+											},
+											trailingContent = {
+												Icon(
+													painter = painterResource(R.drawable.drag_indicator),
+													contentDescription = stringResource(R.string.drag_handle)
+												)
+											},
+											onClick = {
+												selectedShapeId = shape.id
+												showDropDownMenu = false
+											},
+											shape =
+												when (idx) {
+													0 -> MenuDefaults.leadingItemShape
+													filteredShapes.size if selectedShapeId != null -> MenuDefaults.trailingItemShape
+													else -> MenuDefaults.middleItemShape
+												}
+										)
+									}
 
-                                if (selectedShapeId != null) {
-                                    DropdownMenuItem(
-                                        text = {},
-                                        leadingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.close),
-                                                contentDescription = null
-                                            )
-                                        },
-                                        trailingContent = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.drag_indicator),
-                                                contentDescription = stringResource(R.string.drag_handle)
-                                            )
-                                        },
-                                        onClick = {
-                                            selectedShapeId = null
-                                            showDropDownMenu = false
-                                        },
-                                        shape = MenuDefaults.trailingItemShape
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+								if (selectedShapeId != null) {
+									DropdownMenuItem(
+										text = {},
+										leadingIcon = {
+											Icon(
+												painter = painterResource(R.drawable.close),
+												contentDescription = null
+											)
+										},
+										trailingContent = {
+											Icon(
+												painter = painterResource(R.drawable.drag_indicator),
+												contentDescription = stringResource(R.string.drag_handle)
+											)
+										},
+										onClick = {
+											selectedShapeId = null
+											showDropDownMenu = false
+										},
+										shape = MenuDefaults.trailingItemShape
+									)
+								}
+							}
+						}
+					}
+				}
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    UndoRedoBlock(pointsService.undoRedo)
+				Column(
+					verticalArrangement = Arrangement.spacedBy(5.dp),
+					horizontalAlignment = Alignment.CenterHorizontally
+				) {
+					UndoRedoBlock(pointsService.undoRedo)
 
-                    val canGoback = nestId != 0
-                    MultiSelectConnectedButtonRow(
-                        entries = NestEditTools.entries.filterNot { it == EnterNest },
-                        enabled = {
-                            when (it) {
-                                NestManagement -> true
-                                GoParentNest -> canGoback
-                                EnterNest -> error("Shouldn't happen")
-                                ResetSystem -> manipulationSystem.canReset()
-                            }
-                        },
-                        checked = {
-                            when (it) {
-                                NestManagement -> true
-                                GoParentNest -> canGoback
-                                EnterNest -> error("Shouldn't happen")
-                                ResetSystem -> manipulationSystem.canReset()
-                            }
-                        }
-                    ) { entry ->
-                        when (entry) {
-                            NestManagement -> {
-                                showNestManagementDialog = true
-                            }
+					val canGoback = nestId != 0
+					MultiSelectConnectedButtonRow(
+						entries = NestEditTools.entries.filterNot { it == EnterNest },
+						enabled = {
+							when (it) {
+								NestManagement -> true
+								GoParentNest -> canGoback
+								EnterNest -> error("Shouldn't happen")
+								ResetSystem -> manipulationSystem.canReset()
+							}
+						},
+						checked = {
+							when (it) {
+								NestManagement -> true
+								GoParentNest -> canGoback
+								EnterNest -> error("Shouldn't happen")
+								ResetSystem -> manipulationSystem.canReset()
+							}
+						}
+					) { entry ->
+						when (entry) {
+							NestManagement -> {
+								showNestManagementDialog = true
+							}
 
-                            GoParentNest -> {
-                                nestNavigation.goBack()
-                                pointsService.deselectAll()
-                            }
+							GoParentNest -> {
+								nestNavigation.goBack()
+								pointsService.deselectAll()
+							}
 
-                            EnterNest -> {
-                                error("Shouldn't happen")
-                            }
+							EnterNest -> {
+								error("Shouldn't happen")
+							}
 
-                            ResetSystem -> {
-                                manipulationSystem.resetAnimated(scope)
-                            }
-                        }
-                    }
+							ResetSystem -> {
+								manipulationSystem.resetAnimated(scope)
+							}
+						}
+					}
 
-                    MultiSelectConnectedButtonRow(
-                        entries = ShapesEditTools.entries,
-                        checked = {
-                            when (it) {
-                                ShapesEditTools.SnapOffset -> snapShapesOffset
+					MultiSelectConnectedButtonRow(
+						entries = ShapesEditTools.entries,
+						checked = {
+							when (it) {
+								ShapesEditTools.SnapOffset -> snapShapesOffset
 
-                                ShapesEditTools.SnapCenter -> snapShapesCenter
+								ShapesEditTools.SnapCenter -> snapShapesCenter
 
-                                // ShapesEditTools.SnapScale -> snapShapesScale
-                                ShapesEditTools.SnapAngle -> snapShapeAngle
-                            }
-                        }
-                    ) {
-                        when (it) {
-                            ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
+								// ShapesEditTools.SnapScale -> snapShapesScale
+								ShapesEditTools.SnapAngle -> snapShapeAngle
+							}
+						}
+					) {
+						when (it) {
+							ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
 
-                            ShapesEditTools.SnapCenter -> snapShapesCenter = !snapShapesCenter
+							ShapesEditTools.SnapCenter -> snapShapesCenter = !snapShapesCenter
 
-                            // ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
-                            ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
-                        }
-                    }
-                }
-            }
-        }
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .onSizeChanged { size ->
-                        // Updates the center and available width variables, that depends on the phone size and orientation.
-                        // Computes the larger size between width and height to ensure all points belongs to the hittable zone
-                        // The visual points and hitboxes are separated due to the need of a precise pointer input.
-                        // Should be synchronized using the [computePointPosition] function that relies on common
-                        // center to output the points position on screen
+							// ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
+							ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
+						}
+					}
+				}
+			}
+		}
+	) {
+		Box(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.onSizeChanged { size ->
+						// Updates the center and available width variables, that depends on the phone size and orientation.
+						// Computes the larger size between width and height to ensure all points belongs to the hittable zone
+						// The visual points and hitboxes are separated due to the need of a precise pointer input.
+						// Should be synchronized using the [computePointPosition] function that relies on common
+						// center to output the points position on screen
 
-                        val w = size.width.toFloat()
-                        val h = size.height.toFloat()
-                        center = Offset(w / 2f, h / 2f)
-                    }
-        ) {
-            key(currentNest, recomposeTrigger, tempCancelZone) {
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = -offset.value.x * zoom.value
-                            translationY = -offset.value.y * zoom.value
-                            scaleX = zoom.value
-                            scaleY = zoom.value
-                            rotationZ = angle.value
-                            transformOrigin = TransformOrigin(0f, 0f)
-                        }
-                ) {
-                    Canvas(Modifier.fillMaxSize()) {
-                        if (snapShapesOffset && showGridWhenSnappingIsOn) {
-                            backgroundCenteredSquareGrid(
-                                cellSizePx = cellSizeDp,
-                                color = onBackgroundColor,
-                                center = center,
-                                cells = cellNumber
-                            )
-                        }
+						val w = size.width.toFloat()
+						val h = size.height.toFloat()
+						center = Offset(w / 2f, h / 2f)
+					}
+		) {
+			key(currentNest, recomposeTrigger, tempCancelZone) {
+				Box(
+					Modifier
+						.fillMaxSize()
+						.graphicsLayer {
+							translationX = -offset.value.x * zoom.value
+							translationY = -offset.value.y * zoom.value
+							scaleX = zoom.value
+							scaleY = zoom.value
+							rotationZ = angle.value
+							transformOrigin = TransformOrigin(0f, 0f)
+						}
+				) {
+					Canvas(Modifier.fillMaxSize()) {
+						if (snapShapesOffset && showGridWhenSnappingIsOn) {
+							backgroundCenteredSquareGrid(
+								cellSizePx = cellSizeDp,
+								color = onBackgroundColor,
+								center = center,
+								cells = cellNumber
+							)
+						}
 
-                        paths.forEach { (shape, path) ->
-                            val selected = shape.id == selectedShapeId
-                            this.IntersectionShape(
-                                path = path,
-                                shape = shape.snap().highlightedIfSelected(selected, primaryColor),
-                                defaultShape = defaultShape,
-                                center = center,
-                                extraColors = extraColors,
-                                erase = false,
-                                isDefaultEditing = false,
-                                eraseColor = null
-                            )
-                        }
-                    }
+						paths.forEach { (shape, path) ->
+							val selected = shape.id == selectedShapeId
+							this.IntersectionShape(
+								path = path,
+								shape = shape.snap().highlightedIfSelected(selected, primaryColor),
+								defaultShape = defaultShape,
+								center = center,
+								extraColors = extraColors,
+								erase = false,
+								isDefaultEditing = false,
+								eraseColor = null
+							)
+						}
+					}
 
-                    NestOverlay(
-                        center = center,
-                        nest =
-                            currentNest.copy(
-                                intersectionShapes = paths.keys.mapTo(mutableSetOf()) { it.snap() },
-                                cancelZone = tempCancelZone
-                            ),
-                        depth = Int.MAX_VALUE,
-                        eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f),
-                        pointSettingsDisplay = true,
-                        showCancelZone = true,
-                        hideShapes = true
-                    )
+					NestOverlay(
+						center = center,
+						nest =
+							currentNest.copy(
+								intersectionShapes = paths.keys.mapTo(mutableSetOf()) { it.snap() },
+								cancelZone = tempCancelZone
+							),
+						depth = Int.MAX_VALUE,
+						eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f),
+						pointSettingsDisplay = true,
+						showCancelZone = true,
+						hideShapes = true
+					)
 
-                    Canvas(Modifier.fillMaxSize()) {
-                        centerOfNest(center)
-                    }
-                }
-            }
+					Canvas(Modifier.fillMaxSize()) {
+						centerOfNest(center)
+					}
+				}
+			}
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit, isInDragAroundMode, nestId) {
-                        detectTransformGestures(
-                            panZoomLock = true,
-                            onGestureStart = {
-                                if (!isInDragAroundMode) {
-                                    netOffsetChange = Offset.Zero
-                                    witnessShape = paths.keys.find { it.id == selectedShapeId }?.snap()
-                                }
-                            },
-                            onGestureEnd = { totalPanChange: Offset, totalZoomChange: Float, totalRotationChange: Float ->
-                                if (!isInDragAroundMode) {
-                                    witnessShape = null
+			Box(
+				Modifier
+					.fillMaxSize()
+					.pointerInput(Unit, isInDragAroundMode, nestId) {
+						detectTransformGestures(
+							panZoomLock = true,
+							onGestureStart = {
+								if (!isInDragAroundMode) {
+									netOffsetChange = Offset.Zero
+									witnessShape = paths.keys.find { it.id == selectedShapeId }?.snap()
+								}
+							},
+							onGestureEnd = { totalPanChange: Offset, totalZoomChange: Float, totalRotationChange: Float ->
+								if (!isInDragAroundMode) {
+									witnessShape = null
 
-                                    if ((totalPanChange.getDistanceSquared() > 0f) || totalZoomChange != 0f || totalRotationChange != 0f) {
-                                        saveCurrentNest()
-                                        pointsService.movePointsInShapeBy(
-                                            netOffsetChange = netOffsetChange,
-                                            nestId = nestId,
-                                            shapeId = selectedShapeId
-                                        )
-                                    }
-                                }
-                            }
-                        ) { centroid, pan, gestureZoom, gestureRotate ->
-                            if (isInDragAroundMode) {
-                                val oldScale = zoom.value
-                                val newScale = zoom.value * gestureZoom
-                                val newAngle = angle.value + gestureRotate
+									if ((totalPanChange.getDistanceSquared() > 0f) || totalZoomChange != 0f || totalRotationChange != 0f) {
+										saveCurrentNest()
+										pointsService.movePointsInShapeBy(
+											netOffsetChange = netOffsetChange,
+											nestId = nestId,
+											shapeId = selectedShapeId
+										)
+									}
+								}
+							}
+						) { centroid, pan, gestureZoom, gestureRotate ->
+							if (isInDragAroundMode) {
+								val oldScale = zoom.value
+								val newScale = zoom.value * gestureZoom
+								val newAngle = angle.value + gestureRotate
 
-                                val newOffset =
-                                    (offset.value + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
+								val newOffset =
+									(offset.value + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
 
-                                // For natural zooming and rotating, the centroid of the gesture should
-                                // be the fixed point where zooming and rotating occurs.
-                                // We compute where the centroid was (in the pre-transformed coordinate
-                                // space), and then compute where it will be after this delta.
-                                // We then compute what the new offset should be to keep the centroid
-                                // visually stationary for rotating and zooming, and also apply the pan.
-                                scope.launch {
-                                    offset.snapTo(newOffset)
-                                    zoom.snapTo(newScale)
-                                    angle.snapTo(newAngle)
-                                }
-                            } else {
-                                val shapeId = selectedShapeId ?: return@detectTransformGestures
-                                val shape = paths.keys.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
+								// For natural zooming and rotating, the centroid of the gesture should
+								// be the fixed point where zooming and rotating occurs.
+								// We compute where the centroid was (in the pre-transformed coordinate
+								// space), and then compute where it will be after this delta.
+								// We then compute what the new offset should be to keep the centroid
+								// visually stationary for rotating and zooming, and also apply the pan.
+								scope.launch {
+									offset.snapTo(newOffset)
+									zoom.snapTo(newScale)
+									angle.snapTo(newAngle)
+								}
+							} else {
+								val shapeId = selectedShapeId ?: return@detectTransformGestures
+								val shape = paths.keys.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
 
-                                val oldScale = shape.getScale(defaultShape, false)
-                                val newScale = oldScale * gestureZoom
-                                val newAngle = (shape.getRotation(defaultShape, false) + gestureRotate) % 360
+								val oldScale = shape.getScale(defaultShape, false)
+								val newScale = oldScale * gestureZoom
+								val newAngle = (shape.getRotation(defaultShape, false) + gestureRotate) % 360
 
-                                val canvasCentroid = manipulationSystem.normalize(manipulationSystem.transform(centroid))
+								val canvasCentroid = manipulationSystem.normalize(manipulationSystem.transform(centroid))
 
-                                // Same thing as above but there's no need to apply the offset (and in fact it'll break the whole thing)
-                                // because the pan is the amount of drag
-                                val canvasPan = (pan / zoom.value).rotateBy(-angle.value)
+								// Same thing as above but there's no need to apply the offset (and in fact it'll break the whole thing)
+								// because the pan is the amount of drag
+								val canvasPan = (pan / zoom.value).rotateBy(-angle.value)
 
-                                // Compute the new offset that keeps the gesture centroid
-                                // visually fixed during rotation and scaling.
-                                //
-                                // Derivation:
-                                //   C  = center + O + R(θ) * d       (pre-gesture)
-                                //   C' = center + N + R(θ+Δθ) * d'  (post-gesture)
-                                // where:
-                                //   C  = canvas centroid,
-                                //   O = old offset
-                                //   θ = old angle
-                                //   d  = local point offset from shape center
-                                //   N  = new offset, Δθ = rotation delta,
-                                //   d' = d * (newScale / oldScale) (path scales linearly)
-                                //
-                                // Solving for N with C' = C + pan:
-                                //   N = (C - center) + pan
-                                //       - R(Δθ) * (C - center - O) * (newScale / oldScale)
-                                val newOffset =
-                                    canvasPan + canvasCentroid -
-                                        (canvasCentroid - shape.getOffset(defaultShape, false)).rotateBy(gestureRotate) *
-                                        (newScale / oldScale)
+								// Compute the new offset that keeps the gesture centroid
+								// visually fixed during rotation and scaling.
+								//
+								// Derivation:
+								//   C  = center + O + R(θ) * d       (pre-gesture)
+								//   C' = center + N + R(θ+Δθ) * d'  (post-gesture)
+								// where:
+								//   C  = canvas centroid,
+								//   O = old offset
+								//   θ = old angle
+								//   d  = local point offset from shape center
+								//   N  = new offset, Δθ = rotation delta,
+								//   d' = d * (newScale / oldScale) (path scales linearly)
+								//
+								// Solving for N with C' = C + pan:
+								//   N = (C - center) + pan
+								//       - R(Δθ) * (C - center - O) * (newScale / oldScale)
+								val newOffset =
+									canvasPan + canvasCentroid -
+										(canvasCentroid - shape.getOffset(defaultShape, false)).rotateBy(gestureRotate) *
+										(newScale / oldScale)
 
-                                val newShape =
-                                    shape.copy(
-                                        offset = newOffset,
-                                        scale = newScale,
-                                        rotation = newAngle.toInt()
-                                    )
+								val newShape =
+									shape.copy(
+										offset = newOffset,
+										scale = newScale,
+										rotation = newAngle.toInt()
+									)
 
-                                val newSnappedShape = newShape.snap()
+								val newSnappedShape = newShape.snap()
 
-                                netOffsetChange = newSnappedShape.getOffset(defaultShape, false) - witnessShape!!.getOffset(defaultShape, false)
+								netOffsetChange = newSnappedShape.getOffset(defaultShape, false) - witnessShape!!.getOffset(defaultShape, false)
 
-                                paths -= shape
-                                addPath(newShape)
+								paths -= shape
+								addPath(newShape)
 
-                                points
-                                    .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
-                                    .forEach { (_, point) ->
-                                        point.pos =
-                                            pointsService.computePointOffsetRealTime(
-                                                point = point.copy(offset = point.offset + netOffsetChange),
-                                                shape = newSnappedShape
-                                            )
-                                    }
-                            }
-                        }
-                    }
-            )
-        }
-    }
+								points
+									.filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
+									.forEach { (_, point) ->
+										point.pos =
+											pointsService.computePointOffsetRealTime(
+												point = point.copy(offset = point.offset + netOffsetChange),
+												shape = newSnappedShape
+											)
+									}
+							}
+						}
+					}
+			)
+		}
+	}
 
-    if (showMoreSheet) {
-        DragonModalBottomSheet(
-            onDismissRequest = { showMoreSheet = false }
-        ) {
-            DragonSettingsGroup(R.string.nest_info) {
-                Column(
-                    modifier = Modifier.padding(10.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.shapes_number, currentNest.getInterSectionShapes(defaultNest, false).size),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = stringResource(R.string.current_nest, nestId),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                HorizontalDivider(Modifier.padding(horizontal = 10.dp))
+	if (showMoreSheet) {
+		DragonModalBottomSheet(
+			onDismissRequest = { showMoreSheet = false }
+		) {
+			DragonSettingsGroup(R.string.nest_info) {
+				Column(
+					modifier = Modifier.padding(10.dp)
+				) {
+					Text(
+						text = stringResource(R.string.shapes_number, currentNest.getInterSectionShapes(defaultNest, false).size),
+						modifier = Modifier.fillMaxWidth()
+					)
+					Text(
+						text = stringResource(R.string.current_nest, nestId),
+						modifier = Modifier.fillMaxWidth()
+					)
+				}
+				HorizontalDivider(Modifier.padding(horizontal = 10.dp))
 
-                Setting(UiSettingsStore.showGridWhenSnappingIsOn)
-                Setting(UiSettingsStore.nestsCellSizeDp)
-            }
-        }
-    }
+				Setting(UiSettingsStore.showGridWhenSnappingIsOn)
+				Setting(UiSettingsStore.nestsCellSizeDp)
+			}
+		}
+	}
 
-    if (showEditCurrentNestSheet) {
-        NestEditor(
-            currentNest = currentNest,
-            defaultNest = defaultNest,
-            defaultShape = defaultShape,
-            isDefaultEditing = false,
-            tempCancelZone = tempCancelZone,
-            onUpdateCancelZone = {
-                tempCancelZone = it ?: defaultNest.cancelZone ?: Nest.defaultCancelZone
-            },
-            onUpdateShapes = { changedShapes ->
-                paths.clear()
-                changedShapes.forEach { (shape, offset) ->
-                    addPath(shape)
-                    points
-                        .filter { (_, point) -> point.nestId == nestId && point.shapeId == shape.id }
-                        .forEach { (_, point) ->
-                            val pointChanged = point.copy(offset = point.offset + offset)
-                            point.pos = pointsService.computePointOffsetRealTime(pointChanged, shape.snap())
-                        }
-                }
-            }
-        ) { newNest, changedShapes ->
-            pointsService.editNest(nestId) { newNest }
+	if (showEditCurrentNestSheet) {
+		NestEditor(
+			currentNest = currentNest,
+			defaultNest = defaultNest,
+			defaultShape = defaultShape,
+			isDefaultEditing = false,
+			tempCancelZone = tempCancelZone,
+			onUpdateCancelZone = {
+				tempCancelZone = it ?: defaultNest.cancelZone ?: Nest.defaultCancelZone
+			},
+			onUpdateShapes = { changedShapes ->
+				paths.clear()
+				changedShapes.forEach { (shape, offset) ->
+					addPath(shape)
+					points
+						.filter { (_, point) -> point.nestId == nestId && point.shapeId == shape.id }
+						.forEach { (_, point) ->
+							val pointChanged = point.copy(offset = point.offset + offset)
+							point.pos = pointsService.computePointOffsetRealTime(pointChanged, shape.snap())
+						}
+				}
+			}
+		) { newNest, changedShapes ->
+			pointsService.editNest(nestId) { newNest }
 
-            changedShapes.forEach { (shape, offset) ->
-                pointsService.movePointsInShapeBy(
-                    netOffsetChange = offset,
-                    nestId = nestId,
-                    shapeId = shape.id
-                )
-            }
+			changedShapes.forEach { (shape, offset) ->
+				pointsService.movePointsInShapeBy(
+					netOffsetChange = offset,
+					nestId = nestId,
+					shapeId = shape.id
+				)
+			}
 
-            showEditCurrentNestSheet = false
-        }
-    }
+			showEditCurrentNestSheet = false
+		}
+	}
 
-    if (showEditDefaultNestSheet) {
-        NestEditor(
-            currentNest = defaultNest,
-            defaultNest = defaultNest,
-            defaultShape = defaultShape,
-            isDefaultEditing = true,
-            tempCancelZone = tempCancelZone,
-            onUpdateShapes = { /* no-op */ },
-            onUpdateCancelZone = {
-                tempCancelZone = currentNest.getCancelZone(defaultNest, true)
-            }
-        ) { newNest, _ ->
-            pointsService.editDefaultNest(newNest)
-            showEditDefaultNestSheet = false
-        }
-    }
+	if (showEditDefaultNestSheet) {
+		NestEditor(
+			currentNest = defaultNest,
+			defaultNest = defaultNest,
+			defaultShape = defaultShape,
+			isDefaultEditing = true,
+			tempCancelZone = tempCancelZone,
+			onUpdateShapes = { /* no-op */ },
+			onUpdateCancelZone = {
+				tempCancelZone = currentNest.getCancelZone(defaultNest, true)
+			}
+		) { newNest, _ ->
+			pointsService.editDefaultNest(newNest)
+			showEditDefaultNestSheet = false
+		}
+	}
 
-    if (showEditDefaultShapeDialog) {
-        IntersectionShapeEditor(
-            shape = defaultShape,
-            isDefaultEditing = true,
-            defaultShape = defaultShape,
-            onChangeShape = { new ->
-                pointsService.editDefaultShape(new)
-            },
-            onReset = {
-                pointsService.editDefaultShape(IntersectionShape(-1))
-            }
-        ) { showEditDefaultShapeDialog = false }
-    }
+	if (showEditDefaultShapeDialog) {
+		IntersectionShapeEditor(
+			shape = defaultShape,
+			isDefaultEditing = true,
+			defaultShape = defaultShape,
+			onChangeShape = { new ->
+				pointsService.editDefaultShape(new)
+			},
+			onReset = {
+				pointsService.editDefaultShape(IntersectionShape(-1))
+			}
+		) { showEditDefaultShapeDialog = false }
+	}
 
-    if (showNestManagementDialog) {
-        NestManagementSheet(
-            onSelect = {
-                saveCurrentNest()
-                selectedShapeId = null
-                nestNavigation.goToNest(it.id)
-                showNestManagementDialog = false
-            }
-        ) { showNestManagementDialog = false }
-    }
+	if (showNestManagementDialog) {
+		NestManagementSheet(
+			onSelect = {
+				saveCurrentNest()
+				selectedShapeId = null
+				nestNavigation.goToNest(it.id)
+				showNestManagementDialog = false
+			}
+		) { showNestManagementDialog = false }
+	}
 
-    DebugZone(DebugSettingsStore.nestDebugInfo) {
-        Text("Paths size: ${paths.size}")
-        Text("RecomposeTrigger: $recomposeTrigger")
-        Text(currentNest.intersectionShapes?.toString() ?: "null")
-    }
+	DebugZone(DebugSettingsStore.nestDebugInfo) {
+		Text("Paths size: ${paths.size}")
+		Text("RecomposeTrigger: $recomposeTrigger")
+		Text(currentNest.intersectionShapes?.toString() ?: "null")
+	}
 }

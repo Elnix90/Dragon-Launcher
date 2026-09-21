@@ -17,40 +17,40 @@ import org.elnix.dragonlauncher.points.PointsService
 @Module
 @InstallIn(SingletonComponent::class)
 internal object IconsModule {
-    @Provides
-    @Singleton
-    fun provideIconSettingsRepository(
-        @ApplicationContext ctx: Context
-    ): IconSettingsRepository = IconSettingsRepository(ctx)
+	@Provides
+	@Singleton
+	fun provideIconSettingsRepository(
+		@ApplicationContext ctx: Context
+	): IconSettingsRepository = IconSettingsRepository(ctx)
 
-    @Provides
-    @Singleton
-    fun provideIconPackManager(
-        @ApplicationContext ctx: Context,
-        appDatabase: AppDatabase
-    ): IconPackManager =
-        IconPackManager(ctx, appDatabase)
+	@Provides
+	@Singleton
+	fun provideIconPackManager(
+		@ApplicationContext ctx: Context,
+		appDatabase: AppDatabase
+	): IconPackManager =
+		IconPackManager(ctx, appDatabase)
 
-    @Provides
-    @Singleton
-    fun provideIconsService(
-        @ApplicationContext ctx: Context,
-        iconPackManager: IconPackManager,
-        iconSettingsRepository: IconSettingsRepository,
-        appRepository: AppRepository,
-        appOverridesManager: AppOverridesManager,
-        shortcutRepository: AppShortcutRepository,
-        pointsService: PointsService,
-        colorService: ColorService
-    ): IconService =
-        IconService(
-            ctx = ctx,
-            iconPackManager = iconPackManager,
-            iconSettingsRepository = iconSettingsRepository,
-            appRepository = appRepository,
-            shortcutRepository = shortcutRepository,
-            appOverrideManager = appOverridesManager,
-            pointService = pointsService,
-            colorService = colorService
-        )
+	@Provides
+	@Singleton
+	fun provideIconsService(
+		@ApplicationContext ctx: Context,
+		iconPackManager: IconPackManager,
+		iconSettingsRepository: IconSettingsRepository,
+		appRepository: AppRepository,
+		appOverridesManager: AppOverridesManager,
+		shortcutRepository: AppShortcutRepository,
+		pointsService: PointsService,
+		colorService: ColorService
+	): IconService =
+		IconService(
+			ctx = ctx,
+			iconPackManager = iconPackManager,
+			iconSettingsRepository = iconSettingsRepository,
+			appRepository = appRepository,
+			shortcutRepository = shortcutRepository,
+			appOverrideManager = appOverridesManager,
+			pointService = pointsService,
+			colorService = colorService
+		)
 }

@@ -22,59 +22,59 @@ import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalFullscreen
 @Composable
 @ExperimentalMaterial3Api
 fun DragonModalBottomSheet(
-    onDismissRequest: () -> Unit,
-    sheetGesturesEnabled: Boolean = true,
-    skipPartiallyExpanded: Boolean = false,
-    content: @Composable ColumnScope.() -> Unit
+	onDismissRequest: () -> Unit,
+	sheetGesturesEnabled: Boolean = true,
+	skipPartiallyExpanded: Boolean = false,
+	content: @Composable ColumnScope.() -> Unit
 ) {
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetGesturesEnabled = sheetGesturesEnabled,
-        sheetState = rememberBottomSheetState(skipPartiallyExpanded),
-        properties = properties,
-        contentWindowInsets = {
-            WindowInsets.safeDrawing.add(
-                WindowInsets(
-                    left = 15.dp,
-                    right = 15.dp,
-                    top = 0.dp,
-                    bottom = 15.dp
-                )
-            )
-        }
-    ) {
-        // AHAHAHAHAHAHAHAHA FUCK ITTT
-        // FUUUUUUUUUUUCK ANDROID AND YOUR WINDOWS VIEWS!!!!
-        // I FINALLY MANAGED TO MAKE IT!!!!!!!!!!
-        // THE SHEET IS NOT FULLSCREEN WHEN IT APPEARS NOWWWWWW
+	ModalBottomSheet(
+		onDismissRequest = onDismissRequest,
+		sheetGesturesEnabled = sheetGesturesEnabled,
+		sheetState = rememberBottomSheetState(skipPartiallyExpanded),
+		properties = properties,
+		contentWindowInsets = {
+			WindowInsets.safeDrawing.add(
+				WindowInsets(
+					left = 15.dp,
+					right = 15.dp,
+					top = 0.dp,
+					bottom = 15.dp
+				)
+			)
+		}
+	) {
+		// AHAHAHAHAHAHAHAHA FUCK ITTT
+		// FUUUUUUUUUUUCK ANDROID AND YOUR WINDOWS VIEWS!!!!
+		// I FINALLY MANAGED TO MAKE IT!!!!!!!!!!
+		// THE SHEET IS NOT FULLSCREEN WHEN IT APPEARS NOWWWWWW
 
-        val view = LocalView.current
-        val fullscreen = LocalFullscreen.current
-        val dialogWindow = (view.parent as? DialogWindowProvider)?.window
+		val view = LocalView.current
+		val fullscreen = LocalFullscreen.current
+		val dialogWindow = (view.parent as? DialogWindowProvider)?.window
 
-        if (fullscreen) {
-            SideEffect {
-                dialogWindow?.let { window ->
-                    val controller = WindowInsetsControllerCompat(window, window.decorView)
-                    controller.hide(WindowInsetsCompat.Type.systemBars())
-                    controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                }
-            }
-        }
+		if (fullscreen) {
+			SideEffect {
+				dialogWindow?.let { window ->
+					val controller = WindowInsetsControllerCompat(window, window.decorView)
+					controller.hide(WindowInsetsCompat.Type.systemBars())
+					controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+				}
+			}
+		}
 
-        content()
-    }
+		content()
+	}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): SheetState =
-    rememberBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        enabledValues =
-            buildSet {
-                add(SheetValue.Hidden)
-                if (!skipPartiallyExpanded) add(SheetValue.PartiallyExpanded)
-                add(SheetValue.Expanded)
-            }
-    )
+	rememberBottomSheetState(
+		initialValue = SheetValue.Hidden,
+		enabledValues =
+			buildSet {
+				add(SheetValue.Hidden)
+				if (!skipPartiallyExpanded) add(SheetValue.PartiallyExpanded)
+				add(SheetValue.Expanded)
+			}
+	)

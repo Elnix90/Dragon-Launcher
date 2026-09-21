@@ -13,11 +13,11 @@ import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 
 @OptIn(ExperimentalSerializationApi::class)
 public object ColorSerializer : KSerializer<Color> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Color) {
-        encoder.encodeString(value.toHexWithAlpha)
-    }
+	override fun serialize(encoder: Encoder, value: Color) {
+		encoder.encodeString(value.toHexWithAlpha)
+	}
 
-    override fun deserialize(decoder: Decoder): Color = decoder.decodeString().toColor()
+	override fun deserialize(decoder: Decoder): Color = decoder.decodeString().toColor()
 }

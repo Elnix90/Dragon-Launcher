@@ -10,31 +10,31 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowLine
 private val lineSize = 20.dp
 
 fun DrawScope.centerOfNest(center: Offset) {
-    val linePx = lineSize.toPx()
+	val linePx = lineSize.toPx()
 
-    val horizontalStart = Offset(center.x - linePx, center.y)
-    val horizontalEnd = Offset(center.x + linePx, center.y)
+	val horizontalStart = Offset(center.x - linePx, center.y)
+	val horizontalEnd = Offset(center.x + linePx, center.y)
 
-    val verticalStart = Offset(center.x, center.y - linePx)
-    val verticalEnd = Offset(center.x, center.y + linePx)
+	val verticalStart = Offset(center.x, center.y - linePx)
+	val verticalEnd = Offset(center.x, center.y + linePx)
 
-    drawNeonGlowLine(
-        start = horizontalStart,
-        end = horizontalEnd,
-        color = Color.Red,
-        lineStrokeWidth = 1f,
-        erase = false,
-        eraseColor = null,
-        glow = CustomGlow(5.dp)
-    )
+	drawNeonGlowLine(
+		start = horizontalStart,
+		end = horizontalEnd,
+		color = Color.Red,
+		lineStrokeWidth = 1f,
+		erase = false,
+		eraseColor = null,
+		glow = CustomGlow(5.dp)
+	)
 
-    drawNeonGlowLine(
-        start = verticalStart,
-        end = verticalEnd,
-        color = Color.Red,
-        lineStrokeWidth = 1f,
-        erase = false,
-        eraseColor = null,
-        glow = CustomGlow(5.dp)
-    )
+	drawNeonGlowLine(
+		start = verticalStart,
+		end = verticalEnd,
+		color = Color.Red,
+		lineStrokeWidth = 1f,
+		erase = false,
+		eraseColor = null,
+		glow = CustomGlow(5.dp)
+	)
 }

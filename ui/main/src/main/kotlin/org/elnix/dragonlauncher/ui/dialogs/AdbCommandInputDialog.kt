@@ -23,57 +23,57 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
 fun AdbCommandInputDialog(
-    onDismiss: () -> Unit,
-    showLeaveEmptyNotice: Boolean,
-    onActionSelected: (Action.RunAdbCommand) -> Unit
+	onDismiss: () -> Unit,
+	showLeaveEmptyNotice: Boolean,
+	onActionSelected: (Action.RunAdbCommand) -> Unit
 ) {
-    var commandText by remember { mutableStateOf("adb ") }
-    var toast by remember { mutableStateOf(false) }
+	var commandText by remember { mutableStateOf("adb ") }
+	var toast by remember { mutableStateOf(false) }
 
-    CustomAlertDialog(
-        scroll = false,
-        alignment = Alignment.Center,
-        modifier = Modifier.padding(40.dp),
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.enter_adb_command)) },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = commandText,
-                    onValueChange = {
-                        commandText = it
-                    },
-                    singleLine = true,
-                    label = { Text(stringResource(R.string.adb_command)) },
-                    colors = AppObjectsColors.outlinedTextFieldColors()
-                )
+	CustomAlertDialog(
+		scroll = false,
+		alignment = Alignment.Center,
+		modifier = Modifier.padding(40.dp),
+		onDismissRequest = onDismiss,
+		title = { Text(stringResource(R.string.enter_adb_command)) },
+		text = {
+			Column {
+				OutlinedTextField(
+					value = commandText,
+					onValueChange = {
+						commandText = it
+					},
+					singleLine = true,
+					label = { Text(stringResource(R.string.adb_command)) },
+					colors = AppObjectsColors.outlinedTextFieldColors()
+				)
 
-                if (showLeaveEmptyNotice) {
-                    Text(stringResource(R.string.adb_command_leave_empty_notice))
-                }
+				if (showLeaveEmptyNotice) {
+					Text(stringResource(R.string.adb_command_leave_empty_notice))
+				}
 
-                DragonRow(
-                    onClick = {
-                        toast = !toast
-                    }
-                ) {
-                    Checkbox(
-                        checked = toast,
-                        onCheckedChange = {
-                            toast = it
-                        }
-                    )
-                    Text(stringResource(R.string.show_toast))
-                }
-            }
-        },
-        confirmButton = {
-            ValidateCancelButtons(
-                onCancel = onDismiss
-            ) {
-                onActionSelected(Action.RunAdbCommand(commandText, toast))
-                onDismiss()
-            }
-        }
-    )
+				DragonRow(
+					onClick = {
+						toast = !toast
+					}
+				) {
+					Checkbox(
+						checked = toast,
+						onCheckedChange = {
+							toast = it
+						}
+					)
+					Text(stringResource(R.string.show_toast))
+				}
+			}
+		},
+		confirmButton = {
+			ValidateCancelButtons(
+				onCancel = onDismiss
+			) {
+				onActionSelected(Action.RunAdbCommand(commandText, toast))
+				onDismiss()
+			}
+		}
+	)
 }

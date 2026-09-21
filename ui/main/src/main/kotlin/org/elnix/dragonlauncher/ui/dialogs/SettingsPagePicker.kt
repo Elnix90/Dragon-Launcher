@@ -26,39 +26,39 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPagePicker(
-    onDismissRequest: () -> Unit,
-    onSelect: (NavigationRoute) -> Unit
+	onDismissRequest: () -> Unit,
+	onSelect: (NavigationRoute) -> Unit
 ) {
-    DragonModalBottomSheet(onDismissRequest, true) {
-        DialogTitle(stringResource(R.string.pick_a_settings_screen))
-        Spacer(5.dp)
+	DragonModalBottomSheet(onDismissRequest, true) {
+		DialogTitle(stringResource(R.string.pick_a_settings_screen))
+		Spacer(5.dp)
 
-        DragonSettingsGroup {
-            LazyColumnWithScrollIndicator(
-                items = settingsRoutes,
-                modifier = Modifier.heightIn(max = 600.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) { route ->
+		DragonSettingsGroup {
+			LazyColumnWithScrollIndicator(
+				items = settingsRoutes,
+				modifier = Modifier.heightIn(max = 600.dp),
+				verticalArrangement = Arrangement.spacedBy(4.dp)
+			) { route ->
 
-                Row(
-                    modifier =
-                        Modifier.dragonSettingGroup {
-                            clickable { onSelect(route) }
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(route.icon),
-                        contentDescription = null
-                    )
+				Row(
+					modifier =
+						Modifier.dragonSettingGroup {
+							clickable { onSelect(route) }
+						},
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.spacedBy(10.dp)
+				) {
+					Icon(
+						painter = painterResource(route.icon),
+						contentDescription = null
+					)
 
-                    Text(
-                        text = stringResource(route.resId),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-            }
-        }
-    }
+					Text(
+						text = stringResource(route.resId),
+						style = MaterialTheme.typography.labelMedium
+					)
+				}
+			}
+		}
+	}
 }

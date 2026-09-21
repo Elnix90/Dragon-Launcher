@@ -33,20 +33,20 @@ import org.elnix.dragonlauncher.ui.base.modifiers.conditional
  */
 @Composable
 fun LockScreenScaffold(content: @Composable (PaddingValues) -> Unit) {
-    val secretUnlockButton by BehaviorSettingsStore.secretUnlockButton.asState()
+	val secretUnlockButton by BehaviorSettingsStore.secretUnlockButton.asState()
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f),
-        modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets.safeDrawing
-    ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            content(paddingValues)
-            if (secretUnlockButton) {
-                SecretUnlockButton(true)
-            }
-        }
-    }
+	Scaffold(
+		containerColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f),
+		modifier = Modifier.fillMaxSize(),
+		contentWindowInsets = WindowInsets.safeDrawing
+	) { paddingValues ->
+		Box(modifier = Modifier.fillMaxSize()) {
+			content(paddingValues)
+			if (secretUnlockButton) {
+				SecretUnlockButton(true)
+			}
+		}
+	}
 }
 
 /**
@@ -58,23 +58,23 @@ fun LockScreenScaffold(content: @Composable (PaddingValues) -> Unit) {
  */
 @Composable
 fun SecretUnlockButton(
-    enabled: Boolean,
-    securityViewModel: SecurityViewModel = activityViewModel()
+	enabled: Boolean,
+	securityViewModel: SecurityViewModel = activityViewModel()
 ) {
-    Box(
-        modifier =
-            Modifier
-                .size(50.dp)
-                .offset(y = 120.dp)
-                .conditional(!enabled) {
-                    border(1.dp, Color.White)
-                    background(Color.Gray.alphaMultiplier(0.5f))
-                }.clickable(
-                    indication = null,
-                    interactionSource = null,
-                    enabled = enabled
-                ) {
-                    securityViewModel.removeLock()
-                }
-    )
+	Box(
+		modifier =
+			Modifier
+				.size(50.dp)
+				.offset(y = 120.dp)
+				.conditional(!enabled) {
+					border(1.dp, Color.White)
+					background(Color.Gray.alphaMultiplier(0.5f))
+				}.clickable(
+					indication = null,
+					interactionSource = null,
+					enabled = enabled
+				) {
+					securityViewModel.removeLock()
+				}
+	)
 }

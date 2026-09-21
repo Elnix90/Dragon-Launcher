@@ -6,11 +6,11 @@ import org.gradle.api.Project
 
 @Suppress("unused")
 class DragonAndroidComposePlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        target.pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+	override fun apply(target: Project) {
+		target.pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
 
-        target.extensions.configure(CommonExtension::class.java) {
-            buildFeatures.compose = true
-        }
-    }
+		target.extensions.configure(CommonExtension::class.java) {
+			buildFeatures.compose = true
+		}
+	}
 }

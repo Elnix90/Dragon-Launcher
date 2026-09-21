@@ -5,6 +5,6 @@ import androidx.compose.runtime.compositionLocalOf
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 
 val LocalStatusBarElements: ProvidableCompositionLocal<List<StatusBar>> =
-    compositionLocalOf {
-        error("No status bar elements provided")
-    }
+	compositionLocalOf {
+		error("No status bar elements provided")
+	}

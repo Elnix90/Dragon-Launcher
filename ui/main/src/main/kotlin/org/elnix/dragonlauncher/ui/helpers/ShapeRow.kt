@@ -22,61 +22,61 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
 fun DragonGroupScope.ShapeRow(
-    selected: IconShape,
-    title: String = stringResource(R.string.edit_icons_shape),
-    resetEnabled: Boolean,
-    onReset: () -> Unit,
-    onClick: () -> Unit
+	selected: IconShape,
+	title: String = stringResource(R.string.edit_icons_shape),
+	resetEnabled: Boolean,
+	onReset: () -> Unit,
+	onClick: () -> Unit
 ) {
-    Row(
-        modifier =
-            Modifier
-                .dragonSettingGroup {
-                    clickable(onClick = onClick)
-                },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        ShapePreview(
-            iconShape = selected,
-            modifier = Modifier.size(60.dp)
-        )
-        TextWithDescription(
-            text = title,
-            description = stringResource(R.string.edit_icons_shape_desc),
-            modifier = Modifier.weight(1f)
-        )
-        ResetIcon(resetEnabled, onReset)
-    }
+	Row(
+		modifier =
+			Modifier
+				.dragonSettingGroup {
+					clickable(onClick = onClick)
+				},
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.SpaceBetween
+	) {
+		ShapePreview(
+			iconShape = selected,
+			modifier = Modifier.size(60.dp)
+		)
+		TextWithDescription(
+			text = title,
+			description = stringResource(R.string.edit_icons_shape_desc),
+			modifier = Modifier.weight(1f)
+		)
+		ResetIcon(resetEnabled, onReset)
+	}
 }
 
 @Composable
 fun SmallShapeRow(
-    selected: IconShape,
-    onReset: () -> Unit,
-    onClick: () -> Unit
+	selected: IconShape,
+	onReset: () -> Unit,
+	onClick: () -> Unit
 ) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.large)
-                .clickable { onClick() }
-                .background(MaterialTheme.colorScheme.surface),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        ShapePreview(
-            iconShape = selected,
-            modifier = Modifier.size(40.dp)
-        )
+	Row(
+		modifier =
+			Modifier
+				.fillMaxWidth()
+				.clip(MaterialTheme.shapes.large)
+				.clickable { onClick() }
+				.background(MaterialTheme.colorScheme.surface),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.SpaceBetween
+	) {
+		ShapePreview(
+			iconShape = selected,
+			modifier = Modifier.size(40.dp)
+		)
 
-        Text(
-            text = stringResource(R.string.shape),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+		Text(
+			text = stringResource(R.string.shape),
+			style = MaterialTheme.typography.bodyLarge,
+			color = MaterialTheme.colorScheme.onSurface
+		)
 
-        ResetIcon(onReset = onReset)
-    }
+		ResetIcon(onReset = onReset)
+	}
 }

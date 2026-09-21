@@ -10,25 +10,25 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 @Immutable
 @SerialName("Widget")
 public data class Widget(
-    val id: Int,
-    val appWidgetId: Int? = null,
-    val nestId: Int?,
-    val action: Action,
-    val spanX: Float = 1f,
-    val spanY: Float = 1f,
-    val x: Float = 0f,
-    val y: Float = 0f,
-    val angle: Float = 0f,
-    val ghosted: Boolean? = false,
-    val foreground: Boolean? = true,
-    val shape: IconShape? = null
+	val id: Int,
+	val appWidgetId: Int? = null,
+	val nestId: Int?,
+	val action: Action,
+	val spanX: Float = 1f,
+	val spanY: Float = 1f,
+	val x: Float = 0f,
+	val y: Float = 0f,
+	val angle: Float = 0f,
+	val ghosted: Boolean? = false,
+	val foreground: Boolean? = true,
+	val shape: IconShape? = null
 ) {
-    public companion object {
-        public const val defaultGhosted: Boolean = false
-        public const val defaultForeground: Boolean = true
+	public companion object {
+		public const val defaultGhosted: Boolean = false
+		public const val defaultForeground: Boolean = true
 
-        public const val MIN_SIZE: Float = 1.5f
+		public const val MIN_SIZE: Float = 1.5f
 
-        public object WidgetsJson : DragonJson<List<Widget>>()
-    }
+		public object WidgetsJson : DragonJson<List<Widget>>()
+	}
 }

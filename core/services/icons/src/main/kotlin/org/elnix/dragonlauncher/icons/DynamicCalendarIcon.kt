@@ -17,74 +17,74 @@ import java.time.Instant
 import java.time.ZoneId
 
 internal class DynamicCalendarIcon(
-    val resources: Resources,
-    val resourceIds: IntArray,
-    val tint: Int?,
-    val isThemed: Boolean = false
+	val resources: Resources,
+	val resourceIds: IntArray,
+	val tint: Int?,
+	val isThemed: Boolean = false
 ) : DynamicLauncherIcon,
-    TransformableDynamicLauncherIcon {
-    private var transformations: List<LauncherIconTransformation> = emptyList()
+	TransformableDynamicLauncherIcon {
+	private var transformations: List<LauncherIconTransformation> = emptyList()
 
-    init {
-        if (resourceIds.size < 31) throw IllegalArgumentException("DynamicCalendarIcon resourceIds must at least have 31 items")
-    }
+	init {
+		if (resourceIds.size < 31) throw IllegalArgumentException("DynamicCalendarIcon resourceIds must at least have 31 items")
+	}
 
-    override suspend fun getIcon(time: Long): StaticLauncherIcon =
-        withContext(Dispatchers.IO) {
-            val day = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).dayOfMonth
-            val resId = resourceIds[day - 1]
+	override suspend fun getIcon(time: Long): StaticLauncherIcon =
+		withContext(Dispatchers.IO) {
+			val day = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).dayOfMonth
+			val resId = resourceIds[day - 1]
 
-            val adaptiveIcon = AdaptiveIconDrawableCompat.from(resources, resId)
+			val adaptiveIcon = AdaptiveIconDrawableCompat.from(resources, resId)
 
-            var icon =
-                adaptiveIcon?.toLauncherIcon(themed = isThemed, tint = tint)
-                    ?: (
-                        try {
-                            val drawable = ResourcesCompat.getDrawable(resources, resId, null)
+			var icon =
+				adaptiveIcon?.toLauncherIcon(themed = isThemed, tint = tint)
+					?: (
+						try {
+							val drawable = ResourcesCompat.getDrawable(resources, resId, null)
 
-                            when {
-                                drawable is AdaptiveIconDrawable -> {
-                                    AdaptiveIconDrawableCompat
-                                        .from(
-                                            drawable
-                                        ).toLauncherIcon(themed = isThemed, tint = tint)
-                                }
+							when {
+								drawable is AdaptiveIconDrawable -> {
+									AdaptiveIconDrawableCompat
+										.from(
+											drawable
+										).toLauncherIcon(themed = isThemed, tint = tint)
+								}
 
-                                drawable != null -> {
-                                    StaticLauncherIcon(
-                                        foregroundLayer =
-                                            StaticIconLayer(
-                                                icon = drawable,
-                                                scale = 1f,
-                                                tint = tint
-                                            ),
-                                        backgroundLayer = TransparentLayer
-                                    )
-                                }
+								drawable != null -> {
+									StaticLauncherIcon(
+										foregroundLayer =
+											StaticIconLayer(
+												icon = drawable,
+												scale = 1f,
+												tint = tint
+											),
+										backgroundLayer = TransparentLayer
+									)
+								}
 
-                                else -> {
-                                    null
-                                }
-                            }
-                        } catch (e: Resources.NotFoundException) {
-                            null
-                        } ?: return@withContext StaticLauncherIcon(
-                            foregroundLayer =
-                                TextLayer(
-                                    text = day.toString(),
-                                    tint = tint
-                                ),
-                            backgroundLayer = TransparentLayer
-                        )
-                    )
+								else -> {
+									null
+								}
+							}
+						} catch (e: Resources.NotFoundException) {
+							null
+						} ?: return@withContext StaticLauncherIcon(
+							foregroundLayer =
+								TextLayer(
+									text = day.toString(),
+									tint = tint
+								),
+							backgroundLayer = TransparentLayer
+						)
+					)
 
-            for (transformation in transformations) {
-                icon = transformation.transform(icon)
-            }
-            return@withContext icon
-        }
+			for (transformation in transformations) {
+				icon = transformation.transform(icon)
+			}
+			return@withContext icon
+		}
 
-    override fun setTransformations(transformations: List<LauncherIconTransformation>) {
-        this.transformations = transformations
-    }
+	override fun setTransformations(transformations: List<LauncherIconTransformation>) {
+		this.transformations = transformations
+	}
 }

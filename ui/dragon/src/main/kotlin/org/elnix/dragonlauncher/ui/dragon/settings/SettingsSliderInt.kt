@@ -17,33 +17,33 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
 fun DragonGroupScope.Setting(
-    setting: IntSettingObject,
-    enabled: Boolean = true,
-    customDesc: ((Int) -> String)? = null,
-    onChange: ((Int) -> Unit)? = null
+	setting: IntSettingObject,
+	enabled: Boolean = true,
+	customDesc: ((Int) -> String)? = null,
+	onChange: ((Int) -> Unit)? = null
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val state by setting.asState()
+	val state by setting.asState()
 
-    var tempState by remember { mutableIntStateOf(state) }
+	var tempState by remember { mutableIntStateOf(state) }
 
-    LaunchedEffect(state) { tempState = state }
+	LaunchedEffect(state) { tempState = state }
 
-    SliderWithLabel(
-        label = stringResource(setting.title!!),
-        description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
-        value = tempState,
-        valueRange = setting.allowedRange,
-        enabled = enabled,
-        resetEnabled = tempState != setting.default,
-        onReset = { scope.launch { setting.reset(ctx) } },
-        onDragStateChange = {
-            scope.launch { setting.set(ctx, tempState) }
-        }
-    ) {
-        tempState = it
-        onChange?.invoke(it)
-    }
+	SliderWithLabel(
+		label = stringResource(setting.title!!),
+		description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
+		value = tempState,
+		valueRange = setting.allowedRange,
+		enabled = enabled,
+		resetEnabled = tempState != setting.default,
+		onReset = { scope.launch { setting.reset(ctx) } },
+		onDragStateChange = {
+			scope.launch { setting.set(ctx, tempState) }
+		}
+	) {
+		tempState = it
+		onChange?.invoke(it)
+	}
 }

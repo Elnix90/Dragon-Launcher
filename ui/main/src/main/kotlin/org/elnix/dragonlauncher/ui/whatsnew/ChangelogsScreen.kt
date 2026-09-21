@@ -15,42 +15,42 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun ChangelogsScreen() {
-    val ctx = LocalContext.current
-    val uriHandler = LocalUriHandler.current
-    val versionCode = ctx.getVersionCode()
+	val ctx = LocalContext.current
+	val uriHandler = LocalUriHandler.current
+	val versionCode = ctx.getVersionCode()
 
-    val updates by produceState(initialValue = emptyList()) {
-        value = loadChangelogs(ctx, versionCode)
-    }
+	val updates by produceState(initialValue = emptyList()) {
+		value = loadChangelogs(ctx, versionCode)
+	}
 
-    SettingsScaffold(
-        title = stringResource(R.string.changelogs),
-        helpText = stringResource(R.string.changelogs_help),
-        resetText = null,
-        onReset = null,
-        lazyContent = {
-            items(updates) { update ->
+	SettingsScaffold(
+		title = stringResource(R.string.changelogs),
+		helpText = stringResource(R.string.changelogs_help),
+		resetText = null,
+		onReset = null,
+		lazyContent = {
+			items(updates) { update ->
 
-                val updateRegex: Regex = "[\\d-.]+".toRegex()
-                val matchResult = updateRegex.find(update.versionName)
+				val updateRegex: Regex = "[\\d-.]+".toRegex()
+				val matchResult = updateRegex.find(update.versionName)
 
-                val link =
-                    if (matchResult != null) {
-                        "https://github.com/Elnix90/Dragon-Launcher/releases/tag/v${matchResult.value}"
-                    } else {
-                        "https://github.com/Elnix90/Dragon-Launcher/releases/latest"
-                    }
+				val link =
+					if (matchResult != null) {
+						"https://github.com/Elnix90/Dragon-Launcher/releases/tag/v${matchResult.value}"
+					} else {
+						"https://github.com/Elnix90/Dragon-Launcher/releases/latest"
+					}
 
-                UpdateCard(
-                    update,
-                    onLongClick = {
-                        ctx.copyToClipboard(link)
-                    },
-                    onClick = {
-                        uriHandler.openUri(link)
-                    }
-                )
-            }
-        }
-    )
+				UpdateCard(
+					update,
+					onLongClick = {
+						ctx.copyToClipboard(link)
+					},
+					onClick = {
+						uriHandler.openUri(link)
+					}
+				)
+			}
+		}
+	)
 }

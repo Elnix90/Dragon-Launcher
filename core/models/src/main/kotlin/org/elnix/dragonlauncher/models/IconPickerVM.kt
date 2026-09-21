@@ -18,44 +18,44 @@ import org.elnix.dragonlauncher.icons.IconService
 import kotlin.time.Duration.Companion.milliseconds
 
 public class IconPickerVM(
-    app: Application,
-    private val iconService: IconService
+	app: Application,
+	private val iconService: IconService
 ) {
-    private val action = Action.LaunchApp(app)
+	private val action = Action.LaunchApp(app)
 
-    public fun getDefaultIcon(size: Int): Flow<CustomIconWithPreview?> =
-        flow {
-            emit(iconService.getUncustomizedDefaultIcon(action, size))
-        }
+	public fun getDefaultIcon(size: Int): Flow<CustomIconWithPreview?> =
+		flow {
+			emit(iconService.getUncustomizedDefaultIcon(action, size))
+		}
 
-    public fun getIconSuggestions(size: Int): Flow<List<CustomIconWithPreview>> =
-        flow {
-            emit(iconService.getCustomIconSuggestions(action, size))
-        }
+	public fun getIconSuggestions(size: Int): Flow<List<CustomIconWithPreview>> =
+		flow {
+			emit(iconService.getCustomIconSuggestions(action, size))
+		}
 
-    public val installedIconPacks: Flow<List<IconPack>> = iconService.getInstalledIconPacks()
+	public val installedIconPacks: Flow<List<IconPack>> = iconService.getInstalledIconPacks()
 
-    public val iconSearchResults: MutableState<List<CustomIconWithPreview>> = mutableStateOf(emptyList())
-    public val isSearchingIcons: MutableState<Boolean> = mutableStateOf(false)
+	public val iconSearchResults: MutableState<List<CustomIconWithPreview>> = mutableStateOf(emptyList())
+	public val isSearchingIcons: MutableState<Boolean> = mutableStateOf(false)
 
-    private var debounceSearchJob: Job? = null
+	private var debounceSearchJob: Job? = null
 
-    public suspend fun searchIcon(query: String, iconPack: IconPack?) {
-        debounceSearchJob?.cancelAndJoin()
-        if (query.isBlank()) {
-            iconSearchResults.value = emptyList()
-            isSearchingIcons.value = false
-            return
-        }
-        withContext(Dispatchers.IO) {
-            debounceSearchJob =
-                launch {
-                    delay(500.milliseconds)
-                    isSearchingIcons.value = true
-                    iconSearchResults.value = emptyList()
-                    iconSearchResults.value = iconService.searchCustomIcons(query, iconPack)
-                    isSearchingIcons.value = false
-                }
-        }
-    }
+	public suspend fun searchIcon(query: String, iconPack: IconPack?) {
+		debounceSearchJob?.cancelAndJoin()
+		if (query.isBlank()) {
+			iconSearchResults.value = emptyList()
+			isSearchingIcons.value = false
+			return
+		}
+		withContext(Dispatchers.IO) {
+			debounceSearchJob =
+				launch {
+					delay(500.milliseconds)
+					isSearchingIcons.value = true
+					iconSearchResults.value = emptyList()
+					iconSearchResults.value = iconService.searchCustomIcons(query, iconPack)
+					isSearchingIcons.value = false
+				}
+		}
+	}
 }

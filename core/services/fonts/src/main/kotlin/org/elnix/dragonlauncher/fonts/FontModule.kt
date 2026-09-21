@@ -11,9 +11,9 @@ import jakarta.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object FontModule {
-    @Provides
-    @Singleton
-    fun provideFontService(
-        @ApplicationContext ctx: Context
-    ): FontService = FontServiceImpl(ctx)
+	@Provides
+	@Singleton
+	fun provideFontService(
+		@ApplicationContext ctx: Context
+	): FontService = FontServiceImpl(ctx)
 }

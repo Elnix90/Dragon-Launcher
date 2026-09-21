@@ -20,31 +20,31 @@ import org.elnix.dragonlauncher.ktx.alphaMultiplier
 
 @Composable
 fun DebugZone(
-    visible: Boolean,
-    content: @Composable ColumnScope.() -> Unit
+	visible: Boolean,
+	content: @Composable ColumnScope.() -> Unit
 ) {
-    if (!visible) return
+	if (!visible) return
 
-    CompositionLocalProvider(
-        LocalContentColor provides Color.White,
-        LocalTextStyle provides MaterialTheme.typography.labelSmall
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.8f))
-                    .padding(10.dp),
-            content = content
-        )
-    }
+	CompositionLocalProvider(
+		LocalContentColor provides Color.White,
+		LocalTextStyle provides MaterialTheme.typography.labelSmall
+	) {
+		Column(
+			modifier =
+				Modifier
+					.clip(MaterialTheme.shapes.small)
+					.background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.8f))
+					.padding(10.dp),
+			content = content
+		)
+	}
 }
 
 @Composable
 fun DebugZone(
-    setting: BooleanSettingObject,
-    content: @Composable ColumnScope.() -> Unit
+	setting: BooleanSettingObject,
+	content: @Composable ColumnScope.() -> Unit
 ) {
-    val isVisible by setting.asState()
-    DebugZone(isVisible, content)
+	val isVisible by setting.asState()
+	DebugZone(isVisible, content)
 }

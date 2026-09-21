@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.IntSize
  * @return the newly created offset
  */
 public inline fun Size.Companion.rect(side: Float): Size =
-    Size(side, side)
+	Size(side, side)
 
 /**
  * Quick ktx to create a [IntSize] whose [width][IntSize.width] and [height][IntSize.height] values are equals
@@ -21,4 +21,4 @@ public inline fun Size.Companion.rect(side: Float): Size =
  * @return the newly created offset
  */
 public inline fun IntSize.Companion.rect(side: Int): IntSize =
-    IntSize(side, side)
+	IntSize(side, side)

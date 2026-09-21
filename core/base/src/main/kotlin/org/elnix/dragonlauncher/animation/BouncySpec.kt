@@ -5,7 +5,7 @@ import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.spring
 
 public fun <T> bouncySpec(): SpringSpec<T> =
-    spring(
-        dampingRatio = Spring.DampingRatioMediumBouncy,
-        stiffness = Spring.StiffnessLow
-    )
+	spring(
+		dampingRatio = Spring.DampingRatioMediumBouncy,
+		stiffness = Spring.StiffnessLow
+	)

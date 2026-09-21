@@ -47,479 +47,479 @@ import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
  * touches outside the popup pass through to the app below.
  */
 public class OverlayReminderService : Service() {
-    public companion object {
-        public const val EXTRA_APP_NAME: String = "extra_app_name"
-        public const val EXTRA_MODE: String = "extra_mode" // "reminder" or "time_warning"
-        public const val EXTRA_SESSION_TIME: String = "extra_session_time"
-        public const val EXTRA_TODAY_TIME: String = "extra_today_time"
-        public const val EXTRA_REMAINING_TIME: String = "extra_remaining_time"
-        public const val EXTRA_HAS_LIMIT: String = "extra_has_limit"
+	public companion object {
+		public const val EXTRA_APP_NAME: String = "extra_app_name"
+		public const val EXTRA_MODE: String = "extra_mode" // "reminder" or "time_warning"
+		public const val EXTRA_SESSION_TIME: String = "extra_session_time"
+		public const val EXTRA_TODAY_TIME: String = "extra_today_time"
+		public const val EXTRA_REMAINING_TIME: String = "extra_remaining_time"
+		public const val EXTRA_HAS_LIMIT: String = "extra_has_limit"
 
-        private const val DISMISS_DELAY = 7000L
+		private const val DISMISS_DELAY = 7000L
 
-        public fun show(
-            ctx: Context,
-            appName: String,
-            sessionTime: String,
-            todayTime: String,
-            remainingTime: String,
-            hasLimit: Boolean,
-            mode: String = "reminder"
-        ) {
-            if (!Settings.canDrawOverlays(ctx)) {
-                logW(OVERLAY_REMINDER_TAG) { "Cannot show overlay: permission not granted" }
-                return
-            }
-            try {
-                val intent =
-                    Intent(ctx, OverlayReminderService::class.java).apply {
-                        putExtra(EXTRA_APP_NAME, appName)
-                        putExtra(EXTRA_SESSION_TIME, sessionTime)
-                        putExtra(EXTRA_TODAY_TIME, todayTime)
-                        putExtra(EXTRA_REMAINING_TIME, remainingTime)
-                        putExtra(EXTRA_HAS_LIMIT, hasLimit)
-                        putExtra(EXTRA_MODE, mode)
-                    }
-                ctx.startService(intent)
-            } catch (e: Exception) {
-                logE(OVERLAY_REMINDER_TAG, e) { "Failed to start overlay service" }
-            }
-        }
-    }
+		public fun show(
+			ctx: Context,
+			appName: String,
+			sessionTime: String,
+			todayTime: String,
+			remainingTime: String,
+			hasLimit: Boolean,
+			mode: String = "reminder"
+		) {
+			if (!Settings.canDrawOverlays(ctx)) {
+				logW(OVERLAY_REMINDER_TAG) { "Cannot show overlay: permission not granted" }
+				return
+			}
+			try {
+				val intent =
+					Intent(ctx, OverlayReminderService::class.java).apply {
+						putExtra(EXTRA_APP_NAME, appName)
+						putExtra(EXTRA_SESSION_TIME, sessionTime)
+						putExtra(EXTRA_TODAY_TIME, todayTime)
+						putExtra(EXTRA_REMAINING_TIME, remainingTime)
+						putExtra(EXTRA_HAS_LIMIT, hasLimit)
+						putExtra(EXTRA_MODE, mode)
+					}
+				ctx.startService(intent)
+			} catch (e: Exception) {
+				logE(OVERLAY_REMINDER_TAG, e) { "Failed to start overlay service" }
+			}
+		}
+	}
 
-    private val colorCardBg = "#E6192133".toColorInt() // dark with slight transparency
-    private val colorCardBorder = "#806C5CE7".toColorInt() // purple border
-    private val colorTextPrimary = "#FFFFFFFF".toColorInt()
-    private val colorTextSecondary = "#B3FFFFFF".toColorInt() // white 70%
-    private val colorAccentTeal = "#FF00CEC9".toColorInt()
-    private val colorDivider = "#33FFFFFF".toColorInt() // white 20%
+	private val colorCardBg = "#E6192133".toColorInt() // dark with slight transparency
+	private val colorCardBorder = "#806C5CE7".toColorInt() // purple border
+	private val colorTextPrimary = "#FFFFFFFF".toColorInt()
+	private val colorTextSecondary = "#B3FFFFFF".toColorInt() // white 70%
+	private val colorAccentTeal = "#FF00CEC9".toColorInt()
+	private val colorDivider = "#33FFFFFF".toColorInt() // white 20%
 
-    // Time warning mode (dark + orange/red accent)
-    private val colorWarningBg = "#E62D1B3D".toColorInt()
-    private val colorWarningBorder = "#80FFA502".toColorInt()
-    private val colorWarningAccent = "#FFFFA502".toColorInt()
-    private val colorWarningText = "#CCFFA502".toColorInt() // orange 80%
+	// Time warning mode (dark + orange/red accent)
+	private val colorWarningBg = "#E62D1B3D".toColorInt()
+	private val colorWarningBorder = "#80FFA502".toColorInt()
+	private val colorWarningAccent = "#FFFFA502".toColorInt()
+	private val colorWarningText = "#CCFFA502".toColorInt() // orange 80%
 
-    private var windowManager: WindowManager? = null
-    private var overlayView: View? = null
-    private val handler = Handler(Looper.getMainLooper())
-    private var pulseAnimator: ValueAnimator? = null
-    private var autoDismissRunnable: Runnable? = null
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+	private var windowManager: WindowManager? = null
+	private var overlayView: View? = null
+	private val handler = Handler(Looper.getMainLooper())
+	private var pulseAnimator: ValueAnimator? = null
+	private var autoDismissRunnable: Runnable? = null
+	private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-    override fun onBind(intent: Intent?): IBinder? = null
+	override fun onBind(intent: Intent?): IBinder? = null
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        try {
-            if (!Settings.canDrawOverlays(this)) {
-                logW(OVERLAY_REMINDER_TAG) { "Overlay permission not granted" }
-                stopSelf()
-                return START_NOT_STICKY
-            }
+	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+		try {
+			if (!Settings.canDrawOverlays(this)) {
+				logW(OVERLAY_REMINDER_TAG) { "Overlay permission not granted" }
+				stopSelf()
+				return START_NOT_STICKY
+			}
 
-            removeOverlay()
+			removeOverlay()
 
-            val appName = intent?.getStringExtra(EXTRA_APP_NAME) ?: "App"
-            val mode = intent?.getStringExtra(EXTRA_MODE) ?: "reminder"
-            val sessionTime = intent?.getStringExtra(EXTRA_SESSION_TIME) ?: ""
-            val todayTime = intent?.getStringExtra(EXTRA_TODAY_TIME) ?: ""
-            val remainingTime = intent?.getStringExtra(EXTRA_REMAINING_TIME) ?: ""
-            val hasLimit = intent?.getBooleanExtra(EXTRA_HAS_LIMIT, false) ?: false
+			val appName = intent?.getStringExtra(EXTRA_APP_NAME) ?: "App"
+			val mode = intent?.getStringExtra(EXTRA_MODE) ?: "reminder"
+			val sessionTime = intent?.getStringExtra(EXTRA_SESSION_TIME) ?: ""
+			val todayTime = intent?.getStringExtra(EXTRA_TODAY_TIME) ?: ""
+			val remainingTime = intent?.getStringExtra(EXTRA_REMAINING_TIME) ?: ""
+			val hasLimit = intent?.getBooleanExtra(EXTRA_HAS_LIMIT, false) ?: false
 
-            logD(OVERLAY_REMINDER_TAG) { "onStartCommand: mode=$mode, app=$appName" }
+			logD(OVERLAY_REMINDER_TAG) { "onStartCommand: mode=$mode, app=$appName" }
 
-            showOverlay(appName, sessionTime, todayTime, remainingTime, hasLimit, mode)
-        } catch (e: Exception) {
-            logE(OVERLAY_REMINDER_TAG, e) { "Error in onStartCommand" }
-            stopSelf()
-        }
-        return START_NOT_STICKY
-    }
+			showOverlay(appName, sessionTime, todayTime, remainingTime, hasLimit, mode)
+		} catch (e: Exception) {
+			logE(OVERLAY_REMINDER_TAG, e) { "Error in onStartCommand" }
+			stopSelf()
+		}
+		return START_NOT_STICKY
+	}
 
-    private fun showOverlay(
-        appName: String,
-        sessionTime: String,
-        todayTime: String,
-        remainingTime: String,
-        hasLimit: Boolean,
-        mode: String
-    ) {
-        // Launch coroutine to read preferences asynchronously
-        serviceScope.launch {
-            try {
-                // Read user preferences (which stats to show)
-                val showSession = WellbeingSettingsStore.popupShowSessionTime.get(this@OverlayReminderService)
-                val showToday = WellbeingSettingsStore.popupShowTodayTime.get(this@OverlayReminderService)
-                val showRemaining =
-                    WellbeingSettingsStore.popupShowRemainingTime.get(this@OverlayReminderService)
+	private fun showOverlay(
+		appName: String,
+		sessionTime: String,
+		todayTime: String,
+		remainingTime: String,
+		hasLimit: Boolean,
+		mode: String
+	) {
+		// Launch coroutine to read preferences asynchronously
+		serviceScope.launch {
+			try {
+				// Read user preferences (which stats to show)
+				val showSession = WellbeingSettingsStore.popupShowSessionTime.get(this@OverlayReminderService)
+				val showToday = WellbeingSettingsStore.popupShowTodayTime.get(this@OverlayReminderService)
+				val showRemaining =
+					WellbeingSettingsStore.popupShowRemainingTime.get(this@OverlayReminderService)
 
-                val isWarning = mode == "time_warning"
+				val isWarning = mode == "time_warning"
 
-                // Don't pop an empty card: if every stat is disabled (or its
-                // text is missing), a plain reminder has nothing to say.
-                // Warnings always carry the countdown header, so keep them.
-                val hasContent =
-                    (showSession && sessionTime.isNotEmpty()) ||
-                        (showToday && todayTime.isNotEmpty()) ||
-                        (showRemaining && hasLimit)
-                if (!isWarning && !hasContent) {
-                    stopSelf()
-                    return@launch
-                }
+				// Don't pop an empty card: if every stat is disabled (or its
+				// text is missing), a plain reminder has nothing to say.
+				// Warnings always carry the countdown header, so keep them.
+				val hasContent =
+					(showSession && sessionTime.isNotEmpty()) ||
+						(showToday && todayTime.isNotEmpty()) ||
+						(showRemaining && hasLimit)
+				if (!isWarning && !hasContent) {
+					stopSelf()
+					return@launch
+				}
 
-                windowManager = applicationContext.getSystemService(WINDOW_SERVICE) as WindowManager
+				windowManager = applicationContext.getSystemService(WINDOW_SERVICE) as WindowManager
 
-                // Build the view hierarchy
-                val container =
-                    buildOverlayView(
-                        appName,
-                        sessionTime,
-                        todayTime,
-                        remainingTime,
-                        hasLimit,
-                        showSession,
-                        showToday,
-                        showRemaining,
-                        isWarning
-                    )
+				// Build the view hierarchy
+				val container =
+					buildOverlayView(
+						appName,
+						sessionTime,
+						todayTime,
+						remainingTime,
+						hasLimit,
+						showSession,
+						showToday,
+						showRemaining,
+						isWarning
+					)
 
-                val layoutParams =
-                    WindowManager
-                        .LayoutParams(
-                            WindowManager.LayoutParams.MATCH_PARENT,
-                            WindowManager.LayoutParams.WRAP_CONTENT,
-                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                            // FLAG_NOT_FOCUSABLE: overlay never gets input focus
-                            // FLAG_NOT_TOUCH_MODAL: touches outside overlay go to app below
-                            // FLAG_LAYOUT_IN_SCREEN: allow overlay in status bar area
-                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-                            PixelFormat.TRANSLUCENT
-                        ).apply {
-                            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                        }
+				val layoutParams =
+					WindowManager
+						.LayoutParams(
+							WindowManager.LayoutParams.MATCH_PARENT,
+							WindowManager.LayoutParams.WRAP_CONTENT,
+							WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+							// FLAG_NOT_FOCUSABLE: overlay never gets input focus
+							// FLAG_NOT_TOUCH_MODAL: touches outside overlay go to app below
+							// FLAG_LAYOUT_IN_SCREEN: allow overlay in status bar area
+							WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+								WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+								WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+							PixelFormat.TRANSLUCENT
+						).apply {
+							gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+						}
 
-                overlayView = container
-                windowManager?.addView(container, layoutParams)
-                logD(OVERLAY_REMINDER_TAG) { "Overlay view added successfully" }
+				overlayView = container
+				windowManager?.addView(container, layoutParams)
+				logD(OVERLAY_REMINDER_TAG) { "Overlay view added successfully" }
 
-                animateIn(container)
+				animateIn(container)
 
-                // If time warning mode, add pulsing animation
-                if (isWarning) {
-                    startPulseAnimation(container)
-                }
+				// If time warning mode, add pulsing animation
+				if (isWarning) {
+					startPulseAnimation(container)
+				}
 
-                // Auto-dismiss
-                autoDismissRunnable =
-                    Runnable {
-                        try {
-                            if (overlayView === container) {
-                                removeOverlay()
-                                stopSelf()
-                            }
-                        } catch (e: Exception) {
-                            logE(OVERLAY_REMINDER_TAG, e) { "Error in auto-dismiss" }
-                        }
-                    }
-                handler.postDelayed(autoDismissRunnable!!, DISMISS_DELAY)
-            } catch (e: Exception) {
-                logE(OVERLAY_REMINDER_TAG, e) { "Error in showOverlay" }
-                stopSelf()
-            }
-        }
-    }
+				// Auto-dismiss
+				autoDismissRunnable =
+					Runnable {
+						try {
+							if (overlayView === container) {
+								removeOverlay()
+								stopSelf()
+							}
+						} catch (e: Exception) {
+							logE(OVERLAY_REMINDER_TAG, e) { "Error in auto-dismiss" }
+						}
+					}
+				handler.postDelayed(autoDismissRunnable!!, DISMISS_DELAY)
+			} catch (e: Exception) {
+				logE(OVERLAY_REMINDER_TAG, e) { "Error in showOverlay" }
+				stopSelf()
+			}
+		}
+	}
 
-    private fun buildOverlayView(
-        appName: String,
-        sessionTime: String,
-        todayTime: String,
-        remainingTime: String,
-        hasLimit: Boolean,
-        showSession: Boolean,
-        showToday: Boolean,
-        showRemaining: Boolean,
-        isWarning: Boolean
-    ): FrameLayout {
-        val ctx = applicationContext
-        val density = ctx.dp
+	private fun buildOverlayView(
+		appName: String,
+		sessionTime: String,
+		todayTime: String,
+		remainingTime: String,
+		hasLimit: Boolean,
+		showSession: Boolean,
+		showToday: Boolean,
+		showRemaining: Boolean,
+		isWarning: Boolean
+	): FrameLayout {
+		val ctx = applicationContext
+		val density = ctx.dp
 
-        fun dp(value: Int): Int = (value * density + 0.5f).toInt()
+		fun dp(value: Int): Int = (value * density + 0.5f).toInt()
 
-        // Outer wrapper with padding (acts as the "padding from screen edge")
-        val wrapper =
-            FrameLayout(ctx).apply {
-                val statusBarHeight = getStatusBarHeight()
-                setPadding(dp(12), statusBarHeight + dp(8), dp(12), dp(8))
-            }
+		// Outer wrapper with padding (acts as the "padding from screen edge")
+		val wrapper =
+			FrameLayout(ctx).apply {
+				val statusBarHeight = getStatusBarHeight()
+				setPadding(dp(12), statusBarHeight + dp(8), dp(12), dp(8))
+			}
 
-        // Card background
-        val cardBg =
-            GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = dp(24).toFloat()
-                setColor(if (isWarning) colorWarningBg else colorCardBg)
-                setStroke(dp(1), if (isWarning) colorWarningBorder else colorCardBorder)
-            }
+		// Card background
+		val cardBg =
+			GradientDrawable().apply {
+				shape = GradientDrawable.RECTANGLE
+				cornerRadius = dp(24).toFloat()
+				setColor(if (isWarning) colorWarningBg else colorCardBg)
+				setStroke(dp(1), if (isWarning) colorWarningBorder else colorCardBorder)
+			}
 
-        // Main card layout
-        val card =
-            LinearLayout(ctx).apply {
-                orientation = LinearLayout.VERTICAL
-                background = cardBg
-                setPadding(dp(20), dp(16), dp(20), dp(16))
-                elevation = dp(12).toFloat()
-            }
+		// Main card layout
+		val card =
+			LinearLayout(ctx).apply {
+				orientation = LinearLayout.VERTICAL
+				background = cardBg
+				setPadding(dp(20), dp(16), dp(20), dp(16))
+				elevation = dp(12).toFloat()
+			}
 
-        // Header row
-        val headerRow =
-            LinearLayout(ctx).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-            }
+		// Header row
+		val headerRow =
+			LinearLayout(ctx).apply {
+				orientation = LinearLayout.HORIZONTAL
+				gravity = Gravity.CENTER_VERTICAL
+			}
 
-        // Emoji icon
-        val emojiView =
-            TextView(ctx).apply {
-                text = if (isWarning) "\u231B" else "\uD83D\uDC09"
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-                setPadding(0, 0, dp(12), 0)
-            }
+		// Emoji icon
+		val emojiView =
+			TextView(ctx).apply {
+				text = if (isWarning) "\u231B" else "\uD83D\uDC09"
+				setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+				setPadding(0, 0, dp(12), 0)
+			}
 
-        // Title column
-        val titleColumn =
-            LinearLayout(ctx).apply {
-                orientation = LinearLayout.VERTICAL
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            }
+		// Title column
+		val titleColumn =
+			LinearLayout(ctx).apply {
+				orientation = LinearLayout.VERTICAL
+				layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+			}
 
-        val titleText =
-            TextView(ctx).apply {
-                text = appName
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-                setTextColor(colorTextPrimary)
-                typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-                maxLines = 1
-            }
+		val titleText =
+			TextView(ctx).apply {
+				text = appName
+				setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+				setTextColor(colorTextPrimary)
+				typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+				maxLines = 1
+			}
 
-        val subtitleText =
-            TextView(ctx).apply {
-                text =
-                    if (isWarning) {
-                        getString(R.string.time_warning_subtitle)
-                    } else {
-                        getString(R.string.reminder_overlay_subtext)
-                    }
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-                setTextColor(if (isWarning) colorWarningText else colorTextSecondary)
-                maxLines = 1
-            }
+		val subtitleText =
+			TextView(ctx).apply {
+				text =
+					if (isWarning) {
+						getString(R.string.time_warning_subtitle)
+					} else {
+						getString(R.string.reminder_overlay_subtext)
+					}
+				setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+				setTextColor(if (isWarning) colorWarningText else colorTextSecondary)
+				maxLines = 1
+			}
 
-        titleColumn.addView(titleText)
-        titleColumn.addView(subtitleText)
+		titleColumn.addView(titleText)
+		titleColumn.addView(subtitleText)
 
-        // Close button
-        val closeBtn =
-            ImageView(ctx).apply {
-                setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
-                setColorFilter("#99FFFFFF".toColorInt())
-                val size = dp(32)
-                layoutParams =
-                    LinearLayout.LayoutParams(size, size).apply {
-                        gravity = Gravity.CENTER_VERTICAL
-                    }
-                setPadding(dp(4), dp(4), dp(4), dp(4))
-                isClickable = true
-                isFocusable = true
-                setOnClickListener {
-                    removeOverlay()
-                    stopSelf()
-                }
-            }
+		// Close button
+		val closeBtn =
+			ImageView(ctx).apply {
+				setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+				setColorFilter("#99FFFFFF".toColorInt())
+				val size = dp(32)
+				layoutParams =
+					LinearLayout.LayoutParams(size, size).apply {
+						gravity = Gravity.CENTER_VERTICAL
+					}
+				setPadding(dp(4), dp(4), dp(4), dp(4))
+				isClickable = true
+				isFocusable = true
+				setOnClickListener {
+					removeOverlay()
+					stopSelf()
+				}
+			}
 
-        headerRow.addView(emojiView)
-        headerRow.addView(titleColumn)
-        headerRow.addView(closeBtn)
-        card.addView(headerRow)
+		headerRow.addView(emojiView)
+		headerRow.addView(titleColumn)
+		headerRow.addView(closeBtn)
+		card.addView(headerRow)
 
-        // Time statistics row
-        data class TimeItem(
-            val label: String,
-            val value: String
-        )
+		// Time statistics row
+		data class TimeItem(
+			val label: String,
+			val value: String
+		)
 
-        val items = mutableListOf<TimeItem>()
+		val items = mutableListOf<TimeItem>()
 
-        if (showSession && sessionTime.isNotEmpty()) {
-            items.add(TimeItem(getString(R.string.popup_session_label), sessionTime))
-        }
-        if (showToday && todayTime.isNotEmpty()) {
-            items.add(TimeItem(getString(R.string.popup_today_label), todayTime))
-        }
-        if (showRemaining && hasLimit) {
-            items.add(
-                TimeItem(
-                    getString(R.string.popup_remaining_label),
-                    remainingTime.ifEmpty { getString(R.string.popup_no_limit) }
-                )
-            )
-        }
+		if (showSession && sessionTime.isNotEmpty()) {
+			items.add(TimeItem(getString(R.string.popup_session_label), sessionTime))
+		}
+		if (showToday && todayTime.isNotEmpty()) {
+			items.add(TimeItem(getString(R.string.popup_today_label), todayTime))
+		}
+		if (showRemaining && hasLimit) {
+			items.add(
+				TimeItem(
+					getString(R.string.popup_remaining_label),
+					remainingTime.ifEmpty { getString(R.string.popup_no_limit) }
+				)
+			)
+		}
 
-        if (items.isNotEmpty()) {
-            // Spacer
-            card.addView(
-                View(ctx).apply {
-                    layoutParams =
-                        LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            dp(12)
-                        )
-                }
-            )
+		if (items.isNotEmpty()) {
+			// Spacer
+			card.addView(
+				View(ctx).apply {
+					layoutParams =
+						LinearLayout.LayoutParams(
+							LinearLayout.LayoutParams.MATCH_PARENT,
+							dp(12)
+						)
+				}
+			)
 
-            val statsRow =
-                LinearLayout(ctx).apply {
-                    orientation = LinearLayout.HORIZONTAL
-                    gravity = Gravity.CENTER
-                }
+			val statsRow =
+				LinearLayout(ctx).apply {
+					orientation = LinearLayout.HORIZONTAL
+					gravity = Gravity.CENTER
+				}
 
-            items.forEachIndexed { index, item ->
-                // Time info column
-                val infoCol =
-                    LinearLayout(ctx).apply {
-                        orientation = LinearLayout.VERTICAL
-                        gravity = Gravity.CENTER_HORIZONTAL
-                        layoutParams =
-                            LinearLayout.LayoutParams(
-                                0,
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                1f
-                            )
-                    }
+			items.forEachIndexed { index, item ->
+				// Time info column
+				val infoCol =
+					LinearLayout(ctx).apply {
+						orientation = LinearLayout.VERTICAL
+						gravity = Gravity.CENTER_HORIZONTAL
+						layoutParams =
+							LinearLayout.LayoutParams(
+								0,
+								LinearLayout.LayoutParams.WRAP_CONTENT,
+								1f
+							)
+					}
 
-                val valueText =
-                    TextView(ctx).apply {
-                        text = item.value
-                        setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                        setTextColor(if (isWarning) colorWarningAccent else colorTextPrimary)
-                        typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-                        gravity = Gravity.CENTER
-                        maxLines = 1
-                    }
+				val valueText =
+					TextView(ctx).apply {
+						text = item.value
+						setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+						setTextColor(if (isWarning) colorWarningAccent else colorTextPrimary)
+						typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+						gravity = Gravity.CENTER
+						maxLines = 1
+					}
 
-                val labelText =
-                    TextView(ctx).apply {
-                        text = item.label
-                        setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-                        setTextColor(if (isWarning) colorWarningText else colorTextSecondary)
-                        gravity = Gravity.CENTER
-                        maxLines = 1
-                        setPadding(0, dp(2), 0, 0)
-                    }
+				val labelText =
+					TextView(ctx).apply {
+						text = item.label
+						setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+						setTextColor(if (isWarning) colorWarningText else colorTextSecondary)
+						gravity = Gravity.CENTER
+						maxLines = 1
+						setPadding(0, dp(2), 0, 0)
+					}
 
-                infoCol.addView(valueText)
-                infoCol.addView(labelText)
-                statsRow.addView(infoCol)
+				infoCol.addView(valueText)
+				infoCol.addView(labelText)
+				statsRow.addView(infoCol)
 
-                // Divider between items
-                if (index < items.size - 1) {
-                    val divider =
-                        View(ctx).apply {
-                            setBackgroundColor(colorDivider)
-                            layoutParams =
-                                LinearLayout.LayoutParams(dp(1), dp(36)).apply {
-                                    setMargins(dp(4), dp(2), dp(4), dp(2))
-                                    gravity = Gravity.CENTER_VERTICAL
-                                }
-                        }
-                    statsRow.addView(divider)
-                }
-            }
+				// Divider between items
+				if (index < items.size - 1) {
+					val divider =
+						View(ctx).apply {
+							setBackgroundColor(colorDivider)
+							layoutParams =
+								LinearLayout.LayoutParams(dp(1), dp(36)).apply {
+									setMargins(dp(4), dp(2), dp(4), dp(2))
+									gravity = Gravity.CENTER_VERTICAL
+								}
+						}
+					statsRow.addView(divider)
+				}
+			}
 
-            card.addView(statsRow)
-        }
+			card.addView(statsRow)
+		}
 
-        // Progress bar (auto-dismiss indicator)
-        card.addView(
-            View(ctx).apply {
-                layoutParams =
-                    LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        dp(6)
-                    )
-            }
-        )
+		// Progress bar (auto-dismiss indicator)
+		card.addView(
+			View(ctx).apply {
+				layoutParams =
+					LinearLayout.LayoutParams(
+						LinearLayout.LayoutParams.MATCH_PARENT,
+						dp(6)
+					)
+			}
+		)
 
-        val progressTrack =
-            FrameLayout(ctx).apply {
-                val trackBg =
-                    GradientDrawable().apply {
-                        shape = GradientDrawable.RECTANGLE
-                        cornerRadius = dp(2).toFloat()
-                        setColor("#1AFFFFFF".toColorInt())
-                    }
-                background = trackBg
-                layoutParams =
-                    LinearLayout
-                        .LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            dp(3)
-                        ).apply {
-                            setMargins(dp(12), 0, dp(12), 0)
-                        }
-            }
+		val progressTrack =
+			FrameLayout(ctx).apply {
+				val trackBg =
+					GradientDrawable().apply {
+						shape = GradientDrawable.RECTANGLE
+						cornerRadius = dp(2).toFloat()
+						setColor("#1AFFFFFF".toColorInt())
+					}
+				background = trackBg
+				layoutParams =
+					LinearLayout
+						.LayoutParams(
+							LinearLayout.LayoutParams.MATCH_PARENT,
+							dp(3)
+						).apply {
+							setMargins(dp(12), 0, dp(12), 0)
+						}
+			}
 
-        val progressFill =
-            View(ctx).apply {
-                val fillBg =
-                    GradientDrawable().apply {
-                        shape = GradientDrawable.RECTANGLE
-                        cornerRadius = dp(2).toFloat()
-                        setColor(if (isWarning) colorWarningAccent else colorAccentTeal)
-                    }
-                background = fillBg
-                layoutParams =
-                    FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                    )
-                pivotX = 0f
-            }
+		val progressFill =
+			View(ctx).apply {
+				val fillBg =
+					GradientDrawable().apply {
+						shape = GradientDrawable.RECTANGLE
+						cornerRadius = dp(2).toFloat()
+						setColor(if (isWarning) colorWarningAccent else colorAccentTeal)
+					}
+				background = fillBg
+				layoutParams =
+					FrameLayout.LayoutParams(
+						FrameLayout.LayoutParams.MATCH_PARENT,
+						FrameLayout.LayoutParams.MATCH_PARENT
+					)
+				pivotX = 0f
+			}
 
-        progressTrack.addView(progressFill)
-        card.addView(progressTrack)
+		progressTrack.addView(progressFill)
+		card.addView(progressTrack)
 
-        // Animate progress bar from 100% to 0%
-        handler.post {
-            ObjectAnimator.ofFloat(progressFill, "scaleX", 1f, 0f).apply {
-                duration = DISMISS_DELAY
-                interpolator = LinearInterpolator()
-                start()
-            }
-        }
+		// Animate progress bar from 100% to 0%
+		handler.post {
+			ObjectAnimator.ofFloat(progressFill, "scaleX", 1f, 0f).apply {
+				duration = DISMISS_DELAY
+				interpolator = LinearInterpolator()
+				start()
+			}
+		}
 
-        wrapper.addView(card)
-        return wrapper
-    }
+		wrapper.addView(card)
+		return wrapper
+	}
 
-    private fun animateIn(view: View) {
-        view.translationY = -200f
-        view.alpha = 0f
+	private fun animateIn(view: View) {
+		view.translationY = -200f
+		view.alpha = 0f
 
-        AnimatorSet().apply {
-            playTogether(
-                ObjectAnimator.ofFloat(view, "translationY", -200f, 0f).apply {
-                    duration = 500
-                    interpolator = OvershootInterpolator(0.8f)
-                },
-                ObjectAnimator.ofFloat(view, "alpha", 0f, 1f).apply {
-                    duration = 350
-                }
-            )
-            start()
-        }
-    }
+		AnimatorSet().apply {
+			playTogether(
+				ObjectAnimator.ofFloat(view, "translationY", -200f, 0f).apply {
+					duration = 500
+					interpolator = OvershootInterpolator(0.8f)
+				},
+				ObjectAnimator.ofFloat(view, "alpha", 0f, 1f).apply {
+					duration = 350
+				}
+			)
+			start()
+		}
+	}
 
 //    private fun animateOut(view: View, onEnd: () -> Unit) {
 //        AnimatorSet().apply {
@@ -541,52 +541,52 @@ public class OverlayReminderService : Service() {
 //        }
 //    }
 
-    private fun startPulseAnimation(view: View) {
-        pulseAnimator =
-            ValueAnimator.ofFloat(1f, 1.02f).apply {
-                duration = 800
-                repeatCount = ValueAnimator.INFINITE
-                repeatMode = ValueAnimator.REVERSE
-                interpolator = AccelerateDecelerateInterpolator()
-                addUpdateListener { anim ->
-                    val scale = anim.animatedValue as Float
-                    view.scaleX = scale
-                    view.scaleY = scale
-                }
-                start()
-            }
-    }
+	private fun startPulseAnimation(view: View) {
+		pulseAnimator =
+			ValueAnimator.ofFloat(1f, 1.02f).apply {
+				duration = 800
+				repeatCount = ValueAnimator.INFINITE
+				repeatMode = ValueAnimator.REVERSE
+				interpolator = AccelerateDecelerateInterpolator()
+				addUpdateListener { anim ->
+					val scale = anim.animatedValue as Float
+					view.scaleX = scale
+					view.scaleY = scale
+				}
+				start()
+			}
+	}
 
-    private fun removeOverlay() {
-        autoDismissRunnable?.let { handler.removeCallbacks(it) }
-        autoDismissRunnable = null
-        pulseAnimator?.cancel()
-        pulseAnimator = null
-        try {
-            overlayView?.let { view ->
-                if (view.isAttachedToWindow) {
-                    windowManager?.removeViewImmediate(view)
-                    logD(OVERLAY_REMINDER_TAG) { "Overlay removed" }
-                }
-            }
-        } catch (e: Exception) {
-            logE(OVERLAY_REMINDER_TAG, e) { "Error removing overlay" }
-        } finally {
-            overlayView = null
-            windowManager = null
-        }
-    }
+	private fun removeOverlay() {
+		autoDismissRunnable?.let { handler.removeCallbacks(it) }
+		autoDismissRunnable = null
+		pulseAnimator?.cancel()
+		pulseAnimator = null
+		try {
+			overlayView?.let { view ->
+				if (view.isAttachedToWindow) {
+					windowManager?.removeViewImmediate(view)
+					logD(OVERLAY_REMINDER_TAG) { "Overlay removed" }
+				}
+			}
+		} catch (e: Exception) {
+			logE(OVERLAY_REMINDER_TAG, e) { "Error removing overlay" }
+		} finally {
+			overlayView = null
+			windowManager = null
+		}
+	}
 
-    override fun onDestroy() {
-        handler.removeCallbacksAndMessages(null)
-        removeOverlay()
-        serviceScope.cancel()
-        super.onDestroy()
-    }
+	override fun onDestroy() {
+		handler.removeCallbacksAndMessages(null)
+		removeOverlay()
+		serviceScope.cancel()
+		super.onDestroy()
+	}
 
-    @SuppressLint("InternalInsetResource", "DiscouragedApi")
-    private fun getStatusBarHeight(): Int {
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        return if (resourceId > 0) resources.getDimensionPixelSize(resourceId) else 0
-    }
+	@SuppressLint("InternalInsetResource", "DiscouragedApi")
+	private fun getStatusBarHeight(): Int {
+		val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+		return if (resourceId > 0) resources.getDimensionPixelSize(resourceId) else 0
+	}
 }

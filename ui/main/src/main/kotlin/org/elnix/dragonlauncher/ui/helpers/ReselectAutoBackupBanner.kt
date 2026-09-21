@@ -28,35 +28,35 @@ import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
  */
 @Composable
 fun ReselectAutoBackupBanner(onHide: () -> Unit) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val autoBackupLauncher = rememberAutoBackupLauncher()
+	val autoBackupLauncher = rememberAutoBackupLauncher()
 
-    Row(
-        modifier =
-            Modifier
-                .shapedClickable { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            stringResource(R.string.reselect_auto_backup_file),
-            color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.weight(1f)
-        )
+	Row(
+		modifier =
+			Modifier
+				.shapedClickable { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
+				.background(MaterialTheme.colorScheme.surface)
+				.padding(10.dp),
+		horizontalArrangement = Arrangement.spacedBy(5.dp),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Text(
+			stringResource(R.string.reselect_auto_backup_file),
+			color = MaterialTheme.colorScheme.onPrimary,
+			modifier = Modifier.weight(1f)
+		)
 
-        Icon(
-            painter = painterResource(R.drawable.open_in_new),
-            contentDescription = stringResource(R.string.open)
-        )
+		Icon(
+			painter = painterResource(R.drawable.open_in_new),
+			contentDescription = stringResource(R.string.open)
+		)
 
-        DragonIconButton(
-            icon = R.drawable.close,
-            contentDescription = R.string.close,
-            onClick = onHide
-        )
-    }
+		DragonIconButton(
+			icon = R.drawable.close,
+			contentDescription = R.string.close,
+			onClick = onHide
+		)
+	}
 }

@@ -8,6 +8,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.ui.unit.dp
 
 internal object ShapeTokensClone {
-    val CornerValueExtraSmall = CornerSize(4.0.dp)
-    val CornerValueSmall = CornerSize(8.0.dp)
+	val CornerValueExtraSmall = CornerSize(4.0.dp)
+	val CornerValueSmall = CornerSize(8.0.dp)
 }

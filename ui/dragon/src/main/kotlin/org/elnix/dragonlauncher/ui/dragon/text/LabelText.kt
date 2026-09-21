@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun LabelText(text: String, modifier: Modifier = Modifier) {
-    Text(
-        modifier = modifier,
-        text = text,
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.primary
-    )
+	Text(
+		modifier = modifier,
+		text = text,
+		style = MaterialTheme.typography.titleLarge,
+		color = MaterialTheme.colorScheme.primary
+	)
 }

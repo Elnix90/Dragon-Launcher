@@ -69,185 +69,185 @@ import kotlin.math.roundToInt
  */
 @Composable
 private fun DragonGroupScope.SliderWithLabelInternal(
-    label: String,
-    description: String? = null,
-    value: Float,
-    valueRange: ClosedFloatingPointRange<Float>,
-    steps: Int,
-    color: Color = MaterialTheme.colorScheme.primary,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    valueText: String,
-    enabled: Boolean,
-    resetEnabled: Boolean,
-    onDragStateChange: ((Boolean) -> Unit)?,
-    onReset: () -> Unit,
-    onChange: (Float) -> Unit
+	label: String,
+	description: String? = null,
+	value: Float,
+	valueRange: ClosedFloatingPointRange<Float>,
+	steps: Int,
+	color: Color = MaterialTheme.colorScheme.primary,
+	backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+	valueText: String,
+	enabled: Boolean,
+	resetEnabled: Boolean,
+	onDragStateChange: ((Boolean) -> Unit)?,
+	onReset: () -> Unit,
+	onChange: (Float) -> Unit
 ) {
-    val ctx = LocalContext.current
+	val ctx = LocalContext.current
 
-    val focusManager = LocalFocusManager.current
-    val interactionSource = remember { MutableInteractionSource() }
-    val formatter = remember { NumberFormat.getInstance(getDefault()) }
+	val focusManager = LocalFocusManager.current
+	val interactionSource = remember { MutableInteractionSource() }
+	val formatter = remember { NumberFormat.getInstance(getDefault()) }
 
-    var editingText by remember { mutableStateOf(valueText) }
-    var isEditing by remember { mutableStateOf(false) }
-    var isError by remember { mutableStateOf(false) }
+	var editingText by remember { mutableStateOf(valueText) }
+	var isEditing by remember { mutableStateOf(false) }
+	var isError by remember { mutableStateOf(false) }
 
-    val currentOnChange by rememberUpdatedState(onChange)
-    val currentOnDragStateChange by rememberUpdatedState(onDragStateChange)
+	val currentOnChange by rememberUpdatedState(onChange)
+	val currentOnDragStateChange by rememberUpdatedState(onDragStateChange)
 
-    // Sync the text with external value changes (slider drag, programmatic updates).
-    // The state must NOT be re-created on valueText change: the focus-interaction
-    // collector below captures `onDone` once, and re-creating the state would make it
-    // read an orphaned/stale value after the first commit.
-    LaunchedEffect(valueText) {
-        if (!isEditing) editingText = valueText
-    }
+	// Sync the text with external value changes (slider drag, programmatic updates).
+	// The state must NOT be re-created on valueText change: the focus-interaction
+	// collector below captures `onDone` once, and re-creating the state would make it
+	// read an orphaned/stale value after the first commit.
+	LaunchedEffect(valueText) {
+		if (!isEditing) editingText = valueText
+	}
 
-    fun onDone() {
-        try {
-            val editingTrimmed = editingText.trim()
-            if (editingTrimmed.isEmpty()) throw NumberFormatException("Empty input")
+	fun onDone() {
+		try {
+			val editingTrimmed = editingText.trim()
+			if (editingTrimmed.isEmpty()) throw NumberFormatException("Empty input")
 
-            val parsedNumber = formatter.parse(editingText.trim())?.toFloat() ?: throw ParseException("Empty input", 0)
+			val parsedNumber = formatter.parse(editingText.trim())?.toFloat() ?: throw ParseException("Empty input", 0)
 
-            val newValue = parsedNumber.coerceIn(valueRange)
+			val newValue = parsedNumber.coerceIn(valueRange)
 
-            currentOnDragStateChange?.invoke(true)
-            currentOnChange(newValue)
-            currentOnDragStateChange?.invoke(false)
-        } catch (_: ParseException) {
-            isError = true
-            ctx.showToast("Failed to parse number")
-        } catch (_: NumberFormatException) {
-            isError = true
-            ctx.showToast("Empty input")
-        } catch (_: Exception) {
-            isError = true
-            ctx.showToast("Unknown error")
-        }
+			currentOnDragStateChange?.invoke(true)
+			currentOnChange(newValue)
+			currentOnDragStateChange?.invoke(false)
+		} catch (_: ParseException) {
+			isError = true
+			ctx.showToast("Failed to parse number")
+		} catch (_: NumberFormatException) {
+			isError = true
+			ctx.showToast("Empty input")
+		} catch (_: Exception) {
+			isError = true
+			ctx.showToast("Unknown error")
+		}
 
-        focusManager.clearFocus()
-    }
+		focusManager.clearFocus()
+	}
 
-    BackHandler(isEditing, onBack = ::onDone)
+	BackHandler(isEditing, onBack = ::onDone)
 
-    LaunchedEffect(interactionSource) {
-        interactionSource.interactions.collect { interaction ->
-            when (interaction) {
-                is FocusInteraction.Focus -> {
-                    isEditing = true
-                }
+	LaunchedEffect(interactionSource) {
+		interactionSource.interactions.collect { interaction ->
+			when (interaction) {
+				is FocusInteraction.Focus -> {
+					isEditing = true
+				}
 
-                is FocusInteraction.Unfocus -> {
-                    onDone()
-                    isEditing = false
-                }
-            }
-        }
-    }
+				is FocusInteraction.Unfocus -> {
+					onDone()
+					isEditing = false
+				}
+			}
+		}
+	}
 
-    Column(
-        modifier = Modifier.dragonSettingGroup(enabled),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextWithDescription(
-                text = label,
-                description = description,
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(start = 5.dp),
-                enabled = enabled
-            )
+	Column(
+		modifier = Modifier.dragonSettingGroup(enabled),
+		verticalArrangement = Arrangement.spacedBy(5.dp),
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		Row(
+			horizontalArrangement = Arrangement.spacedBy(5.dp),
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			TextWithDescription(
+				text = label,
+				description = description,
+				modifier =
+					Modifier
+						.weight(1f)
+						.padding(start = 5.dp),
+				enabled = enabled
+			)
 
-            TextField(
-                enabled = enabled,
-                interactionSource = interactionSource,
-                value = editingText,
-                onValueChange = { newValue ->
-                    editingText = newValue
-                    isError = false
-                },
-                textStyle =
-                    TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontSize = 13.sp
-                    ),
-                isError = isError,
-                trailingIcon = {
-                    AnimatedContent(
-                        targetState = isEditing,
-                        transitionSpec = { barsContentTransform },
-                        label = "icon_button_transition"
-                    ) { editing ->
-                        when {
-                            editing -> {
-                                DragonIconButton(
-                                    onClick = {
-                                        focusManager.clearFocus()
-                                    },
-                                    icon = R.drawable.check,
-                                    contentDescription = R.string.ok
-                                )
-                            }
+			TextField(
+				enabled = enabled,
+				interactionSource = interactionSource,
+				value = editingText,
+				onValueChange = { newValue ->
+					editingText = newValue
+					isError = false
+				},
+				textStyle =
+					TextStyle(
+						textAlign = TextAlign.Center,
+						fontSize = 13.sp
+					),
+				isError = isError,
+				trailingIcon = {
+					AnimatedContent(
+						targetState = isEditing,
+						transitionSpec = { barsContentTransform },
+						label = "icon_button_transition"
+					) { editing ->
+						when {
+							editing -> {
+								DragonIconButton(
+									onClick = {
+										focusManager.clearFocus()
+									},
+									icon = R.drawable.check,
+									contentDescription = R.string.ok
+								)
+							}
 
-                            else -> {
-                                ResetIcon(
-                                    onReset = {
-                                        editingText = valueText
-                                        isError = false
-                                        onReset()
-                                    },
-                                    enabled = enabled && resetEnabled
-                                )
-                            }
-                        }
-                    }
-                },
-                colors =
-                    AppObjectsColors.outlinedTextFieldColors(
-                        backgroundColor = backgroundColor,
-                        removeBorder = true
-                    ),
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.DecimalSigned,
-                        imeAction = ImeAction.Done
-                    ),
-                keyboardActions =
-                    KeyboardActions(
-                        onDone = { focusManager.clearFocus() }
-                    ),
-                shape = CircleShape,
-                modifier =
-                    Modifier
-                        .width(120.dp)
-                        .height(50.dp)
-            )
-        }
+							else -> {
+								ResetIcon(
+									onReset = {
+										editingText = valueText
+										isError = false
+										onReset()
+									},
+									enabled = enabled && resetEnabled
+								)
+							}
+						}
+					}
+				},
+				colors =
+					AppObjectsColors.outlinedTextFieldColors(
+						backgroundColor = backgroundColor,
+						removeBorder = true
+					),
+				keyboardOptions =
+					KeyboardOptions(
+						keyboardType = KeyboardType.DecimalSigned,
+						imeAction = ImeAction.Done
+					),
+				keyboardActions =
+					KeyboardActions(
+						onDone = { focusManager.clearFocus() }
+					),
+				shape = CircleShape,
+				modifier =
+					Modifier
+						.width(120.dp)
+						.height(50.dp)
+			)
+		}
 
-        Slider(
-            value = value,
-            enabled = enabled,
-            onValueChange = {
-                onChange(it)
-                onDragStateChange?.invoke(true)
-            },
-            onValueChangeFinished = {
-                onDragStateChange?.invoke(false)
-            },
-            valueRange = valueRange,
-            steps = steps,
-            colors = AppObjectsColors.sliderColors(color),
-            modifier = Modifier.height(25.dp)
-        )
-    }
+		Slider(
+			value = value,
+			enabled = enabled,
+			onValueChange = {
+				onChange(it)
+				onDragStateChange?.invoke(true)
+			},
+			onValueChangeFinished = {
+				onDragStateChange?.invoke(false)
+			},
+			valueRange = valueRange,
+			steps = steps,
+			colors = AppObjectsColors.sliderColors(color),
+			modifier = Modifier.height(25.dp)
+		)
+	}
 }
 
 /**
@@ -270,45 +270,45 @@ private fun DragonGroupScope.SliderWithLabelInternal(
  */
 @Composable
 fun DragonGroupScope.SliderWithLabel(
-    label: String,
-    description: String? = null,
-    value: Int,
-    valueRange: IntRange,
-    enabled: Boolean = true,
-    resetEnabled: Boolean,
-    color: Color = MaterialTheme.colorScheme.primary,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    onDragStateChange: ((Boolean) -> Unit)? = null,
-    onReset: () -> Unit,
-    onChange: (Int) -> Unit
+	label: String,
+	description: String? = null,
+	value: Int,
+	valueRange: IntRange,
+	enabled: Boolean = true,
+	resetEnabled: Boolean,
+	color: Color = MaterialTheme.colorScheme.primary,
+	backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+	onDragStateChange: ((Boolean) -> Unit)? = null,
+	onReset: () -> Unit,
+	onChange: (Int) -> Unit
 ) {
-    val floatRange =
-        remember(valueRange) {
-            valueRange.first.toFloat()..valueRange.last.toFloat()
-        }
+	val floatRange =
+		remember(valueRange) {
+			valueRange.first.toFloat()..valueRange.last.toFloat()
+		}
 
-    val steps =
-        remember(valueRange) {
-            // Number of discrete selectable values minus endpoints
-            (valueRange.last - valueRange.first - 1).coerceAtLeast(0)
-        }
+	val steps =
+		remember(valueRange) {
+			// Number of discrete selectable values minus endpoints
+			(valueRange.last - valueRange.first - 1).coerceAtLeast(0)
+		}
 
-    SliderWithLabelInternal(
-        label = label,
-        description = description,
-        value = value.toFloat(),
-        valueRange = floatRange,
-        steps = steps,
-        color = color,
-        backgroundColor = backgroundColor,
-        valueText = value.toString(),
-        enabled = enabled,
-        resetEnabled = resetEnabled,
-        onReset = onReset,
-        onDragStateChange = onDragStateChange
-    ) { floatValue ->
-        onChange(floatValue.roundToInt())
-    }
+	SliderWithLabelInternal(
+		label = label,
+		description = description,
+		value = value.toFloat(),
+		valueRange = floatRange,
+		steps = steps,
+		color = color,
+		backgroundColor = backgroundColor,
+		valueText = value.toString(),
+		enabled = enabled,
+		resetEnabled = resetEnabled,
+		onReset = onReset,
+		onDragStateChange = onDragStateChange
+	) { floatValue ->
+		onChange(floatValue.roundToInt())
+	}
 }
 
 /**
@@ -330,35 +330,35 @@ fun DragonGroupScope.SliderWithLabel(
  */
 @Composable
 fun DragonGroupScope.SliderWithLabel(
-    label: String,
-    description: String? = null,
-    value: Float,
-    valueRange: ClosedFloatingPointRange<Float>,
-    enabled: Boolean = true,
-    resetEnabled: Boolean,
-    decimals: Int = 2,
-    onDragStateChange: ((Boolean) -> Unit)? = null,
-    onReset: () -> Unit,
-    onChange: (Float) -> Unit
+	label: String,
+	description: String? = null,
+	value: Float,
+	valueRange: ClosedFloatingPointRange<Float>,
+	enabled: Boolean = true,
+	resetEnabled: Boolean,
+	decimals: Int = 2,
+	onDragStateChange: ((Boolean) -> Unit)? = null,
+	onReset: () -> Unit,
+	onChange: (Float) -> Unit
 ) {
-    val valueText =
-        remember(value, decimals) {
-            "%.${decimals}f".format(value)
-        }
+	val valueText =
+		remember(value, decimals) {
+			"%.${decimals}f".format(value)
+		}
 
-    SliderWithLabelInternal(
-        label = label,
-        description = description,
-        value = value,
-        valueRange = valueRange,
-        steps = 0,
-        valueText = valueText,
-        enabled = enabled,
-        resetEnabled = resetEnabled,
-        onReset = onReset,
-        onDragStateChange = onDragStateChange,
-        onChange = onChange
-    )
+	SliderWithLabelInternal(
+		label = label,
+		description = description,
+		value = value,
+		valueRange = valueRange,
+		steps = 0,
+		valueText = valueText,
+		enabled = enabled,
+		resetEnabled = resetEnabled,
+		onReset = onReset,
+		onDragStateChange = onDragStateChange,
+		onChange = onChange
+	)
 }
 
 /**
@@ -376,36 +376,36 @@ fun DragonGroupScope.SliderWithLabel(
  */
 @Composable
 fun DragonGroupScope.SliderWithLabel(
-    label: String,
-    description: String? = null,
-    value: Dp,
-    valueRange: ClosedRange<Dp>,
-    enabled: Boolean = true,
-    resetEnabled: Boolean,
-    decimals: Int = 2,
-    onDragStateChange: ((Boolean) -> Unit)? = null,
-    onReset: () -> Unit,
-    onChange: (Dp) -> Unit
+	label: String,
+	description: String? = null,
+	value: Dp,
+	valueRange: ClosedRange<Dp>,
+	enabled: Boolean = true,
+	resetEnabled: Boolean,
+	decimals: Int = 2,
+	onDragStateChange: ((Boolean) -> Unit)? = null,
+	onReset: () -> Unit,
+	onChange: (Dp) -> Unit
 ) {
-    val valueText =
-        remember(value, decimals) {
-            "%.${decimals}f".format(value.value)
-        }
+	val valueText =
+		remember(value, decimals) {
+			"%.${decimals}f".format(value.value)
+		}
 
-    val floatValueRange = valueRange.start.value..valueRange.endInclusive.value
+	val floatValueRange = valueRange.start.value..valueRange.endInclusive.value
 
-    SliderWithLabelInternal(
-        label = label,
-        description = description,
-        value = value.value,
-        valueRange = floatValueRange,
-        steps = 0,
-        valueText = valueText,
-        enabled = enabled,
-        onReset = onReset,
-        resetEnabled = resetEnabled,
-        onDragStateChange = onDragStateChange
-    ) {
-        onChange(it.dp)
-    }
+	SliderWithLabelInternal(
+		label = label,
+		description = description,
+		value = value.value,
+		valueRange = floatValueRange,
+		steps = 0,
+		valueText = valueText,
+		enabled = enabled,
+		onReset = onReset,
+		resetEnabled = resetEnabled,
+		onDragStateChange = onDragStateChange
+	) {
+		onChange(it.dp)
+	}
 }

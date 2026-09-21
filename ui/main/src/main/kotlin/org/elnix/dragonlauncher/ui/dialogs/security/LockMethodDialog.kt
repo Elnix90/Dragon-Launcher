@@ -36,63 +36,63 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun LockMethodDialog(
-    securityViewModel: SecurityViewModel = activityViewModel(),
-    onDismiss: () -> Unit
+	securityViewModel: SecurityViewModel = activityViewModel(),
+	onDismiss: () -> Unit
 ) {
-    val navigator = LocalNavigator.current
+	val navigator = LocalNavigator.current
 
-    val currentLockMethod by PrivateSettingsStore.lockMethod.asState()
+	val currentLockMethod by PrivateSettingsStore.lockMethod.asState()
 
-    DragonModalBottomSheet(onDismissRequest = onDismiss) {
-        DialogTitle(stringResource(R.string.lock_method))
+	DragonModalBottomSheet(onDismissRequest = onDismiss) {
+		DialogTitle(stringResource(R.string.lock_method))
 
-        Text(
-            text = stringResource(R.string.lock_settings_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
-        )
+		Text(
+			text = stringResource(R.string.lock_settings_description),
+			style = MaterialTheme.typography.bodyMedium,
+			color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
+		)
 
-        Spacer(8.dp)
+		Spacer(8.dp)
 
-        DragonSettingsGroup {
-            LockMethod.entries.forEach { method ->
-                val selected = method == currentLockMethod
+		DragonSettingsGroup {
+			LockMethod.entries.forEach { method ->
+				val selected = method == currentLockMethod
 
-                val unavailableText =
-                    if (method == Device && !securityViewModel.isDeviceUnlockAvailable()) {
-                        stringResource(R.string.device_credentials_not_available)
-                    } else {
-                        null
-                    }
+				val unavailableText =
+					if (method == Device && !securityViewModel.isDeviceUnlockAvailable()) {
+						stringResource(R.string.device_credentials_not_available)
+					} else {
+						null
+					}
 
-                val interactionSource = rememberInteractionSource()
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier =
-                        Modifier
-                            .dragonSettingGroup(selected = selected) {
-                                clickable(
-                                    interactionSource = interactionSource,
-                                    onClick = {
-                                        onDismiss()
-                                        navigator.go(NavigationRoute.LockScreenSetup(method))
-                                    }
-                                )
-                            }.padding(10.dp)
-                            .selectableGroup()
-                ) {
-                    RadioButton(
-                        selected = selected,
-                        onClick = null,
-                        interactionSource = interactionSource
-                    )
-                    TextWithDescription(
-                        text = stringResource(method.resId),
-                        description = unavailableText
-                    )
-                }
-            }
-        }
-    }
+				val interactionSource = rememberInteractionSource()
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.spacedBy(10.dp),
+					modifier =
+						Modifier
+							.dragonSettingGroup(selected = selected) {
+								clickable(
+									interactionSource = interactionSource,
+									onClick = {
+										onDismiss()
+										navigator.go(NavigationRoute.LockScreenSetup(method))
+									}
+								)
+							}.padding(10.dp)
+							.selectableGroup()
+				) {
+					RadioButton(
+						selected = selected,
+						onClick = null,
+						interactionSource = interactionSource
+					)
+					TextWithDescription(
+						text = stringResource(method.resId),
+						description = unavailableText
+					)
+				}
+			}
+		}
+	}
 }

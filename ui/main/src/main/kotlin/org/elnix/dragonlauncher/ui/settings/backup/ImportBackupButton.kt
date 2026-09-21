@@ -27,88 +27,88 @@ import org.json.JSONObject
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun ImportBackupButton(
-    onConfirm: (suspend () -> Unit)? = null,
-    backupViewModel: BackupViewModel = activityViewModel(),
-    pointsViewModel: PointsViewModel = activityViewModel(),
-    content: @Composable (onImport: () -> Unit) -> Unit
+	onConfirm: (suspend () -> Unit)? = null,
+	backupViewModel: BackupViewModel = activityViewModel(),
+	pointsViewModel: PointsViewModel = activityViewModel(),
+	content: @Composable (onImport: () -> Unit) -> Unit
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    var importJson by remember { mutableStateOf<JSONObject?>(null) }
-    var legacyJsonString by remember { mutableStateOf<String?>(null) }
+	var importJson by remember { mutableStateOf<JSONObject?>(null) }
+	var legacyJsonString by remember { mutableStateOf<String?>(null) }
 
-    val settingsImportLauncher =
-        rememberSettingsImportLauncher(
-            onJsonReady = { json ->
-                if (backupViewModel.isLegacyBackup(json.toString())) {
-                    legacyJsonString = json.toString()
-                } else {
-                    importJson = json
-                }
-            }
-        )
+	val settingsImportLauncher =
+		rememberSettingsImportLauncher(
+			onJsonReady = { json ->
+				if (backupViewModel.isLegacyBackup(json.toString())) {
+					legacyJsonString = json.toString()
+				} else {
+					importJson = json
+				}
+			}
+		)
 
-    legacyJsonString?.let { json ->
-        MigrationDialog(
-            migrate = { backupViewModel.migrateFromLegacyBackup(json) },
-            onDismiss = { legacyJsonString = null },
-            canDisagree = true
-        )
-    }
+	legacyJsonString?.let { json ->
+		MigrationDialog(
+			migrate = { backupViewModel.migrateFromLegacyBackup(json) },
+			onDismiss = { legacyJsonString = null },
+			canDisagree = true
+		)
+	}
 
-    importJson?.let { json ->
-        var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
+	importJson?.let { json ->
+		var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
 
-        ImportSettingsDialog(
-            backupJson = json,
-            onDismiss = {
-                importJson = null
-            },
-            onConfirm = { selectedStores ->
-                selectedStoresForImport = selectedStores
+		ImportSettingsDialog(
+			backupJson = json,
+			onDismiss = {
+				importJson = null
+			},
+			onConfirm = { selectedStores ->
+				selectedStoresForImport = selectedStores
 
-                scope.launch {
-                    try {
-                        SettingsBackupManager.importSettingsFromJson(
-                            ctx = ctx,
-                            json = json,
-                            requestedStores = selectedStoresForImport
-                        )
-                        backupViewModel.result.value =
-                            BackupResult(
-                                export = false,
-                                error = false,
-                                title = ctx.getString(R.string.import_successful)
-                            )
+				scope.launch {
+					try {
+						SettingsBackupManager.importSettingsFromJson(
+							ctx = ctx,
+							json = json,
+							requestedStores = selectedStoresForImport
+						)
+						backupViewModel.result.value =
+							BackupResult(
+								export = false,
+								error = false,
+								title = ctx.getString(R.string.import_successful)
+							)
 
-                        onConfirm?.invoke()
-                        PrivateSettingsStore.hasInitialized.set(ctx, true)
-                        pointsViewModel.pointsService.load()
-                        importJson = null
-                    } catch (e: Exception) {
-                        logE(BACKUP_TAG, e) { "Import failed" }
-                        backupViewModel.result.value =
-                            BackupResult(
-                                export = false,
-                                error = true,
-                                title = ctx.getString(R.string.import_failed),
-                                message = e.message ?: ""
-                            )
-                    }
-                }
-            }
-        )
-    }
+						onConfirm?.invoke()
+						PrivateSettingsStore.hasInitialized.set(ctx, true)
+						pointsViewModel.pointsService.load()
+						importJson = null
+					} catch (e: Exception) {
+						logE(BACKUP_TAG, e) { "Import failed" }
+						backupViewModel.result.value =
+							BackupResult(
+								export = false,
+								error = true,
+								title = ctx.getString(R.string.import_failed),
+								message = e.message ?: ""
+							)
+					}
+				}
+			}
+		)
+	}
 
-    content {
-        settingsImportLauncher.launch(
-            arrayOf(
-                "application/json",
-                "text/plain",
-                "application/octet-stream",
-                "*/*"
-            )
-        )
-    }
+	content {
+		settingsImportLauncher.launch(
+			arrayOf(
+				"application/json",
+				"text/plain",
+				"application/octet-stream",
+				"*/*"
+			)
+		)
+	}
 }

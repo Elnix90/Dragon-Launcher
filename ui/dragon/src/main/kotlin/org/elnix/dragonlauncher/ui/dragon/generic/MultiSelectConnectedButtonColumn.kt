@@ -43,54 +43,54 @@ import org.elnix.dragonlauncher.ui.dragon.internals.connectedTopButtonShapes
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
-    entries: List<T>,
-    showLabel: Boolean = true,
-    hapticFeedback: Boolean = true,
-    enabled: (T) -> Boolean = { true },
-    checked: (T) -> Boolean,
-    onCheck: (T) -> Unit
+	entries: List<T>,
+	showLabel: Boolean = true,
+	hapticFeedback: Boolean = true,
+	enabled: (T) -> Boolean = { true },
+	checked: (T) -> Boolean,
+	onCheck: (T) -> Unit
 ) {
-    val haptic = LocalHapticFeedback.current
+	val haptic = LocalHapticFeedback.current
 
-    Column(
-        Modifier.padding(vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-    ) {
-        entries.forEachIndexed { index, entry ->
+	Column(
+		Modifier.padding(vertical = 8.dp),
+		verticalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+	) {
+		entries.forEachIndexed { index, entry ->
 
-            val checked = checked(entry)
-            val enabled = enabled(entry)
+			val checked = checked(entry)
+			val enabled = enabled(entry)
 
-            DragonTooltip(entry.resId ?: -1) {
-                @Suppress("DEPRECATION")
-                ToggleButton(
-                    checked = checked,
-                    enabled = enabled,
-                    onCheckedChange = {
-                        onCheck(entry)
-                        if (hapticFeedback) {
-                            haptic.performHapticFeedback(HapticFeedbackType.KeyboardTap)
-                        }
-                    },
-                    colors = AppObjectsColors.toggleButtonColors(),
-                    // Custom shapes
-                    shapes =
-                        when (index) {
-                            0 -> connectedTopButtonShapes()
-                            entries.lastIndex -> connectedBottomButtonShapes()
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                        }
-                ) {
-                    entry.iconEnabled?.let { iconEnabled ->
-                        Crossfade(!checked) { notChecked ->
-                            Icon(
-                                painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+			DragonTooltip(entry.resId ?: -1) {
+				@Suppress("DEPRECATION")
+				ToggleButton(
+					checked = checked,
+					enabled = enabled,
+					onCheckedChange = {
+						onCheck(entry)
+						if (hapticFeedback) {
+							haptic.performHapticFeedback(HapticFeedbackType.KeyboardTap)
+						}
+					},
+					colors = AppObjectsColors.toggleButtonColors(),
+					// Custom shapes
+					shapes =
+						when (index) {
+							0 -> connectedTopButtonShapes()
+							entries.lastIndex -> connectedBottomButtonShapes()
+							else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+						}
+				) {
+					entry.iconEnabled?.let { iconEnabled ->
+						Crossfade(!checked) { notChecked ->
+							Icon(
+								painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
+								contentDescription = null
+							)
+						}
+					}
+				}
+			}
+		}
+	}
 }

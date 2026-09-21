@@ -30,61 +30,61 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
 fun BottomBanners(currentRoute: NavKey) {
-    if (currentRoute == NavigationRoute.Welcome) return
+	if (currentRoute == NavigationRoute.Welcome) return
 
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    val showSetDefaultLauncherBanner by PrivateSettingsStore.showSetDefaultLauncherBanner.asStateNull()
-    val isDefaultLauncher by rememberIsDefaultLauncher()
+	val showSetDefaultLauncherBanner by PrivateSettingsStore.showSetDefaultLauncherBanner.asStateNull()
+	val isDefaultLauncher by rememberIsDefaultLauncher()
 
-    val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
-    val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
-    val showReselectBackupBanner by PrivateSettingsStore.showReselectBackupBanner.asStateNull()
-    val autoBackupUri by remember(autoBackupUriString) {
-        derivedStateOf { autoBackupUriString?.toUri() }
-    }
+	val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
+	val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
+	val showReselectBackupBanner by PrivateSettingsStore.showReselectBackupBanner.asStateNull()
+	val autoBackupUri by remember(autoBackupUriString) {
+		derivedStateOf { autoBackupUriString?.toUri() }
+	}
 
-    var hasAutoBackupPermission by remember {
-        mutableStateOf<Boolean?>(null)
-    }
+	var hasAutoBackupPermission by remember {
+		mutableStateOf<Boolean?>(null)
+	}
 
-    LaunchedEffect(autoBackupUri) {
-        hasAutoBackupPermission =
-            if (autoBackupUri == null) {
-                null
-            } else {
-                ctx.hasUriReadWritePermission(autoBackupUri!!)
-            }
-    }
+	LaunchedEffect(autoBackupUri) {
+		hasAutoBackupPermission =
+			if (autoBackupUri == null) {
+				null
+			} else {
+				ctx.hasUriReadWritePermission(autoBackupUri!!)
+			}
+	}
 
-    val showSetAsDefaultBanner = (showSetDefaultLauncherBanner == true) && !isDefaultLauncher
-    val showReselectAutoBackupFile =
-        (showReselectBackupBanner == true) && autoBackupEnabled && hasAutoBackupPermission == false && autoBackupUri != null
+	val showSetAsDefaultBanner = (showSetDefaultLauncherBanner == true) && !isDefaultLauncher
+	val showReselectAutoBackupFile =
+		(showReselectBackupBanner == true) && autoBackupEnabled && hasAutoBackupPermission == false && autoBackupUri != null
 
-    if (showSetAsDefaultBanner || showReselectAutoBackupFile) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            Spacer()
-            AnimatedVisibility(showSetAsDefaultBanner) {
-                SetDefaultLauncherBanner {
-                    scope.launch {
-                        PrivateSettingsStore.showSetDefaultLauncherBanner.set(ctx, false)
-                    }
-                }
-            }
-            AnimatedVisibility(showReselectAutoBackupFile) {
-                ReselectAutoBackupBanner {
-                    scope.launch {
-                        PrivateSettingsStore.showReselectBackupBanner.set(ctx, false)
-                    }
-                }
-            }
-        }
-    }
+	if (showSetAsDefaultBanner || showReselectAutoBackupFile) {
+		Column(
+			modifier =
+				Modifier
+					.fillMaxSize()
+					.padding(16.dp),
+			verticalArrangement = Arrangement.spacedBy(5.dp)
+		) {
+			Spacer()
+			AnimatedVisibility(showSetAsDefaultBanner) {
+				SetDefaultLauncherBanner {
+					scope.launch {
+						PrivateSettingsStore.showSetDefaultLauncherBanner.set(ctx, false)
+					}
+				}
+			}
+			AnimatedVisibility(showReselectAutoBackupFile) {
+				ReselectAutoBackupBanner {
+					scope.launch {
+						PrivateSettingsStore.showReselectBackupBanner.set(ctx, false)
+					}
+				}
+			}
+		}
+	}
 }

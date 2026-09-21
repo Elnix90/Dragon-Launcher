@@ -21,17 +21,17 @@ import org.elnix.dragonlauncher.base.DragonCache
  * @property imageBitmap the rendered icon bitmap, or null if the point has no icon
  */
 public data class StablePointValues(
-    val sizePx: Float,
-    val innerPaddingPx: Float,
-    val borderRadii: Float,
-    val iconSize: Size,
-    val imageBitmap: ImageBitmap?,
-    val badgeBitmap: ImageBitmap?
+	val sizePx: Float,
+	val innerPaddingPx: Float,
+	val borderRadii: Float,
+	val iconSize: Size,
+	val imageBitmap: ImageBitmap?,
+	val badgeBitmap: ImageBitmap?
 )
 
 public object PointStableCache : DragonCache<Int, StablePointValues>(200)
 
 public data class DrawScopeText(
-    val offsetTextLayoutResult: TextLayoutResult,
-    val topLeft: Offset
+	val offsetTextLayoutResult: TextLayoutResult,
+	val topLeft: Offset
 )

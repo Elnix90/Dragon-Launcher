@@ -30,54 +30,54 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhatsNewBottomSheet() {
-    val ctx = LocalContext.current
-    val uriHandler = LocalUriHandler.current
+	val ctx = LocalContext.current
+	val uriHandler = LocalUriHandler.current
 
-    var lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asMutableState()
-    val versionCode = ctx.getVersionCode()
+	var lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asMutableState()
+	val versionCode = ctx.getVersionCode()
 
-    if (lastSeenVersionCodeWhatsNew >= versionCode) return
+	if (lastSeenVersionCodeWhatsNew >= versionCode) return
 
-    val updates by produceState(initialValue = emptyList()) {
-        value = loadChangelogs(ctx, versionCode)
-    }
+	val updates by produceState(initialValue = emptyList()) {
+		value = loadChangelogs(ctx, versionCode)
+	}
 
-    DragonModalBottomSheet(
-        onDismissRequest = { lastSeenVersionCodeWhatsNew = versionCode }
-    ) {
-        LazyColumn {
-            item {
-                Text(
-                    text = stringResource(R.string.whats_new),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Spacer(12.dp)
-            }
+	DragonModalBottomSheet(
+		onDismissRequest = { lastSeenVersionCodeWhatsNew = versionCode }
+	) {
+		LazyColumn {
+			item {
+				Text(
+					text = stringResource(R.string.whats_new),
+					style = MaterialTheme.typography.headlineSmall,
+					fontWeight = FontWeight.Bold,
+					color = MaterialTheme.colorScheme.onSurface,
+					modifier = Modifier.align(Alignment.CenterHorizontally)
+				)
+				Spacer(12.dp)
+			}
 
-            items(updates) { update ->
-                val updateRegex: Regex = "[\\d-.]+".toRegex()
-                val matchResult = updateRegex.find(update.versionName)
+			items(updates) { update ->
+				val updateRegex: Regex = "[\\d-.]+".toRegex()
+				val matchResult = updateRegex.find(update.versionName)
 
-                val link =
-                    if (matchResult != null) {
-                        "$GITHUB_REPO_LINK/releases/tag/v${matchResult.value}"
-                    } else {
-                        "$GITHUB_REPO_LINK/releases/latest"
-                    }
+				val link =
+					if (matchResult != null) {
+						"$GITHUB_REPO_LINK/releases/tag/v${matchResult.value}"
+					} else {
+						"$GITHUB_REPO_LINK/releases/latest"
+					}
 
-                UpdateCard(
-                    update,
-                    onLongClick = {
-                        ctx.copyToClipboard(link)
-                    },
-                    onClick = {
-                        uriHandler.openUri(link)
-                    }
-                )
-            }
-        }
-    }
+				UpdateCard(
+					update,
+					onLongClick = {
+						ctx.copyToClipboard(link)
+					},
+					onClick = {
+						uriHandler.openUri(link)
+					}
+				)
+			}
+		}
+	}
 }

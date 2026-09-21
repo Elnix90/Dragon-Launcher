@@ -13,44 +13,44 @@ import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 
 @Composable
 fun rememberCustomText(
-    text: String,
-    verticalPadding: Float
+	text: String,
+	verticalPadding: Float
 ): DrawScopeText {
-    val textMeasurer: TextMeasurer = LocalTextMeasurer.current
-    val textStyle = MaterialTheme.typography.labelSmall
+	val textMeasurer: TextMeasurer = LocalTextMeasurer.current
+	val textStyle = MaterialTheme.typography.labelSmall
 
-    return retain(text, textStyle, verticalPadding) {
-        getTopLeftAndTextMeasure(
-            text = text,
-            verticalPadding = verticalPadding,
-            textStyle = textStyle,
-            textMeasurer = textMeasurer
-        )
-    }
+	return retain(text, textStyle, verticalPadding) {
+		getTopLeftAndTextMeasure(
+			text = text,
+			verticalPadding = verticalPadding,
+			textStyle = textStyle,
+			textMeasurer = textMeasurer
+		)
+	}
 }
 
 fun getTopLeftAndTextMeasure(
-    text: String,
-    verticalPadding: Float,
-    textStyle: TextStyle,
-    textMeasurer: TextMeasurer
+	text: String,
+	verticalPadding: Float,
+	textStyle: TextStyle,
+	textMeasurer: TextMeasurer
 ): DrawScopeText {
-    val textLayoutResult =
-        textMeasurer.measure(
-            text = AnnotatedString(text),
-            constraints = Constraints(maxWidth = Int.MAX_VALUE),
-            style = textStyle
-        )
+	val textLayoutResult =
+		textMeasurer.measure(
+			text = AnnotatedString(text),
+			constraints = Constraints(maxWidth = Int.MAX_VALUE),
+			style = textStyle
+		)
 
-    val textWidth = textLayoutResult.size.width
-    val textHeight = textLayoutResult.size.height
+	val textWidth = textLayoutResult.size.width
+	val textHeight = textLayoutResult.size.height
 
-    return DrawScopeText(
-        offsetTextLayoutResult = textLayoutResult,
-        topLeft =
-            Offset(
-                x = textWidth / 2f,
-                y = textHeight / 2 + verticalPadding
-            )
-    )
+	return DrawScopeText(
+		offsetTextLayoutResult = textLayoutResult,
+		topLeft =
+			Offset(
+				x = textWidth / 2f,
+				y = textHeight / 2 + verticalPadding
+			)
+	)
 }

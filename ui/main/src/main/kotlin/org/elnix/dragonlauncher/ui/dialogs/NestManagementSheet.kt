@@ -71,271 +71,271 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NestManagementSheet(
-    pointsViewModel: PointsViewModel = activityViewModel(),
-    title: String? = null,
-    onSelect: ((Nest) -> Unit)? = null,
-    onDismissRequest: () -> Unit
+	pointsViewModel: PointsViewModel = activityViewModel(),
+	title: String? = null,
+	onSelect: ((Nest) -> Unit)? = null,
+	onDismissRequest: () -> Unit
 ) {
-    val pointsService = pointsViewModel.pointsService
-    val navigator = LocalNavigator.current
-    val recomposeTrigger by pointsService.recomposeTrigger.asState()
-    val nests by pointsService.nests.collectAsState()
+	val pointsService = pointsViewModel.pointsService
+	val navigator = LocalNavigator.current
+	val recomposeTrigger by pointsService.recomposeTrigger.asState()
+	val nests by pointsService.nests.collectAsState()
 
-    val currentNestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
+	val currentNestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
 
-    var hasClickedNewNest by remember { mutableStateOf<Int?>(null) }
-    val listState = rememberLazyListState()
-    LaunchedEffect(hasClickedNewNest) {
-        if (hasClickedNewNest != null) {
-            listState.animateScrollToItem(hasClickedNewNest!!)
-            hasClickedNewNest = null
-        }
-    }
+	var hasClickedNewNest by remember { mutableStateOf<Int?>(null) }
+	val listState = rememberLazyListState()
+	LaunchedEffect(hasClickedNewNest) {
+		if (hasClickedNewNest != null) {
+			listState.animateScrollToItem(hasClickedNewNest!!)
+			hasClickedNewNest = null
+		}
+	}
 
-    val nestsList = remember(recomposeTrigger, nests.size) { nests.toList() }
+	val nestsList = remember(recomposeTrigger, nests.size) { nests.toList() }
 
-    DragonModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        skipPartiallyExpanded = true
-    ) {
-        DialogTitle(title ?: stringResource(R.string.manage_nests))
-        Spacer(10.dp)
+	DragonModalBottomSheet(
+		onDismissRequest = onDismissRequest,
+		skipPartiallyExpanded = true
+	) {
+		DialogTitle(title ?: stringResource(R.string.manage_nests))
+		Spacer(10.dp)
 
-        DragonButton(
-            onClick = {
-                hasClickedNewNest = pointsService.addNest()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.add_circle),
-                contentDescription = stringResource(R.string.create_new_nest)
-            )
-            Spacer(15.dp)
-            Text(stringResource(R.string.create_new_nest))
-        }
+		DragonButton(
+			onClick = {
+				hasClickedNewNest = pointsService.addNest()
+			},
+			modifier = Modifier.fillMaxWidth()
+		) {
+			Icon(
+				painter = painterResource(R.drawable.add_circle),
+				contentDescription = stringResource(R.string.create_new_nest)
+			)
+			Spacer(15.dp)
+			Text(stringResource(R.string.create_new_nest))
+		}
 
-        Spacer(15.dp)
+		Spacer(15.dp)
 
-        DragonSettingsGroup {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier.heightIn(max = 700.dp),
-                state = listState
-            ) {
-                items(nestsList) { (id, nest) ->
-                    NestManagementItem(
-                        nest = nest,
-                        selected = id == currentNestId,
-                        modifier = Modifier.animateItem(),
-                        onEditName = { newName ->
-                            pointsService.editNest(nest.id) { old ->
-                                old.copy(name = newName)
-                            }
-                        },
-                        onDelete = { pointsService.removeNest(nest.id) },
-                        onDuplicate = { pointsService.duplicateNest(nest.id) },
-                        onEdit = {
-                            pointsViewModel.nestsNavigationService.goToNest(id, true)
-                            navigator.navigate(NavigationRoute.NestEdit)
-                        },
-                        onSelect = { onSelect?.invoke(nest) }
-                    )
-                }
-            }
-        }
-    }
+		DragonSettingsGroup {
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(5.dp),
+				modifier = Modifier.heightIn(max = 700.dp),
+				state = listState
+			) {
+				items(nestsList) { (id, nest) ->
+					NestManagementItem(
+						nest = nest,
+						selected = id == currentNestId,
+						modifier = Modifier.animateItem(),
+						onEditName = { newName ->
+							pointsService.editNest(nest.id) { old ->
+								old.copy(name = newName)
+							}
+						},
+						onDelete = { pointsService.removeNest(nest.id) },
+						onDuplicate = { pointsService.duplicateNest(nest.id) },
+						onEdit = {
+							pointsViewModel.nestsNavigationService.goToNest(id, true)
+							navigator.navigate(NavigationRoute.NestEdit)
+						},
+						onSelect = { onSelect?.invoke(nest) }
+					)
+				}
+			}
+		}
+	}
 }
 
 @Composable
 private fun DragonGroupScope.NestManagementItem(
-    nest: Nest,
-    selected: Boolean,
-    modifier: Modifier,
-    onEditName: (newName: String?) -> Unit,
-    onDelete: () -> Unit,
-    onDuplicate: () -> Unit,
-    onEdit: () -> Unit,
-    onSelect: (() -> Unit)? = null
+	nest: Nest,
+	selected: Boolean,
+	modifier: Modifier,
+	onEditName: (newName: String?) -> Unit,
+	onDelete: () -> Unit,
+	onDuplicate: () -> Unit,
+	onEdit: () -> Unit,
+	onSelect: (() -> Unit)? = null
 ) {
-    // Same as in dragonSettingGroup, needed to prevent the nest to erase the bg
-    val bgColor = MaterialTheme.colorScheme.surfaceContainerHigh
+	// Same as in dragonSettingGroup, needed to prevent the nest to erase the bg
+	val bgColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
-    var showPopup by remember { mutableStateOf(false) }
+	var showPopup by remember { mutableStateOf(false) }
 
-    Row(
-        modifier =
-            modifier
-                .dragonSettingGroup(selected = selected) {
-                    height(120.dp)
-                        .clickable { onSelect?.invoke() }
-                },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
-    ) {
-        BoxWithConstraints(Modifier.requiredSize(100.dp)) {
-            val center = constraints.getCenter()
-            PointIcon(
-                selected = false,
-                point =
-                    Point(
-                        offset = Offset.Zero,
-                        action = Action.OpenNest(nest.id),
-                        id = -3
-                    ),
-                center = center,
-                eraseColor = bgColor
-            )
-        }
+	Row(
+		modifier =
+			modifier
+				.dragonSettingGroup(selected = selected) {
+					height(120.dp)
+						.clickable { onSelect?.invoke() }
+				},
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.End
+	) {
+		BoxWithConstraints(Modifier.requiredSize(100.dp)) {
+			val center = constraints.getCenter()
+			PointIcon(
+				selected = false,
+				point =
+					Point(
+						offset = Offset.Zero,
+						action = Action.OpenNest(nest.id),
+						id = -3
+					),
+				center = center,
+				eraseColor = bgColor
+			)
+		}
 
-        Spacer(5.dp)
+		Spacer(5.dp)
 
-        var tempState by rememberSaveable { mutableStateOf(nest.name) }
+		var tempState by rememberSaveable { mutableStateOf(nest.name) }
 
-        var isEditing by remember { mutableStateOf(false) }
+		var isEditing by remember { mutableStateOf(false) }
 
-        // Sync the text with external value changes (slider drag, programmatic updates).
-        // The state must NOT be re-created on valueText change: the focus-interaction
-        // collector below captures `onDone` once, and re-creating the state would make it
-        // read an orphaned/stale value after the first commit.
-        LaunchedEffect(nest.name) {
-            if (!isEditing) tempState = nest.name
-        }
+		// Sync the text with external value changes (slider drag, programmatic updates).
+		// The state must NOT be re-created on valueText change: the focus-interaction
+		// collector below captures `onDone` once, and re-creating the state would make it
+		// read an orphaned/stale value after the first commit.
+		LaunchedEffect(nest.name) {
+			if (!isEditing) tempState = nest.name
+		}
 
-        val focusManager = LocalFocusManager.current
-        val interactionSource = remember { MutableInteractionSource() }
-        val animatedIcon = rememberAnimatedIcon()
+		val focusManager = LocalFocusManager.current
+		val interactionSource = remember { MutableInteractionSource() }
+		val animatedIcon = rememberAnimatedIcon()
 
-        fun onDone() {
-            animatedIcon.setSuccess()
-            focusManager.clearFocus(true)
-            onEditName(tempState)
-        }
+		fun onDone() {
+			animatedIcon.setSuccess()
+			focusManager.clearFocus(true)
+			onEditName(tempState)
+		}
 
-        BackHandler(isEditing, onBack = ::onDone)
+		BackHandler(isEditing, onBack = ::onDone)
 
-        LaunchedEffect(interactionSource) {
-            interactionSource.interactions.collect { interaction ->
-                when (interaction) {
-                    is FocusInteraction.Focus -> {
-                        isEditing = true
-                    }
+		LaunchedEffect(interactionSource) {
+			interactionSource.interactions.collect { interaction ->
+				when (interaction) {
+					is FocusInteraction.Focus -> {
+						isEditing = true
+					}
 
-                    is FocusInteraction.Unfocus -> {
-                        onDone()
-                        isEditing = false
-                    }
-                }
-            }
-        }
+					is FocusInteraction.Unfocus -> {
+						onDone()
+						isEditing = false
+					}
+				}
+			}
+		}
 
-        TextField(
-            value = tempState ?: "",
-            onValueChange = { tempState = it },
-            label = null,
-            placeholder = { Text(stringResource(R.string.custom_name)) },
-            colors =
-                AppObjectsColors.outlinedTextFieldColors(
-                    removeBorder = true
-                ),
-            shape = CircleShape,
-            interactionSource = interactionSource,
-            modifier = Modifier
-                .weight(1f)
-                .wrapContentSize(),
-            singleLine = true,
-            keyboardOptions =
-                KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
-                    imeAction = ImeAction.Done
-                ),
-            keyboardActions =
-                KeyboardActions(
-                    onDone = { onDone() }
-                ),
-            trailingIcon = {
-                val showReset = !isEditing
+		TextField(
+			value = tempState ?: "",
+			onValueChange = { tempState = it },
+			label = null,
+			placeholder = { Text(stringResource(R.string.custom_name)) },
+			colors =
+				AppObjectsColors.outlinedTextFieldColors(
+					removeBorder = true
+				),
+			shape = CircleShape,
+			interactionSource = interactionSource,
+			modifier = Modifier
+				.weight(1f)
+				.wrapContentSize(),
+			singleLine = true,
+			keyboardOptions =
+				KeyboardOptions(
+					capitalization = KeyboardCapitalization.Words,
+					imeAction = ImeAction.Done
+				),
+			keyboardActions =
+				KeyboardActions(
+					onDone = { onDone() }
+				),
+			trailingIcon = {
+				val showReset = !isEditing
 
-                AnimatedContent(showReset) { showReset ->
-                    animatedIcon.Icon(
-                        defaultIcon = if (showReset) R.drawable.reset else R.drawable.check,
-                        successIcon = if (showReset) R.drawable.check else R.drawable.save,
-                        enabled = if (showReset) tempState != null else tempState != nest.name
-                    ) {
-                        if (showReset) {
-                            tempState = null
-                            onEditName(null)
+				AnimatedContent(showReset) { showReset ->
+					animatedIcon.Icon(
+						defaultIcon = if (showReset) R.drawable.reset else R.drawable.check,
+						successIcon = if (showReset) R.drawable.check else R.drawable.save,
+						enabled = if (showReset) tempState != null else tempState != nest.name
+					) {
+						if (showReset) {
+							tempState = null
+							onEditName(null)
 
-                            animatedIcon.setSuccess()
-                            focusManager.clearFocus(true)
-                        } else {
-                            onDone()
-                        }
-                    }
-                }
-            }
-        )
+							animatedIcon.setSuccess()
+							focusManager.clearFocus(true)
+						} else {
+							onDone()
+						}
+					}
+				}
+			}
+		)
 
-        Box {
-            MoreIcon { showPopup = true }
+		Box {
+			MoreIcon { showPopup = true }
 
-            DragonDropDownMenu(
-                expanded = showPopup,
-                onDismissRequest = { showPopup = false }
-            ) {
-                DropdownMenuGroup(MenuDefaults.groupShapes()) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(stringResource(R.string.edit_nest))
-                        },
-                        onClick = {
-                            onEdit()
-                            showPopup = false
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.edit_rounded),
-                                contentDescription = stringResource(R.string.edit_nest)
-                            )
-                        }
-                    )
+			DragonDropDownMenu(
+				expanded = showPopup,
+				onDismissRequest = { showPopup = false }
+			) {
+				DropdownMenuGroup(MenuDefaults.groupShapes()) {
+					DropdownMenuItem(
+						text = {
+							Text(stringResource(R.string.edit_nest))
+						},
+						onClick = {
+							onEdit()
+							showPopup = false
+						},
+						leadingIcon = {
+							Icon(
+								painter = painterResource(R.drawable.edit_rounded),
+								contentDescription = stringResource(R.string.edit_nest)
+							)
+						}
+					)
 
-                    DropdownMenuItem(
-                        text = {
-                            Text(stringResource(R.string.duplicate))
-                        },
-                        onClick = {
-                            onDuplicate()
-                            showPopup = false
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.copy),
-                                contentDescription = stringResource(R.string.duplicate)
-                            )
-                        }
-                    )
+					DropdownMenuItem(
+						text = {
+							Text(stringResource(R.string.duplicate))
+						},
+						onClick = {
+							onDuplicate()
+							showPopup = false
+						},
+						leadingIcon = {
+							Icon(
+								painter = painterResource(R.drawable.copy),
+								contentDescription = stringResource(R.string.duplicate)
+							)
+						}
+					)
 
-                    if (nest.id != 0) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(stringResource(R.string.delete_nest))
-                            },
-                            onClick = {
-                                onDelete()
-                                showPopup = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.delete_forever),
-                                    contentDescription = stringResource(R.string.delete_nest),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
+					if (nest.id != 0) {
+						DropdownMenuItem(
+							text = {
+								Text(stringResource(R.string.delete_nest))
+							},
+							onClick = {
+								onDelete()
+								showPopup = false
+							},
+							leadingIcon = {
+								Icon(
+									painter = painterResource(R.drawable.delete_forever),
+									contentDescription = stringResource(R.string.delete_nest),
+									tint = MaterialTheme.colorScheme.error
+								)
+							}
+						)
+					}
+				}
+			}
+		}
+	}
 }

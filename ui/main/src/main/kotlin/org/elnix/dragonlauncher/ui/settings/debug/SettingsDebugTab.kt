@@ -31,84 +31,84 @@ import org.json.JSONObject
 
 @Composable
 fun SettingsDebugTab() {
-    val scope = rememberCoroutineScope()
-    val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
 
-    var settingsJson by remember { mutableStateOf<JSONObject?>(null) }
+	var settingsJson by remember { mutableStateOf<JSONObject?>(null) }
 
-    var selectedStores by remember { mutableStateOf(AllStores) }
-    var showStoresDialog by remember { mutableStateOf(false) }
+	var selectedStores by remember { mutableStateOf(AllStores) }
+	var showStoresDialog by remember { mutableStateOf(false) }
 
-    var forceAllKeys by remember { mutableStateOf(false) }
+	var forceAllKeys by remember { mutableStateOf(false) }
 
-    fun loadSettings() {
-        settingsJson = null
-        scope.launch {
-            settingsJson = SettingsBackupManager.createJsonToExport(ctx, selectedStores, forceAllKeys)
-        }
-    }
+	fun loadSettings() {
+		settingsJson = null
+		scope.launch {
+			settingsJson = SettingsBackupManager.createJsonToExport(ctx, selectedStores, forceAllKeys)
+		}
+	}
 
-    val jsonLines by remember(settingsJson) {
-        derivedStateOf {
-            settingsJson?.toString(2)?.lines().orEmpty()
-        }
-    }
+	val jsonLines by remember(settingsJson) {
+		derivedStateOf {
+			settingsJson?.toString(2)?.lines().orEmpty()
+		}
+	}
 
-    LaunchedEffect(Unit, forceAllKeys) {
-        loadSettings()
-    }
+	LaunchedEffect(Unit, forceAllKeys) {
+		loadSettings()
+	}
 
-    SettingsScaffold(
-        title = "Settings debug json",
-        helpText = "settings json",
-        onReset = null,
-        resetText = null,
-        scrollableContent = false,
-        lasyListState = rememberLazyListState(),
-        topContent = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                DragonButton(
-                    onClick = { showStoresDialog = true }
-                ) {
-                    Text("Select visibles stores")
-                }
+	SettingsScaffold(
+		title = "Settings debug json",
+		helpText = "settings json",
+		onReset = null,
+		resetText = null,
+		scrollableContent = false,
+		lasyListState = rememberLazyListState(),
+		topContent = {
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalArrangement = Arrangement.spacedBy(5.dp)
+			) {
+				DragonButton(
+					onClick = { showStoresDialog = true }
+				) {
+					Text("Select visibles stores")
+				}
 
-                Spacer(Modifier.weight(1f))
+				Spacer(Modifier.weight(1f))
 
-                DragonIconButton(
-                    onClick = { forceAllKeys = !forceAllKeys },
-                    icon = if (forceAllKeys) R.drawable.add_circle else R.drawable.remove_circle,
-                    contentDescription = R.string.copy // Flemme d'ajouter un string
-                )
+				DragonIconButton(
+					onClick = { forceAllKeys = !forceAllKeys },
+					icon = if (forceAllKeys) R.drawable.add_circle else R.drawable.remove_circle,
+					contentDescription = R.string.copy // Flemme d'ajouter un string
+				)
 
-                DragonIconButton(
-                    onClick = { settingsJson?.let { ctx.copyToClipboard(it.toString(2)) } },
-                    icon = R.drawable.copy,
-                    contentDescription = R.string.copy
-                )
+				DragonIconButton(
+					onClick = { settingsJson?.let { ctx.copyToClipboard(it.toString(2)) } },
+					icon = R.drawable.copy,
+					contentDescription = R.string.copy
+				)
 
-                DragonIconButton(
-                    onClick = ::loadSettings,
-                    icon = R.drawable.refresh,
-                    contentDescription = R.string.loading // here too
-                )
-            }
-        }
-    ) {
-        MonospaceScrollableText(jsonLines)
-    }
+				DragonIconButton(
+					onClick = ::loadSettings,
+					icon = R.drawable.refresh,
+					contentDescription = R.string.loading // here too
+				)
+			}
+		}
+	) {
+		MonospaceScrollableText(jsonLines)
+	}
 
-    if (showStoresDialog) {
-        DebugJsonStoresDialog(
-            onDismiss = { showStoresDialog = false },
-            defaultStores = selectedStores
-        ) {
-            selectedStores = it
-            showStoresDialog = false
-            loadSettings()
-        }
-    }
+	if (showStoresDialog) {
+		DebugJsonStoresDialog(
+			onDismiss = { showStoresDialog = false },
+			defaultStores = selectedStores
+		) {
+			selectedStores = it
+			showStoresDialog = false
+			loadSettings()
+		}
+	}
 }

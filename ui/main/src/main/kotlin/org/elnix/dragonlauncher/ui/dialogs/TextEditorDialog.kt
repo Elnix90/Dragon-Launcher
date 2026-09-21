@@ -34,80 +34,80 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @Composable
 fun TextEditorDialog(
-    title: @Composable () -> String,
-    placeHolder: @Composable () -> String,
-    defaultText: String,
-    initialText: String,
-    onDismiss: () -> Unit,
-    onValidate: (String?) -> Unit
+	title: @Composable () -> String,
+	placeHolder: @Composable () -> String,
+	defaultText: String,
+	initialText: String,
+	onDismiss: () -> Unit,
+	onValidate: (String?) -> Unit
 ) {
-    val focusRequester = remember { FocusRequester() }
+	val focusRequester = remember { FocusRequester() }
 
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(initialText, TextRange(initialText.length))) }
-    LaunchedEffect(Unit) {
-        yield()
-        focusRequester.requestFocus()
-    }
+	var textFieldValue by remember { mutableStateOf(TextFieldValue(initialText, TextRange(initialText.length))) }
+	LaunchedEffect(Unit) {
+		yield()
+		focusRequester.requestFocus()
+	}
 
-    AlertDialog(
-        title = {
-            val title = title()
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.edit_rounded),
-                    contentDescription = title,
-                    tint = MaterialTheme.colorScheme.primary
-                )
+	AlertDialog(
+		title = {
+			val title = title()
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween
+			) {
+				Icon(
+					painter = painterResource(R.drawable.edit_rounded),
+					contentDescription = title,
+					tint = MaterialTheme.colorScheme.primary
+				)
 
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        },
-        onDismissRequest = onDismiss,
-        text = {
-            TextField(
-                value = textFieldValue,
-                onValueChange = { textFieldValue = it },
-                singleLine = true,
-                trailingIcon = {
-                    ResetIcon(textFieldValue.text != defaultText) {
-                        textFieldValue = TextFieldValue(defaultText, TextRange(defaultText.length))
-                    }
-                },
-                placeholder = {
-                    Text(placeHolder())
-                },
-                colors = AppObjectsColors.outlinedTextFieldColors(),
-                keyboardOptions =
-                    KeyboardOptions(
-                        imeAction = ImeAction.Done
-                    ),
-                keyboardActions =
-                    KeyboardActions(
-                        onDone = { onValidate(textFieldValue.text.trim()) }
-                    ),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(CircleShape),
-                maxLines = 1
-            )
-        },
-        confirmButton = {
-            ValidateCancelButtons(
-                validateEnabled = textFieldValue.text.trim() != "",
-                onCancel = onDismiss
-            ) { onValidate(textFieldValue.text.trim()) }
-        },
-        dismissButton = {},
-        modifier = Modifier.focusRequester(focusRequester),
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.large
-    )
+				Text(
+					text = title,
+					color = MaterialTheme.colorScheme.onSurface
+				)
+			}
+		},
+		onDismissRequest = onDismiss,
+		text = {
+			TextField(
+				value = textFieldValue,
+				onValueChange = { textFieldValue = it },
+				singleLine = true,
+				trailingIcon = {
+					ResetIcon(textFieldValue.text != defaultText) {
+						textFieldValue = TextFieldValue(defaultText, TextRange(defaultText.length))
+					}
+				},
+				placeholder = {
+					Text(placeHolder())
+				},
+				colors = AppObjectsColors.outlinedTextFieldColors(),
+				keyboardOptions =
+					KeyboardOptions(
+						imeAction = ImeAction.Done
+					),
+				keyboardActions =
+					KeyboardActions(
+						onDone = { onValidate(textFieldValue.text.trim()) }
+					),
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.clip(CircleShape),
+				maxLines = 1
+			)
+		},
+		confirmButton = {
+			ValidateCancelButtons(
+				validateEnabled = textFieldValue.text.trim() != "",
+				onCancel = onDismiss
+			) { onValidate(textFieldValue.text.trim()) }
+		},
+		dismissButton = {},
+		modifier = Modifier.focusRequester(focusRequester),
+		containerColor = MaterialTheme.colorScheme.surface,
+		shape = MaterialTheme.shapes.large
+	)
 }

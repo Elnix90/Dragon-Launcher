@@ -35,130 +35,130 @@ import org.junit.Test
  * If the app module's resources aren't available, use explicit text overrides.
  */
 class ValidateCancelButtonsTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Composable
-    fun TestTheme(content: @Composable () -> Unit) {
-        MaterialTheme {
-            CompositionLocalProvider(
-                LocalUseCustomColorChannels provides true,
-                LocalDisableHapticFeedbackGlobally provides false
-            ) {
-                content()
-            }
-        }
-    }
+	@Composable
+	fun TestTheme(content: @Composable () -> Unit) {
+		MaterialTheme {
+			CompositionLocalProvider(
+				LocalUseCustomColorChannels provides true,
+				LocalDisableHapticFeedbackGlobally provides false
+			) {
+				content()
+			}
+		}
+	}
 
-    @Test
-    fun validateCancelButtons_bothButtonsVisible() {
-        composeTestRule.setContent {
-            TestTheme {
-                ValidateCancelButtons(
-                    validateText = "Save",
-                    cancelText = "Cancel",
-                    onCancel = {},
-                    onConfirm = {}
-                )
-            }
-        }
+	@Test
+	fun validateCancelButtons_bothButtonsVisible() {
+		composeTestRule.setContent {
+			TestTheme {
+				ValidateCancelButtons(
+					validateText = "Save",
+					cancelText = "Cancel",
+					onCancel = {},
+					onConfirm = {}
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Save").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
+	}
 
-    @Test
-    fun validateCancelButtons_confirmClickTriggersOnConfirm() {
-        var confirmed = false
+	@Test
+	fun validateCancelButtons_confirmClickTriggersOnConfirm() {
+		var confirmed = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                ValidateCancelButtons(
-                    validateText = "OK",
-                    cancelText = "Cancel",
-                    onCancel = {},
-                    onConfirm = { confirmed = true }
-                )
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				ValidateCancelButtons(
+					validateText = "OK",
+					cancelText = "Cancel",
+					onCancel = {},
+					onConfirm = { confirmed = true }
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("OK").performClick()
-        assertTrue("onConfirm should have been called", confirmed)
-    }
+		composeTestRule.onNodeWithText("OK").performClick()
+		assertTrue("onConfirm should have been called", confirmed)
+	}
 
-    @Test
-    fun validateCancelButtons_cancelClickTriggersOnCancel() {
-        var cancelled = false
+	@Test
+	fun validateCancelButtons_cancelClickTriggersOnCancel() {
+		var cancelled = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                ValidateCancelButtons(
-                    validateText = "Save",
-                    cancelText = "Cancel",
-                    onCancel = { cancelled = true },
-                    onConfirm = {}
-                )
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				ValidateCancelButtons(
+					validateText = "Save",
+					cancelText = "Cancel",
+					onCancel = { cancelled = true },
+					onConfirm = {}
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Cancel").performClick()
-        assertTrue("onCancel should have been called", cancelled)
-    }
+		composeTestRule.onNodeWithText("Cancel").performClick()
+		assertTrue("onCancel should have been called", cancelled)
+	}
 
-    @Test
-    fun validateCancelButtons_hidesCancelWhenOnCancelIsNull() {
-        composeTestRule.setContent {
-            TestTheme {
-                ValidateCancelButtons(
-                    validateText = "OK",
-                    cancelText = "Cancel",
-                    onCancel = null,
-                    onConfirm = {}
-                )
-            }
-        }
+	@Test
+	fun validateCancelButtons_hidesCancelWhenOnCancelIsNull() {
+		composeTestRule.setContent {
+			TestTheme {
+				ValidateCancelButtons(
+					validateText = "OK",
+					cancelText = "Cancel",
+					onCancel = null,
+					onConfirm = {}
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("OK").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Cancel").assertDoesNotExist()
-    }
+		composeTestRule.onNodeWithText("OK").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Cancel").assertDoesNotExist()
+	}
 
-    @Test
-    fun validateCancelButtons_confirmDisabledWhenValidateEnabledIsFalse() {
-        var confirmed = false
+	@Test
+	fun validateCancelButtons_confirmDisabledWhenValidateEnabledIsFalse() {
+		var confirmed = false
 
-        composeTestRule.setContent {
-            TestTheme {
-                ValidateCancelButtons(
-                    validateText = "Save",
-                    cancelText = "Cancel",
-                    validateEnabled = false,
-                    onCancel = {},
-                    onConfirm = { confirmed = true }
-                )
-            }
-        }
+		composeTestRule.setContent {
+			TestTheme {
+				ValidateCancelButtons(
+					validateText = "Save",
+					cancelText = "Cancel",
+					validateEnabled = false,
+					onCancel = {},
+					onConfirm = { confirmed = true }
+				)
+			}
+		}
 
-        // The confirm button should exist but not be clickable
-        composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-        // Note: clicking a disabled button should NOT trigger the callback.
-        // Compose's test framework won't perform the click on a disabled node.
-        assertFalse("onConfirm should NOT have been called on disabled button", confirmed)
-    }
+		// The confirm button should exist but not be clickable
+		composeTestRule.onNodeWithText("Save").assertIsDisplayed()
+		// Note: clicking a disabled button should NOT trigger the callback.
+		// Compose's test framework won't perform the click on a disabled node.
+		assertFalse("onConfirm should NOT have been called on disabled button", confirmed)
+	}
 
-    @Test
-    fun validateCancelButtons_customText() {
-        composeTestRule.setContent {
-            TestTheme {
-                ValidateCancelButtons(
-                    validateText = "Accept",
-                    cancelText = "Decline",
-                    onCancel = {},
-                    onConfirm = {}
-                )
-            }
-        }
+	@Test
+	fun validateCancelButtons_customText() {
+		composeTestRule.setContent {
+			TestTheme {
+				ValidateCancelButtons(
+					validateText = "Accept",
+					cancelText = "Decline",
+					onCancel = {},
+					onConfirm = {}
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Accept").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Decline").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Accept").assertIsDisplayed()
+		composeTestRule.onNodeWithText("Decline").assertIsDisplayed()
+	}
 }

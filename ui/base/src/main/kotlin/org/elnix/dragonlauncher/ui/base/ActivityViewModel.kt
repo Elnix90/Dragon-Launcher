@@ -8,6 +8,6 @@ import androidx.lifecycle.ViewModel
 
 @Composable
 inline fun <reified VM : ViewModel> activityViewModel(): VM {
-    val activity = LocalActivity.current as ComponentActivity
-    return hiltViewModel(activity)
+	val activity = LocalActivity.current as ComponentActivity
+	return hiltViewModel(activity)
 }

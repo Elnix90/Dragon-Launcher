@@ -35,105 +35,105 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
 @Composable
 fun AppDrawerSearch(
-    modifier: Modifier = Modifier,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    placeholderText: String = stringResource(R.string.search_apps),
-    trailingIcon: (@Composable () -> Unit)? = null,
-    onClickSearch: (() -> Unit)? = null,
-    onEnterPressed: (() -> Unit)? = null,
-    onFocusStateChanged: ((Boolean) -> Unit)? = null
+	modifier: Modifier = Modifier,
+	drawerViewModel: DrawerViewModel = activityViewModel(),
+	placeholderText: String = stringResource(R.string.search_apps),
+	trailingIcon: (@Composable () -> Unit)? = null,
+	onClickSearch: (() -> Unit)? = null,
+	onEnterPressed: (() -> Unit)? = null,
+	onFocusStateChanged: ((Boolean) -> Unit)? = null
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+	val keyboardController = LocalSoftwareKeyboardController.current
 
-    var searchQuery by drawerViewModel.searchQuery
+	var searchQuery by drawerViewModel.searchQuery
 
-    TextField(
-        value = searchQuery,
-        onValueChange = { searchQuery = it },
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-                .clip(MaterialTheme.shapes.large)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .onFocusChanged { focusState ->
-                    val focused = focusState.isFocused
-                    onFocusStateChanged?.invoke(focused) // Notify parent of focus change
-                    if (focused) {
-                        keyboardController?.show() // Show keyboard when TextField gains focus
-                    }
-                    // Keyboard hiding on focus loss is handled by system, IME actions, or explicit calls elsewhere (e.g., scroll logic)
-                },
-        leadingIcon = {
-            Icon(
-                painter = painterResource(R.drawable.search),
-                contentDescription = stringResource(R.string.search_apps),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.medium)
-                    .conditional(onClickSearch) { clickable(onClick = it) }
-                    .padding(2.dp)
-            )
-        },
-        trailingIcon = trailingIcon,
-        placeholder = {
-            Text(
-                text = placeholderText,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions =
-            KeyboardActions(
-                onSearch = onEnterPressed?.let { { it() } }
-            ),
-        colors = AppObjectsColors.outlinedTextFieldColors()
-    )
+	TextField(
+		value = searchQuery,
+		onValueChange = { searchQuery = it },
+		modifier =
+			modifier
+				.fillMaxWidth()
+				.padding(5.dp)
+				.clip(MaterialTheme.shapes.large)
+				.background(MaterialTheme.colorScheme.surfaceVariant)
+				.onFocusChanged { focusState ->
+					val focused = focusState.isFocused
+					onFocusStateChanged?.invoke(focused) // Notify parent of focus change
+					if (focused) {
+						keyboardController?.show() // Show keyboard when TextField gains focus
+					}
+					// Keyboard hiding on focus loss is handled by system, IME actions, or explicit calls elsewhere (e.g., scroll logic)
+				},
+		leadingIcon = {
+			Icon(
+				painter = painterResource(R.drawable.search),
+				contentDescription = stringResource(R.string.search_apps),
+				tint = MaterialTheme.colorScheme.onSurfaceVariant,
+				modifier = Modifier
+					.clip(MaterialTheme.shapes.medium)
+					.conditional(onClickSearch) { clickable(onClick = it) }
+					.padding(2.dp)
+			)
+		},
+		trailingIcon = trailingIcon,
+		placeholder = {
+			Text(
+				text = placeholderText,
+				color = MaterialTheme.colorScheme.onSurface
+			)
+		},
+		singleLine = true,
+		keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+		keyboardActions =
+			KeyboardActions(
+				onSearch = onEnterPressed?.let { { it() } }
+			),
+		colors = AppObjectsColors.outlinedTextFieldColors()
+	)
 }
 
 @Composable
 fun AppShortcutSearch(
-    searchQuery: String,
-    onValueChange: (String) -> Unit
+	searchQuery: String,
+	onValueChange: (String) -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
+	val focusManager = LocalFocusManager.current
+	val focusRequester = remember { FocusRequester() }
 
-    TextField(
-        value = searchQuery,
-        onValueChange = onValueChange,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
-        leadingIcon = {
-            Icon(
-                painter = painterResource(R.drawable.search),
-                contentDescription = stringResource(R.string.search_shortcuts)
-            )
-        },
-        trailingIcon = {
-            DragonIconButton(
-                icon = R.drawable.close,
-                contentDescription = R.string.close,
-                isCancel = true,
-                enabled = searchQuery.isNotEmpty()
-            ) { onValueChange("") }
-        },
-        placeholder = {
-            Text(
-                text = stringResource(R.string.search_shortcuts),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
-        shape = CircleShape,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions =
-            KeyboardActions(
-                onSearch = { focusManager.clearFocus(true) }
-            ),
-        colors = AppObjectsColors.outlinedTextFieldColors()
-    )
+	TextField(
+		value = searchQuery,
+		onValueChange = onValueChange,
+		modifier =
+			Modifier
+				.fillMaxWidth()
+				.focusRequester(focusRequester),
+		leadingIcon = {
+			Icon(
+				painter = painterResource(R.drawable.search),
+				contentDescription = stringResource(R.string.search_shortcuts)
+			)
+		},
+		trailingIcon = {
+			DragonIconButton(
+				icon = R.drawable.close,
+				contentDescription = R.string.close,
+				isCancel = true,
+				enabled = searchQuery.isNotEmpty()
+			) { onValueChange("") }
+		},
+		placeholder = {
+			Text(
+				text = stringResource(R.string.search_shortcuts),
+				color = MaterialTheme.colorScheme.onSurface
+			)
+		},
+		shape = CircleShape,
+		singleLine = true,
+		keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+		keyboardActions =
+			KeyboardActions(
+				onSearch = { focusManager.clearFocus(true) }
+			),
+		colors = AppObjectsColors.outlinedTextFieldColors()
+	)
 }

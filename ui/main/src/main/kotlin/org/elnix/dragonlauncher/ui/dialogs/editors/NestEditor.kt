@@ -62,190 +62,190 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NestEditor(
-    currentNest: Nest,
-    defaultNest: Nest,
-    defaultShape: IntersectionShape,
-    isDefaultEditing: Boolean,
-    onUpdateShapes: (changedShapes: Map<IntersectionShape, Offset>) -> Unit,
-    tempCancelZone: Dp,
-    onUpdateCancelZone: (Dp?) -> Unit,
-    onDismiss: (newNest: Nest, changedShapes: Map<IntersectionShape, Offset>) -> Unit
+	currentNest: Nest,
+	defaultNest: Nest,
+	defaultShape: IntersectionShape,
+	isDefaultEditing: Boolean,
+	onUpdateShapes: (changedShapes: Map<IntersectionShape, Offset>) -> Unit,
+	tempCancelZone: Dp,
+	onUpdateCancelZone: (Dp?) -> Unit,
+	onDismiss: (newNest: Nest, changedShapes: Map<IntersectionShape, Offset>) -> Unit
 ) {
-    val nestDebugInfo by DebugSettingsStore.nestDebugInfo.asState()
-    var showNestShapesManagementDialog by remember { mutableStateOf(false) }
+	val nestDebugInfo by DebugSettingsStore.nestDebugInfo.asState()
+	var showNestShapesManagementDialog by remember { mutableStateOf(false) }
 
-    var editNest by remember(currentNest) { mutableStateOf(currentNest) }
+	var editNest by remember(currentNest) { mutableStateOf(currentNest) }
 
-    val shapes = editNest.getInterSectionShapes(defaultNest, isDefaultEditing)
-    val defaultShapes = emptyNest.getInterSectionShapes(defaultNest, isDefaultEditing)
+	val shapes = editNest.getInterSectionShapes(defaultNest, isDefaultEditing)
+	val defaultShapes = emptyNest.getInterSectionShapes(defaultNest, isDefaultEditing)
 
-    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> =
-        remember {
-            mutableStateMapOf<Int, IntersectionShape>().apply {
-                shapes.forEach {
-                    this[it.id] = it
-                }
-            }
-        }
+	val shapesInternal: SnapshotStateMap<Int, IntersectionShape> =
+		remember {
+			mutableStateMapOf<Int, IntersectionShape>().apply {
+				shapes.forEach {
+					this[it.id] = it
+				}
+			}
+		}
 
-    fun getChangedShapes(): Map<IntersectionShape, Offset> =
-        shapesInternal.values.toSet().associateWith { shapeInternal ->
-            val witnessShape = shapes.find { shapeInternal.id == it.id } ?: return@associateWith Offset.Zero
-            shapeInternal.getOffset(defaultShape, isDefaultEditing) - witnessShape.getOffset(defaultShape, isDefaultEditing)
-        }
+	fun getChangedShapes(): Map<IntersectionShape, Offset> =
+		shapesInternal.values.toSet().associateWith { shapeInternal ->
+			val witnessShape = shapes.find { shapeInternal.id == it.id } ?: return@associateWith Offset.Zero
+			shapeInternal.getOffset(defaultShape, isDefaultEditing) - witnessShape.getOffset(defaultShape, isDefaultEditing)
+		}
 
-    fun triggerUpdate() {
-        onUpdateShapes(getChangedShapes())
-    }
+	fun triggerUpdate() {
+		onUpdateShapes(getChangedShapes())
+	}
 
-    DragonModalBottomSheet(
-        onDismissRequest = {
-            onDismiss(editNest, getChangedShapes())
-        }
-    ) {
-        DialogTitle(
-            text = stringResource(if (!isDefaultEditing) R.string.edit_nest else R.string.edit_default_nest),
-            resetEnabled = editNest.isNotDefault
-        ) { editNest = emptyNest }
+	DragonModalBottomSheet(
+		onDismissRequest = {
+			onDismiss(editNest, getChangedShapes())
+		}
+	) {
+		DialogTitle(
+			text = stringResource(if (!isDefaultEditing) R.string.edit_nest else R.string.edit_default_nest),
+			resetEnabled = editNest.isNotDefault
+		) { editNest = emptyNest }
 
-        Column(
-            modifier =
-                Modifier
-                    .heightIn(max = 700.dp)
-                    .verticalScroll(rememberScrollState())
-        ) {
-            if (nestDebugInfo) {
-                Text(
-                    text = editNest.toString(),
-                    fontSize = 10.sp,
-                    lineHeight = 15.sp,
-                    fontFamily = FontFamily.Monospace,
-                    modifier =
-                        Modifier
-                            .padding(10.dp)
-                            .clip(MaterialTheme.shapes.large)
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(5.dp)
-                )
-            }
+		Column(
+			modifier =
+				Modifier
+					.heightIn(max = 700.dp)
+					.verticalScroll(rememberScrollState())
+		) {
+			if (nestDebugInfo) {
+				Text(
+					text = editNest.toString(),
+					fontSize = 10.sp,
+					lineHeight = 15.sp,
+					fontFamily = FontFamily.Monospace,
+					modifier =
+						Modifier
+							.padding(10.dp)
+							.clip(MaterialTheme.shapes.large)
+							.background(MaterialTheme.colorScheme.background)
+							.padding(5.dp)
+				)
+			}
 
-            DragonButton(onClick = { showNestShapesManagementDialog = true }) {
-                Text(
-                    text = stringResource(R.string.edit_shapes),
-                    style = MaterialTheme.typography.labelMediumEmphasized
-                )
+			DragonButton(onClick = { showNestShapesManagementDialog = true }) {
+				Text(
+					text = stringResource(R.string.edit_shapes),
+					style = MaterialTheme.typography.labelMediumEmphasized
+				)
 
-                Row(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.End)
-                ) {
-                    shapes.sortedBy { it.id }.forEach {
-                        IntersectionShapePreview(
-                            shape = it,
-                            defaultShape = defaultShape,
-                            size = 20.dp,
-                            isDefaultEditing = isDefaultEditing
-                        )
-                    }
-                }
-            }
+				Row(
+					modifier = Modifier.weight(1f),
+					horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.End)
+				) {
+					shapes.sortedBy { it.id }.forEach {
+						IntersectionShapePreview(
+							shape = it,
+							defaultShape = defaultShape,
+							size = 20.dp,
+							isDefaultEditing = isDefaultEditing
+						)
+					}
+				}
+			}
 
-            HorizontalDivider(Modifier.padding(10.dp))
+			HorizontalDivider(Modifier.padding(10.dp))
 
-            DragonSettingsGroup {
-                if (!isDefaultEditing) {
-                    TextRow(
-                        currentValue = editNest.name,
-                        defaultValue = null,
-                        label = null,
-                        placeHolder = stringResource(R.string.custom_name)
-                    ) {
-                        editNest = editNest.copy(name = it)
-                    }
-                }
+			DragonSettingsGroup {
+				if (!isDefaultEditing) {
+					TextRow(
+						currentValue = editNest.name,
+						defaultValue = null,
+						label = null,
+						placeHolder = stringResource(R.string.custom_name)
+					) {
+						editNest = editNest.copy(name = it)
+					}
+				}
 
-                val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
+				val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
 
-                SliderWithLabel(
-                    label = stringResource(R.string.cancel_zone),
-                    description = stringResource(R.string.cancel_zone_desc),
-                    value = if (isDefaultEditing) editNest.getCancelZone(defaultNest, true) else tempCancelZone,
-                    valueRange = 0.dp..300.dp,
-                    resetEnabled = editNest.cancelZone != null,
-                    onReset = {
-                        onUpdateCancelZone(null)
-                        editNest = editNest.copy(cancelZone = null)
-                    },
-                    onChange = {
-                        onUpdateCancelZone(it)
-                        editNest = editNest.copy(cancelZone = it)
-                    }
-                )
+				SliderWithLabel(
+					label = stringResource(R.string.cancel_zone),
+					description = stringResource(R.string.cancel_zone_desc),
+					value = if (isDefaultEditing) editNest.getCancelZone(defaultNest, true) else tempCancelZone,
+					valueRange = 0.dp..300.dp,
+					resetEnabled = editNest.cancelZone != null,
+					onReset = {
+						onUpdateCancelZone(null)
+						editNest = editNest.copy(cancelZone = null)
+					},
+					onChange = {
+						onUpdateCancelZone(it)
+						editNest = editNest.copy(cancelZone = it)
+					}
+				)
 
-                SwitchRow(
-                    state = editNest.getShowAllPointsInCurrentShape(defaultNest, showAllPointsInCurrentShape, isDefaultEditing),
-                    title = R.string.show_all_actions_on_current_shape,
-                    description = R.string.show_all_actions_on_current_shape_desc,
-                    resetEnabled = editNest.showAllPointsInCurrentShape != null,
-                    onReset = { editNest = editNest.copy(showAllPointsInCurrentShape = null) }
-                ) { value -> editNest = editNest.copy(showAllPointsInCurrentShape = value) }
+				SwitchRow(
+					state = editNest.getShowAllPointsInCurrentShape(defaultNest, showAllPointsInCurrentShape, isDefaultEditing),
+					title = R.string.show_all_actions_on_current_shape,
+					description = R.string.show_all_actions_on_current_shape_desc,
+					resetEnabled = editNest.showAllPointsInCurrentShape != null,
+					onReset = { editNest = editNest.copy(showAllPointsInCurrentShape = null) }
+				) { value -> editNest = editNest.copy(showAllPointsInCurrentShape = value) }
 
-                val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
-                SwitchRow(
-                    state = editNest.getShowAllPointsInCurrentNest(defaultNest, showAllPointsInCurrentNest, isDefaultEditing),
-                    title = R.string.show_all_actions_in_current_nest,
-                    description = R.string.show_all_actions_in_current_nest_desc,
-                    resetEnabled = editNest.showAllPointsInCurrentNest != null,
-                    onReset = { editNest = editNest.copy(showAllPointsInCurrentNest = null) }
-                ) { value -> editNest = editNest.copy(showAllPointsInCurrentNest = value) }
+				val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
+				SwitchRow(
+					state = editNest.getShowAllPointsInCurrentNest(defaultNest, showAllPointsInCurrentNest, isDefaultEditing),
+					title = R.string.show_all_actions_in_current_nest,
+					description = R.string.show_all_actions_in_current_nest_desc,
+					resetEnabled = editNest.showAllPointsInCurrentNest != null,
+					onReset = { editNest = editNest.copy(showAllPointsInCurrentNest = null) }
+				) { value -> editNest = editNest.copy(showAllPointsInCurrentNest = value) }
 
-                val showCurrentShape by UiSettingsStore.showCurrentShape.asState()
-                SwitchRow(
-                    state = editNest.getShowCurrentShape(defaultNest, showCurrentShape, isDefaultEditing),
-                    title = R.string.show_shape,
-                    description = R.string.show_shape_desc,
-                    resetEnabled = editNest.showCurrentShape != null,
-                    onReset = { editNest = editNest.copy(showCurrentShape = null) }
-                ) { value -> editNest = editNest.copy(showCurrentShape = value) }
+				val showCurrentShape by UiSettingsStore.showCurrentShape.asState()
+				SwitchRow(
+					state = editNest.getShowCurrentShape(defaultNest, showCurrentShape, isDefaultEditing),
+					title = R.string.show_shape,
+					description = R.string.show_shape_desc,
+					resetEnabled = editNest.showCurrentShape != null,
+					onReset = { editNest = editNest.copy(showCurrentShape = null) }
+				) { value -> editNest = editNest.copy(showCurrentShape = value) }
 
-                val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
-                SwitchRow(
-                    state = editNest.getShowAllShapes(defaultNest, showAllShapesInNest, isDefaultEditing),
-                    title = R.string.show_all_shapes,
-                    description = R.string.show_all_shapes_desc,
-                    resetEnabled = editNest.showAllShapes != null,
-                    onReset = {
-                        editNest = editNest.copy(showAllShapes = null)
-                    }
-                ) { value ->
-                    editNest = editNest.copy(showAllShapes = value)
-                }
+				val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
+				SwitchRow(
+					state = editNest.getShowAllShapes(defaultNest, showAllShapesInNest, isDefaultEditing),
+					title = R.string.show_all_shapes,
+					description = R.string.show_all_shapes_desc,
+					resetEnabled = editNest.showAllShapes != null,
+					onReset = {
+						editNest = editNest.copy(showAllShapes = null)
+					}
+				) { value ->
+					editNest = editNest.copy(showAllShapes = value)
+				}
 
-                SliderWithLabel(
-                    label = stringResource(R.string.preview_scale_factor),
-                    description = stringResource(R.string.preview_scale_factor_desc),
-                    value = editNest.getPreviewScaleFactor(defaultNest, isDefaultEditing),
-                    valueRange = 0f..5f,
-                    resetEnabled = editNest.previewScaleFactor != null,
-                    onReset = { editNest = editNest.copy(previewScaleFactor = null) },
-                    onChange = {
-                        editNest = editNest.copy(previewScaleFactor = it)
-                    }
-                )
-            }
-        }
-    }
+				SliderWithLabel(
+					label = stringResource(R.string.preview_scale_factor),
+					description = stringResource(R.string.preview_scale_factor_desc),
+					value = editNest.getPreviewScaleFactor(defaultNest, isDefaultEditing),
+					valueRange = 0f..5f,
+					resetEnabled = editNest.previewScaleFactor != null,
+					onReset = { editNest = editNest.copy(previewScaleFactor = null) },
+					onChange = {
+						editNest = editNest.copy(previewScaleFactor = it)
+					}
+				)
+			}
+		}
+	}
 
-    if (showNestShapesManagementDialog) {
-        NestShapesManagementEditor(
-            shapesInternal = shapesInternal,
-            triggerUpdate = ::triggerUpdate,
-            isDefaultEditing = isDefaultEditing,
-            defaultShape = defaultShape,
-            defaultShapes = defaultShapes
-        ) { newShapes ->
-            editNest = editNest.copy(intersectionShapes = newShapes.takeIf { it != defaultShapes })
-            showNestShapesManagementDialog = false
-        }
-    }
+	if (showNestShapesManagementDialog) {
+		NestShapesManagementEditor(
+			shapesInternal = shapesInternal,
+			triggerUpdate = ::triggerUpdate,
+			isDefaultEditing = isDefaultEditing,
+			defaultShape = defaultShape,
+			defaultShapes = defaultShapes
+		) { newShapes ->
+			editNest = editNest.copy(intersectionShapes = newShapes.takeIf { it != defaultShapes })
+			showNestShapesManagementDialog = false
+		}
+	}
 }

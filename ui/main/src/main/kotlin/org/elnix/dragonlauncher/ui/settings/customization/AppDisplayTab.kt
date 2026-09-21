@@ -29,92 +29,92 @@ import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
 
-    var showPreview by remember { mutableStateOf(false) }
+	var showPreview by remember { mutableStateOf(false) }
 
-    SettingsScaffold(
-        title = stringResource(R.string.app_display),
-        helpText = stringResource(R.string.app_display_desc),
-        resetText = stringResource(R.string.reset_app_display_tab),
-        onReset = {
-            showPreview = false
-            scope.launch {
-                ColorSettingsStore.resetAll(ctx)
-                ColorModesSettingsStore.resetAll(ctx)
-            }
-        }
-    ) {
-        DragonSettingsGroup(R.string.common_settings) {
-            Setting(UiSettingsStore.fullScreen)
+	SettingsScaffold(
+		title = stringResource(R.string.app_display),
+		helpText = stringResource(R.string.app_display_desc),
+		resetText = stringResource(R.string.reset_app_display_tab),
+		onReset = {
+			showPreview = false
+			scope.launch {
+				ColorSettingsStore.resetAll(ctx)
+				ColorModesSettingsStore.resetAll(ctx)
+			}
+		}
+	) {
+		DragonSettingsGroup(R.string.common_settings) {
+			Setting(UiSettingsStore.fullScreen)
 
-            var showChargingAnimation by showChargingAnimation()
+			var showChargingAnimation by showChargingAnimation()
 
-            SwitchRow(
-                title = R.string.charging_animation,
-                description = R.string.charging_animation_desc,
-                icon = R.drawable.battery_charging,
-                state = showChargingAnimation
-            ) { showChargingAnimation = it }
-        }
+			SwitchRow(
+				title = R.string.charging_animation,
+				description = R.string.charging_animation_desc,
+				icon = R.drawable.battery_charging,
+				state = showChargingAnimation
+			) { showChargingAnimation = it }
+		}
 
-        DragonSettingsGroup(R.string.app_preview_settings) {
-            SwitchRow(
-                state = showPreview,
-                title = R.string.show_app_launch_preview,
-                description = R.string.app_preview_settings_desc,
-                icon = R.drawable.visibility
-            ) { showPreview = it }
+		DragonSettingsGroup(R.string.app_preview_settings) {
+			SwitchRow(
+				state = showPreview,
+				title = R.string.show_app_launch_preview,
+				description = R.string.app_preview_settings_desc,
+				icon = R.drawable.visibility
+			) { showPreview = it }
 
-            Setting(UiSettingsStore.showLaunchingAppLabel)
-            Setting(UiSettingsStore.showLaunchingAppIcon)
-            Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
-            Setting(UiSettingsStore.appLabelOverlaySize)
-            Setting(UiSettingsStore.appIconOverlaySize)
-        }
+			Setting(UiSettingsStore.showLaunchingAppLabel)
+			Setting(UiSettingsStore.showLaunchingAppIcon)
+			Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
+			Setting(UiSettingsStore.appLabelOverlaySize)
+			Setting(UiSettingsStore.appIconOverlaySize)
+		}
 
-        DragonSettingsGroup(R.string.dragging_display) {
-            var showAllActionsOnCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asMutableState()
-            Setting(UiSettingsStore.showAllPointsInCurrentShape) { enabled ->
-                if (!enabled) showAllActionsOnCurrentNest = false
-            }
+		DragonSettingsGroup(R.string.dragging_display) {
+			var showAllActionsOnCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asMutableState()
+			Setting(UiSettingsStore.showAllPointsInCurrentShape) { enabled ->
+				if (!enabled) showAllActionsOnCurrentNest = false
+			}
 
-            val showAllActionsOnCurrentCircle by UiSettingsStore.showAllPointsInCurrentShape.asState()
-            Setting(UiSettingsStore.showAllPointsInCurrentNest, enabled = showAllActionsOnCurrentCircle)
+			val showAllActionsOnCurrentCircle by UiSettingsStore.showAllPointsInCurrentShape.asState()
+			Setting(UiSettingsStore.showAllPointsInCurrentNest, enabled = showAllActionsOnCurrentCircle)
 
-            Setting(UiSettingsStore.showPointPreviewCenterStartPosition)
+			Setting(UiSettingsStore.showPointPreviewCenterStartPosition)
 
-            val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
-            Setting(UiSettingsStore.showCurrentShape, enabled = !showAllShapes)
+			val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
+			Setting(UiSettingsStore.showCurrentShape, enabled = !showAllShapes)
 
-            var showShape by UiSettingsStore.showCurrentShape.asMutableState()
-            Setting(UiSettingsStore.showAllShapesInNest) { enabled ->
-                if (enabled) showShape = true
-            }
+			var showShape by UiSettingsStore.showCurrentShape.asMutableState()
+			Setting(UiSettingsStore.showAllShapesInNest) { enabled ->
+				if (enabled) showShape = true
+			}
 
-            Setting(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
-        }
+			Setting(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
+		}
 
-        DragonSettingsGroup(R.string.depth) {
-            Setting(UiSettingsStore.maxNestsDepth)
-            Setting(UiSettingsStore.maxLiveNestsDepth)
-        }
-    }
+		DragonSettingsGroup(R.string.depth) {
+			Setting(UiSettingsStore.maxNestsDepth)
+			Setting(UiSettingsStore.maxLiveNestsDepth)
+		}
+	}
 
-    val points by pointsViewModel.pointsService.points.collectAsState()
-    val randomPoint = remember(showPreview) { points.values.random() }
+	val points by pointsViewModel.pointsService.points.collectAsState()
+	val randomPoint = remember(showPreview) { points.values.random() }
 
-    val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
-    val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
+	val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
+	val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
+	val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
 
-    if (showPreview) {
-        PointPreviewTitle(
-            point = randomPoint,
-            topPadding = appLabelIconOverlayTopPadding,
-            showLabel = showLaunchingAppLabel,
-            showIcon = showLaunchingAppIcon
-        )
-    }
+	if (showPreview) {
+		PointPreviewTitle(
+			point = randomPoint,
+			topPadding = appLabelIconOverlayTopPadding,
+			showLabel = showLaunchingAppLabel,
+			showIcon = showLaunchingAppIcon
+		)
+	}
 }

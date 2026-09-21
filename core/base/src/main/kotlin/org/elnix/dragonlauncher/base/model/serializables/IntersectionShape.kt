@@ -28,121 +28,121 @@ import org.elnix.dragonlauncher.ktx.unless
 @Serializable
 @SerialName("IntersectionShape")
 public data class IntersectionShape(
-    val id: Int,
-    val shape: IconShape? = null,
-    @FloatRange(from = 0.0)
-    val scale: Float? = null,
-    @IntRange(from = 0, to = 360)
-    val rotation: Int? = null,
-    @Serializable(with = OffsetSerializer::class)
-    val offset: Offset? = null,
-    val haptic: CustomHapticFeedback? = null,
-    @Serializable(with = DpSerializer::class)
-    val borderStroke: Dp? = null,
-    @Serializable(with = ColorSerializer::class)
-    val color: Color? = null,
-    val glow: CustomGlow? = null,
-    /**
-     * Whether if when moved, the points offsets are adapted to match their original angle relative to this shape,
-     * or if they aren't taken into account and that the shape moves regardless of the points in it.
-     * When its `false` the points might rotate around their hidden underlying offset aas the shape moves
-     */
-    val pointsKeepTheirRelativePosition: Boolean? = null
+	val id: Int,
+	val shape: IconShape? = null,
+	@FloatRange(from = 0.0)
+	val scale: Float? = null,
+	@IntRange(from = 0, to = 360)
+	val rotation: Int? = null,
+	@Serializable(with = OffsetSerializer::class)
+	val offset: Offset? = null,
+	val haptic: CustomHapticFeedback? = null,
+	@Serializable(with = DpSerializer::class)
+	val borderStroke: Dp? = null,
+	@Serializable(with = ColorSerializer::class)
+	val color: Color? = null,
+	val glow: CustomGlow? = null,
+	/**
+	 * Whether if when moved, the points offsets are adapted to match their original angle relative to this shape,
+	 * or if they aren't taken into account and that the shape moves regardless of the points in it.
+	 * When its `false` the points might rotate around their hidden underlying offset aas the shape moves
+	 */
+	val pointsKeepTheirRelativePosition: Boolean? = null
 ) {
 //    public fun scaledBy(scale: Float, defaultIntersectionShape: IntersectionShape): IntersectionShape = this.copy(scale = this.getScale(defaultIntersectionShape) * scale)
 
-    /**
-     * Returns the size of this [IntersectionShape], computed with the pixel density
-     */
-    public inline fun getSize(
-        density: Float,
-        defaultIntersectionShape: IntersectionShape,
-        isDefaultEditing: Boolean
-    ): Size =
-        Size.rect(
-            (this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale) *
-                defaultSize.dp.value *
-                density
-        )
+	/**
+	 * Returns the size of this [IntersectionShape], computed with the pixel density
+	 */
+	public inline fun getSize(
+		density: Float,
+		defaultIntersectionShape: IntersectionShape,
+		isDefaultEditing: Boolean
+	): Size =
+		Size.rect(
+			(this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale) *
+				defaultSize.dp.value *
+				density
+		)
 
-    public inline fun getOffset(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Offset =
-        this.offset ?: (defaultIntersectionShape.offset unless isDefaultEditing) ?: defaultOffset
+	public inline fun getOffset(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Offset =
+		this.offset ?: (defaultIntersectionShape.offset unless isDefaultEditing) ?: defaultOffset
 
-    public inline fun getOffsetX(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
-        (this.offset?.x ?: defaultIntersectionShape.offset?.x.unless(isDefaultEditing) ?: defaultOffset.x).round(2)
+	public inline fun getOffsetX(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+		(this.offset?.x ?: defaultIntersectionShape.offset?.x.unless(isDefaultEditing) ?: defaultOffset.x).round(2)
 
-    public inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
-        (this.offset?.y ?: defaultIntersectionShape.offset?.y.unless(isDefaultEditing) ?: defaultOffset.y).round(2)
+	public inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+		(this.offset?.y ?: defaultIntersectionShape.offset?.y.unless(isDefaultEditing) ?: defaultOffset.y).round(2)
 
-    public inline fun getScale(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
-        (this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale).round(2)
+	public inline fun getScale(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+		(this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale).round(2)
 
-    public inline fun getRotation(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Int =
-        this.rotation ?: (defaultIntersectionShape.rotation unless isDefaultEditing) ?: defaultRotation
+	public inline fun getRotation(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Int =
+		this.rotation ?: (defaultIntersectionShape.rotation unless isDefaultEditing) ?: defaultRotation
 
-    public inline fun getColor(defaultIntersectionShape: IntersectionShape, extraColors: ExtraColors, isDefaultEditing: Boolean): Color =
-        this.color ?: (defaultIntersectionShape.color unless isDefaultEditing) ?: extraColors.shapes
+	public inline fun getColor(defaultIntersectionShape: IntersectionShape, extraColors: ExtraColors, isDefaultEditing: Boolean): Color =
+		this.color ?: (defaultIntersectionShape.color unless isDefaultEditing) ?: extraColors.shapes
 
-    public inline fun getShape(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): IconShape =
-        this.shape ?: (defaultIntersectionShape.shape unless isDefaultEditing) ?: defaultShape
+	public inline fun getShape(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): IconShape =
+		this.shape ?: (defaultIntersectionShape.shape unless isDefaultEditing) ?: defaultShape
 
-    public inline fun getBorderStroke(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Dp =
-        this.borderStroke ?: (defaultIntersectionShape.borderStroke unless isDefaultEditing) ?: defaultBorderStroke
+	public inline fun getBorderStroke(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Dp =
+		this.borderStroke ?: (defaultIntersectionShape.borderStroke unless isDefaultEditing) ?: defaultBorderStroke
 
-    public inline fun getGlow(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomGlow =
-        this.glow ?: (defaultIntersectionShape.glow unless isDefaultEditing) ?: defaultGlow
+	public inline fun getGlow(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomGlow =
+		this.glow ?: (defaultIntersectionShape.glow unless isDefaultEditing) ?: defaultGlow
 
-    public inline fun getHapticFeedback(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomHapticFeedback =
-        this.haptic ?: (defaultIntersectionShape.haptic unless isDefaultEditing) ?: defaultHapticFeedback
+	public inline fun getHapticFeedback(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomHapticFeedback =
+		this.haptic ?: (defaultIntersectionShape.haptic unless isDefaultEditing) ?: defaultHapticFeedback
 
-    public inline fun getPointsKeepTheirRelativePosition(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Boolean =
-        this.pointsKeepTheirRelativePosition
-            ?: (defaultIntersectionShape.pointsKeepTheirRelativePosition unless isDefaultEditing)
-            ?: defaultPointsKeepTheirRelativePosition
+	public inline fun getPointsKeepTheirRelativePosition(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Boolean =
+		this.pointsKeepTheirRelativePosition
+			?: (defaultIntersectionShape.pointsKeepTheirRelativePosition unless isDefaultEditing)
+			?: defaultPointsKeepTheirRelativePosition
 
-    @Suppress("ConstPropertyName")
-    public companion object {
-        /**
-         * Used to derive a  size from the scale, the main parameter that defines the size of the shape stays the [scale]
-         */
-        public const val defaultSize: Float = 300f
-        public val defaultBorderStroke: Dp = 2.dp
+	@Suppress("ConstPropertyName")
+	public companion object {
+		/**
+		 * Used to derive a  size from the scale, the main parameter that defines the size of the shape stays the [scale]
+		 */
+		public const val defaultSize: Float = 300f
+		public val defaultBorderStroke: Dp = 2.dp
 
-        public val defaultGlow: CustomGlow =
-            CustomGlow(
-                color = null,
-                radius = 5.dp
-            )
+		public val defaultGlow: CustomGlow =
+			CustomGlow(
+				color = null,
+				radius = 5.dp
+			)
 
-        public const val defaultScale: Float = 1f
-        public const val defaultRotation: Int = 0
+		public const val defaultScale: Float = 1f
+		public const val defaultRotation: Int = 0
 
-        public val defaultOffset: Offset = Offset.Zero
-        public val defaultShape: IconShape = IconShape.Circle
-        public const val defaultEraseBackground: Boolean = true
-        public const val defaultPointsKeepTheirRelativePosition: Boolean = true
+		public val defaultOffset: Offset = Offset.Zero
+		public val defaultShape: IconShape = IconShape.Circle
+		public const val defaultEraseBackground: Boolean = true
+		public const val defaultPointsKeepTheirRelativePosition: Boolean = true
 
-        public val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
+		public val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
 
-        public val emptyIntersectionShape: IntersectionShape = IntersectionShape(-1)
+		public val emptyIntersectionShape: IntersectionShape = IntersectionShape(-1)
 
-        @Suppress("NOTHING_TO_INLINE")
-        public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
-            if (selected) this.copy(glow = CustomGlow(color = color, radius = 30.dp)) else this
+		@Suppress("NOTHING_TO_INLINE")
+		public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
+			if (selected) this.copy(glow = CustomGlow(color = color, radius = 30.dp)) else this
 
-        public inline val IntersectionShape.isDefault: Boolean
-            get() =
-                this.shape == null &&
-                    this.scale == null &&
-                    this.rotation == null &&
-                    this.offset == null &&
-                    this.haptic == null &&
-                    this.glow == null &&
-                    this.color == null &&
-                    this.pointsKeepTheirRelativePosition == null
-        public inline val IntersectionShape.isNotDefault: Boolean
-            get() = !isDefault
+		public inline val IntersectionShape.isDefault: Boolean
+			get() =
+				this.shape == null &&
+					this.scale == null &&
+					this.rotation == null &&
+					this.offset == null &&
+					this.haptic == null &&
+					this.glow == null &&
+					this.color == null &&
+					this.pointsKeepTheirRelativePosition == null
+		public inline val IntersectionShape.isNotDefault: Boolean
+			get() = !isDefault
 
-        public object DefaultShapeJson : DragonJson<IntersectionShape>()
-    }
+		public object DefaultShapeJson : DragonJson<IntersectionShape>()
+	}
 }

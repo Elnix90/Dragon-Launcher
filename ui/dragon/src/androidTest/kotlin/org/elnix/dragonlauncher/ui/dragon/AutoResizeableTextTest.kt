@@ -22,66 +22,66 @@ import org.junit.Test
  * doesn't affect the text content in the semantic tree.
  */
 class AutoResizeableTextTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+	@get:Rule
+	val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun autoResizeableText_displaysShortText() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                AutoResizeableText(text = "Hi")
-            }
-        }
+	@Test
+	fun autoResizeableText_displaysShortText() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				AutoResizeableText(text = "Hi")
+			}
+		}
 
-        composeTestRule.onNodeWithText("Hi").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Hi").assertIsDisplayed()
+	}
 
-    @Test
-    fun autoResizeableText_displaysLongText() {
-        val longText = "This is a very long text that should auto-resize to fit within the available space"
-        composeTestRule.setContent {
-            MaterialTheme {
-                AutoResizeableText(text = longText)
-            }
-        }
+	@Test
+	fun autoResizeableText_displaysLongText() {
+		val longText = "This is a very long text that should auto-resize to fit within the available space"
+		composeTestRule.setContent {
+			MaterialTheme {
+				AutoResizeableText(text = longText)
+			}
+		}
 
-        composeTestRule.onNodeWithText(longText).assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText(longText).assertIsDisplayed()
+	}
 
-    @Test
-    fun autoResizeableText_displaysEmptyText() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                AutoResizeableText(text = "")
-            }
-        }
+	@Test
+	fun autoResizeableText_displaysEmptyText() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				AutoResizeableText(text = "")
+			}
+		}
 
-        composeTestRule.onNodeWithText("").assertExists()
-    }
+		composeTestRule.onNodeWithText("").assertExists()
+	}
 
-    @Test
-    fun autoResizeableText_displaysSpecialCharacters() {
-        val text = "α β γ & < > \" '"
-        composeTestRule.setContent {
-            MaterialTheme {
-                AutoResizeableText(text = text)
-            }
-        }
+	@Test
+	fun autoResizeableText_displaysSpecialCharacters() {
+		val text = "α β γ & < > \" '"
+		composeTestRule.setContent {
+			MaterialTheme {
+				AutoResizeableText(text = text)
+			}
+		}
 
-        composeTestRule.onNodeWithText(text).assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText(text).assertIsDisplayed()
+	}
 
-    @Test
-    fun autoResizeableText_withExplicitFontSize() {
-        composeTestRule.setContent {
-            MaterialTheme {
-                AutoResizeableText(
-                    text = "Custom size",
-                    fontSize = 24.sp
-                )
-            }
-        }
+	@Test
+	fun autoResizeableText_withExplicitFontSize() {
+		composeTestRule.setContent {
+			MaterialTheme {
+				AutoResizeableText(
+					text = "Custom size",
+					fontSize = 24.sp
+				)
+			}
+		}
 
-        composeTestRule.onNodeWithText("Custom size").assertIsDisplayed()
-    }
+		composeTestRule.onNodeWithText("Custom size").assertIsDisplayed()
+	}
 }

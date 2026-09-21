@@ -17,70 +17,70 @@ private const val MULTIPLIER = 0.2f
 
 @Composable
 fun SliderColorPicker(
-    actualColor: Color,
-    initialColor: Color,
-    onColorSelected: (Color) -> Unit
+	actualColor: Color,
+	initialColor: Color,
+	onColorSelected: (Color) -> Unit
 ) {
-    var red by remember(actualColor) { mutableIntStateOf(actualColor.red.to255) }
-    var green by remember(actualColor) { mutableIntStateOf(actualColor.green.to255) }
-    var blue by remember(actualColor) { mutableIntStateOf(actualColor.blue.to255) }
-    val alpha = remember(actualColor) { actualColor.alpha.to255 }
+	var red by remember(actualColor) { mutableIntStateOf(actualColor.red.to255) }
+	var green by remember(actualColor) { mutableIntStateOf(actualColor.green.to255) }
+	var blue by remember(actualColor) { mutableIntStateOf(actualColor.blue.to255) }
+	val alpha = remember(actualColor) { actualColor.alpha.to255 }
 
-    val initialColorRed = remember { initialColor.red.to255 }
-    val initialColorGreen = remember { initialColor.green.to255 }
-    val initialColorBlue = remember { initialColor.blue.to255 }
+	val initialColorRed = remember { initialColor.red.to255 }
+	val initialColorGreen = remember { initialColor.green.to255 }
+	val initialColorBlue = remember { initialColor.blue.to255 }
 
-    fun select() {
-        onColorSelected(Color(red, green, blue, alpha))
-    }
+	fun select() {
+		onColorSelected(Color(red, green, blue, alpha))
+	}
 
-    DragonSettingsGroup {
-        SliderWithLabel(
-            label = stringResource(R.string.red),
-            value = red,
-            color = Color.Red,
-            backgroundColor = Color.Red.alphaMultiplier(MULTIPLIER),
-            valueRange = 0..255,
-            resetEnabled = red != initialColorRed,
-            onReset = {
-                red = initialColorRed
-                select()
-            }
-        ) {
-            red = it
-            select()
-        }
+	DragonSettingsGroup {
+		SliderWithLabel(
+			label = stringResource(R.string.red),
+			value = red,
+			color = Color.Red,
+			backgroundColor = Color.Red.alphaMultiplier(MULTIPLIER),
+			valueRange = 0..255,
+			resetEnabled = red != initialColorRed,
+			onReset = {
+				red = initialColorRed
+				select()
+			}
+		) {
+			red = it
+			select()
+		}
 
-        SliderWithLabel(
-            label = stringResource(R.string.green),
-            value = green,
-            color = Color.Green,
-            backgroundColor = Color.Green.alphaMultiplier(MULTIPLIER),
-            valueRange = 0..255,
-            resetEnabled = green != initialColorGreen,
-            onReset = {
-                green = initialColorGreen
-                select()
-            }
-        ) {
-            green = it
-            select()
-        }
+		SliderWithLabel(
+			label = stringResource(R.string.green),
+			value = green,
+			color = Color.Green,
+			backgroundColor = Color.Green.alphaMultiplier(MULTIPLIER),
+			valueRange = 0..255,
+			resetEnabled = green != initialColorGreen,
+			onReset = {
+				green = initialColorGreen
+				select()
+			}
+		) {
+			green = it
+			select()
+		}
 
-        SliderWithLabel(
-            label = stringResource(R.string.blue),
-            value = blue,
-            color = Color.Blue,
-            backgroundColor = Color.Blue.alphaMultiplier(MULTIPLIER),
-            valueRange = 0..255,
-            resetEnabled = blue != initialColorBlue,
-            onReset = {
-                blue = initialColorBlue
-                select()
-            }
-        ) {
-            blue = it
-            select()
-        }
-    }
+		SliderWithLabel(
+			label = stringResource(R.string.blue),
+			value = blue,
+			color = Color.Blue,
+			backgroundColor = Color.Blue.alphaMultiplier(MULTIPLIER),
+			valueRange = 0..255,
+			resetEnabled = blue != initialColorBlue,
+			onReset = {
+				blue = initialColorBlue
+				select()
+			}
+		) {
+			blue = it
+			select()
+		}
+	}
 }

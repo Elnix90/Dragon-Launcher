@@ -10,35 +10,35 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 
 @Composable
 fun FilePickerDialog(
-    onDismiss: () -> Unit,
-    onFileSelected: (Action.OpenFile) -> Unit
+	onDismiss: () -> Unit,
+	onFileSelected: (Action.OpenFile) -> Unit
 ) {
-    val ctx = LocalContext.current
-    val launcher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocument(),
-            onResult = { uri ->
-                uri?.let {
-                    val mimeType = ctx.contentResolver.getType(it)
+	val ctx = LocalContext.current
+	val launcher =
+		rememberLauncherForActivityResult(
+			contract = ActivityResultContracts.OpenDocument(),
+			onResult = { uri ->
+				uri?.let {
+					val mimeType = ctx.contentResolver.getType(it)
 
-                    // Take persistable permission
-                    ctx.contentResolver.takePersistableUriPermission(
-                        it,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
+					// Take persistable permission
+					ctx.contentResolver.takePersistableUriPermission(
+						it,
+						Intent.FLAG_GRANT_READ_URI_PERMISSION or
+							Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+					)
 
-                    val action =
-                        Action.OpenFile(
-                            uri = it.toString(),
-                            mimeType = mimeType
-                        )
-                    onFileSelected(action)
-                } ?: onDismiss()
-            }
-        )
+					val action =
+						Action.OpenFile(
+							uri = it.toString(),
+							mimeType = mimeType
+						)
+					onFileSelected(action)
+				} ?: onDismiss()
+			}
+		)
 
-    LaunchedEffect(Unit) {
-        launcher.launch(arrayOf("*/*"))
-    }
+	LaunchedEffect(Unit) {
+		launcher.launch(arrayOf("*/*"))
+	}
 }
