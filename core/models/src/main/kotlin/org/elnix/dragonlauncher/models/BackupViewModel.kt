@@ -29,6 +29,7 @@ import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
+import org.elnix.dragonlauncher.swipe.SwipeService
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -40,7 +41,8 @@ public class BackupViewModel
 	constructor(
 		application: Application,
 		private val migrationService: SettingsMigrationService,
-		private val pointsService: PointsService
+		private val pointsService: PointsService,
+		private val swipeService: SwipeService
 	) : AndroidViewModel(application) {
 		public val result: SettingFlow<BackupResult?> = SettingFlow(null)
 		public val migrationResult: SettingFlow<MigrationResult?> = SettingFlow(null)
@@ -79,6 +81,7 @@ public class BackupViewModel
 
 					if (result.success) {
 						pointsService.load()
+						swipeService.loadAllFromDisk()
 						PrivateSettingsStore.hasInitialized.set(application, true)
 						PrivateSettingsStore.hasSeenWelcomeScreen.set(application, true)
 					}
@@ -105,6 +108,7 @@ public class BackupViewModel
 
 						if (result.success) {
 							pointsService.load()
+							swipeService.loadAllFromDisk()
 							logI(SETTINGS_TAG) { "Migration completed: ${result.message}" }
 						} else {
 							logI(SETTINGS_TAG) { "Migration skipped or failed: ${result.message}" }

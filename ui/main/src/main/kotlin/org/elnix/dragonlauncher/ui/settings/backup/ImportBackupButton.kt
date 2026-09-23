@@ -17,6 +17,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dialogs.MigrationDialog
@@ -29,6 +30,7 @@ import org.json.JSONObject
 fun ImportBackupButton(
 	onConfirm: (suspend () -> Unit)? = null,
 	backupViewModel: BackupViewModel = activityViewModel(),
+	swipeViewModel: SwipeViewModel = activityViewModel(),
 	pointsViewModel: PointsViewModel = activityViewModel(),
 	content: @Composable (onImport: () -> Unit) -> Unit
 ) {
@@ -85,6 +87,7 @@ fun ImportBackupButton(
 						onConfirm?.invoke()
 						PrivateSettingsStore.hasInitialized.set(ctx, true)
 						pointsViewModel.pointsService.load()
+						swipeViewModel.swipeService.loadAllFromDisk()
 						importJson = null
 					} catch (e: Exception) {
 						logE(BACKUP_TAG, e) { "Import failed" }
