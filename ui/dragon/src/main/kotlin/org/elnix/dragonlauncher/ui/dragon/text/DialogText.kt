@@ -24,10 +24,10 @@ fun DialogTitle(
 	Row(
 		verticalAlignment = Alignment.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween,
-		modifier = Modifier.fillMaxWidth()
+		modifier = modifier.fillMaxWidth()
 	) {
 		AutoResizeableText(
-			modifier = modifier,
+			modifier = Modifier,
 			text = text,
 			style = MaterialTheme.typography.headlineSmallEmphasized,
 			color = MaterialTheme.colorScheme.onSurface
