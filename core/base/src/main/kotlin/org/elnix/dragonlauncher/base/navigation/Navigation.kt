@@ -321,7 +321,6 @@ public val NavKey.inTransparentScreen: Boolean
 		when (this) {
 			NavigationRoute.Main,
 			NavigationRoute.Drawer,
-			NavigationRoute.DrawerSettings,
 			NavigationRoute.Wallpaper,
 			NavigationRoute.Widgets,
 			NavigationRoute.Welcome,

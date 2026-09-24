@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +37,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dialogs.ToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
@@ -53,18 +53,20 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 @Composable
 fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 	val ctx = LocalContext.current
+	val drawerSettings = LocalDrawerSettings.current
 	val scope = rememberCoroutineScope()
 
 	val apps by drawerViewModel.userApps.collectAsState()
 
-	val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
-	val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
-	val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
-	val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
+	val leftDrawerAction = drawerSettings.leftDrawerAction
+	val rightDrawerAction = drawerSettings.rightDrawerAction
+	val leftDrawerWidth = drawerSettings.leftDrawerWidth
+	val rightDrawerWidth = drawerSettings.rightDrawerWidth
+	val gridSize = drawerSettings.gridSize
 
-	val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
-	val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
-	val useCategory by DrawerSettingsStore.useCategory.asState()
+	val autoOpenSingleMatch = drawerSettings.autoOpenSingleMatch
+	val showRecentlyUsed = drawerSettings.showRecentlyUsedApps
+	val useCategory = drawerSettings.useCategory
 
 	var leftWidth by remember { mutableStateOf(leftDrawerWidth) }
 	var rightWidth by remember { mutableStateOf(rightDrawerWidth) }
@@ -153,7 +155,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 			Setting(DrawerSettingsStore.iconsSpacingHorizontal)
 			Setting(DrawerSettingsStore.iconsSpacingVertical)
 
-			val gridSize by DrawerSettingsStore.gridSize.asState()
 			val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
 
 			AnimatedVisibility(gridSize == 1) {
@@ -164,22 +165,21 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 					scope.launch { DrawerSettingsStore.horizontalAlignment.set(ctx, it) }
 				}
 			}
+		}
 
-			Box(
-				modifier =
-					Modifier
-						.padding(10.dp)
-						.fillMaxWidth()
-						.height(200.dp)
-						.clip(MaterialTheme.shapes.large)
-						.border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
-			) {
-				AppGrid(
-					apps = apps.shuffled().take(if (gridSize == 1) 3 else gridSize * 2),
-					longPressPopup = false,
-					onClick = null
-				)
-			}
+		Box(
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.height(200.dp)
+					.clip(MaterialTheme.shapes.large)
+					.border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+		) {
+			AppGrid(
+				apps = apps.shuffled().take(if (gridSize == 1) 3 else gridSize * 2),
+				longPressPopup = false,
+				onClick = null
+			)
 		}
 
 		DragonSettingsGroup(R.string.drawer_actions) {
