@@ -8,6 +8,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.util.fastCoerceAtMost
@@ -15,7 +16,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.SettingFlow
@@ -62,37 +62,18 @@ class PointsSettingsViewModel
 		val showResetPointsAndNestsDialog = mutableStateOf(false)
 
 		/** The queue of apps to place one by one, non-empty in manual placement mode. */
-		val manualPlacementQueue = mutableStateOf<List<Action>>(emptyList())
-		val isInManualPlacementMode: Boolean
-			get() = manualPlacementQueue.value.isNotEmpty()
+		val manualPlacementQueue = SnapshotStateList<Action>()
 
-		val isDragging = mutableStateOf(false)
+		val draggingMode = mutableStateOf(DraggingMode.None)
 
 		/** The temporary (animated) positions of the selected points. */
 		val selectedPointTempOffset: SnapshotStateMap<Int, TempPos> = mutableStateMapOf()
 
-		init {
-			// Load the settings so we can access them through their `.value` property afterwards
-			viewModelScope.launch {
-				UiSettingsStore.snapPoints.load(application)
-				UiSettingsStore.snapPointsToShapes.load(application)
-				UiSettingsStore.allowFreePoints.load(application)
-				UiSettingsStore.multiSelectPoints.load(application)
-			}
-		}
-
 		/** Current value of the [UiSettingsStore.snapPoints] setting. */
-		val snapPoints: Boolean
-			get() = UiSettingsStore.snapPoints.value
-
-		private val snapPointsToShapes: Boolean
-			get() = UiSettingsStore.snapPointsToShapes.value
-
-		private val allowFreePoints: Boolean
-			get() = UiSettingsStore.allowFreePoints.value
-
-		private val multiSelectPoints: Boolean
-			get() = UiSettingsStore.multiSelectPoints.value
+		val snapPoints = UiSettingsStore.snapPoints.stateFlow(application, viewModelScope)
+		private val snapPointsToShapes = UiSettingsStore.snapPointsToShapes.stateFlow(application, viewModelScope)
+		private val allowFreePoints = UiSettingsStore.allowFreePoints.stateFlow(application, viewModelScope)
+		private val multiSelectPoints = UiSettingsStore.multiSelectPoints.stateFlow(application, viewModelScope)
 
 		private val nestId: Int
 			get() = nestsNavigationService.currentNestId.value
@@ -109,7 +90,7 @@ class PointsSettingsViewModel
 		 * Selects a point and registers its [TempPos] so the screen can animate it towards its position.
 		 */
 		fun select(id: Int) {
-			if (multiSelectPoints) {
+			if (multiSelectPoints.value) {
 				pointsService.select(id)
 			} else {
 				pointsService.selectOnyOne(id)
@@ -122,14 +103,6 @@ class PointsSettingsViewModel
 					shapeId = mutableStateOf(point.shapeId),
 					offset = Animatable(manipulationSystem.undoBoth(point.getPos()), Offset.VectorConverter)
 				)
-		}
-
-		/**
-		 * Deselects a point and removes its [TempPos].
-		 */
-		fun deselect(id: Int) {
-			pointsService.deselect(id)
-			selectedPointTempOffset -= id
 		}
 
 		/**
@@ -150,7 +123,7 @@ class PointsSettingsViewModel
 			forceSnap: Boolean = false
 		): Int? {
 			// Early return: if user don't want to snap to shapes, no need to compute them as it is a bit expensive
-			if (allowFreePoints && !snapPointsToShapes && !forceSnap) return null
+			if (allowFreePoints.value && !snapPointsToShapes.value && !forceSnap) return null
 
 			if (shapes.isEmpty()) return null
 
@@ -246,3 +219,28 @@ class PointsSettingsViewModel
 					")"
 		}
 	}
+
+enum class DraggingMode {
+	/**
+	 * When  the user isn't dragging at all.
+	 * This is the default value and any gesture end resets the more to this one
+	 */
+	None,
+
+	/**
+	 * Move mode, when the user drags with 2 fingers or more.
+	 * This mode fires as soon as 2 or more fingers are registered on screen, and does not reset until the gesture is finished
+	 */
+	Move,
+
+	/**
+	 * Point mode, when the user only drags a single point around the screen
+	 */
+	Point;
+
+	/**
+	 * Whether if the user is currently touching the screen
+	 */
+	val isDragging: Boolean
+		get() = this == Move || this == Point
+}

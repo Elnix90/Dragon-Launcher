@@ -8,12 +8,10 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -84,15 +82,12 @@ import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore.isInDragAroundMode
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.components.ToggleAnimatedFab
 import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
@@ -111,7 +106,7 @@ import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
-import org.elnix.dragonlauncher.ui.helpers.detectTransformGestures
+import org.elnix.dragonlauncher.ui.helpers.detectTransformGesturesWithStartAndEnd
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
@@ -150,8 +145,6 @@ fun PointsSettingsScreen(
 	val points by pointsService.points.collectAsState()
 	val nests by pointsService.nests.collectAsState()
 
-	val isInDragAroundMode by isInDragAroundMode.asState()
-
 	val primaryColor = MaterialTheme.colorScheme.primary
 
 	val snapPointsAngle by UiSettingsStore.snapPointsAngle.asState()
@@ -166,7 +159,7 @@ fun PointsSettingsScreen(
 	val cellSizePx = cellSizeDp.px
 	val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
 
-	val snapPoints = viewModel.snapPoints
+	val snapPoints by viewModel.snapPoints.collectAsState()
 
 	fun Offset.snap(): Offset = if (snapPoints && allowFreePoints) this.snapToGrid(cellSizePx) else this
 
@@ -188,9 +181,10 @@ fun PointsSettingsScreen(
 	var showResetPointsAndNestsDialog by viewModel.showResetPointsAndNestsDialog
 
 	// Manual placement mode state (multi-select "Place one by one")
-	var manualPlacementQueue by viewModel.manualPlacementQueue
-	val isInManualPlacementMode = viewModel.isInManualPlacementMode
-	var isDragging by viewModel.isDragging
+	val manualPlacementQueue = viewModel.manualPlacementQueue
+	val isInManualPlacementMode = manualPlacementQueue.isNotEmpty()
+
+	var draggingMode by viewModel.draggingMode
 
 	val nestsNavigationService = pointsViewModel.nestsNavigationService
 	val nestId by nestsNavigationService.currentNestId.collectAsState()
@@ -230,15 +224,6 @@ fun PointsSettingsScreen(
 	fun Point.computePosition(): Offset = manipulationSystem.undoBoth(this.getPos())
 
 	val selectedPointTempOffset = viewModel.selectedPointTempOffset
-
-	fun toggleDragAroundMode(checked: Boolean) {
-		scope.launch {
-			PrivateSettingsStore.isInDragAroundMode.set(ctx, checked)
-		}
-		if (checked) {
-			pointsService.deselectAll()
-		}
-	}
 
 	val recomposeTrigger by pointsService.recomposeTrigger.asState()
 	LaunchedEffect(recomposeTrigger) {
@@ -288,7 +273,7 @@ fun PointsSettingsScreen(
 
 	val handleBack = {
 		if (isInManualPlacementMode) {
-			manualPlacementQueue = emptyList()
+			manualPlacementQueue.clear()
 		} else if (selectedPointsIds.isNotEmpty()) {
 			pointsService.deselectAll()
 		} else if (nestId != 0) {
@@ -325,32 +310,12 @@ fun PointsSettingsScreen(
 		},
 		bottomContent = {
 			RowWithScrollIndicator(rememberScrollState()) {
-				Row(
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceEvenly
-				) {
-					AnimatedFab(
-						onClick = { showAddDialog = true },
-						icon = R.drawable.add,
-						minSize = 70.dp,
-						containerColor = MaterialTheme.colorScheme.secondary
-					)
-
-					Spacer(12.dp)
-
-					ToggleAnimatedFab(
-						checked = isInDragAroundMode,
-						onCheckedChange = ::toggleDragAroundMode,
-						minSize = 70.dp,
-						containerColor = MaterialTheme.colorScheme.tertiary
-					) {
-						if (it) {
-							R.drawable.drag_pan
-						} else {
-							R.drawable.pan_tool
-						}
-					}
-				}
+				AnimatedFab(
+					onClick = { showAddDialog = true },
+					icon = R.drawable.add,
+					minSize = 70.dp,
+					containerColor = MaterialTheme.colorScheme.secondary
+				)
 
 				Column(
 					verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -473,17 +438,17 @@ fun PointsSettingsScreen(
 						viewModel.center.value = Offset(w / 2f, h / 2f)
 					}
 		) {
-            /*
-             * Main Canva, draws the circles, and sub nests by recursivity.
-             *
-             * Uses [graphicsLayer] to apply transformation of [offset], [zoom] and [angle] and provide an easy way to navigate in the canvas
-             *
-             * - If the user drags a point, I draw it in the offset of where the finger is.
-             * - If the user has hovered a point for more than 500ms, a radial circle overlay spawns and indicates
-             *   that it can release to merge the 2 points
-             * - If the selected point is a live nest, it is drawn in transparency on top of it.
-             *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
-             */
+			/*
+			 * Main Canva, draws the circles, and sub nests by recursivity.
+			 *
+			 * Uses [graphicsLayer] to apply transformation of [offset], [zoom] and [angle] and provide an easy way to navigate in the canvas
+			 *
+			 * - If the user drags a point, I draw it in the offset of where the finger is.
+			 * - If the user has hovered a point for more than 500ms, a radial circle overlay spawns and indicates
+			 *   that it can release to merge the 2 points
+			 * - If the selected point is a live nest, it is drawn in transparency on top of it.
+			 *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
+			 */
 			key(recomposeTrigger, selectedPointsIds, points.size, defaultPoint) {
 				Box(
 					Modifier
@@ -533,7 +498,8 @@ fun PointsSettingsScreen(
 						skipSelected = true
 					)
 
-					if (isDragging) {
+					if (draggingMode == DraggingMode.Point) {
+						// Draws the currently dragged point(s) on the screen,
 						Canvas(Modifier.fillMaxSize()) {
 							selectedPointTempOffset
 								.values
@@ -632,86 +598,106 @@ fun PointsSettingsScreen(
 			Box(
 				Modifier
 					.fillMaxSize()
-					.pointerInput(Unit, isInDragAroundMode, nestId) {
-						if (isInDragAroundMode) {
-							detectTransformGestures(
-								panZoomLock = true
-							) { centroid, pan, gestureZoom, gestureRotate ->
+					.pointerInput(Unit) {
+						detectTransformGesturesWithStartAndEnd(
+							panZoomLock = true,
+							onGesture = { fingerNumber, centroid, pan, gestureZoom, gestureRotate ->
+								if (!draggingMode.isDragging) {
+									when (fingerNumber) {
+										1 -> {
+											draggingMode = DraggingMode.Point
 
-								val oldScale = viewModel.zoom.value
-								val newScale = viewModel.zoom.value * gestureZoom
+											// When only 1 finger is down, the centroid is the position of the finger
+											val tr = centroid.toTr()
+											val newSelectedPoint = (tr ifDistanceIsSmallEnough { tr.bestP })
 
-								// For natural zooming and rotating, the centroid of the gesture should
-								// be the fixed point where zooming and rotating occurs.
-								// We compute where the centroid was (in the pre-transformed coordinate
-								// space), and then compute where it will be after this delta.
-								// We then compute what the new offset should be to keep the centroid
-								// visually stationary for rotating and zooming, and also apply the pan.
-								scope.launch {
-									viewModel.offset.snapTo(
-										(viewModel.offset.value + centroid / oldScale).rotateBy(gestureRotate) -
-											(centroid / newScale + pan / oldScale)
-									)
-									viewModel.zoom.snapTo(newScale)
-									viewModel.angle.snapTo(viewModel.angle.value + gestureRotate)
-								}
-							}
-						} else {
-							detectDragGestures(
-								onDragStart = { tapOffset ->
-									isDragging = true
-
-									val tr = tapOffset.toTr()
-									val newSelectedPoint = (tr ifDistanceIsSmallEnough { tr.bestP })
-
-									// Only select if not already
-									if (newSelectedPoint != null && newSelectedPoint.id !in selectedPointsIds) {
-										viewModel.select(newSelectedPoint.id)
-									}
-								},
-								onDrag = { change, dragAmount ->
-									change.consume()
-
-									// 1. the selected points are updated in real time to provide visual feedback.
-									//    If snapShapes is enabled, the closest shape should light up to indicate
-									//    that when the user releases its finger, the point snaps to the shape
-
-									selectedPointsIds.forEach { id ->
-										val (_, previousOffset) = selectedPointTempOffset[id] ?: return@forEach
-										val point = pointsService.findPointById(id) ?: return@forEach
-
-										val tr = previousOffset.value.toTr()
-										val newShapeId = viewModel.computePointMoved(point, tr.normalizedOffset, shapes, !allowFreePoints)
-
-										selectedPointTempOffset[id]?.apply {
-											shapeId.value = newShapeId
-											val oldOffset = this@apply.offset.value
-											scope.launch {
-												this@apply.offset.snapTo(oldOffset + dragAmount)
+											// Only select if not already
+											if (newSelectedPoint != null && newSelectedPoint.id !in selectedPointsIds) {
+												viewModel.select(newSelectedPoint.id)
 											}
+										}
+
+										else -> {
+											draggingMode = DraggingMode.Move
+											pointsService.deselectAll()
+										}
+									}
+								}
+
+								if (fingerNumber > 1 && draggingMode == DraggingMode.Point) {
+									draggingMode = DraggingMode.Move
+									pointsService.deselectAll()
+								}
+
+								when (draggingMode) {
+									DraggingMode.Move -> {
+										val oldScale = viewModel.zoom.value
+										val newScale = viewModel.zoom.value * gestureZoom
+
+										// For natural zooming and rotating, the centroid of the gesture should
+										// be the fixed point where zooming and rotating occurs.
+										// We compute where the centroid was (in the pre-transformed coordinate
+										// space), and then compute where it will be after this delta.
+										// We then compute what the new offset should be to keep the centroid
+										// visually stationary for rotating and zooming, and also apply the pan.
+										scope.launch {
+											viewModel.offset.snapTo(
+												(viewModel.offset.value + centroid / oldScale).rotateBy(gestureRotate) -
+													(centroid / newScale + pan / oldScale)
+											)
+											viewModel.zoom.snapTo(newScale)
+											viewModel.angle.snapTo(viewModel.angle.value + gestureRotate)
 										}
 									}
 
-									// 2. If autoMerge is enabled, the closest point is analyzed and optionally light up
-									//    to indicate a merge with the current dragged point
-									if (autoMerge) {
-										val tr = change.position.toTr()
-										val bestPExcept =
-											pointsService.computeClosestExcept(
-												ignoredPointId = selectedPointsIds.toTypedArray(),
-												normalizedPos = tr.normalizedOffset,
-												nestId = nestId
-											) ?: return@detectDragGestures
+									DraggingMode.Point -> {
+										// 1. the selected points are updated in real time to provide visual feedback.
+										//    If snapShapes is enabled, the closest shape should light up to indicate
+										//    that when the user releases its finger, the point snaps to the shape
 
-										closestHoveredPoint =
-											if (bestPExcept.getPos() distanceTo tr.normalizedOffset <= TOUCH_THRESHOLD_PX) {
-												bestPExcept
-											} else {
-												null
+										selectedPointsIds.forEach { id ->
+											val (_, previousOffset) = selectedPointTempOffset[id] ?: return@forEach
+											val point = pointsService.findPointById(id) ?: return@forEach
+
+											val tr = previousOffset.value.toTr()
+											val newShapeId = viewModel.computePointMoved(point, tr.normalizedOffset, shapes, !allowFreePoints)
+
+											selectedPointTempOffset[id]?.apply {
+												shapeId.value = newShapeId
+												val oldOffset = this@apply.offset.value
+												scope.launch {
+													this@apply.offset.snapTo(oldOffset + pan)
+												}
 											}
+										}
+
+										// 2. If autoMerge is enabled, the closest point is analyzed and optionally light up
+										//    to indicate a merge with the current dragged point
+										if (autoMerge) {
+											val tr = pan.toTr()
+											val bestPExcept =
+												pointsService.computeClosestExcept(
+													ignoredPointId = selectedPointsIds.toTypedArray(),
+													normalizedPos = tr.normalizedOffset,
+													nestId = nestId
+												) ?: return@detectTransformGesturesWithStartAndEnd
+
+											closestHoveredPoint =
+												if (bestPExcept.getPos() distanceTo tr.normalizedOffset <= TOUCH_THRESHOLD_PX) {
+													bestPExcept
+												} else {
+													null
+												}
+										}
 									}
-								},
-								onDragEnd = {
+
+									else -> {
+										error("Here the dragging mode is either Point or Move")
+									}
+								}
+							},
+							onGestureEnd = {
+								if (draggingMode == DraggingMode.Point) {
 									// 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
 									//    do the computation to merge the 2 points
 									if (ableToLaunchHoverAction && closestHoveredPoint != null) {
@@ -810,28 +796,20 @@ fun PointsSettingsScreen(
 											}
 										}
 									}
-
-									isDragging = false
-									closestHoveredPoint = null
-									ableToLaunchHoverAction = false
-								},
-								onDragCancel = {
-									isDragging = false
-									selectedPointTempOffset.clear()
-									pointsService.deselectAll()
-									closestHoveredPoint = null
-									ableToLaunchHoverAction = false
 								}
-							)
-						}
-					}.pointerInput(isInManualPlacementMode, isInDragAroundMode, nestId) {
+								closestHoveredPoint = null
+								ableToLaunchHoverAction = false
+								draggingMode = DraggingMode.None
+							}
+						)
+					}.pointerInput(isInManualPlacementMode, nestId) {
 						detectTapGestures(
 							onTap = { tapOffset ->
 								val tr = tapOffset.toTr()
 
 								// Manual placement mode: place the current queued app where user tapped
 								if (isInManualPlacementMode) {
-									val action = manualPlacementQueue.first()
+									val action = manualPlacementQueue.removeAt(0)
 
 									val newLiveNest =
 										if (action is Action.OpenNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
@@ -851,7 +829,7 @@ fun PointsSettingsScreen(
 									val shapeId = viewModel.computePointMoved(newPoint, tr.normalizedOffset, shapes, !allowFreePoints)
 
 									val newPointId =
-										pointsService.addPoint { id ->
+										pointsService.addPoint(false) { id ->
 											newPoint.copy(
 												id = id,
 												shapeId = shapeId
@@ -861,34 +839,27 @@ fun PointsSettingsScreen(
 									if (autoSeparatePoints) {
 										pointsService.autoSeparate(nestId, newPointId)
 									}
-
-									manualPlacementQueue = manualPlacementQueue.drop(1)
-								}
-
-								val bestP = tr ifDistanceIsSmallEnough { tr.bestP }
-
-								if (bestP == null) {
-									pointsService.deselectAll()
 								} else {
-									val id = bestP.id
+									val bestP = tr ifDistanceIsSmallEnough { tr.bestP }
 
-									if (isInDragAroundMode) {
-										toggleDragAroundMode(false)
-									}
-
-									// Checks whether if there are only 1 point selected, and if it is the case, open its editor or nest
-									if (selectedPointsIds.size == 1 && id in selectedPointsIds) {
-										// Same point tapped -> if circle nest, open it, else edit point
-										if (bestP.action is Action.OpenNest) {
-											pointsService.deselectAll()
-											nestsNavigationService.goToNest((bestP.action as Action.OpenNest).nestId)
-										} else {
-											showEditDialog = bestP.id
-										}
-									} else if (bestP.id in selectedPointsIds) {
-										viewModel.deselect(id)
+									if (bestP == null) {
+										pointsService.deselectAll()
 									} else {
-										viewModel.select(id)
+										val id = bestP.id
+
+										// Checks whether if there are only 1 point selected, and if it is the case, open its editor or nest
+										if (selectedPointsIds.size == 1 && id in selectedPointsIds) {
+											// Same point tapped -> if circle nest, open it, else edit point
+											if (bestP.action is Action.OpenNest) {
+												pointsService.deselectAll()
+												nestsNavigationService.goToNest((bestP.action as Action.OpenNest).nestId)
+											} else {
+												showEditDialog = bestP.id
+											}
+										} else {
+											// If the point is already selected, it'll deselect
+											viewModel.select(id)
+										}
 									}
 								}
 							}
@@ -1038,8 +1009,8 @@ fun PointsSettingsScreen(
 				showAddDialog = false
 			},
 			onMultipleActionsSelected = { actions ->
-				toggleDragAroundMode(false)
-				manualPlacementQueue = actions
+				manualPlacementQueue.clear()
+				manualPlacementQueue.addAll(actions)
 				showAddDialog = false
 			}
 		)
@@ -1170,10 +1141,10 @@ fun PointsSettingsScreen(
 		}
 	}
 
-    /*
-     * Debug Infos section
-     * Shows various information about the current settings state, may be unreadable when lots of points
-     */
+	/*
+	 * Debug Infos section
+	 * Shows various information about the current settings state, may be unreadable when lots of points
+	 */
 	DebugZone(DebugSettingsStore.settingsDebugInfo) {
 		Text("current nest: $currentNest")
 		Text("Points number: ${points.size}")
