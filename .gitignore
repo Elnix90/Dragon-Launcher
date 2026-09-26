@@ -9,6 +9,7 @@
 .cxx
 local.properties
 .env
+keystore.p12
 .env2
 .kotlin
 crash.txt
