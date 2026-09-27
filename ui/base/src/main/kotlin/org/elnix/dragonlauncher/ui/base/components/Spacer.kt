@@ -1,4 +1,4 @@
-@file:Suppress("UnusedReceiverParameter")
+@file:Suppress("UnusedReceiverParameter", "NOTHING_TO_INLINE")
 
 package org.elnix.dragonlauncher.ui.base.components
 
@@ -12,21 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 
 @Composable
-fun RowScope.Spacer() {
+inline fun RowScope.Spacer() {
 	Spacer(Modifier.weight(1f))
 }
 
 @Composable
-fun ColumnScope.Spacer() {
+inline fun ColumnScope.Spacer() {
 	Spacer(Modifier.weight(1f))
 }
 
 @Composable
-fun RowScope.Spacer(width: Dp) {
+inline fun RowScope.Spacer(width: Dp) {
 	Spacer(Modifier.width(width))
 }
 
 @Composable
-fun ColumnScope.Spacer(height: Dp) {
+inline fun ColumnScope.Spacer(height: Dp) {
 	Spacer(Modifier.height(height))
 }
