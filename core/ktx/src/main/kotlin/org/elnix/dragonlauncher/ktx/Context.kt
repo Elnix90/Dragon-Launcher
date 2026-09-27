@@ -320,3 +320,14 @@ private fun hashSignature(signatureBytes: ByteArray): String {
 	val hashBytes = digest.digest(signatureBytes)
 	return hashBytes.joinToString("") { "%02x".format(it) }
 }
+
+public fun Context.openUsageStatisticSettings() {
+	startActivity(
+		Intent(
+			Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+			"package:$packageName".toUri()
+		).apply {
+			flags = Intent.FLAG_ACTIVITY_NEW_TASK
+		}
+	)
+}

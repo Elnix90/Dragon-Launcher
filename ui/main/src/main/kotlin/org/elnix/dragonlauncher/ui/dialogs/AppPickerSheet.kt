@@ -40,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -291,8 +290,6 @@ fun AppPickerSheet(
 				}
 
 				else -> {
-					logWtf { "isMulti: $isMultiSelectMode\nonMultiple: $onMultipleAppsSelected" }
-
 					AppGrid(
 						apps = apps,
 						isMultiSelectMode = isMultiSelectMode,

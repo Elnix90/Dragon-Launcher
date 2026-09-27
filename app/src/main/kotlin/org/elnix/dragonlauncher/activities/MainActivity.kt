@@ -44,6 +44,7 @@ import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.WIDGET_TAG
 import org.elnix.dragonlauncher.base.WidgetHostProvider
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
@@ -333,6 +334,13 @@ class MainActivity :
 			LaunchedEffect(Unit) {
 				lastStackTrace = PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
 				isCrashStackLoading = false
+			}
+
+			LaunchedEffect(Unit) {
+				val installVersionCode = PrivateSettingsStore.installVersionCode.getOrNull(ctx)
+				if (installVersionCode == null) {
+					PrivateSettingsStore.installVersionCode.set(ctx, ctx.getVersionCode())
+				}
 			}
 
 			if (isCrashStackLoading) {

@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asMutableState
+import io.github.elnix90.runtime.asMutableStateNull
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.loadChangelogs
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
@@ -26,17 +26,26 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 
-// I hate the behavior of this shitty modal sheet that force showing the system bars, even in fullscreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhatsNewBottomSheet() {
 	val ctx = LocalContext.current
 	val uriHandler = LocalUriHandler.current
 
-	var lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asMutableState()
+	var lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asMutableStateNull()
 	val versionCode = ctx.getVersionCode()
 
-	if (lastSeenVersionCodeWhatsNew >= versionCode) return
+	when {
+		// New users will not see the What's new screen the first time they install the app, only afterward
+		lastSeenVersionCodeWhatsNew == 0 -> {
+			lastSeenVersionCodeWhatsNew = versionCode
+		}
+
+		// The user has already seen this version's what's new
+		lastSeenVersionCodeWhatsNew == null || lastSeenVersionCodeWhatsNew!! >= versionCode -> {
+			return
+		}
+	}
 
 	val updates by produceState(initialValue = emptyList()) {
 		value = loadChangelogs(ctx, versionCode)

@@ -14,10 +14,10 @@ import org.elnix.dragonlauncher.i18n.R
  * Builds and posts every notification owned by [AppTimerService]:
  * channels, the ongoing timer notification and the periodic reminders.
  */
-internal class TimerNotifications(
+public class TimerNotifications(
 	private val ctx: Context
 ) {
-	fun createChannels() {
+	public fun createChannels() {
 		val nm = ctx.getSystemService(NotificationManager::class.java) ?: return
 
 		nm.createNotificationChannel(
@@ -42,7 +42,7 @@ internal class TimerNotifications(
 		)
 	}
 
-	fun buildTimerNotification(
+	public fun buildTimerNotification(
 		appName: String,
 		timeLimitEnabled: Boolean,
 		remainingMs: Long,
@@ -81,7 +81,7 @@ internal class TimerNotifications(
 			.build()
 	}
 
-	fun updateTimerNotification(
+	public fun updateTimerNotification(
 		appName: String,
 		timeLimitEnabled: Boolean,
 		remainingMs: Long,
@@ -94,7 +94,7 @@ internal class TimerNotifications(
 		)
 	}
 
-	fun sendReminderNotification(appName: String, timeText: String) {
+	public fun sendReminderNotification(appName: String, timeText: String) {
 		val nm = ctx.getSystemService(NotificationManager::class.java) ?: return
 		val notif =
 			NotificationCompat
@@ -108,7 +108,7 @@ internal class TimerNotifications(
 		nm.notify(AppTimerService.NOTIF_ID_REMINDER, notif)
 	}
 
-	fun sendTestReminderNotification(appName: String, minutes: Int) {
+	public fun sendTestReminderNotification(appName: String, minutes: Int) {
 		val nm = ctx.getSystemService(NotificationManager::class.java) ?: return
 		nm.createNotificationChannel(
 			NotificationChannel(

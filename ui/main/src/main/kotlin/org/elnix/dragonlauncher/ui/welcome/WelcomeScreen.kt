@@ -25,8 +25,6 @@ import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
-import org.elnix.dragonlauncher.models.InitializationViewModel
-import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.slideInHorizontalBouncy
 import org.elnix.dragonlauncher.ui.base.animation.slideOutHorizontalBouncy
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
@@ -36,13 +34,10 @@ import kotlin.time.Duration.Companion.milliseconds
 @SuppressLint("LocalContextGetResourceValueCall", "FrequentlyChangingValue")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun WelcomeScreen(
-	welcomeViewModel: WelcomeViewModel,
-	initializationViewModel: InitializationViewModel = activityViewModel()
-) {
+fun WelcomeScreen(viewModel: WelcomeViewModel) {
 	val navigator = LocalNavigator.current
 
-	val pagerState = welcomeViewModel.pagerState
+	val pagerState = viewModel.pagerState
 
 	var showScrollIndicator by remember { mutableStateOf(false) }
 	var showShapesScrollBar by remember { mutableStateOf(false) }
@@ -99,7 +94,7 @@ fun WelcomeScreen(
 		) { displayPage ->
 			when (displayPage) {
 				0 -> {
-					WelcomePageIntro(pagerState.currentPage < 2, welcomeViewModel::setAsSeen)
+					WelcomePageIntro(pagerState.currentPage < 2, viewModel::setAsSeen)
 				}
 
 				1 -> {
@@ -109,10 +104,7 @@ fun WelcomeScreen(
 				2 -> {
 					WelcomePageSettings(
 						onEnterSettings = {
-							welcomeViewModel.setAsSeen()
-
-							// Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
-							initializationViewModel.checkLauncherInitialization()
+							viewModel.setAsSeen()
 							navigator.popBackMainScreen()
 							navigator.go(NavigationRoute.PointsSettings)
 						}
@@ -122,13 +114,8 @@ fun WelcomeScreen(
 				3 -> {
 					LaunchedEffect(pagerState.currentPage) {
 						if (pagerState.currentPage == PAGES_NUMBER - 1) {
-							welcomeViewModel.setAsSeen()
-
 							showShapesScrollBar = false
-
-							// Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
-							initializationViewModel.checkLauncherInitialization()
-
+							viewModel.setAsSeen()
 							navigator.onBack()
 						}
 					}

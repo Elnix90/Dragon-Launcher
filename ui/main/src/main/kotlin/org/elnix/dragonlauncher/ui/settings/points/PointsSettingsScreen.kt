@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
@@ -51,6 +50,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import io.github.elnix90.runtime.asMutableStateNull
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -82,6 +82,7 @@ import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -90,11 +91,13 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
+import org.elnix.dragonlauncher.ui.components.PointPreview
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
+import org.elnix.dragonlauncher.ui.dialogs.InitializationSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.editors.PointEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -124,7 +127,6 @@ fun PointsSettingsScreen(
 	viewModel: PointsSettingsViewModel = hiltViewModel(),
 	initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
-	val ctx = LocalContext.current
 	val navigator = LocalNavigator.current
 	val density = LocalDensity.current
 	val extraColors = LocalExtraColors.current
@@ -146,6 +148,8 @@ fun PointsSettingsScreen(
 	val nests by pointsService.nests.collectAsState()
 
 	val primaryColor = MaterialTheme.colorScheme.primary
+
+	var hasInitialized by PrivateSettingsStore.hasInitialized.asMutableStateNull()
 
 	val snapPointsAngle by UiSettingsStore.snapPointsAngle.asState()
 	val snapPointAngleThreshold by UiSettingsStore.snapPointAngleThreshold.asState()
@@ -182,7 +186,7 @@ fun PointsSettingsScreen(
 
 	// Manual placement mode state (multi-select "Place one by one")
 	val manualPlacementQueue = viewModel.manualPlacementQueue
-	val isInManualPlacementMode = manualPlacementQueue.isNotEmpty()
+	val isInPlacementMode = manualPlacementQueue.isNotEmpty()
 
 	var draggingMode by viewModel.draggingMode
 
@@ -272,7 +276,7 @@ fun PointsSettingsScreen(
 	}
 
 	val handleBack = {
-		if (isInManualPlacementMode) {
+		if (isInPlacementMode) {
 			manualPlacementQueue.clear()
 		} else if (selectedPointsIds.isNotEmpty()) {
 			pointsService.deselectAll()
@@ -802,13 +806,13 @@ fun PointsSettingsScreen(
 								draggingMode = DraggingMode.None
 							}
 						)
-					}.pointerInput(isInManualPlacementMode, nestId) {
+					}.pointerInput(isInPlacementMode, nestId) {
 						detectTapGestures(
 							onTap = { tapOffset ->
 								val tr = tapOffset.toTr()
 
 								// Manual placement mode: place the current queued app where user tapped
-								if (isInManualPlacementMode) {
+								if (isInPlacementMode) {
 									val action = manualPlacementQueue.removeAt(0)
 
 									val newLiveNest =
@@ -929,6 +933,16 @@ fun PointsSettingsScreen(
 						Icon(painter = painterResource(R.drawable.casino), null)
 						Spacer(5.dp)
 						Text(stringResource(R.string.gamble_apps))
+					}
+					DragonButton(
+						onClick = {
+							hasInitialized = false
+							showMoreSheet = false
+						}
+					) {
+						Icon(painter = painterResource(R.drawable.start), null)
+						Spacer(5.dp)
+						Text(stringResource(R.string.has_initialized_desc))
 					}
 				}
 
@@ -1056,23 +1070,9 @@ fun PointsSettingsScreen(
 		onDeselectAll = { pointsService.deselectAll() }
 	)
 
-	if (isInManualPlacementMode) {
-		val appName =
-			when (val currentAction = manualPlacementQueue.first()) {
-				is Action.LaunchApp -> {
-					ctx.packageManager
-						.runCatching {
-							getApplicationLabel(
-								getApplicationInfo(currentAction.packageName, 0)
-							).toString()
-						}.getOrDefault(currentAction.packageName)
-				}
-
-				else -> {
-					currentAction::class.simpleName ?: ""
-				}
-			}
+	if (isInPlacementMode) {
 		val remaining = manualPlacementQueue.size
+		val currentPoint = Point.dummySwipePoint(manualPlacementQueue.first())
 
 		Box(
 			modifier =
@@ -1091,12 +1091,21 @@ fun PointsSettingsScreen(
 						).padding(horizontal = 16.dp, vertical = 12.dp)
 			) {
 				Text(
-					text = stringResource(R.string.place_app_where, appName),
+					text = stringResource(R.string.place_app_where),
 					color = MaterialTheme.colorScheme.onPrimaryContainer,
 					fontWeight = FontWeight.Bold,
 					textAlign = TextAlign.Center,
 					fontSize = 14.sp
 				)
+
+				PointPreview(
+					point = currentPoint,
+					showIcon = true,
+					showLabel = true,
+					appIconOverlaySize = 30.dp,
+					appLabelOverlaySize = 18.sp
+				)
+
 				Text(
 					text = stringResource(R.string.multi_select_count, remaining),
 					color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
@@ -1138,6 +1147,12 @@ fun PointsSettingsScreen(
 
 			initializationViewModel.initialize()
 			showResetPointsAndNestsDialog = false
+		}
+	}
+
+	if (hasInitialized == false) {
+		InitializationSheet {
+			hasInitialized = true
 		}
 	}
 

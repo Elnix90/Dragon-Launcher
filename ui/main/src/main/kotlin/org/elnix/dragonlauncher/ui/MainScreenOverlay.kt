@@ -128,10 +128,10 @@ fun MainScreenOverlay(
 			Animatable(Offset.Zero, Offset.VectorConverter)
 		}
 
-    /*
-     * 1. selects the hovered point in the point service
-     * 2. animates the offset whenever the hovered point changes to this new point offset using [Point.getPos]
-     */
+	/*
+	 * 1. selects the hovered point in the point service
+	 * 2. animates the offset whenever the hovered point changes to this new point offset using [Point.getPos]
+	 */
 	LaunchedEffect(hoveredPoint) {
 		val hoveredPointId = hoveredPoint?.id
 		pointsService.selectOnyOne(hoveredPointId)
@@ -149,12 +149,12 @@ fun MainScreenOverlay(
 		)
 	}
 
-    /*
-     * This prevents the animated offset to always coming from the center, but start animating from the current pos
-     * Which should be always non-null id a point is selected.
-     *
-     * it snaps either when the root nest is on no point, or when the highest live lest is at its center (the hovered point is the host)
-     */
+	/*
+	 * This prevents the animated offset to always coming from the center, but start animating from the current pos
+	 * Which should be always non-null id a point is selected.
+	 *
+	 * it snaps either when the root nest is on no point, or when the highest live lest is at its center (the hovered point is the host)
+	 */
 	LaunchedEffect(current) {
 		if (!animationWhenSnapping) return@LaunchedEffect
 		if (!isDragging) return@LaunchedEffect
@@ -542,14 +542,12 @@ fun MainScreenOverlay(
 		}
 	}
 
-	if (showLaunchingAppLabel || showLaunchingAppIcon) {
-		PointPreviewTitle(
-			point = displayPoint,
-			topPadding = appLabelIconOverlayTopPadding,
-			showLabel = showLaunchingAppLabel,
-			showIcon = showLaunchingAppIcon
-		)
-	}
+	PointPreviewTitle(
+		point = displayPoint,
+		topPadding = appLabelIconOverlayTopPadding,
+		showLabel = showLaunchingAppLabel,
+		showIcon = showLaunchingAppIcon
+	)
 }
 
 fun defaultHapticFeedback(): CustomHapticFeedback =

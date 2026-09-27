@@ -30,7 +30,7 @@ fun AppearanceTab() {
 
 		DragonSettingsGroup(R.string.other) {
 			RouteItem(NavigationRoute.StatusBar)
-			RouteItem(NavigationRoute.Theme, enabled = false)
+// 			RouteItem(NavigationRoute.Theme, enabled = false)
 			RouteItem(NavigationRoute.Fonts)
 		}
 	}

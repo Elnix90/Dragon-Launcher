@@ -41,8 +41,11 @@ public class AppTimerService : Service() {
 	@Inject
 	public lateinit var permissionManager: PermissionsManager
 
-	private val usageStats: UsageStatsReader by lazy { UsageStatsReader(this, permissionManager) }
-	private val notifications: TimerNotifications by lazy { TimerNotifications(this) }
+	@Inject
+	public lateinit var usageStats: UsageStatsReader
+
+	@Inject
+	public lateinit var notifications: TimerNotifications
 
 	public companion object {
 		public const val CHANNEL_TIMER: String = "dragon_timer_channel"

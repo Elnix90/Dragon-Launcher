@@ -1,18 +1,18 @@
 package org.elnix.dragonlauncher.ui.settings.wellbeing
 
 import android.app.Application
-import android.content.Intent
 import android.provider.Settings
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownSocialMediaApps
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
+import org.elnix.dragonlauncher.ktx.openUsageStatisticSettings
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 
 /**
@@ -22,30 +22,30 @@ import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
  */
 @HiltViewModel
 @Stable
-public class WellbeingViewModel
+class WellbeingViewModel
 	@Inject
 	constructor(
 		application: Application
 	) : AndroidViewModel(application) {
-		public val showAppPicker = mutableStateOf(false)
-		public val showPermissionDialog = mutableStateOf(false)
-		public val showOverlayPermissionDialog = mutableStateOf(false)
+		val showAppPicker = mutableStateOf(false)
+		val showPermissionDialog = mutableStateOf(false)
+		val showOverlayPermissionDialog = mutableStateOf(false)
 
 		/**
 		 * Remembers that the user asked for overlay reminders while the
 		 * overlay permission was missing, so the toggle can be restored
 		 * once the permission is granted.
 		 */
-		public val pendingReminderEnable = mutableStateOf(false)
+		val pendingReminderEnable = mutableStateOf(false)
 
 		/** Setting() persists the value itself; only guide to system settings when needed. */
-		public fun onGuiltToggle(newValue: Boolean, hasUsageStatsPermission: Boolean) {
+		fun onGuiltToggle(newValue: Boolean, hasUsageStatsPermission: Boolean) {
 			if (newValue && !hasUsageStatsPermission) {
 				showPermissionDialog.value = true
 			}
 		}
 
-		public fun onReminderToggle(newValue: Boolean, reminderMode: ReminderMode) {
+		fun onReminderToggle(newValue: Boolean, reminderMode: ReminderMode) {
 			val ctx = getApplication<Application>()
 			if (newValue && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
 				pendingReminderEnable.value = true
@@ -57,7 +57,7 @@ public class WellbeingViewModel
 		 * Reconciles the reminder toggle with the overlay permission, called
 		 * whenever the toggle, the mode or the permission state changes.
 		 */
-		public fun syncOverlayState(reminderEnabled: Boolean, reminderMode: ReminderMode, canShowOverlay: Boolean) {
+		fun syncOverlayState(reminderEnabled: Boolean, reminderMode: ReminderMode, canShowOverlay: Boolean) {
 			val ctx = getApplication<Application>()
 			viewModelScope.launch {
 				if (reminderMode == ReminderMode.Overlay && !canShowOverlay) {
@@ -73,25 +73,17 @@ public class WellbeingViewModel
 			}
 		}
 
-		public fun onOverlayDialogConfirm() {
-			val ctx = getApplication<Application>()
+		fun onOverlayDialogConfirm() {
 			showOverlayPermissionDialog.value = false
-			ctx.startActivity(
-				Intent(
-					Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-					"package:${ctx.packageName}".toUri()
-				).apply {
-					flags = Intent.FLAG_ACTIVITY_NEW_TASK
-				}
-			)
+			application.openUsageStatisticSettings()
 		}
 
-		public fun onOverlayDialogDismiss() {
+		fun onOverlayDialogDismiss() {
 			pendingReminderEnable.value = false
 			showOverlayPermissionDialog.value = false
 		}
 
-		public fun onAddSocialMedia(allPackages: Set<String>, pausedApps: Set<String>) {
+		fun onAddSocialMedia(allPackages: Set<String>, pausedApps: Set<String>) {
 			val ctx = getApplication<Application>()
 			viewModelScope.launch {
 				val socialApps = knownSocialMediaApps.filter { it in allPackages }
@@ -99,14 +91,14 @@ public class WellbeingViewModel
 			}
 		}
 
-		public fun onRemovePausedApp(packageName: String, pausedApps: Set<String>) {
+		fun onRemovePausedApp(packageName: String, pausedApps: Set<String>) {
 			val ctx = getApplication<Application>()
 			viewModelScope.launch {
 				WellbeingSettingsStore.pausedApps.set(ctx, pausedApps - packageName)
 			}
 		}
 
-		public fun onAppPicked(packageName: String, pausedApps: Set<String>) {
+		fun onAppPicked(packageName: String, pausedApps: Set<String>) {
 			val ctx = getApplication<Application>()
 			viewModelScope.launch {
 				WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + packageName)
@@ -114,7 +106,7 @@ public class WellbeingViewModel
 			}
 		}
 
-		public fun onMultipleAppsPicked(packageNames: Set<String>, pausedApps: Set<String>) {
+		fun onMultipleAppsPicked(packageNames: Set<String>, pausedApps: Set<String>) {
 			val ctx = getApplication<Application>()
 			viewModelScope.launch {
 				WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + packageNames)
@@ -122,7 +114,7 @@ public class WellbeingViewModel
 			}
 		}
 
-		public fun onResetSettings() {
+		fun onResetSettings() {
 			val ctx = getApplication<Application>()
 			viewModelScope.launch {
 				WellbeingSettingsStore.resetAll(ctx)

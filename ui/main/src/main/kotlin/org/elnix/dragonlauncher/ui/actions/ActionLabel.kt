@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.actions
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
@@ -30,7 +31,7 @@ fun actionLabel(
 		is Action.LaunchApp -> {
 			LaunchedEffect(action) {
 				val app = drawerViewModel.fromAction(action)
-				action.appLabel = app?.label ?: app?.packageName ?: action.packageName
+				action.appLabel.value = app?.label ?: app?.packageName ?: action.packageName
 			}
 
 			val prefix = when (action.profile.type) {
@@ -39,12 +40,13 @@ fun actionLabel(
 				Private -> stringResource(Private.resId)
 			}
 
+			val cachedLabel by action.appLabel
 			// This prevents to draw anything if the appLabel isn't already loaded.
 			// The apps now gets their respective prefix before their name
 			when {
-				action.appLabel == null -> ""
-				prefix != null -> prefix + action.appLabel!!
-				else -> action.appLabel!!
+				cachedLabel == null -> ""
+				prefix != null -> prefix + cachedLabel!!
+				else -> cachedLabel!!
 			}
 		}
 

@@ -35,6 +35,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 	public val hasInitialized: BooleanSettingObject =
 		boolean(
 			title = R.string.has_initialized,
+			description = R.string.has_initialized_desc,
 			default = false
 		)
 
@@ -79,6 +80,13 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 			allowedRange = 0..Int.MAX_VALUE
 		)
 
+	@SettingKey
+	public val installVersionCode: IntSettingObject =
+		int(
+			default = -1,
+			allowedRange = -1..Int.MAX_VALUE
+		)
+
 	/**
 	 *  Hashed code for settings lock (SHA-256).
 	 *  This can contain either the Pattern hashed or the PIN hashed.
@@ -116,7 +124,4 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 
 	@SettingKey
 	public val lastCrashStackTrace: StringSettingObject = string("")
-
-	@SettingKey
-	public val isInDragAroundMode: BooleanSettingObject = boolean(false)
 }

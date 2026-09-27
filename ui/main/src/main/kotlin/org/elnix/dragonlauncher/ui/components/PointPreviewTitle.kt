@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
@@ -44,10 +45,7 @@ fun PointPreviewTitle(
 	showIcon: Boolean
 ) {
 	if (point == null) return
-
-	val extraColors = LocalExtraColors.current
-
-	val label = point.customName ?: actionLabel(point.action)
+	if (!(showIcon || showLabel)) return
 
 	val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
 	val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
@@ -71,42 +69,60 @@ fun PointPreviewTitle(
 		)
 	}
 
-	val action = point.action
-	if (showIcon || showLabel) {
-		Box(
-			Modifier
-				.fillMaxWidth()
-				.offset(y = offsetY.value.dp)
-				.padding(top = topPadding)
-				.alpha(alpha.value),
-			contentAlignment = Alignment.TopCenter
-		) {
-			Row(
-				horizontalArrangement = Arrangement.spacedBy(5.dp),
-				verticalAlignment = Alignment.CenterVertically
-			) {
-				if (showIcon) {
-					FinalPointIcon(point, size = appIconOverlaySize)
-				}
+	Box(
+		Modifier
+			.fillMaxWidth()
+			.offset(y = offsetY.value.dp)
+			.padding(top = topPadding)
+			.alpha(alpha.value),
+		contentAlignment = Alignment.TopCenter
+	) {
+		PointPreview(
+			point = point,
+			showIcon = showIcon,
+			showLabel = showLabel,
+			appIconOverlaySize = appIconOverlaySize,
+			appLabelOverlaySize = appLabelOverlaySize.sp
+		)
+	}
+}
 
-				if (showLabel) {
-					Text(
-						text = label,
-						style =
-							TextStyle(
-								color = action.actionColor(extraColors, point.customActionColor),
-								fontSize = appLabelOverlaySize.sp,
-								fontWeight = FontWeight.Bold,
-								shadow =
-									Shadow(
-										color = Color.Black.copy(alpha = 0.48f),
-										offset = Offset(0f, 1f),
-										blurRadius = 5f
-									)
+@Composable
+fun PointPreview(
+	point: Point,
+	showIcon: Boolean,
+	showLabel: Boolean,
+	appIconOverlaySize: Dp,
+	appLabelOverlaySize: TextUnit
+) {
+	val extraColors = LocalExtraColors.current
+
+	val label = point.customName ?: actionLabel(point.action)
+
+	Row(
+		horizontalArrangement = Arrangement.spacedBy(5.dp),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		if (showIcon) {
+			FinalPointIcon(point, size = appIconOverlaySize)
+		}
+
+		if (showLabel) {
+			Text(
+				text = label,
+				style =
+					TextStyle(
+						color = point.action.actionColor(extraColors, point.customActionColor),
+						fontSize = appLabelOverlaySize,
+						fontWeight = FontWeight.Bold,
+						shadow =
+							Shadow(
+								color = Color.Black.copy(alpha = 0.48f),
+								offset = Offset(0f, 1f),
+								blurRadius = 5f
 							)
 					)
-				}
-			}
+			)
 		}
 	}
 }

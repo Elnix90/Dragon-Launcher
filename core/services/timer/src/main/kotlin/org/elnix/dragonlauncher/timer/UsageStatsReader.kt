@@ -2,9 +2,12 @@ package org.elnix.dragonlauncher.timer
 
 import android.Manifest
 import android.app.usage.UsageEvents
+import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import androidx.annotation.RequiresPermission
+import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.APPS_TAG
 import org.elnix.dragonlauncher.base.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
@@ -17,7 +20,7 @@ import java.util.Calendar
  * They must stay synchronous: callers need the result immediately, an async
  * wrapper would always return the default value before the query finishes.
  */
-internal class UsageStatsReader(
+public class UsageStatsReader(
 	private val ctx: Context,
 	private val permissionManager: PermissionsManager
 ) {
@@ -26,7 +29,7 @@ internal class UsageStatsReader(
 	 * or -1 if usage stats permission is not granted.
 	 */
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	fun getTodayUsageMinutes(packageName: String): Long {
+	public fun getTodayUsageMinutes(packageName: String): Long {
 		// hasPermissionBlocking is suspend, so the synchronous
 		// checkPermissionOnce is used here instead.
 		if (!permissionManager.checkPermissionOnce(PermissionGroup.UsageStat)) {
@@ -52,12 +55,28 @@ internal class UsageStatsReader(
 		}
 	}
 
+	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
+	public fun getMostUsedApps(): List<UsageStats> = try {
+		val usm = ctx.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+		val calendar = Calendar.getInstance()
+		calendar.add(Calendar.MONTH, -1)
+
+		val start = calendar.getTimeInMillis()
+		val end = System.currentTimeMillis()
+
+		val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, start, end)
+		stats
+	} catch (e: Exception) {
+		logE(APPS_TAG, e) { "Error getting the most used apps" }
+		emptyList()
+	}
+
 	/**
 	 * The "today total" text for overlays.
 	 * Returns an empty string if permission is missing.
 	 */
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	fun todayText(packageName: String): String =
+	public fun todayText(packageName: String): String =
 		getTodayUsageMinutes(packageName)
 			.takeIf { it >= 0 }
 			?.formatDuration()
@@ -69,7 +88,7 @@ internal class UsageStatsReader(
 	 * Uses multiple methods for better reliability.
 	 */
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	fun getCurrentForegroundPackage(trackedPackage: String): String? {
+	public fun getCurrentForegroundPackage(trackedPackage: String): String? {
 		// hasPermissionBlocking is suspend, so the synchronous
 		// checkPermissionOnce is used here instead.
 		if (!permissionManager.checkPermissionOnce(PermissionGroup.UsageStat)) {

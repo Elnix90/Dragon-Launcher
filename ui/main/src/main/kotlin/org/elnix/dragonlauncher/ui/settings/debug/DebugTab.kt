@@ -115,16 +115,7 @@ fun DebugTab(
 				Text(text = "Show Google lockdown warning")
 			}
 
-			DragonButton(
-				onClick = {
-					scope.launch {
-						PrivateSettingsStore.hasSeenWelcomeScreen.reset(ctx)
-					}
-				}
-			) {
-				Text(text = "Show Welcome Screen")
-			}
-
+			Setting(PrivateSettingsStore.hasSeenWelcomeScreen)
 			val signatureMatched by securityViewModel.signatureMatched.asState()
 			// The old has seen welcome toggle, only show when in signed debug version (only I should be able to have it)
 			if (ctx.getBuildType() == "debug" && signatureMatched) {
@@ -229,7 +220,7 @@ fun DebugTab(
 			Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
 			Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
 
-			this.DragonButton(onClick = { SystemControl.openServiceSettings((ctx)) }) {
+			DragonButton(onClick = { SystemControl.openServiceSettings((ctx)) }) {
 				Text("Open Accessibility Services")
 			}
 		}
@@ -325,7 +316,7 @@ fun DebugTab(
 		}
 
 		DragonSettingsGroup(R.string.test_overlays) {
-			this.DragonButton(
+			DragonButton(
 				onClick = {
 					if (!Settings.canDrawOverlays(ctx)) {
 						showPermissionDialog = true
@@ -346,7 +337,7 @@ fun DebugTab(
 				Text(text = "Test: Reminder overlay")
 			}
 
-			this.DragonButton(
+			DragonButton(
 				onClick = {
 					if (!Settings.canDrawOverlays(ctx)) {
 						showPermissionDialog = true
@@ -369,19 +360,19 @@ fun DebugTab(
 		}
 
 		DragonSettingsGroup(R.string.risky) {
-			this.DragonButton(
+			DragonButton(
 				onClick = {
 					@Suppress("DIVISION_BY_ZERO")
 					5 / 0
 				}
 			) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
 
-			this.DragonButton(onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }) { Text("Close app (gently)") }
-			this.DragonButton(onClick = { kill(9, 9) }) { Text("☠\uFE0F Kill Process") }
+			DragonButton(onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }) { Text("Close app (gently)") }
+			DragonButton(onClick = { kill(9, 9) }) { Text("☠\uFE0F Kill Process") }
 		}
 
 		DragonSettingsGroup(R.string.dangerous_actions) {
-			this.DragonButton(
+			DragonButton(
 				onClick = {
 					ctx.startActivity(
 						Intent(Intent.ACTION_DELETE).apply {

@@ -509,7 +509,7 @@
   <!--  ─────────────  Multi Select  ─────────────  -->
   <string name="multi_select_count">%d selected</string>
 
-  <string name="place_app_where">Where do you want to place %s?</string>
+  <string name="place_app_where">Where do you want to place</string>
   <string name="tap_circle_to_place">Tap on the circle to place the app</string>
   <string name="multi_select_drawer_hint">💡 Long press an app to select multiple at once</string>
   <string name="deselect_all">Deselect all</string>
@@ -1141,4 +1141,12 @@
   <string name="ime_padding_drawer">Ime padding drawer</string>
   <string name="ime_padding_drawer_desc">Whether if the keyboard overlaps the apps or not</string>
   <string name="add_apps">Add apps</string>
+	<string name="lets_begin">Let\'s begin!</string>
+	<string name="auto_import_apps">Auto import apps</string>
+	<string name="start_fresh">Start fresh</string>
+	<string name="initialize_apps">Initialize apps</string>
+	<string name="the_number_of_apps_you_want_to_add">The number of apps you want to add to your setup</string>
+	<string name="has_initialized_desc">Show the initialization sheet</string>
+	<string name="or">Or…</string>
+	<string name="permission_granted">Permission granted!</string>
 </resources>

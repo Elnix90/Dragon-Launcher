@@ -6,6 +6,8 @@ import android.os.UserHandle
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -49,10 +51,14 @@ public sealed class Action {
 		@Transient
 		val timerDuration: Int? = null
 	) : Action() {
+		@Transient
 		override val drawableId: Int = R.drawable.apps
+
+		@Transient
 		override val resId: Int = R.string.open_app
 
-		public var appLabel: String? = null
+		@Transient
+		public var appLabel: MutableState<String?> = mutableStateOf(null)
 
 		public constructor(application: Application) : this(
 			application.packageName,
