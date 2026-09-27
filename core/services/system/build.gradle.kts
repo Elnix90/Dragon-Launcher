@@ -20,4 +20,6 @@ dependencies {
 	implementation(project(":core:ktx"))
 	implementation(project(":core:settings"))
 	api(project(":core:base"))
+
+	api(project(":core:permissions"))
 }

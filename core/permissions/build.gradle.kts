@@ -18,6 +18,9 @@ dependencies {
 	implementation(libs.timber)
 	implementation(libs.hilt.android)
 	implementation(libs.hilt.core)
+	implementation(libs.androidx.lifecycle.process)
+
+	api(project(":core:i18n"))
 
 	ksp(libs.hilt.compiler)
 

@@ -7,6 +7,8 @@ import android.content.pm.ShortcutInfo
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.JSON_TAG
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 
 @SuppressLint("InlinedApi")
 public fun deserialize(serialized: Action.LaunchShortcut, ctx: Context): ShortcutInfo? {
@@ -17,7 +19,7 @@ public fun deserialize(serialized: Action.LaunchShortcut, ctx: Context): Shortcu
 		val id = serialized.shortcutId
 		val user = serialized.user
 
-		if (!launcherApps.hasShortcutHostPermission()) {
+		if (!ctx.permissionsManager.checkPermissionOnce(PermissionGroup.AppShortcuts)) {
 			return null
 		} else {
 			val query = LauncherApps.ShortcutQuery()

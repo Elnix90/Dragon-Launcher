@@ -128,6 +128,8 @@ import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
+import org.elnix.dragonlauncher.ui.settings.debug.PermissionsTab
+import org.elnix.dragonlauncher.ui.settings.debug.PermissionsViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.SettingsDebugTab
 import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
 import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsScreen
@@ -475,6 +477,10 @@ fun MainAppUi(
 							entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab() }
 							entry<NavigationRoute.Debug>(metadata = horizontalMetadata) { DebugTab() }
 							entry<NavigationRoute.Logs>(metadata = horizontalMetadata) { LogsTab() }
+							entry<NavigationRoute.Permissions>(metadata = horizontalMetadata) {
+								val viewModel: PermissionsViewModel = hiltViewModel()
+								PermissionsTab(viewModel)
+							}
 							entry<NavigationRoute.SettingsJson>(metadata = horizontalMetadata) { SettingsDebugTab() }
 
 							// All the appearance sub-settings

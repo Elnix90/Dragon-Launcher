@@ -147,7 +147,7 @@ internal class AppShortcutRepositoryImpl(
 	private fun refreshShortcuts() {
 		scope.launch {
 			mutex.withLock {
-				if (!permissionsManager.hasPermission(PermissionGroup.AppShortcuts).first()) return@launch
+				if (!permissionsManager.checkPermissionOnce(PermissionGroup.AppShortcuts)) return@launch
 				val launcherApps = ctx.getSystemService<LauncherApps>() ?: return@launch
 
 				val shortcutQuery = LauncherApps.ShortcutQuery()
@@ -201,7 +201,7 @@ internal class AppShortcutRepositoryImpl(
 
 	override suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity> {
 		val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-		if (!launcherApps.hasShortcutHostPermission()) return emptyList()
+		if (!permissionsManager.checkPermissionOnce(PermissionGroup.AppShortcuts)) return emptyList()
 		val results = mutableListOf<AppShortcutConfigActivity>()
 		val profiles = profileManager.activeProfiles.first()
 		for (profile in profiles) {

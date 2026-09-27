@@ -12,7 +12,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownSocialMediaApps
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
-import org.elnix.dragonlauncher.ktx.openUsageStatisticSettings
+import org.elnix.dragonlauncher.ktx.openOverlaySettings
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 
 /**
@@ -75,7 +75,7 @@ class WellbeingViewModel
 
 		fun onOverlayDialogConfirm() {
 			showOverlayPermissionDialog.value = false
-			application.openUsageStatisticSettings()
+			application.openOverlaySettings()
 		}
 
 		fun onOverlayDialogDismiss() {

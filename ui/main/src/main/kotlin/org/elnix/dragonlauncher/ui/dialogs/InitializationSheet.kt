@@ -11,8 +11,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.openUsageStatisticSettings
 import org.elnix.dragonlauncher.models.InitializationViewModel
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -47,7 +48,7 @@ fun InitializationSheet(
 				icon = R.drawable.analytics,
 				enabled = !hasPermission,
 				description = stringResource(if (!hasPermission) R.string.usage_permission_required else R.string.permission_granted)
-			) { ctx.openUsageStatisticSettings() }
+			) { ctx.permissionsManager.requestPermission(PermissionGroup.UsageStat) }
 
 			val howMany by initializationViewModel.howMany.asState()
 			SliderWithLabel(

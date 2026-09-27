@@ -11,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.shareIn
@@ -55,7 +56,7 @@ public class ProfilesViewModel
 			}
 		}
 
-		public val hasProfilesPermission: Flow<Boolean> = permissionsManager.hasPermission(PermissionGroup.ManageProfiles)
+		public val hasProfilesPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.DefaultLauncher)
 
 		init {
 			viewModelInitialized()

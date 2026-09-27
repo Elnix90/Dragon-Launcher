@@ -202,6 +202,13 @@ public sealed class NavigationRoute : NavKey {
 	}
 
 	@Serializable
+	@SerialName("Permissions")
+	public data object Permissions : NavigationRoute() {
+		override val resId: Int = R.string.permissions
+		override val icon: Int = R.drawable.encrypted
+	}
+
+	@Serializable
 	@SerialName("LogsViewer")
 	public data class LogsViewer(
 		val filename: String
@@ -294,6 +301,7 @@ public sealed class NavigationRoute : NavKey {
 				Extensions,
 				Debug,
 				Logs,
+				Permissions,
 				SettingsJson,
 				NestEdit,
 				WorkspaceDetail("")

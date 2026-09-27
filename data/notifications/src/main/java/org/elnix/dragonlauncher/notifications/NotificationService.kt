@@ -11,16 +11,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.NOTIFICATIONS_TAG
-import org.elnix.dragonlauncher.permissions.PermissionsManager
 import java.lang.ref.WeakReference
 
 @AndroidEntryPoint
 public class NotificationService : NotificationListenerService() {
 	@Inject
 	public lateinit var notificationRepository: NotificationRepository
-
-	@Inject
-	public lateinit var permissionsManager: PermissionsManager
 
 	private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
@@ -30,7 +26,6 @@ public class NotificationService : NotificationListenerService() {
 		super.onListenerConnected()
 
 		logD(NOTIFICATIONS_TAG) { "Notification listener connected" }
-		permissionsManager.reportNotificationListenerState(true)
 		instance = WeakReference(this)
 
 		scope.launch {
@@ -88,7 +83,6 @@ public class NotificationService : NotificationListenerService() {
 
 	override fun onListenerDisconnected() {
 		super.onListenerDisconnected()
-		permissionsManager.reportNotificationListenerState(false)
 		notificationRepository.setNotifications(emptyList())
 
 		logD(NOTIFICATIONS_TAG) { "Notification listener disconnected" }

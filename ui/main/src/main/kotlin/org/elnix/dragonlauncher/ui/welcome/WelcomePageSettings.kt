@@ -18,7 +18,8 @@ import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.openDefaultLauncherSettings
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -48,7 +49,9 @@ fun WelcomePageSettings(
 
 				DragonButton(
 					enabled = !isDefaultLauncher,
-					onClick = { ctx.openDefaultLauncherSettings() }
+					onClick = {
+						ctx.permissionsManager.requestPermission(PermissionGroup.DefaultLauncher)
+					}
 				) {
 					Text(
 						text = if (isDefaultLauncher) {

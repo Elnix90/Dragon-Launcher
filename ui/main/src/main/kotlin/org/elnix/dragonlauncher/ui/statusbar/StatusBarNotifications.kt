@@ -20,8 +20,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.permissions.PermissionGroup
-import org.elnix.dragonlauncher.services.openNotificationSettings
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
@@ -34,7 +32,7 @@ fun StatusBarNotifications(
 
 	val notifications = drawerViewModel.notifications
 
-	val hasNotificationPermission by drawerViewModel.hasPermission(PermissionGroup.Notifications).collectAsState(false)
+	val hasNotificationPermission by drawerViewModel.hasNotificationsPermission().collectAsState(false)
 
 	if (!hasNotificationPermission) {
 		Icon(
@@ -43,7 +41,9 @@ fun StatusBarNotifications(
 			modifier =
 				Modifier
 					.size(18.dp)
-					.clickable { openNotificationSettings(ctx) }
+					.clickable {
+						drawerViewModel.requestNotificationsPermission()
+					}
 		)
 		return
 	} else if (notifications.isNullOrEmpty()) {

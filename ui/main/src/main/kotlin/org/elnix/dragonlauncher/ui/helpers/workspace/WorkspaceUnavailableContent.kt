@@ -20,7 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.openDefaultLauncherSettings
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
@@ -63,7 +64,7 @@ fun WorkspaceUnavailableContent(
 
 					DragonButton(
 						onClick = {
-							ctx.openDefaultLauncherSettings()
+							ctx.permissionsManager.requestPermission(PermissionGroup.DefaultLauncher)
 						}
 					) {
 						Text(

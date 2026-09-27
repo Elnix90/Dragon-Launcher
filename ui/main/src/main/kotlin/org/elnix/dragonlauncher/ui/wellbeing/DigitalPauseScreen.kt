@@ -4,8 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import android.content.Intent
-import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedContent
@@ -86,12 +84,15 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import java.util.Calendar
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 private val ZenPurple = Color(0xFF6C5CE7)
@@ -484,7 +485,7 @@ private fun LotusBloom(flowerSize: Dp, startIdle: Boolean) {
 	)
 	LaunchedEffect(revealState.isAtEnd, startIdle) {
 		if (revealState.isAtEnd && phase == LotusPhase.Reveal && startIdle) {
-			delay(1200)
+			delay(1200.milliseconds)
 			phase = LotusPhase.Idle
 		}
 	}
@@ -535,7 +536,7 @@ private fun LotusBloom(flowerSize: Dp, startIdle: Boolean) {
 					)
 					LaunchedEffect(idleState.isAtEnd) {
 						if (idleState.isAtEnd) {
-							delay(3000)
+							delay(3000.milliseconds)
 							idleRun++
 						}
 					}
@@ -711,11 +712,7 @@ private fun PermissionNeededContent(ctx: Context) {
 		)
 		Spacer(12.dp)
 		OutlinedButton(
-			onClick = {
-				val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-				ctx.startActivity(intent)
-			},
+			onClick = { ctx.permissionsManager.requestPermission(PermissionGroup.UsageStat) },
 			border = BorderStroke(1.dp, ZenTeal),
 			colors = ButtonDefaults.outlinedButtonColors(contentColor = ZenTeal)
 		) {

@@ -90,6 +90,7 @@ fun DebugTab(
 		DragonSettingsGroup(R.string.more) {
 			RouteItem(NavigationRoute.Logs)
 			RouteItem(NavigationRoute.SettingsJson)
+			RouteItem(NavigationRoute.Permissions)
 		}
 
 		DragonSettingsGroup(R.string.ui_flow_and_debug) {

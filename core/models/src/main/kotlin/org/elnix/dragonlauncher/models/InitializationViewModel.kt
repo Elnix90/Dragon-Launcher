@@ -8,9 +8,7 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.logging.logW
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.APPS_TAG
 import org.elnix.dragonlauncher.applications.AppRepository
@@ -41,8 +39,8 @@ public class InitializationViewModel
 	@Inject
 	constructor(
 		application: Application,
+		permissionsManager: PermissionsManager,
 		private val appRepository: AppRepository,
-		private val permissionsManager: PermissionsManager,
 		private val usageStatsReader: UsageStatsReader,
 		private val pointsService: PointsService
 	) : AndroidViewModel(application) {
@@ -51,11 +49,7 @@ public class InitializationViewModel
 		}
 
 		public val howMany: SettingFlow<Int> = SettingFlow(30)
-		public val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat).stateIn(
-			scope = viewModelScope,
-			started = SharingStarted.Lazily,
-			initialValue = false
-		)
+		public val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat)
 
 		public fun initializeSwipeSettings(
 			points: Points,

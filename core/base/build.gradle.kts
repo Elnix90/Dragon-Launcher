@@ -45,4 +45,6 @@ dependencies {
 	implementation(project(":core:libs:material-shapes"))
 	implementation(project(":core:ktx"))
 	implementation(project(":core:i18n"))
+
+	api(project(":core:permissions"))
 }

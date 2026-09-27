@@ -1,30 +1,22 @@
 package org.elnix.dragonlauncher.base.utils
 
 import android.annotation.SuppressLint
-import android.app.role.RoleManager
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
-import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isDefaultLauncher
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 
 public object ConnectivityUtils {
 	public fun Context.isBluetoothEnabled(): Boolean {
@@ -128,51 +120,20 @@ public object ConnectivityUtils {
 			Settings.Global.AIRPLANE_MODE_ON,
 			0
 		) == 1
-
-	public val Context.isDefaultLauncher: Boolean
-		get() {
-			return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-				val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
-				roleManager.isRoleHeld(RoleManager.ROLE_HOME)
-			} else {
-				val intent =
-					Intent(Intent.ACTION_MAIN).apply {
-						addCategory(Intent.CATEGORY_HOME)
-					}
-
-				val resolveInfo =
-					packageManager.resolveActivity(
-						intent,
-						PackageManager.MATCH_DEFAULT_ONLY
-					)
-
-				resolveInfo?.activityInfo?.packageName == packageName
-			}
-		}
 }
 
+/**
+ * Whether this app is the user default home app, kept in sync by the manager.
+ *
+ * Reads the published [kotlinx.coroutines.flow.StateFlow] instead of running a
+ * second, local lifecycle observer, so the value cannot drift from the one the
+ * rest of the app sees.
+ */
 @Composable
 public fun rememberIsDefaultLauncher(): State<Boolean> {
 	val ctx = LocalContext.current
-	val lifecycleOwner = LocalLifecycleOwner.current
 
-	val isDefaultLauncher = remember { mutableStateOf(ctx.isDefaultLauncher) }
-
-	DisposableEffect(lifecycleOwner) {
-		val observer =
-			LifecycleEventObserver { _, event ->
-				if (event == Lifecycle.Event.ON_RESUME) {
-					isDefaultLauncher.value = ctx.isDefaultLauncher
-				}
-			}
-
-		// Add the observer to the lifecycle
-		lifecycleOwner.lifecycle.addObserver(observer)
-
-		onDispose {
-			lifecycleOwner.lifecycle.removeObserver(observer)
-		}
-	}
-
-	return isDefaultLauncher
+	return ctx.permissionsManager
+		.hasPermission(PermissionGroup.DefaultLauncher)
+		.collectAsState()
 }

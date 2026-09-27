@@ -135,7 +135,11 @@ public class DrawerViewModel
 				packageName
 			)
 
-		public fun hasPermission(permission: PermissionGroup): Flow<Boolean> = permissionsManager.hasPermission(permission)
+		public fun hasNotificationsPermission(): StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.Notifications)
+
+		public fun requestNotificationsPermission() {
+			permissionsManager.requestPermission(PermissionGroup.Notifications)
+		}
 
 		public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
 

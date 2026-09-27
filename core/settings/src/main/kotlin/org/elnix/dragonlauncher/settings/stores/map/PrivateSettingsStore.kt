@@ -17,7 +17,11 @@ import org.elnix.dragonlauncher.i18n.R
 @SettingsStore
 public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 	@SettingKey
-	public val hasSeenWelcomeScreen: BooleanSettingObject = boolean(false)
+	public val hasSeenWelcomeScreen: BooleanSettingObject = boolean(
+		title = R.string.has_seen_welcome_old,
+		description = R.string.has_seen_welcome_old_desc,
+		default = false
+	)
 
 	/**
 	 * That's the original setting key, only old users will have this one set to true

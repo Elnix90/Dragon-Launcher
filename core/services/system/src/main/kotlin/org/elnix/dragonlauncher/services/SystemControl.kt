@@ -4,28 +4,30 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.provider.Settings
 import androidx.annotation.RequiresApi
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.ACCESSIBILITY_TAG
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 
 public object SystemControl {
-	public fun isServiceEnabled(ctx: Context): Boolean {
-		val enabled =
-			Settings.Secure.getString(
-				ctx.contentResolver,
-				Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-			) ?: return false
+	/**
+	 * Whether the accessibility service is granted.
+	 *
+	 * Delegates to [org.elnix.dragonlauncher.permissions.PermissionsManager], which owns every permission check in the
+	 * app. The comparison there matches the whole component name, unlike the
+	 * substring match done here, which also matched on partial package names.
+	 */
+	public fun isServiceEnabled(ctx: Context): Boolean =
+		ctx.permissionsManager.checkPermissionOnce(PermissionGroup.Accessibility)
 
-		return enabled.contains(ctx.packageName)
-	}
-
+	/**
+	 * Opens the accessibility settings screen, through the manager so the request
+	 * path is the same one the permissions screen uses.
+	 */
 	public fun openServiceSettings(ctx: Context) {
-		ctx.startActivity(
-			Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-		)
+		ctx.permissionsManager.requestPermission(PermissionGroup.Accessibility)
 	}
 
 	/**

@@ -109,7 +109,7 @@ public class ProfileManager(
 		)
 		scope.launch {
 			if (isAtLeastApiLevel(35)) {
-				permissionsManager.hasPermission(PermissionGroup.ManageProfiles).collectLatest {
+				permissionsManager.hasPermission(PermissionGroup.DefaultLauncher).collectLatest {
 					refreshProfiles()
 				}
 			} else {

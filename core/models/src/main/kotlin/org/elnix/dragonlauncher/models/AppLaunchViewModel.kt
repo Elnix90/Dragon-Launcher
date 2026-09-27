@@ -11,10 +11,8 @@ import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.elnix.dragonlauncher.APP_LAUNCH_TAG
@@ -49,14 +47,7 @@ public class AppLaunchViewModel
 		private val appRepository: AppRepository
 	) : AndroidViewModel(application) {
 		public val hasUsageStatsPermission: StateFlow<Boolean> =
-			permissionsManager
-				.hasPermission(
-					PermissionGroup.UsageStat
-				).stateIn(
-					viewModelScope,
-					SharingStarted.Lazily,
-					false
-				)
+			permissionsManager.hasPermission(PermissionGroup.UsageStat)
 
 		public val pendingAppLaunch: SettingFlow<Application?> = SettingFlow(null)
 
