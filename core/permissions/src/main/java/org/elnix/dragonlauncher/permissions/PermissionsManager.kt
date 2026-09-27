@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Process
 import android.provider.Settings
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -130,7 +131,7 @@ internal class PermissionsManagerImpl(
 				}
 
 				PermissionGroup.UsageStat -> {
-					Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+					Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS, "package:${ctx.packageName}".toUri())
 				}
 
 				// Both groups depend on being the default launcher, so they share
