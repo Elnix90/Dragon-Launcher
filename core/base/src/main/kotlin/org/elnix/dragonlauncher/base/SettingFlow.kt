@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 public class SettingFlow<T>(
-	default: T
+	private val default: T
 ) {
 	private val mutableFlow = MutableStateFlow(default)
 	public val flow: StateFlow<T> = mutableFlow.asStateFlow()
@@ -18,5 +18,9 @@ public class SettingFlow<T>(
 
 	public fun update(newValue: (T) -> T) {
 		mutableFlow.value = newValue(mutableFlow.value)
+	}
+
+	public fun reset() {
+		mutableFlow.value = default
 	}
 }
