@@ -49,7 +49,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.elnix90.runtime.asMutableStateNull
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
@@ -121,10 +120,10 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PointsSettingsScreen(
+	viewModel: PointsSettingsViewModel,
 	iconsViewModel: IconsViewModel = activityViewModel(),
 	pointsViewModel: PointsViewModel = activityViewModel(),
 	drawerViewModel: DrawerViewModel = activityViewModel(),
-	viewModel: PointsSettingsViewModel = hiltViewModel(),
 	initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
 	val navigator = LocalNavigator.current

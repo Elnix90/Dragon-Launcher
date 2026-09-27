@@ -131,6 +131,7 @@ import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
 import org.elnix.dragonlauncher.ui.settings.debug.SettingsDebugTab
 import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
 import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsScreen
+import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsViewModel
 import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspacesTab
@@ -460,7 +461,10 @@ fun MainAppUi(
 								val viewModel: WelcomeViewModel = hiltViewModel()
 								WelcomeScreen(viewModel)
 							}
-							entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) { PointsSettingsScreen() }
+							entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) {
+								val viewModel: PointsSettingsViewModel = hiltViewModel()
+								PointsSettingsScreen(viewModel)
+							}
 							entry<NavigationRoute.Settings>(metadata = horizontalMetadata) { SettingsScreen() }
 							entry<NavigationRoute.Appearance>(metadata = horizontalMetadata) { AppearanceTab() }
 							entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab() }
