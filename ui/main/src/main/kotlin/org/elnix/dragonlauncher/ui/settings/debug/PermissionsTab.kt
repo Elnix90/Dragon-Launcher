@@ -26,7 +26,8 @@ fun PermissionsTab(
 				SwitchRow(
 					state = granted,
 					title = group.title,
-					description = group.description
+					description = group.description,
+					icon = group.icon
 				) {
 					// These are granted in system settings only, so the row cannot
 					// toggle anything itself. Both directions send the user to the
