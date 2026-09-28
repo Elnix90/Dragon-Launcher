@@ -12,5 +12,6 @@
     <locale android:name="ko" />
     <locale android:name="pt" />
     <locale android:name="ta" />
+		<locale android:name="tr" />
     <locale android:name="zh-rCN" />
 </locale-config>
