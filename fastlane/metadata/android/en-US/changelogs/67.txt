@@ -1,0 +1,9 @@
+4.3.0 (Wyvern)
+2026-09-28
+[NEW]
+* Complete rework of points gesture system
+* Complete rework of initialization feature
+[IMPROVED]
+* load settings after backup to sync states
+* Small UI enhancements
+* Centralized permissions system
