@@ -3,10 +3,10 @@ package org.elnix.dragonlauncher.ui.components.iconeditor
 import android.content.pm.PackageManager
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -41,12 +41,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -64,6 +64,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
+import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,6 +108,7 @@ fun IconPicker(
 				.fillMaxSize()
 				.heightIn(max = 9999.dp),
 		columns = GridCells.Fixed(columns),
+		verticalArrangement = Arrangement.spacedBy(8.dp),
 		contentPadding = contentPadding
 	) {
 		if (packsInstalled) {
@@ -121,6 +123,12 @@ fun IconPicker(
 					},
 					placeholder = {
 						Text(stringResource(R.string.select_icon))
+					},
+					leadingIcon = {
+						Icon(
+							painter = painterResource(R.drawable.search),
+							contentDescription = null
+						)
 					},
 					colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
 					keyboardOptions =
@@ -143,7 +151,7 @@ fun IconPicker(
 		if (query.isEmpty()) {
 			if (defaultIcon != null) {
 				item(span = { GridItemSpan(columns) }) {
-					Separator(stringResource(R.string.icon_picker_default_icon))
+					SettingsWithTitle(stringResource(R.string.icon_picker_default_icon)) {}
 				}
 				item {
 					IconPreview(item = defaultIcon, iconSize = iconSize, onClick = {
@@ -154,7 +162,7 @@ fun IconPicker(
 
 			if (suggestions.isNotEmpty()) {
 				item(span = { GridItemSpan(columns) }) {
-					Separator(stringResource(R.string.icon_picker_suggestions))
+					SettingsWithTitle(stringResource(R.string.icon_picker_suggestions)) {}
 				}
 				items(suggestions) {
 					IconPreview(
@@ -230,7 +238,7 @@ fun IconPicker(
 									}
 								}
 							)
-							installedIconPacks?.forEachIndexed { i, iconPack ->
+							installedIconPacks?.forEach { iconPack ->
 								DropdownMenuItem(
 									onClick = {
 										showIconPackFilter = false
@@ -299,26 +307,14 @@ fun IconPreview(
 	onClick: () -> Unit
 ) {
 	Box(
-		contentAlignment = Alignment.Center,
-		modifier = Modifier.padding(vertical = 8.dp)
+		contentAlignment = Alignment.Center
 	) {
 		ShapedLauncherIcon(
 			size = iconSize,
 			icon = { item?.preview },
-			modifier = Modifier.clickable(onClick = onClick)
+			modifier = Modifier
+				.clip(MaterialTheme.shapes.medium)
+				.clickable(onClick = onClick)
 		)
 	}
-}
-
-@Composable
-fun Separator(label: String) {
-	Text(
-		label,
-		textAlign = TextAlign.Center,
-		style = MaterialTheme.typography.titleSmall,
-		modifier =
-			Modifier
-				.padding(top = 16.dp, bottom = 8.dp)
-				.fillMaxWidth()
-	)
 }

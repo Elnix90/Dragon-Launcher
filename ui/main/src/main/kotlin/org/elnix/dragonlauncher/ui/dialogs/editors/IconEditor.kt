@@ -87,9 +87,9 @@ fun AppIconEditor(
 		},
 		onDismiss = { newIcon, newProperties ->
 			appOverrideManager.setAppCustomization(
-				app.key,
-				newIcon,
-				newProperties.takeIf { it.isNotEmpty }
+				cacheKey = app.key,
+				customIcon = newIcon,
+				iconProperties = newProperties.takeIf { it.isNotEmpty }
 			)
 			onDismiss()
 		}
@@ -118,8 +118,6 @@ private fun IconEditorImpl(
 	LaunchedEffect(editIcon, editProperties) {
 		previewIcon = resolvePreview(previewSizePx, editIcon, editProperties)
 	}
-
-	// TODO when picking unmodified system icon, it doesn't work and bug out completely I don't want to bother with that anymore
 
 	DragonModalBottomSheet(
 		onDismissRequest = { onDismiss(editIcon, editProperties) },

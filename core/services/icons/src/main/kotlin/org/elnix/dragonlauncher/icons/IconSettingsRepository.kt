@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.icons
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import org.elnix.dragonlauncher.base.model.models.IconSettings
@@ -44,7 +43,7 @@ public class IconSettingsRepository(
 		) { flows ->
 			IconSettings(
 				iconPack = flows[0] as String?,
-				iconsTint = (flows[1] as Color?)?.toArgb(),
+				iconsTint = flows[1] as Color?,
 				themedIcons = flows[2] as Boolean,
 				forceThemed = flows[3] as Boolean,
 				adaptify = flows[4] as Boolean,

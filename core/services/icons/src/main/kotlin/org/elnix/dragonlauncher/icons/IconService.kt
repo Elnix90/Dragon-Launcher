@@ -116,6 +116,8 @@ public class IconService internal constructor(
 			listOf()
 		)
 
+	private var settingsTint: Int? = null
+
 	init {
 		requestIconPackListUpdate()
 		ctx.registerReceiver(
@@ -138,11 +140,12 @@ public class IconService internal constructor(
 				iconSettingsRepository.settings.distinctUntilChanged(),
 				extraColors
 			) { settings, colors ->
+				settingsTint = settings.iconsTint?.toArgb()
 				Pair(settings, colors)
 			}.collectLatest { (settings, extraColors) ->
 				iconPacksUpdated.collectLatest {
 
-					fun tint(): Int? = if (!settings.onlyTintIconPacks) settings.iconsTint else null
+					fun tint(): Int? = if (!settings.onlyTintIconPacks) settings.iconsTint?.toArgb() else null
 
 					val providers = mutableListOf<IconProvider>()
 
@@ -171,7 +174,7 @@ public class IconService internal constructor(
 									ctx = ctx,
 									appRepository = appRepository,
 									iconPack = pack,
-									tint = settings.iconsTint,
+									tint = settings.iconsTint?.toArgb(),
 									iconPackManager = iconPackManager,
 									allowThemed = settings.themedIcons
 								)
@@ -397,16 +400,10 @@ public class IconService internal constructor(
 	): Flow<LauncherIcon?> {
 		return combine(iconProviders, transformations) { providers, transformations ->
 
-			val effectiveProperties =
-				(
-					customIcon?.getProperties()?.takeIf { it.isNotEmpty }
-						?: iconProperties
-				).takeIf { it?.isNotEmpty == true }
-
 			val cacheKey =
 				CacheKey(
 					data = application.key,
-					customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
+					customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + iconProviders.hashCode(),
 					providersHashCode = providers.hashCode(),
 					transformationsHashcode = transformations.hashCode()
 				)
@@ -429,8 +426,8 @@ public class IconService internal constructor(
 
 			if (icon != null) {
 				icon = icon.transform(transforms)
-				if (effectiveProperties != null && icon is StaticLauncherIcon) {
-					icon = icon.copy(properties = effectiveProperties)
+				if (iconProperties != null && icon is StaticLauncherIcon) {
+					icon = icon.copy(properties = iconProperties)
 				}
 				DrawerIconCache.compute(cacheKey) { icon }
 			}
@@ -556,21 +553,24 @@ public class IconService internal constructor(
 		}
 	}
 
-	private fun getProviders(customIcon: CustomIcon?): List<IconProvider> {
+	private fun getProviders(
+		customIcon: CustomIcon?
+	): List<IconProvider> {
 		if (customIcon is UnmodifiedSystemDefaultIcon) {
 			return listOf(
 				SystemIconProvider(
 					appRepository = appRepository,
 					themedIcons = false,
-					tint = customIcon.getProperties().tint?.toArgb()
+					tint = customIcon.getProperties().tint?.toArgb() ?: settingsTint
 				)
 			)
 		}
 		if (customIcon is CustomIconPackIcon) {
 			return listOf(
 				CustomIconPackIconProvider(
-					customIcon,
-					iconPackManager
+					customIcon = customIcon,
+					tint = customIcon.getProperties().tint?.toArgb() ?: settingsTint,
+					iconPackManager = iconPackManager
 				)
 			)
 		}
@@ -689,8 +689,7 @@ public class IconService internal constructor(
 							packType = ent.type,
 							drawable = ent.drawable,
 							extras = ent.extras,
-							allowThemed = it.themed,
-							tint = it.tint
+							allowThemed = it.themed
 						)
 					}
 				)
@@ -749,19 +748,20 @@ public class IconService internal constructor(
 
 	public suspend fun searchCustomIcons(query: String, iconPack: IconPack?): List<CustomIconWithPreview> {
 		val transformations = this.transformations.first()
-		val tint = iconSettings.first().iconsTint
+		val tint: Color? = iconSettings.first().iconsTint
+		val tintArgb = tint?.toArgb()
 		return iconPackManager.searchIconPackIcon(query, iconPack).flatMap {
 			val themedIcon =
 				if (it.themed) {
 					iconPackManager
-						.getIcon(it.iconPack, it, tint, true)
+						.getIcon(it.iconPack, it, tintArgb, true)
 						?.transform(transformations)
 				} else {
 					null
 				}
 			val unthemedIcon =
 				iconPackManager
-					.getIcon(it.iconPack, it, tint, false)
+					.getIcon(it.iconPack, it, tintArgb, false)
 					?.transform(transformations)
 
 			buildList {
@@ -776,8 +776,7 @@ public class IconService internal constructor(
 									drawable = ent.drawable,
 									extras = ent.extras,
 									allowThemed = false,
-									tint = tint,
-									properties = CustomIconProperties()
+									properties = CustomIconProperties(tint = tint)
 								),
 							preview = unthemedIcon
 						)
@@ -793,8 +792,7 @@ public class IconService internal constructor(
 									drawable = ent.drawable,
 									extras = ent.extras,
 									allowThemed = true,
-									tint = tint,
-									properties = CustomIconProperties()
+									properties = CustomIconProperties(tint = tint)
 								),
 							preview = themedIcon
 						)

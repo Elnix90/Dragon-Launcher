@@ -311,7 +311,7 @@ public class IconPackManager(
 
 		val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, resId)
 		if (adaptiveIconCompat != null) {
-			return adaptiveIconCompat.toLauncherIcon(themed = allowThemed && icon.themed, tint = tint)
+			return adaptiveIconCompat.toLauncherIcon(themed = allowThemed && icon.themed, tint = icon.tint ?: tint)
 		}
 		val drawable =
 			try {
@@ -328,7 +328,7 @@ public class IconPackManager(
 							StaticIconLayer(
 								icon = drawable.monochrome!!,
 								scale = 1.5f,
-								tint = tint
+								tint = icon.tint ?: tint
 							),
 						backgroundLayer = TransparentLayer
 					)
@@ -338,7 +338,7 @@ public class IconPackManager(
 							StaticIconLayer(
 								icon = drawable.foreground,
 								scale = 1.5f,
-								tint = tint
+								tint = icon.tint ?: tint
 							),
 						backgroundLayer = TransparentLayer
 					)
@@ -351,7 +351,7 @@ public class IconPackManager(
 						StaticIconLayer(
 							icon = drawable,
 							scale = 0.65f,
-							tint = tint
+							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
 				)
@@ -364,7 +364,7 @@ public class IconPackManager(
 							StaticIconLayer(
 								icon = it,
 								scale = 1.5f,
-								tint = tint
+								tint = icon.tint ?: tint
 							)
 						} ?: TransparentLayer,
 					backgroundLayer =
@@ -372,7 +372,7 @@ public class IconPackManager(
 							StaticIconLayer(
 								icon = it,
 								scale = 1.5f,
-								tint = tint
+								tint = icon.tint ?: tint
 							)
 						} ?: TransparentLayer
 				)
@@ -384,7 +384,7 @@ public class IconPackManager(
 						StaticIconLayer(
 							icon = drawable,
 							scale = 1f,
-							tint = tint
+							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
 				)
@@ -411,13 +411,13 @@ public class IconPackManager(
 			return ThemedDynamicCalendarIcon(
 				resources = resources,
 				resourceIds = drawableIds,
-				tint = tint
+				tint = icon.tint ?: tint
 			)
 		}
 		return DynamicCalendarIcon(
 			resources = resources,
 			resourceIds = drawableIds,
-			tint = tint
+			tint = icon.tint ?: tint
 		)
 	}
 
@@ -437,7 +437,7 @@ public class IconPackManager(
 			}
 		val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, drawableId)
 		if (adaptiveIconCompat != null) {
-			return adaptiveIconCompat.toLauncherIcon(themed = icon.themed && allowThemed, tint = tint, clock = icon.config)
+			return adaptiveIconCompat.toLauncherIcon(themed = icon.themed && allowThemed, tint = icon.tint ?: tint, clock = icon.config)
 		}
 		val drawable =
 			try {
@@ -478,7 +478,7 @@ public class IconPackManager(
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
 							scale = 1.5f,
-							tint = tint
+							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
 				)
@@ -493,7 +493,7 @@ public class IconPackManager(
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
 							scale = 1f,
-							tint = tint
+							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
 				)
@@ -508,13 +508,13 @@ public class IconPackManager(
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
 							scale = 1.5f,
-							tint = tint
+							tint = icon.tint ?: tint
 						),
 					backgroundLayer =
 						StaticIconLayer(
 							icon = background!!,
 							scale = 1.5f,
-							tint = tint
+							tint = icon.tint ?: tint
 						)
 				)
 			}
@@ -528,7 +528,7 @@ public class IconPackManager(
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
 							scale = 1f,
-							tint = tint
+							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
 				)

@@ -9,6 +9,7 @@ import org.elnix.dragonlauncher.icons.iconPackAppIcon
 
 internal class CustomIconPackIconProvider(
 	private val customIcon: CustomIconPackIcon,
+	private val tint: Int?,
 	private val iconPackManager: IconPackManager
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
@@ -24,7 +25,7 @@ internal class CustomIconPackIconProvider(
 		return iconPackManager.getIcon(
 			iconPack = customIcon.iconPackPackage,
 			icon = icon,
-			tint = customIcon.tint,
+			tint = tint,
 			allowThemed = customIcon.allowThemed
 		)
 	}
