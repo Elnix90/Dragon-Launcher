@@ -714,7 +714,7 @@
   <string name="usage_access">Usage Statistics Access</string>
   <string name="android_permissions">Android Permissions</string>
   <string name="manage_in_system_settings">Manage in system settings.</string>
-  <string name="permission_external_storage_title">All Files Access</string>
+
   <string name="permission_external_storage_desc">Gives Dragon Launcher access to your whole storage. Needed to read and write files such as backups, and to open files from other apps.</string>
   <string name="permission_notifications_title">Notification Access</string>
   <string name="permission_notifications_desc">Allows Dragon Launcher to read your notifications, so they can be displayed in the status bar alongside your apps.</string>
