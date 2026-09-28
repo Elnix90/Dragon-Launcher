@@ -726,6 +726,8 @@
   <string name="permission_manage_profiles_desc">Lets Dragon Launcher manage your work and private profiles, so you can pause, lock and switch between them.</string>
   <string name="permission_usage_stat_title">Usage Access</string>
   <string name="permission_usage_stat_desc">Allows Dragon Launcher to read app usage data, so screen time, app timers and digital wellbeing features can work.</string>
+	<string name="permission_display_over_other_apps_title">Display over other apps</string>
+	<string name="permission_display_over_other_apps_desc">Allows Dragon Launcher to display an overlay on top of other apps (for the wellbeing)</string>
   <string name="snap_points_angle">Snap Points angle</string>
   <string name="snap_points_angle_desc">Give a rounded angle to the points, such as snapping to 0° when close to 0° (multiple od 15°)</string>
   <string name="snap_points">Snap Points</string>

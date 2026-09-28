@@ -18,8 +18,9 @@ import org.elnix.dragonlauncher.i18n.R
 public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 	@SettingKey
 	public val hasSeenWelcomeScreen: BooleanSettingObject = boolean(
-		title = R.string.has_seen_welcome_old,
-		description = R.string.has_seen_welcome_old_desc,
+		title = R.string.has_seen_welcome,
+		description = R.string.has_seen_welcome_desc,
+		icon = R.drawable.rocket_launch,
 		default = false
 	)
 

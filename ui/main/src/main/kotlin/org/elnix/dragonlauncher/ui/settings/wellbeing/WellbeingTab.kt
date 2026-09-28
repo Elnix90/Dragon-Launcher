@@ -4,13 +4,11 @@ import android.provider.Settings
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,6 +34,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerSheet
 import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
+import org.elnix.dragonlauncher.ui.dialogs.OverlayPermissionDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -58,7 +57,7 @@ fun WellbeingTab(
 	val reminderMode by WellbeingSettingsStore.reminderMode.asState()
 
 	val showAppPicker by viewModel.showAppPicker
-	val showPermissionDialog by viewModel.showPermissionDialog
+	val showUsageStatsPermissionDialog by viewModel.showUsageStatsPermissionDialog
 	val showOverlayPermissionDialog by viewModel.showOverlayPermissionDialog
 
 	val allApps by drawerViewModel.allApps.collectAsState()
@@ -201,26 +200,12 @@ fun WellbeingTab(
 		)
 	}
 
-	if (showPermissionDialog) {
-		AppUsagePermissionDialog { viewModel.showPermissionDialog.value = false }
+	if (showUsageStatsPermissionDialog) {
+		AppUsagePermissionDialog { viewModel.showUsageStatsPermissionDialog.value = false }
 	}
 
 	if (showOverlayPermissionDialog) {
-		AlertDialog(
-			onDismissRequest = viewModel::onOverlayDialogDismiss,
-			title = { Text(stringResource(R.string.overlay_permission_required)) },
-			text = { Text(stringResource(R.string.overlay_permission_description)) },
-			confirmButton = {
-				TextButton(onClick = viewModel::onOverlayDialogConfirm) {
-					Text(stringResource(R.string.open_settings))
-				}
-			},
-			dismissButton = {
-				TextButton(onClick = viewModel::onOverlayDialogDismiss) {
-					Text(stringResource(R.string.cancel))
-				}
-			}
-		)
+		OverlayPermissionDialog { viewModel.showOverlayPermissionDialog.value = false }
 	}
 }
 

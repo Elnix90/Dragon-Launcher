@@ -316,20 +316,3 @@ private fun hashSignature(signatureBytes: ByteArray): String {
 	val hashBytes = digest.digest(signatureBytes)
 	return hashBytes.joinToString("") { "%02x".format(it) }
 }
-
-/**
- * Opens the system screen where the "display over other apps" permission is set.
- *
- * Usage access is not routed here on purpose, it is a `PermissionGroup` and goes
- * through the permissions manager like every other special permission.
- */
-public fun Context.openOverlaySettings() {
-	startActivity(
-		Intent(
-			Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-			"package:$packageName".toUri()
-		).apply {
-			flags = Intent.FLAG_ACTIVITY_NEW_TASK
-		}
-	)
-}

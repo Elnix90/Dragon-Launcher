@@ -39,5 +39,11 @@ public enum class PermissionGroup(
 		R.string.permission_usage_stat_title,
 		R.string.permission_usage_stat_desc,
 		R.drawable.analytics
+	),
+
+	DisplayOverOtherApps(
+		R.string.permission_display_over_other_apps_title,
+		R.string.permission_display_over_other_apps_desc,
+		R.drawable.visibility
 	)
 }

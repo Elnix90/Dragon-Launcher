@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -39,7 +38,6 @@ import org.elnix.dragonlauncher.base.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.SecurityViewModel
-import org.elnix.dragonlauncher.services.SystemControl
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
@@ -51,7 +49,7 @@ import org.elnix.dragonlauncher.ui.base.animation.Icon
 import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
+import org.elnix.dragonlauncher.ui.dialogs.OverlayPermissionDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
@@ -64,9 +62,12 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
 @Composable
 fun DebugTab(
+	viewModel: DebugTabViewModel,
 	securityViewModel: SecurityViewModel = activityViewModel()
 ) {
 	val ctx = LocalContext.current
+	val focusManager = LocalFocusManager.current
+
 	val scope = rememberCoroutineScope()
 
 	val storeResetSectionState =
@@ -76,8 +77,10 @@ fun DebugTab(
 			icon = R.drawable.delete_forever
 		)
 
-	var packageResult by remember { mutableStateOf<String?>(null) }
-	var showPermissionDialog by remember { mutableStateOf(false) }
+	var packageResult by viewModel.packageResult
+	var showOverlayPermissionDialog by viewModel.showOverlayPermissionDialog
+	var packageQuery by viewModel.packageQuery
+	var customSystemPackage by viewModel.customSystemPackage
 
 	SettingsScaffold(
 		title = stringResource(R.string.debug),
@@ -97,23 +100,11 @@ fun DebugTab(
 			DragonButton(
 				onClick = {
 					scope.launch {
-						PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx)
+						PrivateSettingsStore.lastSeenVersionCodeWhatsNew.set(ctx, 1)
 					}
 				}
 			) {
 				Text(text = "Show What's New sheet")
-			}
-
-			DragonButton(
-				onClick = {
-					scope.launch {
-						PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx)
-						DebugSettingsStore.showGoogleLockDownWarning.reset(ctx)
-					}
-					GoogleWarningManager.updateWarningDialog(true)
-				}
-			) {
-				Text(text = "Show Google lockdown warning")
 			}
 
 			Setting(PrivateSettingsStore.hasSeenWelcomeScreen)
@@ -128,6 +119,18 @@ fun DebugTab(
 			Setting(PrivateSettingsStore.showSetDefaultLauncherBanner)
 			Setting(PrivateSettingsStore.showReselectBackupBanner)
 			Setting(DebugSettingsStore.showFps)
+
+			DragonButton(
+				onClick = {
+					scope.launch {
+						PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.set(ctx, 0)
+						DebugSettingsStore.showGoogleLockDownWarning.reset(ctx)
+					}
+					GoogleWarningManager.updateWarningDialog(true)
+				}
+			) {
+				Text(text = "Show Google lockdown warning")
+			}
 			Setting(DebugSettingsStore.showGoogleLockDownWarning)
 			Setting(DebugSettingsStore.showKillLauncherActionInActionPicker)
 			Setting(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
@@ -144,9 +147,7 @@ fun DebugTab(
 		}
 
 		DragonSettingsGroup(R.string.package_search) {
-			val focusManager = LocalFocusManager.current
 			val animatedIcon = rememberAnimatedIcon()
-			var packageQuery by remember { mutableStateOf("") }
 
 			fun searchPackage() {
 				packageResult =
@@ -220,17 +221,10 @@ fun DebugTab(
 		DragonSettingsGroup(R.string.accessibility) {
 			Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
 			Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
-
-			DragonButton(onClick = { SystemControl.openServiceSettings((ctx)) }) {
-				Text("Open Accessibility Services")
-			}
 		}
 
 		DragonSettingsGroup(R.string.system) {
-			val focusManager = LocalFocusManager.current
 			val animatedIcon = rememberAnimatedIcon()
-
-			var customSystemPackage by remember { mutableStateOf("") }
 
 			fun setSystemPackage() {
 				scope.launch {
@@ -320,7 +314,7 @@ fun DebugTab(
 			DragonButton(
 				onClick = {
 					if (!Settings.canDrawOverlays(ctx)) {
-						showPermissionDialog = true
+						showOverlayPermissionDialog = true
 						ctx.showToast("Overlay permission not granted")
 						return@DragonButton
 					}
@@ -341,7 +335,7 @@ fun DebugTab(
 			DragonButton(
 				onClick = {
 					if (!Settings.canDrawOverlays(ctx)) {
-						showPermissionDialog = true
+						showOverlayPermissionDialog = true
 						ctx.showToast("Overlay permission not granted")
 						return@DragonButton
 					}
@@ -398,7 +392,7 @@ fun DebugTab(
 		}
 	}
 
-	if (showPermissionDialog) {
-		AppUsagePermissionDialog { showPermissionDialog = false }
+	if (showOverlayPermissionDialog) {
+		OverlayPermissionDialog { showOverlayPermissionDialog = false }
 	}
 }

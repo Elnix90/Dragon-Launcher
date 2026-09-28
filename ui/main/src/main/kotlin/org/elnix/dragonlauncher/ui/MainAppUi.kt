@@ -126,6 +126,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
 import org.elnix.dragonlauncher.ui.settings.customization.WidgetsTab
 import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
+import org.elnix.dragonlauncher.ui.settings.debug.DebugTabViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.LogsTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
 import org.elnix.dragonlauncher.ui.settings.debug.PermissionsTab
@@ -475,7 +476,10 @@ fun MainAppUi(
 							entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen() }
 							entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab() }
 							entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab() }
-							entry<NavigationRoute.Debug>(metadata = horizontalMetadata) { DebugTab() }
+							entry<NavigationRoute.Debug>(metadata = horizontalMetadata) {
+								val viewModel: DebugTabViewModel = hiltViewModel()
+								DebugTab(viewModel)
+							}
 							entry<NavigationRoute.Logs>(metadata = horizontalMetadata) { LogsTab() }
 							entry<NavigationRoute.Permissions>(metadata = horizontalMetadata) {
 								val viewModel: PermissionsViewModel = hiltViewModel()

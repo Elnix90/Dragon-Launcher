@@ -142,6 +142,10 @@ internal class PermissionsManagerImpl(
 				PermissionGroup.DefaultLauncher -> {
 					Intent(Settings.ACTION_HOME_SETTINGS)
 				}
+
+				PermissionGroup.DisplayOverOtherApps -> {
+					Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, "package:$ctx.packageName".toUri())
+				}
 			}
 
 		// NEW_TASK lets the application context start the screen, so a request
@@ -182,6 +186,10 @@ internal class PermissionsManagerImpl(
 
 			PermissionGroup.Accessibility -> {
 				isComponentEnabled(Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+			}
+
+			PermissionGroup.DisplayOverOtherApps -> {
+				Settings.canDrawOverlays(ctx)
 			}
 		}
 
