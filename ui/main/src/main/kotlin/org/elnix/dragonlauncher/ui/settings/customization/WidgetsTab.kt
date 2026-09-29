@@ -934,12 +934,15 @@ private fun DraggableWidget(
 				)
 			}
 
-			// Edit button
-			Box {
+			// Edit button - below the widget's box
+			Box (
+				modifier = Modifier.align(Alignment.BottomCenter)
+			){
 				DragonIconButton(
 					modifier =
 						Modifier
-							.align(Alignment.BottomEnd)
+							.offset(y = (50.dp))
+							.size(40.dp)
 							.clip(CircleShape)
 							.background(Color.Transparent),
 					icon = R.drawable.edit_rounded,
