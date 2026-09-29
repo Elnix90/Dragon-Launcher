@@ -935,9 +935,9 @@ private fun DraggableWidget(
 			}
 
 			// Edit button - below the widget's box
-			Box (
+			Box(
 				modifier = Modifier.align(Alignment.BottomCenter)
-			){
+			) {
 				DragonIconButton(
 					modifier =
 						Modifier
