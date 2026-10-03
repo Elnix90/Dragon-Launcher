@@ -934,21 +934,20 @@ private fun DraggableWidget(
 				)
 			}
 
-			// Edit button
-			Box {
+			// Edit button - below the widget's box
+			Box(
+				modifier = Modifier.align(Alignment.BottomCenter)
+			) {
 				DragonIconButton(
-					modifier =
-						Modifier
-							.align(Alignment.BottomEnd)
-							.clip(CircleShape)
-							.background(Color.Transparent),
+					modifier = Modifier.offset(y = (50.dp)),
 					icon = R.drawable.edit_rounded,
 					contentDescription = R.string.edit
 				) { showEditPopup = true }
 
 				DropdownMenu(
 					expanded = showEditPopup,
-					onDismissRequest = { showEditPopup = false }
+					onDismissRequest = { showEditPopup = false },
+					shape = MaterialTheme.shapes.large
 				) {
 					DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
 						DropdownMenuItem(
