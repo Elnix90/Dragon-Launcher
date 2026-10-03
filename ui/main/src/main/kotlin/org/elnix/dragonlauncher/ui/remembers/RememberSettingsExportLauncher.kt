@@ -11,9 +11,9 @@ import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.SettingsBackupManager
 import io.github.elnix90.core.stores.SettingsStore
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.backup.BackupResult
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
@@ -24,6 +24,7 @@ fun rememberSettingsExportLauncher(
 ): ManagedActivityResultLauncher<String, Uri?> {
 	val ctx = LocalContext.current
 	val scope = rememberCoroutineScope()
+	val backupService = backupViewModel.backupService
 
 	val exportCancelledText = stringResource(R.string.export_cancelled)
 	val exportSuccessfulText = stringResource(R.string.export_successful)
@@ -32,7 +33,7 @@ fun rememberSettingsExportLauncher(
 	val settingsExportLauncher =
 		rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
 			if (uri == null) {
-				backupViewModel.result.value =
+				backupService.result.value =
 					BackupResult(
 						export = true,
 						error = true,
@@ -45,14 +46,14 @@ fun rememberSettingsExportLauncher(
 			scope.launch {
 				try {
 					SettingsBackupManager.exportSettings(ctx, uri, selectedStoresForExport)
-					backupViewModel.result.value =
+					backupService.result.value =
 						BackupResult(
 							export = true,
 							error = false,
 							title = exportSuccessfulText
 						)
 				} catch (e: Exception) {
-					backupViewModel.result.value =
+					backupService.result.value =
 						BackupResult(
 							export = true,
 							error = true,

@@ -6,8 +6,11 @@ import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.geometry.Offset
@@ -60,6 +63,13 @@ class PointsSettingsViewModel
 		val showEditDialog = mutableStateOf<Int?>(null)
 		val showNestManagementDialog = mutableStateOf(false)
 		val showResetPointsAndNestsDialog = mutableStateOf(false)
+
+		var showSelectedPointsDialog = mutableStateOf(false)
+		var showSelectedPointsMoreDialog = mutableStateOf(false)
+
+		var frozenIds by mutableStateOf<List<Int>>(emptyList())
+		var frozenPoints by mutableStateOf(pointsService.points.value)
+		var selectedPointsOldCount by mutableIntStateOf(frozenIds.size)
 
 		/** The queue of apps to place one by one, non-empty in manual placement mode. */
 		val manualPlacementQueue = SnapshotStateList<Action>()

@@ -17,12 +17,13 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 fun LauncherSnackbarHost(
 	dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
+	val logsService = dragonLogViewModel.logsService
 	val snackbarHostState = remember { SnackbarHostState() }
 
 	LaunchedEffect(Unit) {
-		dragonLogViewModel.alertFlow.collect { alert ->
+		logsService.alertFlow.collect { alert ->
 			if (alert != null) {
-				launch {
+				this@LaunchedEffect.launch {
 					snackbarHostState.showSnackbar(
 						message = "${alert.level.logLevelChar}: ${alert.message}",
 						actionLabel = "Dismiss",

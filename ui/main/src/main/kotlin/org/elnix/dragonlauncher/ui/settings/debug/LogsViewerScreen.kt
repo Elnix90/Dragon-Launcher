@@ -26,11 +26,12 @@ fun LogsViewerScreen(
 	dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
 	val ctx = LocalContext.current
+	val logsService = dragonLogViewModel.logsService
 
 	val file = File(ctx.filesDir, "logs/$filename")
 	var logs: String by remember(filename) { mutableStateOf("") }
 	LaunchedEffect(Unit) {
-		logs = dragonLogViewModel.readLogFile(file)
+		logs = logsService.readLogFile(file)
 	}
 	val lines by remember(logs) { derivedStateOf { logs.lines() } }
 

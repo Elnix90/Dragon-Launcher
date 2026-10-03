@@ -47,12 +47,12 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.BACKUP_TAG
 import org.elnix.dragonlauncher.THEMES_TAG
+import org.elnix.dragonlauncher.backup.BackupResult
 import org.elnix.dragonlauncher.base.loadThemes
 import org.elnix.dragonlauncher.base.model.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.base.utils.DateUtils
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
@@ -79,6 +79,8 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
 	val ctx = LocalContext.current
 	val scope = rememberCoroutineScope()
 
+	val backupService = backupViewModel.backupService
+
 	val userThemesStore by UiSettingsStore.userThemes.asState()
 	val userThemes: SnapshotStateSet<String> = remember { mutableStateSetOf() }
 
@@ -103,7 +105,7 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
 						ColorModesSettingsStore.colorTestMode.set(ctx, true)
 
 						SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
-						backupViewModel.result.value =
+						backupService.result.value =
 							BackupResult(
 								export = false,
 								error = false,
@@ -115,7 +117,7 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
 						ColorSettingsStore.restoreColors(ctx)
 						ColorModesSettingsStore.colorTestMode.reset(ctx)
 
-						backupViewModel.result.value =
+						backupService.result.value =
 							BackupResult(
 								export = false,
 								error = true,

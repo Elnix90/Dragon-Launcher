@@ -112,7 +112,6 @@ dependencies {
 	implementation(project(":core:services:recents"))
 	implementation(project(":core:services:system"))
 	implementation(project(":core:services:security"))
-	implementation(project(":core:services:migration"))
 	implementation(project(":core:services:appshortcuts"))
 
 	implementation(project(":data:database"))

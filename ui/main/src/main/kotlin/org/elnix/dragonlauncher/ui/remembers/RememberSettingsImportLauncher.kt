@@ -14,8 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.BACKUP_TAG
+import org.elnix.dragonlauncher.backup.BackupResult
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.json.JSONObject
@@ -28,9 +28,10 @@ fun rememberSettingsImportLauncher(
 ): ManagedActivityResultLauncher<Array<String>, Uri?> {
 	val ctx = LocalContext.current
 	val scope = rememberCoroutineScope()
+	val backupService = backupViewModel.backupService
 
 	fun onError(msg: String) {
-		backupViewModel.result.value =
+		backupService.result.value =
 			BackupResult(
 				export = false,
 				error = true,

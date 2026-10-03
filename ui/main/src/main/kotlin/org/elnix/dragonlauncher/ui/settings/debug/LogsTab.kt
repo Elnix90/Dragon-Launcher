@@ -78,26 +78,25 @@ import java.io.File
 fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 	val ctx = LocalContext.current
 	val navigator = LocalNavigator.current
+	val logsService = dragonLogViewModel.logsService
 
 	val enableLogging by DebugSettingsStore.enableLogging.asState()
 
 	var refreshTrigger by remember { mutableIntStateOf(0) }
 	val logFiles by produceState(initialValue = emptyList(), ctx, refreshTrigger) {
-		value = dragonLogViewModel.getAllLogFiles()
+		value = logsService.getAllLogFiles()
 	}
 
 	var showDeleteDialog by remember { mutableStateOf<File?>(null) }
 
 	val windowInfo = LocalWindowInfo.current
-	val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 	val memInfo = ActivityManager.MemoryInfo()
-	am.getMemoryInfo(memInfo)
 	val currentLauncher = ctx.detectSystemLauncher()
 	val isDefault by rememberIsDefaultLauncher()
 	val versionNumber = ctx.getVersionNumber()
 	val codeName = ctx.getCodeName()
 	val versionCode = ctx.getVersionNumber()
-	""
+
 	// Build extension list by parsing the registry JSON directly (robust to field names)
 	val finalExtensionText by produceState(initialValue = "No extensions installed", refreshTrigger) {
 		value = buildExtensionText(ctx)
@@ -210,7 +209,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 					Setting(DebugSettingsStore.filterTag)
 					DragonButton(
 						onClick = {
-							dragonLogViewModel.clearLogs()
+							logsService.clearLogs()
 							refreshTrigger++
 						},
 						needConfirm = true,
@@ -272,7 +271,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 
 									DragonIconButton(
 										onClick = {
-											ctx.copyToClipboard(dragonLogViewModel.readLogFile(file))
+											ctx.copyToClipboard(logsService.readLogFile(file))
 										},
 										icon = R.drawable.copy,
 										contentDescription = R.string.copy
@@ -299,7 +298,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 			message = "THis can't be undone",
 			onDismiss = { showDeleteDialog = null }
 		) {
-			dragonLogViewModel.deleteLogFile(fileToDelete)
+			logsService.deleteLogFile(fileToDelete)
 			refreshTrigger++
 			showDeleteDialog = null
 		}
@@ -326,7 +325,7 @@ private fun exportLogFile(
 		logE(LOGS_TAG, e) { "FileProvider not configured, falling back to text share" }
 
 		// Fallback to text sharing
-		val content = dragonLogViewModel.readLogFile(file)
+		val content = dragonLogViewModel.logsService.readLogFile(file)
 
 		ctx.shareContent(
 			text = content,

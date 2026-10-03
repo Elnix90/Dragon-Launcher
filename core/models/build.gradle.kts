@@ -50,8 +50,10 @@ dependencies {
 	api(project(":core:shizuku"))
 	api(project(":core:permissions"))
 
+	api(project(":core:services:logs"))
 	api(project(":core:services:icons"))
 	api(project(":core:services:fonts"))
+	api(project(":core:services:backup"))
 	api(project(":core:services:swipe"))
 	api(project(":core:services:colors"))
 	api(project(":core:services:points"))
@@ -61,7 +63,6 @@ dependencies {
 	api(project(":core:services:recents"))
 	api(project(":core:services:security"))
 	api(project(":core:services:lifecycle"))
-	api(project(":core:services:migration"))
 	api(project(":core:services:applaunch"))
 
 	api(project(":data:notifications"))

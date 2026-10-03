@@ -93,7 +93,6 @@ dependencies {
 	implementation(project(":core:permissions"))
 	implementation(project(":core:services:system"))
 	implementation(project(":core:services:fonts"))
-	implementation(project(":core:services:migration"))
 	implementation(project(":core:services:timer"))
 	implementation(project(":data:appoverrides"))
 	implementation(project(":data:workspaces"))
