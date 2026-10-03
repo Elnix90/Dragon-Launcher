@@ -25,10 +25,14 @@ dependencies {
 
 	runtimeOnly(libs.kotlinx.coroutines.android)
 
-	api(project(":core:services:widgets"))
 	api(project(":core:services:points"))
+	api(project(":core:services:system"))
+	api(project(":core:services:widgets"))
+	api(project(":core:services:applaunch"))
+	api(project(":core:services:lifecycle"))
 
-	api(project(":core:settings"))
 	api(project(":core:base"))
 	api(project(":core:i18n"))
+	api(project(":core:settings"))
+	api(project(":core:shizuku"))
 }

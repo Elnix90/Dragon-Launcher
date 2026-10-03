@@ -16,8 +16,13 @@ public class SettingFlow<T>(
 			mutableFlow.value = newValue
 		}
 
-	public fun update(newValue: (T) -> T) {
-		mutableFlow.value = newValue(mutableFlow.value)
+	public fun update(newValue: (T) -> T?) {
+		val newValue = newValue(mutableFlow.value)
+		if (newValue == null) {
+			reset()
+		} else {
+			mutableFlow.value = newValue
+		}
 	}
 
 	public fun reset() {

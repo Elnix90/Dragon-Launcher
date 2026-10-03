@@ -11,14 +11,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 
 /**
@@ -52,7 +55,8 @@ data class DrawParams(
 	val showCancelZone: Boolean,
 	val showShape: Boolean,
 	val showAllShapesInNest: Boolean,
-	val textMeasurer: TextMeasurer
+	val textMeasurer: TextMeasurer,
+	val globalDraggingMode: GlobalDraggingMode
 )
 
 /**
@@ -74,7 +78,8 @@ fun rememberDrawParams(
 	showCancelZone: Boolean,
 	hideShapes: Boolean,
 	skipSelected: Boolean,
-	pointsViewModel: PointsViewModel = activityViewModel()
+	pointsViewModel: PointsViewModel = activityViewModel(),
+	swipeViewModel: SwipeViewModel = activityViewModel()
 ): DrawParams {
 	val ctx = LocalContext.current
 	val extraColors = LocalExtraColors.current
@@ -96,6 +101,8 @@ fun rememberDrawParams(
 
 	val iconShape by DrawerSettingsStore.iconShape.asState()
 
+	val globalDraggingMode by swipeViewModel.swipeService.globalDraggingMode.asState()
+
 	return remember(
 		extraColors,
 		colorScheme,
@@ -113,7 +120,8 @@ fun rememberDrawParams(
 		showCancelZone,
 		showShape,
 		showAllShapesInNest,
-		textMeasurer
+		textMeasurer,
+		globalDraggingMode
 	) {
 		DrawParams(
 			ctx = ctx,
@@ -136,7 +144,8 @@ fun rememberDrawParams(
 			showCancelZone = showCancelZone,
 			showShape = showShape,
 			showAllShapesInNest = showAllShapesInNest,
-			textMeasurer = textMeasurer
+			textMeasurer = textMeasurer,
+			globalDraggingMode = globalDraggingMode
 		)
 	}
 }

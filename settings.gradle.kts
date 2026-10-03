@@ -59,6 +59,8 @@ include(":core:services:colors")
 include(":core:services:widgets")
 include(":core:services:recents")
 include(":core:services:security")
+include(":core:services:applaunch")
+include(":core:services:lifecycle")
 include(":core:services:migration")
 include(":core:services:appshortcuts")
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,7 +38,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.ktx.toPath
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
+import org.elnix.dragonlauncher.swipe.SwipeService
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
 
@@ -58,20 +59,20 @@ fun HoldToActivateArc(
 	center: Offset?,
 	progress: Float,
 	customObject: CustomObject,
-	playAnimation: Boolean = true
+	playAnimation: Boolean = true,
+	swipeService: SwipeService
 ) {
 	if (center == null || progress <= 0f) return
 
 	val ctx = LocalContext.current
 	val extraColors = LocalExtraColors.current
-	val holdSettings = LocalHoldToActivateSettings.current
 
-	val rotationsPerSecond = holdSettings.rotationsPerSecond
-	val rgbLoading = holdSettings.holdRgbLoading
-	val holdToActivateSettingsTolerance = holdSettings.holdToActivateSettingsTolerance
-	val showToleranceOnMainScreen = holdSettings.showToleranceOnMainScreen
-	val pulsingRadius = holdSettings.pulsingRadius
-	val pulsingDuration = holdSettings.pulsingRDuration
+	val rotationsPerSecond by swipeService.rotationsPerSecond.collectAsState()
+	val rgbLoading by swipeService.holdRgbLoading.collectAsState()
+	val holdToActivateSettingsTolerance by swipeService.holdToActivateSettingsTolerance.collectAsState()
+	val showToleranceOnMainScreen by swipeService.showToleranceOnMainScreen.collectAsState()
+	val pulsingRadius by swipeService.pulsingRadius.collectAsState()
+	val pulsingDuration by swipeService.pulsingDuration.collectAsState()
 
 	val color =
 		if (rgbLoading) {

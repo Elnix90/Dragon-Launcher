@@ -455,7 +455,7 @@ class MainActivity :
 			intent.action == Intent.ACTION_MAIN &&
 			intent.hasCategory(Intent.CATEGORY_HOME)
 		) {
-			appLifecycleViewModel.onHomeAction()
+			appLifecycleViewModel.lifecycleService.onHomeAction()
 			logD(TAG) { "HOME intent received (pending)" }
 		}
 	}

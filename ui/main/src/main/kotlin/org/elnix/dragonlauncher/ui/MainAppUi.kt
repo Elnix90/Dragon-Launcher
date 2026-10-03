@@ -20,11 +20,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,16 +35,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.SHIZUKU_TAG
+import kotlinx.coroutines.FlowPreview
 import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
@@ -56,8 +52,6 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.None
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pattern
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
@@ -71,19 +65,15 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
-import org.elnix.dragonlauncher.ui.actions.launchAction
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asMutableState
 import org.elnix.dragonlauncher.ui.base.asState
@@ -110,21 +100,26 @@ import org.elnix.dragonlauncher.ui.navigation.drawerMetadata
 import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
 import org.elnix.dragonlauncher.ui.navigation.welcomeMetadata
+import org.elnix.dragonlauncher.ui.settings.SettingsScreen
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
 import org.elnix.dragonlauncher.ui.settings.customization.AngleLineTab
 import org.elnix.dragonlauncher.ui.settings.customization.AppDisplayTab
 import org.elnix.dragonlauncher.ui.settings.customization.AppearanceTab
-import org.elnix.dragonlauncher.ui.settings.customization.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.customization.FontTab
-import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateTab
 import org.elnix.dragonlauncher.ui.settings.customization.IconsTab
 import org.elnix.dragonlauncher.ui.settings.customization.NestEditScreen
 import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
 import org.elnix.dragonlauncher.ui.settings.customization.ThemesTab
 import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
 import org.elnix.dragonlauncher.ui.settings.customization.WidgetsTab
+import org.elnix.dragonlauncher.ui.settings.customization.behavior.BehaviorTab
+import org.elnix.dragonlauncher.ui.settings.customization.behavior.BehaviorTabViewModel
+import org.elnix.dragonlauncher.ui.settings.customization.behavior.GlobalDraggingModeSetup
+import org.elnix.dragonlauncher.ui.settings.customization.behavior.GlobalDraggingModeSetupViewModel
 import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
+import org.elnix.dragonlauncher.ui.settings.customization.hold.HoldToActivateTab
+import org.elnix.dragonlauncher.ui.settings.customization.hold.HoldToActivateTabViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTabViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.LogsTab
@@ -145,9 +140,9 @@ import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseScreen
 import org.elnix.dragonlauncher.ui.wellbeing.TimeLimitExceededScreen
 import org.elnix.dragonlauncher.ui.whatsnew.ChangelogsScreen
 import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
-import rikka.shizuku.Shizuku
 
-@SuppressLint("LocalContextGetResourceValueCall")
+@OptIn(FlowPreview::class)
+@SuppressLint("LocalContextGetResourceValueCall", "WrongConstant")
 @Composable
 fun MainAppUi(
 	appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
@@ -155,7 +150,6 @@ fun MainAppUi(
 	securityViewModel: SecurityViewModel = activityViewModel(),
 	appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
 	shizukuViewModel: ShizukuViewModel = activityViewModel(),
-	pointsViewModel: PointsViewModel = activityViewModel(),
 	swipeViewModel: SwipeViewModel = activityViewModel(),
 	onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
 	onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
@@ -165,28 +159,23 @@ fun MainAppUi(
 	val uriHandler = LocalUriHandler.current
 	val lifecycleOwner = LocalLifecycleOwner.current
 
-	val scope = rememberCoroutineScope()
-
 	val swipeService = swipeViewModel.swipeService
-	val pointsService = pointsViewModel.pointsService
+	val shizukuService = shizukuViewModel.shizukuService
+	val lifecycleService = appLifecycleViewModel.lifecycleService
 
-	var showFilePicker: Point? by remember { mutableStateOf(null) }
-	var showShizukuCommandPromter by remember { mutableStateOf<Action.RunAdbCommand?>(null) }
+	val showFilePicker by swipeViewModel.swipeService.showFilePicker.asState()
 
-	val showShizukuUnavailableDialog by shizukuViewModel.showUnavailable.collectAsState()
-	val hasShizukuPermission by shizukuViewModel.shizukuPermissionState().collectAsState()
+	val showShizukuCommandPrompter by swipeService.showShizukuCommandPrompter.asState()
+	val showShizukuUnavailableDialog by shizukuService.showUnavailable.collectAsState()
 	val isShizukuInstalled by drawerViewModel.isAppInstalled(SHIZUKU_PACKAGE_NAME).collectAsState()
 
 	val homeAction by BehaviorSettingsStore.homeAction.asState()
-	val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asStateNull()
-
-	val useAccessibilityInsteadOfContextToExpandActionPanel by DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel.asState()
 
 	val backStack = rememberNavBackStack(NavigationRoute.Main)
 
 	// Forced to use a state here, to make compose react to the changes, especially the hole events handles
-	val currentRoute by remember {
-		derivedStateOf { backStack.lastOrNull() ?: NavigationRoute.Main }
+	val currentRoute: NavKey by produceState<NavKey>(initialValue = NavigationRoute.Main, backStack.lastOrNull()) {
+		value = backStack.lastOrNull() ?: NavigationRoute.Main
 	}
 
 	val isLocked by securityViewModel.isLocked.asState()
@@ -230,7 +219,7 @@ fun MainAppUi(
 			}
 		}
 
-	val lastInteraction by appLifecycleViewModel.lastInteraction.asState()
+	val lastInteraction by lifecycleService.lastInteraction.asState()
 	DisposableEffect(lifecycleOwner) {
 		val observer =
 			LifecycleEventObserver { _, event ->
@@ -240,14 +229,14 @@ fun MainAppUi(
 					if (offScreenUserTimeout != null) {
 						val isInIgnoredRoutes = currentRoute.isIgnoredReturnScreen
 
-						val userHasExceededTimeout = appLifecycleViewModel.isTimeoutExceeded(offScreenUserTimeout)
+						val userHasExceededTimeout = lifecycleService.isTimeoutExceeded(offScreenUserTimeout)
 
 						if (!isInIgnoredRoutes && userHasExceededTimeout) {
 							navigator.popBackMainScreen()
 						}
 					}
 				} else if (event == Lifecycle.Event.ON_PAUSE) {
-					appLifecycleViewModel.updateLastInteraction()
+					lifecycleService.updateLastInteraction()
 				}
 			}
 
@@ -285,70 +274,10 @@ fun MainAppUi(
 		}
 	}
 
-	fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand) {
-		if (!Shizuku.pingBinder()) {
-			logD(SHIZUKU_TAG) { "Shizuku is not running, opening it..." }
-			shizukuViewModel.setUnavailable()
-			return
-		}
-
-		if (!hasShizukuPermission) {
-			logD(SHIZUKU_TAG) { "Shizuku his not allowed" }
-
-			shizukuViewModel.requestShizukuPermission()
-		} else {
-			logD(SHIZUKU_TAG) { "Shizuku tries to run the command: $command" }
-			if (command.toast == true) {
-				ctx.showToast("Running: $command")
-			}
-			shizukuViewModel.executeShizukuCommand(command.command)
-		}
-	}
-
-	fun launchAction(point: Point) {
-		val action = point.action
-
-		swipeService.clearAfterLaunch()
-		appLifecycleViewModel.blockHomeActionsTemporarily()
-
-		try {
-			launchAction(
-				ctx = ctx,
-				appLaunchViewModel = appLaunchViewModel,
-				drawerViewModel = drawerViewModel,
-				action = action,
-				useAccessibilityInsteadOfContextToExpandActionPanel = useAccessibilityInsteadOfContextToExpandActionPanel,
-				onReselectFile = { showFilePicker = point },
-				onAppSettings = navigator::navigate,
-				onAppDrawer = { workspaceId ->
-					if (workspaceId != null) {
-						scope.launch {
-							DrawerSettingsStore.lastWorkspaceUsed.set(ctx, workspaceId)
-						}
-					}
-					navigator.navigate(NavigationRoute.Drawer)
-				}
-			) { command ->
-				if (command.command.trim().isEmpty()) {
-					showShizukuCommandPromter = command
-				} else {
-					runShisukuCommandNotEmpty(command)
-				}
-			}
-		} catch (e: Exception) {
-			logE(TAG, e) { "Unknow error while launching action" }
-		}
-	}
-
-	fun launchAction(action: Action) {
-		launchAction(dummySwipePoint(action))
-	}
-
-	// Drawer home action receiver
-	var drawerHomeHandler by remember { mutableStateOf<(() -> Unit)?>(null) }
+	var drawerHomeHandler by drawerViewModel.drawerHomeHandler
 
 	LaunchedEffect(Unit) {
-		appLifecycleViewModel.homeEvents.collect {
+		lifecycleService.homeEvents.collect {
 			logD(TAG) { "Got home event, launching home action, currentRoute: $currentRoute" }
 			when (currentRoute) {
 				NavigationRoute.Drawer -> {
@@ -356,7 +285,7 @@ fun MainAppUi(
 				}
 
 				NavigationRoute.Main -> {
-					launchAction(homeAction)
+					swipeService.launchAction(homeAction)
 				}
 
 				NavigationRoute.Welcome -> {
@@ -370,11 +299,10 @@ fun MainAppUi(
 			}
 		}
 	}
+
 	LaunchedEffect(Unit) {
-		swipeService.doubleClicActionChannel.collect {
-			if (doubleClickAction != null) {
-				launchAction(doubleClickAction!!)
-			}
+		swipeService.navigatorChannel.collect {
+			navigator.navigate(it)
 		}
 	}
 
@@ -442,7 +370,7 @@ fun MainAppUi(
 					},
 					entryProvider =
 						entryProvider {
-							entry<NavigationRoute.Main>(metadata = verticalMetadata) { MainScreen(::launchAction) }
+							entry<NavigationRoute.Main>(metadata = verticalMetadata) { MainScreen() }
 							entry<NavigationRoute.Drawer>(metadata = drawerMetadata) {
 								LaunchedEffect(Unit) {
 									drawerViewModel.clearSearchQuery()
@@ -454,7 +382,7 @@ fun MainAppUi(
 									},
 									onLaunchAction = {
 										drawerViewModel.clearSearchQuery()
-										launchAction(it)
+										swipeService.launchAction(it)
 										navigator.onBack()
 									}
 								)
@@ -470,7 +398,14 @@ fun MainAppUi(
 							}
 							entry<NavigationRoute.Settings>(metadata = horizontalMetadata) { SettingsScreen() }
 							entry<NavigationRoute.Appearance>(metadata = horizontalMetadata) { AppearanceTab() }
-							entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab() }
+							entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) {
+								val viewModel: BehaviorTabViewModel = hiltViewModel()
+								BehaviorTab(viewModel)
+							}
+							entry<NavigationRoute.GlobalDraggingModeSetup>(metadata = horizontalMetadata) {
+								val viewModel: GlobalDraggingModeSetupViewModel = hiltViewModel()
+								GlobalDraggingModeSetup(viewModel)
+							}
 							entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) { DrawerTab() }
 							entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab() }
 							entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen() }
@@ -496,7 +431,10 @@ fun MainAppUi(
 							entry<NavigationRoute.StatusBar>(metadata = horizontalMetadata) { StatusBarTab() }
 							entry<NavigationRoute.Fonts>(metadata = horizontalMetadata) { FontTab() }
 							entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab() }
-							entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateTab() }
+							entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) {
+								val viewModel: HoldToActivateTabViewModel = hiltViewModel()
+								HoldToActivateTab(viewModel)
+							}
 							entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab() }
 							entry<NavigationRoute.Workspace>(metadata = horizontalMetadata) { WorkspacesTab() }
 
@@ -634,26 +572,25 @@ fun MainAppUi(
 
 				if (currentRoute !is NavigationRoute.LockScreen && currentRoute !is NavigationRoute.LockScreenSetup) {
 					if (showFilePicker != null) {
-						val currentPoint = showFilePicker!!
-
+						val oldAction = showFilePicker!!
 						FilePickerDialog(
-							onDismiss = { showFilePicker = null },
-							onFileSelected = { newAction ->
-								val updatedPoint = currentPoint.copy(action = newAction)
-								pointsService.editPoint(currentPoint.id) { updatedPoint }
-								showFilePicker = null
-								launchAction(updatedPoint)
+							onDismiss = swipeService::dismissFilePicker,
+							onFileSelected = {
+								swipeService.onFilePicked(
+									oldAction = oldAction,
+									newAction = it
+								)
 							}
 						)
 					}
 
-					if (showShizukuCommandPromter != null) {
+					if (showShizukuCommandPrompter != null) {
 						AdbCommandInputDialog(
-							onDismiss = { showShizukuCommandPromter = null },
+							onDismiss = { swipeService.dismissCommandPrompt() },
 							showLeaveEmptyNotice = false
 						) {
 							if (it.command.trim().isNotEmpty()) {
-								runShisukuCommandNotEmpty(it)
+								shizukuViewModel.shizukuService.runShisukuCommandNotEmpty(it)
 							}
 						}
 					}
@@ -661,11 +598,11 @@ fun MainAppUi(
 					if (showShizukuUnavailableDialog) {
 						ShizukuUnavailableDialog(
 							onDismiss = {
-								shizukuViewModel.dismissUnavailableDialog()
+								shizukuService.dismissUnavailableDialog()
 							},
 							onConfirm = {
 								if (isShizukuInstalled) {
-									launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
+									swipeService.launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
 								} else {
 									uriHandler.openUri(URL_SHIZUKU_SITE)
 								}
@@ -673,7 +610,7 @@ fun MainAppUi(
 						)
 					}
 
-					var pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.asMutableState()
+					var pendingAppToLaunch by appLaunchViewModel.appLaunchService.pendingAppLaunch.asMutableState()
 
 					if (pendingAppToLaunch != null) {
 						val pendingApp = pendingAppToLaunch!!

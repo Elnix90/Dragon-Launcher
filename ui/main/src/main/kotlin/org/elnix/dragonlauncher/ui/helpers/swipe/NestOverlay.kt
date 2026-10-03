@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
+import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ui.base.asState
@@ -97,6 +98,7 @@ fun DrawScope.NestOverlay(
 
 				val showShape =
 					depth > 1 ||
+						drawParams.globalDraggingMode is GlobalDraggingMode.Fixed ||
 						isSettingDisplay ||
 						(
 							nest.getShowAllShapes(
@@ -159,11 +161,7 @@ fun DrawScope.NestOverlay(
 			.getPointsForNest(nestId = nest.id, skipSelected = drawParams.skipSelected && depth == 1)
 			.filter { (id, point) ->
 				when {
-					depth > 1 -> {
-						true
-					}
-
-					isSettingDisplay -> {
+					depth > 1 || isSettingDisplay || drawParams.globalDraggingMode is GlobalDraggingMode.Fixed -> {
 						true
 					}
 

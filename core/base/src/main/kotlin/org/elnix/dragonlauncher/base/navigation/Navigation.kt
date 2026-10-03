@@ -146,6 +146,13 @@ public sealed class NavigationRoute : NavKey {
 	}
 
 	@Serializable
+	@SerialName("GlobalDraggingModeSetup")
+	public data object GlobalDraggingModeSetup : NavigationRoute() {
+		override val resId: Int = R.string.global_dragging_mode
+		override val icon: Int = R.drawable.settings
+	}
+
+	@Serializable
 	@SerialName("DrawerSettings")
 	public data object DrawerSettings : NavigationRoute() {
 		override val resId: Int = R.string.drawer_settings

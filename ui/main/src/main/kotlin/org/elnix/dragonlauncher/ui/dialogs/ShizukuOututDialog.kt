@@ -16,14 +16,13 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 fun ShizukuOutputDialog(
 	shizukuViewModel: ShizukuViewModel = activityViewModel()
 ) {
-	val output by shizukuViewModel.outputValue.asState()
+	val shizukuService = shizukuViewModel.shizukuService
+	val output by shizukuService.outputValue.asState()
 
 	output?.let { output ->
 		CustomAlertDialog(
 			scroll = false,
-			onDismissRequest = {
-				shizukuViewModel.clearOutput()
-			},
+			onDismissRequest = shizukuService::clearOutput,
 			title = { Text(stringResource(R.string.command_output)) },
 			text = {
 				Column {

@@ -1,6 +1,5 @@
-package org.elnix.dragonlauncher.ui.settings.customization
+package org.elnix.dragonlauncher.ui.settings.customization.hold
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -15,15 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -56,7 +54,6 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.Preset
 import org.elnix.dragonlauncher.ui.components.PresetRow
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -68,7 +65,6 @@ import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
@@ -84,7 +80,7 @@ private data class HoldPreset(
 	val rotationsPerSecond: Float? = null,
 	val holdRgbLoading: Boolean? = null,
 	val pulsingRadius: Float? = null,
-	val pulsingRDuration: Int? = null,
+	val pulsingDuration: Int? = null,
 	@Serializable(with = ColorSerializer::class)
 	val color: Color? = null
 ) : Preset {
@@ -99,13 +95,14 @@ private data class HoldPreset(
 			"    rotationsPerSecond = ${rotationsPerSecond?.round(2)}f,\n" +
 			"    holdRgbLoading = $holdRgbLoading,\n" +
 			"    pulsingRadius = ${pulsingRadius?.round(2)}f,\n" +
-			"    pulsingRDuration = $pulsingRDuration\n" +
+			"    pulsingRDuration = $pulsingDuration\n" +
 			"    color = ${color?.let { "Color(0x${color.toHexWithAlpha.replace("#", "")}" }})\n" +
 			")"
 }
 
 @Composable
 fun HoldToActivateTab(
+	viewModel: HoldToActivateTabViewModel,
 	swipeViewModel: SwipeViewModel = activityViewModel()
 ) {
 	val ctx = LocalContext.current
@@ -117,30 +114,29 @@ fun HoldToActivateTab(
 	val swipeService = swipeViewModel.swipeService
 	val holdObject by swipeService.holdObject.asState()
 
-	val holdSettings = LocalHoldToActivateSettings.current
-	val holdDelayBeforeStartingLongClickSettings = holdSettings.holdDelayBeforeStartingLongClickSettings
-	val longCLickSettingsDuration = holdSettings.longCLickSettingsDuration
+	val rotationsPerSecond by swipeService.rotationsPerSecond.collectAsState()
+	val rgbLoading by swipeService.holdRgbLoading.collectAsState()
+	val holdToActivateSettingsTolerance by swipeService.holdToActivateSettingsTolerance.collectAsState()
+	val showToleranceOnMainScreen by swipeService.showToleranceOnMainScreen.collectAsState()
+	val pulsingRadius by swipeService.pulsingRadius.collectAsState()
+	val pulsingDuration by swipeService.pulsingDuration.collectAsState()
+	val holdDelayBeforeStartingLongClickSettings by swipeService.holdDelayBeforeStartingLongClickSettings.collectAsState()
+	val longCLickSettingsDuration by swipeService.longCLickSettingsDuration.collectAsState()
 
-	var showHoldSettingsOrderDialog by remember { mutableStateOf(false) }
-	var playAnimation by remember { mutableStateOf(true) }
-	var manualMode by remember { mutableStateOf(false) }
+	val holdAnchor by swipeService.holdAnchor.asState()
+	val holdProgress by swipeService.holdProgress
 
-	val progress = remember { Animatable(0f) }
+	var showHoldSettingsOrderDialog by viewModel.showHoldSettingsOrderDialog
+	var playAnimation by viewModel.playAnimation
+	var manualMode by viewModel.manualMode
 
-	val hold =
-		rememberHoldToOpenSettings(
-			onSettings = { },
-			holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
-			loadDuration = longCLickSettingsDuration.toLong()
-		)
+	val progress = viewModel.progress
 
 	SettingsScaffold(
 		title = stringResource(R.string.hold_settings),
 		onBack = {
-			scope.launch {
-				swipeService.saveHoldObject()
-				navigator.onBack()
-			}
+			swipeService.saveHoldObject()
+			navigator.onBack()
 		},
 		helpText = stringResource(R.string.hold_settings_help),
 		resetText = stringResource(R.string.reset_hold_tab),
@@ -199,8 +195,8 @@ fun HoldToActivateTab(
 			}
 
 			Column {
-				var height by remember { mutableIntStateOf(0) }
-				var isFirstPositioning by remember { mutableStateOf(true) }
+				var height by viewModel.height
+				var isFirstPositioning by viewModel.isFirstPositioning
 
 				BoxWithConstraints(
 					modifier =
@@ -212,27 +208,32 @@ fun HoldToActivateTab(
 									height = layoutCoordinates.size.width
 									isFirstPositioning = false
 								}
-							}.then(hold.pointerModifier)
+							}.pointerInput(Unit) {
+								with(swipeService) {
+									holdGesture(scope.coroutineContext)
+								}
+							}
 				) {
 					val center =
 						if (!manualMode) {
 							this.constraints.getCenter()
 						} else {
-							hold.center
+							holdAnchor
 						}
 
 					val progress =
 						if (!manualMode) {
 							progress.value
 						} else {
-							hold.progress
+							holdProgress
 						}
 
 					HoldToActivateArc(
 						center = center,
 						progress = progress,
 						customObject = holdObject,
-						playAnimation = playAnimation
+						playAnimation = playAnimation,
+						swipeService = swipeService
 					)
 				}
 
@@ -286,7 +287,7 @@ fun HoldToActivateTab(
 					rotationsPerSecond = 0.50f,
 					holdRgbLoading = false,
 					pulsingRadius = 2.0f,
-					pulsingRDuration = 500,
+					pulsingDuration = 500,
 					color = Color(0xFFB902FF)
 				)
 			),
@@ -294,14 +295,14 @@ fun HoldToActivateTab(
 				HoldPreset(
 					name = "new",
 					customObject = swipeService.holdObject.value,
-					holdDelayBeforeStartingLongClickSettings = holdSettings.holdDelayBeforeStartingLongClickSettings,
-					longCLickSettingsDuration = holdSettings.longCLickSettingsDuration,
-					holdToActivateSettingsTolerance = holdSettings.holdToActivateSettingsTolerance,
-					showToleranceOnMainScreen = holdSettings.showToleranceOnMainScreen,
-					rotationsPerSecond = holdSettings.rotationsPerSecond,
-					holdRgbLoading = holdSettings.holdRgbLoading,
-					pulsingRadius = holdSettings.pulsingRadius,
-					pulsingRDuration = holdSettings.pulsingRDuration,
+					holdDelayBeforeStartingLongClickSettings = holdDelayBeforeStartingLongClickSettings,
+					longCLickSettingsDuration = longCLickSettingsDuration,
+					holdToActivateSettingsTolerance = holdToActivateSettingsTolerance,
+					showToleranceOnMainScreen = showToleranceOnMainScreen,
+					rotationsPerSecond = rotationsPerSecond,
+					holdRgbLoading = rgbLoading,
+					pulsingRadius = pulsingRadius,
+					pulsingDuration = pulsingDuration,
 					color = extraColors.holdToActivate
 				)
 			},
@@ -318,7 +319,7 @@ fun HoldToActivateTab(
 					HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, preset.rotationsPerSecond)
 					HoldToActivateArcSettingsStore.holdRgbLoading.set(ctx, preset.holdRgbLoading)
 					HoldToActivateArcSettingsStore.pulsingRadius.set(ctx, preset.pulsingRadius)
-					HoldToActivateArcSettingsStore.pulsingRDuration.set(ctx, preset.pulsingRDuration)
+					HoldToActivateArcSettingsStore.pulsingRDuration.set(ctx, preset.pulsingDuration)
 				}
 			}
 		)
@@ -344,7 +345,7 @@ fun HoldToActivateTab(
 						/**
 						 * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
 						 */
-						val magicNumber = 1000f / holdSettings.longCLickSettingsDuration
+						val magicNumber = 1000f / longCLickSettingsDuration
 						HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, magicNumber)
 					}
 				}

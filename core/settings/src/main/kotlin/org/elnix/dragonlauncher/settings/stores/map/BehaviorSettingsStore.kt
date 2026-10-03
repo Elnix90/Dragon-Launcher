@@ -6,9 +6,11 @@ import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.objects.BooleanSettingObject
 import io.github.elnix90.core.objects.DpSettingObject
 import io.github.elnix90.core.objects.IntSettingObject
+import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.dp
 import io.github.elnix90.core.objects.int
+import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
@@ -219,5 +221,17 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 			icon = R.drawable.apps,
 			default = 50.dp,
 			allowedRange = 5.dp..200.dp
+		)
+
+	/**
+	 * The Launcher-wide dragging mode.
+	 */
+	@SettingKey
+	public val globalDraggingMode: StringSettingObject =
+		string(
+			title = R.string.global_dragging_mode,
+			description = R.string.global_dragging_mode_desc,
+			icon = R.drawable.shape_line,
+			default = ""
 		)
 }

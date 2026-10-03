@@ -1165,4 +1165,15 @@
 	<string name="has_initialized_desc">Show the initialization sheet</string>
 	<string name="or">Or…</string>
 	<string name="permission_granted">Permission granted!</string>
+	<string name="global_dragging_mode">Global Dragging Mode</string>
+	<string name="global_dragging_mode_setup">Dragging Mode setup</string>
+	<string name="global_dragging_mode_setup_help">Configure the option for the current dragging mode you chose.</string>
+	<string name="global_dragging_mode_setup_reset">Are you sure you want to reset the current dragging mode?</string>
+	<string name="global_dragging_mode_desc">The Launcher-wide dragging mode</string>
+	<string name="nests_settings">Nests settings</string>
+	<string name="configure_dragging_mode">Configure Dragging mode</string>
+    <string name="dragging_mode_normal">Normal</string>
+	<string name="dragging_mode_normal_desc">The default dragging mode, swipe from anywhere to make the nests appear</string>
+	<string name="dragging_mode_fixed">Fixed</string>
+	<string name="dragging_mode_fixed_desc">Place your nests in one place, they are always visible and you can drag anywhere, it\'l enable from the center</string>
 </resources>

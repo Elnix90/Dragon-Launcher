@@ -61,7 +61,7 @@ fun WellbeingTab(
 	val showOverlayPermissionDialog by viewModel.showOverlayPermissionDialog
 
 	val allApps by drawerViewModel.allApps.collectAsState()
-	val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
+	val hasUsageStatsPermission by appLaunchViewModel.appLaunchService.hasUsageStatsPermission.collectAsState()
 
 	val canShowOverlay = Settings.canDrawOverlays(ctx)
 	LaunchedEffect(reminderEnabled, reminderMode, canShowOverlay) {

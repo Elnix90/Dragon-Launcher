@@ -1,14 +1,11 @@
-package org.elnix.dragonlauncher.ui.settings.customization
+package org.elnix.dragonlauncher.ui.settings.customization.behavior
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -18,31 +15,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Device
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.None
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pattern
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pin
+import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.security.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dialogs.security.SecretUnlockButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.SettingActionSelector
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import kotlin.time.Duration.Companion.seconds
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun BehaviorTab() {
+fun BehaviorTab(
+	viewModel: BehaviorTabViewModel
+) {
 	val ctx = LocalContext.current
+	val navigator = LocalNavigator.current
 	val scope = rememberCoroutineScope()
 
 	val leftPadding by BehaviorSettingsStore.leftPadding.asState()
@@ -61,14 +64,10 @@ fun BehaviorTab() {
 			enabled = superWarningModeEnabled
 		)
 
-	var showPaddingBox by remember { mutableStateOf(false) }
-	var showLockMethodPicker by remember { mutableStateOf(false) }
-	var hasEnabledSecretUnlockButton by remember { mutableStateOf(false) }
-	LaunchedEffect(hasEnabledSecretUnlockButton) {
-		if (!hasEnabledSecretUnlockButton) return@LaunchedEffect
-		delay(1.seconds)
-		hasEnabledSecretUnlockButton = false
-	}
+	val globalDraggingMode by viewModel.globalDraggingMode.asState()
+	val showPaddingBox by viewModel.showPaddingBox.asState()
+	val showSecretButtonBox by viewModel.showSecretButtonBox.asState()
+	var showLockMethodPicker by viewModel.showLockMethodPicker
 
 	Box {
 		SettingsScaffold(
@@ -87,6 +86,28 @@ fun BehaviorTab() {
 				SettingActionSelector(BehaviorSettingsStore.homeAction)
 			}
 
+			DragonSettingsGroup(R.string.nests_settings) {
+				ActionSelectorRow(
+					options = GlobalDraggingMode.DraggingModeList,
+					selected = globalDraggingMode,
+					label = stringResource(R.string.global_dragging_mode),
+					optionLabel = { stringResource(it.title) },
+					optionDesc = { stringResource(it.description) },
+					switchEnabled = false,
+					resetEnabled = globalDraggingMode != GlobalDraggingMode.Normal,
+					toggled = null,
+					onReset = { viewModel.setDraggingMode(null) }
+				) { viewModel.setDraggingMode(it) }
+
+				SettingsItem(
+					title = stringResource(R.string.configure_dragging_mode),
+					icon = R.drawable.settings,
+					enabled = globalDraggingMode is GlobalDraggingMode.Fixed
+				) {
+					navigator.navigate(NavigationRoute.GlobalDraggingModeSetup)
+				}
+			}
+
 			DragonSettingsGroup(R.string.common_settings) {
 				Setting(BehaviorSettingsStore.keepScreenOn)
 				Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
@@ -101,7 +122,7 @@ fun BehaviorTab() {
 					state = showPaddingBox,
 					title = R.string.show_padding_box,
 					icon = R.drawable.visibility
-				) { showPaddingBox = it }
+				) { viewModel.showPaddingBox.value = it }
 
 				Setting(BehaviorSettingsStore.rightPadding)
 				Setting(BehaviorSettingsStore.leftPadding)
@@ -122,7 +143,7 @@ fun BehaviorTab() {
 					icon = R.drawable.lock
 				) { showLockMethodPicker = true }
 
-				Setting(BehaviorSettingsStore.secretUnlockButton, enabled = lockMethod != None) { hasEnabledSecretUnlockButton = it }
+				Setting(BehaviorSettingsStore.secretUnlockButton, enabled = lockMethod != None) { viewModel.enableSecretButton() }
 
 				ExpandableSection(superWarningState) {
 					Setting(
@@ -153,7 +174,7 @@ fun BehaviorTab() {
 			}
 		}
 
-		if (hasEnabledSecretUnlockButton) {
+		if (showSecretButtonBox) {
 			SecretUnlockButton(false)
 		}
 	}

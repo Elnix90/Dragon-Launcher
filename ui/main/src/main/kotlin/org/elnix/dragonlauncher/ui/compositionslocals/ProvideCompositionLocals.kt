@@ -40,10 +40,10 @@ fun ProvideGlobalCompositionLocals(
 
 	val colorPickerMode by ColorModesSettingsStore.colorPickerMode.asState()
 
-    /*
-     * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
-     * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
-     */
+	/*
+	 * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
+	 * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
+	 */
 	CompositionLocalProvider(
 		LocalTextMeasurer provides rememberTextMeasurer(),
 		LocalStatusBarElements provides elements,
@@ -54,9 +54,7 @@ fun ProvideGlobalCompositionLocals(
 	) {
 		ProvideCurrentTime {
 			ProvideDrawerSettings {
-				ProvideHoldToActivateSettings {
-					content()
-				}
+				content()
 			}
 		}
 	}

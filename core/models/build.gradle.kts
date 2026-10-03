@@ -60,7 +60,9 @@ dependencies {
 	api(project(":core:services:widgets"))
 	api(project(":core:services:recents"))
 	api(project(":core:services:security"))
+	api(project(":core:services:lifecycle"))
 	api(project(":core:services:migration"))
+	api(project(":core:services:applaunch"))
 
 	api(project(":data:notifications"))
 	api(project(":data:applications"))

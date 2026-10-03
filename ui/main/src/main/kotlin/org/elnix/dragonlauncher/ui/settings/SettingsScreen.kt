@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui
+package org.elnix.dragonlauncher.ui.settings
 
 import android.annotation.SuppressLint
 import android.content.Intent
