@@ -11,7 +11,6 @@ android {
 dependencies {
 	implementation(libs.kotlin.stdlib)
 	implementation(libs.kotlin.reflect)
-	implementation(libs.androidx.appcompat)
 	implementation(libs.dragon.logging)
 	implementation(libs.core)
 	implementation(libs.javax.inject)
@@ -20,7 +19,7 @@ dependencies {
 	implementation(libs.hilt.core)
 	implementation(libs.androidx.lifecycle.process)
 
-	api(project(":core:i18n"))
+	implementation(project(":core:i18n"))
 
 	ksp(libs.hilt.compiler)
 
@@ -30,4 +29,6 @@ dependencies {
 	runtimeOnly(libs.kotlinx.coroutines.android)
 
 	implementation(project(":core:ktx"))
+  implementation(libs.androidx.annotation)
+  implementation(libs.androidx.lifecycle.common)
 }

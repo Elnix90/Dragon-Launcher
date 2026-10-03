@@ -9,7 +9,6 @@ android {
 
 dependencies {
 	implementation(libs.androidx.appcompat)
-	implementation(libs.commons.lang3)
 	implementation(libs.hilt.android)
 	implementation(libs.hilt.core)
 	implementation(libs.javax.inject)

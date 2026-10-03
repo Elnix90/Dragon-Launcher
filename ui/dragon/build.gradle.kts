@@ -45,8 +45,8 @@ dependencies {
 
 	implementation(project(":ui:base"))
 	implementation(project(":ui:theme"))
-	implementation(project(":core:base"))
-	implementation(project(":ui:composition"))
+	api(project(":core:base"))
+	androidTestImplementation(project(":ui:composition"))
 	implementation(project(":core:settings"))
 	implementation(project(":core:i18n"))
 	implementation(project(":core:ktx"))
@@ -61,4 +61,7 @@ dependencies {
 	androidTestRuntimeOnly(libs.androidx.test.runner)
 
 	debugRuntimeOnly(libs.compose.ui.test.manifest)
+  implementation(libs.androidx.annotation)
+  implementation(libs.androidx.compose.runtime.annotation)
+  implementation(libs.androidx.compose.runtime.saveable)
 }

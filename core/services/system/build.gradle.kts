@@ -21,5 +21,6 @@ dependencies {
 	implementation(project(":core:settings"))
 	api(project(":core:base"))
 
-	api(project(":core:permissions"))
+	implementation(project(":core:permissions"))
+  implementation(project(":core:i18n"))
 }

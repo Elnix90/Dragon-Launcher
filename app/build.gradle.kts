@@ -110,7 +110,6 @@ dependencies {
 	implementation(project(":core:services:compat"))
 	implementation(project(":core:services:points"))
 	implementation(project(":core:services:recents"))
-	implementation(project(":core:services:system"))
 	implementation(project(":core:services:security"))
 	implementation(project(":core:services:appshortcuts"))
 
@@ -123,6 +122,14 @@ dependencies {
 	implementation(project(":ui:base"))
 	implementation(project(":ui:main"))
 	implementation(project(":ui:theme"))
+  implementation(libs.androidx.compose.runtime.retain)
+  implementation(project(":core:services:applaunch"))
+  implementation(project(":core:services:backup"))
+  implementation(project(":core:services:lifecycle"))
+  implementation(project(":core:services:logs"))
+  implementation(project(":core:services:swipe"))
+  implementation(project(":core:services:widgets"))
+  implementation(project(":core:shizuku"))
 }
 
 // Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app
@@ -131,6 +138,10 @@ tasks.register<Copy>("copyChangelogsToAssets") {
 	from("../fastlane/metadata/android/en-US/changelogs")
 	into(file("src/main/assets/changelogs"))
 	include("*.txt")
+}
+
+tasks.matching { it.name.startsWith("explodeAssetSource") }.configureEach {
+	dependsOn("copyChangelogsToAssets")
 }
 
 // Download the extensions registry from GitHub
@@ -172,15 +183,7 @@ tasks.register("downloadExtensionsRegistry") {
 // Use preBuild tasks instead of merge* (they exist in AGP)
 if (!gradle.startParameter.taskRequests.any { it.args.contains("buildHealth") }) {
 	tasks.named("preBuild") {
-		dependsOn("copyChangelogsToAssets")
-
-//        // Only download extensions registry on release builds
-//        val isReleaseVariant = gradle.startParameter.taskRequests.any {
-//            it.args.any { arg -> arg.contains("Release", ignoreCase = true) }
-//        }
-//        if (isReleaseVariant) {
-		dependsOn("downloadExtensionsRegistry")
-//        }
+		dependsOn("copyChangelogsToAssets", "downloadExtensionsRegistry")
 	}
 } else {
 	println("Gradle in using build health, not running preBuild")

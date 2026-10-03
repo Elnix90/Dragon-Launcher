@@ -10,9 +10,7 @@ android {
 dependencies {
 	implementation(libs.kotlin.stdlib)
 	implementation(libs.kotlin.reflect)
-	implementation(libs.kotlinx.collections.immutable)
-	implementation(libs.dragon.logging)
-	implementation(libs.core)
+	api(libs.dragon.logging)
 	implementation(libs.jakarta.inject)
 	implementation(libs.hilt.core)
 	implementation(libs.timber)
@@ -26,4 +24,5 @@ dependencies {
 
 	implementation(libs.settings.core)
 	implementation(project(":core:settings:"))
+  implementation(project(":core:i18n"))
 }

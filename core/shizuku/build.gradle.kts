@@ -8,7 +8,6 @@ android {
 }
 
 dependencies {
-	implementation(libs.androidx.runtime)
 	implementation(libs.shizuku.api)
 	implementation(libs.hilt.core)
 	implementation(libs.hilt.android)
@@ -19,7 +18,9 @@ dependencies {
 
 	api(libs.kotlinx.coroutines.core)
 
-	api(project(":core:i18n"))
+	implementation(project(":core:i18n"))
 	api(project(":core:base"))
-	api(project(":core:ktx"))
+	implementation(project(":core:ktx"))
+  api(libs.dagger)
+  implementation(libs.javax.inject)
 }

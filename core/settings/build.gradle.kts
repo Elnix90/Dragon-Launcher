@@ -23,9 +23,9 @@ dependencies {
 	// My plugin 🤎
 	implementation(libs.settings.annotations)
 
-	implementation(libs.dragon.logging)
 
-	api(project(":core:ktx"))
+	implementation(project(":core:ktx"))
 	api(project(":core:base"))
-	api(project(":core:i18n"))
+	implementation(project(":core:i18n"))
+  implementation(libs.androidx.compose.runtime.annotation)
 }

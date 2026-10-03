@@ -33,4 +33,5 @@ dependencies {
 	implementation(project(":core:settings"))
 	api(project(":core:base"))
 	api(project(":core:permissions"))
+  implementation(libs.javax.inject)
 }

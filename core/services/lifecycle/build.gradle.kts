@@ -10,9 +10,7 @@ android {
 dependencies {
 	implementation(libs.kotlin.stdlib)
 	implementation(libs.kotlin.reflect)
-	implementation(libs.kotlinx.collections.immutable)
 	implementation(libs.dragon.logging)
-	implementation(libs.core)
 	implementation(libs.jakarta.inject)
 	implementation(libs.hilt.core)
 	implementation(libs.timber)
@@ -24,12 +22,8 @@ dependencies {
 
 	runtimeOnly(libs.kotlinx.coroutines.android)
 
-	api(project(":core:permissions"))
 	api(project(":core:base"))
-	api(project(":core:profiles"))
-	api(project(":core:i18n"))
+	implementation(project(":core:i18n"))
 
-	api(project(":core:services:recents"))
-	api(project(":core:services:timer"))
-	api(project(":data:applications"))
+  runtimeOnly(libs.androidx.datastore.core)
 }
