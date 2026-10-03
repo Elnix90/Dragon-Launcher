@@ -28,4 +28,5 @@ dependencies {
 	api(project(":core:base"))
 	implementation(project(":core:ktx"))
 	api(project(":core:permissions"))
+	implementation(project(":core:i18n"))
 }

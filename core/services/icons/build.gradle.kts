@@ -39,4 +39,6 @@ dependencies {
 	api(project(":core:services:points"))
 	api(project(":core:services:colors"))
 	api(project(":core:services:appshortcuts"))
+	implementation(libs.androidx.compose.runtime.annotation)
+	implementation(project(":core:i18n"))
 }

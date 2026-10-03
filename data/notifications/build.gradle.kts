@@ -12,10 +12,10 @@ dependencies {
 	implementation(libs.kotlin.reflect)
 	implementation(libs.dragon.logging)
 	implementation(libs.core)
-	implementation(libs.hilt.core)
+	api(libs.hilt.core)
 	implementation(libs.javax.inject)
 	implementation(libs.timber)
-	implementation(libs.hilt.android)
+	api(libs.hilt.android)
 
 	ksp(libs.hilt.compiler)
 
@@ -24,5 +24,7 @@ dependencies {
 
 	runtimeOnly(libs.kotlinx.coroutines.android)
 
-	api(project(":core:i18n"))
+	implementation(project(":core:i18n"))
+	implementation(libs.androidx.annotation)
+	api(libs.jakarta.inject)
 }

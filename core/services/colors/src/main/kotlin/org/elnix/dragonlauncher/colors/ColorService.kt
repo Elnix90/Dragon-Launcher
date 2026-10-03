@@ -2,19 +2,28 @@ package org.elnix.dragonlauncher.colors
 
 import android.content.Context
 import androidx.compose.material3.ColorScheme
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
+import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 
 public interface ColorService {
-	public val extraColors: Flow<ExtraColors>
-	public val colors: Flow<ColorScheme>
+	public val extraColors: StateFlow<ExtraColors>
+	public val colors: StateFlow<ColorScheme>
 }
 
 internal class ColorServiceImpl(
 	ctx: Context
 ) : ColorService {
+	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
 	private val angleLineColor = ColorSettingsStore.angleLineColor.flow(ctx)
 	private val shapesColor = ColorSettingsStore.shapesColor.flow(ctx)
 	private val launchAppColor = ColorSettingsStore.launchAppColor.flow(ctx)
@@ -35,7 +44,7 @@ internal class ColorServiceImpl(
 	private val runAdbCommand = ColorSettingsStore.runAdbCommand.flow(ctx)
 	private val holdToActivateColor = ColorSettingsStore.holdToActivateColor.flow(ctx)
 
-	override val extraColors: Flow<ExtraColors> =
+	override val extraColors: StateFlow<ExtraColors> =
 		combine(
 			angleLineColor,
 			shapesColor,
@@ -78,7 +87,11 @@ internal class ColorServiceImpl(
 				runAdbCommand = extraColors[17],
 				holdToActivate = extraColors[18]
 			)
-		}
+		}.stateIn(
+			scope = scope,
+			started = SharingStarted.Eagerly,
+			initialValue = DefaultExtraColors
+		)
 
 	private val primary = ColorSettingsStore.primaryColor.flow(ctx)
 	private val onPrimary = ColorSettingsStore.onPrimaryColor.flow(ctx)
@@ -135,7 +148,7 @@ internal class ColorServiceImpl(
 	private val outlineVariant = ColorSettingsStore.outlineVariantColor.flow(ctx)
 	private val scrim = ColorSettingsStore.scrimColor.flow(ctx)
 
-	override val colors: Flow<ColorScheme> =
+	override val colors: StateFlow<ColorScheme> =
 		combine(
 			primary,
 			onPrimary,
@@ -236,5 +249,9 @@ internal class ColorServiceImpl(
 				outlineVariant = colors[46],
 				scrim = colors[47]
 			)
-		}
+		}.stateIn(
+			scope = scope,
+			started = SharingStarted.Eagerly,
+			initialValue = AmoledDragonColorScheme
+		)
 }

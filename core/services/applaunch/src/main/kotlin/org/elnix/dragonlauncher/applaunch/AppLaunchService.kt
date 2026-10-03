@@ -1,0 +1,245 @@
+package org.elnix.dragonlauncher.applaunch
+
+import android.content.Context
+import android.content.pm.LauncherApps
+import android.os.Bundle
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logI
+import io.github.elnix90.logging.logW
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import org.elnix.dragonlauncher.APP_LAUNCH_TAG
+import org.elnix.dragonlauncher.applications.AppRepository
+import org.elnix.dragonlauncher.base.SettingFlow
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.compat.PackageManagerCompat
+import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.PermissionsManager
+import org.elnix.dragonlauncher.profiles.ProfileManager
+import org.elnix.dragonlauncher.recents.RecentsService
+import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
+import org.elnix.dragonlauncher.timer.AppTimerService
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.milliseconds
+
+public interface AppLaunchService {
+	public val hasUsageStatsPermission: StateFlow<Boolean>
+	public val pendingAppLaunch: SettingFlow<Application?>
+
+	public fun requestAppLaunch(launchAction: Action.LaunchApp)
+
+	public fun requestAppLaunch(app: Application)
+
+	public suspend fun startTimer(timeLimitMinutes: Int?, app: Application)
+
+	public fun onAppTimerServiceStarted(duration: Int?): Boolean
+
+	public fun launchShortcut(action: Action.LaunchShortcut)
+}
+
+internal class AppLaunchServiceImpl(
+	private val ctx: Context,
+	permissionsManager: PermissionsManager,
+	private val recentsService: RecentsService,
+	private val profileManager: ProfileManager,
+	private val packageManagerCompat: PackageManagerCompat,
+	private val appRepository: AppRepository
+) : AppLaunchService {
+	val viewModelScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+	override val hasUsageStatsPermission: StateFlow<Boolean> =
+		permissionsManager.hasPermission(PermissionGroup.UsageStat)
+
+	override val pendingAppLaunch: SettingFlow<Application?> = SettingFlow(null)
+
+	private var currentLaunchJob: Job? = null
+
+	override fun requestAppLaunch(launchAction: Action.LaunchApp) {
+		viewModelScope.launch {
+			// Resolve the stored profile to the live one, as the persisted userHandle
+			// may have been serialized incorrectly (e.g. by older versions).
+			val profile = profileManager.resolveProfile(launchAction.profile)
+			if (profile == null) {
+				logW(APP_LAUNCH_TAG) { "Profile ${launchAction.profile} not found for ${launchAction.packageName}" }
+				return@launch
+			}
+
+			val app = appRepository.findOne(launchAction).first()
+			if (app != null) {
+				requestAppLaunch(app)
+			} else {
+				launchLockedApp(profile, launchAction)
+			}
+		}
+	}
+
+	/**
+	 * Requests an unlock of the given profile and launches the app once it's
+	 * available. The wait for the unlock is unbounded: it lasts as long as it
+	 * takes the user to confirm the unlock dialog. Only the wait for the app to
+	 * appear in the app list afterward is bounded.
+	 */
+	private fun launchLockedApp(profile: Profile, action: Action.LaunchApp) {
+		if (!isAtLeastApiLevel(28) || !profileManager.isProfileLocked(profile)) {
+			logW(APP_LAUNCH_TAG) { "App ${action.packageName} not available and ${profile.type} profile is not locked" }
+			return
+		}
+
+		logI(APP_LAUNCH_TAG) { "Unlocking ${profile.type} profile to launch ${action.packageName}" }
+		profileManager.unlockProfile(profile)
+
+		viewModelScope.launch {
+			if (!waitForProfileUnlock(profile)) return@launch
+			val app = waitForAppAvailability(profile, action) ?: return@launch
+			requestAppLaunch(app)
+		}
+	}
+
+	override fun requestAppLaunch(app: Application) {
+		viewModelScope.launch {
+			val startAppTimer =
+				if (!WellbeingSettingsStore.socialMediaPauseEnabled.get(ctx)) {
+					false
+				} else {
+					app.packageName in WellbeingSettingsStore.pausedApps.get(ctx)
+				}
+
+			if (startAppTimer) {
+				pendingAppLaunch.value = app
+				return@launch
+			}
+
+			launchAppWithProfileUnlock(app)
+		}
+	}
+
+	override suspend fun startTimer(timeLimitMinutes: Int?, app: Application) {
+		AppTimerService.start(
+			ctx = ctx,
+			application = app,
+			reminderEnabled = WellbeingSettingsStore.reminderEnabled.flow(ctx).first(),
+			reminderIntervalMinutes = WellbeingSettingsStore.reminderIntervalMinutes.flow(ctx).first(),
+			reminderMode =
+				WellbeingSettingsStore.reminderMode
+					.flow(ctx)
+					.first()
+					.toString(),
+			timeLimitMinutes = timeLimitMinutes
+		)
+	}
+
+	override fun onAppTimerServiceStarted(duration: Int?): Boolean {
+		val pendingApp = pendingAppLaunch.value
+		if (pendingApp != null) {
+			viewModelScope.launch {
+				// A null duration means "no time limit", but the timer service
+				// is still needed when periodic reminders are enabled.
+				val startTimer =
+					duration != null ||
+						WellbeingSettingsStore.reminderEnabled.flow(ctx).first()
+				if (startTimer) {
+					startTimer(duration, pendingApp)
+				}
+			}
+
+			launchAppDirectly(pendingApp)
+			// Clear here (not only in the UI) so a stale pending app
+			// cannot re-trigger the pause screen.
+			pendingAppLaunch.value = null
+			return true
+		}
+		return false
+	}
+
+	override fun launchShortcut(action: Action.LaunchShortcut) {
+		action.takeIf { it.packageName.isNotEmpty() }?.let {
+			packageManagerCompat.launchShortcut(it.packageName, it.shortcutId)
+		}
+	}
+
+	private fun launchAppWithProfileUnlock(app: Application) {
+		currentLaunchJob?.cancel()
+		currentLaunchJob =
+			viewModelScope.launch {
+				if (isAtLeastApiLevel(28) && profileManager.isProfileLocked(app.profile)) {
+					logI(APP_LAUNCH_TAG) { "Unlocking ${app.profile.type} profile to launch ${app.packageName}" }
+					profileManager.unlockProfile(app.profile)
+					if (!waitForProfileUnlock(app.profile)) return@launch
+				}
+				launchAppDirectly(app)
+			}
+	}
+
+	private suspend fun waitForProfileUnlock(profile: Profile): Boolean =
+		try {
+			profileManager.getProfileState(profile).first { it?.locked == false }
+			true
+		} catch (e: CancellationException) {
+			logE(APP_LAUNCH_TAG, e) { "App launch canceled while waiting for profile unlock" }
+			false
+		}
+
+	private suspend fun waitForAppAvailability(profile: Profile, action: Action.LaunchApp): Application? =
+		withTimeoutOrNull(
+			15_000L.milliseconds
+		) {
+			val modifiedAction = action.copy(profile = profile)
+			appRepository.findOne(modifiedAction).first { it != null }
+		} ?: run {
+			logW(APP_LAUNCH_TAG) {
+				"App ${action.packageName} still not available after ${profile.type} profile unlock"
+			}
+			null
+		}
+
+	/**
+	 * Launch an app directly without any pause check.
+	 * Used both by launchAction and after the digital pause screen.
+	 */
+	private fun launchAppDirectly(app: Application) {
+		val launcherApps = ctx.getSystemService(LauncherApps::class.java)
+
+		val packageName = app.packageName
+
+		val activity =
+			launcherApps
+				.getActivityList(null, app.profile.userHandle)
+				.firstOrNull { it.applicationInfo.packageName == packageName }
+				?: run {
+					logW(APP_LAUNCH_TAG) { "Launcher activity not found for $packageName" }
+					return
+				}
+
+		val options = Bundle()
+
+		if (isAtLeastApiLevel(31)) {
+			options.putInt("android.activity.splashScreenStyle", 1)
+		}
+
+		try {
+			launcherApps.startMainActivity(
+				activity.componentName,
+				app.profile.userHandle,
+				null,
+				options
+			)
+
+			recentsService.touch(app)
+		} catch (e: SecurityException) {
+			logE(APP_LAUNCH_TAG, e) { "Security error launching $packageName" }
+		} catch (e: NullPointerException) {
+			logE(APP_LAUNCH_TAG, e) { "App component not found for $packageName" }
+		} catch (e: Exception) {
+			logE(APP_LAUNCH_TAG, e) { "Failed to launch $packageName" }
+		}
+	}
+}

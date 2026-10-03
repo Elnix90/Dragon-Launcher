@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.BACKUP_TAG
-import org.elnix.dragonlauncher.models.BackupResult
+import org.elnix.dragonlauncher.backup.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -22,6 +22,7 @@ fun rememberAutoBackupLauncher(
 ): ManagedActivityResultLauncher<String, Uri?> {
 	val ctx = LocalContext.current
 	val scope = rememberCoroutineScope()
+	val backupService = backupViewModel.backupService
 
 	return rememberLauncherForActivityResult(
 		ActivityResultContracts.CreateDocument("application/json")
@@ -37,7 +38,7 @@ fun rememberAutoBackupLauncher(
 					BackupSettingsStore.autoBackupUri.set(ctx, uri.toString())
 					BackupSettingsStore.autoBackupEnabled.set(ctx, true)
 				}
-				backupViewModel.result.value =
+				backupService.result.value =
 					BackupResult(
 						export = true,
 						error = false,
@@ -45,7 +46,7 @@ fun rememberAutoBackupLauncher(
 					)
 			} catch (e: SecurityException) {
 				// Fallback: Store non-persistable URI or notify user
-				backupViewModel.result.value =
+				backupService.result.value =
 					BackupResult(
 						export = true,
 						error = true,

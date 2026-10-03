@@ -13,7 +13,6 @@ dependencies {
 	implementation(libs.kotlin.reflect)
 	implementation(libs.kotlinx.serialization.json)
 	implementation(libs.kotlinx.serialization.core)
-	implementation(libs.dragon.logging)
 	implementation(libs.settings.core)
 	implementation(libs.jakarta.inject)
 	implementation(libs.androidx.compose.ui.geometry)
@@ -34,4 +33,5 @@ dependencies {
 	implementation(project(":core:ktx"))
 	implementation(project(":core:settings"))
 	api(project(":core:base"))
+	implementation(project(":core:i18n"))
 }

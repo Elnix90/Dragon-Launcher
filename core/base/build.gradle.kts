@@ -11,7 +11,7 @@ android {
 dependencies {
 	implementation(libs.kotlin.stdlib)
 	implementation(libs.kotlin.reflect)
-	implementation(libs.androidx.ui)
+	api(libs.androidx.ui)
 	implementation(platform(libs.androidx.compose.bom))
 	implementation(libs.androidx.graphics.shapes)
 	implementation(libs.androidx.compose.material3)
@@ -22,8 +22,6 @@ dependencies {
 	implementation(libs.androidx.annotation)
 	implementation(libs.androidx.compose.foundation)
 	implementation(libs.androidx.compose.runtime.annotation)
-	implementation(libs.androidx.lifecycle.common)
-	implementation(libs.androidx.lifecycle.runtime.compose)
 	implementation(libs.timber)
 
 	api(libs.kotlinx.coroutines.core)
@@ -46,5 +44,5 @@ dependencies {
 	implementation(project(":core:ktx"))
 	implementation(project(":core:i18n"))
 
-	api(project(":core:permissions"))
+	implementation(project(":core:permissions"))
 }

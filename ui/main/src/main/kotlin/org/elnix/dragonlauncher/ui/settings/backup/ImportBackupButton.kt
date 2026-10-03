@@ -13,14 +13,13 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.BACKUP_TAG
+import org.elnix.dragonlauncher.backup.BackupResult
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.dialogs.MigrationDialog
 import org.elnix.dragonlauncher.ui.dialogs.importexport.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
 import org.json.JSONObject
@@ -36,28 +35,16 @@ fun ImportBackupButton(
 ) {
 	val ctx = LocalContext.current
 	val scope = rememberCoroutineScope()
+	val backupService = backupViewModel.backupService
 
 	var importJson by remember { mutableStateOf<JSONObject?>(null) }
-	var legacyJsonString by remember { mutableStateOf<String?>(null) }
 
 	val settingsImportLauncher =
 		rememberSettingsImportLauncher(
 			onJsonReady = { json ->
-				if (backupViewModel.isLegacyBackup(json.toString())) {
-					legacyJsonString = json.toString()
-				} else {
-					importJson = json
-				}
+				importJson = json
 			}
 		)
-
-	legacyJsonString?.let { json ->
-		MigrationDialog(
-			migrate = { backupViewModel.migrateFromLegacyBackup(json) },
-			onDismiss = { legacyJsonString = null },
-			canDisagree = true
-		)
-	}
 
 	importJson?.let { json ->
 		var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
@@ -77,7 +64,7 @@ fun ImportBackupButton(
 							json = json,
 							requestedStores = selectedStoresForImport
 						)
-						backupViewModel.result.value =
+						backupService.result.value =
 							BackupResult(
 								export = false,
 								error = false,
@@ -91,7 +78,7 @@ fun ImportBackupButton(
 						importJson = null
 					} catch (e: Exception) {
 						logE(BACKUP_TAG, e) { "Import failed" }
-						backupViewModel.result.value =
+						backupService.result.value =
 							BackupResult(
 								export = false,
 								error = true,

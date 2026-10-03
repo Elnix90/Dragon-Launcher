@@ -28,7 +28,7 @@ fun rememberCurrentColorScheme(
 	colorsViewModel: ColorsViewModel = activityViewModel()
 ): State<ColorScheme> {
 	val defaultTheme by ColorModesSettingsStore.defaultTheme.asState()
-	val customScheme by colorsViewModel.colorscheme.collectAsState()
+	val customScheme by colorsViewModel.colorService.colors.collectAsState()
 	val systemScheme = systemColorScheme()
 
 	return remember(
@@ -56,7 +56,7 @@ fun DragonLauncherTheme(
 ) {
 	val useCustomColorChannels by ColorModesSettingsStore.useCustomColorChannels.asState()
 
-	val extraColors by colorsViewModel.extraColors.collectAsState(DefaultExtraColors)
+	val extraColors by colorsViewModel.colorService.extraColors.collectAsState(DefaultExtraColors)
 	val typography by fontViewModel.typography.collectAsState()
 	val colorScheme by rememberCurrentColorScheme()
 

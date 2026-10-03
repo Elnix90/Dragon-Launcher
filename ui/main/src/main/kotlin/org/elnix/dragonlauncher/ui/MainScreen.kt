@@ -15,9 +15,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -30,11 +30,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SwipeViewModel
@@ -46,25 +43,20 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalHoldToActivateSettings
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.CustomDim
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
-import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("LocalContextResourcesRead")
 @Composable
 fun MainScreen(
-	onLaunchAction: (Point) -> Unit,
 	swipeViewModel: SwipeViewModel = activityViewModel(),
 	widgetsViewModel: WidgetsViewModel = activityViewModel(),
 	pointsViewModel: PointsViewModel = activityViewModel()
 ) {
-	val navigator = LocalNavigator.current
 	val density = LocalDensity.current
 
 	val swipeService = swipeViewModel.swipeService
@@ -79,13 +71,12 @@ fun MainScreen(
 
 	val backAction by BehaviorSettingsStore.backAction.asStateNull()
 
-	val holdSettings = LocalHoldToActivateSettings.current
-
 	val start by swipeService.start.asState()
 	val current by swipeService.current.asState()
+	val globalDraggingMode by swipeService.globalDraggingMode.asState()
+	val fixedOffset by swipeService.fixedOffset.asState()
 
-	var holdOffset by remember { mutableStateOf<Offset?>(null) }
-	var showDropDownMenuSettings by remember { mutableStateOf(false) }
+	val showDropDownMenuSettings by swipeService.showDropDownMenuSettings.asState()
 
 	val nestId by nestNavigationService.currentNestId.collectAsState()
 
@@ -95,57 +86,7 @@ fun MainScreen(
 		}
 	}
 
-	fun launchAction(point: Point) {
-		// Handle nest related actions here, and let the rest pass through
-		when (val action = point.action) {
-			Action.GoParentNest -> {
-				nestNavigationService.goBack()
-				swipeService.clearAfterLaunch()
-			}
-
-			is Action.OpenNest -> {
-				nestNavigationService.goToNest(action.nestId)
-				swipeService.clearAfterLaunch()
-			}
-
-			else -> {
-				nestNavigationService.clearStack()
-				onLaunchAction(point)
-			}
-		}
-	}
-
 	val holdMenuEntries by swipeService.holdMenuEntriesString.asState()
-
-	val hold =
-		rememberHoldToOpenSettings(
-			onSettings = { offset ->
-				swipeService.clearAfterLaunch()
-
-				// When the list only has 1 element, directly go to that screen, otherwise, open the menu
-				// If the list is empty, do nothing
-				when {
-					holdMenuEntries.size > 1 -> {
-						showDropDownMenuSettings = true
-						holdOffset = offset
-					}
-
-					holdMenuEntries.size == 1 -> {
-						val routeToGo = holdMenuEntries.first()
-						val action = Action.OpenDragonLauncherSettings(routeToGo)
-						launchAction(dummySwipePoint(action))
-					}
-
-					else -> {
-						// If list is empty, directly navigate to settings root. Never block the user out of settings
-						val action = Action.OpenDragonLauncherSettings(NavigationRoute.PointsSettings)
-						launchAction(dummySwipePoint(action))
-					}
-				}
-			},
-			holdDelay = holdSettings.holdDelayBeforeStartingLongClickSettings.toLong(),
-			loadDuration = holdSettings.longCLickSettingsDuration.toLong()
-		)
 
     /*
      * 1. Tests if the current nest is the main, if not, go back one nest
@@ -155,23 +96,24 @@ fun MainScreen(
 		if (nestId != 0) {
 			nestNavigationService.goBack()
 		} else if (backAction != null) {
-			launchAction(
-				dummySwipePoint(backAction)
-			)
+			swipeService.launchAction(backAction!!)
 		}
 	}
 
 	val mainDimAmount by UiSettingsStore.wallpaperDimMainScreen.asState()
 	WallpaperDim(mainDimAmount)
 
+	val scope = rememberCoroutineScope()
 	Box(
 		modifier =
 			Modifier
 				.fillMaxSize()
 				.background(Color.Transparent)
-				.pointerInput(Unit, nestId) {
+				.pointerInput(Unit) {
 					with(swipeService) { mainDragGesture() }
-				}.then(hold.pointerModifier)
+				}.pointerInput(Unit) {
+					with(swipeService) { holdGesture(scope.coroutineContext) }
+				}
 	) {
 		mainScreenLayers.filter { it.enabled }.forEach { layer ->
 			when (layer) {
@@ -183,7 +125,7 @@ fun MainScreen(
 					var showCustomDim by remember { mutableStateOf(false) }
 
 					LaunchedEffect(start) {
-						if (start != null) {
+						if (start != null && globalDraggingMode is GlobalDraggingMode.Normal) {
 							delay(layer.showAfterMs.milliseconds)
 							showCustomDim = true
 						} else {
@@ -197,30 +139,36 @@ fun MainScreen(
 				}
 
 				is MainScreenLayer.DragOverlay -> {
+					val startOffset = when (globalDraggingMode) {
+						is GlobalDraggingMode.Fixed -> fixedOffset
+						GlobalDraggingMode.Normal -> start
+					}
+
 					MainScreenOverlay(
 						lineBeforeNests = layer.lineBeforeNests,
-						start = start,
+						start = startOffset,
 						current = current,
-						currentNestId = nestId,
-						onLaunch = { launchAction(it) }
+						globalDraggingMode = globalDraggingMode,
+						currentNestId = nestId
 					)
 				}
 
 				is MainScreenLayer.HoldToActivate -> {
+					val holdAnchor by swipeService.holdAnchor.asState()
+					val holdProgress by swipeService.holdProgress
+
 					HoldToActivateArc(
-						center = hold.center,
-						progress = hold.progress,
-						customObject = holdObject
+						center = holdAnchor,
+						progress = holdProgress,
+						customObject = holdObject,
+						swipeService = swipeService
 					)
 
-					if (holdOffset != null) {
+					if (holdAnchor != null) {
 						val actions =
 							holdMenuEntries.map { route ->
 								MoreOptions(
-									onClick = {
-										showDropDownMenuSettings = false
-										navigator.navigate(route)
-									},
+									onClick = { swipeService.setting(route) },
 									icon = route.icon,
 									text = { stringResource(route.resId) }
 								)
@@ -229,8 +177,8 @@ fun MainScreen(
 						val dpOffset =
 							with(density) {
 								DpOffset(
-									x = holdOffset!!.x.toDp(),
-									y = holdOffset!!.y.toDp()
+									x = holdAnchor!!.x.toDp(),
+									y = holdAnchor!!.y.toDp()
 								)
 							}
 
@@ -240,17 +188,14 @@ fun MainScreen(
 							BurgerListAction(
 								actions = actions,
 								isExpanded = showDropDownMenuSettings,
-								onDismissRequest = {
-									showDropDownMenuSettings = false
-									holdOffset = null
-								}
+								onDismissRequest = { swipeService.dismissMenu() }
 							)
 						}
 					}
 				}
 
 				is MainScreenLayer.StatusBar -> {
-					StatusBar { action -> launchAction(dummySwipePoint(action)) }
+					StatusBar { action -> swipeService.launchAction(action) }
 				}
 
 				is MainScreenLayer.Widgets -> {
@@ -276,11 +221,7 @@ fun MainScreen(
 											transformOrigin = TransformOrigin.Center
 										},
 								onLaunchAction = {
-									launchAction(
-										dummySwipePoint(
-											action = widget.action
-										)
-									)
+									swipeService.launchAction(widget.action)
 								},
 								blockTouches = widget.ghosted == true
 							)

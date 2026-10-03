@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,6 +37,7 @@ fun <T> DragonGroupScope.ActionSelectorRow(
 	switchEnabled: Boolean = true,
 	label: String,
 	optionLabel: @Composable (T) -> String = { it.toString() },
+	optionDesc: (@Composable (T) -> String)? = null,
 	toggled: Boolean? = null,
 	enabled: Boolean = true,
 	resetEnabled: Boolean,
@@ -96,12 +96,12 @@ fun <T> DragonGroupScope.ActionSelectorRow(
 		ResetIcon(enabled && resetEnabled, onReset)
 	}
 
-	// Options dialog
 	if (showSheet) {
 		ActionSelector(
 			label = label,
 			options = options,
 			optionLabel = optionLabel,
+			optionDesc = optionDesc,
 			selected = selected,
 			onSelected = onSelected,
 			onDismiss = { showSheet = false }
@@ -115,12 +115,11 @@ fun <T> ActionSelector(
 	label: String?,
 	options: List<T>,
 	optionLabel: @Composable (T) -> String = { it.toString() },
+	optionDesc: (@Composable (T) -> String)? = null,
 	selected: T?,
 	onSelected: (T) -> Unit,
 	onDismiss: () -> Unit
 ) {
-	val textColor = MaterialTheme.colorScheme.onSurface
-
 	DragonModalBottomSheet(
 		onDismissRequest = onDismiss,
 		skipPartiallyExpanded = true
@@ -149,10 +148,9 @@ fun <T> ActionSelector(
 						interactionSource = interactionSource
 					)
 
-					Text(
+					TextWithDescription(
 						text = optionLabel(option),
-						color = textColor,
-						style = MaterialTheme.typography.bodyMedium
+						description = optionDesc?.invoke(option)
 					)
 				}
 			}

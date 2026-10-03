@@ -20,13 +20,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
-import org.elnix.dragonlauncher.SWIPE_TAG
 import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
@@ -62,11 +61,12 @@ fun MainScreenOverlay(
 	lineBeforeNests: Boolean,
 	start: Offset?,
 	current: Offset?,
-	currentNestId: Int,
-	onLaunch: ((Point) -> Unit)?
+	globalDraggingMode: GlobalDraggingMode,
+	currentNestId: Int
 ) {
 	val ctx = LocalContext.current
 	val extraColors = LocalExtraColors.current
+	val haptic = LocalHapticFeedback.current
 	val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
 	val pointsService = pointsViewModel.pointsService
@@ -209,7 +209,7 @@ fun MainScreenOverlay(
 			currentPoint = hoveredPoint,
 			isDragging = isDragging
 		) { firedPoint ->
-			onLaunch?.invoke(firedPoint)
+			swipeService.launchAction(firedPoint.action)
 		}
 
 	LaunchedEffect(hoveredPoint?.id, liveNestControllersStack.count { it.isActive }) {
@@ -227,7 +227,6 @@ fun MainScreenOverlay(
 		}
 	}
 
-	val haptic = LocalHapticFeedback.current
 	LaunchedEffect(highestController.nestedHitResult?.isInCancelZone) {
 		if (isAnyLiveNestActive &&
 			highestController.isActive &&
@@ -238,30 +237,8 @@ fun MainScreenOverlay(
 		}
 	}
 
+	// TODO
 	LaunchedEffect(isDragging) {
-		if (!isDragging) {
-			when {
-				liveNestControllersStack[0].suppressMainLaunch -> {
-					logI(SWIPE_TAG) { "Aborted because suppressMainLaunch was true" }
-				}
-
-				holdAndRun.firedThisGesture -> {
-					logI(SWIPE_TAG) { "Aborted because hold and run already fired this gesture" }
-				}
-
-				else -> {
-					val nestedPoint = highestController.resolveOnRelease()
-					if (nestedPoint != null) {
-						val stageAction = cycleActionsController.resolveOnRelease()
-						if (stageAction != null) {
-							onLaunch?.invoke(nestedPoint.copy(action = stageAction))
-						} else {
-							onLaunch?.invoke(nestedPoint)
-						}
-					}
-				}
-			}
-		}
 		liveNestControllersStack.forEach { it.clearAfterLaunch() }
 		holdAndRun.clear()
 		cycleActionsController.clear()
@@ -310,7 +287,13 @@ fun MainScreenOverlay(
 			skipSelected = false
 		)
 
+	/*
+	 * These 2 vales are there to force the drawn overlay to be re-drawn,
+	 * in order to keep a sync between the icons and the states.
+	 */
 	val iconsTrigger by PointStableCache.cacheTrigger.asState()
+	val selectedPointsIds by pointsService.selectedPointsIds.asState()
+
 	Box(Modifier.fillMaxSize()) {
 		DebugZone(debugInfo) {
 			Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
@@ -334,7 +317,7 @@ fun MainScreenOverlay(
 			}
 		}
 
-		if (isDragging) {
+		if (isDragging || globalDraggingMode is GlobalDraggingMode.Fixed) {
 			for ((idx, controller) in liveNestControllersStack.withIndex()) {
 				if (controller.isActive) {
 					val liveNestOpacity = liveNestLayersAlphas.getOrNull(idx) ?: continue
@@ -364,7 +347,7 @@ fun MainScreenOverlay(
 					 * - If only the snap to action is checked, it uses [Point.getPos] to... get its [pos][Point.pos] + the center of the live nest
 					 * - Finally, if nothing worked, it defaults to the computed current pos
 					 */
-					val effectiveCurrentPos: Offset =
+					val effectiveCurrentPos: Offset? =
 						when {
 							// Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest
 							!isHighestController -> {
@@ -423,6 +406,8 @@ fun MainScreenOverlay(
 					val pickedRememberRotationEnd = endObject.resolveRotation(false, effectiveSweepAngle)
 
 					fun DrawScope.lineDrawing() {
+						if (effectiveCurrentPos == null) return
+
 						/**
 						 * The line color uses a [Int] angle, that it converts to a float, to prevent tiny difference in colors.
 						 * This method can only produce at most 360 different colors.
@@ -485,7 +470,13 @@ fun MainScreenOverlay(
 									compositingStrategy = CompositingStrategy.Offscreen
 								}.drawWithCache {
 									onDrawBehind {
+										/*
+										 * Do not remove those lines!!!
+										 * THEY ARE CRITICAL for the launcher UI rendering logic.
+										 * They force the cache to update its visual state with the backend (the SwipeService)
+										 */
 										iconsTrigger
+										selectedPointsIds
 
 										NestOverlay(
 											center = liveNestCenter,

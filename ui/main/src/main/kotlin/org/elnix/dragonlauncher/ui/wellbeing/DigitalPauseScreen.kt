@@ -112,6 +112,8 @@ fun DigitalPauseScreen(
 	val ctx = LocalContext.current
 	val packageName = application.packageName
 
+	val appLaunchService = appLaunchViewModel.appLaunchService
+
 	val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
 	val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
 	val pauseDurationSeconds by WellbeingSettingsStore.pauseDurationSeconds.asState()
@@ -122,7 +124,7 @@ fun DigitalPauseScreen(
 	var countdownFinished by remember { mutableStateOf(false) }
 	var currentPhraseIndex by remember { mutableIntStateOf(0) }
 
-	val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
+	val hasUsageStatsPermission by appLaunchService.hasUsageStatsPermission.collectAsState()
 	val scrollState = rememberScrollState()
 	// Shrink the lotus once the choice is shown so the action buttons
 	// ("No, I'll pass" / "Yes, open anyway") stay visible on small screens,
@@ -301,7 +303,7 @@ fun DigitalPauseScreen(
 									showChoice = false
 									showTimePicker = true
 								} else {
-									appLaunchViewModel.onAppTimerServiceStarted(null)
+									appLaunchService.onAppTimerServiceStarted(null)
 									onCancel()
 								}
 							},
@@ -322,7 +324,7 @@ fun DigitalPauseScreen(
 				) {
 					TimeLimitPickerUI(
 						onConfirm = {
-							appLaunchViewModel.onAppTimerServiceStarted(it)
+							appLaunchService.onAppTimerServiceStarted(it)
 							onCancel()
 						},
 						onCancel = onCancel

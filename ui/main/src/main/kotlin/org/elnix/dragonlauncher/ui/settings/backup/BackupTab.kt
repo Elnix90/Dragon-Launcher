@@ -200,7 +200,7 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 				icon = R.drawable.reset,
 				enabled = autoBackupEnabled && backupPath != null && !hasTriggeredManualAutoBackup,
 				onClick = {
-					backupViewModel.commandBackup()
+					backupViewModel.backupService.commandBackup()
 					ctx.showToast(ctx.getString(R.string.backup_triggered))
 					hasTriggeredManualAutoBackup = true
 				}

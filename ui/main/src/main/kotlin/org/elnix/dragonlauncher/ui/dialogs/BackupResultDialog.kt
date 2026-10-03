@@ -15,7 +15,8 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 fun BackupResultDialog(
 	backupViewModel: BackupViewModel = activityViewModel()
 ) {
-	val result by backupViewModel.result.asState()
+	val backupService = backupViewModel.backupService
+	val result by backupService.result.asState()
 
 	result?.let { res ->
 		val isError = res.error
@@ -34,7 +35,7 @@ fun BackupResultDialog(
 			titleColor = if (isError) MaterialTheme.colorScheme.onErrorContainer else Color.Green,
 			titleBgColor = if (isError) MaterialTheme.colorScheme.errorContainer else Color(0xFF167E16),
 			copy = isError,
-			onValidate = { backupViewModel.result.value = null }
+			onValidate = { backupService.result.value = null }
 		)
 	}
 }

@@ -49,6 +49,8 @@ public class DrawerViewModel
 		public val appOverrideManager: AppOverridesManager,
 		public val workspaceManager: WorkspacesManager
 	) : ViewModel() {
+		public var drawerHomeHandler: MutableState<(() -> Unit)?> = mutableStateOf(null)
+
 		public val allApps: StateFlow<List<Application>> =
 			appsRepository.getAllApps().stateIn(
 				viewModelScope,

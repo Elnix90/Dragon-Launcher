@@ -66,3 +66,6 @@ description = "Clean everything"
 [tasks.setup-hooks]
 run = "pre-commit install && pre-commit install --hook-type commit-msg && mise use pre-commit"
 description = "Install git hooks (pre-commit + commit-msg)"
+
+[hooks]
+postinstall = "mise setup-hooks"
