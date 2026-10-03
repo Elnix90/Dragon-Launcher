@@ -38,5 +38,5 @@ dependencies {
 	implementation(project(":core:ktx"))
 
 	api(project(":core:models"))
-  implementation(project(":core:services:colors"))
+	implementation(project(":core:services:colors"))
 }

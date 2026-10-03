@@ -61,7 +61,7 @@ dependencies {
 	androidTestRuntimeOnly(libs.androidx.test.runner)
 
 	debugRuntimeOnly(libs.compose.ui.test.manifest)
-  implementation(libs.androidx.annotation)
-  implementation(libs.androidx.compose.runtime.annotation)
-  implementation(libs.androidx.compose.runtime.saveable)
+	implementation(libs.androidx.annotation)
+	implementation(libs.androidx.compose.runtime.annotation)
+	implementation(libs.androidx.compose.runtime.saveable)
 }

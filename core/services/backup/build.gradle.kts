@@ -26,8 +26,8 @@ dependencies {
 	api(project(":core:base"))
 	implementation(project(":core:i18n"))
 
-  runtimeOnly(libs.androidx.datastore.core)
-  implementation(libs.settings.core)
-  implementation(project(":core:ktx"))
-  implementation(project(":core:settings"))
+	runtimeOnly(libs.androidx.datastore.core)
+	implementation(libs.settings.core)
+	implementation(project(":core:ktx"))
+	implementation(project(":core:settings"))
 }

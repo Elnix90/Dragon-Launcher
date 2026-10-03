@@ -122,14 +122,14 @@ dependencies {
 	implementation(project(":ui:base"))
 	implementation(project(":ui:main"))
 	implementation(project(":ui:theme"))
-  implementation(libs.androidx.compose.runtime.retain)
-  implementation(project(":core:services:applaunch"))
-  implementation(project(":core:services:backup"))
-  implementation(project(":core:services:lifecycle"))
-  implementation(project(":core:services:logs"))
-  implementation(project(":core:services:swipe"))
-  implementation(project(":core:services:widgets"))
-  implementation(project(":core:shizuku"))
+	implementation(libs.androidx.compose.runtime.retain)
+	implementation(project(":core:services:applaunch"))
+	implementation(project(":core:services:backup"))
+	implementation(project(":core:services:lifecycle"))
+	implementation(project(":core:services:logs"))
+	implementation(project(":core:services:swipe"))
+	implementation(project(":core:services:widgets"))
+	implementation(project(":core:shizuku"))
 }
 
 // Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app

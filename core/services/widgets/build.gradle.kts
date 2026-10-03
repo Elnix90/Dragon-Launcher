@@ -25,7 +25,7 @@ dependencies {
 	implementation(project(":core:settings"))
 	api(project(":core:base"))
 	implementation(project(":core:i18n"))
-  implementation(libs.androidx.compose.ui.unit)
-  implementation(libs.kotlinx.serialization.core)
-  implementation(libs.kotlinx.serialization.json)
+	implementation(libs.androidx.compose.ui.unit)
+	implementation(libs.kotlinx.serialization.core)
+	implementation(libs.kotlinx.serialization.json)
 }

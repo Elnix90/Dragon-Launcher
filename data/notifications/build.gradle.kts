@@ -25,6 +25,6 @@ dependencies {
 	runtimeOnly(libs.kotlinx.coroutines.android)
 
 	implementation(project(":core:i18n"))
-  implementation(libs.androidx.annotation)
-  api(libs.jakarta.inject)
+	implementation(libs.androidx.annotation)
+	api(libs.jakarta.inject)
 }

@@ -30,8 +30,8 @@ dependencies {
 	api(project(":core:services:recents"))
 	implementation(project(":core:services:timer"))
 	api(project(":data:applications"))
-  implementation(libs.settings.core)
-  implementation(project(":core:ktx"))
-  api(project(":core:services:compat"))
-  implementation(project(":core:settings"))
+	implementation(libs.settings.core)
+	implementation(project(":core:ktx"))
+	api(project(":core:services:compat"))
+	implementation(project(":core:settings"))
 }

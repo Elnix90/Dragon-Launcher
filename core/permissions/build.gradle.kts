@@ -29,6 +29,6 @@ dependencies {
 	runtimeOnly(libs.kotlinx.coroutines.android)
 
 	implementation(project(":core:ktx"))
-  implementation(libs.androidx.annotation)
-  implementation(libs.androidx.lifecycle.common)
+	implementation(libs.androidx.annotation)
+	implementation(libs.androidx.lifecycle.common)
 }

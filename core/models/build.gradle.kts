@@ -66,7 +66,7 @@ dependencies {
 	api(project(":data:workspaces"))
 	api(project(":data:appoverrides"))
 	api(project(":core:profiles"))
-  implementation(libs.androidx.compose.runtime.annotation)
-  implementation(libs.kotlinx.collections.immutable)
-  api(project(":core:services:appshortcuts"))
+	implementation(libs.androidx.compose.runtime.annotation)
+	implementation(libs.kotlinx.collections.immutable)
+	api(project(":core:services:appshortcuts"))
 }

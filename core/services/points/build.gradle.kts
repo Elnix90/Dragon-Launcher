@@ -33,5 +33,5 @@ dependencies {
 	implementation(project(":core:ktx"))
 	implementation(project(":core:settings"))
 	api(project(":core:base"))
-  implementation(project(":core:i18n"))
+	implementation(project(":core:i18n"))
 }

@@ -25,5 +25,5 @@ dependencies {
 	api(project(":core:base"))
 	implementation(project(":core:i18n"))
 
-  runtimeOnly(libs.androidx.datastore.core)
+	runtimeOnly(libs.androidx.datastore.core)
 }

@@ -21,6 +21,6 @@ dependencies {
 	implementation(project(":core:i18n"))
 	api(project(":core:base"))
 	implementation(project(":core:ktx"))
-  api(libs.dagger)
-  implementation(libs.javax.inject)
+	api(libs.dagger)
+	implementation(libs.javax.inject)
 }

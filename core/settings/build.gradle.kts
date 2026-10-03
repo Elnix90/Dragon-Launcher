@@ -23,9 +23,8 @@ dependencies {
 	// My plugin 🤎
 	implementation(libs.settings.annotations)
 
-
 	implementation(project(":core:ktx"))
 	api(project(":core:base"))
 	implementation(project(":core:i18n"))
-  implementation(libs.androidx.compose.runtime.annotation)
+	implementation(libs.androidx.compose.runtime.annotation)
 }

@@ -29,5 +29,5 @@ dependencies {
 
 	implementation(project(":core:i18n"))
 	implementation(project(":core:settings"))
-  implementation(libs.kotlinx.coroutines.core)
+	implementation(libs.kotlinx.coroutines.core)
 }

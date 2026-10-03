@@ -24,5 +24,5 @@ dependencies {
 
 	implementation(libs.settings.core)
 	implementation(project(":core:settings:"))
-  implementation(project(":core:i18n"))
+	implementation(project(":core:i18n"))
 }
