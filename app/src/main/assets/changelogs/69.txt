@@ -1,0 +1,4 @@
+4.4.1 (Smaug)
+2026-10-04
+[FIXED]
+* Double click action not working
