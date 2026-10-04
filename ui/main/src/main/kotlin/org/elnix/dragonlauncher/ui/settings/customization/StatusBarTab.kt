@@ -3,17 +3,22 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
@@ -28,6 +33,8 @@ fun StatusBarTab() {
 	val ctx = LocalContext.current
 	val scope = rememberCoroutineScope()
 	var showStatusBar by showStatusBar()
+
+	val fullscreen by UiSettingsStore.fullScreen.asStateNull()
 
 	SettingsScaffold(
 		title = stringResource(R.string.status_bar),
@@ -52,6 +59,14 @@ fun StatusBarTab() {
 				description = R.string.show_status_bar_desc,
 				state = showStatusBar
 			) { showStatusBar = it }
+		}
+
+		if (fullscreen == false) {
+			Text(
+				text = stringResource(R.string.status_bar_warning),
+				style = MaterialTheme.typography.bodyMediumEmphasized,
+				textAlign = TextAlign.Center
+			)
 		}
 
 		AnimatedVisibility(showStatusBar) {

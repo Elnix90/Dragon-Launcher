@@ -1176,4 +1176,5 @@
 	<string name="dragging_mode_normal_desc">The default dragging mode, swipe from anywhere to make the nests appear</string>
 	<string name="dragging_mode_fixed">Fixed</string>
 	<string name="dragging_mode_fixed_desc">Place your nests in one place, they are always visible and you can drag anywhere, it\'l enable from the center</string>
+    <string name="status_bar_warning">⚠️ The custom status bar is only displayed when the app is in fullscreen</string>
 </resources>
