@@ -88,6 +88,7 @@ dependencies {
 	implementation(libs.settings.runtime)
 	implementation(libs.core)
 	implementation(libs.androidx.lifecycle.viewmodel.compose)
+	implementation(libs.androidx.compose.runtime.retain)
 	implementation(libs.timber)
 
 	// DO NOT FUCKING DELTE THIS!!!!!
@@ -99,18 +100,28 @@ dependencies {
 	implementation(project(":core:base"))
 	implementation(project(":core:i18n"))
 	implementation(project(":core:models"))
+	implementation(project(":core:shizuku"))
 	implementation(project(":core:profiles"))
 	implementation(project(":core:settings"))
 	implementation(project(":core:permissions"))
+
+	implementation(project(":ui:theme"))
+	implementation(project(":core:services:logs"))
+	implementation(project(":core:services:swipe"))
 	implementation(project(":core:services:fonts"))
 	implementation(project(":core:services:icons"))
 	implementation(project(":core:services:timer"))
 	implementation(project(":core:services:badges"))
 	implementation(project(":core:services:colors"))
 	implementation(project(":core:services:compat"))
+	implementation(project(":core:services:system"))
+	implementation(project(":core:services:backup"))
 	implementation(project(":core:services:points"))
+	implementation(project(":core:services:widgets"))
 	implementation(project(":core:services:recents"))
 	implementation(project(":core:services:security"))
+	implementation(project(":core:services:lifecycle"))
+	implementation(project(":core:services:applaunch"))
 	implementation(project(":core:services:appshortcuts"))
 
 	implementation(project(":data:database"))
@@ -121,15 +132,7 @@ dependencies {
 
 	implementation(project(":ui:base"))
 	implementation(project(":ui:main"))
-	implementation(project(":ui:theme"))
-	implementation(libs.androidx.compose.runtime.retain)
-	implementation(project(":core:services:applaunch"))
-	implementation(project(":core:services:backup"))
-	implementation(project(":core:services:lifecycle"))
-	implementation(project(":core:services:logs"))
-	implementation(project(":core:services:swipe"))
-	implementation(project(":core:services:widgets"))
-	implementation(project(":core:shizuku"))
+
 }
 
 // Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app
