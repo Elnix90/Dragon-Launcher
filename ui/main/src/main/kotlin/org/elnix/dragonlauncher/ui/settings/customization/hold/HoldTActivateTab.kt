@@ -268,7 +268,30 @@ fun HoldToActivateTab(
 			presets = listOf(
 				HoldPreset("Default"),
 				HoldPreset(
-					name = "Elnix's",
+					name = "Elnix",
+					customObject = CustomObject(
+						stroke = 4.5.dp,
+						color = null,
+						glow = CustomGlow(radius = 12.dp, color = null),
+						shape = IconShape.Random,
+						size = 75.0.dp,
+						rotation = -1,
+						mirror = false,
+						eraseBackground = false,
+						alignsWithDragAngle = false
+					),
+					holdDelayBeforeStartingLongClickSettings = 300,
+					longCLickSettingsDuration = 500,
+					holdToActivateSettingsTolerance = 10.0.dp,
+					showToleranceOnMainScreen = false,
+					rotationsPerSecond = 0.50f,
+					holdRgbLoading = false,
+					pulsingRadius = 2.0f,
+					pulsingDuration = 500,
+					color = Color(0xFFB902FF)
+				),
+				HoldPreset(
+					name = "Yo",
 					customObject = CustomObject(
 						stroke = 4.5.dp,
 						color = null,

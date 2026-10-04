@@ -316,7 +316,7 @@ fun AngleLineTab(
 			presets = listOf(
 				AngleLinePreset("Default"),
 				AngleLinePreset(
-					name = "new",
+					name = "Elnix",
 					rgbLine = true,
 					startAndAngleShareSameRandomAngle = true,
 					useSnappedAngleOrRealAngle = true,
