@@ -1,0 +1,12 @@
+4.4.0 (Smaug)
+2026-10-04
+[NEW]
+* Complete refactor of all gesture system (real big ngl)
+* New locked nest system
+[IMPROVED]
+* Widgets tab UI
+* Global UI refinements
+[FIXED]
+* Icon rendering logic
+[NOTE]
+* Removed migration system from 4.0.0
