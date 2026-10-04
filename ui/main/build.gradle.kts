@@ -54,7 +54,9 @@ dependencies {
 	implementation(libs.androidx.compose.runtime.retain)
 	api(libs.androidx.graphics.shapes)
 	implementation(libs.androidx.activity)
+	implementation(libs.androidx.compose.runtime.annotation)
 	implementation(libs.androidx.fragment)
+	implementation(libs.lottie)
 	debugImplementation(libs.androidx.compose.ui.tooling)
 
 	runtimeOnly(libs.kotlinx.coroutines.android)
@@ -76,6 +78,11 @@ dependencies {
 	api(libs.androidx.ui.graphics)
 	api(libs.reorderable)
 	api(libs.settings.core)
+	debugApi(libs.reorderable.android.debug)
+	api(libs.androidx.lifecycle.viewmodel.base)
+	api(libs.dagger)
+	api(libs.jakarta.inject)
+	api(libs.javax.inject)
 
 	api(project(":ui:dragon"))
 	implementation(project(":ui:theme"))
@@ -83,12 +90,12 @@ dependencies {
 	implementation(project(":ui:base"))
 
 	api(project(":core:base"))
-	implementation(project(":core:i18n"))
 	api(project(":core:models"))
 	api(project(":core:settings"))
-
 	implementation(project(":core:ktx"))
+	implementation(project(":core:i18n"))
 	implementation(project(":core:shizuku"))
+
 	api(project(":core:permissions"))
 	implementation(project(":core:services:system"))
 	implementation(project(":core:services:fonts"))
@@ -96,21 +103,14 @@ dependencies {
 	implementation(project(":data:appoverrides"))
 	implementation(project(":data:workspaces"))
 
-	api(project(":core:services:badges"))
 	api(project(":core:services:icons"))
 	api(project(":core:services:points"))
+	api(project(":core:services:badges"))
 
-	debugApi(libs.reorderable.android.debug)
-	implementation(libs.androidx.compose.runtime.annotation)
-	api(libs.androidx.lifecycle.viewmodel.base)
-	implementation("com.airbnb.android:lottie:6.5.2")
-	api(libs.dagger)
-	api(libs.jakarta.inject)
-	api(libs.javax.inject)
-	implementation(project(":core:services:applaunch"))
-	implementation(project(":core:services:backup"))
-	implementation(project(":core:services:lifecycle"))
-	implementation(project(":core:services:logs"))
 	api(project(":core:services:swipe"))
+	implementation(project(":core:services:logs"))
+	implementation(project(":core:services:backup"))
 	implementation(project(":core:services:widgets"))
+	implementation(project(":core:services:lifecycle"))
+	implementation(project(":core:services:applaunch"))
 }

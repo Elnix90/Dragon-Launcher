@@ -230,8 +230,6 @@ public sealed class NavigationRoute : NavKey {
 	public data class LogsViewer(
 		val filename: String
 	) : NavigationRoute() {
-		override fun hashCode(): Int = super.hashCode()
-
 		override val resId: Int = R.string.logs
 		override val icon: Int = R.drawable.source_notes
 	}
@@ -255,8 +253,6 @@ public sealed class NavigationRoute : NavKey {
 	public data class WorkspaceDetail(
 		val workspaceId: String
 	) : NavigationRoute() {
-		override fun hashCode(): Int = super.hashCode()
-
 		override val resId: Int = R.string.edit_workspace
 		override val icon: Int = R.drawable.edit_rounded
 	}
@@ -266,8 +262,6 @@ public sealed class NavigationRoute : NavKey {
 	public data class TimerExceeded(
 		val appName: String
 	) : NavigationRoute() {
-		override fun hashCode(): Int = super.hashCode()
-
 		override val resId: Int = R.string.time_exceeded_title
 		override val icon: Int = R.drawable.timer
 	}

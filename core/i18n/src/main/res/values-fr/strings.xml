@@ -22,10 +22,8 @@
     <string name="extension_manual_install_desc">Si vous n\'avez pas d\'extension d\'installation, téléchargez l\'APK et sélectionnez-le ci-dessous pour l\'installer.</string>
     <string name="select_apk">Sélectionner l\'APK</string>
     <string name="system_default">Par défaut système</string>
-    <string name="version_arg">Version</string>
-    <string name="export_cancelled">Exportation annulée</string>
-    <string name="import_cancelled">Importation annulée</string>
-    <string name="backup">Sauvegarde</string>
+	<string name="export_cancelled">Exportation annulée</string>
+	<string name="backup">Sauvegarde</string>
     <string name="backup_restore_text">Sauvegarde ou restauration des paramètres et des actions de l’application, les sauvegardes automatiques sont déclenchées automatiquement à chaque lancement/pause/fermeture de l’application ou en appuyant sur le bouton « Déclencher » ci-dessous</string>
     <string name="export_settings">Exporter les paramètres</string>
     <string name="import_settings">Importer les paramètres</string>
@@ -34,8 +32,7 @@
     <string name="import_successful">Importation réussie</string>
     <string name="export_successful">Exportation réussie</string>
     <string name="unknown_error">Erreur inconnue</string>
-    <string name="no_file_picked">Aucun fichier choisi</string>
-    <string name="color_selector_text">Sélectionnez le thème de couleur que vous souhaitez</string>
+	<string name="color_selector_text">Sélectionnez le thème de couleur que vous souhaitez</string>
     <string name="color_mode_all">Toutes les couleurs</string>
     <string name="reset">Réinitialisation</string>
     <string name="reset_to_default_colors">Réinitialisation aux couleurs par défaut</string>
@@ -109,9 +106,7 @@
     <string name="keep_screen_on">Garder l’écran allumé</string>
     <string name="back_action">Action arrière</string>
     <string name="double_click_action">Action de double clic</string>
-    <string name="privacy_first">La vie privée avant tout</string>
-    <string name="quick_tutorial">Petit tutoriel rapide</string>
-    <string name="long_click_to_access_settings">Appuyez lngtemps pour accèder aux paramètres</string>
+	<string name="long_click_to_access_settings">Appuyez lngtemps pour accèder aux paramètres</string>
     <string name="swipe_to_open_app">Faites glisser pour ouvrir vos applications / raccourcis configurés</string>
     <string name="configure_your_apps">Configurez vos applications et raccourcis dans les paramètres</string>
     <string name="theme_selector">Sélecteur de thème</string>
@@ -230,8 +225,7 @@
     <string name="copy">Copie</string>
     <string name="pick_a_nest">Choisissez un nid</string>
     <string name="create_new_nest">Créer un nouveau nid</string>
-    <string name="open_burger_menu">Ouvrir le menu des hamburgers</string>
-    <string name="selected_text">Choisi</string>
+	<string name="selected_text">Choisi</string>
     <string name="unselected">Désélectionné</string>
     <string name="inner_padding">Rembourrage intérieur</string>
     <string name="tint">Teinte</string>
@@ -279,8 +273,7 @@
     <string name="close_kb">Fermer clavier</string>
     <string name="open_kb">Clavier ouvert</string>
     <string name="open_settings">Ouvrir les paramètres</string>
-    <string name="clear_all">Tout effacer</string>
-    <!--  ─────────────  Wellbeing Section  ─────────────  -->
+	<!--  ─────────────  Wellbeing Section  ─────────────  -->
     <string name="wellbeing">Bien-être numérique</string>
     <string name="wellbeing_help">Prenez le contrôle de vos habitudes numériques. Faites une pause avant d\'ouvrir des applications distrayantes et réfléchissez à votre utilisation.</string>
     <string name="social_media_pause">Pause Réseaux Sociaux</string>
@@ -313,7 +306,7 @@
     <string name="reminder_mode_title">Rappel d\'utilisation</string>
     <string name="reminder_mode_description">Recevez des rappels périodiques lorsque vous restez trop longtemps sur une app en pause</string>
     <string name="reminder_interval">Intervalle de rappel</string>
-    <string name="reminder_interval_description">Me le rapeller toutes les ... minutes</string>
+    <string name="reminder_interval_description">Me le rapeller toutes les … minutes</string>
     <string name="overlay_permission_required">Permission de superposition</string>
     <string name="overlay_permission_description">Pour afficher des rappels par-dessus d\'autres applications, Dragon Launcher a besoin de la permission « Afficher par-dessus d\'autres apps ».</string>
     <!--  Popup Display Options  -->
@@ -434,8 +427,7 @@
     <string name="on_tertiary_fixed_variant_color">Sur la variante fixe tertiaire</string>
     <string name="custom_colors">Couleurs personnalisées</string>
 	<string name="custom_colors_desc">Couleurs personalisées</string>
-	<string name="normal_colors">Couleurs normales</string>
-    <string name="reset_all_points">Réinitialisez tous les points</string>
+	<string name="reset_all_points">Réinitialisez tous les points</string>
     <string name="reset_all_points_desc">Toutes vos actions seront réinitialisées, cela ne peut pas être annulé !</string>
     <string name="use_categories">Catégories d’utilisation</string>
     <string name="use_categories_desc">Regroupez les applications dans le tiroir selon leurs catégories définies</string>
@@ -454,7 +446,7 @@
 	<string name="category_grid_cells_desc">Nombre d\'apps dans une ligne/colonne d\'une catégorie</string>
 	<string name="multi_select_count">%d sélectionnée(s)</string>
 
-	<string name="place_app_where">Ou voulez-vous placer...</string>
+	<string name="place_app_where">Ou voulez-vous placer…</string>
 	<string name="tap_circle_to_place">Appuyez sur le cercle pour placer l\'app</string>
     <string name="multi_select_drawer_hint">💡 Appui long sur une app pour en sélectionner plusieurs d\'un coup</string>
     <string name="deselect_all">Tout désélectionner</string>
@@ -482,8 +474,7 @@
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">Sélectionner le profil par défaut</string>
     <string name="select_workspace_hint">Choisissez quel profil s\'ouvre par défaut. Vous pouvez toujours changer en glissant à gauche ou à droite dans le tiroir.</string>
-    <string name="workspace_default">Par défaut</string>
-    <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
+	<!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">Échec de l\'ajout du raccourci</string>
     <string name="pinned_shortcuts">Raccourcis</string>
     <string name="no_pinned_shortcuts">Aucun raccourci disponible</string>
@@ -500,25 +491,20 @@
     <string name="hold_delay_before_starting_long_click_settings">Maintenez le délai avant de commencer les paramètres du clic long (ms)</string>
     <string name="hold_delay_before_starting_long_click_settings_desc">Combien de temps faut-il tenir avant que les réglages de chargement ne commencent à se charger</string>
     <string name="keep_screen_on_desc">Ne désactivez pas l’écran ni ne verrouillez, gardez-le toujours allumé quand Dragon est concentré</string>
-    <string name="drag_zone_padding">Rembourrage de zone de traînée</string>
-	<string name="drag_zone_padding_desc">Ajuster la zone draggable</string>
 	<string name="points_settings">Réglages de points</string>
     <string name="logs">Journaux d’ajournement</string>
     <string name="settings_json">Paramètres JSON</string>
     <string name="pick_a_settings_screen">Choisissez un écran de paramètres</string>
     <string name="app_preview_settings">Superposition d’aperçu d’application</string>
     <string name="app_preview_settings_desc">Personalisez à quoi ressemble le tiroir d\'apps</string>
-    <string name="not_implemented">Non implémenté</string>
-    <string name="show_status_bar_desc">Affichez la barre d’état, si désactivée rien n’apparaît</string>
+	<string name="show_status_bar_desc">Affichez la barre d’état, si désactivée rien n’apparaît</string>
     <string name="disable_haptic_globally">Désactivez globalement le retour haptique</string>
     <string name="disable_haptic_globally_desc">Empêchez Dragon de produire un quelconque retour haptique dans la sélection des points au cas où vous détesteriez ça</string>
     <string name="drag_handle">Poignée de déplacement</string>
     <string name="personal_profile">Personel</string>
     <string name="work_profile">Professionnel</string>
     <string name="private_profile">Espace privé</string>
-    <string name="private_space_locked">Espace privé verrouillé</string>
-    <string name="private_space_authenticating">Authentification…</string>
-    <string name="app_info_name">name = %1$s</string>
+	<string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWork = %1$s</string>
@@ -602,23 +588,12 @@
     <string name="please_enable_accessibility_services_to_use_that_feature">Veuillez activer le service d’accessibilité pour utiliser cette fonctionnalité</string>
 	<string name="federico_desc">Nids actifs &amp; traductions</string>
 	<string name="copied_to_clipboard">Copié dans le press papié!</string>
-    <string name="permission_tab_help">Gérez ici les permissions et accès système pour Dragon Launcher</string>
-    <string name="special_system_access">Accès système spéciaux</string>
-    <string name="notification_access">Accès aux notifications</string>
-    <string name="notification_access_desc">Permet d\'afficher les badges de notification sur les icônes.</string>
-    <string name="install_from_unknown_source_permission">Installation d\'applications (APK)</string>
-    <string name="install_from_unknown_source_permission_desc">Nécessaire pour installer les extensions téléchargées</string>
-    <string name="accessibility_service">Service d\'accessibilité</string>
-    <string name="accessibility_service_desc">Utilisé pour étendre le panneau de notifications via des gestes.</string>
-    <string name="usage_access">Accès aux statistiques d\'utilisation</string>
-    <string name="android_permissions">Permissions Android</string>
-    <string name="manage_in_system_settings">Gérer dans les paramètres système.</string>
-    <string name="font_manage_help">Gérez vos polices ici. Vous pouvez importer vos propres fichiers TTF/OTF ou en télécharger depuis le catalogue Google Fonts.</string>
+	<string name="usage_access">Accès aux statistiques d\'utilisation</string>
+	<string name="font_manage_help">Gérez vos polices ici. Vous pouvez importer vos propres fichiers TTF/OTF ou en télécharger depuis le catalogue Google Fonts.</string>
     <string name="font_catalog">Catalogue</string>
     <string name="font_import">Importer</string>
     <string name="font_installed_fonts">Polices installées</string>
-    <string name="font_available_in_extension">Disponible dans l\'extension (%1$d)</string>
-    <string name="font_download_all_started">Lancement du téléchargement de toutes les polices. Vérifiez vos notifications.</string>
+	<string name="font_download_all_started">Lancement du téléchargement de toutes les polices. Vérifiez vos notifications.</string>
     <string name="font_confirm_delete">Confirmer (%1$d)</string>
     <string name="font_search_placeholder">Rechercher des polices…</string>
     <string name="font_downloading">Téléchargement de %1$s…</string>
@@ -670,8 +645,7 @@
     <string name="hold_settings_help">Les réglages liés à l\'arc qui apparaît lorsque vous tenez assez longtemps sur l\'écran principal, Vous ne pouvez pas complètement désactiver, sinon, vous pouvez lâcher la dernière porte qui peut vous mener à des réglages, si vous avez fait de la merde, et ainsi être forcé de réinitialiser l\'application.</string>
     <string name="rotation_per_second">Rotations/seconde</string>
     <string name="rotation_per_second_desc">Combien de tours sur lui-même il fait en une seconde</string>
-    <string name="enable_backup">Activer la sauvegarde</string>
-    <string name="choose_a_auto_backup_file">Choisissez un fichier de sauvegarde automatique</string>
+	<string name="choose_a_auto_backup_file">Choisissez un fichier de sauvegarde automatique</string>
     <string name="minus_one_means_random">-1 signifie aléatoire au démarrage</string>
     <string name="search_bar">Barre de recherche</string>
     <string name="toolbars_order">Ordre des barres d\'outils</string>
@@ -712,8 +686,7 @@
     <string name="app_info_cache_key">Cache key = %1$s</string>
     <string name="custom_dim">Opacité custom</string>
     <string name="dim_amount">Quantité d\'opacité</string>
-    <string name="refresh">Rafraîchir</string>
-    <string name="crash">L\'application à crashé !</string>
+	<string name="crash">L\'application à crashé !</string>
     <string name="access_app">Accéder à l\'application (vous pourriez encore subir le crash)</string>
     <string name="shizuku_unavailable">Shizuku n\'est pas disponible</string>
     <string name="shizuku_unavailable_message">Shizuku n\'est pas installé ou correctement configuré sur votre appareil</string>
@@ -732,22 +705,13 @@
     <string name="pick_a">Choisis un</string>
     <string name="command">commande</string>
     <string name="show_toast">Afficher un toast</string>
-    <string name="show_tooltips">Afficher les infobulles</string>
-    <string name="gradient">Dégradé</string>
+	<string name="gradient">Dégradé</string>
     <string name="app_display_desc">Changez les paramètres d\'apparence globaux, dans le contexte du launcher, pas les couleurs</string>
     <string name="shape_scale">Echelle %1$.2f</string>
     <string name="rotation_arg">"Rotation:  %1$d°"</string>
     <string name="pause_duration_description">Combien de temps vous devez respirer avant de pouvoir continuer</string>
     <string name="use_anyways">utilisez quand même</string>
-    <string name="migrating_settings">Migration en cours</string>
-    <string name="migrate_from_322">Migrer depuis la version 3.2.2</string>
-    <string name="migrate_from_322_desc">Votre sauvegarde semble venir de la version 3.2.2 et a besion d\'être migrée vers la nouvelle version. Voulez vous continuer?</string>
-    <string name="migrate_from_322_desc_forced">Bienvenue dans la nouvelle version de Dragon! Pour continuer, vos paramètres vont être migrés automatiquement vers le nouveau système. Si quelque chose échoue, merci de me le signaler immédiatement par nimport quel moyen (dans la section \"à propos\" des paramètres) pour me permettre de corriger le problème le plus rapidement possible.</string>
-    <string name="migrating_settings_desc">Conversion de la sauvegarde de la version 3.2.2 vers 4.0.0. Merci de patienter.</string>
-    <string name="migrating_settings_desc_kidding">Je déconne, ça n\'est pas aussi long :)</string>
-    <string name="migration_complete">Migration complétée</string>
-    <string name="migration_had_issues">La migration a eu des problèmes</string>
-    <string name="preview_scale_factor">Echelle de l\'affichage</string>
+	<string name="preview_scale_factor">Echelle de l\'affichage</string>
     <string name="plain_wallpaper">Fond d\'écran uni</string>
     <string name="wallpaper_dim_amount_main">Intensité du voile du fond d\'écran sur l\'écran pricipal</string>
     <string name="wallpaper_dim_amount_drawer">Intensité du voile du fond d\'écran dans le tiroir d\'apps</string>
@@ -804,8 +768,7 @@
     <string name="green">Vert</string>
     <string name="blue">Bleu</string>
     <string name="move_around_mode">Mode déplacement</string>
-    <string name="reset_rotation">Réinitialiser la rotation</string>
-    <string name="reset_zoom">Réinitialiser le zoom</string>
+	<string name="reset_zoom">Réinitialiser le zoom</string>
     <string name="edit_workspace">Editer le workspace</string>
     <string name="random">Aléatoire</string>
     <string name="special_options">Options spéciales</string>
@@ -862,9 +825,8 @@
     <string name="left_padding_status_bar_desc">L\'espace vide à gauche de la barre de status</string>
     <string name="right_padding_status_bar_desc">L\'espace vide à droite de la barre de status</string>
     <string name="top_padding_status_bar_desc">Les gens qui utilisent ce truc sont étranges</string>
-    <string name="bottom_padding_status_bar_desc">Je comprends ce paremètre un peu mieux que le précedant, mais quand même...</string>
-    <string name="pick_stores_to_display">Choisissez les stores à afficher</string>
-    <string name="profile">Profile</string>
+    <string name="bottom_padding_status_bar_desc">Je comprends ce paremètre un peu mieux que le précedant, mais quand même…</string>
+	<string name="profile">Profile</string>
     <string name="themed_icons_desc">Si vous voulez utilisez les icônes Material-theme</string>
     <string name="force_themed_icons_desc">Appliquer les icônes Material-Theme même ppour ceux pas compatibles</string>
     <string name="adaptify_icons_desc">Je n\'ai aucune idée de ce que fait cette option mais elle était dans le bout de code que j\'ai copié de Kvaesitso</string>
@@ -882,8 +844,7 @@
     <string name="nest_debug_overlay_desc">Ajoute quelque options visuelle pour debugger l\'affichage des nids</string>
     <string name="auto_merge">Fusionner automatiquement</string>
     <string name="auto_merge_desc">Peut déclencher des actions automatique lorsque vous maintenez un point au dessus d\'un autre</string>
-    <string name="show_more_sheet">Afficher plus</string>
-    <string name="selected_points">Points séléctionés</string>
+	<string name="selected_points">Points séléctionés</string>
     <string name="animation_when_snapping">Animer quand le point séléctionné converge</string>
     <string name="animation_when_snapping_desc">Utilise de super animations pour animer le trait</string>
     <string name="cannot_directly_uninstall_from_other_profiles">Dragon ne peut pas directement demander à Android de désinstaller depuis d\'autres profiles, faites le vous même</string>
@@ -904,9 +865,7 @@
     <string name="reset_backup_tab">Etes vous sur de vouloir réinitialiser tous les paramètres de sauvegarde?</string>
     <string name="copy_to_clipboard">Copier dans le presse papier</string>
     <string name="import_from_clipboard">Importer depuis le presse papier</string>
-    <string name="points_keep_their_relative_position">Les point gardent leur position relative</string>
-    <string name="points_keep_their_relative_position_desc">Quand la forme est déplacée, les points sont aussi déplacés du même vecteur que la forme que vous bougez, ce qui les maintient en place visuellement</string>
-    <string name="duplicate">Dupliquer</string>
+	<string name="duplicate">Dupliquer</string>
     <string name="flashbang_theme">Theme Flashbang</string>
     <string name="line">Ligne</string>
     <string name="angle">Angle</string>

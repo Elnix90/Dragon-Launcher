@@ -41,7 +41,7 @@ private data class AppLocale(
 
 // yeeted from nsh04/Tomato
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalePickerSheet(onDismissRequest: () -> Unit) {
 	val ctx = LocalContext.current
@@ -159,7 +159,6 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
 @Composable
 fun listItemColors(): ListItemColors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun segmentedListItemShapes(
 	index: Int,

@@ -69,7 +69,6 @@ fun WelcomePageTutorial() {
 }
 
 @SuppressLint("LocalContextGetResourceValueCall")
-@OptIn(ExperimentalGridApi::class)
 @Composable
 private fun TutorialEntry(
 	painterResId: Int,

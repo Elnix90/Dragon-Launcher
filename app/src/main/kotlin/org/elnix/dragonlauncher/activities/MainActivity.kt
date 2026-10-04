@@ -443,10 +443,6 @@ class MainActivity :
 		appWidgetHost.startListening()
 	}
 
-	override fun onPause() {
-		super.onPause()
-	}
-
 	override fun onStop() {
 		super.onStop()
 		appWidgetHost.stopListening()

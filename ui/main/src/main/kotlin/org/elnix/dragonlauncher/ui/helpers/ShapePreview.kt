@@ -28,7 +28,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShapePreview(
 	iconShape: IconShape,

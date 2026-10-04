@@ -15,10 +15,9 @@ public inline val String?.isBlankJson: Boolean
 	get() {
 		if (this == null) return true
 		val trimmed = trim()
-		if (trimmed.isEmpty()) return true
+		return trimmed.isEmpty() || trimmed.matches(Regex("""^\{\s*\}$|^\[\s*\]$"""))
 
 		// Match {} or [] with optional internal whitespace
-		return trimmed.matches(Regex("""^\{\s*\}$|^\[\s*\]$"""))
 	}
 
 /**

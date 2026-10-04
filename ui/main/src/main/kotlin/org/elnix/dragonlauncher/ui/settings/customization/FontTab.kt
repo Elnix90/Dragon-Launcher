@@ -96,7 +96,7 @@ import java.io.FileOutputStream
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@SuppressLint("LocalContextGetResourceValueCall")
+@SuppressLint("LocalContextGetResourceValueCall", "WrongConstant")
 @Composable
 fun FontTab() {
 	val ctx = LocalContext.current

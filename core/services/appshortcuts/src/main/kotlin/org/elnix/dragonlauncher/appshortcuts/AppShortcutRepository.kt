@@ -204,8 +204,8 @@ internal class AppShortcutRepositoryImpl(
 		if (!permissionsManager.checkPermissionOnce(PermissionGroup.AppShortcuts)) return emptyList()
 		val results = mutableListOf<AppShortcutConfigActivity>()
 		val profiles = profileManager.activeProfiles.first()
-		for (profile in profiles) {
-			val activities = launcherApps.getShortcutConfigActivityList(null, profile.userHandle)
+		for ((_, userHandle) in profiles) {
+			val activities = launcherApps.getShortcutConfigActivityList(null, userHandle)
 			results.addAll(
 				activities.map {
 					AppShortcutConfigActivity(it)

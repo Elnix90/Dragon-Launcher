@@ -83,7 +83,6 @@ import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ColorSelectorTab() {
 	val navigator = LocalNavigator.current

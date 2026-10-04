@@ -16,7 +16,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
@@ -415,7 +414,7 @@ fun SettingsScreen(
 						var toast by remember { mutableStateOf<Toast?>(null) }
 						var timesClickedOnVersion by remember { mutableIntStateOf(0) }
 
-						TextRow(stringResource(R.string.version)) {
+						TextRow(stringResource(R.string.version), {
 							VersionNumberChip(
 								modifier =
 									Modifier
@@ -468,11 +467,11 @@ fun SettingsScreen(
 											}
 										}
 							)
-						}
+						})
 
-						TextRow(stringResource(R.string.code_name_string)) { CodeNameChip() }
-						TextRow(stringResource(R.string.version_code)) { VersionCodeChip() }
-						TextRow(stringResource(R.string.build_type)) { BuildTypeChip() }
+						TextRow(stringResource(R.string.code_name_string), { CodeNameChip() })
+						TextRow(stringResource(R.string.version_code), { VersionCodeChip() })
+						TextRow(stringResource(R.string.build_type), { BuildTypeChip() })
 					}
 				}
 
@@ -498,7 +497,7 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun ColumnScope.TextRow(
+private fun TextRow(
 	text: String,
 	tag: @Composable RowScope.() -> Unit
 ) {

@@ -29,7 +29,6 @@ val connectedTopButtonPressShape: Shape
 			bottomEnd = ConnectedButtonGroupSmallTokens.PressedInnerCornerCornerSize
 		)
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedTopButtonShapes(
 	shape: Shape = connectedTopButtonShape,
@@ -60,7 +59,6 @@ val connectedBottomButtonPressShape: Shape
 			bottomEnd = ShapeDefaultsClone.CornerFull
 		)
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedBottomButtonShapes(
 	shape: Shape = connectedBottomButtonShape,

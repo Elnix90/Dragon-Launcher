@@ -1,5 +1,6 @@
 plugins {
 	alias(libs.plugins.dragon.library)
+	alias(libs.plugins.dragon.compose)
 	alias(libs.plugins.dragon.hilt)
 }
 

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.Image

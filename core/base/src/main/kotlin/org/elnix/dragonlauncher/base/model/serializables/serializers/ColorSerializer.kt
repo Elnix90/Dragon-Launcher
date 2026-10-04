@@ -11,7 +11,6 @@ import kotlinx.serialization.encoding.Encoder
 import org.elnix.dragonlauncher.ktx.toColor
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 
-@OptIn(ExperimentalSerializationApi::class)
 public object ColorSerializer : KSerializer<Color> {
 	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 

@@ -66,7 +66,7 @@ class LabelTextTest {
 
 	@Test
 	fun labelText_displaysSpecialCharacters() {
-		val specialText = "Émojis & Spëcial Chârs: @#\$%"
+		val specialText = "Émojis & Spëcial Chârs: @#$%"
 		composeTestRule.setContent {
 			MaterialTheme {
 				LabelText(text = specialText)

@@ -289,34 +289,34 @@ private fun ClockLayer(
 		withTransform({
 			this.scale(scale)
 		}) {
-			for (sublayer in sublayers) {
-				when (sublayer.role) {
+			for ((drawable, role) in sublayers) {
+				when (role) {
 					ClockSublayerRole.Hour -> {
-						sublayer.drawable.level = (
+						drawable.level = (
 							((hour - defaultHour + 12) % 12) * 60 +
 								((minute) % 60)
 						)
 					}
 
 					ClockSublayerRole.Minute -> {
-						sublayer.drawable.level =
+						drawable.level =
 							((minute - defaultMinute + 60) % 60)
 					}
 
 					ClockSublayerRole.Second -> {
-						sublayer.drawable.level =
+						drawable.level =
 							(((second - defaultSecond + 60) % 60) * 10)
 					}
 
 					else -> {}
 				}
 				drawIntoCanvas {
-					sublayer.drawable.bounds =
+					drawable.bounds =
 						run {
 							val toRect = size.toRect()
 							Rect(toRect.left.toInt(), toRect.top.toInt(), toRect.right.toInt(), toRect.bottom.toInt())
 						}
-					sublayer.drawable.drawWithColorFilter(it.nativeCanvas, colorFilter)
+					drawable.drawWithColorFilter(it.nativeCanvas, colorFilter)
 				}
 			}
 		}

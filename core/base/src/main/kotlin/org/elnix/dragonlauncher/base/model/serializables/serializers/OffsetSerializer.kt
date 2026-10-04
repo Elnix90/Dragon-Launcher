@@ -10,7 +10,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import org.elnix.dragonlauncher.ktx.round
 
-@OptIn(ExperimentalSerializationApi::class)
 internal object OffsetSerializer : KSerializer<Offset> {
 	override val descriptor: SerialDescriptor =
 		PrimitiveSerialDescriptor("Offset", PrimitiveKind.STRING)

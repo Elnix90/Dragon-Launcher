@@ -31,14 +31,11 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppShortcutSearch
 
-private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): Boolean {
-	if (q.isBlank()) return true
-	return appName.contains(q, ignoreCase = true) ||
-		`package`.contains(q, ignoreCase = true) ||
-		(shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-		(longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-		id.contains(q, ignoreCase = true)
-}
+private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): Boolean = q.isBlank() || appName.contains(q, ignoreCase = true) ||
+	`package`.contains(q, ignoreCase = true) ||
+	(shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+	(longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+	id.contains(q, ignoreCase = true)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

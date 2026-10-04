@@ -297,7 +297,6 @@ public class IconService internal constructor(
 		}
 	}
 
-	@OptIn(ExperimentalCoroutinesApi::class)
 	public fun getActionIcon(
 		action: Action,
 		reload: Boolean = false
@@ -355,7 +354,6 @@ public class IconService internal constructor(
 			resolveCustomPointIcon(point, size, reload)
 		}
 
-	@OptIn(ExperimentalCoroutinesApi::class)
 	public fun getShortcutIcon(
 		shortcut: Action.LaunchShortcut,
 		reload: Boolean = false
@@ -403,7 +401,7 @@ public class IconService internal constructor(
 			val cacheKey =
 				CacheKey(
 					data = application.key,
-					customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + iconProviders.hashCode(),
+					customIconHashCode = 31 * customIcon.hashCode() + iconProviders.hashCode(),
 					providersHashCode = providers.hashCode(),
 					transformationsHashcode = transformations.hashCode()
 				)
@@ -451,7 +449,7 @@ public class IconService internal constructor(
 			val cacheKey =
 				CacheKey(
 					data = point.key,
-					customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
+					customIconHashCode = 31 * customIcon.hashCode() + effectiveProperties.hashCode(),
 					providersHashCode = providers.hashCode(),
 					transformationsHashcode = transformations.hashCode()
 				)

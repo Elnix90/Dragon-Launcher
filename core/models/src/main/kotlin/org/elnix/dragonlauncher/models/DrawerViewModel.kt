@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package org.elnix.dragonlauncher.models
 
 import android.content.pm.ShortcutInfo

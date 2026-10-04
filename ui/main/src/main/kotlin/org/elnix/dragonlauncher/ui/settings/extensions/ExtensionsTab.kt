@@ -165,7 +165,6 @@ private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
 			if (isInstalled) {
 				val pkg = extension.packageName
 
-				@Suppress("RemoveRedundantQualifierName") // This is needed to differentiate the 3 overloads (one with the Scope receiver)
 				org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
 					onClick = {
 						val intent = ctx.packageManager.getLaunchIntentForPackage(pkg)
@@ -189,7 +188,6 @@ private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
 				}
 			}
 
-			@Suppress("RemoveRedundantQualifierName") // This is needed to differentiate the 3 overloads (one with the Scope receiver)
 			org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
 				onClick = {
 					if (!isInstalled) {

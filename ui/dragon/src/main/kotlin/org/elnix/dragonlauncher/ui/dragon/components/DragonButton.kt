@@ -18,7 +18,6 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DragonButton(
 	onClick: () -> Unit,
@@ -61,7 +60,6 @@ fun DragonButton(
 	}
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DragonGroupScope.DragonButton(
 	onClick: () -> Unit,

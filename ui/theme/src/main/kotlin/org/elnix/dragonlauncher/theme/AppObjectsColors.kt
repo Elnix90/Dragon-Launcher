@@ -4,7 +4,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButtonColors
@@ -237,7 +236,6 @@ object AppObjectsColors {
 			IconButtonDefaults.iconButtonColors()
 		}
 
-	@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 	@Deprecated("Do not use this its only there as a placeholder")
 	@Composable
 	fun toggleButtonColors(): ToggleButtonColors =

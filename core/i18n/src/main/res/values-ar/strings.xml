@@ -24,10 +24,8 @@
     <string name="extension_manual_install_desc">إذا لم يكن لديك إضافة تثبيت، فقم بتنزيل ملف APK وحدده أدناه للتثبيت.</string>
     <string name="select_apk">حدد ملف APK</string>
     <string name="system_default">افتراضي النظام</string>
-    <string name="version_arg">الإصدار</string>
-    <string name="export_cancelled">تم إلغاء التصدير</string>
-    <string name="import_cancelled">تم إلغاء الاستيراد</string>
-    <string name="backup">النسخ الاحتياطي</string>
+	<string name="export_cancelled">تم إلغاء التصدير</string>
+	<string name="backup">النسخ الاحتياطي</string>
     <string name="backup_restore_text">نسخ احتياطي أو استعادة الإعدادات وإجراءات التطبيق، يتم تشغيل النسخ الاحتياطي التلقائي عند كل تشغيل / إيقاف مؤقت / خروج من التطبيق أو بالضغط على زر \"تشغيل\" أدناه</string>
     <string name="export_settings">تصدير الإعدادات</string>
     <string name="import_settings">استيراد الإعدادات</string>
@@ -87,8 +85,7 @@
     <string name="font_catalog">الكتالوج</string>
     <string name="font_import">استيراد</string>
     <string name="font_installed_fonts">الخطوط المثبتة</string>
-    <string name="font_available_in_extension">متاح في الإضافة (%1$d)</string>
-    <string name="font_download_all_started">بدء تنزيل جميع الخطوط. تحقق من الإشعارات.</string>
+	<string name="font_download_all_started">بدء تنزيل جميع الخطوط. تحقق من الإشعارات.</string>
     <string name="font_confirm_delete">تأكيد (%1$d)</string>
     <string name="font_search_placeholder">البحث عن الخطوط…</string>
     <string name="font_downloading">جاري تنزيل %1$s…</string>
@@ -96,8 +93,7 @@
     <string name="font_cat_serif">SERIF</string>
     <string name="font_cat_sans_serif">SANS-SERIF</string>
     <string name="font_cat_monospace">MONOSPACE</string>
-    <string name="show_tooltips">إظهار تلميحات الأدوات</string>
-    <string name="gradient">تدرج</string>
+	<string name="gradient">تدرج</string>
     <string name="sliders">أشرطة تمرير</string>
     <string name="common_settings">إعدادات عامة</string>
     <string name="dragging_display">عرض السحب</string>
@@ -155,8 +151,7 @@
     <string name="green">أخضر</string>
     <string name="blue">أزرق</string>
     <string name="move_around_mode">وضع التحريك</string>
-    <string name="reset_rotation">إعادة ضبط التدوير</string>
-    <string name="reset_zoom">إعادة ضبط التكبير</string>
+	<string name="reset_zoom">إعادة ضبط التكبير</string>
     <string name="edit_workspace">تحرير مساحة العمل</string>
     <string name="random">عشوائي</string>
     <string name="special_options">خيارات خاصة</string>
@@ -211,9 +206,7 @@
     <string name="keep_screen_on">إبقاء الشاشة قيد التشغيل</string>
     <string name="back_action">إجراء العودة</string>
     <string name="double_click_action">إجراء النقر المزدوج</string>
-    <string name="privacy_first">الخصوصية أولاً</string>
-    <string name="quick_tutorial">برنامج تعليمي سريع</string>
-    <string name="swipe_to_open_app">اسحب لفتح التطبيقات / الاختصارات المهيأة</string>
+	<string name="swipe_to_open_app">اسحب لفتح التطبيقات / الاختصارات المهيأة</string>
     <string name="configure_your_apps">قم بتهيئة تطبيقاتك واختصاراتك في الإعدادات</string>
     <string name="theme_selector">محدد السمات</string>
     <string name="edit_point">تحرير النقطة</string>
@@ -328,8 +321,7 @@
     <string name="copy">نسخ</string>
     <string name="pick_a_nest">انتقِ عشًا</string>
     <string name="create_new_nest">إنشاء عش جديد</string>
-    <string name="open_burger_menu">فتح قائمة الهمبرغر</string>
-    <string name="selected_text">محدد</string>
+	<string name="selected_text">محدد</string>
     <string name="unselected">غير محدد</string>
     <string name="inner_padding">الهامش الداخلي</string>
     <string name="tint">تظليل</string>
@@ -376,8 +368,7 @@
     <string name="close_kb">إغلاق لوحة المفاتيح</string>
     <string name="open_kb">فتح لوحة المفاتيح</string>
     <string name="open_settings">فتح الإعدادات</string>
-    <string name="clear_all">مسح الكل</string>
-    <string name="wellbeing">الرفاهية الرقمية</string>
+	<string name="wellbeing">الرفاهية الرقمية</string>
     <string name="wellbeing_help">تحكم في عاداتك الرقمية. توقف قليلاً قبل فتح التطبيقات المشتتة وفكر في استخدامك.</string>
     <string name="social_media_pause">وقفة وسائل التواصل الاجتماعي</string>
     <string name="social_media_pause_description">إظهار شاشة وعي قبل فتح التطبيقات التي قد تشتت انتباهك (تيك توك، إنستغرام، سناب شات…)</string>
@@ -515,8 +506,7 @@
     <string name="on_tertiary_fixed_color">فوق الثلاثي الثابت</string>
     <string name="on_tertiary_fixed_variant_color">فوق بديل الثلاثي الثابت</string>
     <string name="custom_colors">ألوان مخصصة</string>
-    <string name="normal_colors">ألوان عادية</string>
-    <string name="reset_all_points">إعادة ضبط جميع النقاط</string>
+	<string name="reset_all_points">إعادة ضبط جميع النقاط</string>
     <string name="reset_all_points_desc">سيتم إعادة ضبط جميع إجراءاتك، لا يمكن التراجع عن هذا!</string>
     <string name="use_categories">استخدام الفئات</string>
     <string name="use_categories_desc">تجميع التطبيقات في الدرج حسب فئاتها المحددة</string>
@@ -556,8 +546,7 @@
     <string name="authentication_error">خطأ في المصادقة: %s</string>
     <string name="select_default_workspace">حدد مساحة العمل الافتراضية</string>
     <string name="select_workspace_hint">اختر مساحة العمل التي تفتح افتراضياً. يمكنك دائماً التبديل عن طريق السحب لليسار أو اليمين في الدرج.</string>
-    <string name="workspace_default">الافتراضية</string>
-    <string name="pinned_shortcut_failed">فشل إضافة الاختصار</string>
+	<string name="pinned_shortcut_failed">فشل إضافة الاختصار</string>
     <string name="pinned_shortcuts">الاختصارات</string>
     <string name="no_pinned_shortcuts">لا توجد اختصارات متاحة</string>
     <string name="select_shortcut_action_title">حدد إجراءً لـ %1$s</string>
@@ -574,8 +563,7 @@
     <string name="hold_delay_before_starting_long_click_settings">تأخير الانتظار قبل بدء الضغط المطول للإعدادات (ملي ثانية)</string>
     <string name="hold_delay_before_starting_long_click_settings_desc">كم من الوقت يجب الانتظار قبل أن يبدأ تحميل الإعدادات</string>
     <string name="keep_screen_on_desc">لا تغلق الشاشة أو تقفلها، ابقها قيد التشغيل دائماً عندما يكون التنين في المقدمة</string>
-    <string name="drag_zone_padding">هامش منطقة السحب</string>
-    <string name="points_settings">إعدادات النقاط</string>
+	<string name="points_settings">إعدادات النقاط</string>
     <string name="default_point_live_nest_defaults">افتراضيات العش المباشر</string>
     <string name="default_point_live_nest_defaults_summary">تُستخدم عند اختيار عش مستهدف في نقطة ما (تأخير المعاينة، المقياس، السماحية، التعتيم).</string>
     <string name="default_hold_and_run_delay">تأخير \"الضغط والتشغيل\" الافتراضي (ملي ثانية)</string>
@@ -584,15 +572,12 @@
     <string name="settings_json">ملف الإعدادات JSON</string>
     <string name="pick_a_settings_screen">اختر شاشة إعدادات</string>
     <string name="app_preview_settings">تراكب معاينة التطبيق</string>
-    <string name="not_implemented">غير منفذ بعد</string>
-    <string name="show_status_bar_desc">عرض شريط الحالة، إذا تم تعطيله فلن يظهر شيء</string>
+	<string name="show_status_bar_desc">عرض شريط الحالة، إذا تم تعطيله فلن يظهر شيء</string>
     <string name="disable_haptic_globally">تعطيل الردود اللمسية عالمياً</string>
     <string name="disable_haptic_globally_desc">منع التنين من إصدار أي ردود فعل لمسية عند اختيار النقاط إذا كنت تكرهها</string>
     <string name="drag_handle">مقبض السحب</string>
     <string name="private_profile">المساحة الخاصة</string>
-    <string name="private_space_locked">المساحة الخاصة مقفولة</string>
-    <string name="private_space_authenticating">جاري المصادقة…</string>
-    <string name="app_info_name">الاسم = %1$s</string>
+	<string name="app_info_name">الاسم = %1$s</string>
     <string name="app_info_package_name">اسم الحزمة = %1$s</string>
     <string name="app_info_is_system">نظام = %1$s</string>
     <string name="app_info_is_work_profile">ملف عمل = %1$s</string>
@@ -678,18 +663,8 @@
     <string name="select_all">تحديد الكل</string>
     <string name="invert">عكس</string>
     <string name="advanced">متقدم</string>
-    <string name="permission_tab_help">التحكم في أذونات التطبيق، والوصول المختلف للإضافات الخارجية</string>
-    <string name="special_system_access">وصول خاص للنظام</string>
-    <string name="notification_access">الوصول إلى الإشعارات</string>
-    <string name="notification_access_desc">السماح بعرض نقاط الإشعارات على التطبيقات</string>
-    <string name="install_from_unknown_source_permission">إذن التثبيت من مصادر غير معروفة (APK)</string>
-    <string name="install_from_unknown_source_permission_desc">مطلوب لتثبيت الإضافات</string>
-    <string name="accessibility_service">خدمة إمكانية الوصول</string>
-    <string name="accessibility_service_desc">تُستخدم لتوسيع لوحة الإشعارات عبر الإيماءات.</string>
-    <string name="usage_access">الوصول إلى إحصائيات الاستخدام</string>
-    <string name="android_permissions">أذونات أندرويد</string>
-    <string name="manage_in_system_settings">الإدارة في إعدادات النظام.</string>
-    <string name="snap_points">نقاط المحاذاة</string>
+	<string name="usage_access">الوصول إلى إحصائيات الاستخدام</string>
+	<string name="snap_points">نقاط المحاذاة</string>
     <string name="undo">تراجع</string>
     <string name="undo_all">تراجع عن الكل</string>
     <string name="redo">إعادة</string>
@@ -718,8 +693,7 @@
     <string name="hold_settings_help">الإعدادات المتعلقة بالقوس الذي يظهر عندما تضغط مطولاً لفترة كافية على الشاشة الرئيسية. لا يمكنك تعطيله تماماً، وإلا فقد تفقد الباب الأخير الذي يقودك للإعدادات إذا أخطأت في التكوين، مما سيضطرك لإعادة ضبط التطبيق.</string>
     <string name="rotation_per_second">دورة/ثانية</string>
     <string name="rotation_per_second_desc">كم عدد الدورات التي يقوم بها حول نفسه في ثانية واحدة</string>
-    <string name="enable_backup">تفعيل النسخ الاحتياطي</string>
-    <string name="choose_a_auto_backup_file">اختر ملف نسخ احتياطي تلقائي</string>
+	<string name="choose_a_auto_backup_file">اختر ملف نسخ احتياطي تلقائي</string>
     <string name="minus_one_means_random">-1 تعني عشوائي عند البدء</string>
     <string name="search_bar">شريط البحث</string>
     <string name="toolbars_order">ترتيب أشرطة الأدوات</string>
@@ -746,12 +720,10 @@
     <string name="enable_snap_move">تفعيل محاذاة الحركة</string>
     <string name="off_screen_timeout">مهلة الخروج من الشاشة (ثانية)</string>
     <string name="off_screen_timeout_desc">كم من الوقت ينتظر التطبيق قبل العودة إلى الشاشة الرئيسية عندما تكون في شاشة أخرى. لا ينطبق على بعض الشاشات المحددة، مثل النسخ الاحتياطي (لأنك تختار ملفاً). -1 تعني عدم العودة</string>
-    <string name="refresh">تحديث</string>
-    <string name="crash">تعطل التطبيق!</string>
+	<string name="crash">تعطل التطبيق!</string>
     <string name="access_app">الدخول للتطبيق (قد تواجه تعطلاً مرة أخرى)</string>
     <string name="shizuku_unavailable">Shizuku غير متاح</string>
     <string name="shizuku_unavailable_message">Shizuku غير مثبت أو غير مهيأ بشكل صحيح على جهازك</string>
-    <string name="shizuku">شيزوكو</string>
     <string name="run_adb_command">تشغيل أمر ADB</string>
     <string name="toggle_bluetooth">تبديل البلوتوث</string>
     <string name="toggle_mobile_data">تبديل بيانات الهاتف</string>

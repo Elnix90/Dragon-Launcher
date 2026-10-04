@@ -17,18 +17,12 @@ internal val JAVA_VERSION: JavaVersion = JavaVersion.VERSION_21
 internal const val KOTLIN_METADATA_VERSION = "2.3.0-Beta1"
 
 internal fun Project.configureKotlinAndroid(
-	enableExplicitApi: Boolean = true,
-	enablePropertyParamAnnotationFlag: Boolean = true
+	enableExplicitApi: Boolean = true
 ) {
 	extensions.configure(KotlinAndroidProjectExtension::class.java) {
 		jvmToolchain(JAVA_VERSION.majorVersion.toInt())
 		if (enableExplicitApi) {
 			explicitApi()
-		}
-		if (enablePropertyParamAnnotationFlag) {
-//            compilerOptions {
-//                freeCompilerArgs.value(listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"))
-//            }
 		}
 	}
 }

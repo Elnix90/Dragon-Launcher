@@ -27,7 +27,6 @@ data class FancyAnimation(
 	val shape: Shape
 )
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun rememberFancyAnimations(
 	isPressed: Boolean,

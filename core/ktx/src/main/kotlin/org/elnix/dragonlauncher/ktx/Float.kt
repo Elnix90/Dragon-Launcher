@@ -9,12 +9,6 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 public const val TWO_PI_F: Float = (2.0 * PI).toFloat()
-public val Float.Companion.TWO_PI: Float
-	get() = TWO_PI_F
-
-private const val PI_F = PI.toFloat()
-public val Float.Companion.PI: Float
-	get() = PI_F
 
 public inline val Float.radians: Double
 	get() = Math.toRadians(this.toDouble())

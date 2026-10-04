@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.util.fastForEachIndexed
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BurgerListAction(
 	actions: List<MoreOptions>,

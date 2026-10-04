@@ -40,7 +40,6 @@ import org.elnix.dragonlauncher.ui.dragon.internals.connectedTopButtonShapes
  * @param hapticFeedback Whether to emit a [HapticFeedbackType.KeyboardTap] on every tap,
  *   regardless of the resulting checked state. Defaults to `true`.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
 	entries: List<T>,

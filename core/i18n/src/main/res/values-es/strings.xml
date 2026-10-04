@@ -22,10 +22,8 @@
     <string name="extension_manual_install_desc">Si no tienes una extensión de instalación, descarga el APK y scelútalo abajo para instalar.</string>
     <string name="select_apk">Seleccionar APK</string>
     <string name="system_default">Sistema predeterminado</string>
-    <string name="version_arg">Versión</string>
-    <string name="export_cancelled">Exportación cancelada</string>
-    <string name="import_cancelled">Importación cancelada</string>
-    <string name="backup_restore_text">Respaldar o restaurar los ajustes y las acciones de la app, respaldos automáticos son automáticamente disparados en cada inicio/pausa/salida de la app o apretando el botón \"Disparador\" debajo</string>
+	<string name="export_cancelled">Exportación cancelada</string>
+	<string name="backup_restore_text">Respaldar o restaurar los ajustes y las acciones de la app, respaldos automáticos son automáticamente disparados en cada inicio/pausa/salida de la app o apretando el botón \"Disparador\" debajo</string>
     <string name="export_settings">Ajustes de Exportación</string>
     <string name="import_settings">Ajustes de Importación</string>
     <string name="export_failed">Exportación fallida</string>
@@ -104,9 +102,7 @@
     <string name="keep_screen_on">Mantener la pantalla encendida</string>
     <string name="back_action">Acción Trasera</string>
     <string name="double_click_action">Acción de doble clic</string>
-    <string name="privacy_first">La privacidad es lo primero</string>
-    <string name="quick_tutorial">Tutorial rápido</string>
-    <string name="swipe_to_open_app">Desliza para abrir tus aplicaciones o atajos configurados</string>
+	<string name="swipe_to_open_app">Desliza para abrir tus aplicaciones o atajos configurados</string>
     <string name="configure_your_apps">Configura tus aplicaciones y atajos en los ajustes</string>
     <string name="theme_selector">Selector de temas</string>
     <string name="edit_point">Punto de edición</string>
@@ -221,8 +217,7 @@
     <string name="copy">Copiar</string>
     <string name="pick_a_nest">Elige un nido</string>
     <string name="create_new_nest">Crear nuevo nido</string>
-    <string name="open_burger_menu">Abrir menú de hamburguesas</string>
-    <string name="selected_text">Seleccionado</string>
+	<string name="selected_text">Seleccionado</string>
     <string name="unselected">No seleccionado</string>
     <string name="inner_padding">Acolchado interior</string>
     <string name="tint">Tinte</string>
@@ -266,8 +261,7 @@
     <string name="close_kb">Cerrar teclado</string>
     <string name="open_kb">Abrir teclado</string>
     <string name="open_settings">Abrir ajustes</string>
-    <string name="clear_all">Borrar todo</string>
-    <!--  ─────────────  Wellbeing Section  ─────────────  -->
+	<!--  ─────────────  Wellbeing Section  ─────────────  -->
     <string name="wellbeing">Bienestar digital</string>
     <string name="wellbeing_help">Toma el control de tus hábitos digitales. Haga una pausa antes de abrir aplicaciones que le distraigan y reflexione sobre su uso.</string>
     <string name="social_media_pause">Pausa en las redes sociales</string>
@@ -413,8 +407,7 @@
     <string name="on_tertiary_fixed_color">En Terciario Fijo</string>
     <string name="on_tertiary_fixed_variant_color">Sobre la variante fija terciaria</string>
     <string name="custom_colors">Colores personalizados</string>
-    <string name="normal_colors">Colores normales</string>
-    <string name="reset_all_points">Restablecer todos los puntos</string>
+	<string name="reset_all_points">Restablecer todos los puntos</string>
     <string name="reset_all_points_desc">Todas tus acciones se restablecerán, ¡esto no se puede deshacer!</string>
     <string name="use_categories">Usar categorías</string>
     <string name="use_categories_desc">Agrupar aplicaciones en el cajón por sus categorías definidas</string>
@@ -458,8 +451,7 @@
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">Seleccionar espacio de trabajo predeterminado</string>
     <string name="select_workspace_hint">Elige qué espacio de trabajo se abre por defecto. Siempre puedes cambiar deslizando a izquierda o derecha en el cajón.</string>
-    <string name="workspace_default">Predeterminado</string>
-    <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
+	<!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">Error al añadir el acceso directo fijado</string>
     <string name="pinned_shortcuts">Accesos directos fijados</string>
     <string name="no_pinned_shortcuts">No hay accesos directos fijados disponibles</string>
@@ -475,21 +467,17 @@
     <string name="hold_delay_before_starting_long_click_settings">Mantener el retraso antes de iniciar los ajustes de pulsación larga (ms)</string>
     <string name="hold_delay_before_starting_long_click_settings_desc">¿Cuánto tiempo se debe esperar antes de que los ajustes se carguen al inicio?</string>
     <string name="keep_screen_on_desc">No apagues ni bloquees la pantalla, mantenla siempre encendida cuando Dragon esté enfocado</string>
-    <string name="drag_zone_padding">Relleno de zona de arrastre</string>
-    <string name="points_settings">Ajustes de punto</string>
+	<string name="points_settings">Ajustes de punto</string>
     <string name="logs">Registros</string>
     <string name="settings_json">Ajustes JSON</string>
     <string name="pick_a_settings_screen">Elige una pantalla de ajustes</string>
     <string name="app_preview_settings">Cubre vista previa de App</string>
-    <string name="not_implemented">No implementado</string>
-    <string name="show_status_bar_desc">Mostrar la barra de estado, si está deshabilitada no se muestra nada</string>
+	<string name="show_status_bar_desc">Mostrar la barra de estado, si está deshabilitada no se muestra nada</string>
     <string name="disable_haptic_globally">Deshabilitar la retroalimentación háptica globalmente</string>
     <string name="disable_haptic_globally_desc">Evite que Dragon produzca retroalimentación háptica en la selección de puntos en caso de que lo odie</string>
     <string name="drag_handle">Controlador de arrastre</string>
     <string name="private_profile">Espacio privado</string>
-    <string name="private_space_locked">Espacio privado bloqueado</string>
-    <string name="private_space_authenticating">Autenticando…</string>
-    <string name="app_info_name">name = %1$s</string>
+	<string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">Nombre del paquete = %1$s</string>
     <string name="app_info_is_system">Del sistema = %1$s</string>
     <string name="app_info_is_work_profile">Tiene perfil de trabajo= %1$s</string>
@@ -573,8 +561,7 @@
     <string name="font_catalog">Catálogo</string>
     <string name="font_import">Importar</string>
     <string name="font_installed_fonts">Fuentes instaladas</string>
-    <string name="font_available_in_extension">Disponible en la extensión (%1$d)</string>
-    <string name="font_download_all_started">Iniciando la descarga de todas las fuentes. Revisa tus notificaciones.</string>
+	<string name="font_download_all_started">Iniciando la descarga de todas las fuentes. Revisa tus notificaciones.</string>
     <string name="font_confirm_delete">¿Confirmar? (%1$d)</string>
     <string name="font_search_placeholder">Buscando fuentes…</string>
     <string name="font_downloading">Descargando%1$s…</string>
@@ -594,18 +581,8 @@
     <string name="select_all">Seleccionar todos</string>
     <string name="invert">Invertir</string>
     <string name="advanced">Avanzado</string>
-    <string name="permission_tab_help">Controlar los permisos de la aplicación y el acceso a extensiones externas</string>
-    <string name="special_system_access">Acceso especial al sistema</string>
-    <string name="notification_access">Acceso a notificaciones</string>
-    <string name="notification_access_desc">Permitir que las aplicaciones muestren puntos de notificaciones</string>
-    <string name="install_from_unknown_source_permission">Instalar desde fuentes desconocidas (APK)</string>
-    <string name="install_from_unknown_source_permission_desc">Indispensable para instalar extensiones</string>
-    <string name="accessibility_service">Servicios de accesibilidad</string>
-    <string name="accessibility_service_desc">Se usa para acceder al panel de notificaciones por gestos.</string>
-    <string name="usage_access">Acceso a estadísticas de uso</string>
-    <string name="android_permissions">Permisos de Android</string>
-    <string name="manage_in_system_settings">Gestionar ajustes del sistema.</string>
-    <string name="snap_points">Ajustar puntos</string>
+	<string name="usage_access">Acceso a estadísticas de uso</string>
+	<string name="snap_points">Ajustar puntos</string>
     <string name="undo">Deshacer</string>
     <string name="undo_all">Deshacer todo</string>
     <string name="redo">Revertir</string>
@@ -634,7 +611,6 @@
     <string name="access_app">Acceso a la aplicación (es posible que nuevamente experimente fallas)</string>
     <string name="shizuku_unavailable">Shizuku no está disponible</string>
     <string name="shizuku_unavailable_message">Shizuku no está instalado o configurado para funcionar dentro del dispositivo</string>
-    <string name="shizuku">Shizuku</string>
     <string name="run_adb_command">Ejecutar comando ADB</string>
     <string name="toggle_bluetooth">Activar/Desactivar Bluetooth</string>
     <string name="toggle_mobile_data">Activar/Desactivar Datos móviles</string>
@@ -650,8 +626,7 @@
     <string name="pick_a">Elegir un</string>
     <string name="command">Comando</string>
     <string name="show_toast">Mostrar mensaje rápido</string>
-    <string name="show_tooltips">Mostrar información sobre funciones</string>
-    <string name="gradient">Gradiente</string>
+	<string name="gradient">Gradiente</string>
     <string name="sliders">Deslizadores</string>
     <string name="this_is_a_beta_version">Esta es una versión beta, lo cuál implica que contiene funciones y características inestables o en prueba que pueden generar errores y fallas. ¡Por favor, informa si encuentras alguno! Esto ayuda a seguir mejorando la aplicación</string>
     <string name="this_feature_is_in_beta">Esta función está en beta, puede que llegue a fallar y no está terminada todavía, ¡reporta si hayas errores o tienes alguna sugerecia para mejorarla!</string>
@@ -682,8 +657,7 @@
     <string name="hold_settings_help">Los ajustes relacionados para el arco que engendra cuando mantiene por un suficiente largo en la pantalla principal, no puede deshabilitarlo completamente, por otro caso pudo perder la última puerta que puede dejarle establecer, si lo hiciste algo mal, y por lo tanto te verás forzar a reiniciar la aplicación.</string>
     <string name="rotation_per_second">Rotaciones/segundo</string>
     <string name="rotation_per_second_desc">¿Cuántas vueltas da sobre sí mismo en un segundo</string>
-    <string name="enable_backup">Habilitar respaldo</string>
-    <string name="choose_a_auto_backup_file">Elija un archivo de respaldo automático</string>
+	<string name="choose_a_auto_backup_file">Elija un archivo de respaldo automático</string>
     <string name="minus_one_means_random">-1 significa aleatorio en el inicio</string>
     <string name="search_bar">Barra de Búsqueda</string>
     <string name="toolbars_order">Ordenar barra de herramientas</string>
@@ -720,8 +694,7 @@
     <string name="green">Verde</string>
     <string name="blue">Azul</string>
     <string name="move_around_mode">Mover Modo Alrededor</string>
-    <string name="reset_rotation">Restablece rotación</string>
-    <string name="reset_zoom">Restablece ampliación/reducción</string>
+	<string name="reset_zoom">Restablece ampliación/reducción</string>
     <string name="edit_workspace">Editar Pupitre</string>
     <string name="random">Aleatorio</string>
     <string name="special_options">Opciones Especiales</string>
@@ -729,8 +702,7 @@
     <string name="configuration">Configuración</string>
     <string name="cant_remove_to_avoid_lock_out">No puede eliminar esto para evitar estar bloqueado fuera de los ajustes</string>
     <string name="pin_code_warning_desc">Para restablecer en caso que lo olvide, puede no elegir pero restablecer todos los ajustes de app a través de app android en el menú info</string>
-    <string name="refresh">Refrescar</string>
-    <string name="crash">App Colgada!</string>
+	<string name="crash">App Colgada!</string>
     <string name="test_mode_validate">Conservar</string>
     <string name="test_mode_cancel">Restaurar</string>
     <string name="disable">Deshabilitar</string>

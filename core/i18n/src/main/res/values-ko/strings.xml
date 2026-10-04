@@ -14,9 +14,7 @@
     <string name="color_selector">컬러 셀렉터</string>
     <string name="debug">디버그</string>
     <string name="system_default">시스템 기본 상태</string>
-    <string name="version_arg">버전</string>
     <string name="export_cancelled">수출 취소</string>
-    <string name="import_cancelled">수입 취소</string>
     <string name="backup_restore_text">앱의 설정과 동작을 백업하거나 복원하세요. 자동 백업은 앱 실행/일시정지/종료 시 자동으로 작동하거나 아래의 \"트리거\" 버튼을 누르면 작동합니다</string>
     <string name="export_settings">내보내기 설정</string>
     <string name="import_settings">가져오기 설정</string>
@@ -107,8 +105,6 @@
     <string name="keep_screen_on">화면 켜</string>
     <string name="back_action">백 액션</string>
     <string name="double_click_action">더블 클릭 액션</string>
-    <string name="privacy_first">프라이버시 퍼스트</string>
-    <string name="quick_tutorial">간단한 튜토리얼</string>
 
     <string name="swipe_to_open_app">설정된 앱/바로가기를 열려면 스와이프하세요</string>
     <string name="configure_your_apps">설정에서 앱과 바로가기를 설정하세요</string>
@@ -225,7 +221,6 @@
     <string name="copy">복사</string>
     <string name="pick_a_nest">둥지를 골라라</string>
     <string name="create_new_nest">새 둥지 만들기</string>
-    <string name="open_burger_menu">버거 메뉴 열기</string>
     <string name="selected_text">선택된</string>
     <string name="unselected">선택 해제됨</string>
     <string name="inner_padding">내부 패딩</string>
@@ -259,7 +254,6 @@
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">기본 워크스페이스 선택</string>
     <string name="select_workspace_hint">기본으로 열리는 워크스페이스를 선택하세요. 서랍에서 좌우로 스와이프하여 언제든 변경할 수 있습니다.</string>
-    <string name="workspace_default">기본값</string>
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">고정된 바로가기 추가 실패</string>
     <string name="pinned_shortcuts">고정된 바로가기</string>
@@ -271,8 +265,6 @@
     <string name="recently_used_apps_count">최근 앱 수</string>
     <string name="drag_handle">드래그 핸들</string>
     <string name="private_profile">프라이빗 스페이스</string>
-    <string name="private_space_locked">프라이빗 스페이스가 잠겨 있습니다</string>
-    <string name="private_space_authenticating">인증 중…</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>

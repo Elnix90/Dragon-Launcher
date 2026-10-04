@@ -25,10 +25,8 @@
   <string name="select_apk">Select APK</string>
   <string name="system_default">System Default</string>
   <string name="version">Version</string>
-  <string name="version_arg">Version %1$s</string>
-  <string name="export_cancelled">Export Cancelled</string>
-  <string name="import_cancelled">Import Cancelled</string>
-  <string name="backup">Backup</string>
+	<string name="export_cancelled">Export Cancelled</string>
+	<string name="backup">Backup</string>
   <string name="backup_restore_text">Backup or restore the settings and the actions of the app, automatic backups are triggered automatically on each app launch / pause / quit or by pressing the \"Trigger\" button below</string>
   <string name="export_settings">Export Settings</string>
   <string name="import_settings">Import Settings</string>
@@ -37,8 +35,7 @@
   <string name="import_successful">Import Successful</string>
   <string name="export_successful">Export Successful</string>
   <string name="unknown_error">Unknown Error</string>
-  <string name="no_file_picked">No file picked</string>
-  <string name="color_selector_text">Select your preferred color theme</string>
+	<string name="color_selector_text">Select your preferred color theme</string>
   <string name="color_mode_all">All Colors</string>
   <string name="reset">Reset</string>
   <string name="reset_to_default_colors">Reset to Default Colors</string>
@@ -92,8 +89,7 @@
   <string name="font_catalog">Catalog</string>
   <string name="font_import">Import</string>
   <string name="font_installed_fonts">Installed Fonts</string>
-  <string name="font_available_in_extension">Available in Extension (%1$d)</string>
-  <string name="font_download_all_started">Starting all fonts download. Check notifications.</string>
+	<string name="font_download_all_started">Starting all fonts download. Check notifications.</string>
   <string name="font_confirm_delete">Confirm (%1$d)</string>
   <string name="font_search_placeholder">Search fonts…</string>
   <string name="font_downloading">Downloading %1$s…</string>
@@ -132,9 +128,7 @@
   <string name="keep_screen_on">Keep Screen On</string>
   <string name="back_action">Back Action</string>
   <string name="double_click_action">Double Click Action</string>
-  <string name="privacy_first">Privacy First</string>
-  <string name="quick_tutorial">Quick Tutorial</string>
-  <string name="long_click_to_access_settings">Long click to access settings</string>
+	<string name="long_click_to_access_settings">Long click to access settings</string>
   <string name="swipe_to_open_app">Swipe to open your configured apps / shortcuts</string>
   <string name="configure_your_apps">Configure your apps and shortcuts in settings</string>
   <string name="theme_selector">Theme selector</string>
@@ -256,8 +250,7 @@
   <string name="copy">Copy</string>
   <string name="pick_a_nest">Pick A Nest</string>
   <string name="create_new_nest">Create New Nest</string>
-  <string name="open_burger_menu">Open Burger Menu</string>
-  <string name="selected_text">Selected</string>
+	<string name="selected_text">Selected</string>
   <string name="unselected">Unselected</string>
   <string name="inner_padding">Inner Padding</string>
   <string name="tint">Tint</string>
@@ -311,9 +304,8 @@
   <string name="close_kb">Close Keyboard</string>
   <string name="open_kb">Open keyboard</string>
   <string name="open_settings">Open Settings</string>
-  <string name="clear_all">Clear all</string>
 
-  <!--  ─────────────  Wellbeing Section  ─────────────  -->
+	<!--  ─────────────  Wellbeing Section  ─────────────  -->
   <string name="wellbeing">Digital Wellbeing</string>
   <string name="wellbeing_help">Take control of your digital habits. Pause before opening distracting apps and reflect on your usage.</string>
   <string name="social_media_pause">Social Media Pause</string>
@@ -486,8 +478,7 @@
 
   <string name="custom_colors">Custom Colors</string>
   <string name="custom_colors_desc">The colors used by the launcher Actions</string>
-  <string name="normal_colors">Normal Colors</string>
-  <string name="reset_all_points">Reset All points</string>
+	<string name="reset_all_points">Reset All points</string>
   <string name="reset_all_points_desc">All your actions will be reset, this can\'t be undone!</string>
   <string name="use_categories">Use Categories</string>
   <string name="use_categories_desc">Group apps in drawer by their defined categories</string>
@@ -541,9 +532,8 @@
   <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
   <string name="select_default_workspace">Select default workspace</string>
   <string name="select_workspace_hint">Choose which workspace opens by default. You can always switch by swiping left or right in the drawer.</string>
-  <string name="workspace_default">Default</string>
 
-  <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
+	<!--  ─────────────  Pinned Shortcuts  ─────────────  -->
   <string name="pinned_shortcut_failed">Failed to add shortcut</string>
   <string name="pinned_shortcuts">Shortcuts</string>
   <string name="no_pinned_shortcuts">No shortcuts available</string>
@@ -569,9 +559,7 @@
   <string name="hold_delay_before_starting_long_click_settings">Hold delay before starting long click settings (ms)</string>
   <string name="hold_delay_before_starting_long_click_settings_desc">How long to hold before the loading settings starts to load</string>
   <string name="keep_screen_on_desc">Do not turn the screen off and lock, keep it always on when Dragon is focused</string>
-  <string name="drag_zone_padding">Drag zone padding</string>
-  <string name="drag_zone_padding_desc">Adjust the global draggable area</string>
-  <string name="points_settings">Point settings</string>
+	<string name="points_settings">Point settings</string>
   <string name="default_point_live_nest_defaults">Live Nest defaults</string>
   <string name="default_point_live_nest_defaults_summary">Used when you pick a target nest on a point (preview delay, scale, grace, dim).</string>
   <string name="default_hold_and_run_delay">Default Hold &amp; Run delay (ms)</string>
@@ -581,17 +569,14 @@
   <string name="pick_a_settings_screen">Pick a settings screen</string>
   <string name="app_preview_settings">App preview overlay</string>
   <string name="app_preview_settings_desc">Manage how the preview looks like</string>
-  <string name="not_implemented">Not implemented</string>
-  <string name="show_status_bar_desc">Display the status bar, if disabled nothing\'s showed</string>
+	<string name="show_status_bar_desc">Display the status bar, if disabled nothing\'s showed</string>
   <string name="disable_haptic_globally">Disable Haptic feedback globally</string>
   <string name="disable_haptic_globally_desc">Prevent Dragon to produce any haptic feedback in points selection in case you hate it</string>
   <string name="drag_handle">Drag handle</string>
   <string name="personal_profile">Personal</string>
   <string name="work_profile">Work</string>
   <string name="private_profile">Private</string>
-  <string name="private_space_locked">Private Space locked</string>
-  <string name="private_space_authenticating">Authenticating…</string>
-  <string name="app_info_name">name = %1$s</string>
+	<string name="app_info_name">name = %1$s</string>
   <string name="app_info_package_name">packageName = %1$s</string>
   <string name="app_info_is_system">isSystem = %1$s</string>
   <string name="app_info_is_work_profile">isWork = %1$s</string>
@@ -704,20 +689,9 @@
   <string name="lucky_desc">Digital wellbeing &amp; reminders</string>
   <string name="federico_desc">Live nests features &amp; translations</string>
   <string name="copied_to_clipboard">Copied to clipboard!</string>
-  <string name="permission_tab_help">Control the app permissions, and different access it has to external extensions</string>
-  <string name="special_system_access">Special system access</string>
-  <string name="notification_access">Notification access</string>
-  <string name="notification_access_desc">Allow displaying notification dots on apps</string>
-  <string name="install_from_unknown_source_permission">Install from unknown source permission (APK)</string>
-  <string name="install_from_unknown_source_permission_desc">Needed to install extensions</string>
-  <string name="accessibility_service">Accessibility Service</string>
-  <string name="accessibility_service_desc">Used to expand the notification panel via gestures.</string>
-  <string name="usage_access">Usage Statistics Access</string>
-  <string name="android_permissions">Android Permissions</string>
-  <string name="manage_in_system_settings">Manage in system settings.</string>
+	<string name="usage_access">Usage Statistics Access</string>
 
-  <string name="permission_external_storage_desc">Gives Dragon Launcher access to your whole storage. Needed to read and write files such as backups, and to open files from other apps.</string>
-  <string name="permission_notifications_title">Notification Access</string>
+	<string name="permission_notifications_title">Notification Access</string>
   <string name="permission_notifications_desc">Allows Dragon Launcher to read your notifications, so they can be displayed in the status bar alongside your apps.</string>
   <string name="permission_app_shortcuts_title">App Shortcuts</string>
   <string name="permission_app_shortcuts_desc">Allows Dragon Launcher to read the shortcuts published by your apps, so they appear in the app drawer and in search results.</string>
@@ -763,8 +737,7 @@
   <string name="hold_settings_help">The settings related to the arc that spawns when you hold for long enough on the  main screen, You cannot fully disable it, otherwise, you could lose the last door that can lead you to settings, if you did shit, and so be forced to reset the app.</string>
   <string name="rotation_per_second">Rotations/second</string>
   <string name="rotation_per_second_desc">How many turns on itself it does in one second</string>
-  <string name="enable_backup">Enable backup</string>
-  <string name="choose_a_auto_backup_file">Choose an auto backup file</string>
+	<string name="choose_a_auto_backup_file">Choose an auto backup file</string>
   <string name="minus_one_means_random">-1 means random on start</string>
   <string name="search_bar">Search Bar</string>
   <string name="toolbars_order">Toolbars order</string>
@@ -797,8 +770,7 @@
   <string name="points_cell_size_desc">The size of the virtual grid that is used to snap points</string>
   <string name="off_screen_timeout">Off-screen timeout (s)</string>
   <string name="off_screen_timeout_desc">How long the app waits before returning to home screen when you\'re in another screen. Doesn\'t apply to some specified screens, such as backup (because you pick a file). -1 means no return</string>
-  <string name="refresh">Refresh</string>
-  <string name="crash">App Crashed!</string>
+	<string name="crash">App Crashed!</string>
   <string name="access_app">Access app (you may experience crash again)</string>
   <string name="shizuku_unavailable">Shizuku is unavailable</string>
   <string name="shizuku_unavailable_message">Shizuku is not installed or properly configured on your device</string>
@@ -818,8 +790,7 @@
   <string name="pick_a">Pick a</string>
   <string name="command">command</string>
   <string name="show_toast">Show toast</string>
-  <string name="show_tooltips">Show Tooltips</string>
-  <string name="gradient">Gradient</string>
+	<string name="gradient">Gradient</string>
   <string name="sliders">Sliders</string>
   <string name="common_settings">Common settings</string>
   <string name="dragging_display">Dragging display</string>
@@ -888,8 +859,7 @@
   <string name="green">Green</string>
   <string name="blue">Blue</string>
   <string name="move_around_mode">Move Around Mode</string>
-  <string name="reset_rotation">Reset rotation</string>
-  <string name="reset_zoom">Reset zoom</string>
+	<string name="reset_zoom">Reset zoom</string>
   <string name="edit_workspace">Edit Workspace</string>
   <string name="random">Random</string>
   <string name="special_options">Special Options</string>
@@ -961,8 +931,7 @@
   <string name="right_padding_status_bar_desc">Right blank space on the status bar</string>
   <string name="top_padding_status_bar_desc">Those who uses that are strange</string>
   <string name="bottom_padding_status_bar_desc">I would understand that a bit more than the previous one</string>
-  <string name="pick_stores_to_display">Pick Stores to display</string>
-  <string name="profile">Profile</string>
+	<string name="profile">Profile</string>
   <string name="themed_icons_desc">Whether or not to use material themed icons</string>
   <string name="force_themed_icons_desc">Apply the themed icons even for those who aren\'t normally compatible</string>
   <string name="adaptify_icons_desc">I have no idea what this option does, but it was there when I copied some icons logic</string>
@@ -981,8 +950,7 @@
   <string name="nest_debug_overlay_desc">Adds some visual debug features in the drawing of nests</string>
   <string name="auto_merge">Auto merge</string>
   <string name="auto_merge_desc">Can trigger actions when hovering a point with another, such as merging them to a new Nest</string>
-  <string name="show_more_sheet">Show more sheet</string>
-  <string name="show_angle_preview">Show angle preview</string>
+	<string name="show_angle_preview">Show angle preview</string>
   <plurals name="n_points_selected">
     <item quantity="one">point selected</item>
     <item quantity="other">points selected</item>
@@ -1023,8 +991,7 @@
   <string name="align_with_angle_desc">Used to rotate the shape according to the drag angle, might be used to get clean results</string>
   <string name="how_many_question">How many?</string>
   <string name="gamble_apps">Gamble apps</string>
-  <string name="show_app_launch_preview_desc">Show the selected point in the main screen</string>
-  <string name="stroke_width_explanation">-1 = No draw; &lt; 0 = Fill; 0 = 1 pixel; &gt; 0 = value</string>
+	<string name="stroke_width_explanation">-1 = No draw; &lt; 0 = Fill; 0 = 1 pixel; &gt; 0 = value</string>
   <string name="shape_offset">Offset</string>
   <string name="custom_object">Custom Object</string>
   <string name="show_grid">Show grid</string>
@@ -1050,9 +1017,7 @@
   <string name="name_and_action">Name and action</string>
   <string name="copy_to_clipboard">Copy to clipboard</string>
   <string name="import_from_clipboard">Import from clipboard</string>
-  <string name="points_keep_their_relative_position">Points keep their relative position</string>
-  <string name="points_keep_their_relative_position_desc">Whether if when moved, the points offsets are adapted to match their original angle relative to this shape,\nor if they aren\'t taken into account and that the shape moves regardless of the points in it.\nWhen false the points might rotate around their hidden underlying offset aas the shape moves</string>
-  <string name="duplicate">Duplicate</string>
+	<string name="duplicate">Duplicate</string>
   <string name="flashbang_theme">Flashbang theme</string>
   <string name="line">Line</string>
   <string name="angle">Angle</string>
@@ -1075,16 +1040,7 @@
   <string name="snap_points_to_shapes">Snap points to shapes</string>
   <string name="signature_not_matched">SIGNATURE DOES NOT MATCH!!! The app is not signed with the official key of the official developer. Your data might be compromised!</string>
   <string name="use_anyways">Use anyways</string>
-  <string name="migrating_settings">Migrating settings…</string>
-  <string name="migrate_from_322">Migrate from version 3.3.2</string>
-  <string name="migrate_from_322_desc">Your backup seems to come from the version 3.2.2 and needs to be migrated to the new version. Would you like to proceed?</string>
-  <string name="migrate_from_322_desc_forced">Welcome to this new version of Dragon! To continue, your settings will perform an autonomous migration to the new system. It is recommended to keep the old backup file in case of issues. If anything fails, please address me (Elnix90) immediately via any mean you\'d like (in \"about\" section in settings) to report me the issue and let me fix it ASAP</string>
-  <string name="migrating_settings_desc">Converting your backup from 3.2.2 to 4.0.0 format. Please wait.</string>
-  <string name="migrating_settings_desc_kidding">Just kidding, it doesn\'t take that long :)</string>
-  <string name="migration_complete">Migration completed</string>
-  <string name="migration_had_issues">Migration had issues</string>
-  <string name="buy_me_a_coffee" translatable="false">Buy me a coffee</string>
-  <string name="render_foreground">Render Foreground</string>
+	<string name="render_foreground">Render Foreground</string>
   <string name="render_foreground_desc">Whether or not to render the foreground layer of the icons</string>
   <string name="render_background">Render Background</string>
   <string name="render_background_desc">Whether or not to render the background layer of the icons</string>
@@ -1107,13 +1063,10 @@
   <string name="paste">Paste</string>
   <string name="open_backup_file">Open backup file</string>
   <string name="show_reselect_backup_banner">Show reselect backup banner</string>
-  <string name="show_reselect_backup_banner_desc">When enabled, if Dragon cannot touch the selected backup file, you will be prompted to reselect it</string>
-  <string name="select_stores">Select stores</string>
+	<string name="select_stores">Select stores</string>
   <string name="secret_unlock_button">Secret unlock button</string>
   <string name="secret_unlock_button_desc">Adds a secret clickable zone (no indication at all) that unlocks the screen (when you forgot the password)</string>
-  <string name="actions_lock_method">Actions lock method</string>
-  <string name="actions_lock_method_desc">What lock method to use to launch actions. You can configure what type of actions are affected and use the same password as the settings</string>
-  <string name="fine_grained">Fine-Grained</string>
+	<string name="fine_grained">Fine-Grained</string>
   <string name="snap_points_angle_threshold">Snap points angle threshold</string>
   <string name="snap_points_angle_threshold_desc">The angle at which the points are snapped. Use a multiple of 360 for best results</string>
   <string name="show_snap_point_angle_lines">Show snap points angle lines</string>
@@ -1122,8 +1075,7 @@
   <string name="use_snapped_angle_or_real_angle">Use snapped angle or real angle</string>
   <string name="use_snapped_angle_or_real_angle_desc">When using \"snap to point\", the computed angle is the real angle or the angle at which the selected point belongs?</string>
   <string name="widget_not_found">Widget not found</string>
-  <string name="by_elnix">by Elnix90</string>
-  <string name="app_tagline">Fast Gesture based android launcher</string>
+	<string name="app_tagline">Fast Gesture based android launcher</string>
   <string name="code_name_string">Code name</string>
   <string name="version_code">Version code</string>
   <string name="build_type">Build type</string>

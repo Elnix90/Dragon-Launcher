@@ -85,7 +85,6 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.util.UUID
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StatusBar(
 	launchAction: ((Action) -> Unit)?

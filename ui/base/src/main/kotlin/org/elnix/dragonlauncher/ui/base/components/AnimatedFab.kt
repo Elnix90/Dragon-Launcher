@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -30,7 +29,6 @@ import org.elnix.dragonlauncher.ui.base.animation.FancyAnimation
 import org.elnix.dragonlauncher.ui.base.animation.rememberFancyAnimations
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
-import org.elnix.dragonlauncher.ui.base.withHapticParam
 
 /**
  * Animated FAB, the basic overload. Takes a [Composable] lambda to file grained control the drawing inside th FAB.
@@ -43,7 +41,6 @@ import org.elnix.dragonlauncher.ui.base.withHapticParam
  * @param containerColor the container color
  * @param onClick the on click labda called upon user click
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnimatedFab(
 	icon: @Composable BoxScope.() -> Unit,
@@ -131,67 +128,4 @@ fun AnimatedFab(
 		containerColor = containerColor,
 		onClick = onClick
 	)
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun ToggleAnimatedFab(
-	checked: Boolean,
-	onCheckedChange: (Boolean) -> Unit,
-	modifier: Modifier = Modifier,
-	minSize: Dp = 56.dp,
-	containerColor: Color = FloatingActionButtonDefaults.containerColor,
-	icon: (isPressed: Boolean) -> Int
-) {
-	val interactionSource = rememberInteractionSource()
-	val buttonPressed by interactionSource.collectIsPressedAsState()
-
-	val isActivated =
-		if (buttonPressed) {
-			!checked
-		} else {
-			checked
-		}
-
-	val fabAnimation =
-		rememberFancyAnimations(
-			isPressed = buttonPressed,
-			normalShape = MaterialShapes.Cookie9Sided,
-			pressedShape = MaterialShapes.Cookie7Sided
-		)
-
-	Box(
-		modifier =
-			modifier
-				.graphicsLayer {
-					scaleX = fabAnimation.scale
-					scaleY = fabAnimation.scale
-
-					if (buttonPressed) {
-						rotationZ = fabAnimation.outerRotation
-					}
-				}.defaultMinSize(minWidth = minSize, minHeight = minSize)
-				.clip(fabAnimation.shape)
-				.background(containerColor)
-				.toggleable(
-					value = checked,
-					onValueChange = withHapticParam { onCheckedChange(!checked) },
-					interactionSource = interactionSource,
-					indication = null
-				)
-	) {
-		Icon(
-			painter = painterResource(icon(isActivated)),
-			contentDescription = null,
-			tint = contentColorFor(containerColor),
-			modifier =
-				Modifier
-					.align(Alignment.Center)
-					.graphicsLayer {
-						if (buttonPressed) {
-							rotationZ = fabAnimation.rotation - fabAnimation.outerRotation
-						}
-					}
-		)
-	}
 }

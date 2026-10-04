@@ -45,7 +45,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
  * @param onCheck Called when the user taps a button, both on check and uncheck.
  *   regardless of the resulting checked state. Defaults to `true`.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
 	entries: List<T>,
@@ -101,7 +100,6 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
 	}
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedLeadingButtonShapes(
 	shape: Shape = connectedLeadingButtonShape,
@@ -110,7 +108,6 @@ fun connectedLeadingButtonShapes(
 ): IconToggleButtonShapes =
 	IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedMiddleButtonShapes(
 	shape: Shape = ShapeDefaults.Small,
@@ -119,7 +116,6 @@ fun connectedMiddleButtonShapes(
 ): IconToggleButtonShapes =
 	IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun connectedTrailingButtonShapes(
 	shape: Shape = connectedTrailingButtonShape,

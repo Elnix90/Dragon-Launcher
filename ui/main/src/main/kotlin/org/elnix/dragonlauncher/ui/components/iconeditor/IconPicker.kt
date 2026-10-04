@@ -66,7 +66,6 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IconPicker(
 	application: Application,

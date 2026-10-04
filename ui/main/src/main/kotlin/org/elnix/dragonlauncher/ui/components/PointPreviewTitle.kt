@@ -36,7 +36,6 @@ import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PointPreviewTitle(
 	point: Point?,

@@ -160,7 +160,6 @@ fun PinSetup(
 	}
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 private fun PinPrompt(

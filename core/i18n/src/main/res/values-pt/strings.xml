@@ -14,9 +14,7 @@
     <string name="color_selector">Seletor de cores</string>
     <string name="debug">Depuração</string>
     <string name="system_default">Sistema Padrão</string>
-    <string name="version_arg">Versão</string>
     <string name="export_cancelled">Exportação Cancelada</string>
-    <string name="import_cancelled">Importação Cancelada</string>
     <string name="backup_restore_text">Faça backup ou restaure as configurações e ações do app, backups automáticos são acionados automaticamente a cada iniciação/pausa/saída do app ou pressionando o botão \"Trigger\" abaixo</string>
     <string name="export_settings">Configurações de Exportação</string>
     <string name="import_settings">Configurações de importação</string>
@@ -108,8 +106,6 @@
     <string name="keep_screen_on">Mantenha a Tela Ligada</string>
     <string name="back_action">Ação Traseira</string>
     <string name="double_click_action">Ação de Duplo Clique</string>
-    <string name="privacy_first">Privacy First</string>
-    <string name="quick_tutorial">Tutorial Rápido</string>
 
     <string name="swipe_to_open_app">Deslize para abrir seus aplicativos/atalhos configurados</string>
     <string name="configure_your_apps">Configure seus aplicativos e atalhos nas configurações</string>
@@ -226,7 +222,6 @@
     <string name="copy">Cópia</string>
     <string name="pick_a_nest">Escolha um ninho</string>
     <string name="create_new_nest">Criar novo ninho</string>
-    <string name="open_burger_menu">Menu de hambúrguer aberto</string>
     <string name="selected_text">Selecionado</string>
     <string name="unselected">Não selecionado</string>
     <string name="inner_padding">Preenchimento interno</string>
@@ -260,7 +255,6 @@
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">Selecionar workspace padrão</string>
     <string name="select_workspace_hint">Escolha qual workspace abre por padrão. Você pode sempre mudar deslizando para a esquerda ou direita na gaveta.</string>
-    <string name="workspace_default">Padrão</string>
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">Falha ao adicionar atalho fixado</string>
     <string name="pinned_shortcuts">Atalhos fixados</string>
@@ -272,8 +266,6 @@
     <string name="recently_used_apps_count">Número de apps recentes</string>
     <string name="drag_handle">Alça de arrastar</string>
     <string name="private_profile">Espaço Privado</string>
-    <string name="private_space_locked">Espaço Privado bloqueado</string>
-    <string name="private_space_authenticating">Autenticando…</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>

@@ -182,7 +182,6 @@ fun PatternSetup(
 	}
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UseOfNonLambdaOffsetOverload", "MissingPermission")
 @Composable
 private fun PatternPrompt(

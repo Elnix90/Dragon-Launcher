@@ -152,7 +152,6 @@ public fun IconShape.resolveShape(): Shape {
 /**
  * Resolve an nullable [IconShape] element to a [Shape] and defaults to [default]
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 public fun IconShape?.resolveShape(
 	default: IconShape = IconShape.PlatformDefault
 ): Shape = (this ?: default).resolveShape()

@@ -288,9 +288,9 @@ internal class AppRepositoryImpl(
 		getAllApps().map { apps ->
 			val allFinal = mutableSetOf<Application>()
 
-			for (workspace in workspaces) {
-				val appIds = workspace.appIds ?: emptySet()
-				val removedAppIds = workspace.removedAppIds ?: emptySet()
+			for ((_, type, appIds1, removedAppIds1) in workspaces) {
+				val appIds = appIds1 ?: emptySet()
+				val removedAppIds = removedAppIds1 ?: emptySet()
 
 				val workspaceFiltered =
 					when (workspaceViewMode) {
@@ -304,7 +304,7 @@ internal class AppRepositoryImpl(
 
 						WorkspaceViewMode.Default -> {
 							val base =
-								when (workspace.type) {
+								when (type) {
 									All -> {
 										apps
 									}

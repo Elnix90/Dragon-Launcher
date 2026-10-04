@@ -117,7 +117,7 @@ import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsViewModel.Trans
 import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("ConfigurationScreenWidthHeight")
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PointsSettingsScreen(
 	viewModel: PointsSettingsViewModel,

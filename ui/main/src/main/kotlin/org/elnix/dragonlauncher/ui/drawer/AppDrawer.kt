@@ -112,7 +112,6 @@ import kotlin.math.abs
 import kotlin.math.pow
 
 @SuppressLint("LocalContextGetResourceValueCall", "UseOfNonLambdaOffsetOverload")
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDrawerScreen(
 	drawerViewModel: DrawerViewModel = activityViewModel(),

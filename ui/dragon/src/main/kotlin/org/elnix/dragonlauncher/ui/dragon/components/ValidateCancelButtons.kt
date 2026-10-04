@@ -28,7 +28,6 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ValidateCancelButtons(
 	validateText: String = stringResource(R.string.save),

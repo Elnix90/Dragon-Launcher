@@ -25,7 +25,7 @@ fun DragonGroupScope.DrawerActionSelector(
 	val actions =
 		DrawerActions.entries
 			.filter { it != DrawerActions.Disabled }
-			.filter { if (!allowNone) it != DrawerActions.None else true }
+			.filter { allowNone || it != DrawerActions.None }
 
 	ActionSelectorRow(
 		options = actions,

@@ -46,7 +46,6 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.editors.AppIconEditor
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppLongPressPopup(
 	app: Application,
@@ -292,7 +291,6 @@ fun AppLongPressPopup(
 	}
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ButtonGroupScope.Button(
 	onClick: () -> Unit,

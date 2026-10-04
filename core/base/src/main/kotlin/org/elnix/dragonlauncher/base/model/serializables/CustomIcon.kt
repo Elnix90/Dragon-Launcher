@@ -8,8 +8,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon.Companion.ThemeColor
-import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon.Companion.UnspecifiedColor
 import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
 
 @Immutable

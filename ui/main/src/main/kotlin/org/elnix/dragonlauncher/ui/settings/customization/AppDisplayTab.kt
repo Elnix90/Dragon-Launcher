@@ -26,7 +26,6 @@ import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 	val ctx = LocalContext.current

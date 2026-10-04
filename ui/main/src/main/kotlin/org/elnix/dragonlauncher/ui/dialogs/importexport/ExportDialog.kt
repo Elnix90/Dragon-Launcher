@@ -15,7 +15,6 @@ internal fun ExportDialog(
 	onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
 	val defaultStoresStringSet by BackupSettingsStore.backupStores.asState()
-	val defaultStores = defaultStoresStringSet.toSettingsStoreList()
 
 	BaseImportExportDialog(
 		title = R.string.select_settings_to_export,

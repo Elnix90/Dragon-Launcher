@@ -21,7 +21,6 @@ import org.elnix.dragonlauncher.base.model.enumsui.SelectButtonOption
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHapticParam
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
 	entries: List<T>,

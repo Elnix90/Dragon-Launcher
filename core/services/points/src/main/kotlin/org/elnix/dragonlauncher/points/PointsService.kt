@@ -708,12 +708,12 @@ internal class PointsServiceImpl(
 		}
 
 		grid =
-			points.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point ->
+			points.groupByTo(mutableMapOf()) { point ->
 				cellKey(point.getPos())
 			}
 
 		nestGrid =
-			points.groupByTo(mutableMapOf<Int, MutablePoints>()) { point ->
+			points.groupByTo(mutableMapOf()) { point ->
 				point.nestId
 			}
 

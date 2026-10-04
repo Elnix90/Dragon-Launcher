@@ -33,8 +33,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @OptIn(
-	ExperimentalMaterial3ExpressiveApi::class,
-	ExperimentalMaterial3Api::class
+	ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
 fun SignatureWarningDialog(

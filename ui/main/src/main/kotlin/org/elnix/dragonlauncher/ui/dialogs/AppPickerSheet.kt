@@ -59,7 +59,7 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppPickerSheet(
 	profilesViewModel: ProfilesViewModel = activityViewModel(),

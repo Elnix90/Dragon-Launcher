@@ -13,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DragonIconButtonImpl(
 	onClick: () -> Unit,

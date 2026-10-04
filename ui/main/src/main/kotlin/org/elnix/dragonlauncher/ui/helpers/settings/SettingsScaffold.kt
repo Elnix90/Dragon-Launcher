@@ -46,7 +46,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScaffold(
 	title: String,

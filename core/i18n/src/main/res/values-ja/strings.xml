@@ -14,9 +14,7 @@
     <string name="color_selector">カラーセレクター</string>
     <string name="debug">デバッグ</string>
     <string name="system_default">システムデフォルト</string>
-    <string name="version_arg">バージョン %1$s</string>
     <string name="export_cancelled">エクスポート中止</string>
-    <string name="import_cancelled">インポート中止</string>
     <string name="backup_restore_text">設定やアプリの操作をバックアップまたは復元し、各アプリの起動・一時停止・終了時、または下の「トリガー」ボタンを押すことで自動バックアップが発動します</string>
     <string name="export_settings">設定をエクスポート</string>
     <string name="import_settings">設定をインポート</string>
@@ -108,8 +106,6 @@
     <string name="keep_screen_on">スリープしない</string>
     <string name="back_action">バックアクション</string>
     <string name="double_click_action">ダブルクリックアクション</string>
-    <string name="privacy_first">プライバシー・ファースト</string>
-    <string name="quick_tutorial">簡単なチュートリアル</string>
     <string name="swipe_to_open_app">スワイプして設定済みのアプリやショートカットを開きます</string>
     <string name="configure_your_apps">設定でアプリやショートカットを設定します</string>
     <string name="theme_selector">テーマセレクター</string>
@@ -224,7 +220,6 @@
     <string name="copy">コピー</string>
     <string name="pick_a_nest">ネストを選択</string>
     <string name="create_new_nest">新しいネストを作成する</string>
-    <string name="open_burger_menu">バーガーメニューを開く</string>
     <string name="selected_text">選択済み</string>
     <string name="unselected">未選択</string>
     <string name="inner_padding">内側のパディング</string>
@@ -257,7 +252,6 @@
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">デフォルトのワークスペースを選択</string>
     <string name="select_workspace_hint">デフォルトで開くワークスペースを選択。ドロワーで左右にスワイプすればいつでも変更できます。</string>
-    <string name="workspace_default">デフォルト</string>
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">ピン留めショートカットの追加に失敗しました</string>
     <string name="pinned_shortcuts">ピン留めショートカット</string>
@@ -269,8 +263,6 @@
     <string name="recently_used_apps_count">最近のアプリ数</string>
     <string name="drag_handle">ドラッグハンドル</string>
     <string name="private_profile">プライベートスペース</string>
-    <string name="private_space_locked">プライベートスペースはロックされています</string>
-    <string name="private_space_authenticating">認証中…</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
@@ -287,7 +279,6 @@
     <string name="extension_manual_install_desc">インストールできる拡張機能がない場合、APKファイルをダウンロードして下のボタンを選択することでインストールできます。</string>
     <string name="select_apk">APKファイルを選択</string>
     <string name="backup">バックアップ</string>
-    <string name="no_file_picked">ファイルが選択されていません</string>
     <string name="preview_scale_factor">プレビューの表示スケール</string>
     <string name="preview_scale_factor_desc">サブネストのプレビューを表示する際、どの程度プレビューを縮小するか</string>
     <string name="width_actions_settings">ドロワーアクション設定</string>
@@ -296,7 +287,6 @@
     <string name="font_catalog">カタログ</string>
     <string name="font_import">インポート</string>
     <string name="font_installed_fonts">インストールされたフォント</string>
-    <string name="font_available_in_extension">拡張機能によって有効 (%1$d)</string>
     <string name="font_download_all_started">全フォントのダウンロードを開始しました。通知をご確認ください。</string>
     <string name="font_confirm_delete">確認 (%1$d)</string>
     <string name="font_search_placeholder">フォント検索…</string>
@@ -364,7 +354,6 @@
     <string name="close_kb">キーボードを閉じる</string>
     <string name="open_kb">キーボードを開く</string>
     <string name="open_settings">設定を開く</string>
-    <string name="clear_all">全て消去</string>
     <string name="wellbeing">Digital Wellbeing</string>
     <string name="wellbeing_help">デジタル習慣をコントロールしましょう。気を散らすアプリを開く前に立ち止まり、自分の利用状況を振り返ってみましょう。</string>
     <string name="social_media_pause">ソーシャルメディア停止</string>
@@ -396,7 +385,7 @@
     <string name="reminder_mode_title">使用状況リマインダー</string>
     <string name="reminder_mode_description">停止中のアプリを長時間利用した際に、定期的にリマインダーを受け取ります</string>
     <string name="reminder_interval">通知期間</string>
-    <string name="reminder_interval_description">...分ごとに通知</string>
+    <string name="reminder_interval_description">…分ごとに通知</string>
     <string name="overlay_permission_required">オーバーレイ権限</string>
     <string name="overlay_permission_description">リマインダーを他のアプリの上に表示するために、「他のアプリの上に重ねて表示」権限が必要です。</string>
     <string name="popup_display_title">ポップアップ内容</string>
@@ -491,7 +480,6 @@
     <string name="on_tertiary_fixed_color">固定三次色上の文字色</string>
     <string name="on_tertiary_fixed_variant_color">固定三次色バリアント上の文字色</string>
     <string name="custom_colors">カスタムカラー</string>
-    <string name="normal_colors">ノーマルカラー</string>
     <string name="reset_all_points">全てのポイントをリセット</string>
     <string name="reset_all_points_desc">全てのアクションがリセットされます、元に戻すことはできません！</string>
     <string name="use_categories">カテゴリ分けを使用</string>
@@ -520,7 +508,6 @@
     <string name="hold_delay_before_starting_long_click_settings">設定長押し開始前の遅延 (ミリ秒)</string>
     <string name="hold_delay_before_starting_long_click_settings_desc">設定の読み込みを開始する前の待機時間の長さ</string>
     <string name="keep_screen_on_desc">Dragonがフォーカスされている間、スクリーンをオフやロック状態にせず点灯させ続ける</string>
-    <string name="drag_zone_padding">ドラッグゾーンの余白</string>
     <string name="points_settings">ポイント設定</string>
     <string name="default_point_live_nest_defaults">ライブネストのデフォルト</string>
     <string name="default_point_live_nest_defaults_summary">ポイント上のターゲットネストを選択した場合に使用します (プレビュー遅延, 大きさ, グレース, ディム)。</string>
@@ -531,7 +518,6 @@
     <string name="pick_a_settings_screen">設定画面を選択</string>
     <string name="app_preview_settings">アプリプレビューオーバーレイ</string>
     <string name="app_preview_settings_desc">プレビューの表示方法を管理</string>
-    <string name="not_implemented">未実装</string>
     <string name="show_status_bar_desc">ステータスバーを表示 (無効であれば何も表示しない)</string>
     <string name="disable_haptic_globally">全体で触覚フィードバックを無効化</string>
     <string name="disable_haptic_globally_desc">(あなたが嫌いな場合) ポイント選択時に触覚フィードバックが発生しないようにします</string>
@@ -623,17 +609,7 @@
     <string name="invert">反転</string>
     <string name="advanced">高度</string>
     <string name="copied_to_clipboard">クリップボードにコピーしました！</string>
-    <string name="permission_tab_help">アプリの権限と、拡張機能ごとのさまざまな権限を管理します</string>
-    <string name="special_system_access">特殊なシステムアクセス</string>
-    <string name="notification_access">通知へのアクセス</string>
-    <string name="notification_access_desc">アプリに通知ドットを表示することを許可する</string>
-    <string name="install_from_unknown_source_permission">不明な提供元のアプリをインストール</string>
-    <string name="install_from_unknown_source_permission_desc">拡張機能のインストールに必要です</string>
-    <string name="accessibility_service">アクセシビリティサービス</string>
-    <string name="accessibility_service_desc">ジェスチャーを用いて通知パネルを展開するのに使われます。</string>
     <string name="usage_access">使用統計へのアクセス</string>
-    <string name="android_permissions">Androidの権限</string>
-    <string name="manage_in_system_settings">システム設定を管理します。</string>
     <string name="snap_points_angle">ポイントのスナップ角度</string>
     <string name="snap_points_angle_desc">ポイントの角度を近い数字にスナップします。例えば、0°に近い場合は0°にスナップします。(15°の倍数)</string>
     <string name="snap_points">ポイントスナップ</string>
@@ -668,7 +644,6 @@
     <string name="hold_settings_help">メイン画面で長押しすると表示されるアークに関する設定です。メイン画面で長押しすると、アークに関する設定が表示されます。完全に無効にすることはできません。そうしないと、設定画面にアクセスできる最後の扉が失われ、アプリをリセットせざるを得なくなる可能性があります。</string>
     <string name="rotation_per_second">秒あたりの回転</string>
     <string name="rotation_per_second_desc">1秒間にどれくらい回転するか</string>
-    <string name="enable_backup">バックアップを有効化</string>
     <string name="choose_a_auto_backup_file">自動バックアップファイルを選択</string>
     <string name="minus_one_means_random">-1を設定すると、ランダムな位置から開始します</string>
     <string name="search_bar">検索バー</string>
@@ -702,7 +677,6 @@
     <string name="points_cell_size_desc">ポイントをスナップするための仮想的な罫線のサイズ</string>
     <string name="off_screen_timeout">オフスクリーンタイムアウト (秒)</string>
     <string name="off_screen_timeout_desc">別の画面にいるときにアプリがホーム画面に戻るまでの待機時間。バックアップなどの一部画面では戻りません。-1が設定されている場合も戻りません</string>
-    <string name="refresh">再読み込み</string>
     <string name="crash">アプリがクラッシュしました！</string>
     <string name="access_app">アプリを起動 (クラッシュが再発する可能性があります)</string>
     <string name="shizuku_unavailable">Shizukuが無効です</string>
@@ -722,7 +696,6 @@
     <string name="pick_a">選ぶ</string>
     <string name="command">コマンド</string>
     <string name="show_toast">トーストを表示</string>
-    <string name="show_tooltips">ツールチップを表示</string>
     <string name="gradient">グラデーション</string>
     <string name="sliders">スライダー</string>
     <string name="common_settings">通常設定</string>
@@ -787,7 +760,6 @@
     <string name="green">緑</string>
     <string name="blue">青</string>
     <string name="move_around_mode">移動モード</string>
-    <string name="reset_rotation">回転をリセット</string>
     <string name="reset_zoom">ズームをリセット</string>
     <string name="edit_workspace">ワークスペースを編集</string>
     <string name="random">ランダム</string>
@@ -857,7 +829,6 @@
     <string name="right_padding_status_bar_desc">ステータスバーの右の空白</string>
     <string name="top_padding_status_bar_desc">これを使う人がいるのだろうか</string>
     <string name="bottom_padding_status_bar_desc">さっきのよりかはまだ意味が理解できる</string>
-    <string name="pick_stores_to_display">表示するストアを選択</string>
     <string name="profile">プロファイル</string>
     <string name="themed_icons_desc">マテリアルデザインのアイコンを使用するか</string>
     <string name="force_themed_icons_desc">互換性のないアイコンに対してテーマアイコンを適用する</string>
@@ -876,7 +847,6 @@
     <string name="nest_debug_overlay_desc">ネストの描画に視覚的なデバッグ機能を追加する</string>
     <string name="auto_merge">自動マージ</string>
     <string name="auto_merge_desc">ポイントと別のポイントを重ねたときに、それらを新しいネストに統合するなどのアクションをトリガーする</string>
-    <string name="show_more_sheet">より多くのシートを表示</string>
     <string name="show_angle_preview">角度プレビューを表示</string>
     <plurals name="n_points_selected">
         <item quantity="other">ポイントを選択済み</item>
@@ -917,7 +887,6 @@
     <string name="align_with_angle_desc">ドラッグの角度に応じて図形を回転させます。よりきれいに見えるために使えるかもしれません</string>
     <string name="how_many_question">いくつ？</string>
     <string name="gamble_apps">ランダムなアプリを配置</string>
-    <string name="show_app_launch_preview_desc">選択したポイントをメインスクリーンに表示</string>
     <string name="stroke_width_explanation">-1は描画しない, 0未満は内側まで満たす, 0は1px, 0以上は値と同じ</string>
     <string name="shape_offset">オフセット</string>
     <string name="custom_object">カスタムオブジェクト</string>
@@ -944,7 +913,6 @@
     <string name="name_and_action">名前とアクション</string>
     <string name="copy_to_clipboard">クリップボードにコピー</string>
     <string name="import_from_clipboard">クリップボードからインポート</string>
-    <string name="points_keep_their_relative_position">ポイントが相対的な位置を維持する</string>
     <string name="duplicate">複製</string>
     <string name="flashbang_theme">閃 光 テ ー マ</string>
     <string name="line">ライン</string>
@@ -965,14 +933,6 @@
     <string name="snap_points_to_shapes">ポイントを図形にスナップ</string>
     <string name="signature_not_matched">署名が一致しません！！！ アプリは公式開発者の公式キーで署名されていません。データが侵害される可能性があります！</string>
     <string name="use_anyways">それでも使う</string>
-    <string name="migrating_settings">設定を移行中…</string>
-    <string name="migrate_from_322">バージョン3.3.2から移行</string>
-    <string name="migrate_from_322_desc">バックアップはバージョン3.2.2のもので、新しいバージョンへの移行が必要です。続行しますか？</string>
-    <string name="migrate_from_322_desc_forced">Dragonの新バージョンへようこそ！続行すると、設定が自動的に新しいシステムに移行されます。問題が発生した場合に備えて、古いバックアップファイルを保存しておくことをお勧めします。何か問題が発生した場合は、設定の「アプリに関して」セクションにある任意の方法で私 (Elnix90) にすぐに連絡して問題を報告し、できるだけ早く修正させてください</string>
-    <string name="migrating_settings_desc">バージョン3.2.2のバックアップをバージョン4.0.0に変換しています。しばらくお待ちください。</string>
-    <string name="migrating_settings_desc_kidding">冗談だよ、そんなに時間はかからないよ :)</string>
-    <string name="migration_complete">移行完了</string>
-    <string name="migration_had_issues">移行時に問題が発生しました</string>
     <string name="render_foreground">前景を描画</string>
     <string name="render_foreground_desc">アイコンの前景を描画するか</string>
     <string name="render_background">背景を描画</string>
@@ -996,7 +956,6 @@
     <string name="paste">貼り付け</string>
     <string name="open_backup_file">バックアップファイルを開く</string>
     <string name="show_reselect_backup_banner">バックアップの再選択バナーを表示する</string>
-    <string name="show_reselect_backup_banner_desc">有効時、Dragonが選択したバックアップファイルにアクセスできない場合、再選択するバナーを表示します</string>
     <string name="select_stores">ストアを選択</string>
     <string name="yoann_desc">拡張機能, パフォーマンス, ウィジェット</string>
     <string name="lucky_desc">Digital Wellbeing, リマインダー</string>
@@ -1009,15 +968,11 @@
     <string name="error_colors_section_desc">エラーや警告に関する色</string>
     <string name="outline_colors_section_desc">枠線、区切り線、選択を示す色</string>
     <string name="surface_container_colors_section_desc">重要度に応じた表面色の色分け</string>
-    <string name="drag_zone_padding_desc">グローバルなドラッグ可能位置を調整</string>
-    <string name="points_keep_their_relative_position_desc">移動時に、ポイントのオフセットがこの図形に対する元の角度に合うように調整されるか、\nまたは、ポイントは考慮されず、図形はポイントに関係なく移動するか。\nfalseの場合、図形が移動するにつれて、ポイントは隠れた基となるオフセットを中心に回転する可能性があります</string>
     <string name="pattern_sensitivity">パターンの当たり判定</string>
     <string name="pattern_sensitivity_desc">どれくらいの遠さの点に当たるか</string>
     <string name="show_sensitivity">当たり判定を表示</string>
     <string name="secret_unlock_button">秘密のアンロックボタン</string>
     <string name="secret_unlock_button_desc">強制的にアンロックする不可視なボタンを追加します (パスワードを忘れたときの最終手段)</string>
-    <string name="actions_lock_method">アクションロックメソッド</string>
-    <string name="actions_lock_method_desc">アクションを起動するために使用するロック方法を指定します。影響を受けるアクションの種類を設定したり、設定と同じパスワードを使用したりすることができます</string>
     <string name="snap_points_angle_threshold">ポイントのスナップ角度</string>
     <string name="snap_points_angle_threshold_desc">ポイントがスナップされる角度。完璧に等間隔に並べるためには360°の約数を推奨</string>
     <string name="show_snap_point_angle_lines">ポイントをスナップする角度を表示</string>
@@ -1026,7 +981,6 @@
     <string name="use_snapped_angle_or_real_angle">スナップ時の角度を使用する</string>
     <string name="use_snapped_angle_or_real_angle_desc">有効のときはスナップしたポイントの角度を使用し、無効であれば指の位置に応じた角度を表示に使用する</string>
     <string name="widget_not_found">ウィジェットが見つかりません</string>
-    <string name="by_elnix">by Elnix90</string>
     <string name="app_tagline">高速なジェスチャーベースのAndroidランチャー</string>
     <string name="code_name_string">コードネーム</string>
     <string name="version_code">バージョンコード</string>

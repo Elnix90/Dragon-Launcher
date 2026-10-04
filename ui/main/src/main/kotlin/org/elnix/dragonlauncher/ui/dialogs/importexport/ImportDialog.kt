@@ -7,7 +7,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.json.JSONObject
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ImportSettingsDialog(
 	backupJson: JSONObject,

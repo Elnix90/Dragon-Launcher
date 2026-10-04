@@ -77,11 +77,7 @@ public data class StaticLauncherIcon(
 
 						val hasProperties = properties.isNotEmpty
 						val saved =
-							if (hasProperties) {
-								applyPropertyCanvasState(canvas, size)
-							} else {
-								false
-							}
+							hasProperties && applyPropertyCanvasState(canvas, size)
 
 						val propertyPaint =
 							properties.tint?.let {

@@ -11,7 +11,6 @@
     <string name="no_extensions_found">Kayıtlı eklenti bulunamadı.</string>
     <string name="install">İndir</string>
     <string name="export_cancelled">Dışarı aktarım iptal edildi</string>
-    <string name="import_cancelled">İçeri aktarım iptal edildi</string>
     <string name="select_apk">APK\'yı Seçin</string>
     <string name="appearance_tab_text">Görünüş ayarlarını değiştirin</string>
     <string name="do_not_remind_me_again">Bana tekrar hatırlatma</string>
