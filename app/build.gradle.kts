@@ -132,7 +132,6 @@ dependencies {
 
 	implementation(project(":ui:base"))
 	implementation(project(":ui:main"))
-
 }
 
 // Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app

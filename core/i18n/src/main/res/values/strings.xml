@@ -1178,4 +1178,9 @@
 	<string name="dragging_mode_fixed">Fixed</string>
 	<string name="dragging_mode_fixed_desc">Place your nests in one place, they are always visible and you can drag anywhere, it\'l enable from the center</string>
     <string name="status_bar_warning">⚠️ The custom status bar is only displayed when the app is in fullscreen</string>
+	<string name="decode_error">Decode Error!</string>
+	<string name="decode_error_desc">A failure occurred when decoding the points, it is recommended to export the data to prevent any loss.</string>
+	<string name="decode_error_share_to_dev">Please share me this bug via any mean for me to fix it ASAP!</string>
+	<string name="decode_error_allow_anyway">Allow Dragon to override data anyway</string>
+	<string name="share_logs">Share logs</string>
 </resources>

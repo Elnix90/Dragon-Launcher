@@ -101,4 +101,22 @@ public abstract class DragonJson<T> {
 			logE(JSON_TAG, e) { "Failed to decode JSON:\n$croppedString\n to ${T::class.simpleName}, returning fallback" }
 		}.getOrElse { fallback }
 	}
+
+	/**
+	 * Decodes a JSON string to a Kotlin object, and throws in case of any errors
+	 * This is useful, when I actually want to cache the decoding issues, such as for the points
+	 *
+	 * Uses the global [json] instance for deserialization.
+	 *
+	 * @param T The expected type of the decoded object.
+	 * @param string The JSON string to deserialize (can be `null` or any type with a `toString()` method).
+	 * @see json
+	 * @see decode
+	 */
+	public inline fun <reified T : Any> decodeAndThrow(string: Any?): T? {
+		val stringifiedString = string?.toString() ?: return null
+		if (stringifiedString.isEmpty()) return null
+
+		return json.decodeFromString<T>(stringifiedString)
+	}
 }

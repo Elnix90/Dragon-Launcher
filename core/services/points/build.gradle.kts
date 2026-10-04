@@ -20,6 +20,7 @@ dependencies {
 	implementation(libs.androidx.ui.graphics)
 	implementation(libs.hilt.core)
 	implementation(libs.timber)
+	implementation(libs.dragon.logging)
 
 	implementation(libs.hilt.android)
 	ksp(libs.hilt.compiler)

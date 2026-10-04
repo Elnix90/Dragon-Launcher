@@ -4,6 +4,9 @@ package org.elnix.dragonlauncher.points
 
 import android.content.Context
 import androidx.compose.ui.geometry.Offset
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logI
+import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -11,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.POINTS_TAG
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
@@ -141,7 +145,10 @@ public interface PointsService {
 	public fun persist()
 
 	/** Reload all data from DataStore. */
-	public suspend fun load()
+	public fun load()
+
+	public val allDecodeSuccessful: SettingFlow<List<DecodeError>?>
+	public val writeToStorageAnyway: SettingFlow<Boolean>
 
 	/** Set the given [points], [nests] and [defaultPoint] if not null. */
 	public fun set(
@@ -487,43 +494,128 @@ internal class PointsServiceImpl(
 		applyChange { defaultIntersectionShape.value = newDefaultShape }
 	}
 
-	override suspend fun load() {
-		val decodedPoints = PointsJson.decode<Set<Point>>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
-		_points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
+	override val allDecodeSuccessful: SettingFlow<List<DecodeError>?> = SettingFlow(null)
+	override val writeToStorageAnyway: SettingFlow<Boolean> = SettingFlow(false)
 
-		val decodedNests = NestsJson.decode<Set<Nest>>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
-		_nests.value = ConcurrentHashMap(decodedNests.associateBy { it.id })
+	override fun load() {
+		scope.launch {
+			val errors = mutableListOf<DecodeError>()
 
-		val decodedDefaultPoint = DefaultPointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), emptyPoint)
-		defaultPoint.value = decodedDefaultPoint
+			val pointsJsonString = PointsSettingsStore.jsonSetting.get(ctx)
+			try {
+				val decodedPoints = PointsJson.decodeAndThrow<Set<Point>>(pointsJsonString)
+				if (decodedPoints != null) {
+					_points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
+				}
+			} catch (e: Exception) {
+				logE(POINTS_TAG, e) { "Failed to decode points" }
+				errors += DecodeError(
+					type = "Points",
+					exception = e,
+					json = pointsJsonString
+				)
+			}
 
-		val decodedDefaultNest = DefaultNestJson.decode(DefaultNestSettingsStore.jsonSetting.get(ctx), emptyNest)
-		defaultNest.value = decodedDefaultNest
+			val nestsJsonString = NestsSettingsStore.jsonSetting.get(ctx)
+			try {
+				val decodedNests = NestsJson.decodeAndThrow<Set<Nest>>(nestsJsonString)
+				if (decodedNests != null) {
+					_nests.value = ConcurrentHashMap(decodedNests.associateBy { it.id })
+				}
+			} catch (e: Exception) {
+				logE(POINTS_TAG, e) { "Failed to decode nests" }
+				errors += DecodeError(
+					type = "Nests",
+					exception = e,
+					json = nestsJsonString
+				)
+			}
 
-		val decodedDefaultShape =
-			DefaultShapeJson.decode(DefaultShapeSettingsStore.jsonSetting.get(ctx), emptyIntersectionShape)
-		defaultIntersectionShape.value = decodedDefaultShape
+			val defaultPointJsonString = DefaultPointSettingsStore.jsonSetting.get(ctx)
+			try {
+				val decodedDefaultPoint = DefaultPointJson.decodeAndThrow<Point>(defaultPointJsonString)
+				if (decodedDefaultPoint != null) {
+					defaultPoint.value = decodedDefaultPoint
+				}
+			} catch (e: Exception) {
+				logE(POINTS_TAG, e) { "Failed to decode default point" }
+				errors += DecodeError(
+					type = "Default Point",
+					exception = e,
+					json = defaultPointJsonString
+				)
+			}
 
-		resetGrids()
-		recompose()
+			val defaultNestJsonString = DefaultNestSettingsStore.jsonSetting.get(ctx)
+			try {
+				val decodedDefaultNest = DefaultNestJson.decodeAndThrow<Nest>(defaultNestJsonString)
+				if (decodedDefaultNest != null) {
+					defaultNest.value = decodedDefaultNest
+				}
+			} catch (e: Exception) {
+				logE(POINTS_TAG, e) { "Failed to decode default nest" }
+				errors += DecodeError(
+					type = "Default Nest",
+					exception = e,
+					json = defaultNestJsonString
+				)
+			}
+
+			val defaultShapeJsonString = DefaultShapeSettingsStore.jsonSetting.get(ctx)
+			try {
+				val decodedDefaultShape = DefaultShapeJson.decodeAndThrow<IntersectionShape>(defaultShapeJsonString)
+				if (decodedDefaultShape != null) {
+					defaultIntersectionShape.value = decodedDefaultShape
+				}
+			} catch (e: Exception) {
+				logE(POINTS_TAG, e) { "Failed to decode default shape" }
+				errors += DecodeError(
+					type = "Default shape",
+					exception = e,
+					json = defaultShapeJsonString
+				)
+			}
+
+			resetGrids()
+			recompose()
+
+			if (errors.isNotEmpty()) {
+				logW(POINTS_TAG) { "All decodes were not successful, preventing dragon to write to storage:\n$errors" }
+			} else {
+				logI(POINTS_TAG) { "All decodes were successful" }
+			}
+			allDecodeSuccessful.value = errors
+		}
 	}
 
 	override fun persist() {
-		scope.launch {
-			val encodedPoints = PointsJson.encode<Set<Point>>(_points.value.values.toSet())
-			PointsSettingsStore.jsonSetting.set(ctx, encodedPoints)
+		val hasErrors = !allDecodeSuccessful.value.isNullOrEmpty()
+		if (!hasErrors || writeToStorageAnyway.value) {
+			scope.launch {
+				launch {
+					val encodedPoints = PointsJson.encode<Set<Point>>(_points.value.values.toSet())
+					PointsSettingsStore.jsonSetting.set(ctx, encodedPoints)
+				}
 
-			val encodedNests = NestsJson.encode<Set<Nest>>(_nests.value.values.toSet())
-			NestsSettingsStore.jsonSetting.set(ctx, encodedNests)
+				launch {
+					val encodedNests = NestsJson.encode<Set<Nest>>(_nests.value.values.toSet())
+					NestsSettingsStore.jsonSetting.set(ctx, encodedNests)
+				}
+				launch {
+					val encodedDefaultPoint = DefaultPointJson.encode(defaultPoint.value)
+					DefaultPointSettingsStore.jsonSetting.set(ctx, encodedDefaultPoint)
+				}
 
-			val encodedDefaultPoint = DefaultPointJson.encode(defaultPoint.value)
-			DefaultPointSettingsStore.jsonSetting.set(ctx, encodedDefaultPoint)
+				launch {
+					val encodedDefaultNest = DefaultNestJson.encode(defaultNest.value)
+					DefaultNestSettingsStore.jsonSetting.set(ctx, encodedDefaultNest)
+				}
 
-			val encodedDefaultNest = DefaultNestJson.encode(defaultNest.value)
-			DefaultNestSettingsStore.jsonSetting.set(ctx, encodedDefaultNest)
-
-			val encodedDefaultShape = DefaultShapeJson.encode(defaultIntersectionShape.value)
-			DefaultShapeSettingsStore.jsonSetting.set(ctx, encodedDefaultShape)
+				launch {
+					val encodedDefaultShape = DefaultShapeJson.encode(defaultIntersectionShape.value)
+					DefaultShapeSettingsStore.jsonSetting.set(ctx, encodedDefaultShape)
+				}
+			}
 		}
 	}
 
@@ -1010,4 +1102,12 @@ internal class PointsServiceImpl(
 
 	private fun cellKey(offset: Offset): GridCase =
 		Pair((offset.x / gridSize).toInt(), (offset.y / gridSize).toInt())
+}
+
+public data class DecodeError(
+	val type: String,
+	val exception: Exception,
+	val json: String
+) {
+	override fun toString(): String = type + "\n\n" + exception.stackTraceToString() + "\n\n" + json
 }

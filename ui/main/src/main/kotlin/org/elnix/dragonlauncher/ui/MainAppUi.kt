@@ -64,6 +64,7 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.models.SwipeViewModel
@@ -81,6 +82,7 @@ import org.elnix.dragonlauncher.ui.compositionslocals.Navigator
 import org.elnix.dragonlauncher.ui.compositionslocals.ProvideGlobalCompositionLocals
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
+import org.elnix.dragonlauncher.ui.dialogs.DecodingErrorSheet
 import org.elnix.dragonlauncher.ui.dialogs.FilePickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.GoogleLockingWarningDialog
 import org.elnix.dragonlauncher.ui.dialogs.MainScreeLayersTab
@@ -144,6 +146,7 @@ import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
 @Composable
 fun MainAppUi(
 	appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
+	pointsViewModel: PointsViewModel = activityViewModel(),
 	drawerViewModel: DrawerViewModel = activityViewModel(),
 	securityViewModel: SecurityViewModel = activityViewModel(),
 	appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
@@ -625,6 +628,17 @@ fun MainAppUi(
 									uriHandler.openUri(URL_SHIZUKU_SITE)
 								}
 							}
+						)
+					}
+
+					val decodeErrors by pointsViewModel.pointsService.allDecodeSuccessful.asState()
+					val writeToStorageAnyway by pointsViewModel.pointsService.writeToStorageAnyway.asState()
+					if (!decodeErrors.isNullOrEmpty() || writeToStorageAnyway) {
+						DecodingErrorSheet(
+							onDismissRequest = {
+								pointsViewModel.pointsService.writeToStorageAnyway.value = true
+							},
+							errors = decodeErrors!!
 						)
 					}
 
