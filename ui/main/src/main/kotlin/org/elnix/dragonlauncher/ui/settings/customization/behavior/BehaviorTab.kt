@@ -26,6 +26,8 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.components.BetaVersionType
+import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.security.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dialogs.security.SecretUnlockButton
@@ -86,6 +88,7 @@ fun BehaviorTab(
 				SettingActionSelector(BehaviorSettingsStore.homeAction)
 			}
 
+			BetaVersionWarning(BetaVersionType.Feature)
 			DragonSettingsGroup(R.string.nests_settings) {
 				ActionSelectorRow(
 					options = GlobalDraggingMode.DraggingModeList,
