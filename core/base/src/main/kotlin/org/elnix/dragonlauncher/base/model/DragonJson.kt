@@ -69,7 +69,10 @@ public abstract class DragonJson<T> {
 
 			json.decodeFromString<T>(stringifiedString)
 		}.onFailure { e ->
-			logE(JSON_TAG, e) { "Failed to decode JSON:\n$string\n to ${T::class.simpleName}" }
+			// Take at most 1000 chars to avoid printing the whole JSON
+			val croppedString = string.toString().take(1000)
+
+			logE(JSON_TAG, e) { "Failed to decode JSON:\n$croppedString\n to ${T::class.simpleName}, returning fallback" }
 		}.getOrNull()
 	}
 
@@ -92,7 +95,10 @@ public abstract class DragonJson<T> {
 
 			json.decodeFromString<T>(stringifiedString)
 		}.onFailure { e ->
-			logE(JSON_TAG, e) { "Failed to decode JSON\n$string\n to ${T::class.simpleName}, returning fallback" }
+			// Take at most 1000 chars to avoid printing the whole JSON
+			val croppedString = string.toString().take(1000)
+
+			logE(JSON_TAG, e) { "Failed to decode JSON:\n$croppedString\n to ${T::class.simpleName}, returning fallback" }
 		}.getOrElse { fallback }
 	}
 }
