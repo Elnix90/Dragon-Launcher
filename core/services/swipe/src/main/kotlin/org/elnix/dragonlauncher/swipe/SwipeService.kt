@@ -22,6 +22,7 @@ import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
+import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -237,7 +238,6 @@ internal class SwipeServiceImpl(
 		start.value = null
 		current.value = null
 		pointsService.deselectAll()
-		lastClickTime = 0L
 	}
 
 	private val doubleClickAction = BehaviorSettingsStore.doubleClickAction.stateFlow(ctx, scope)
@@ -280,8 +280,10 @@ internal class SwipeServiceImpl(
 
 				val currentTime = System.currentTimeMillis()
 				val diff = currentTime - lastClickTime
+				logWtf { "Diff: $diff\n\ncurrentTime: $currentTime\nlastClickTime $lastClickTime" }
 				if (diff < DOUBLE_CLICK_ACTION_DELAY) {
 					launchAction(doubleClickAction.value)
+					logWtf { "Launching double click action" }
 					continue
 				}
 
@@ -424,6 +426,8 @@ internal class SwipeServiceImpl(
 
 	override fun launchAction(action: Action) {
 		clearAfterLaunch()
+
+		lastClickTime = 0L
 		showDropDownMenuSettings.value = false
 		lifecycleService.blockHomeActionsTemporarily()
 
