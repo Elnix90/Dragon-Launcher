@@ -1,11 +1,7 @@
 package org.elnix.dragonlauncher.ui.wellbeing
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.usage.UsageStatsManager
 import android.content.Context
-import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
@@ -87,10 +83,11 @@ import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
+import org.elnix.dragonlauncher.timer.UsageStatsReader
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import java.util.Calendar
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -106,10 +103,11 @@ private val TextSecondary = Color(0xFFB2BEC3)
 @Composable
 fun DigitalPauseScreen(
 	application: Application,
-	appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
-	onCancel: () -> Unit
+	viewModel: DigitalPauseViewModel,
+	appLaunchViewModel: AppLaunchViewModel = activityViewModel()
 ) {
 	val ctx = LocalContext.current
+	val navigator = LocalNavigator.current
 	val packageName = application.packageName
 
 	val appLaunchService = appLaunchViewModel.appLaunchService
@@ -118,14 +116,19 @@ fun DigitalPauseScreen(
 	val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
 	val pauseDurationSeconds by WellbeingSettingsStore.pauseDurationSeconds.asState()
 
-	var countdown by remember(pauseDurationSeconds) { mutableIntStateOf(pauseDurationSeconds) }
-	var showChoice by remember { mutableStateOf(false) }
-	var showTimePicker by remember { mutableStateOf(false) }
-	var countdownFinished by remember { mutableStateOf(false) }
-	var currentPhraseIndex by remember { mutableIntStateOf(0) }
+	var countdown by viewModel.countdown
+	LaunchedEffect(pauseDurationSeconds) {
+		countdown = pauseDurationSeconds
+	}
+
+	var showChoice by viewModel.showChoice
+	var showTimePicker by viewModel.showTimePicker
+	var countdownFinished by viewModel.countdownFinished
+	var currentPhraseIndex by viewModel.currentPhraseIndex
 
 	val hasUsageStatsPermission by appLaunchService.hasUsageStatsPermission.collectAsState()
 	val scrollState = rememberScrollState()
+
 	// Shrink the lotus once the choice is shown so the action buttons
 	// ("No, I'll pass" / "Yes, open anyway") stay visible on small screens,
 	// especially when the guilt stats card grows (yearly line).
@@ -143,7 +146,11 @@ fun DigitalPauseScreen(
 
 	val usageStats =
 		remember(packageName, guiltModeEnabled, hasUsageStatsPermission) {
-			if (guiltModeEnabled && hasUsageStatsPermission) getUsageStats(ctx, packageName) else null
+			if (guiltModeEnabled && hasUsageStatsPermission) {
+				viewModel.getUsageStats(ctx, packageName)
+			} else {
+				null
+			}
 		}
 
 	LaunchedEffect(pauseDurationSeconds) {
@@ -157,8 +164,6 @@ fun DigitalPauseScreen(
 		countdownFinished = true
 		showChoice = true
 	}
-
-	BackHandler(onBack = onCancel)
 
 	Surface(
 		modifier = Modifier.fillMaxSize(),
@@ -281,14 +286,14 @@ fun DigitalPauseScreen(
 
 						// Cancel Button
 						DragonButton(
-							onClick = onCancel,
+							onClick = navigator::onBack,
 							modifier =
 								Modifier
 									.fillMaxWidth()
 									.height(60.dp)
 						) {
 							Text(
-								text = stringResource(R.string.pause_no_thanks).uppercase(),
+								text = stringResource(R.string.pause_no_thanks),
 								style = MaterialTheme.typography.labelLarge,
 								letterSpacing = 1.sp
 							)
@@ -303,8 +308,8 @@ fun DigitalPauseScreen(
 									showChoice = false
 									showTimePicker = true
 								} else {
-									appLaunchService.onAppTimerServiceStarted(null)
-									onCancel()
+									appLaunchService.onAppTimerServiceStarted(null, application)
+									navigator.onBack()
 								}
 							},
 							colors = ButtonDefaults.textButtonColors(contentColor = TextSecondary)
@@ -323,11 +328,11 @@ fun DigitalPauseScreen(
 					exit = fadeOut()
 				) {
 					TimeLimitPickerUI(
-						onConfirm = {
-							appLaunchService.onAppTimerServiceStarted(it)
-							onCancel()
+						onConfirm = { duration ->
+							appLaunchService.onAppTimerServiceStarted(duration, application)
+							navigator.onBack()
 						},
-						onCancel = onCancel
+						onCancel = navigator::onBack
 					)
 				}
 			}
@@ -659,7 +664,7 @@ private fun GlassCard(
 }
 
 @Composable
-private fun UsageStatsDisplay(stats: AppUsageStats) {
+private fun UsageStatsDisplay(stats: UsageStatsReader.AppUsageStats) {
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -722,37 +727,3 @@ private fun PermissionNeededContent(ctx: Context) {
 		}
 	}
 }
-
-data class AppUsageStats(
-	val yesterdayMinutes: Long,
-	val todayMinutes: Long
-)
-
-@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-private fun getUsageStats(ctx: Context, packageName: String): AppUsageStats? =
-	try {
-		val usageStatsManager = ctx.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-		val now = System.currentTimeMillis()
-		val todayCal =
-			Calendar.getInstance().apply {
-				set(Calendar.HOUR_OF_DAY, 0)
-				set(Calendar.MINUTE, 0)
-				set(Calendar.SECOND, 0)
-				set(Calendar.MILLISECOND, 0)
-			}
-		val todayStart = todayCal.timeInMillis
-		val todayStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, todayStart, now)
-		val todayMinutes = todayStats.filter { it.packageName == packageName }.sumOf { it.totalTimeInForeground } / 60000
-		val yesterdayStart = (todayCal.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
-		val yesterdayStats =
-			usageStatsManager.queryUsageStats(
-				UsageStatsManager.INTERVAL_DAILY,
-				yesterdayStart,
-				todayStart
-			)
-		val yesterdayMinutes = yesterdayStats.filter { it.packageName == packageName }.sumOf { it.totalTimeInForeground } / 60000
-		AppUsageStats(yesterdayMinutes, todayMinutes)
-	} catch (e: Exception) {
-		e.printStackTrace()
-		null
-	}

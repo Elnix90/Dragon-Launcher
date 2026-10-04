@@ -10,13 +10,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.elnix.dragonlauncher.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.applications.AppRepository
-import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
@@ -33,7 +35,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 public interface AppLaunchService {
 	public val hasUsageStatsPermission: StateFlow<Boolean>
-	public val pendingAppLaunch: SettingFlow<Application?>
+	public val pendingAppLaunch: Flow<Application?>
 
 	public fun requestAppLaunch(launchAction: Action.LaunchApp)
 
@@ -41,7 +43,7 @@ public interface AppLaunchService {
 
 	public suspend fun startTimer(timeLimitMinutes: Int?, app: Application)
 
-	public fun onAppTimerServiceStarted(duration: Int?): Boolean
+	public fun onAppTimerServiceStarted(duration: Int?, application: Application)
 
 	public fun launchShortcut(action: Action.LaunchShortcut)
 }
@@ -59,7 +61,8 @@ internal class AppLaunchServiceImpl(
 	override val hasUsageStatsPermission: StateFlow<Boolean> =
 		permissionsManager.hasPermission(PermissionGroup.UsageStat)
 
-	override val pendingAppLaunch: SettingFlow<Application?> = SettingFlow(null)
+	private val _pendingAppLaunch = Channel<Application>(Channel.CONFLATED)
+	override val pendingAppLaunch = _pendingAppLaunch.receiveAsFlow()
 
 	private var currentLaunchJob: Job? = null
 
@@ -107,14 +110,10 @@ internal class AppLaunchServiceImpl(
 	override fun requestAppLaunch(app: Application) {
 		viewModelScope.launch {
 			val startAppTimer =
-				if (!WellbeingSettingsStore.socialMediaPauseEnabled.get(ctx)) {
-					false
-				} else {
-					app.packageName in WellbeingSettingsStore.pausedApps.get(ctx)
-				}
+				WellbeingSettingsStore.socialMediaPauseEnabled.get(ctx) && app.packageName in WellbeingSettingsStore.pausedApps.get(ctx)
 
 			if (startAppTimer) {
-				pendingAppLaunch.value = app
+				_pendingAppLaunch.trySend(app)
 				return@launch
 			}
 
@@ -137,27 +136,17 @@ internal class AppLaunchServiceImpl(
 		)
 	}
 
-	override fun onAppTimerServiceStarted(duration: Int?): Boolean {
-		val pendingApp = pendingAppLaunch.value
-		if (pendingApp != null) {
-			viewModelScope.launch {
-				// A null duration means "no time limit", but the timer service
-				// is still needed when periodic reminders are enabled.
-				val startTimer =
-					duration != null ||
-						WellbeingSettingsStore.reminderEnabled.flow(ctx).first()
-				if (startTimer) {
-					startTimer(duration, pendingApp)
-				}
+	override fun onAppTimerServiceStarted(duration: Int?, application: Application) {
+		viewModelScope.launch {
+			// A null duration means "no time limit", but the timer service
+			// is still needed when periodic reminders are enabled.
+			val startTimer = duration != null || WellbeingSettingsStore.reminderEnabled.flow(ctx).first()
+			if (startTimer) {
+				startTimer(duration, application)
 			}
-
-			launchAppDirectly(pendingApp)
-			// Clear here (not only in the UI) so a stale pending app
-			// cannot re-trigger the pause screen.
-			pendingAppLaunch.value = null
-			return true
 		}
-		return false
+
+		launchAppDirectly(application)
 	}
 
 	override fun launchShortcut(action: Action.LaunchShortcut) {

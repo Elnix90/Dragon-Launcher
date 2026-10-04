@@ -392,7 +392,8 @@
   <string name="time_exceeded_subtitle">It\'s time to take a break and do something you enjoy offline 🌱</string>
   <string name="time_exceeded_ok">Got it, thanks Dragon</string>
   <string name="time_exceeded_header">Session ended</string>
-  <string name="encouragement_walk">Go for a walk 🚶</string>
+	<string name="encouragement_walk">Go for a walk 🚶</string>
+	<string name="encouragement_grass">Touch some grass 🌿</string>
   <string name="encouragement_water">Drink some water 💧</string>
   <string name="encouragement_stretch">Stretch your body 🧘</string>
   <string name="encouragement_window">Look out the window 🪟</string>

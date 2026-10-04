@@ -43,7 +43,6 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
-import kotlinx.coroutines.FlowPreview
 import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
@@ -75,7 +74,6 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asMutableState
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
@@ -137,11 +135,11 @@ import org.elnix.dragonlauncher.ui.warning.SignatureWarningDialog
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
 import org.elnix.dragonlauncher.ui.welcome.WelcomeViewModel
 import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseScreen
+import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseViewModel
 import org.elnix.dragonlauncher.ui.wellbeing.TimeLimitExceededScreen
 import org.elnix.dragonlauncher.ui.whatsnew.ChangelogsScreen
 import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
 
-@OptIn(FlowPreview::class)
 @SuppressLint("LocalContextGetResourceValueCall", "WrongConstant")
 @Composable
 fun MainAppUi(
@@ -299,6 +297,13 @@ fun MainAppUi(
 			}
 		}
 	}
+	LaunchedEffect(Unit) {
+		appLaunchViewModel.appLaunchService.pendingAppLaunch.collect {
+			if (it != null) {
+				navigator.navigate(NavigationRoute.DigitalPauseScreen(it.action))
+			}
+		}
+	}
 
 	LaunchedEffect(Unit) {
 		swipeService.navigatorChannel.collect {
@@ -410,7 +415,21 @@ fun MainAppUi(
 							entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab() }
 							entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen() }
 							entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab() }
+
 							entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab() }
+							entry<NavigationRoute.DigitalPauseScreen>(metadata = horizontalMetadata) {
+								val viewModel: DigitalPauseViewModel = hiltViewModel()
+								val app by drawerViewModel.findOne(it.appToLaunch).collectAsState(null)
+
+								if (app != null) {
+									DigitalPauseScreen(
+										viewModel = viewModel,
+										application = app!!
+									)
+								}
+							}
+							entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }
+
 							entry<NavigationRoute.Debug>(metadata = horizontalMetadata) {
 								val viewModel: DebugTabViewModel = hiltViewModel()
 								DebugTab(viewModel)
@@ -452,7 +471,6 @@ fun MainAppUi(
 
 							entry<NavigationRoute.WorkspaceDetail>(metadata = horizontalMetadata) { key -> WorkspaceDetailScreen(key.workspaceId) }
 
-							entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }
 							entry<NavigationRoute.LockScreen> { key ->
 
 								fun onSuccess() {
@@ -607,16 +625,6 @@ fun MainAppUi(
 									uriHandler.openUri(URL_SHIZUKU_SITE)
 								}
 							}
-						)
-					}
-
-					var pendingAppToLaunch by appLaunchViewModel.appLaunchService.pendingAppLaunch.asMutableState()
-
-					if (pendingAppToLaunch != null) {
-						val pendingApp = pendingAppToLaunch!!
-						DigitalPauseScreen(
-							application = pendingApp,
-							onCancel = { pendingAppToLaunch = null }
 						)
 					}
 

@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
 
 @Immutable
@@ -176,6 +177,15 @@ public sealed class NavigationRoute : NavKey {
 	@Serializable
 	@SerialName("Wellbeing")
 	public data object Wellbeing : NavigationRoute() {
+		override val resId: Int = R.string.wellbeing
+		override val icon: Int = R.drawable.self_improvement
+	}
+
+	@Serializable
+	@SerialName("DigitalPauseScreen")
+	public data class DigitalPauseScreen(
+		val appToLaunch: Action.LaunchApp
+	) : NavigationRoute() {
 		override val resId: Int = R.string.wellbeing
 		override val icon: Int = R.drawable.self_improvement
 	}

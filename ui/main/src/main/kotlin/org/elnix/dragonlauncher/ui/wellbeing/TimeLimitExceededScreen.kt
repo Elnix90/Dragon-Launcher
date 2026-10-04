@@ -282,6 +282,8 @@ private fun GlassEncouragementCard() {
 	val messages =
 		listOf(
 			stringResource(R.string.encouragement_walk),
+			stringResource(R.string.encouragement_grass),
+			stringResource(R.string.encouragement_walk),
 			stringResource(R.string.encouragement_water),
 			stringResource(R.string.encouragement_stretch),
 			stringResource(R.string.encouragement_window),
