@@ -22,7 +22,6 @@ import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
-import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -280,10 +279,8 @@ internal class SwipeServiceImpl(
 
 				val currentTime = System.currentTimeMillis()
 				val diff = currentTime - lastClickTime
-				logWtf { "Diff: $diff\n\ncurrentTime: $currentTime\nlastClickTime $lastClickTime" }
 				if (diff < DOUBLE_CLICK_ACTION_DELAY) {
 					launchAction(doubleClickAction.value)
-					logWtf { "Launching double click action" }
 					continue
 				}
 
