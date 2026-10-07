@@ -22,8 +22,8 @@
     <string name="extension_manual_install_desc">Si vous n\'avez pas d\'extension d\'installation, téléchargez l\'APK et sélectionnez-le ci-dessous pour l\'installer.</string>
     <string name="select_apk">Sélectionner l\'APK</string>
     <string name="system_default">Par défaut système</string>
-	<string name="export_cancelled">Exportation annulée</string>
-	<string name="backup">Sauvegarde</string>
+    <string name="export_cancelled">Exportation annulée</string>
+    <string name="backup">Sauvegarde</string>
     <string name="backup_restore_text">Sauvegarde ou restauration des paramètres et des actions de l’application, les sauvegardes automatiques sont déclenchées automatiquement à chaque lancement/pause/fermeture de l’application ou en appuyant sur le bouton « Déclencher » ci-dessous</string>
     <string name="export_settings">Exporter les paramètres</string>
     <string name="import_settings">Importer les paramètres</string>
@@ -32,7 +32,7 @@
     <string name="import_successful">Importation réussie</string>
     <string name="export_successful">Exportation réussie</string>
     <string name="unknown_error">Erreur inconnue</string>
-	<string name="color_selector_text">Sélectionnez le thème de couleur que vous souhaitez</string>
+    <string name="color_selector_text">Sélectionnez le thème de couleur que vous souhaitez</string>
     <string name="color_mode_all">Toutes les couleurs</string>
     <string name="reset">Réinitialisation</string>
     <string name="reset_to_default_colors">Réinitialisation aux couleurs par défaut</string>
@@ -106,7 +106,7 @@
     <string name="keep_screen_on">Garder l’écran allumé</string>
     <string name="back_action">Action arrière</string>
     <string name="double_click_action">Action de double clic</string>
-	<string name="long_click_to_access_settings">Appuyez lngtemps pour accèder aux paramètres</string>
+    <string name="long_click_to_access_settings">Appuyez lngtemps pour accèder aux paramètres</string>
     <string name="swipe_to_open_app">Faites glisser pour ouvrir vos applications / raccourcis configurés</string>
     <string name="configure_your_apps">Configurez vos applications et raccourcis dans les paramètres</string>
     <string name="theme_selector">Sélecteur de thème</string>
@@ -119,7 +119,7 @@
     <string name="recent_apps">Applications récentes</string>
     <string name="open_recent_apps_color">Ouvrir la couleur des applications récentes</string>
     <string name="open_circle_nest_color">Couleur du nid en cercle ouvert</string>
-    <string name="go_parent_nest_color">Go Parent Nest Color</string>
+    <string name="go_parent_nest_color">Aller à la couleur du nid parent</string>
     <string name="left_padding">Rembourrage gauche</string>
     <string name="right_padding">Rembourrage à droite</string>
     <string name="top_padding">Rembourrage supérieur</string>
@@ -225,7 +225,7 @@
     <string name="copy">Copie</string>
     <string name="pick_a_nest">Choisissez un nid</string>
     <string name="create_new_nest">Créer un nouveau nid</string>
-	<string name="selected_text">Choisi</string>
+    <string name="selected_text">Choisi</string>
     <string name="unselected">Désélectionné</string>
     <string name="inner_padding">Rembourrage intérieur</string>
     <string name="tint">Teinte</string>
@@ -257,14 +257,14 @@
     <string name="open_default_launcher_settings">Ouvrir les paramètres du lanceur par défaut</string>
     <string name="welcome_to_dragon_launcher">Bienvenue sur Dragon Launcher</string>
     <string name="customize_apps">Personnaliser les applications</string>
-	<string name="swipe_up_to_start_using_directly">Glissez vers le haut pour commencer à utiliser Dragon Launcher</string>
-	<string name="app_aliases">Aliases d’applications</string>
+    <string name="swipe_up_to_start_using_directly">Glissez vers le haut pour commencer à utiliser Dragon Launcher</string>
+    <string name="app_aliases">Aliases d’applications</string>
     <string name="edit_alias">Éditeur alias</string>
     <string name="alias">Alias</string>
     <string name="create_alias">Créer un alias</string>
     <string name="scroll_up_action">Action de défilement vers le haut</string>
-	<string name="click_search_icon_action">Action du click de l\'icône rechercher</string>
-	<string name="scroll_down_action">Action de défilement vers le bas</string>
+    <string name="click_search_icon_action">Action du click de l\'icône rechercher</string>
+    <string name="scroll_down_action">Action de défilement vers le bas</string>
     <string name="auto_launch_single_match">Match unique à lancement automatique</string>
     <string name="auto_launch_single_match_desc">Quand une seule application est visible dans le tiroir, elle se lance automatiquement</string>
     <string name="auto_show_keyboard">Clavier d’exposition auto</string>
@@ -273,7 +273,7 @@
     <string name="close_kb">Fermer clavier</string>
     <string name="open_kb">Clavier ouvert</string>
     <string name="open_settings">Ouvrir les paramètres</string>
-	<!--  ─────────────  Wellbeing Section  ─────────────  -->
+    <!--  ─────────────  Wellbeing Section  ─────────────  -->
     <string name="wellbeing">Bien-être numérique</string>
     <string name="wellbeing_help">Prenez le contrôle de vos habitudes numériques. Faites une pause avant d\'ouvrir des applications distrayantes et réfléchissez à votre utilisation.</string>
     <string name="social_media_pause">Pause Réseaux Sociaux</string>
@@ -366,27 +366,27 @@
     <string name="use_pure_black_background">Utilisez un fond noir pur</string>
     <!--  ───────────── Colors  ─────────────  -->
     <string name="primary_colors_section">Couleurs primaires</string>
-	<string name="primary_colors_section_desc">Couleurs primaires</string>
-	<string name="primary_color">Couleur primaire</string>
+    <string name="primary_colors_section_desc">Couleurs primaires</string>
+    <string name="primary_color">Couleur primaire</string>
     <string name="on_primary_color">Sur la couleur primaire</string>
     <string name="primary_container_color">Conteneur principal</string>
     <string name="on_primary_container_color">Sur le récipient primaire</string>
     <string name="inverse_primary_color">Primaire inverse</string>
     <string name="secondary_colors_section">Couleurs secondaires</string>
-	<string name="secondary_colors_section_desc">Couleurs secondaires</string>
-	<string name="secondary_color">Couleur secondaire</string>
+    <string name="secondary_colors_section_desc">Couleurs secondaires</string>
+    <string name="secondary_color">Couleur secondaire</string>
     <string name="on_secondary_color">Sur la couleur secondaire</string>
     <string name="secondary_container_color">Conteneur secondaire</string>
     <string name="on_secondary_container_color">Sur le conteneur secondaire</string>
     <string name="tertiary_colors_section">Couleurs tertiaires</string>
-	<string name="tertiary_colors_section_desc">Couleurs tertiares</string>
-	<string name="tertiary_color">Couleur tertiaire</string>
+    <string name="tertiary_colors_section_desc">Couleurs tertiares</string>
+    <string name="tertiary_color">Couleur tertiaire</string>
     <string name="on_tertiary_color">Sur la couleur tertiaire</string>
     <string name="tertiary_container_color">Conteneur tertiaire</string>
     <string name="on_tertiary_container_color">Sur le conteneur tertiaire</string>
     <string name="background_surface_colors_section">Arrière-plan / Couleurs de surface</string>
-	<string name="background_surface_colors_section_desc">Couleurs d\'arrière plan</string>
-	<string name="background_color">Couleur de fond</string>
+    <string name="background_surface_colors_section_desc">Couleurs d\'arrière plan</string>
+    <string name="background_color">Couleur de fond</string>
     <string name="on_background_color">Sur la couleur de fond</string>
     <string name="surface_color">Couleur de surface</string>
     <string name="on_surface_color">Sur la couleur de surface</string>
@@ -396,19 +396,19 @@
     <string name="inverse_surface_color">Inverse Surface</string>
     <string name="inverse_on_surface_color">Inverse sur la surface</string>
     <string name="error_colors_section">Couleurs d’erreur</string>
-	<string name="error_colors_section_desc">Couleurs d\'erreur</string>
-	<string name="error_color">Couleur d’erreur</string>
+    <string name="error_colors_section_desc">Couleurs d\'erreur</string>
+    <string name="error_color">Couleur d’erreur</string>
     <string name="on_error_color">Sur la couleur d’erreur</string>
     <string name="error_container_color">Conteneur d’erreur</string>
     <string name="on_error_container_color">Sur le conteneur d’erreur</string>
     <string name="outline_colors_section">Contour / Couleurs diverses</string>
-	<string name="outline_colors_section_desc">Couleurs de bordure</string>
-	<string name="outline_color">Couleur de contour</string>
+    <string name="outline_colors_section_desc">Couleurs de bordure</string>
+    <string name="outline_color">Couleur de contour</string>
     <string name="outline_variant_color">Variante de contour</string>
     <string name="scrim_color">Scrim</string>
     <string name="surface_container_colors_section">Couleurs des contenants de surface</string>
-	<string name="surface_container_colors_section_desc">Couleurs de container de surface</string>
-	<string name="surface_bright_color">Surface Bright</string>
+    <string name="surface_container_colors_section_desc">Couleurs de container de surface</string>
+    <string name="surface_bright_color">Surface Bright</string>
     <string name="surface_container_color">Conteneur de surface</string>
     <string name="surface_container_high_color">Surface Container High</string>
     <string name="surface_container_highest_color">Conteneur de surface le plus élevé</string>
@@ -426,8 +426,8 @@
     <string name="on_tertiary_fixed_color">Sur le terme tertiaire fixe</string>
     <string name="on_tertiary_fixed_variant_color">Sur la variante fixe tertiaire</string>
     <string name="custom_colors">Couleurs personnalisées</string>
-	<string name="custom_colors_desc">Couleurs personalisées</string>
-	<string name="reset_all_points">Réinitialisez tous les points</string>
+    <string name="custom_colors_desc">Couleurs personalisées</string>
+    <string name="reset_all_points">Réinitialisez tous les points</string>
     <string name="reset_all_points_desc">Toutes vos actions seront réinitialisées, cela ne peut pas être annulé !</string>
     <string name="use_categories">Catégories d’utilisation</string>
     <string name="use_categories_desc">Regroupez les applications dans le tiroir selon leurs catégories définies</string>
@@ -444,10 +444,9 @@
     <string name="category_cells">Cellules de catégorie</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
 	<string name="category_grid_cells_desc">Nombre d\'apps dans une ligne/colonne d\'une catégorie</string>
-	<string name="multi_select_count">%d sélectionnée(s)</string>
-
-	<string name="place_app_where">Ou voulez-vous placer…</string>
-	<string name="tap_circle_to_place">Appuyez sur le cercle pour placer l\'app</string>
+    <string name="multi_select_count">%d sélectionnée(s)</string>
+    <string name="place_app_where">Ou voulez-vous placer…</string>
+    <string name="tap_circle_to_place">Appuyez sur le cercle pour placer l\'app</string>
     <string name="multi_select_drawer_hint">💡 Appui long sur une app pour en sélectionner plusieurs d\'un coup</string>
     <string name="deselect_all">Tout désélectionner</string>
     <!--  ─────────────  Shortcuts Settings  ─────────────  -->
@@ -474,7 +473,7 @@
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">Sélectionner le profil par défaut</string>
     <string name="select_workspace_hint">Choisissez quel profil s\'ouvre par défaut. Vous pouvez toujours changer en glissant à gauche ou à droite dans le tiroir.</string>
-	<!--  ─────────────  Pinned Shortcuts  ─────────────  -->
+    <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">Échec de l\'ajout du raccourci</string>
     <string name="pinned_shortcuts">Raccourcis</string>
     <string name="no_pinned_shortcuts">Aucun raccourci disponible</string>
@@ -485,26 +484,26 @@
     <string name="recently_used_apps_count">Nombre d\'apps récentes</string>
     <string name="show_category_name">Catégorie de l’émission</string>
     <string name="show_category_name_desc">Affichez le nom de la catégorie en dessous</string>
-	<string name="disabled_system_categories_desc">Choisissez quelles catégories système à cacher dans le tiroir</string>
-	<string name="long_click_settings_duration">Durée des paramètres du clic long (ms)</string>
+    <string name="disabled_system_categories_desc">Choisissez quelles catégories système à cacher dans le tiroir</string>
+    <string name="long_click_settings_duration">Durée des paramètres du clic long (ms)</string>
     <string name="long_click_settings_duration_desc">Configurez combien de temps vous avez pour cliquer longtemps afin d’accéder aux paramètres</string>
     <string name="hold_delay_before_starting_long_click_settings">Maintenez le délai avant de commencer les paramètres du clic long (ms)</string>
     <string name="hold_delay_before_starting_long_click_settings_desc">Combien de temps faut-il tenir avant que les réglages de chargement ne commencent à se charger</string>
     <string name="keep_screen_on_desc">Ne désactivez pas l’écran ni ne verrouillez, gardez-le toujours allumé quand Dragon est concentré</string>
-	<string name="points_settings">Réglages de points</string>
+    <string name="points_settings">Réglages de points</string>
     <string name="logs">Journaux d’ajournement</string>
     <string name="settings_json">Paramètres JSON</string>
     <string name="pick_a_settings_screen">Choisissez un écran de paramètres</string>
     <string name="app_preview_settings">Superposition d’aperçu d’application</string>
     <string name="app_preview_settings_desc">Personalisez à quoi ressemble le tiroir d\'apps</string>
-	<string name="show_status_bar_desc">Affichez la barre d’état, si désactivée rien n’apparaît</string>
+    <string name="show_status_bar_desc">Affichez la barre d’état, si désactivée rien n’apparaît</string>
     <string name="disable_haptic_globally">Désactivez globalement le retour haptique</string>
     <string name="disable_haptic_globally_desc">Empêchez Dragon de produire un quelconque retour haptique dans la sélection des points au cas où vous détesteriez ça</string>
     <string name="drag_handle">Poignée de déplacement</string>
     <string name="personal_profile">Personel</string>
     <string name="work_profile">Professionnel</string>
     <string name="private_profile">Espace privé</string>
-	<string name="app_info_name">name = %1$s</string>
+    <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWork = %1$s</string>
@@ -586,14 +585,14 @@
     <string name="debug_mode_already_enabled">Le mode Débogage est déjà activé</string>
     <string name="not_supported_in_this_android_version">Non pris en charge dans cette version Android</string>
     <string name="please_enable_accessibility_services_to_use_that_feature">Veuillez activer le service d’accessibilité pour utiliser cette fonctionnalité</string>
-	<string name="federico_desc">Nids actifs &amp; traductions</string>
-	<string name="copied_to_clipboard">Copié dans le press papié!</string>
-	<string name="usage_access">Accès aux statistiques d\'utilisation</string>
-	<string name="font_manage_help">Gérez vos polices ici. Vous pouvez importer vos propres fichiers TTF/OTF ou en télécharger depuis le catalogue Google Fonts.</string>
+    <string name="federico_desc">Nids actifs &amp; traductions</string>
+    <string name="copied_to_clipboard">Copié dans le presse-papier !</string>
+    <string name="usage_access">Accès aux statistiques d\'utilisation</string>
+    <string name="font_manage_help">Gérez vos polices ici. Vous pouvez importer vos propres fichiers TTF/OTF ou en télécharger depuis le catalogue Google Fonts.</string>
     <string name="font_catalog">Catalogue</string>
     <string name="font_import">Importer</string>
     <string name="font_installed_fonts">Polices installées</string>
-	<string name="font_download_all_started">Lancement du téléchargement de toutes les polices. Vérifiez vos notifications.</string>
+    <string name="font_download_all_started">Lancement du téléchargement de toutes les polices. Vérifiez vos notifications.</string>
     <string name="font_confirm_delete">Confirmer (%1$d)</string>
     <string name="font_search_placeholder">Rechercher des polices…</string>
     <string name="font_downloading">Téléchargement de %1$s…</string>
@@ -645,7 +644,7 @@
     <string name="hold_settings_help">Les réglages liés à l\'arc qui apparaît lorsque vous tenez assez longtemps sur l\'écran principal, Vous ne pouvez pas complètement désactiver, sinon, vous pouvez lâcher la dernière porte qui peut vous mener à des réglages, si vous avez fait de la merde, et ainsi être forcé de réinitialiser l\'application.</string>
     <string name="rotation_per_second">Rotations/seconde</string>
     <string name="rotation_per_second_desc">Combien de tours sur lui-même il fait en une seconde</string>
-	<string name="choose_a_auto_backup_file">Choisissez un fichier de sauvegarde automatique</string>
+    <string name="choose_a_auto_backup_file">Choisissez un fichier de sauvegarde automatique</string>
     <string name="minus_one_means_random">-1 signifie aléatoire au démarrage</string>
     <string name="search_bar">Barre de recherche</string>
     <string name="toolbars_order">Ordre des barres d\'outils</string>
@@ -686,7 +685,7 @@
     <string name="app_info_cache_key">Cache key = %1$s</string>
     <string name="custom_dim">Opacité custom</string>
     <string name="dim_amount">Quantité d\'opacité</string>
-	<string name="crash">L\'application à crashé !</string>
+    <string name="crash">L\'application à crashé !</string>
     <string name="access_app">Accéder à l\'application (vous pourriez encore subir le crash)</string>
     <string name="shizuku_unavailable">Shizuku n\'est pas disponible</string>
     <string name="shizuku_unavailable_message">Shizuku n\'est pas installé ou correctement configuré sur votre appareil</string>
@@ -705,13 +704,13 @@
     <string name="pick_a">Choisis un</string>
     <string name="command">commande</string>
     <string name="show_toast">Afficher un toast</string>
-	<string name="gradient">Dégradé</string>
+    <string name="gradient">Dégradé</string>
     <string name="app_display_desc">Changez les paramètres d\'apparence globaux, dans le contexte du launcher, pas les couleurs</string>
     <string name="shape_scale">Echelle %1$.2f</string>
     <string name="rotation_arg">"Rotation:  %1$d°"</string>
     <string name="pause_duration_description">Combien de temps vous devez respirer avant de pouvoir continuer</string>
     <string name="use_anyways">utilisez quand même</string>
-	<string name="preview_scale_factor">Echelle de l\'affichage</string>
+    <string name="preview_scale_factor">Echelle de l\'affichage</string>
     <string name="plain_wallpaper">Fond d\'écran uni</string>
     <string name="wallpaper_dim_amount_main">Intensité du voile du fond d\'écran sur l\'écran pricipal</string>
     <string name="wallpaper_dim_amount_drawer">Intensité du voile du fond d\'écran dans le tiroir d\'apps</string>
@@ -731,8 +730,8 @@
     <string name="export">Exporter</string>
     <string name="import_text">Importer</string>
     <string name="this_is_a_beta_version">Cette application est actuellement en beta! Cela veut dire qu\'elle peut contenir des fonctionnalités instables et des bugs</string>
-	<string name="add_current_theme">Ajouter le thème actuel</string>
-	<string name="test_mode_validate">Garder</string>
+    <string name="add_current_theme">Ajouter le thème actuel</string>
+    <string name="test_mode_validate">Garder</string>
     <string name="test_mode_cancel">Restaurer</string>
     <string name="disable">Désactiver</string>
     <string name="disabled">Désactivé</string>
@@ -768,7 +767,7 @@
     <string name="green">Vert</string>
     <string name="blue">Bleu</string>
     <string name="move_around_mode">Mode déplacement</string>
-	<string name="reset_zoom">Réinitialiser le zoom</string>
+    <string name="reset_zoom">Réinitialiser le zoom</string>
     <string name="edit_workspace">Editer le workspace</string>
     <string name="random">Aléatoire</string>
     <string name="special_options">Options spéciales</string>
@@ -826,7 +825,7 @@
     <string name="right_padding_status_bar_desc">L\'espace vide à droite de la barre de status</string>
     <string name="top_padding_status_bar_desc">Les gens qui utilisent ce truc sont étranges</string>
     <string name="bottom_padding_status_bar_desc">Je comprends ce paremètre un peu mieux que le précedant, mais quand même…</string>
-	<string name="profile">Profile</string>
+    <string name="profile">Profile</string>
     <string name="themed_icons_desc">Si vous voulez utilisez les icônes Material-theme</string>
     <string name="force_themed_icons_desc">Appliquer les icônes Material-Theme même ppour ceux pas compatibles</string>
     <string name="adaptify_icons_desc">Je n\'ai aucune idée de ce que fait cette option mais elle était dans le bout de code que j\'ai copié de Kvaesitso</string>
@@ -844,7 +843,7 @@
     <string name="nest_debug_overlay_desc">Ajoute quelque options visuelle pour debugger l\'affichage des nids</string>
     <string name="auto_merge">Fusionner automatiquement</string>
     <string name="auto_merge_desc">Peut déclencher des actions automatique lorsque vous maintenez un point au dessus d\'un autre</string>
-	<string name="selected_points">Points séléctionés</string>
+    <string name="selected_points">Points séléctionés</string>
     <string name="animation_when_snapping">Animer quand le point séléctionné converge</string>
     <string name="animation_when_snapping_desc">Utilise de super animations pour animer le trait</string>
     <string name="cannot_directly_uninstall_from_other_profiles">Dragon ne peut pas directement demander à Android de désinstaller depuis d\'autres profiles, faites le vous même</string>
@@ -865,7 +864,7 @@
     <string name="reset_backup_tab">Etes vous sur de vouloir réinitialiser tous les paramètres de sauvegarde?</string>
     <string name="copy_to_clipboard">Copier dans le presse papier</string>
     <string name="import_from_clipboard">Importer depuis le presse papier</string>
-	<string name="duplicate">Dupliquer</string>
+    <string name="duplicate">Dupliquer</string>
     <string name="flashbang_theme">Theme Flashbang</string>
     <string name="line">Ligne</string>
     <string name="angle">Angle</string>
@@ -893,16 +892,29 @@
     <string name="drawer_label_color_desc">La couleur du texte des noms d\'apps dans le tiroir. Par défaut utilise la couleur onBackground</string>
     <string name="points_screens_transparency">Transparence des écrans à points</string>
     <string name="points_screens_transparency_desc">La transparence des écrants devant afficher des choses liée au points, pour que vous puissiez y voir votre fond d\'écran derrière</string>
-	<string name="category_cells_desc">Nombre de catégories dans la largeur du tiroir</string>
-	<string name="category_grid_cells">Cellules des catégories</string>
-	<string name="set_category">Définir la catégorie</string>
-	<string name="create_category">Créer une nouvelle catégorie</string>
-	<string name="category_name">Nom de la catégorie</string>
-	<string name="use_default_category">Utiliser la catégorie par défaut</string>
-	<string name="disabled_system_categories">Catégories système désactivées</string>
-	<string name="yoann_desc">Extensions, performances, widgets</string>
-	<string name="lucky_desc">Bien être numérique &amp; reminders</string>
-	<string name="accessibility">Accessibilité</string>
-	<string name="add_apps">Ajouter des apps</string>
-	<string name="add_shape">Ajouter une forme</string>
+    <string name="category_cells_desc">Nombre de catégories dans la largeur du tiroir</string>
+    <string name="category_grid_cells">Cellules des catégories</string>
+    <string name="set_category">Définir la catégorie</string>
+    <string name="create_category">Créer une nouvelle catégorie</string>
+    <string name="category_name">Nom de la catégorie</string>
+    <string name="use_default_category">Utiliser la catégorie par défaut</string>
+    <string name="disabled_system_categories">Catégories système désactivées</string>
+    <string name="yoann_desc">Extensions, performances, widgets</string>
+    <string name="lucky_desc">Bien être numérique &amp; reminders</string>
+    <string name="accessibility">Accessibilité</string>
+    <string name="add_apps">Ajouter des apps</string>
+    <string name="add_shape">Ajouter une forme</string>
+    <string name="version">Version</string>
+    <string name="encouragement_grass">Prenez l’air 🌤</string>
+    <string name="app_info_installer_package">Clef de l’installateur de paquet : %1$s</string>
+    <string name="permission_notifications_title">Accès aux notifications</string>
+    <string name="permission_notifications_desc">Autorisez Dragon Launcher à lire vos notifications pour qu’elles puissent être affichés dans la barre de statuts à côté de vos applications.</string>
+    <string name="permission_app_shortcuts_title">Raccourcis d’applications</string>
+    <string name="permission_app_shortcuts_desc">Autorisez Dragon Launcher lire les raccourcis publiés par vos applications pour qu’ils puissent apparaître dans le tiroir d’app et dans les résultats de recherche.</string>
+    <string name="permission_accessibility_title">Services d’accessibilité</string>
+    <string name="permission_accessibility_desc">Autorisez Dragon Launcher à ouvrir le volet des notifications, le menu des paramètres rapides et les applications récentes. Nécessaire principalement aux appareils qui n’autorisent pas les lanceurs tiers à garder la navigation par gestes.</string>
+    <string name="permission_manage_profiles_title">Lanceur par défaut</string>
+    <string name="permission_manage_profiles_desc">Autorisez Dragon Launcher à gérer vos profils pros et persos pour que vous puissiez les mettre en pause, les verrouiller et passer de l’un à l’autre.</string>
+    <string name="permission_usage_stat_desc">Autorisez Dragon Launcher à accéder à vos statistiques d’utilisation. Nécessaire aux temps d’écran, aux minuteurs d’applications et au bien-être numérique.</string>
+    <string name="permission_display_over_other_apps_title">Affichage par-dessus les autres applications</string>
 </resources>
