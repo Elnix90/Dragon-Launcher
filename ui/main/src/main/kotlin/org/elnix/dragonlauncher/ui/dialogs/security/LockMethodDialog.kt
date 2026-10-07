@@ -37,13 +37,13 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 @Composable
 fun LockMethodDialog(
 	securityViewModel: SecurityViewModel = activityViewModel(),
-	onDismiss: () -> Unit
+	onDismissRequest: () -> Unit
 ) {
 	val navigator = LocalNavigator.current
 
 	val currentLockMethod by PrivateSettingsStore.lockMethod.asState()
 
-	DragonModalBottomSheet(onDismissRequest = onDismiss) {
+	DragonModalBottomSheet(onDismissRequest = onDismissRequest) {
 		DialogTitle(stringResource(R.string.lock_method))
 
 		Text(
@@ -75,7 +75,7 @@ fun LockMethodDialog(
 								clickable(
 									interactionSource = interactionSource,
 									onClick = {
-										onDismiss()
+										onDismissRequest()
 										navigator.go(NavigationRoute.LockScreenSetup(method))
 									}
 								)

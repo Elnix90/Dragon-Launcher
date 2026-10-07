@@ -33,7 +33,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryPickerDialog(
+fun CategoryPickerSheet(
 	app: Application,
 	drawerViewModel: DrawerViewModel = activityViewModel(),
 	existingCustomCategories: List<String>,
@@ -58,7 +58,7 @@ fun CategoryPickerDialog(
 
 	DragonModalBottomSheet(
 		onDismissRequest = onDismissRequest,
-		true
+		skipPartiallyExpanded = true
 	) {
 		DialogTitle(
 			text = stringResource(R.string.set_category),

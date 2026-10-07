@@ -108,7 +108,7 @@ fun DragonGroupScope.ExpandableSection(
 
 	if (expanded) {
 		DragonModalBottomSheet(
-			onDismissRequest = { state.toggle() },
+			onDismissRequest = state.toggle,
 			skipPartiallyExpanded = state.skipPartiallyExpanded
 		) {
 			DragonSettingsGroup(

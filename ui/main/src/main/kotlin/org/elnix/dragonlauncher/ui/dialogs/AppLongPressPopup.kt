@@ -11,7 +11,6 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ButtonGroupScope
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
@@ -283,7 +282,7 @@ fun AppLongPressPopup(
 	if (showCategoryDialog) {
 		val allApps by drawerViewModel.userApps.collectAsState()
 		val existingCustomCategories = allApps.mapNotNull { it.categoryOverride }.distinct()
-		CategoryPickerDialog(
+		CategoryPickerSheet(
 			app = app,
 			existingCustomCategories = existingCustomCategories,
 			onDismissRequest = { showCategoryDialog = false }

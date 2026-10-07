@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +53,7 @@ fun IntersectionShapeEditor(
 	defaultShape: IntersectionShape,
 	onChangeShape: (newShape: IntersectionShape) -> Unit,
 	onReset: () -> Unit,
-	onDismiss: () -> Unit
+	onDismissRequest: () -> Unit
 ) {
 	val extraColors = LocalExtraColors.current
 	val nestDebugInfo by DebugSettingsStore.nestDebugInfo.asState()
@@ -79,7 +78,7 @@ fun IntersectionShapeEditor(
 
 	var showHapticFeedbackEditor by remember { mutableStateOf(false) }
 
-	DragonModalBottomSheet(onDismiss) {
+	DragonModalBottomSheet(onDismissRequest) {
 		DialogTitle(
 			text = stringResource(if (!isDefaultEditing) R.string.edit_shape else R.string.edit_default_shape),
 			resetEnabled = shape.isNotDefault,

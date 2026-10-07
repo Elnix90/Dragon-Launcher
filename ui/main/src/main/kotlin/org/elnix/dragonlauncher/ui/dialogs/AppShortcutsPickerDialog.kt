@@ -58,7 +58,10 @@ fun AppShortcutPickerDialog(
 			}
 		}
 
-	DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
+	DragonModalBottomSheet(
+		onDismissRequest = onDismiss,
+		sheetGesturesEnabled = true
+	) {
 		DialogTitle(stringResource(R.string.select_shortcut_action_title, appName))
 		Spacer(10.dp)
 		Column(

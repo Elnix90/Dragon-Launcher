@@ -29,7 +29,10 @@ fun SettingsPagePicker(
 	onDismissRequest: () -> Unit,
 	onSelect: (NavigationRoute) -> Unit
 ) {
-	DragonModalBottomSheet(onDismissRequest, true) {
+	DragonModalBottomSheet(
+		onDismissRequest = onDismissRequest,
+		sheetGesturesEnabled = true
+	) {
 		DialogTitle(stringResource(R.string.pick_a_settings_screen))
 		Spacer(5.dp)
 

@@ -107,7 +107,10 @@ fun PinnedShortcutsPickerDialog(
 			}
 		}
 
-	DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
+	DragonModalBottomSheet(
+		onDismissRequest = onDismiss,
+		sheetGesturesEnabled = true
+	) {
 		DialogTitle(stringResource(R.string.pinned_shortcuts))
 		Spacer(10.dp)
 
