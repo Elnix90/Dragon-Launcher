@@ -27,7 +27,7 @@ jobs:
         run: |
           VER=$(grep -oP 'versionName\s*=\s*"\K[0-9.]+' app/build.gradle* | head -n1)
           echo "VERSION=$VER" >> $GITHUB_ENV
-          echo "Detected versionName: $VER" 
+          echo "Detected versionName: $VER"
 
       - name: Read latest changelog
         id: changelog
@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "changelog<<EOF" >> "$GITHUB_OUTPUT"
           .github/scripts/read-changelog.sh >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"      
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Decode keystore
         env:
@@ -61,10 +61,10 @@ jobs:
 
           MAPPING="Mappings-${{ env.VERSION }}.txt"
           mv app/build/outputs/mapping/release/mapping.txt "$MAPPING"
-          
+
           echo "Release file: $NAME"
           echo "Mapping file: $MAPPING"
-          
+
           {
             echo "APK=$NAME"
             echo "MAPPING=$MAPPING"
