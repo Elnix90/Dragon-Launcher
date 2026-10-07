@@ -1141,4 +1141,6 @@
 	<string name="recently_installed_apps_duration_desc">How many days the recently installed badge remains</string>
 	<string name="show_current_selected_point">Show current selected point</string>
 	<string name="show_current_selected_point_desc">Display the point you are hovering over when dragging</string>
+	<string name="auto_show_unlock_profile">Auto show unlock profile</string>
+	<string name="auto_show_unlock_profile_desc">When you enter a locked profile in the drawer, the unlock prompt auto shows up</string>
 </resources>

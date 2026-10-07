@@ -90,8 +90,8 @@ object DrawerSettingsStore : MapSettingsStore() {
 	@SettingKey
 	val autoAskToUnlockProfile =
 		boolean(
-			title = R.string.auto_show_keyboard,
-			description = R.string.auto_show_keyboard_desc,
+			title = R.string.auto_show_unlock_profile,
+			description = R.string.auto_show_unlock_profile_desc,
 			icon = R.drawable.lock_open,
 			default = true
 		)
