@@ -85,7 +85,7 @@ fun rememberDrawParams(
 	val extraColors = LocalExtraColors.current
 	val colorScheme = MaterialTheme.colorScheme
 
-	val showCurrentPoint by UiSettingsStore.showLaunchingAppIcon.asState()
+	val showCurrentSelectedPoint by UiSettingsStore.showCurrentSelectedPoint.asState()
 	val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
 
 	val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
@@ -111,7 +111,7 @@ fun rememberDrawParams(
 		pointSettingsDisplay,
 		hideShapes,
 		skipSelected,
-		showCurrentPoint,
+		showCurrentSelectedPoint,
 		showAllPointsInCurrentShape,
 		showAllPointsInCurrentNest,
 		allowShowPointCenter,
@@ -136,7 +136,7 @@ fun rememberDrawParams(
 			pointSettingsDisplay = pointSettingsDisplay,
 			hideShapes = hideShapes,
 			skipSelected = skipSelected,
-			showCurrentPoint = showCurrentPoint,
+			showCurrentPoint = showCurrentSelectedPoint,
 			showAllPointsInCurrentShape = showAllPointsInCurrentShape,
 			showAllPointsInCurrentNest = showAllPointsInCurrentNest,
 			showPointPreviewCenterStartPosition = allowShowPointCenter && showPointPreviewCenterStartPosition,

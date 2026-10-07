@@ -33,6 +33,16 @@ object UiSettingsStore : MapSettingsStore() {
 			default = true
 		)
 
+	/** Show the current selected point */
+	@SettingKey
+	val showCurrentSelectedPoint =
+		boolean(
+			title = R.string.show_current_selected_point,
+			description = R.string.show_current_selected_point_desc,
+			icon = R.drawable.visibility,
+			default = true
+		)
+
 	@SettingKey
 	val appLabelIconOverlayTopPadding =
 		dp(

@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -74,6 +73,8 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 		}
 
 		DragonSettingsGroup(R.string.dragging_display) {
+			Setting(UiSettingsStore.showCurrentSelectedPoint)
+
 			var showAllActionsOnCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asMutableState()
 			Setting(UiSettingsStore.showAllPointsInCurrentShape) { enabled ->
 				if (!enabled) showAllActionsOnCurrentNest = false
