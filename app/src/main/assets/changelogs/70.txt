@@ -1,0 +1,10 @@
+4.4.2 (Smaug)
+2026-10-07
+[NEW]
+* Recent apps display a recent badge (will be improved soon)
+[IMPROVED]
+* Category feature dialogs rework
+* Drawer-related bugs and rework
+* Optimization of core functions for performance
+[FIXED]
+* Bottom sheets UI fixes
