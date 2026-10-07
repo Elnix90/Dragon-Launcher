@@ -19,7 +19,6 @@ import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.models.HitResult
-import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.DefaultShapeJson
@@ -44,7 +43,6 @@ import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.getNextId
 import org.elnix.dragonlauncher.ktx.groupByTo
 import org.elnix.dragonlauncher.ktx.radians
-import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultNestSettingsStore
@@ -505,33 +503,10 @@ internal class PointsServiceImpl(
 
 			val pointsJsonString = PointsSettingsStore.jsonSetting.get(ctx)
 			try {
-				val points: List<Point> = buildList {
-					repeat(90) {
-						val angle = it * 4
-						val p = Point(
-							offset = Offset(100f, 0f).rotateBy(angle.toFloat()),
-							action = Action.GoParentNest,
-							id = angle,
-							shapeId = 0
-						)
-						add(p)
-					}
+				val decodedPoints = PointsJson.decodeAndThrow<Set<Point>>(pointsJsonString)
+				if (decodedPoints != null) {
+					_points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
 				}
-// 				val points = mapOf(
-// 					0 to Point(
-// 						offset = Offset(100f, 100f),
-// 						action = Action.GoParentNest,
-// 						id = 0,
-// 						shapeId = 0
-// 					)
-// 				)
-
-				_points.value = ConcurrentHashMap(points.associateBy { it.id })
-// 				_points.value = ConcurrentHashMap(points)
-// 				val decodedPoints = PointsJson.decodeAndThrow<Set<Point>>(pointsJsonString)
-// 				if (decodedPoints != null) {
-// 					_points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
-// 				}
 			} catch (e: Exception) {
 				logE(POINTS_TAG, e) { "Failed to decode points" }
 				errors += DecodeError(
@@ -1104,7 +1079,7 @@ private fun circleBoundary(
 
 /**
  *  Intersection of a ray at [angleRad] with a regular [numSides]-gon
- *  inscribed in a circle of [radius], rotated by [rotationRad]
+ *  inscribed in a circle of [radius], rotated by [rotationDeg]
  *
  * Thanks to everyone who helped me make this  function!!
  *  - BIG UP AT `@nil31415` (discord) who cooked this!!
