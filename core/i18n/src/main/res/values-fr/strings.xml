@@ -119,7 +119,7 @@
     <string name="recent_apps">Applications récentes</string>
     <string name="open_recent_apps_color">Ouvrir la couleur des applications récentes</string>
     <string name="open_circle_nest_color">Couleur du nid en cercle ouvert</string>
-    <string name="go_parent_nest_color">Go Parent Nest Color</string>
+    <string name="go_parent_nest_color">Aller à la couleur du nid parent</string>
     <string name="left_padding">Rembourrage gauche</string>
     <string name="right_padding">Rembourrage à droite</string>
     <string name="top_padding">Rembourrage supérieur</string>
