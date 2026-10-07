@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers.workspace
+package org.elnix.dragonlauncher.ui.drawer
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
@@ -56,8 +56,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.drawer.AppItemGrid
-import org.elnix.dragonlauncher.ui.drawer.AppItemHorizontal
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 import kotlin.math.min
@@ -124,7 +122,7 @@ fun AppGrid(
 	 * When the drawer aligns top to bottom, this uses the intuitive direction: if the user cannot scroll backwards (reached the top of the screen)
 	 * When the drawer aligns bottom to top, this uses the opposite direction: if the user cannot scroll down more (reached end on the apps)
 	 *
-	 * IT is used by the [org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen] to provide an animated down drop animation in the drawer
+	 * IT is used by the [AppDrawerScreen] to provide an animated down drop animation in the drawer
 	 */
 	val isAtTop by remember {
 		derivedStateOf {

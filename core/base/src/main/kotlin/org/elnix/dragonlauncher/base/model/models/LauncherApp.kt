@@ -22,7 +22,8 @@ public data class LauncherApp(
 	override val categoryOverride: String? = null,
 	override val profile: Profile,
 	override val category: AppCategory,
-	override val isSuspended: Boolean
+	override val isSuspended: Boolean,
+	override val installTime: Long
 ) : Application() {
 	override val isSystem: Boolean = false
 	override val isLaunchable: Boolean = true
@@ -38,8 +39,7 @@ public data class LauncherApp(
 
 	override fun overrideCategory(categoryName: String?): Application = this.copy(categoryOverride = categoryName)
 
-	override val componentName: ComponentName
-		get() = launcherActivityInfo.componentName
+	override val componentName: ComponentName = launcherActivityInfo.componentName
 
 	/**
 	 * Cached result of the normalized label.
@@ -48,8 +48,7 @@ public data class LauncherApp(
 	 */
 	override var cachedNormalizerResult: Pair<String, String>? = null
 
-	override val packageName: String
-		get() = componentName.packageName
+	override val packageName: String = componentName.packageName
 
 	override suspend fun loadIcon(
 		themed: Boolean,

@@ -11,17 +11,16 @@ public data class PointApp(
 ) : Application() {
 	override val isSystem: Boolean = false
 	override val isLaunchable: Boolean = true
+	override val installTime: Long = 0L
 
 	override val packageName: String
 		get() =
 			when (val action = point.action) {
-
 				is Action.LaunchApp -> action.packageName
 				is Action.LaunchShortcut -> action.packageName
 				else -> ""
 			}
 
-	// TODO
 	override val isSuspended: Boolean = false
 	override val label: String = ""
 	override val defaultLabel: String = ""

@@ -177,6 +177,9 @@ internal class AppRepositoryImpl(
 			val profileMap = profiles.first().associateBy { it.userHandle.hashCode() }
 
 			launchableActivityInfos.forEach { activityInfo ->
+
+				val a = activityInfo.firstInstallTime
+
 				val app = createLauncherApp(activityInfo, profileMap)
 				if (app != null) {
 					allApps.add(app)
@@ -230,7 +233,8 @@ internal class AppRepositoryImpl(
 			versionName = versionName,
 			profile = profile,
 			category = category,
-			isSuspended = activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SUSPENDED != 0
+			isSuspended = activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SUSPENDED != 0,
+			installTime = activityInfo.firstInstallTime
 		)
 	}
 

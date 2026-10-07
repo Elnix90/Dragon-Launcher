@@ -1137,4 +1137,6 @@
 	<string name="share_logs">Share logs</string>
 	<string name="custom_category">Custom category</string>
 	<string name="default_category">Default category</string>
+	<string name="recently_installed_apps_duration">Recently installed apps duration</string>
+	<string name="recently_installed_apps_duration_desc">How many days the recently installed badge remains</string>
 </resources>

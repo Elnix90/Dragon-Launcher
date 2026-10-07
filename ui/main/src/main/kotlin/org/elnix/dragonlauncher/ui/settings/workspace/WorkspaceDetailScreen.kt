@@ -34,11 +34,11 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerSheet
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.drawer.AppGrid
+import org.elnix.dragonlauncher.ui.drawer.WorkspaceLockedContent
+import org.elnix.dragonlauncher.ui.drawer.WorkspaceUnavailableContent
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
-import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
-import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
 @Composable
 fun WorkspaceDetailScreen(

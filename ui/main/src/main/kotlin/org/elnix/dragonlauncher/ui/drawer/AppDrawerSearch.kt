@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers.workspace
+package org.elnix.dragonlauncher.ui.drawer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

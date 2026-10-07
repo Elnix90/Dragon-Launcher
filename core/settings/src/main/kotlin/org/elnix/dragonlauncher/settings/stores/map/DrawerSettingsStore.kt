@@ -396,4 +396,14 @@ public object DrawerSettingsStore : MapSettingsStore() {
 			icon = R.drawable.keyboard,
 			default = false
 		)
+
+	@SettingKey
+	public val recentlyInstalledAppsDuration: IntSettingObject =
+		int(
+			title = R.string.recently_installed_apps_duration,
+			description = R.string.recently_installed_apps_duration_desc,
+			icon = R.drawable.recent,
+			default = 2,
+			allowedRange = 0..10
+		)
 }

@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.helpers.workspace.AppShortcutSearch
+import org.elnix.dragonlauncher.ui.drawer.AppShortcutSearch
 
 private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): Boolean = q.isBlank() || appName.contains(q, ignoreCase = true) ||
 	`package`.contains(q, ignoreCase = true) ||

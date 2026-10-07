@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.helpers.workspace.AppShortcutSearch
+import org.elnix.dragonlauncher.ui.drawer.AppShortcutSearch
 
 /**
  * Represents a pinned shortcut with extra metadata for display.

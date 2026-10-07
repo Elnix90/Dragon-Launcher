@@ -15,6 +15,7 @@ dependencies {
 	implementation(libs.androidx.annotation)
 	implementation(libs.hilt.core)
 	implementation(libs.hilt.android)
+	implementation(libs.settings.core)
 
 	ksp(libs.hilt.compiler)
 
@@ -25,6 +26,7 @@ dependencies {
 	runtimeOnly(libs.androidx.datastore.core)
 
 	implementation(project(":core:i18n"))
+	implementation(project(":core:settings"))
 	api(project(":core:base"))
 	api(project(":core:profiles"))
 	api(project(":data:notifications"))

@@ -65,6 +65,13 @@ public abstract class Application : Comparable<Application> {
 
 	public abstract val versionName: String?
 
+	public abstract val installTime: Long
+
+	/**
+	 * Return whether the app was installed recently
+	 */
+	public fun isRecent(daysToKeep: Int): Boolean = System.currentTimeMillis() - installTime < ONE_DAY_SECONDS * daysToKeep
+
 	public val isPrivate: Boolean
 		get() = profile.type == Profile.Type.Private
 
@@ -269,3 +276,5 @@ public data class StoreLink(
 	@DrawableRes
 	val icon: Int
 )
+
+private const val ONE_DAY_SECONDS = 24 * 3600L * 1000

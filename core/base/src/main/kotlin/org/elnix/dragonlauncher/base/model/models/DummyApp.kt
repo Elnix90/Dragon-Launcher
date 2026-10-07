@@ -20,6 +20,7 @@ public class DummyApp : Application() {
 	override val labelOverride: String = ""
 	override val profile: Profile = Profile.dummy()
 	override val versionName: String = ""
+	override val installTime: Long = 0L
 	override val category: AppCategory = AppCategory.Other
 
 	override fun overrideLabel(label: String): Application = this

@@ -45,10 +45,10 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
+import org.elnix.dragonlauncher.ui.drawer.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 
 @Composable
 fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
@@ -127,6 +127,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 			Setting(DrawerSettingsStore.showAppLabelsInDrawer)
 			Setting(DrawerSettingsStore.labelTextColor)
 			Setting(DrawerSettingsStore.drawerAlign)
+			Setting(DrawerSettingsStore.recentlyInstalledAppsDuration)
 			DrawerIconShapePicker()
 		}
 

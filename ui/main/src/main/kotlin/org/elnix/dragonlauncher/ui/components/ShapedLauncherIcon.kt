@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.logging.logWtf
 import org.elnix.dragonlauncher.badges.Badge
 import org.elnix.dragonlauncher.badges.BadgeIcon
 import org.elnix.dragonlauncher.base.icons.ClockLayer
@@ -189,6 +190,7 @@ fun ShapedLauncherIcon(
 		}
 		val badge = badge()
 		if (badge != null) {
+			logWtf { badge.toString() }
 			Surface(
 				tonalElevation = 1.dp,
 				modifier =

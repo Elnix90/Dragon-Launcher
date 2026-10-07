@@ -36,8 +36,7 @@ public data class SystemApp(
 
 	override fun overrideCategory(categoryName: String?): Application = this.copy(categoryOverride = categoryName)
 
-	override val componentName: ComponentName
-		get() = buildFakeComponentName(applicationInfo.packageName)
+	override val componentName: ComponentName = buildFakeComponentName(applicationInfo.packageName)
 
 	/**
 	 * Cached result of the normalized label.
@@ -46,10 +45,11 @@ public data class SystemApp(
 	 */
 	override var cachedNormalizerResult: Pair<String, String>? = null
 
-	override val packageName: String
-		get() = applicationInfo.packageName
+	override val packageName: String = applicationInfo.packageName
 
 	override val category: AppCategory = AppCategory.Other
+
+	override val installTime: Long = 0L
 
 	override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? {
 		return try {

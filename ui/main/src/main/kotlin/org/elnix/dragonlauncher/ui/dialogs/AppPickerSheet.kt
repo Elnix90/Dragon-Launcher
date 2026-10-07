@@ -3,7 +3,6 @@ package org.elnix.dragonlauncher.ui.dialogs
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +15,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -54,10 +52,10 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
-import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
-import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
-import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
+import org.elnix.dragonlauncher.ui.drawer.AppDrawerSearch
+import org.elnix.dragonlauncher.ui.drawer.AppGrid
+import org.elnix.dragonlauncher.ui.drawer.WorkspaceLockedContent
+import org.elnix.dragonlauncher.ui.drawer.WorkspaceUnavailableContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
