@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
@@ -26,8 +25,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import io.github.elnix90.runtime.asStateNull
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.SecurityViewModel
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -41,7 +42,8 @@ fun SignatureWarningDialog(
 ) {
 	val signatureMatched by securityViewModel.signatureMatched.asState()
 	val useAnyways by securityViewModel.useAnyways.asState()
-	if (signatureMatched || useAnyways) return
+	val useAppEvenIfSignatureIsNotMatched by DebugSettingsStore.useAppEvenIfSignatureIsNotMatched.asStateNull()
+	if (signatureMatched || useAnyways || useAppEvenIfSignatureIsNotMatched == true) return
 
 	val ctx = LocalContext.current
 

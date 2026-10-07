@@ -3,12 +3,6 @@ package org.elnix.dragonlauncher.settings.stores.map
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
-import io.github.elnix90.core.objects.BooleanSettingObject
-import io.github.elnix90.core.objects.DpSettingObject
-import io.github.elnix90.core.objects.FloatSettingObject
-import io.github.elnix90.core.objects.IntSettingObject
-import io.github.elnix90.core.objects.StringSetSettingObject
-import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.dp
 import io.github.elnix90.core.objects.float
@@ -19,10 +13,10 @@ import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
-public object UiSettingsStore : MapSettingsStore() {
+object UiSettingsStore : MapSettingsStore() {
 	/** Overlay on top of the screen */
 	@SettingKey
-	public val showLaunchingAppLabel: BooleanSettingObject =
+	val showLaunchingAppLabel =
 		boolean(
 			title = R.string.show_launching_app_label,
 			description = R.string.show_launching_app_label_description,
@@ -31,7 +25,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showLaunchingAppIcon: BooleanSettingObject =
+	val showLaunchingAppIcon =
 		boolean(
 			title = R.string.show_launching_app_icon,
 			description = R.string.show_launching_app_icon_description,
@@ -40,7 +34,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val appLabelIconOverlayTopPadding: DpSettingObject =
+	val appLabelIconOverlayTopPadding =
 		dp(
 			title = R.string.app_label_icon_overlay_top_padding,
 			description = R.string.app_label_icon_overlay_top_padding_desc,
@@ -50,7 +44,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val appLabelOverlaySize: IntSettingObject =
+	val appLabelOverlaySize =
 		int(
 			title = R.string.app_label_overlay_size,
 			description = R.string.self_explanatory,
@@ -60,7 +54,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val appIconOverlaySize: DpSettingObject =
+	val appIconOverlaySize =
 		dp(
 			title = R.string.app_icon_overlay_size,
 			description = R.string.self_explanatory,
@@ -70,7 +64,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val multiSelectPoints: BooleanSettingObject =
+	val multiSelectPoints =
 		boolean(
 			title = R.string.multi_select_points,
 			description = R.string.multi_select_points_desc,
@@ -79,7 +73,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val fullScreen: BooleanSettingObject =
+	val fullScreen =
 		boolean(
 			title = R.string.fullscreen_app,
 			description = R.string.fullscreen_description,
@@ -88,7 +82,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showPointPreviewCenterStartPosition: BooleanSettingObject =
+	val showPointPreviewCenterStartPosition =
 		boolean(
 			title = R.string.show_app_icon_start_drag_position,
 			description = R.string.show_app_icon_start_drag_position_description,
@@ -97,7 +91,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val linePreviewSnapToAction: BooleanSettingObject =
+	val linePreviewSnapToAction =
 		boolean(
 			title = R.string.line_preview_snap_to_action,
 			description = R.string.line_preview_snap_to_action_description,
@@ -106,7 +100,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val animationWhenSnapping: BooleanSettingObject =
+	val animationWhenSnapping =
 		boolean(
 			title = R.string.animation_when_snapping,
 			description = R.string.animation_when_snapping_desc,
@@ -115,7 +109,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showAllPointsInCurrentShape: BooleanSettingObject =
+	val showAllPointsInCurrentShape =
 		boolean(
 			title = R.string.show_all_actions_on_current_shape,
 			description = R.string.show_all_actions_on_current_shape_desc,
@@ -124,7 +118,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showAllPointsInCurrentNest: BooleanSettingObject =
+	val showAllPointsInCurrentNest =
 		boolean(
 			title = R.string.show_all_actions_in_current_nest,
 			description = R.string.show_all_actions_in_current_nest_desc,
@@ -133,7 +127,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showCurrentShape: BooleanSettingObject =
+	val showCurrentShape =
 		boolean(
 			title = R.string.show_shape,
 			description = R.string.show_shape_desc,
@@ -142,7 +136,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showAllShapesInNest: BooleanSettingObject =
+	val showAllShapesInNest =
 		boolean(
 			title = R.string.show_all_shapes,
 			description = R.string.show_all_shapes_desc,
@@ -151,7 +145,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val wallpaperDimMainScreen: FloatSettingObject =
+	val wallpaperDimMainScreen =
 		float(
 			title = R.string.wallpaper_dim_amount_main,
 			description = R.string.dim_amount_help,
@@ -161,7 +155,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val wallpaperDimDrawerScreen: FloatSettingObject =
+	val wallpaperDimDrawerScreen =
 		float(
 			title = R.string.wallpaper_dim_amount_drawer,
 			description = R.string.dim_amount_help,
@@ -171,7 +165,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val pointsScreensTransparency: FloatSettingObject =
+	val pointsScreensTransparency =
 		float(
 			title = R.string.points_screens_transparency,
 			description = R.string.points_screens_transparency_desc,
@@ -181,11 +175,11 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val globalFont: StringSettingObject = string("Default")
+	val globalFont = string("Default")
 
 	/** How far the points drawing system `actionsInCircle` draws the points */
 	@SettingKey
-	public val maxNestsDepth: IntSettingObject =
+	val maxNestsDepth =
 		int(
 			title = R.string.depth,
 			description = R.string.depth_desc,
@@ -196,7 +190,7 @@ public object UiSettingsStore : MapSettingsStore() {
 
 	/** How many sub live nests can be drawn at once */
 	@SettingKey
-	public val maxLiveNestsDepth: IntSettingObject =
+	val maxLiveNestsDepth =
 		int(
 			title = R.string.live_nest_depth,
 			description = R.string.live_nests_depth_desc,
@@ -206,7 +200,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showGridWhenSnappingIsOn: BooleanSettingObject =
+	val showGridWhenSnappingIsOn =
 		boolean(
 			title = R.string.show_grid,
 			description = R.string.show_grid_when_snapping_is_on,
@@ -215,7 +209,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val nestsCellSizeDp: DpSettingObject =
+	val nestsCellSizeDp =
 		dp(
 			title = R.string.nests_cell_size,
 			description = R.string.nests_cell_size_desc,
@@ -225,7 +219,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val pointsCellSizeDp: DpSettingObject =
+	val pointsCellSizeDp =
 		dp(
 			title = R.string.points_cell_size,
 			description = R.string.points_cell_size_desc,
@@ -235,7 +229,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val widgetsCellSizeDp: DpSettingObject =
+	val widgetsCellSizeDp =
 		dp(
 			title = R.string.widget_cell_size,
 			description = R.string.widget_cell_size_help,
@@ -245,10 +239,10 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val userThemes: StringSetSettingObject = stringSet(emptySet())
+	val userThemes = stringSet(emptySet())
 
 	@SettingKey
-	public val multiplyOrSubtractOpacityInLiveNests: BooleanSettingObject =
+	val multiplyOrSubtractOpacityInLiveNests =
 		boolean(
 			title = R.string.multiply_or_subtract_opacity_in_live_nests,
 			description = R.string.multiply_or_subtract_opacity_in_live_nests_desc,
@@ -257,7 +251,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val doNotRemindMeAgainPinLockWarning: BooleanSettingObject =
+	val doNotRemindMeAgainPinLockWarning =
 		boolean(
 			title = R.string.do_not_remind_me_again_pin_lock,
 			description = R.string.do_not_remind_me_again_pin_lock_desc,
@@ -265,15 +259,11 @@ public object UiSettingsStore : MapSettingsStore() {
 			default = false
 		)
 
-	@SettingKey
-	public val useAppEvenIfSignatureIsNotMatched: BooleanSettingObject = boolean(false)
-
 	/**
 	 * Point settings screen settings, only used in this screen
 	 */
-
 	@SettingKey
-	public val autoSeparatePoints: BooleanSettingObject =
+	val autoSeparatePoints =
 		boolean(
 			title = R.string.auto_separate,
 			description = R.string.auto_separate_desc,
@@ -282,7 +272,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val snapPoints: BooleanSettingObject =
+	val snapPoints =
 		boolean(
 			title = R.string.snap_points,
 			description = R.string.snap_points_desc,
@@ -291,7 +281,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val snapPointsToShapes: BooleanSettingObject =
+	val snapPointsToShapes =
 		boolean(
 			title = R.string.snap_points_to_shapes,
 			description = R.string.snap_points_to_shapes_desc,
@@ -300,7 +290,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val snapPointsAngle: BooleanSettingObject =
+	val snapPointsAngle =
 		boolean(
 			title = R.string.snap_points_angle,
 			description = R.string.snap_points_angle_desc,
@@ -309,7 +299,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val snapPointAngleThreshold: IntSettingObject =
+	val snapPointAngleThreshold =
 		int(
 			title = R.string.snap_points_angle_threshold,
 			description = R.string.snap_points_angle_threshold_desc,
@@ -319,7 +309,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showSnapPointAngleLines: BooleanSettingObject =
+	val showSnapPointAngleLines =
 		boolean(
 			title = R.string.show_snap_point_angle_lines,
 			description = R.string.show_snap_point_angle_lines_desc,
@@ -328,7 +318,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val allowFreePoints: BooleanSettingObject =
+	val allowFreePoints =
 		boolean(
 			title = R.string.allow_free_points,
 			description = R.string.allow_free_points_desc,
@@ -337,7 +327,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val snapShapesOffset: BooleanSettingObject =
+	val snapShapesOffset =
 		boolean(
 			title = R.string.snap_shapes_offset,
 			icon = R.drawable.grid_guides,
@@ -345,23 +335,23 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val snapShapesCenter: BooleanSettingObject =
+	val snapShapesCenter =
 		boolean(
 			title = R.string.snap_shapes_center,
 			icon = R.drawable.center_focus_strong,
 			default = true
 		)
 
-	@SettingKey
-	public val snapShapesScale: BooleanSettingObject =
-		boolean(
-			title = R.string.snap_shapes_scale,
-			icon = R.drawable.text_fields_alt,
-			default = false
-		)
+// 	@SettingKey
+// 	val snapShapesScale =
+// 		boolean(
+// 			title = R.string.snap_shapes_scale,
+// 			icon = R.drawable.text_fields_alt,
+// 			default = false
+// 		)
 
 	@SettingKey
-	public val snapShapeAngle: BooleanSettingObject =
+	val snapShapeAngle =
 		boolean(
 			title = R.string.snap_shapes_angle,
 			icon = R.drawable.trhee_d_rotation,
@@ -369,7 +359,7 @@ public object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val autoMerge: BooleanSettingObject =
+	val autoMerge =
 		boolean(
 			title = R.string.auto_merge,
 			description = R.string.auto_merge_desc,

@@ -4,4 +4,4 @@ import io.github.elnix90.annotations.AllStores
 import io.github.elnix90.core.stores.SettingsStore
 
 @AllStores
-public val AllStores: Set<SettingsStore<*, *>> = emptySet()
+val AllStores: Set<SettingsStore<*, *>> = emptySet()

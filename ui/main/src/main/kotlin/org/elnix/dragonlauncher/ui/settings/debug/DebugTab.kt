@@ -378,6 +378,7 @@ fun DebugTab(
 			) { Text("☠\uFE0F Uninstall Launcher") }
 
 			Setting(DebugSettingsStore.disableExtensionSignatureCheck)
+			Setting(DebugSettingsStore.useAppEvenIfSignatureIsNotMatched)
 
 			ExpandableSection(storeResetSectionState) {
 				AllStores.forEach { store ->

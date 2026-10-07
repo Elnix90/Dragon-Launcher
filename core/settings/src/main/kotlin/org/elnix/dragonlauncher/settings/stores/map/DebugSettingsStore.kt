@@ -3,9 +3,6 @@ package org.elnix.dragonlauncher.settings.stores.map
 import android.util.Log
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
-import io.github.elnix90.core.objects.BooleanSettingObject
-import io.github.elnix90.core.objects.IntSettingObject
-import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.objects.string
@@ -13,9 +10,9 @@ import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
-public object DebugSettingsStore : MapSettingsStore() {
+object DebugSettingsStore : MapSettingsStore() {
 	@SettingKey
-	public val debugEnabled: BooleanSettingObject =
+	val debugEnabled =
 		boolean(
 			title = R.string.activate_debug_mode,
 			description = R.string.activate_debug_mode_desc,
@@ -24,7 +21,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val mainScreenDebugInfos: BooleanSettingObject =
+	val mainScreenDebugInfos =
 		boolean(
 			title = R.string.show_debug_infos,
 			description = R.string.show_debug_infos_desc,
@@ -33,7 +30,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val nestDebugOverlay: BooleanSettingObject =
+	val nestDebugOverlay =
 		boolean(
 			title = R.string.nest_debug_overlay,
 			description = R.string.nest_debug_overlay_desc,
@@ -42,7 +39,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val nestDebugInfo: BooleanSettingObject =
+	val nestDebugInfo =
 		boolean(
 			title = R.string.nest_debug_info,
 			description = R.string.nest_debug_info_desc,
@@ -51,7 +48,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val settingsDebugInfo: BooleanSettingObject =
+	val settingsDebugInfo =
 		boolean(
 			title = R.string.show_debug_infos_settings,
 			description = R.string.show_debug_infos_settings_desc,
@@ -60,7 +57,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val widgetsDebugInfo: BooleanSettingObject =
+	val widgetsDebugInfo =
 		boolean(
 			title = R.string.show_debug_infos_widgets,
 			description = R.string.show_debug_infos_widgets_desc,
@@ -69,7 +66,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val workspacesDebugInfo: BooleanSettingObject =
+	val workspacesDebugInfo =
 		boolean(
 			title = R.string.show_debug_infos_workspace,
 			description = R.string.show_debug_infos_workspace_desc,
@@ -78,7 +75,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val forceAppLanguageSelector: BooleanSettingObject =
+	val forceAppLanguageSelector =
 		boolean(
 			title = R.string.force_app_language_selector,
 			description = R.string.force_app_language_selector_desc,
@@ -87,7 +84,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val autoRaiseDragonOnSystemLauncher: BooleanSettingObject =
+	val autoRaiseDragonOnSystemLauncher =
 		boolean(
 			title = R.string.auto_raise_dragon_on_system_launcher,
 			description = R.string.auto_raise_dragon_on_system_launcher_desc,
@@ -96,10 +93,10 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val systemLauncherPackageName: StringSettingObject = string("")
+	val systemLauncherPackageName = string("")
 
 	@SettingKey
-	public val useAccessibilityInsteadOfContextToExpandActionPanel: BooleanSettingObject =
+	val useAccessibilityInsteadOfContextToExpandActionPanel =
 		boolean(
 			title = R.string.use_accessibility_instead_of_context,
 			description = R.string.use_accessibility_instead_of_context_desc,
@@ -108,7 +105,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val enableLogging: BooleanSettingObject =
+	val enableLogging =
 		boolean(
 			title = R.string.enable_logging,
 			description = R.string.enable_logging_desc,
@@ -117,7 +114,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val disableExtensionSignatureCheck: BooleanSettingObject =
+	val disableExtensionSignatureCheck =
 		boolean(
 			title = R.string.disable_extension_signature_check,
 			description = R.string.disable_extension_signature_check_desc,
@@ -129,7 +126,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 	 * Whether to disable the warning in the settings, for example when you're not on stock Android (meaning you already escaped google's hell)
 	 */
 	@SettingKey
-	public val showGoogleLockDownWarning: BooleanSettingObject =
+	val showGoogleLockDownWarning =
 		boolean(
 			title = R.string.show_google_lockdown_warning,
 			description = R.string.show_google_lockdown_warning_desc,
@@ -138,7 +135,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val snackBarLogLevel: IntSettingObject =
+	val snackBarLogLevel =
 		int(
 			title = R.string.snackbar_log_level,
 			description = R.string.snackbar_log_level_desc,
@@ -148,7 +145,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val filesLogLevel: IntSettingObject =
+	val filesLogLevel =
 		int(
 			title = R.string.files_log_level,
 			description = R.string.files_log_level_desc,
@@ -158,7 +155,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val filterTag: StringSettingObject =
+	val filterTag =
 		string(
 			title = R.string.filter_tag,
 			description = R.string.pick_a_character,
@@ -167,7 +164,7 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showFps: BooleanSettingObject =
+	val showFps =
 		boolean(
 			title = R.string.show_fps,
 			description = R.string.show_fps_desc,
@@ -176,11 +173,14 @@ public object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val showKillLauncherActionInActionPicker: BooleanSettingObject =
+	val showKillLauncherActionInActionPicker =
 		boolean(
 			title = R.string.show_kill_launcher_action,
 			description = R.string.show_kill_launcher_action_desc,
 			icon = R.drawable.ic_action_kill,
 			default = false
 		)
+
+	@SettingKey
+	val useAppEvenIfSignatureIsNotMatched = boolean(false)
 }

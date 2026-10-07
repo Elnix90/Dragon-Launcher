@@ -2,10 +2,6 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
-import io.github.elnix90.core.objects.BooleanSettingObject
-import io.github.elnix90.core.objects.EnumSettingObject
-import io.github.elnix90.core.objects.IntSettingObject
-import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.enum
 import io.github.elnix90.core.objects.int
@@ -15,9 +11,9 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
-public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
+object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 	@SettingKey
-	public val hasSeenWelcomeScreen: BooleanSettingObject = boolean(
+	val hasSeenWelcomeScreen = boolean(
 		title = R.string.has_seen_welcome,
 		description = R.string.has_seen_welcome_desc,
 		icon = R.drawable.rocket_launch,
@@ -29,7 +25,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 	 * and therefore, they'll see the message in the welcome screen
 	 */
 	@SettingKey
-	public val hasSeenWelcome: BooleanSettingObject = boolean(
+	val hasSeenWelcome = boolean(
 		title = R.string.has_seen_welcome_old,
 		description = R.string.has_seen_welcome_old_desc,
 		icon = R.drawable.timer,
@@ -37,7 +33,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 	)
 
 	@SettingKey
-	public val hasInitialized: BooleanSettingObject =
+	val hasInitialized =
 		boolean(
 			title = R.string.has_initialized,
 			description = R.string.has_initialized_desc,
@@ -45,7 +41,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 		)
 
 	@SettingKey
-	public val showSetDefaultLauncherBanner: BooleanSettingObject =
+	val showSetDefaultLauncherBanner =
 		boolean(
 			title = R.string.show_set_default_launcher_banner,
 			description = R.string.show_set_default_launcher_banner_desc,
@@ -54,7 +50,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 		)
 
 	@SettingKey
-	public val showReselectBackupBanner: BooleanSettingObject =
+	val showReselectBackupBanner =
 		boolean(
 			title = R.string.show_reselect_backup_banner,
 			description = R.string.show_set_default_launcher_banner_desc,
@@ -63,7 +59,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 		)
 
 	@SettingKey
-	public val hideBetaVersionWarning: BooleanSettingObject =
+	val hideBetaVersionWarning =
 		boolean(
 			title = R.string.hide_beta_version_warning,
 			description = R.string.hide_beta_version_warning_desc,
@@ -72,21 +68,21 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 		)
 
 	@SettingKey
-	public val lastSeenVersionCodeWhatsNew: IntSettingObject =
+	val lastSeenVersionCodeWhatsNew =
 		int(
 			default = 0,
 			allowedRange = 0..Int.MAX_VALUE
 		)
 
 	@SettingKey
-	public val lastSeenVersionCodeGoogleLockdownWarning: IntSettingObject =
+	val lastSeenVersionCodeGoogleLockdownWarning =
 		int(
 			default = Int.MAX_VALUE,
 			allowedRange = 0..Int.MAX_VALUE
 		)
 
 	@SettingKey
-	public val installVersionCode: IntSettingObject =
+	val installVersionCode =
 		int(
 			default = -1,
 			allowedRange = -1..Int.MAX_VALUE
@@ -98,35 +94,35 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 	 *  They are both handled as string, containing the digits in the LtR direction:
 	 */
 	@SettingKey
-	public val settingsHash: StringSettingObject = string("")
+	val settingsHash = string("")
 
-	/**
-	 *  Hashed code for launching actions (SHA-256).
-	 *  This can contain either the Pattern hashed or the PIN hashed.
-	 *  They are both handled as string, containing the digits in the LtR direction:
-	 */
-	@SettingKey
-	public val actionsHash: StringSettingObject = string("")
+// 	/**
+// 	 *  Hashed code for launching actions (SHA-256).
+// 	 *  This can contain either the Pattern hashed or the PIN hashed.
+// 	 *  They are both handled as string, containing the digits in the LtR direction:
+// 	 */
+// 	@SettingKey
+// 	val actionsHash = string("")
 
 	@SettingKey
-	public val lockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)
+	val lockMethod = enum(LockMethod.None)
 
-	/**
-	 * The lock method for the actions
-	 */
-	@SettingKey
-	public val actionsLockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)
+// 	/**
+// 	 * The lock method for the actions
+// 	 */
+// 	@SettingKey
+// 	val actionsLockMethod = enum(LockMethod.None)
 
 //    /**
 //     * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection
 //     */
 //    @SettingKey
-//    public val welcomeScreenTempPage: IntSettingObject =
+//    public val welcomeScreenTempPage =
 //        int(
 //            default = 0,
 //            allowedRange = 0..6
 //        )
 
 	@SettingKey
-	public val lastCrashStackTrace: StringSettingObject = string("")
+	val lastCrashStackTrace = string("")
 }

@@ -1,7 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
 plugins {
 	alias(libs.plugins.dragon.library)
 	alias(libs.plugins.dragon.serialization)
 	alias(libs.plugins.settings) // My plugin 🤎
+}
+
+kotlin {
+	explicitApi = ExplicitApiMode.Disabled
 }
 
 android {
@@ -15,6 +21,7 @@ dependencies {
 	implementation(libs.kotlinx.serialization.core)
 	implementation(libs.androidx.compose.material3)
 	implementation(libs.androidx.compose.ui.unit)
+	implementation(libs.androidx.compose.runtime.annotation)
 
 	api(libs.androidx.datastore.preferences.core)
 	api(libs.androidx.ui.graphics)
@@ -26,5 +33,4 @@ dependencies {
 	implementation(project(":core:ktx"))
 	api(project(":core:base"))
 	implementation(project(":core:i18n"))
-	implementation(libs.androidx.compose.runtime.annotation)
 }

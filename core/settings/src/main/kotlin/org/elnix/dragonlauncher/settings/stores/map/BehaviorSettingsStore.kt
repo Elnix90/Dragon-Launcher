@@ -3,10 +3,6 @@ package org.elnix.dragonlauncher.settings.stores.map
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
-import io.github.elnix90.core.objects.BooleanSettingObject
-import io.github.elnix90.core.objects.DpSettingObject
-import io.github.elnix90.core.objects.IntSettingObject
-import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.dp
 import io.github.elnix90.core.objects.int
@@ -14,13 +10,12 @@ import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.specialObjects.ActionSettingObject
 import org.elnix.dragonlauncher.settings.specialObjects.action
 
 @SettingsStore
-public object BehaviorSettingsStore : MapSettingsStore() {
+object BehaviorSettingsStore : MapSettingsStore() {
 	@SettingKey
-	public val backAction: ActionSettingObject =
+	val backAction =
 		action(
 			title = R.string.back_action,
 			description = R.string.back_action_desc,
@@ -29,7 +24,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val doubleClickAction: ActionSettingObject =
+	val doubleClickAction =
 		action(
 			title = R.string.double_click_action,
 			description = R.string.double_click_action_desc,
@@ -38,7 +33,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val homeAction: ActionSettingObject =
+	val homeAction =
 		action(
 			title = R.string.home_action,
 			description = R.string.home_action_desc,
@@ -47,7 +42,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val keepScreenOn: BooleanSettingObject =
+	val keepScreenOn =
 		boolean(
 			title = R.string.keep_screen_on,
 			description = R.string.keep_screen_on_desc,
@@ -56,7 +51,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val leftPadding: IntSettingObject =
+	val leftPadding =
 		int(
 			default = 60,
 			title = R.string.left_padding,
@@ -65,7 +60,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val rightPadding: IntSettingObject =
+	val rightPadding =
 		int(
 			default = 60,
 			title = R.string.right_padding,
@@ -74,7 +69,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val topPadding: IntSettingObject =
+	val topPadding =
 		int(
 			default = 80,
 			title = R.string.top_padding,
@@ -83,7 +78,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val bottomPadding: IntSettingObject =
+	val bottomPadding =
 		int(
 			default = 100,
 			title = R.string.bottom_padding,
@@ -92,7 +87,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val disableHapticFeedbackGlobally: BooleanSettingObject =
+	val disableHapticFeedbackGlobally =
 		boolean(
 			title = R.string.disable_haptic_globally,
 			description = R.string.disable_haptic_globally_desc,
@@ -101,7 +96,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val superWarningMode: BooleanSettingObject =
+	val superWarningMode =
 		boolean(
 			title = R.string.super_warning_mode,
 			description = R.string.super_warning_mode_desc,
@@ -110,7 +105,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val vibrateOnError: BooleanSettingObject =
+	val vibrateOnError =
 		boolean(
 			title = R.string.vibrate_on_error,
 			description = R.string.vibrate_on_error_desc,
@@ -119,7 +114,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val alarmSound: BooleanSettingObject =
+	val alarmSound =
 		boolean(
 			title = R.string.alarm_sound,
 			description = R.string.super_warning_mode_desc,
@@ -128,7 +123,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val metalPipesSound: BooleanSettingObject =
+	val metalPipesSound =
 		boolean(
 			title = R.string.metal_pipes_sound,
 			description = R.string.metal_pipes_sound_desc,
@@ -137,7 +132,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val superWarningModeSound: IntSettingObject =
+	val superWarningModeSound =
 		int(
 			default = 100,
 			title = R.string.super_warning_mode_sound,
@@ -146,7 +141,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val promptForShortcutsWhenAddingApp: BooleanSettingObject =
+	val promptForShortcutsWhenAddingApp =
 		boolean(
 			title = R.string.prompt_shortcuts_when_adding_app,
 			description = R.string.prompt_shortcuts_when_adding_app_desc,
@@ -155,7 +150,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val offScreenTimeout: IntSettingObject =
+	val offScreenTimeout =
 		int(
 			default = 10,
 			title = R.string.off_screen_timeout,
@@ -164,7 +159,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint: BooleanSettingObject =
+	val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint =
 		boolean(
 			title = R.string.create_live_nest_by_default,
 			description = R.string.create_live_nest_by_default_desc,
@@ -173,7 +168,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	public val openRootNestEachTime: BooleanSettingObject =
+	val openRootNestEachTime =
 		boolean(
 			title = R.string.open_root_nest_each_time,
 			description = R.string.open_root_nest_each_time_desc,
@@ -185,7 +180,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 	 * Adds a secret unlock button in the unlock screen that you can press when
 	 */
 	@SettingKey
-	public val secretUnlockButton: BooleanSettingObject =
+	val secretUnlockButton =
 		boolean(
 			title = R.string.secret_unlock_button,
 			description = R.string.secret_unlock_button_desc,
@@ -199,7 +194,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 	 * CRITICAL: when the pattern size changes, the hash must be also recomputed!!
 	 */
 	@SettingKey
-	public val patternSize: IntSettingObject =
+	val patternSize =
 		int(
 			title = R.string.pattern_size,
 			description = R.string.pattern_size_desc,
@@ -214,7 +209,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 	 * CRITICAL: when the pattern size changes, the hash must be also recomputed!!
 	 */
 	@SettingKey
-	public val patternSensitivity: DpSettingObject =
+	val patternSensitivity =
 		dp(
 			title = R.string.pattern_sensitivity,
 			description = R.string.pattern_sensitivity_desc,
@@ -227,7 +222,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
 	 * The Launcher-wide dragging mode.
 	 */
 	@SettingKey
-	public val globalDraggingMode: StringSettingObject =
+	val globalDraggingMode =
 		string(
 			title = R.string.global_dragging_mode,
 			description = R.string.global_dragging_mode_desc,
