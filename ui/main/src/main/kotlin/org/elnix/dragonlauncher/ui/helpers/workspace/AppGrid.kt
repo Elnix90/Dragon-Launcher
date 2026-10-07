@@ -65,8 +65,14 @@ import kotlin.time.Duration.Companion.seconds
 
 @Immutable
 private data class MutableCategory(
-	val categoryName: String,
+	val cat: DisplayCategory,
 	val apps: List<Application>
+)
+
+@Immutable
+private data class DisplayCategory(
+	val displayName: String,
+	val categoryName: String
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -224,15 +230,27 @@ fun AppGrid(
 
 			// That's shitty code, and it should move to a viewmodel, but I don't care about the categories anyway
 
-			val allCategoryNames: Set<String> =
+			val allCategoryNames: Set<DisplayCategory> =
 				remember(visibleApps, disabledSystemCategories, categoryOrder) {
 					val systemCategories =
 						AppCategory.entries
 							.filter { it.name !in disabledSystemCategories }
-							.mapTo(mutableSetOf()) { it.name }
+							.mapTo(mutableSetOf()) {
+								val displayName = it.name(ctx)
+								DisplayCategory(
+									displayName = displayName,
+									categoryName = it.name
+								)
+							}
 
 					val customCategories =
-						visibleApps.mapNotNullTo(mutableSetOf()) { it.categoryOverride }
+						visibleApps.mapNotNullTo(mutableSetOf()) {
+							val ov = it.categoryOverride ?: return@mapNotNullTo null
+							DisplayCategory(
+								displayName = ov,
+								categoryName = ov
+							)
+						}
 
 					customCategories + systemCategories
 				}
@@ -240,20 +258,20 @@ fun AppGrid(
 			val mutableCategoryNames: SnapshotStateList<MutableCategory> = remember(allCategoryNames, categoryOrder) {
 				mutableStateListOf<MutableCategory>().apply {
 					val allCategories = if (categoryOrder.isNotEmpty()) {
-						allCategoryNames.sortedBy { name ->
-							val idx = categoryOrder.indexOf(name)
+						allCategoryNames.sortedBy { displayCategory ->
+							val idx = categoryOrder.indexOf(displayCategory.categoryName)
 							if (idx >= 0) idx else Int.MAX_VALUE
 						}
 					} else {
 						allCategoryNames.toList()
 					}
 
-					allCategories.forEach { categoryName ->
-						val apps = visibleApps.filter { it.effectiveCategory == categoryName }
+					allCategories.forEach { displayCategory ->
+						val apps = visibleApps.filter { it.effectiveCategory == displayCategory.categoryName }
 						if (apps.isNotEmpty()) {
 							add(
 								MutableCategory(
-									categoryName = categoryName,
+									cat = displayCategory,
 									apps = apps
 								)
 							)
@@ -264,7 +282,7 @@ fun AppGrid(
 
 			fun saveOrder() {
 				scope.launch {
-					DrawerSettingsStore.categoryOrder.set(ctx, mutableCategoryNames.map { it.categoryName })
+					DrawerSettingsStore.categoryOrder.set(ctx, mutableCategoryNames.map { it.cat.categoryName })
 				}
 			}
 
@@ -289,11 +307,11 @@ fun AppGrid(
 			) {
 				items(
 					items = mutableCategoryNames,
-					key = { it.categoryName }
+					key = { it.cat.categoryName }
 				) { category ->
-					ReorderableItem(state = reorderState, key = category.categoryName) {
+					ReorderableItem(state = reorderState, key = category.cat.categoryName) {
 						CategoryGrid(
-							categoryName = category.categoryName,
+							categoryName = category.cat.displayName,
 							apps = category.apps,
 							modifier = Modifier.longPressDraggableHandle(
 								onDragStopped = ::saveOrder
@@ -301,7 +319,7 @@ fun AppGrid(
 							longPressPopup = longPressPopup,
 							onClick = onClick
 						) {
-							openedCategory = category.categoryName
+							openedCategory = category.cat.categoryName
 						}
 					}
 				}

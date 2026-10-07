@@ -1135,4 +1135,6 @@
 	<string name="decode_error_share_to_dev">Please share me this bug via any mean for me to fix it ASAP!</string>
 	<string name="decode_error_allow_anyway">Allow Dragon to override data anyway</string>
 	<string name="share_logs">Share logs</string>
+	<string name="custom_category">Custom category</string>
+	<string name="default_category">Default category</string>
 </resources>

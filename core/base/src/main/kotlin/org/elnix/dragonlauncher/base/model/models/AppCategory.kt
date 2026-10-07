@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.base.model.models
 
+import android.content.Context
 import android.content.pm.ApplicationInfo
 
 public enum class AppCategory {
@@ -14,6 +15,8 @@ public enum class AppCategory {
 	Accessibility,
 	Other
 	;
+
+	public fun name(ctx: Context): String = ApplicationInfo.getCategoryTitle(ctx, ordinal)?.toString() ?: "Other"
 
 	public companion object {
 		public fun mapSystemCategoryToSection(category: Int): AppCategory =

@@ -50,7 +50,7 @@ fun AppLongPressPopup(
 	app: Application,
 	drawerViewModel: DrawerViewModel = activityViewModel(),
 	onOpenApp: () -> Unit,
-	close: () -> Unit
+	onDismissRequest: () -> Unit
 ) {
 	val ctx = LocalContext.current
 	val uriHandler = LocalUriHandler.current
@@ -112,7 +112,7 @@ fun AppLongPressPopup(
 								id = selectedWorkspaceId,
 								cacheKey = app.key
 							)
-							close()
+							onDismissRequest()
 						}
 					)
 				)
@@ -126,7 +126,7 @@ fun AppLongPressPopup(
 								id = selectedWorkspaceId,
 								cacheKey = app.key
 							)
-							close()
+							onDismissRequest()
 						}
 					)
 				)
@@ -139,7 +139,7 @@ fun AppLongPressPopup(
 					onClick = {
 						scope.launch {
 							app.shareApkFile(ctx)
-							close()
+							onDismissRequest()
 						}
 					}
 				)
@@ -153,7 +153,7 @@ fun AppLongPressPopup(
 						onClick = {
 							scope.launch {
 								uriHandler.openUri(link.url)
-								close()
+								onDismissRequest()
 							}
 						}
 					)
@@ -285,7 +285,10 @@ fun AppLongPressPopup(
 		CategoryPickerSheet(
 			app = app,
 			existingCustomCategories = existingCustomCategories,
-			onDismissRequest = { showCategoryDialog = false }
+			onDismissRequest = {
+				showCategoryDialog = false
+				onDismissRequest()
+			}
 		)
 	}
 }
