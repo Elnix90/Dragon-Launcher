@@ -14,7 +14,7 @@ body:
           required: true
         - label: I updated the app to the latest version and and searched in the whole app / asked if the feature isn't already implemented
           required: true
-        - label: I verified that the issue
+        - label: I haven't read those requirements
           required: false
   - type: textarea
     id: summary
