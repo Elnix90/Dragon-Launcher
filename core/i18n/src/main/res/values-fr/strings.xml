@@ -916,4 +916,5 @@
     <string name="permission_manage_profiles_title">Lanceur par défaut</string>
     <string name="permission_manage_profiles_desc">Autorisez Dragon Launcher à gérer vos profils pros et persos pour que vous puissiez les mettre en pause, les verrouiller et passer de l’un à l’autre.</string>
     <string name="permission_usage_stat_desc">Autorisez Dragon Launcher à accéder à vos statistiques d’utilisation. Nécessaire aux temps d’écran, aux minuteurs d’applications et au bien-être numérique.</string>
+    <string name="permission_display_over_other_apps_title">Affichage par-dessus les autres applications</string>
 </resources>
