@@ -404,6 +404,9 @@ internal class SwipeServiceImpl(
 	private val useAccessibilityInsteadOfContextToExpandActionPanel =
 		DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel.stateFlow(ctx, scope)
 
+	private val openRootNestEachTime =
+		BehaviorSettingsStore.openRootNestEachTime.stateFlow(ctx, scope)
+
 	override val showShizukuCommandPrompter: SettingFlow<Action.RunAdbCommand?> = SettingFlow(null)
 
 	override fun dismissCommandPrompt() {
@@ -427,6 +430,10 @@ internal class SwipeServiceImpl(
 		lastClickTime = 0L
 		showDropDownMenuSettings.value = false
 		lifecycleService.blockHomeActionsTemporarily()
+
+		if (openRootNestEachTime.value) {
+			nestsNavigationService.clearStack()
+		}
 
 		when (action) {
 			is Action.LaunchApp -> {
