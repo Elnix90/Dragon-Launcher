@@ -19,6 +19,7 @@ import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.models.HitResult
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.DefaultShapeJson
@@ -35,20 +36,21 @@ import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.emptyPo
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
+import org.elnix.dragonlauncher.ktx.PI_F
+import org.elnix.dragonlauncher.ktx.TWO_PI_F
 import org.elnix.dragonlauncher.ktx.angleDeg
-import org.elnix.dragonlauncher.ktx.angleRad
+import org.elnix.dragonlauncher.ktx.angleRad360
 import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.getNextId
 import org.elnix.dragonlauncher.ktx.groupByTo
 import org.elnix.dragonlauncher.ktx.radians
+import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultNestSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultPointSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultShapeSettingsStore
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -503,10 +505,33 @@ internal class PointsServiceImpl(
 
 			val pointsJsonString = PointsSettingsStore.jsonSetting.get(ctx)
 			try {
-				val decodedPoints = PointsJson.decodeAndThrow<Set<Point>>(pointsJsonString)
-				if (decodedPoints != null) {
-					_points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
+				val points: List<Point> = buildList {
+					repeat(90) {
+						val angle = it * 4
+						val p = Point(
+							offset = Offset(100f, 0f).rotateBy(angle.toFloat()),
+							action = Action.GoParentNest,
+							id = angle,
+							shapeId = 0
+						)
+						add(p)
+					}
 				}
+// 				val points = mapOf(
+// 					0 to Point(
+// 						offset = Offset(100f, 100f),
+// 						action = Action.GoParentNest,
+// 						id = 0,
+// 						shapeId = 0
+// 					)
+// 				)
+
+				_points.value = ConcurrentHashMap(points.associateBy { it.id })
+// 				_points.value = ConcurrentHashMap(points)
+// 				val decodedPoints = PointsJson.decodeAndThrow<Set<Point>>(pointsJsonString)
+// 				if (decodedPoints != null) {
+// 					_points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
+// 				}
 			} catch (e: Exception) {
 				logE(POINTS_TAG, e) { "Failed to decode points" }
 				errors += DecodeError(
@@ -854,12 +879,12 @@ internal class PointsServiceImpl(
 	override inline fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset {
 		val shapeOffset = shape.getOffset(defaultIntersectionShape.value, false)
 
-		val angleRad = (point.offset - shapeOffset).angleRad()
+		val angleRad = (point.offset - shapeOffset).angleRad360()
 
 		val halfSize = shape.getSize(density, defaultIntersectionShape.value, false).width / 2
-		val rotationRad = (shape.getRotation(defaultIntersectionShape.value, false)).radians.toFloat()
+		val rotationDeg = (shape.getRotation(defaultIntersectionShape.value, false) % 360)
 
-		return shapeOffset + computeShapeBoundary(shape.getShape(defaultIntersectionShape.value, false), halfSize, angleRad, rotationRad)
+		return shapeOffset + computeShapeBoundary(shape.getShape(defaultIntersectionShape.value, false), halfSize, angleRad, rotationDeg)
 	}
 
 	override fun getPointsForNest(
@@ -994,13 +1019,13 @@ internal class PointsServiceImpl(
 
 	/** Returns the point where the ray at [angleRad] (from origin) first hits
 	 *  the boundary of [iconShape] when the shape is inscribed in a circle of
-	 *  radius [halfSize] and rotated by [rotationRad]. Unsupported shapes fall
+	 *  radius [halfSize] and rotated by [rotationDeg]. Unsupported shapes fall
 	 *  back to a circle boundary. */
 	private fun computeShapeBoundary(
 		iconShape: IconShape,
 		halfSize: Float,
 		angleRad: Float,
-		rotationRad: Float
+		rotationDeg: Int
 	): Offset =
 		when (iconShape) {
 			is IconShape.Circle -> {
@@ -1010,45 +1035,45 @@ internal class PointsServiceImpl(
 			is IconShape.Triangle,
 			is IconShape.RoundedTriangle
 			-> {
-				polygonBoundary(3, halfSize, angleRad, rotationRad)
+				polygonBoundary(3, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Square,
 			is IconShape.RoundedSquare
 			-> {
-				polygonBoundary(4, halfSize, angleRad, rotationRad)
+				polygonBoundary(4, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Pentagon -> {
-				polygonBoundary(5, halfSize, angleRad, rotationRad)
+				polygonBoundary(5, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Hexagon,
 			is IconShape.Cookie6Sided
 			-> {
-				polygonBoundary(6, halfSize, angleRad, rotationRad)
+				polygonBoundary(6, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Heptagon,
 			is IconShape.Cookie7Sided
 			-> {
-				polygonBoundary(7, halfSize, angleRad, rotationRad)
+				polygonBoundary(7, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Octagon -> {
-				polygonBoundary(8, halfSize, angleRad, rotationRad)
+				polygonBoundary(8, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Cookie9Sided -> {
-				polygonBoundary(9, halfSize, angleRad, rotationRad)
+				polygonBoundary(9, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Decagon -> {
-				polygonBoundary(10, halfSize, angleRad, rotationRad)
+				polygonBoundary(10, halfSize, angleRad, rotationDeg)
 			}
 
 			is IconShape.Cookie12Sided -> {
-				polygonBoundary(12, halfSize, angleRad, rotationRad)
+				polygonBoundary(12, halfSize, angleRad, rotationDeg)
 			}
 
 //            is IconShape.Custom ->
@@ -1058,47 +1083,6 @@ internal class PointsServiceImpl(
 				circleBoundary(halfSize, angleRad)
 			}
 		}
-
-	/** Point on a circle of [radius] at the given angle. */
-	private fun circleBoundary(
-		radius: Float,
-		angleRad: Float
-	): Offset = Offset(radius * cos(angleRad), radius * sin(angleRad))
-
-	/** Intersection of a ray at [angleRad] with a regular [numSides]-gon
-	 *  inscribed in a circle of [radius], rotated by [rotationRad]. */
-	private fun polygonBoundary(
-		numSides: Int,
-		radius: Float,
-		angleRad: Float,
-		rotationRad: Float
-	): Offset {
-		val dir = Offset(cos(angleRad), sin(angleRad))
-		val epsilon = 1e-6f
-		var minT = Float.MAX_VALUE
-
-		for (k in 0 until numSides) {
-			val a1 = (2.0 * PI * k / numSides + rotationRad).toFloat()
-			val a2 = (2.0 * PI * ((k + 1) % numSides) / numSides + rotationRad).toFloat()
-			val v1 = Offset(radius * cos(a1), radius * sin(a1))
-			val v2 = Offset(radius * cos(a2), radius * sin(a2))
-			val edgeX = v2.x - v1.x
-			val edgeY = v2.y - v1.y
-			val det = dir.x * edgeY - dir.y * edgeX
-			if (abs(det) < epsilon) continue
-			val t = (v1.x * edgeY - v1.y * edgeX) / det
-			val s = (v1.x * dir.y - v1.y * dir.x) / det
-			if (t >= 0f && s >= 0f && s <= 1f && t < minT) {
-				minT = t
-			}
-		}
-
-		return if (minT < Float.MAX_VALUE) {
-			dir * minT
-		} else {
-			circleBoundary(radius, angleRad)
-		}
-	}
 
 	private fun cellKey(offset: Offset): GridCase =
 		Pair((offset.x / gridSize).toInt(), (offset.y / gridSize).toInt())
@@ -1110,4 +1094,61 @@ public data class DecodeError(
 	val json: String
 ) {
 	override fun toString(): String = type + "\n\n" + exception.stackTraceToString() + "\n\n" + json
+}
+
+/** Point on a circle of [radius] at the given angle. */
+private fun circleBoundary(
+	radius: Float,
+	angleRad: Float
+): Offset = Offset(radius * cos(angleRad), radius * sin(angleRad))
+
+/**
+ *  Intersection of a ray at [angleRad] with a regular [numSides]-gon
+ *  inscribed in a circle of [radius], rotated by [rotationRad]
+ *
+ * Thanks to everyone who helped me make this  function!!
+ *  - BIG UP AT `@nil31415` (discord) who cooked this!!
+ *  - Thanks to `@g2tx` (discord) who placed the first bricks of this huge improvement
+ *  - Thanks to ------ who created a monster function
+ */
+public fun polygonBoundary(
+	numSides: Int,
+	radius: Float,
+	angleRad: Float,
+	rotationDeg: Int
+): Offset {
+	// Computes a positive angle modulo 2*PI to avoid strange negative numbers issues with the mathematical function below
+	var rotationRad = rotationDeg.radians.toFloat()
+	if (rotationRad < 0f) rotationRad += TWO_PI_F
+
+	var theta = (angleRad - rotationRad) % TWO_PI_F
+	if (theta < 0f) theta += TWO_PI_F
+
+	val piOverN = PI_F / numSides
+
+	/**
+	 * Computes the following formulae:
+	 *
+	 * ```
+	 *
+	 * 	alpha = theta % (2 * PI / n)
+	 *
+	 *
+	 *      cos( PI / n)
+	 *   --------------------
+	 *     cos ( PI / n - alpha)
+	 * ```
+	 *
+	 * Finally, I multiply the whole thing by [radius], because the produced result lies in the Unit Circle
+	 */
+	val dist = cos(piOverN) / cos(piOverN - theta % (TWO_PI_F / numSides)) * radius
+
+	/*
+	 * Returns a new Offset created from the computed distance and the base angelRad of the point,
+	 * not the angle + rotation
+	 */
+	return Offset(
+		x = dist * cos(angleRad),
+		y = dist * sin(angleRad)
+	)
 }

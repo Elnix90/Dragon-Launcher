@@ -29,6 +29,12 @@ public fun angle360FromOffset(center: Offset, offset: Offset): Float {
 
 public fun Offset.angleRad(): Float = atan2(y, x)
 
+public fun Offset.angleRad360(): Float {
+	var rad = this.angleRad()
+	if (rad < 0f) rad += TWO_PI_F
+	return rad
+}
+
 /** Angle 0..360 from [this] (east = 0, clockwise). */
 public inline fun Offset.angleDeg(): Float {
 	var deg = this.angleRad().degrees.toFloat()
