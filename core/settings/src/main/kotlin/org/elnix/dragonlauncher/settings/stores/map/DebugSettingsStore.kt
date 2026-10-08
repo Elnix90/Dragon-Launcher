@@ -182,5 +182,11 @@ object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	val useAppEvenIfSignatureIsNotMatched = boolean(false)
+	val useAppEvenIfSignatureIsNotMatched =
+		boolean(
+			title = R.string.use_app_even_if_signature_does_not_match,
+			description = R.string.use_app_even_if_signature_does_not_match_desc,
+			icon = R.drawable.encrypted,
+			default = false
+		)
 }

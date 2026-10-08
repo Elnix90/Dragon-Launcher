@@ -18,6 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,13 +28,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import io.github.elnix90.runtime.asStateNull
+import io.github.elnix90.runtime.asMutableStateNull
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @OptIn(
 	ExperimentalMaterial3ExpressiveApi::class
@@ -42,10 +46,10 @@ fun SignatureWarningDialog(
 ) {
 	val signatureMatched by securityViewModel.signatureMatched.asState()
 	val useAnyways by securityViewModel.useAnyways.asState()
-	val useAppEvenIfSignatureIsNotMatched by DebugSettingsStore.useAppEvenIfSignatureIsNotMatched.asStateNull()
+	var useAppEvenIfSignatureIsNotMatched by DebugSettingsStore.useAppEvenIfSignatureIsNotMatched.asMutableStateNull()
 	if (signatureMatched || useAnyways || useAppEvenIfSignatureIsNotMatched == true) return
 
-	val ctx = LocalContext.current
+	var showConfirmDialog by remember { mutableStateOf(false) }
 
 	BasicAlertDialog(
 		onDismissRequest = {}
@@ -81,12 +85,11 @@ fun SignatureWarningDialog(
 					color = MaterialTheme.colorScheme.error
 				)
 
+				val ctx = LocalContext.current
 				ValidateCancelButtons(
 					cancelText = stringResource(R.string.use_anyways),
 					validateText = "${stringResource(R.string.uninstall)} ☠\uFE0F",
-					onCancel = {
-						securityViewModel.useAnyways.value = true
-					},
+					onCancel = { showConfirmDialog = true },
 					onConfirm = {
 						ctx.startActivity(
 							Intent(Intent.ACTION_DELETE).apply {
@@ -96,6 +99,16 @@ fun SignatureWarningDialog(
 					}
 				)
 			}
+		}
+	}
+
+	if (showConfirmDialog) {
+		UserValidation(
+			message = stringResource(R.string.are_you_sure),
+			doNotRemindMeAgain = { useAppEvenIfSignatureIsNotMatched = true },
+			onDismiss = { showConfirmDialog = false }
+		) {
+			securityViewModel.useAnyways.value = true
 		}
 	}
 }
