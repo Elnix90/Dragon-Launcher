@@ -204,6 +204,7 @@ fun SettingsScreen(
 				ctx.startActivity(intent)
 			}
 
+			RouteItem(NavigationRoute.Permissions)
 			AnimatedVisibility(isDebugModeEnabled) {
 				RouteItem(NavigationRoute.Debug)
 			}
