@@ -70,6 +70,7 @@ fun PointPreviewCanvas(
 			rememberDrawParams(
 				eraseColor = backgroundColor,
 				isDefaultEditing = isDefaultEditing,
+				isTopPoint = false,
 				pointSettingsDisplay = false,
 				showCancelZone = false,
 				allowShowPointCenter = false,

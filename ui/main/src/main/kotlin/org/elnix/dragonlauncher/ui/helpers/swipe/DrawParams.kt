@@ -37,6 +37,7 @@ data class DrawParams(
 	val colorScheme: ColorScheme,
 	val iconShape: IconShape,
 	val maxNestsDepth: Int,
+	val maxTopBarDepth: Int,
 	val isDefaultEditing: Boolean,
 	/** Settings Screen only */
 	val eraseColor: Color,
@@ -44,6 +45,7 @@ data class DrawParams(
 	val preventDrawingSubNests: Boolean,
 	/** Settings Screen only */
 	val pointSettingsDisplay: Boolean,
+	val isTopPoint: Boolean,
 	/** Settings Screen only */
 	val hideShapes: Boolean,
 	val skipSelected: Boolean,
@@ -78,6 +80,7 @@ fun rememberDrawParams(
 	showCancelZone: Boolean,
 	hideShapes: Boolean,
 	skipSelected: Boolean,
+	isTopPoint: Boolean,
 	pointsViewModel: PointsViewModel = activityViewModel(),
 	swipeViewModel: SwipeViewModel = activityViewModel()
 ): DrawParams {
@@ -87,6 +90,7 @@ fun rememberDrawParams(
 
 	val showCurrentSelectedPoint by UiSettingsStore.showCurrentSelectedPoint.asState()
 	val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
+	val maxTopBarDepth by UiSettingsStore.maxTopBarDepth.asState()
 
 	val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
 	val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
@@ -107,6 +111,7 @@ fun rememberDrawParams(
 		extraColors,
 		colorScheme,
 		maxNestsDepth,
+		maxTopBarDepth,
 		eraseColor,
 		pointSettingsDisplay,
 		hideShapes,
@@ -130,7 +135,9 @@ fun rememberDrawParams(
 			colorScheme = colorScheme,
 			iconShape = iconShape,
 			maxNestsDepth = maxNestsDepth,
+			maxTopBarDepth = maxTopBarDepth,
 			isDefaultEditing = isDefaultEditing,
+			isTopPoint = isTopPoint,
 			eraseColor = eraseColor,
 			preventDrawingSubNests = false,
 			pointSettingsDisplay = pointSettingsDisplay,

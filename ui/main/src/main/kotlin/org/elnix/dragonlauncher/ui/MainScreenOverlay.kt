@@ -83,11 +83,6 @@ fun MainScreenOverlay(
 
 	val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
-	val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-	val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
-
-	val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
-
 	val linePreviewSnapToAction by UiSettingsStore.linePreviewSnapToAction.asState()
 	val animationWhenSnapping by UiSettingsStore.animationWhenSnapping.asState()
 	val useSnappedAngleOrRealAngle by AngleLineSettingsStore.useSnappedAngleOrRealAngle.asState()
@@ -282,6 +277,7 @@ fun MainScreenOverlay(
 			isDefaultEditing = false,
 			allowShowPointCenter = true,
 			pointSettingsDisplay = false,
+			isTopPoint = false,
 			showCancelZone = nestDebugOverlay,
 			hideShapes = false,
 			skipSelected = false
@@ -533,12 +529,7 @@ fun MainScreenOverlay(
 		}
 	}
 
-	PointPreviewTitle(
-		point = displayPoint,
-		topPadding = appLabelIconOverlayTopPadding,
-		showLabel = showLaunchingAppLabel,
-		showIcon = showLaunchingAppIcon
-	)
+	PointPreviewTitle(displayPoint)
 }
 
 fun defaultHapticFeedback(): CustomHapticFeedback =

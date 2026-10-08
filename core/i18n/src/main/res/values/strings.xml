@@ -1143,4 +1143,11 @@
 	<string name="show_current_selected_point_desc">Display the point you are hovering over when dragging</string>
 	<string name="auto_show_unlock_profile">Auto show unlock profile</string>
 	<string name="auto_show_unlock_profile_desc">When you enter a locked profile in the drawer, the unlock prompt auto shows up</string>
+	<string name="top_bar_depth">Top bar depth</string>
+	<string name="top_bar_depth_desc">The maximum depth at which the points in the top bar are drawn. (when they are live nests)</string>
+	<string name="point_preview_mode">Point preview mode</string>
+	<string name="point_preview_mode_new">Displays the point as it is in the nests</string>
+	<string name="point_preview_mode_legacy">Displays a resized action of the current point, less accurate</string>
+	<string name="use_app_even_if_signature_does_not_match">Use app even if signature does not match</string>
+	<string name="use_app_even_if_signature_does_not_match_desc">Hides the big warning screen when you\'re using a debug version</string>
 </resources>

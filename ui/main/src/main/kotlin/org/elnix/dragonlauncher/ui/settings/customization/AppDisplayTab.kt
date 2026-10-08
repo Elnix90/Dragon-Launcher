@@ -65,6 +65,7 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 				icon = R.drawable.visibility
 			) { showPreview = it }
 
+			Setting(UiSettingsStore.pointPreviewMode)
 			Setting(UiSettingsStore.showLaunchingAppLabel)
 			Setting(UiSettingsStore.showLaunchingAppIcon)
 			Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
@@ -98,6 +99,7 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 
 		DragonSettingsGroup(R.string.depth) {
 			Setting(UiSettingsStore.maxNestsDepth)
+			Setting(UiSettingsStore.maxTopBarDepth)
 			Setting(UiSettingsStore.maxLiveNestsDepth)
 		}
 	}
@@ -105,16 +107,7 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 	val points by pointsViewModel.pointsService.points.collectAsState()
 	val randomPoint = remember(showPreview) { points.values.random() }
 
-	val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-	val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
-	val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
-
 	if (showPreview) {
-		PointPreviewTitle(
-			point = randomPoint,
-			topPadding = appLabelIconOverlayTopPadding,
-			showLabel = showLaunchingAppLabel,
-			showIcon = showLaunchingAppIcon
-		)
+		PointPreviewTitle(randomPoint)
 	}
 }

@@ -22,6 +22,7 @@ import kotlin.math.roundToInt
 @Suppress("FunctionName")
 fun DrawScope.PointBg(
 	point: Point,
+	depth: Int,
 	selected: Boolean,
 	center: Offset,
 	drawParams: DrawParams
@@ -29,6 +30,7 @@ fun DrawScope.PointBg(
 	val extraColors = drawParams.extraColors
 	val colorScheme = drawParams.colorScheme
 	val defaultPoint = drawParams.pointsService.defaultPoint.value
+
 	val cached =
 		PointStableCache[point.id] ?: run {
 			missingPoint(drawParams, center)
@@ -38,46 +40,49 @@ fun DrawScope.PointBg(
 	val iconBitmap = cached.imageBitmap
 	val badgeBitmap = cached.badgeBitmap
 	val iconSize = cached.iconSize
-	val sizePx = cached.sizePx
 
-	val borderColor = point.getBorderColor(selected, defaultPoint, extraColors, drawParams.isDefaultEditing)
-	val backgroundColor = point.getBackgroundColor(selected, defaultPoint, drawParams.isDefaultEditing)
-	val glow = point.getGlow(selected, defaultPoint, drawParams.isDefaultEditing)
+	if (depth > 1 || !drawParams.isTopPoint) {
+		val borderColor = point.getBorderColor(selected, defaultPoint, extraColors, drawParams.isDefaultEditing)
+		val backgroundColor = point.getBackgroundColor(selected, defaultPoint, drawParams.isDefaultEditing)
+		val glow = point.getGlow(selected, defaultPoint, drawParams.isDefaultEditing)
 
-	val borderIconShape = point.getBorderShape(selected, defaultPoint, drawParams.isDefaultEditing)
-	val borderShape = borderIconShape.resolveShape()
-	val borderStroke = point.getBorderStroke(selected, defaultPoint, drawParams.isDefaultEditing)
+		val borderIconShape = point.getBorderShape(selected, defaultPoint, drawParams.isDefaultEditing)
+		val borderShape = borderIconShape.resolveShape()
+		val borderStroke = point.getBorderStroke(selected, defaultPoint, drawParams.isDefaultEditing)
 
-	val path =
-		DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
-			toPath(borderShape, iconSize)
-		}
+		val path =
+			DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
+				toPath(borderShape, iconSize)
+			}
 
-	withTransform(
-		{
-			translate(
-				left = center.x + iconSize.width / -2f,
-				top = center.y + iconSize.height / -2f
+		withTransform(
+			{
+				translate(
+					left = center.x + iconSize.width / -2f,
+					top = center.y + iconSize.height / -2f
+				)
+			}
+		) {
+			drawPathGlow(
+				path = path,
+				color = borderColor,
+				lineStrokeWidth = borderStroke,
+				glow = glow,
+				erase = true,
+				eraseColor = drawParams.eraseColor
+			)
+
+			drawPath(
+				path = path,
+				color = backgroundColor,
+				style = Fill
 			)
 		}
-	) {
-		drawPathGlow(
-			path = path,
-			color = borderColor,
-			lineStrokeWidth = borderStroke,
-			glow = glow,
-			erase = true,
-			eraseColor = drawParams.eraseColor
-		)
-
-		drawPath(
-			path = path,
-			color = backgroundColor,
-			style = Fill
-		)
 	}
 
 	if (iconBitmap != null) {
+		val sizePx = cached.sizePx
+
 		val size = Size.rect(sizePx)
 		val iconPath =
 			DrawPathCache.getOrCompute(

@@ -6,7 +6,9 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.models.PointPreviewTitleOptions
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
@@ -18,6 +20,7 @@ import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeed
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalFullscreen
 import org.elnix.dragonlauncher.ui.composition.LocalColorPickerMode
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
+import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
 import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 
@@ -40,6 +43,21 @@ fun ProvideGlobalCompositionLocals(
 
 	val colorPickerMode by ColorModesSettingsStore.colorPickerMode.asState()
 
+	val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
+	val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
+	val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
+	val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
+	val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
+	val pointPreviewMode by UiSettingsStore.pointPreviewMode.asState()
+
+	val pointPreviewTitleOptions = PointPreviewTitleOptions(
+		showLabel = showLaunchingAppLabel,
+		showIcon = showLaunchingAppIcon,
+		pointPreviewMode = pointPreviewMode,
+		appIconOverlaySize = appIconOverlaySize,
+		appLabelOverlaySize = appLabelOverlaySize.sp,
+		topPadding = appLabelIconOverlayTopPadding
+	)
 	/*
 	 * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
 	 * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
@@ -50,7 +68,8 @@ fun ProvideGlobalCompositionLocals(
 		LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
 		LocalFullscreen provides fullscreen,
 		LocalNestDebugOverlay provides nestDebugOverlay,
-		LocalColorPickerMode provides colorPickerMode
+		LocalColorPickerMode provides colorPickerMode,
+		LocalPointPreviewTitleOptions provides pointPreviewTitleOptions
 	) {
 		ProvideCurrentTime {
 			ProvideDrawerSettings {

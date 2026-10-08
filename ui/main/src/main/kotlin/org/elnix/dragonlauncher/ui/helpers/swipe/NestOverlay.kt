@@ -44,6 +44,7 @@ fun NestOverlay(
 		rememberDrawParams(
 			eraseColor = eraseColor,
 			isDefaultEditing = false,
+			isTopPoint = false,
 			allowShowPointCenter = allowShowPointCenter,
 			showCancelZone = showCancelZone,
 			pointSettingsDisplay = pointSettingsDisplay,

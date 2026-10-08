@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -39,6 +40,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
@@ -94,12 +96,15 @@ fun SelectedPointsTopBar(
 
 			true -> {
 				val previewPointId = frozenIds.firstOrNull() ?: return@AnimatedContent
-				PointPreviewTitle(
-					point = frozenPoints[previewPointId],
-					topPadding = 30.dp,
-					showLabel = true,
-					showIcon = true
-				)
+				CompositionLocalProvider(
+					LocalPointPreviewTitleOptions provides LocalPointPreviewTitleOptions.current.copy(
+						showIcon = true,
+						showLabel = true,
+						topPadding = 30.dp
+					)
+				) {
+					PointPreviewTitle(frozenPoints[previewPointId])
+				}
 			}
 
 			false -> {

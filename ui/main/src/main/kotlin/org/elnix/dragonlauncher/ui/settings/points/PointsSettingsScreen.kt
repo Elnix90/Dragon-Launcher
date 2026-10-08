@@ -19,11 +19,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -63,6 +63,8 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.GoParent
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.ResetSystem
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.SelectedPointEditTools
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode
+import org.elnix.dragonlauncher.base.model.models.PointPreviewTitleOptions
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -93,6 +95,7 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.PointPreview
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
+import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
@@ -1097,13 +1100,18 @@ fun PointsSettingsScreen(
 					fontSize = 14.sp
 				)
 
-				PointPreview(
-					point = currentPoint,
-					showIcon = true,
-					showLabel = true,
-					appIconOverlaySize = 30.dp,
-					appLabelOverlaySize = 18.sp
-				)
+				CompositionLocalProvider(
+					LocalPointPreviewTitleOptions provides PointPreviewTitleOptions(
+						showIcon = true,
+						showLabel = true,
+						pointPreviewMode = PointPreviewMode.Legacy,
+						appIconOverlaySize = 30.dp,
+						appLabelOverlaySize = 18.sp,
+						topPadding = Dp.Unspecified
+					)
+				) {
+					PointPreview(currentPoint)
+				}
 
 				Text(
 					text = stringResource(R.string.multi_select_count, remaining),

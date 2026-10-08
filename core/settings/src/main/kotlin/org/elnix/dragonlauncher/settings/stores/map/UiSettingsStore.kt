@@ -5,11 +5,13 @@ import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.dp
+import io.github.elnix90.core.objects.enum
 import io.github.elnix90.core.objects.float
 import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.objects.stringSet
 import io.github.elnix90.core.stores.MapSettingsStore
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
@@ -209,6 +211,17 @@ object UiSettingsStore : MapSettingsStore() {
 			allowedRange = 1..10
 		)
 
+	/** How many sub live nests can be drawn at once */
+	@SettingKey
+	val maxTopBarDepth =
+		int(
+			title = R.string.top_bar_depth,
+			description = R.string.top_bar_depth_desc,
+			icon = R.drawable.height,
+			default = 2,
+			allowedRange = 1..3
+		)
+
 	@SettingKey
 	val showGridWhenSnappingIsOn =
 		boolean(
@@ -375,5 +388,12 @@ object UiSettingsStore : MapSettingsStore() {
 			description = R.string.auto_merge_desc,
 			icon = R.drawable.merge,
 			default = true
+		)
+
+	@SettingKey
+	val pointPreviewMode =
+		enum(
+			title = R.string.point_preview_mode,
+			default = PointPreviewMode.New
 		)
 }

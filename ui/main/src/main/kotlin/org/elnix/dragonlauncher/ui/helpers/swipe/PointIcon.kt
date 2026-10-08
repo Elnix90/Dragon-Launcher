@@ -28,12 +28,14 @@ fun PointIcon(
 	depth: Int = 1,
 	selected: Boolean = false,
 	pointSettingsDisplay: Boolean = false,
+	isTopPoint: Boolean = false,
 	hideShapes: Boolean = false
 ) {
 	val drawParams =
 		rememberDrawParams(
 			eraseColor = eraseColor,
 			isDefaultEditing = false,
+			isTopPoint = isTopPoint,
 			pointSettingsDisplay = pointSettingsDisplay,
 			showCancelZone = false,
 			allowShowPointCenter = false,
@@ -70,10 +72,16 @@ fun DrawScope.PointIcon(
 
 	val action = point.action
 
+	val hasReachedMaxDepth = when {
+		drawParams.isTopPoint && depth < drawParams.maxTopBarDepth -> false
+		!drawParams.isTopPoint && depth < drawParams.maxNestsDepth -> false
+		else -> true
+	}
+
 	if (
 		action is Action.OpenNest &&
 		point.customIcon == null &&
-		depth < drawParams.maxNestsDepth &&
+		!hasReachedMaxDepth &&
 		!drawParams.preventDrawingSubNests
 	) {
 		val nest = drawParams.pointsService.findNestById(action.nestId)
@@ -97,6 +105,7 @@ fun DrawScope.PointIcon(
 	} else {
 		PointBg(
 			point = point,
+			depth = depth,
 			selected = selected,
 			center = center,
 			drawParams = drawParams

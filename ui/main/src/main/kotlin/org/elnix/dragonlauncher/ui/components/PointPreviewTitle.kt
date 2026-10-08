@@ -5,15 +5,15 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,31 +23,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
+import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
+import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-fun PointPreviewTitle(
-	point: Point?,
-	topPadding: Dp = 60.dp,
-	showLabel: Boolean,
-	showIcon: Boolean
-) {
+fun PointPreviewTitle(point: Point?) {
 	if (point == null) return
-	if (!(showIcon || showLabel)) return
 
-	val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
-	val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
+	val options = LocalPointPreviewTitleOptions.current
+	if (!(options.showIcon || options.showLabel)) return
 
 	val alpha = remember { Animatable(initialValue = 0f) }
 	val offsetY = remember { Animatable(initialValue = -20f) }
@@ -72,29 +65,20 @@ fun PointPreviewTitle(
 		Modifier
 			.fillMaxWidth()
 			.offset(y = offsetY.value.dp)
-			.padding(top = topPadding)
+			.padding(top = options.topPadding)
 			.alpha(alpha.value),
 		contentAlignment = Alignment.TopCenter
 	) {
-		PointPreview(
-			point = point,
-			showIcon = showIcon,
-			showLabel = showLabel,
-			appIconOverlaySize = appIconOverlaySize,
-			appLabelOverlaySize = appLabelOverlaySize.sp
-		)
+		PointPreview(point)
 	}
 }
 
 @Composable
 fun PointPreview(
-	point: Point,
-	showIcon: Boolean,
-	showLabel: Boolean,
-	appIconOverlaySize: Dp,
-	appLabelOverlaySize: TextUnit
+	point: Point
 ) {
 	val extraColors = LocalExtraColors.current
+	val options = LocalPointPreviewTitleOptions.current
 
 	val label = point.customName ?: actionLabel(point.action)
 
@@ -102,17 +86,34 @@ fun PointPreview(
 		horizontalArrangement = Arrangement.spacedBy(5.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		if (showIcon) {
-			FinalPointIcon(point, size = appIconOverlaySize)
+		if (options.showIcon) {
+			when (options.pointPreviewMode) {
+				PointPreviewMode.New -> {
+					BoxWithConstraints(Modifier.requiredSize(options.appIconOverlaySize)) {
+						val center = constraints.getCenter()
+						PointIcon(
+							selected = false,
+							point = point,
+							center = center,
+							isTopPoint = true,
+							eraseColor = Color.Transparent
+						)
+					}
+				}
+
+				PointPreviewMode.Legacy -> {
+					FinalPointIcon(point, size = options.appIconOverlaySize)
+				}
+			}
 		}
 
-		if (showLabel) {
+		if (options.showLabel) {
 			Text(
 				text = label,
 				style =
 					TextStyle(
 						color = point.action.actionColor(extraColors, point.customActionColor),
-						fontSize = appLabelOverlaySize,
+						fontSize = options.appLabelOverlaySize,
 						fontWeight = FontWeight.Bold,
 						shadow =
 							Shadow(
