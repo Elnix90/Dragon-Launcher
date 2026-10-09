@@ -63,7 +63,7 @@ fun SettingsTitle(
 			Text(
 				text = title,
 				color = MaterialTheme.colorScheme.onBackground,
-				style = MaterialTheme.typography.titleLarge,
+				style = MaterialTheme.typography.titleLargeEmphasized,
 				modifier =
 					Modifier
 						.weight(1f)

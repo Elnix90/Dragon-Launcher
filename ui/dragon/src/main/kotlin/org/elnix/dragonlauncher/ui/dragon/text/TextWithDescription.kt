@@ -22,12 +22,12 @@ fun TextWithDescription(
 	) {
 		Text(
 			text = text,
-			style = MaterialTheme.typography.titleMedium
+			style = MaterialTheme.typography.titleMediumEmphasized
 		)
 		if (description != null) {
 			Text(
 				text = description,
-				style = MaterialTheme.typography.bodyMedium
+				style = MaterialTheme.typography.bodySmall
 			)
 		}
 	}
@@ -36,8 +36,8 @@ fun TextWithDescription(
 @Composable
 fun TextWithDescription(
 	text: String,
-	description1: String?,
-	description2: String?,
+	description1: String,
+	description2: String,
 	modifier: Modifier = Modifier
 ) {
 	Column(
@@ -46,20 +46,16 @@ fun TextWithDescription(
 	) {
 		Text(
 			text = text,
-			style = MaterialTheme.typography.labelMedium
+			style = MaterialTheme.typography.titleMediumEmphasized
 		)
-		if (description1 != null) {
-			Text(
-				text = description1,
-				style = MaterialTheme.typography.labelSmall
-			)
-		}
+		Text(
+			text = description1,
+			style = MaterialTheme.typography.labelSmall
+		)
 
-		if (description2 != null) {
-			Text(
-				text = description2,
-				style = MaterialTheme.typography.labelSmall
-			)
-		}
+		Text(
+			text = description2,
+			style = MaterialTheme.typography.labelSmall
+		)
 	}
 }
