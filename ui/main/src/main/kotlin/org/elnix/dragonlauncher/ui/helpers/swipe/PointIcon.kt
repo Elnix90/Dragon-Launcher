@@ -88,7 +88,11 @@ fun DrawScope.PointIcon(
 		val scaleFactor = nest.getPreviewScaleFactor(drawParams.pointsService.defaultNest.value, drawParams.isDefaultEditing)
 
 		val newDepth = depth + 1
-		val newScale = 1f / (newDepth * scaleFactor)
+		var newScale = 1f / (newDepth * scaleFactor)
+
+		if (drawParams.isTopPoint && depth == 1) {
+			newScale *= drawParams.appIconOverlayScale
+		}
 
 		scale(
 			scale = newScale,

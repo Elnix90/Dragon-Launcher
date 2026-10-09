@@ -278,7 +278,8 @@
   <string name="show_app_icon_start_drag_position_description">Display the current selected app in the center of where you starred to drag</string>
   <string name="line_preview_snap_to_action_description">The line preview isn\'t free to move, it snaps to the selected action when there\'s one</string>
   <string name="app_label_overlay_size">App label overlay size</string>
-  <string name="app_icon_overlay_size">App Icon overlay size</string>
+	<string name="app_icon_overlay_size">App Icon overlay size</string>
+	<string name="app_icon_overlay_scale">App Icon overlay scale</string>
   <string name="loading_themes">Loading themes…</string>
   <string name="already_default_launcher">Already Default Launcher</string>
   <string name="open_default_launcher_settings">Open Default Launcher Settings</string>

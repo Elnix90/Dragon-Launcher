@@ -8,6 +8,7 @@ public data class PointPreviewTitleOptions(
 	val showIcon: Boolean,
 	val pointPreviewMode: PointPreviewMode,
 	val appIconOverlaySize: Dp,
+	val appIconOverlayScale: Float,
 	val appLabelOverlaySize: TextUnit,
 	val topPadding: Dp
 )

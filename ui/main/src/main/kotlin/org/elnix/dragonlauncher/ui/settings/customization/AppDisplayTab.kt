@@ -12,10 +12,9 @@ import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
@@ -65,10 +64,14 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 			) { showPreview = it }
 
 			Setting(UiSettingsStore.pointPreviewMode)
+			val mode by UiSettingsStore.pointPreviewMode.asState()
+
 			Setting(UiSettingsStore.showLaunchingAppLabel)
 			Setting(UiSettingsStore.showLaunchingAppIcon)
 			Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
 			Setting(UiSettingsStore.appLabelOverlaySize)
+
+			if (mode == PointPreviewMode.New) Setting(UiSettingsStore.appIconOverlayScale)
 			Setting(UiSettingsStore.appIconOverlaySize)
 		}
 

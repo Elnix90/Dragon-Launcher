@@ -76,6 +76,16 @@ object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val appIconOverlayScale =
+		float(
+			title = R.string.app_icon_overlay_scale,
+			description = R.string.self_explanatory,
+			icon = R.drawable.format_size,
+			default = 1f,
+			allowedRange = 0.1f..20f
+		)
+
+	@SettingKey
 	val multiSelectPoints =
 		boolean(
 			title = R.string.multi_select_points,

@@ -17,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -42,16 +41,7 @@ fun PointPreviewTitle(point: Point?) {
 	val options = LocalPointPreviewTitleOptions.current
 	if (!(options.showIcon || options.showLabel)) return
 
-	val alpha = remember { Animatable(initialValue = 0f) }
 	val offsetY = remember { Animatable(initialValue = -20f) }
-
-	LaunchedEffect(point.id) {
-		alpha.snapTo(0f)
-		alpha.animateTo(
-			targetValue = 1f,
-			animationSpec = tween(150)
-		)
-	}
 
 	LaunchedEffect(point.id) {
 		offsetY.snapTo(-20f)
@@ -65,8 +55,7 @@ fun PointPreviewTitle(point: Point?) {
 		Modifier
 			.fillMaxWidth()
 			.offset(y = offsetY.value.dp)
-			.padding(top = options.topPadding)
-			.alpha(alpha.value),
+			.padding(top = options.topPadding),
 		contentAlignment = Alignment.TopCenter
 	) {
 		PointPreview(point)
@@ -89,6 +78,7 @@ fun PointPreview(
 		if (options.showIcon) {
 			when (options.pointPreviewMode) {
 				PointPreviewMode.New -> {
+					// TODO change the size to the scale
 					BoxWithConstraints(Modifier.requiredSize(options.appIconOverlaySize)) {
 						val center = constraints.getCenter()
 						PointIcon(

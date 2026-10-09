@@ -23,6 +23,7 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
+import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
 
 /**
  * Aggregated drawing parameters derived from [PointsViewModel] and other reactive sources.
@@ -46,6 +47,7 @@ data class DrawParams(
 	/** Settings Screen only */
 	val pointSettingsDisplay: Boolean,
 	val isTopPoint: Boolean,
+	val appIconOverlayScale: Float,
 	/** Settings Screen only */
 	val hideShapes: Boolean,
 	val skipSelected: Boolean,
@@ -86,6 +88,9 @@ fun rememberDrawParams(
 ): DrawParams {
 	val ctx = LocalContext.current
 	val extraColors = LocalExtraColors.current
+
+	val appIconOverlayScale = LocalPointPreviewTitleOptions.current.appIconOverlayScale
+
 	val colorScheme = MaterialTheme.colorScheme
 
 	val showCurrentSelectedPoint by UiSettingsStore.showCurrentSelectedPoint.asState()
@@ -110,6 +115,7 @@ fun rememberDrawParams(
 	return remember(
 		extraColors,
 		colorScheme,
+		appIconOverlayScale,
 		maxNestsDepth,
 		maxTopBarDepth,
 		eraseColor,
@@ -138,6 +144,7 @@ fun rememberDrawParams(
 			maxTopBarDepth = maxTopBarDepth,
 			isDefaultEditing = isDefaultEditing,
 			isTopPoint = isTopPoint,
+			appIconOverlayScale = appIconOverlayScale,
 			eraseColor = eraseColor,
 			preventDrawingSubNests = false,
 			pointSettingsDisplay = pointSettingsDisplay,

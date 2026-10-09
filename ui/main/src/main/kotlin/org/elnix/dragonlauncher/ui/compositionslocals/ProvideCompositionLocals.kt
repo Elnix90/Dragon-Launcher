@@ -47,6 +47,7 @@ fun ProvideGlobalCompositionLocals(
 	val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
 	val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
 	val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
+	val appIconOverlayScale by UiSettingsStore.appIconOverlayScale.asState()
 	val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
 	val pointPreviewMode by UiSettingsStore.pointPreviewMode.asState()
 
@@ -55,9 +56,11 @@ fun ProvideGlobalCompositionLocals(
 		showIcon = showLaunchingAppIcon,
 		pointPreviewMode = pointPreviewMode,
 		appIconOverlaySize = appIconOverlaySize,
+		appIconOverlayScale = appIconOverlayScale,
 		appLabelOverlaySize = appLabelOverlaySize.sp,
 		topPadding = appLabelIconOverlayTopPadding
 	)
+
 	/*
 	 * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
 	 * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag

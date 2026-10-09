@@ -55,13 +55,9 @@ fun DrawScope.PointBg(
 				toPath(borderShape, iconSize)
 			}
 
-		withTransform(
-			{
-				translate(
-					left = center.x + iconSize.width / -2f,
-					top = center.y + iconSize.height / -2f
-				)
-			}
+		translate(
+			left = center.x + iconSize.width / -2f,
+			top = center.y + iconSize.height / -2f
 		) {
 			drawPathGlow(
 				path = path,
@@ -87,13 +83,23 @@ fun DrawScope.PointBg(
 		val iconPath =
 			DrawPathCache.getOrCompute(
 				Pair(drawParams.iconShape, size)
-			) {
-				toPath(drawParams.iconShape.resolveShape(), size)
-			}
+			) { toPath(drawParams.iconShape.resolveShape(), size) }
 
-		translate(
-			left = center.x + sizePx / -2f,
-			top = center.y + sizePx / -2f
+		withTransform(
+			{
+				if (drawParams.isTopPoint && depth == 1) {
+					scale(
+						scaleX = drawParams.appIconOverlayScale,
+						scaleY = drawParams.appIconOverlayScale,
+						pivot = center
+					)
+				}
+
+				translate(
+					left = center.x + sizePx / -2f,
+					top = center.y + sizePx / -2f
+				)
+			}
 		) {
 			clipPath(iconPath) {
 				drawImage(

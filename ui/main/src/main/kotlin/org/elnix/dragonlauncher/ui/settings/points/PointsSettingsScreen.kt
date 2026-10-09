@@ -1107,6 +1107,7 @@ fun PointsSettingsScreen(
 						pointPreviewMode = PointPreviewMode.Legacy,
 						appIconOverlaySize = 30.dp,
 						appLabelOverlaySize = 18.sp,
+						appIconOverlayScale = 1f,
 						topPadding = Dp.Unspecified
 					)
 				) {
