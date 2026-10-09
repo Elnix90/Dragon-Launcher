@@ -423,7 +423,6 @@
     <string name="category_cells">Kategoriezellen</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d ausgewählt</string>
-
     <string name="tap_circle_to_place">Tippen Sie auf den Kreis, um die App zu platzieren</string>
     <string name="multi_select_drawer_hint">💡 Lange auf eine App drücken, um mehrere gleichzeitig auszuwählen</string>
     <string name="deselect_all">Alle abwählen</string>
@@ -581,4 +580,5 @@
     <string name="shape">Form</string>
     <string name="hold_to_activate">Halten zum Aktivieren</string>
     <string name="crash">Die App ist abgestürzt!</string>
+    <string name="appearance">Erscheinungsbild</string>
 </resources>
