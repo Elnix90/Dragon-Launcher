@@ -39,8 +39,7 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 		onReset = {
 			showPreview = false
 			scope.launch {
-				ColorSettingsStore.resetAll(ctx)
-				ColorModesSettingsStore.resetAll(ctx)
+				UiSettingsStore.resetAll(ctx)
 			}
 		}
 	) {
