@@ -43,6 +43,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dialogs.editors.AppIconEditor
 
 @Composable
@@ -55,6 +56,7 @@ fun AppLongPressPopup(
 	val ctx = LocalContext.current
 	val uriHandler = LocalUriHandler.current
 	val workspaceViewMode = LocalWorkspaceViewMode.current
+	val drawerSettings = LocalDrawerSettings.current
 
 	val scope = rememberCoroutineScope()
 
@@ -94,13 +96,15 @@ fun AppLongPressPopup(
 					onClick = { showAliasDialog = true }
 				)
 			)
-			add(
-				MoreOptions(
-					text = { stringResource(R.string.set_category) },
-					icon = R.drawable.filter_alt,
-					onClick = { showCategoryDialog = true }
+			if (drawerSettings.useCategory) {
+				add(
+					MoreOptions(
+						text = { stringResource(R.string.set_category) },
+						icon = R.drawable.filter_alt,
+						onClick = { showCategoryDialog = true }
+					)
 				)
-			)
+			}
 
 			if (workspaceViewMode == WorkspaceViewMode.Removed) {
 				add(
@@ -250,7 +254,7 @@ fun AppLongPressPopup(
 		}
 
 		if (showDetailedAppInfoDialog) {
-			ApplicationInfoDialog(app) { showDetailedAppInfoDialog = false }
+			ApplicationInfoSheet(app) { showDetailedAppInfoDialog = false }
 		}
 	}
 
