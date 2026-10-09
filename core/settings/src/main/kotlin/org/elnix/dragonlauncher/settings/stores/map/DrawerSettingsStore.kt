@@ -389,6 +389,15 @@ object DrawerSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val openableCategories =
+		boolean(
+			title = R.string.openable_categories,
+			description = R.string.openable_categories_help,
+			icon = R.drawable.drag_indicator,
+			default = true
+		)
+
+	@SettingKey
 	val recentlyInstalledAppsDuration =
 		int(
 			title = R.string.recently_installed_apps_duration,

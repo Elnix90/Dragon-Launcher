@@ -34,8 +34,9 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 fun AppItemHorizontal(
 	app: Application,
 	selected: Boolean,
-	onLongClick: (() -> Unit)?,
+	clickable: Boolean,
 	longPressPopup: Boolean,
+	onLongClick: (() -> Unit)?,
 	onClick: (() -> Unit)?
 ) {
 	require(!((onLongClick != null) && longPressPopup)) {
@@ -63,16 +64,18 @@ fun AppItemHorizontal(
 					.clip(MaterialTheme.shapes.large)
 					.conditional(selected) {
 						background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-					}.combinedClickable(
-						onLongClick = {
-							if (longPressPopup) {
-								showLongPressPopup = true
-							} else {
-								onLongClick?.invoke()
-							}
-						},
-						onClick = { onClick?.invoke() }
-					).padding(5.dp)
+					}.conditional(clickable) {
+						combinedClickable(
+							onLongClick = {
+								if (longPressPopup) {
+									showLongPressPopup = true
+								} else {
+									onLongClick?.invoke()
+								}
+							},
+							onClick = { onClick?.invoke() }
+						).padding(5.dp)
+					}.padding(5.dp)
 		) {
 			if (drawerSettings.showAppIconsInDrawer) {
 				AppIcon(app, drawerSettings.iconSize)
@@ -105,12 +108,13 @@ fun AppItemHorizontal(
 fun AppItemGrid(
 	app: Application,
 	selected: Boolean,
-	onLongClick: (() -> Unit)?,
+	clickable: Boolean,
 	longPressPopup: Boolean,
+	onLongClick: (() -> Unit)?,
 	onClick: (() -> Unit)?
 ) {
-	require(!((onLongClick != null) && longPressPopup)) {
-		"Long press action, or popup, or neither, but not both!"
+	require((!((onLongClick != null) && longPressPopup)) || !clickable) {
+		"Long press action, or popup, or neither, or not clickable, but not both!"
 	}
 
 	val drawerSettings = LocalDrawerSettings.current
@@ -127,16 +131,18 @@ fun AppItemGrid(
 					.clip(MaterialTheme.shapes.large)
 					.conditional(selected) {
 						background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-					}.combinedClickable(
-						onLongClick = {
-							if (longPressPopup) {
-								showLongPressPopup = true
-							} else {
-								onLongClick?.invoke()
-							}
-						},
-						onClick = { onClick?.invoke() }
-					).padding(5.dp)
+					}.conditional(clickable) {
+						combinedClickable(
+							onLongClick = {
+								if (longPressPopup) {
+									showLongPressPopup = true
+								} else {
+									onLongClick?.invoke()
+								}
+							},
+							onClick = { onClick?.invoke() }
+						).padding(5.dp)
+					}
 		) {
 			if (drawerSettings.showAppIconsInDrawer) {
 				AppIcon(app, drawerSettings.iconSize)

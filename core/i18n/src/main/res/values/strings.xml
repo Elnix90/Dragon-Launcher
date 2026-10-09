@@ -1107,4 +1107,6 @@
 	<string name="point_preview_mode_legacy">Displays a resized action of the current point, less accurate</string>
 	<string name="use_app_even_if_signature_does_not_match">Use app even if signature does not match</string>
 	<string name="use_app_even_if_signature_does_not_match_desc">Hides the big warning screen when you\'re using a debug version</string>
+    <string name="openable_categories">Openable categories</string>
+	<string name="openable_categories_help">The apps inside the categories cannot be clicked, and any click opens the category</string>
 </resources>

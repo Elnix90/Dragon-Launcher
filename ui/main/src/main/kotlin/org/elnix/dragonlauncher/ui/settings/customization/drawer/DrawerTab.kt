@@ -137,6 +137,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 			Setting(DrawerSettingsStore.categoryCells, enabled = useCategory)
 			Setting(DrawerSettingsStore.categoryGridCells, enabled = useCategory)
 			Setting(DrawerSettingsStore.categoryColor, enabled = useCategory)
+			Setting(DrawerSettingsStore.openableCategories, enabled = useCategory)
 			SettingsItem(
 				title = stringResource(R.string.disabled_system_categories),
 				icon = R.drawable.filter_alt,

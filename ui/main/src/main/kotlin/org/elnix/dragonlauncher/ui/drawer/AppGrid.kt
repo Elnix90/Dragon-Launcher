@@ -335,6 +335,7 @@ fun AppGrid(
 				items(visibleApps, key = { it.key.cacheKey }) { app ->
 					AppItemHorizontal(
 						app = app,
+						clickable = true,
 						selected = app in selectedPackages,
 						onLongClick =
 							if (onEnterMultiSelect != null && onToggleSelect != null) {
@@ -374,6 +375,7 @@ fun AppGrid(
 				items(items = visibleApps, key = { it.key.cacheKey }) { app ->
 					AppItemGrid(
 						app = app,
+						clickable = true,
 						selected = app in selectedPackages,
 						onLongClick =
 							if (onEnterMultiSelect != null && onToggleSelect != null) {
@@ -427,6 +429,7 @@ private fun CategoryGrid(
 				modifier =
 					modifier
 						.aspectRatio(1f)
+						.clickable(onClick = onOpenCategory)
 						.padding(10.dp)
 			) {
 				var appIndex = 0
@@ -439,7 +442,6 @@ private fun CategoryGrid(
 					modifier = Modifier
 						.fillMaxSize()
 						.clip(MaterialTheme.shapes.medium)
-						.clickable(onClick = onOpenCategory)
 						.background(drawerSettings.categoryColor)
 				) {
 					repeat(gridCells) {
@@ -457,6 +459,7 @@ private fun CategoryGrid(
 
 										AppItemGrid(
 											app = app,
+											clickable = !drawerSettings.openableCategories,
 											selected = false,
 											onLongClick = null,
 											longPressPopup = longPressPopup,
