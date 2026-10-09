@@ -78,7 +78,6 @@ fun PointPreview(
 		if (options.showIcon) {
 			when (options.pointPreviewMode) {
 				PointPreviewMode.New -> {
-					// TODO change the size to the scale
 					BoxWithConstraints(Modifier.requiredSize(options.appIconOverlaySize)) {
 						val center = constraints.getCenter()
 						PointIcon(
