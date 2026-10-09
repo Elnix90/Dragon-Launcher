@@ -11,15 +11,10 @@ public enum class WorkspaceType(
 	@param:DrawableRes public val icon: Int
 ) {
 	All(R.drawable.select_all),
+	NotInNests(R.drawable.nest_icon),
 	User(R.drawable.account_circle),
 	System(R.drawable.account_tree),
 	Work(R.drawable.enterprise),
 	Private(R.drawable.encrypted),
 	Custom(R.drawable.instant_mix)
-	;
-
-	public companion object {
-		public val WorkspaceType.isPrivate: Boolean
-			get() = this == Private
-	}
 }

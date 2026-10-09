@@ -23,6 +23,10 @@ public data class Workspace(
 					type = WorkspaceType.User
 				),
 				Workspace(
+					id = "Not In Nests",
+					type = WorkspaceType.NotInNests
+				),
+				Workspace(
 					id = "System",
 					type = WorkspaceType.System,
 					enabled = false

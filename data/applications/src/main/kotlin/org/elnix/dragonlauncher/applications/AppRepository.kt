@@ -41,11 +41,13 @@ import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.All
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Custom
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.NotInNests
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Private
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.System
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.User
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Work
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
+import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.profiles.ProfileManager
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
@@ -91,6 +93,7 @@ public interface AppRepository {
 internal class AppRepositoryImpl(
 	private val ctx: Context,
 	private val profileManager: ProfileManager,
+	private val pointService: PointsService,
 	private val packageManagerCompat: PackageManagerCompat,
 	private val appOverridesManager: AppOverridesManager,
 	private val workspacesManager: WorkspacesManager,
@@ -177,9 +180,6 @@ internal class AppRepositoryImpl(
 			val profileMap = profiles.first().associateBy { it.userHandle.hashCode() }
 
 			launchableActivityInfos.forEach { activityInfo ->
-
-				val a = activityInfo.firstInstallTime
-
 				val app = createLauncherApp(activityInfo, profileMap)
 				if (app != null) {
 					allApps.add(app)
@@ -331,6 +331,21 @@ internal class AppRepositoryImpl(
 
 									Private -> {
 										apps.filter { it.isPrivate && it.isLaunchable }
+									}
+
+									NotInNests -> {
+										val pointsApps =
+											pointService.points.value.values
+												.filter { it.action is Action.LaunchApp }
+												.mapTo(mutableSetOf()) {
+													it.action
+												}
+										apps.filter {
+											!it.isWork &&
+												!it.isPrivate &&
+												it.isLaunchable &&
+												it.action !in pointsApps
+										}
 									}
 								}
 

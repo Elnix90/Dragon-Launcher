@@ -26,8 +26,10 @@ dependencies {
 	api(project(":core:i18n"))
 	api(project(":core:base"))
 	api(project(":core:profiles"))
-	implementation(project(":core:settings"))
 	api(project(":data:appoverrides"))
 	api(project(":data:workspaces"))
+	implementation(project(":core:settings"))
+
 	api(project(":core:services:compat"))
+	implementation(project(":core:services:points"))
 }
