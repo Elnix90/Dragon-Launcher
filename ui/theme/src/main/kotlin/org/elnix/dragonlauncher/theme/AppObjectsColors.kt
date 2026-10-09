@@ -32,15 +32,19 @@ object AppObjectsColors {
 					checkedThumbColor = outline,
 					checkedTrackColor = primary,
 					checkedBorderColor = Color.Transparent,
+					checkedIconColor = primary,
 					uncheckedThumbColor = outline.alphaMultiplier(0.7f),
 					uncheckedTrackColor = background,
 					uncheckedBorderColor = Color.Transparent,
+					uncheckedIconColor = background,
 					disabledCheckedThumbColor = outline.alphaMultiplier(0.5f),
 					disabledCheckedTrackColor = primary.alphaMultiplier(0.5f),
 					disabledCheckedBorderColor = Color.Transparent,
+					disabledCheckedIconColor = primary.alphaMultiplier(0.5f),
 					disabledUncheckedThumbColor = onSurface.alphaMultiplier(0.5f),
 					disabledUncheckedTrackColor = background,
-					disabledUncheckedBorderColor = Color.Transparent
+					disabledUncheckedBorderColor = Color.Transparent,
+					disabledUncheckedIconColor = background
 				)
 			}
 		} else {

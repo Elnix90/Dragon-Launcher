@@ -2,12 +2,17 @@ package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -59,7 +64,15 @@ fun DragonGroupScope.SwitchRow(
 			enabled = enabled,
 			interactionSource = interactionSource,
 			onCheckedChange = null,
-			colors = AppObjectsColors.switchColors()
+			colors = AppObjectsColors.switchColors(),
+			thumbContent = {
+				val icon = if (checked) R.drawable.check else R.drawable.close
+				Icon(
+					painter = painterResource(icon),
+					contentDescription = null,
+					modifier = Modifier.size(SwitchDefaults.IconSize)
+				)
+			}
 		)
 
 		if (onReset != null) {
