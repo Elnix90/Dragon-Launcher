@@ -20,7 +20,7 @@ import org.junit.Test
  * - Single description: `TextWithDescription(text, description)`
  * - Dual description: `TextWithDescription(text, description1, description2)`
  *
- * KEY TESTING PATTERN: Testing conditional rendering — descriptions are only
+ * KEY TESTING PATTERN: Testing conditional rendering - descriptions are only
  * shown when non-null. We verify both the presence and absence of text nodes.
  */
 class TextWithDescriptionTest {
@@ -62,73 +62,5 @@ class TextWithDescriptionTest {
 
 		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
 		composeTestRule.onNodeWithText("Some description").assertDoesNotExist()
-	}
-
-	//  Dual description overload
-
-	@Test
-	fun textWithDescription_dual_showsBothDescriptions() {
-		composeTestRule.setContent {
-			MaterialTheme {
-				TextWithDescription(
-					text = "Title",
-					description1 = "First description",
-					description2 = "Second description"
-				)
-			}
-		}
-
-		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-		composeTestRule.onNodeWithText("First description").assertIsDisplayed()
-		composeTestRule.onNodeWithText("Second description").assertIsDisplayed()
-	}
-
-	@Test
-	fun textWithDescription_dual_hidesFirstWhenNull() {
-		composeTestRule.setContent {
-			MaterialTheme {
-				TextWithDescription(
-					text = "Title",
-					description1 = null,
-					description2 = "Second description"
-				)
-			}
-		}
-
-		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-		composeTestRule.onNodeWithText("Second description").assertIsDisplayed()
-	}
-
-	@Test
-	fun textWithDescription_dual_hidesSecondWhenNull() {
-		composeTestRule.setContent {
-			MaterialTheme {
-				TextWithDescription(
-					text = "Title",
-					description1 = "First description",
-					description2 = null
-				)
-			}
-		}
-
-		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-		composeTestRule.onNodeWithText("First description").assertIsDisplayed()
-	}
-
-	@Test
-	fun textWithDescription_dual_hidesBothWhenNull() {
-		composeTestRule.setContent {
-			MaterialTheme {
-				TextWithDescription(
-					text = "Title",
-					description1 = null,
-					description2 = null
-				)
-			}
-		}
-
-		composeTestRule.onNodeWithText("Title").assertIsDisplayed()
-		composeTestRule.onNodeWithText("First").assertDoesNotExist()
-		composeTestRule.onNodeWithText("Second").assertDoesNotExist()
 	}
 }

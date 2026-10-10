@@ -32,30 +32,3 @@ fun TextWithDescription(
 		}
 	}
 }
-
-@Composable
-fun TextWithDescription(
-	text: String,
-	description1: String,
-	description2: String,
-	modifier: Modifier = Modifier
-) {
-	Column(
-		modifier = modifier,
-		verticalArrangement = Arrangement.spacedBy(5.dp)
-	) {
-		Text(
-			text = text,
-			style = MaterialTheme.typography.titleMediumEmphasized
-		)
-		Text(
-			text = description1,
-			style = MaterialTheme.typography.labelSmall
-		)
-
-		Text(
-			text = description2,
-			style = MaterialTheme.typography.labelSmall
-		)
-	}
-}

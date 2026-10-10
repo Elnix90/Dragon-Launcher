@@ -58,7 +58,7 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 
 ## Permissions
 
-Dragon Launcher is a launcher: some of the permissions below are required by Android itself for core launcher duties (listing apps, setting the wallpaper, reacting to boot). This is the full list of permissions declared in the app manifests and why each one is used. None of them are used to collect or transmit data — the app has **no internet access** and does not even declare the `INTERNET` permission.
+Dragon Launcher is a launcher: some of the permissions below are required by Android itself for core launcher duties (listing apps, setting the wallpaper, reacting to boot). This is the full list of permissions declared in the app manifests and why each one is used. None of them are used to collect or transmit data - the app has **no internet access** and does not even declare the `INTERNET` permission.
 
 | Permission                                          | Type                | Why it is used                                                                                                                      |
 |-----------------------------------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------|

@@ -30,7 +30,7 @@ import org.junit.Test
  *
  * KEY TESTING PATTERN: Testing stateful composables. We pass state as
  * parameters and verify that interaction callbacks are invoked correctly.
- * The composable is "controlled" — the test owns the state and passes it down.
+ * The composable is "controlled" - the test owns the state and passes it down.
  *
  * NOTE: SwitchRow depends on AppObjectsColors.switchColors() from :core:ui:theme,
  * and TextWithDescription from :core:ui:dragon. These must be on the classpath.
