@@ -16,6 +16,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
@@ -107,7 +109,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningReminder
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalGridApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun SettingsScreen(
@@ -345,31 +347,39 @@ fun SettingsScreen(
 					SocialLink("https://github.com/manmen2414", R.mipmap.mameeenn),
 					SocialLink("https://github.com/acress1", R.mipmap.acress1),
 					SocialLink("https://github.com/TamilNeram", R.mipmap.tamilneram),
-					SocialLink("https://github.com/sudo-py-dev", R.mipmap.sudopydev)
+					SocialLink("https://github.com/sudo-py-dev", R.mipmap.sudopydev),
+					SocialLink("https://github.com/fatihinur", R.mipmap.fatihinur),
+					SocialLink("https://github.com/pentakore", R.mipmap.pentakore),
+					SocialLink("https://github.com/vasesm", R.mipmap.vasesm),
+					SocialLink("https://github.com/ak1for2business-prog", R.mipmap.ak1for2businessprog)
 				)
 
-			Column(
-				modifier = Modifier.dragonSettingGroup(),
-				verticalArrangement = Arrangement.spacedBy(15.dp),
-				horizontalAlignment = Alignment.CenterHorizontally
+			Grid(
+				config = {
+					repeat(7) { column(1.fr) }
+					gap(row = 15.dp, column = 0.dp)
+				},
+				modifier = Modifier.dragonSettingGroup()
 			) {
-				translators.chunked(7).forEach { translatorRow ->
-					// Magic number hehe (it simply fits the screen perfectly
-					Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
-						translatorRow.forEach { translator ->
-							Image(
-								painter = painterResource(id = translator.icon),
-								contentDescription = null,
-								modifier =
-									Modifier
-										.size(40.dp)
-										.clip(CircleShape)
-										.clickable {
-											uriHandler.openUri(translator.url)
-										},
-								contentScale = ContentScale.Fit
-							)
-						}
+				translators.forEach { translator ->
+					Box(
+						modifier = Modifier
+							.fillMaxWidth()
+							.clip(MaterialTheme.shapes.medium)
+							.clickable {
+								uriHandler.openUri(translator.url)
+							},
+						contentAlignment = Alignment.Center
+					) {
+						Image(
+							painter = painterResource(translator.icon),
+							contentDescription = null,
+							contentScale = ContentScale.Fit,
+							modifier =
+								Modifier
+									.size(40.dp)
+									.clip(CircleShape)
+						)
 					}
 				}
 			}
