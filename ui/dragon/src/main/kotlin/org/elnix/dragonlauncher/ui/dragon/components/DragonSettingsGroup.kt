@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope.Companion.DRAGON_GROUP_SCOPE_SPACING
 import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
 // sealed class DragonSettingGroupItems {
@@ -129,6 +130,10 @@ class DragonGroupScope
 					.conditional(clickModifier) { it() }
 					.padding(10.dp)
 			}
+
+		companion object {
+			val DRAGON_GROUP_SCOPE_SPACING = 4.dp
+		}
 	}
 
 @Composable
@@ -166,7 +171,7 @@ fun DragonSettingsGroup(
 		SettingsWithTitle(title, modifier, icon, trailingIcon) {
 			Column(
 				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.spacedBy(4.dp),
+				verticalArrangement = Arrangement.spacedBy(DRAGON_GROUP_SCOPE_SPACING),
 				modifier =
 					Modifier
 						.fillMaxWidth()

@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.components
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -83,20 +84,25 @@ fun IntersectionShapePreview(
 ) {
 	val resolvedShape = shape.getShape(defaultShape, isDefaultEditing).resolveShape()
 	Box(
-		modifier =
-			modifier
-				.size(size)
-				.rotate(shape.getRotation(defaultShape, isDefaultEditing).toFloat())
-				.clip(MaterialTheme.shapes.medium)
-				.conditional(onClick) {
-					clickable(onClick = it)
-				}.clip(resolvedShape)
-				.border(1.dp, shape.color ?: LocalExtraColors.current.shapes, resolvedShape),
-		contentAlignment = Alignment.Center
+		Modifier.conditional(onClick) {
+			clip(MaterialTheme.shapes.medium)
+				.clickable(onClick = it)
+				.padding(5.dp)
+		}
 	) {
-		Text(
-			text = shape.id.toString(),
-			style = MaterialTheme.typography.labelSmall
-		)
+		Box(
+			modifier =
+				modifier
+					.size(size)
+					.rotate(shape.getRotation(defaultShape, isDefaultEditing).toFloat())
+					.clip(resolvedShape)
+					.border(1.dp, shape.color ?: LocalExtraColors.current.shapes, resolvedShape),
+			contentAlignment = Alignment.Center
+		) {
+			Text(
+				text = shape.id.toString(),
+				style = MaterialTheme.typography.labelSmall
+			)
+		}
 	}
 }

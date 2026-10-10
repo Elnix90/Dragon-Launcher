@@ -1,7 +1,9 @@
 package org.elnix.dragonlauncher.ui.dialogs.editors
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,9 +34,9 @@ import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.CopyIcon
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope.Companion.DRAGON_GROUP_SCOPE_SPACING
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
@@ -104,7 +107,7 @@ fun NestShapesManagementEditor(
 
 		DragonSettingsGroup {
 			LazyColumn(
-				verticalArrangement = Arrangement.spacedBy(5.dp),
+				verticalArrangement = Arrangement.spacedBy(DRAGON_GROUP_SCOPE_SPACING),
 				modifier = Modifier.heightIn(max = 600.dp)
 			) {
 				items(shapesInternal.values.toList()) { shape ->
@@ -165,9 +168,12 @@ private fun DragonGroupScope.ShapeItem(
 ) {
 	var showShapeDialog by remember { mutableStateOf(false) }
 
-	DragonRow(
-		onClick = oClick,
-		modifier = Modifier.dragonSettingGroup()
+	Row(
+		modifier = Modifier.dragonSettingGroup {
+			clickable(onClick = oClick)
+		},
+		horizontalArrangement = Arrangement.SpaceBetween,
+		verticalAlignment = Alignment.CenterVertically
 	) {
 		IntersectionShapePreview(
 			shape = shape,
@@ -179,7 +185,8 @@ private fun DragonGroupScope.ShapeItem(
 		Spacer(12.dp)
 
 		Column(
-			verticalArrangement = Arrangement.spacedBy(5.dp)
+			verticalArrangement = Arrangement.spacedBy(5.dp),
+			modifier = Modifier.weight(1f)
 		) {
 			Text(
 				text = "${stringResource(R.string.shape_offset)}: ${shape.getOffset(defaultShape, isDefaultEditing).cleanString()}",
@@ -194,8 +201,6 @@ private fun DragonGroupScope.ShapeItem(
 				style = MaterialTheme.typography.labelSmall
 			)
 		}
-
-		Spacer()
 
 		CopyIcon(onCopy = onClone)
 

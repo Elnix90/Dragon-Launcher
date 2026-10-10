@@ -78,7 +78,10 @@ fun IntersectionShapeEditor(
 
 	var showHapticFeedbackEditor by remember { mutableStateOf(false) }
 
-	DragonModalBottomSheet(onDismissRequest) {
+	DragonModalBottomSheet(
+		onDismissRequest = onDismissRequest,
+		skipPartiallyExpanded = true
+	) {
 		DialogTitle(
 			text = stringResource(if (!isDefaultEditing) R.string.edit_shape else R.string.edit_default_shape),
 			resetEnabled = shape.isNotDefault,
