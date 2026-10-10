@@ -140,12 +140,6 @@ fun PointsSettingsScreen(
 	val defaultNest by pointsService.defaultNest.asState()
 	val defaultIntersectionShape by pointsService.defaultIntersectionShape.asState()
 
-	// Force icons to recompose in the screen, because sometimes, the points icons are not loaded and display "?"
-	LaunchedEffect(Unit) {
-		delay(200.milliseconds)
-		pointsService.recompose()
-	}
-
 	val points by pointsService.points.collectAsState()
 	val nests by pointsService.nests.collectAsState()
 

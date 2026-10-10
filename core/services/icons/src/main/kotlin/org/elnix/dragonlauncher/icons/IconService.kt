@@ -301,12 +301,13 @@ public class IconService internal constructor(
 		action: Action,
 		reload: Boolean = false
 	): Flow<LauncherIcon?> {
-		return combine(iconSize, iconProviders, transformations) { iconSize, providers, transformations ->
+		return combine(iconSize, iconProviders, transformations, appRepository.appsRevision) { iconSize, providers, transformations, revision ->
 			val size = (iconSize * density.density).value.toInt()
 
 			val cacheKey =
 				CacheKey(
-					data = action::class,
+					subject = action::class,
+					appsRevision = revision,
 					customIconHashCode = 0,
 					providersHashCode = providers.hashCode(),
 					transformationsHashcode = transformations.hashCode()
@@ -358,11 +359,12 @@ public class IconService internal constructor(
 		shortcut: Action.LaunchShortcut,
 		reload: Boolean = false
 	): Flow<LauncherIcon?> {
-		return combine(iconProviders, transformations) { providers, transformations ->
+		return combine(iconProviders, transformations, appRepository.appsRevision) { providers, transformations, revision ->
 
 			val cacheKey =
 				CacheKey(
-					data = shortcut,
+					subject = shortcut,
+					appsRevision = revision,
 					customIconHashCode = 0,
 					providersHashCode = providers.hashCode(),
 					transformationsHashcode = transformations.hashCode()
@@ -396,11 +398,12 @@ public class IconService internal constructor(
 		customIcon: CustomIcon?,
 		iconProperties: CustomIconProperties?
 	): Flow<LauncherIcon?> {
-		return combine(iconProviders, transformations) { providers, transformations ->
+		return combine(iconProviders, transformations, appRepository.appsRevision) { providers, transformations, revision ->
 
 			val cacheKey =
 				CacheKey(
-					data = application.key,
+					subject = application.key,
+					appsRevision = revision,
 					customIconHashCode = 31 * customIcon.hashCode() + iconProviders.hashCode(),
 					providersHashCode = providers.hashCode(),
 					transformationsHashcode = transformations.hashCode()
@@ -438,7 +441,7 @@ public class IconService internal constructor(
 		size: Dp,
 		reload: Boolean
 	): Flow<LauncherIcon?> {
-		return combine(iconProviders, transformations, extraColors) { providers, transformations, _ ->
+		return combine(iconProviders, transformations, extraColors, appRepository.appsRevision) { providers, transformations, _, revision ->
 			val customIcon = point.customIcon
 			val effectiveProperties =
 				(
@@ -448,7 +451,8 @@ public class IconService internal constructor(
 
 			val cacheKey =
 				CacheKey(
-					data = point.key,
+					subject = point.key,
+					appsRevision = revision,
 					customIconHashCode = 31 * customIcon.hashCode() + effectiveProperties.hashCode(),
 					providersHashCode = providers.hashCode(),
 					transformationsHashcode = transformations.hashCode()

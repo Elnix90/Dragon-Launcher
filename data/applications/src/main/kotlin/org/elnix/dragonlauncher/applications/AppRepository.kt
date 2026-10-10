@@ -17,12 +17,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.runningFold
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -36,6 +39,7 @@ import org.elnix.dragonlauncher.base.model.models.LauncherApp
 import org.elnix.dragonlauncher.base.model.models.ResultScore
 import org.elnix.dragonlauncher.base.model.models.SystemApp
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
@@ -54,6 +58,19 @@ import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 
 public interface AppRepository {
 	public fun getAllApps(): Flow<ImmutableList<Application>>
+
+	/**
+	 * Monotonic revision of the installed-app snapshot.
+	 *
+	 * Starts at `0` (no app list published yet) and is bumped exactly when the *set* of installed
+	 * apps changes - a package added/removed, or the very first successful load. A no-op refresh
+	 * never bumps it.
+	 *
+	 * Combine on this to re-resolve anything derived from an [Application] (icons, badges, …) the
+	 * moment the app list becomes available or changes, instead of sampling a possibly-empty list
+	 * once and caching the `null` forever.
+	 */
+	public val appsRevision: StateFlow<Int>
 
 	public fun search(
 		query: String,
@@ -107,6 +124,15 @@ internal class AppRepositoryImpl(
 	private val installedApps = MutableStateFlow<List<Application>>(emptyList())
 	private val launchableApps = MutableStateFlow<List<Application>>(emptyList())
 	private val systemApps = MutableStateFlow<List<Application>>(emptyList())
+
+	private val _appsRevision = MutableStateFlow(0)
+	override val appsRevision: StateFlow<Int> = _appsRevision.asStateFlow()
+
+	/**
+	 * Keys of the last published app set. Only ever touched while holding [mutex], so it needs
+	 * no synchronization of its own.
+	 */
+	private var lastAppKeys: Set<CacheKey> = emptySet()
 
 	private val profiles = profileManager.activeProfiles
 
@@ -205,6 +231,15 @@ internal class AppRepositoryImpl(
 			installedApps.value = allApps
 			launchableApps.value = launchable
 			systemApps.value = system
+
+			// Publish a new revision only when the set of apps actually changed, so app-derived
+			// consumers (icons, badges) re-resolve on real add/remove events without thrashing
+			// on no-op refreshes. Running under [mutex] keeps the compare-and-set race-free.
+			val newAppKeys = allApps.mapTo(mutableSetOf()) { it.key }
+			if (newAppKeys != lastAppKeys) {
+				lastAppKeys = newAppKeys
+				_appsRevision.update { it + 1 }
+			}
 		}
 	}
 

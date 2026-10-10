@@ -83,45 +83,38 @@ public class PointsViewModel
 	) : AndroidViewModel(application) {
 		private val density: Density = Density(application.resources.displayMetrics.density)
 
-		private var isInitPhase = true
-
 		init {
 			viewModelScope.launch(Dispatchers.Default) {
 				pointsService.recomposeTrigger.flow
 					.collect {
-						if (isInitPhase) {
-							isInitPhase = false
-						} else {
+						val nests = pointsService.nests.value
 
-							val nests = pointsService.nests.value
-
-							val uniqueShapes =
-								nests.values.flatMap {
-									it.getInterSectionShapes(pointsService.defaultNest.value, false)
-								}
-							NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
-
-							for (shape in uniqueShapes) {
-								NestIntersectionShapesPathCache.compute(shape) {
-									shape
-										.getShape(pointsService.defaultIntersectionShape.value, false)
-										.resolveShape()
-										.toPath(
-											shape.getSize(
-												density.density,
-												pointsService.defaultIntersectionShape.value,
-												false
-											),
-											density
-										)
-								}
+						val uniqueShapes =
+							nests.values.flatMap {
+								it.getInterSectionShapes(pointsService.defaultNest.value, false)
 							}
+						NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
 
-							val points = pointsService.points.value
-
-							PointStableCache.updateMaxCacheSize(points.size)
-							synchronizePointTracking(points)
+						for (shape in uniqueShapes) {
+							NestIntersectionShapesPathCache.compute(shape) {
+								shape
+									.getShape(pointsService.defaultIntersectionShape.value, false)
+									.resolveShape()
+									.toPath(
+										shape.getSize(
+											density.density,
+											pointsService.defaultIntersectionShape.value,
+											false
+										),
+										density
+									)
+							}
 						}
+
+						val points = pointsService.points.value
+
+						PointStableCache.updateMaxCacheSize(points.size)
+						synchronizePointTracking(points)
 					}
 			}
 
