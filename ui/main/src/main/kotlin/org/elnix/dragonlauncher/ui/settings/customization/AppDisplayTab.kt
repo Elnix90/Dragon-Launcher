@@ -69,7 +69,6 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 			Setting(UiSettingsStore.showLaunchingAppLabel)
 			Setting(UiSettingsStore.showLaunchingAppIcon)
 			Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
-			Setting(UiSettingsStore.appLabelOverlaySize)
 
 			if (mode == PointPreviewMode.New) Setting(UiSettingsStore.appIconOverlayScale)
 			Setting(UiSettingsStore.appIconOverlaySize)
