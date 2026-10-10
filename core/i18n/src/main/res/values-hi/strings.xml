@@ -291,7 +291,7 @@
     <string name="grant_usage_permission">अनुमति प्रदान करें</string>
     <!--  ─────────────  Wellbeing: Reminder Mode  ─────────────  -->
     <string name="reminder_mode_title">उपयोग अनुस्मारक</string>
-    <string name="reminder_mode_description">जब आप किसी रुके हुए ऐप पर बहुत देर तक रहते हैं तो समय-समय पर अनुस्मारक प्राप्त करें</string>
+
     <string name="reminder_interval">अनुस्मारक अंतराल</string>
     <string name="overlay_permission_required">ओवरले अनुमति</string>
     <string name="overlay_permission_description">अन्य ऐप्स पर अनुस्मारक प्रदर्शित करने के लिए, ड्रैगन लॉन्चर को \"अन्य ऐप्स पर प्रदर्शित करें\" अनुमति की आवश्यकता होती है।</string>

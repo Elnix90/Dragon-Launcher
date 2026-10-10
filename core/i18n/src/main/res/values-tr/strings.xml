@@ -358,7 +358,7 @@
     <string name="usage_permission_needed">Kullanım iznine erişim gerekli</string>
     <string name="grant_usage_permission">İzin Ver</string>
     <string name="reminder_mode_title">Kullanım Hatırlatıcısı</string>
-    <string name="reminder_mode_description">Durdurulmuş bir uygulamada çok uzun süre kaldığında periyodik uyarılar al</string>
+
     <string name="reminder_interval">Hatırlatma aralığı</string>
     <string name="reminder_interval_description">Bana her … dakikada bir hatırlat</string>
     <string name="overlay_permission_required">Üzerinde Görüntüleme İzni</string>

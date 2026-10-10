@@ -1,5 +1,5 @@
 # Formatting rules for this project. ktlint reads this file directly, and so do
-# IntelliJ / Android Studio — one source of truth for the IDE and the build.
+# IntelliJ / Android Studio - one source of truth for the IDE and the build.
 root = true
 
 [*]

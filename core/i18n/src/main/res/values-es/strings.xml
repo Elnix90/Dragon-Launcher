@@ -293,7 +293,7 @@
     <string name="grant_usage_permission">Conceder permiso</string>
     <!--  ─────────────  Wellbeing: Reminder Mode  ─────────────  -->
     <string name="reminder_mode_title">Recordatorio de uso</string>
-    <string name="reminder_mode_description">Reciba recordatorios periódicos cuando permanezca demasiado tiempo en una aplicación en pausa</string>
+
     <string name="reminder_interval">Intervalo de recordatorio</string>
     <string name="reminder_interval_description">Recordármelo cada %d minutos</string>
     <string name="overlay_permission_required">Permiso de superposición</string>

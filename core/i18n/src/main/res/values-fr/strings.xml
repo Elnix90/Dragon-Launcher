@@ -304,7 +304,7 @@
     <string name="grant_usage_permission">Accorder la permission</string>
     <!--  ─────────────  Wellbeing: Reminder Mode  ─────────────  -->
     <string name="reminder_mode_title">Rappel d\'utilisation</string>
-    <string name="reminder_mode_description">Recevez des rappels périodiques lorsque vous restez trop longtemps sur une app en pause</string>
+
     <string name="reminder_interval">Intervalle de rappel</string>
     <string name="reminder_interval_description">Me le rapeller toutes les … minutes</string>
     <string name="overlay_permission_required">Permission de superposition</string>

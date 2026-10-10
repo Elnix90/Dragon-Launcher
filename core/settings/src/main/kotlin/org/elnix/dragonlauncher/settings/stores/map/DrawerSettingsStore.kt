@@ -376,7 +376,7 @@ object DrawerSettingsStore : MapSettingsStore() {
 		enum(
 			default = DrawerAlign.Top,
 			title = R.string.drawer_align,
-			description = R.string.drawer_align_desc
+			icon = R.drawable.swap_vert
 		)
 
 	@SettingKey

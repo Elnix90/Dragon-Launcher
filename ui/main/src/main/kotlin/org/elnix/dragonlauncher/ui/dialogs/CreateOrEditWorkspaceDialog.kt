@@ -57,6 +57,7 @@ fun CreateOrEditWorkspaceDialog(
 				options = WorkspaceType.entries,
 				selected = selectedType,
 				switchEnabled = false,
+				icon = R.drawable.workspaces,
 				label = stringResource(R.string.workspace_type),
 				resetEnabled = selectedType != WorkspaceType.Custom,
 				onReset = {

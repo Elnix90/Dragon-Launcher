@@ -120,7 +120,7 @@
     <string name="none">Нет</string>
     <string name="workspace_type">Тип рабочей области</string>
     <string name="workspace_name">Название рабочей области</string>
-    <string name="reset_this_workspace_to_default_apps">Вернуть приложения этой рабочей области по умолчанию? Это зависит от её типа: область SYSTEM получит все системные приложения, а USER — все пользовательские.</string>
+    <string name="reset_this_workspace_to_default_apps">Вернуть приложения этой рабочей области по умолчанию? Это зависит от её типа: область SYSTEM получит все системные приложения, а USER - все пользовательские.</string>
     <string name="workspace_detail_help">Можно выбрать, какие приложения показываются в этой рабочей области: добавлять и убирать их, переименовывать и менять значки</string>
     <string name="reset_workspace">Сбросить рабочую область</string>
     <string name="workspace">Рабочая область</string>
@@ -130,7 +130,7 @@
     <string name="double_click_action">Действие двойного нажатия</string>
     <string name="privacy_first">Приватность прежде всего</string>
     <string name="quick_tutorial">Краткое руководство</string>
-    <string name="long_click_to_access_settings">Долгое нажатие — вход в настройки</string>
+    <string name="long_click_to_access_settings">Долгое нажатие - вход в настройки</string>
     <string name="swipe_to_open_app">Проведите пальцем, чтобы открыть настроенные приложения и ярлыки</string>
     <string name="configure_your_apps">Настройте свои приложения и ярлыки в настройках</string>
     <string name="theme_selector">Выбор темы</string>
@@ -205,7 +205,7 @@
     <string name="add_widget">Добавить виджет</string>
     <string name="widgets">Виджеты</string>
     <string name="edit">Изменить</string>
-    <string name="widgets_tab_help">Управление виджетами и плавающими приложениями рабочей области: добавление, порядок, размер и положение.\nПризрачный — виджет не реагирует на нажатия\nПередний план — жесты перетаскивания не срабатывают на виджете\nПопробуйте комбинировать эти два параметра, чтобы получить нужное поведение</string>
+    <string name="widgets_tab_help">Управление виджетами и плавающими приложениями рабочей области: добавление, порядок, размер и положение.\nПризрачный - виджет не реагирует на нажатия\nПередний план - жесты перетаскивания не срабатывают на виджете\nПопробуйте комбинировать эти два параметра, чтобы получить нужное поведение</string>
     <string name="delete_widget">Удалить виджет</string>
     <string name="remove_point">Удалить точку</string>
     <string name="copy_point">Копировать точку</string>
@@ -339,7 +339,7 @@
     <string name="usage_permission_needed">Нужен доступ к статистике использования</string>
     <string name="grant_usage_permission">Предоставить доступ</string>
     <string name="reminder_mode_title">Напоминания об использовании</string>
-    <string name="reminder_mode_description">Периодически напоминать, если вы слишком долго находитесь в приложении с паузой</string>
+
     <string name="reminder_interval">Интервал напоминаний</string>
     <string name="reminder_interval_description">Напоминать каждые … минут</string>
     <string name="overlay_permission_required">Разрешение на наложение</string>
@@ -617,7 +617,7 @@
     <string name="edit_default_shape">Изменить фигуру по умолчанию</string>
     <string name="erase_background">Стирать фон</string>
     <string name="glow_radius">Радиус свечения</string>
-    <string name="zero_means_no_glow">0 — без свечения</string>
+    <string name="zero_means_no_glow">0 - без свечения</string>
     <string name="glow_color">Цвет свечения</string>
     <string name="line_object">Объект линии</string>
     <string name="angle_object">Объект угла</string>
@@ -700,7 +700,7 @@
     <string name="rotation_per_second_desc">Сколько оборотов вокруг себя делается за секунду</string>
     <string name="enable_backup">Включить резервное копирование</string>
     <string name="choose_a_auto_backup_file">Выберите файл автокопии</string>
-    <string name="minus_one_means_random">-1 — случайно при запуске</string>
+    <string name="minus_one_means_random">-1 - случайно при запуске</string>
     <string name="search_bar">Строка поиска</string>
     <string name="toolbars_order">Порядок панелей</string>
     <string name="loading">Загрузка…</string>
@@ -731,7 +731,7 @@
     <string name="nests_cell_size_desc">Размер сетки, к которой привязываются фигуры</string>
     <string name="points_cell_size_desc">Размер виртуальной сетки, к которой привязываются точки</string>
     <string name="off_screen_timeout">Тайм-аут вне главного экрана (с)</string>
-    <string name="off_screen_timeout_desc">Через сколько приложение вернётся на главный экран, если вы находитесь на другом экране. Не действует на некоторых экранах, например резервного копирования (там выбирается файл). -1 — не возвращаться</string>
+    <string name="off_screen_timeout_desc">Через сколько приложение вернётся на главный экран, если вы находитесь на другом экране. Не действует на некоторых экранах, например резервного копирования (там выбирается файл). -1 - не возвращаться</string>
     <string name="refresh">Обновить</string>
     <string name="crash">Приложение аварийно завершилось!</string>
     <string name="access_app">Открыть приложение (сбой может повториться)</string>
@@ -760,9 +760,9 @@
     <string name="select_settings_to_export">Выберите настройки для экспорта</string>
     <string name="select_settings_to_import">Выберите настройки для импорта</string>
     <string name="edit_hold_to_activate_elements">Элементы удержания</string>
-    <string name="edit_hold_to_activate_elements_desc">Изменить действия, которые появляются при удержании 3 секунды. Если элемент один — переход выполняется автоматически</string>
+    <string name="edit_hold_to_activate_elements_desc">Изменить действия, которые появляются при удержании 3 секунды. Если элемент один - переход выполняется автоматически</string>
     <string name="warning">Внимание!</string>
-    <string name="this_is_a_beta_version">Это бета-версия: в ней могут быть нестабильные функции и много ошибок. Пожалуйста, сообщайте о найденных ошибках — это очень помогает</string>
+    <string name="this_is_a_beta_version">Это бета-версия: в ней могут быть нестабильные функции и много ошибок. Пожалуйста, сообщайте о найденных ошибках - это очень помогает</string>
     <string name="this_feature_is_in_beta">Эта функция в бета-версии, она может ломаться и ещё не доделана. Сообщайте об ошибках и присылайте предложения, чтобы помочь её улучшить!</string>
     <string name="export">Экспорт</string>
     <string name="import_text">Импорт</string>
@@ -802,7 +802,7 @@
     <string name="other">Другое</string>
     <string name="kill_launcher">Завершить лаунчер</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">Умножать или вычитать непрозрачность в живых гнёздах</string>
-    <string name="multiply_or_subtract_opacity_in_live_nests_desc">Если выключено, непрозрачность умножается для аккуратного вида. Если включено — вычитается, чтобы быстрее дойти до нуля и скрыть нижние гнёзда, не загромождая интерфейс</string>
+    <string name="multiply_or_subtract_opacity_in_live_nests_desc">Если выключено, непрозрачность умножается для аккуратного вида. Если включено - вычитается, чтобы быстрее дойти до нуля и скрыть нижние гнёзда, не загромождая интерфейс</string>
     <string name="align_start">Начало</string>
     <string name="align_center">Центр</string>
     <string name="align_end">Конец</string>
@@ -838,7 +838,7 @@
     <string name="test_overlays">Проверка наложений</string>
     <string name="risky">Рискованно</string>
     <string name="pin_code_warning_title">Внимание: возможна потеря данных</string>
-    <string name="pin_code_warning_desc">Если вы забудете PIN-код, единственный способ сброса — стереть все данные приложения через меню «О приложении» в Android</string>
+    <string name="pin_code_warning_desc">Если вы забудете PIN-код, единственный способ сброса - стереть все данные приложения через меню «О приложении» в Android</string>
     <string name="do_something">Сделать что-нибудь</string>
     <string name="warning_title">Важное предупреждение</string>
     <string name="warning_subtitle">Ваш телефон вот-вот перестанет быть вашим.</string>
@@ -884,7 +884,7 @@
     <string name="do_not_remind_me_again_pin_lock_desc">Показывать ли предупреждение при установке PIN-кода</string>
     <string name="left_padding_status_bar_desc">Пустое место слева в строке состояния</string>
     <string name="right_padding_status_bar_desc">Пустое место справа в строке состояния</string>
-    <string name="top_padding_status_bar_desc">Кто этим пользуется — странные люди</string>
+    <string name="top_padding_status_bar_desc">Кто этим пользуется - странные люди</string>
     <string name="bottom_padding_status_bar_desc">А вот это я ещё могу понять</string>
     <string name="pick_stores_to_display">Выберите хранилища для отображения</string>
     <string name="profile">Профиль</string>
@@ -930,7 +930,7 @@
     <string name="cancel_zone_desc">Насколько нужно протянуть палец, чтобы активировать первую точку</string>
     <string name="nest_info">Информация о гнезде</string>
     <string name="nest_edition">Редактирование гнезда</string>
-    <string name="mirror_desc">Некоторые фигуры рисуются в обратную сторону — отразите их по вертикали, чтобы получить нужный результат</string>
+    <string name="mirror_desc">Некоторые фигуры рисуются в обратную сторону - отразите их по вертикали, чтобы получить нужный результат</string>
     <string name="mirror">Отразить</string>
     <string name="automatic_magic_number">Автоматическое магическое число</string>
     <string name="hold_to_activate_color">Цвет удержания</string>
@@ -1015,7 +1015,7 @@
     <string name="render_background_desc">Отрисовывать ли фоновый слой значков</string>
     <string name="icons_settings">Настройки значков</string>
     <string name="drawer_label_color">Цвет названий</string>
-    <string name="drawer_label_color_desc">Цвет названий приложений в меню. По умолчанию — цвет onBackground</string>
+    <string name="drawer_label_color_desc">Цвет названий приложений в меню. По умолчанию - цвет onBackground</string>
     <string name="points_screens_transparency">Прозрачность экранов точек</string>
     <string name="points_screens_transparency_desc">Прозрачность всех экранов, где отображаются точки и настройки свайпов, чтобы видеть обои и удобнее настраивать</string>
     <string name="search_all_workspaces_when_first_char_is">Искать во всех рабочих областях, если первый символ:</string>
@@ -1045,7 +1045,7 @@
     <string name="show_snap_point_angle_lines_desc">Показывать подсказку, куда будет привязан угол</string>
     <string name="show_padding_box">Показывать рамку отступов</string>
     <string name="use_snapped_angle_or_real_angle">Привязанный или реальный угол</string>
-    <string name="use_snapped_angle_or_real_angle_desc">При привязке к точке вычисляемый угол — реальный или угол выбранной точки?</string>
+    <string name="use_snapped_angle_or_real_angle_desc">При привязке к точке вычисляемый угол - реальный или угол выбранной точки?</string>
     <string name="widget_not_found">Виджет не найден</string>
     <string name="by_elnix">от Elnix90</string>
     <string name="app_tagline">Быстрый лаунчер для Android на жестах</string>
@@ -1078,7 +1078,7 @@
     <string name="show_google_lockdown_warning_desc">Если выключено, оно не будет показываться вверху настроек</string>
     <string name="top">Сверху</string>
     <string name="bottom">Снизу</string>
-    <string name="drawer_align_desc">Выравнивание значков в меню приложений</string>
+
     <string name="drawer_align">Выравнивание в меню</string>
     <string name="ime_padding_drawer">Отступ под клавиатуру в меню</string>
     <string name="ime_padding_drawer_desc">Перекрывает ли клавиатура приложения</string>

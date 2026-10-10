@@ -98,7 +98,12 @@ fun WellbeingTab(
 		}
 
 		DragonSettingsGroup(R.string.popup_display_title) {
-			Setting(WellbeingSettingsStore.reminderMode, enabled = socialMediaPauseEnabled && reminderEnabled)
+			Setting(WellbeingSettingsStore.reminderMode, enabled = socialMediaPauseEnabled && reminderEnabled) {
+				when (it) {
+					ReminderMode.Notification -> stringResource(R.string.reminder_mode_notification)
+					ReminderMode.Overlay -> stringResource(R.string.reminder_mode_overlay)
+				}
+			}
 
 			val enabled = reminderMode == ReminderMode.Overlay && socialMediaPauseEnabled && reminderEnabled
 			Setting(WellbeingSettingsStore.popupShowSessionTime, enabled = enabled)

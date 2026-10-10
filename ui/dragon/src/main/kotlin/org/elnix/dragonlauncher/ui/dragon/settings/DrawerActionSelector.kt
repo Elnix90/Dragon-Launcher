@@ -15,6 +15,7 @@ import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 @Composable
 fun DragonGroupScope.DrawerActionSelector(
 	setting: EnumSettingObject<DrawerActions>,
+	icon: Int,
 	allowNone: Boolean = false
 ) {
 	val ctx = LocalContext.current
@@ -31,6 +32,7 @@ fun DragonGroupScope.DrawerActionSelector(
 		options = actions,
 		selected = state,
 		label = stringResource(setting.title!!),
+		icon = icon,
 		optionLabel = { stringResource(it.resId) },
 		toggled = state != DrawerActions.Disabled,
 		resetEnabled = state != setting.default,

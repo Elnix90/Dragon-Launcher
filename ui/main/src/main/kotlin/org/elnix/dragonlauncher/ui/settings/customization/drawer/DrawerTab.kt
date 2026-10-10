@@ -28,6 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.enumsui.select.DrawerAlign.Bottom
+import org.elnix.dragonlauncher.base.model.enumsui.select.DrawerAlign.Top
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.notDisabled
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.notNone
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
@@ -126,7 +128,12 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 			Setting(DrawerSettingsStore.showAppIconsInDrawer)
 			Setting(DrawerSettingsStore.showAppLabelsInDrawer)
 			Setting(DrawerSettingsStore.labelTextColor)
-			Setting(DrawerSettingsStore.drawerAlign)
+			Setting(DrawerSettingsStore.drawerAlign) {
+				when (it) {
+					Top -> stringResource(R.string.drawer_align_top_desc)
+					Bottom -> stringResource(R.string.drawer_align_bottom_desc)
+				}
+			}
 			Setting(DrawerSettingsStore.recentlyInstalledAppsDuration)
 			DrawerIconShapePicker()
 		}
@@ -185,18 +192,18 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 		}
 
 		DragonSettingsGroup(R.string.drawer_actions) {
-			DrawerActionSelector(DrawerSettingsStore.drawerScrollUpAction)
-			DrawerActionSelector(DrawerSettingsStore.drawerScrollDownAction)
-			DrawerActionSelector(DrawerSettingsStore.tapEmptySpaceAction)
-			DrawerActionSelector(DrawerSettingsStore.drawerBackAction)
-			DrawerActionSelector(DrawerSettingsStore.drawerEnterAction)
-			DrawerActionSelector(DrawerSettingsStore.drawerHomeAction)
-			DrawerActionSelector(DrawerSettingsStore.drawerClickSearchIconAction)
+			DrawerActionSelector(DrawerSettingsStore.drawerScrollUpAction, R.drawable.keyboard_arrow_up)
+			DrawerActionSelector(DrawerSettingsStore.drawerScrollDownAction, R.drawable.arrow_down)
+			DrawerActionSelector(DrawerSettingsStore.tapEmptySpaceAction, R.drawable.circle)
+			DrawerActionSelector(DrawerSettingsStore.drawerBackAction, R.drawable.back)
+			DrawerActionSelector(DrawerSettingsStore.drawerEnterAction, R.drawable.start)
+			DrawerActionSelector(DrawerSettingsStore.drawerHomeAction, R.drawable.home)
+			DrawerActionSelector(DrawerSettingsStore.drawerClickSearchIconAction, R.drawable.search)
 		}
 
 		DragonSettingsGroup(R.string.width_actions_settings) {
-			DrawerActionSelector(DrawerSettingsStore.leftDrawerAction, allowNone = true)
-			DrawerActionSelector(DrawerSettingsStore.rightDrawerAction, allowNone = true)
+			DrawerActionSelector(DrawerSettingsStore.leftDrawerAction, R.drawable.keyboard_arrow_left, allowNone = true)
+			DrawerActionSelector(DrawerSettingsStore.rightDrawerAction, R.drawable.arrow_right, allowNone = true)
 		}
 
 		AnimatedVisibility(leftDrawerAction.notDisabled || rightDrawerAction.notDisabled) {

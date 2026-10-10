@@ -397,7 +397,6 @@
     <string name="usage_permission_needed">إذن الوصول إلى الاستخدام مطلوب</string>
     <string name="grant_usage_permission">منح الإذن</string>
     <string name="reminder_mode_title">تذكير الاستخدام</string>
-    <string name="reminder_mode_description">تلقي تذكيرات دورية عندما تبقى لفترة طويلة في تطبيق موقوف</string>
     <string name="reminder_interval">فاصل التذكير</string>
     <string name="reminder_interval_description">ذكرني كل %d دقائق</string>
     <string name="overlay_permission_required">إذن التراكب</string>

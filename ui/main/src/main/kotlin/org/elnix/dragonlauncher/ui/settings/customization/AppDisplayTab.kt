@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,7 +13,8 @@ import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.models.PointPreviewMode
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.Legacy
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.New
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -63,15 +65,25 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 				icon = R.drawable.visibility
 			) { showPreview = it }
 
-			Setting(UiSettingsStore.pointPreviewMode)
+			Setting(UiSettingsStore.pointPreviewMode) {
+				when (it) {
+					New -> stringResource(R.string.point_preview_mode_new)
+					Legacy -> stringResource(R.string.point_preview_mode_legacy)
+				}
+			}
 			val mode by UiSettingsStore.pointPreviewMode.asState()
 
 			Setting(UiSettingsStore.showLaunchingAppLabel)
 			Setting(UiSettingsStore.showLaunchingAppIcon)
 			Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
-
-			if (mode == PointPreviewMode.New) Setting(UiSettingsStore.appIconOverlayScale)
 			Setting(UiSettingsStore.appIconOverlaySize)
+
+			AnimatedVisibility(mode == New) {
+				Setting(UiSettingsStore.appIconOverlayScale)
+			}
+			AnimatedVisibility(mode == New) {
+				Setting(UiSettingsStore.maxTopBarDepth)
+			}
 		}
 
 		DragonSettingsGroup(R.string.dragging_display) {
@@ -100,7 +112,6 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 
 		DragonSettingsGroup(R.string.depth) {
 			Setting(UiSettingsStore.maxNestsDepth)
-			Setting(UiSettingsStore.maxTopBarDepth)
 			Setting(UiSettingsStore.maxLiveNestsDepth)
 		}
 	}

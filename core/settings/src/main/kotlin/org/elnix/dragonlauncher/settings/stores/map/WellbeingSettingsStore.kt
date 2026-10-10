@@ -65,7 +65,6 @@ object WellbeingSettingsStore : MapSettingsStore() {
 	@SettingKey
 	val reminderEnabled = boolean(
 		title = R.string.reminder_mode_title,
-		description = R.string.reminder_mode_description,
 		icon = R.drawable.timer,
 		default = false
 	)

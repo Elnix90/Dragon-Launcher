@@ -314,7 +314,7 @@
     <string name="usage_permission_needed">பயன்பாட்டு அணுகல் இசைவு தேவை</string>
     <string name="grant_usage_permission">இசைவு வழங்கவும்</string>
     <string name="reminder_mode_title">பயன்பாட்டு நினைவூட்டல்</string>
-    <string name="reminder_mode_description">இடைநிறுத்தப்பட்ட பயன்பாட்டில் அதிக நேரம் இருக்கும் போது அவ்வப்போது நினைவூட்டல்களைப் பெறுங்கள்</string>
+
     <string name="reminder_interval">நினைவூட்டல் இடைவெளி</string>
     <string name="reminder_interval_description">ஒவ்வொரு %d நிமிடங்களுக்கும் எனக்கு நினைவூட்டு</string>
     <string name="overlay_permission_required">மேலடுக்கு இசைவு</string>

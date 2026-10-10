@@ -94,6 +94,7 @@ fun BehaviorTab(
 					options = GlobalDraggingMode.DraggingModeList,
 					selected = globalDraggingMode,
 					label = stringResource(R.string.global_dragging_mode),
+					icon = R.drawable.nest_icon,
 					optionLabel = { stringResource(it.title) },
 					optionDesc = { stringResource(it.description) },
 					switchEnabled = false,

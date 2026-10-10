@@ -8,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -550,6 +549,7 @@ fun EditStatusBar() {
 							}
 							ActionSelectorRow(
 								label = stringResource(R.string.spacer_mode),
+								icon = R.drawable.remove,
 								options = StatusBar.Spacer.SpacerMode.entries,
 								selected = item.mode,
 								resetEnabled = item.mode != StatusBar.Spacer.defaultSpacerMode,

@@ -404,6 +404,7 @@ object UiSettingsStore : MapSettingsStore() {
 	val pointPreviewMode =
 		enum(
 			title = R.string.point_preview_mode,
+			icon = R.drawable.wallpaper,
 			default = PointPreviewMode.New
 		)
 }

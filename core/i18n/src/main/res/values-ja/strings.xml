@@ -383,7 +383,7 @@
     <string name="usage_permission_needed">使用状況へのアクセス権限が必要</string>
     <string name="grant_usage_permission">権限を付与する</string>
     <string name="reminder_mode_title">使用状況リマインダー</string>
-    <string name="reminder_mode_description">停止中のアプリを長時間利用した際に、定期的にリマインダーを受け取ります</string>
+
     <string name="reminder_interval">通知期間</string>
     <string name="reminder_interval_description">…分ごとに通知</string>
     <string name="overlay_permission_required">オーバーレイ権限</string>
@@ -1026,7 +1026,7 @@
     <string name="show_google_lockdown_warning_desc">無効時、ロックダウン警告が上部に表示されません</string>
     <string name="top">上部</string>
     <string name="bottom">下部</string>
-    <string name="drawer_align_desc">ドロワー内のアイコンの配置</string>
+
     <string name="drawer_align">ドロワー配置</string>
     <string name="ime_padding_drawer">キーボードのパディング</string>
     <string name="ime_padding_drawer_desc">キーボードがアプリと重なるか</string>

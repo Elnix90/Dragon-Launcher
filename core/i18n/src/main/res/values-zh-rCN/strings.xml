@@ -314,7 +314,7 @@
     <string name="usage_permission_needed">需要使用情况访问权限</string>
     <string name="grant_usage_permission">授予权限</string>
     <string name="reminder_mode_title">使用提醒</string>
-    <string name="reminder_mode_description">当您在已加入停顿的应用中停留太久时，接收定期提醒</string>
+
     <string name="reminder_interval">提醒间隔时间</string>
     <string name="reminder_interval_description">每 %d 分钟提醒我一次</string>
     <string name="overlay_permission_required">需要“显示在其他应用上层”权限</string>

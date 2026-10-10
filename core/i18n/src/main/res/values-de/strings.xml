@@ -294,7 +294,7 @@
     <string name="grant_usage_permission">Erlaubnis erteilen</string>
     <!--  ─────────────  Wellbeing: Reminder Mode  ─────────────  -->
     <string name="reminder_mode_title">Nutzungserinnerung</string>
-    <string name="reminder_mode_description">Erhalten Sie regelmäßige Erinnerungen, wenn Sie zu lange in einer pausierten App bleiben</string>
+
     <string name="reminder_interval">Erinnerungsintervall</string>
     <string name="overlay_permission_required">Overlay-Berechtigung</string>
     <string name="overlay_permission_description">Um Erinnerungen über anderen Apps anzuzeigen, benötigt Dragon Launcher die Berechtigung „Über anderen Apps anzeigen“.</string>

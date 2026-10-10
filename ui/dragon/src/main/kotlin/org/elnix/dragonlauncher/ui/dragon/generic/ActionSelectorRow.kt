@@ -28,6 +28,8 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -41,6 +43,7 @@ fun <T> DragonGroupScope.ActionSelectorRow(
 	selected: T,
 	switchEnabled: Boolean = true,
 	label: String,
+	icon: Int,
 	optionLabel: @Composable (T) -> String = { it.toString() },
 	optionDesc: (@Composable (T) -> String)? = null,
 	toggled: Boolean? = null,
@@ -65,6 +68,9 @@ fun <T> DragonGroupScope.ActionSelectorRow(
 				},
 		verticalAlignment = Alignment.CenterVertically
 	) {
+		BoxedIcon(icon)
+		Spacer(8.dp)
+
 		TextWithDescription(
 			text = label,
 			description = optionLabel(selected),
