@@ -19,6 +19,7 @@ import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.models.HitResult
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.DefaultShapeJson
@@ -86,7 +87,7 @@ public interface PointsService {
 
 	public fun duplicateNest(nestId: Int): Int
 
-	public fun removeNest(id: Int)
+	public fun removeNest(id: Int, deleteAllRelatedPoints: Boolean)
 
 	public fun editNest(
 		id: Int,
@@ -458,8 +459,19 @@ internal class PointsServiceImpl(
 		return newId
 	}
 
-	override fun removeNest(id: Int) {
-		applyChange { _nests.value.remove(id) }
+	override fun removeNest(id: Int, deleteAllRelatedPoints: Boolean) {
+		applyChange {
+			_nests.value.remove(id)
+			if (deleteAllRelatedPoints) {
+				_points.value.values
+					.filter {
+						// Removes all points that are either in that nest or that opens that nest
+						it.nestId == id || (it.action is Action.OpenNest && (it.action as Action.OpenNest).nestId == id)
+					}.forEach {
+						_points.value.remove(it.id)
+					}
+			}
+		}
 	}
 
 	override fun editNest(

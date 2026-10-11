@@ -1110,7 +1110,9 @@
     <string name="openable_categories">Openable categories</string>
 	<string name="openable_categories_help">The apps inside the categories cannot be clicked, and any click opens the category</string>
 	<string name="drawer_align_top_desc">The icons aligns from the start naturally</string>
-	<string name="drawer_align_bottom_desc">The icons aligns fromt the bottom. The scroll to dismiss isn\'t inverted</string>
+	<string name="drawer_align_bottom_desc">The icons aligns from the bottom. The scroll to dismiss isn\'t inverted</string>
 	<string name="reminder_mode_notification">Dragon sends you a notification when the time is up!</string>
-	<string name="reminder_mode_overlay">A PiP overlay spawns and tells you its time to stop!</string>
+	<string name="reminder_mode_overlay">A PiP overlay spawns and tells you it\'s time to stop!</string>
+    <string name="are_you_sure_to_delete_the_nest">Are you sure you want to delete the nest \"%1$s\" ?</string>
+	<string name="delete_all_related_points">Delete all related points? This will delete all the points that open that nest as well as all the points in that nest (not recursive)</string>
 </resources>

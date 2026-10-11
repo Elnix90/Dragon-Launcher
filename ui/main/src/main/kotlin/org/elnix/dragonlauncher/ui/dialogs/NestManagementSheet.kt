@@ -2,17 +2,20 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.FocusInteraction
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,14 +23,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +46,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -58,6 +67,7 @@ import org.elnix.dragonlauncher.ui.base.animation.Icon
 import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
@@ -65,6 +75,8 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.MoreIcon
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.text.DialogDescription
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
@@ -133,7 +145,7 @@ fun NestManagementSheet(
 								old.copy(name = newName)
 							}
 						},
-						onDelete = { pointsService.removeNest(nest.id) },
+						onDelete = { deleteAllRelatedPoints -> pointsService.removeNest(nest.id, deleteAllRelatedPoints) },
 						onDuplicate = { pointsService.duplicateNest(nest.id) },
 						onEdit = {
 							pointsViewModel.nestsNavigationService.goToNest(id, true)
@@ -153,7 +165,7 @@ private fun DragonGroupScope.NestManagementItem(
 	selected: Boolean,
 	modifier: Modifier,
 	onEditName: (newName: String?) -> Unit,
-	onDelete: () -> Unit,
+	onDelete: (deleteAllRelatedPoints: Boolean) -> Unit,
 	onDuplicate: () -> Unit,
 	onEdit: () -> Unit,
 	onSelect: (() -> Unit)? = null
@@ -161,7 +173,8 @@ private fun DragonGroupScope.NestManagementItem(
 	// Same as in dragonSettingGroup, needed to prevent the nest to erase the bg
 	val bgColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
-	var showPopup by remember { mutableStateOf(false) }
+	var showPopup by rememberSaveable { mutableStateOf(false) }
+	var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 
 	Row(
 		modifier =
@@ -191,8 +204,7 @@ private fun DragonGroupScope.NestManagementItem(
 		Spacer(5.dp)
 
 		var tempState by rememberSaveable { mutableStateOf(nest.name) }
-
-		var isEditing by remember { mutableStateOf(false) }
+		var isEditing by rememberSaveable { mutableStateOf(false) }
 
 		// Sync the text with external value changes (slider drag, programmatic updates).
 		// The state must NOT be re-created on valueText change: the focus-interaction
@@ -203,7 +215,7 @@ private fun DragonGroupScope.NestManagementItem(
 		}
 
 		val focusManager = LocalFocusManager.current
-		val interactionSource = remember { MutableInteractionSource() }
+		val interactionSource = rememberInteractionSource()
 		val animatedIcon = rememberAnimatedIcon()
 
 		fun onDone() {
@@ -322,7 +334,7 @@ private fun DragonGroupScope.NestManagementItem(
 								Text(stringResource(R.string.delete_nest))
 							},
 							onClick = {
-								onDelete()
+								showDeleteConfirmDialog = true
 								showPopup = false
 							},
 							leadingIcon = {
@@ -338,4 +350,103 @@ private fun DragonGroupScope.NestManagementItem(
 			}
 		}
 	}
+
+	if (showDeleteConfirmDialog) {
+		DeleteNestConfirmDialog(
+			nest = nest,
+			onValidate = onDelete,
+			onDismiss = { showDeleteConfirmDialog = false }
+		)
+	}
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun DeleteNestConfirmDialog(
+	nest: Nest,
+	onValidate: (deleteAllRelatedPoints: Boolean) -> Unit,
+	onDismiss: () -> Unit
+) {
+	var deleteAllRelatedPoints by rememberSaveable { mutableStateOf(true) }
+
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		confirmButton = {
+			ValidateCancelButtons(
+				validateText = stringResource(R.string.ok),
+				cancelText = stringResource(R.string.cancel),
+				onCancel = onDismiss,
+				onConfirm = {
+					onValidate(deleteAllRelatedPoints)
+					onDismiss()
+				}
+			)
+		},
+		icon = {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier =
+					Modifier
+						.size(48.dp)
+						.background(
+							color = MaterialTheme.colorScheme.errorContainer,
+							shape = MaterialShapes.Pill.toShape()
+						)
+			) {
+				Icon(
+					painter = painterResource(R.drawable.warning),
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.onErrorContainer,
+					modifier = Modifier.padding(5.dp)
+				)
+			}
+		},
+		title = {
+			DialogTitle(
+				text = stringResource(R.string.delete_nest),
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.padding(bottom = 4.dp)
+						.clip(MaterialTheme.shapes.large)
+						.background(MaterialTheme.colorScheme.surface)
+						.padding(8.dp)
+			)
+		},
+		text = {
+			Column {
+				DialogDescription(
+					text = stringResource(R.string.are_you_sure_to_delete_the_nest, nest.name.takeIf { !it.isNullOrBlank() } ?: nest.id.toString()),
+					modifier = Modifier.padding(top = 8.dp)
+				)
+				Spacer(15.dp)
+
+				val interactionSource = rememberInteractionSource()
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.spacedBy(8.dp),
+					modifier = Modifier
+						.clip(MaterialTheme.shapes.large)
+						.clickable(interactionSource = interactionSource) { deleteAllRelatedPoints = !deleteAllRelatedPoints }
+						.padding(5.dp)
+				) {
+					Checkbox(
+						checked = deleteAllRelatedPoints,
+						onCheckedChange = null,
+						interactionSource = interactionSource,
+						colors = AppObjectsColors.checkboxColors()
+					)
+					Text(
+						text = stringResource(R.string.delete_all_related_points),
+						style = MaterialTheme.typography.bodySmall,
+						color = MaterialTheme.colorScheme.onSurface,
+						modifier = Modifier.padding(end = 8.dp)
+					)
+				}
+			}
+		},
+		containerColor = MaterialTheme.colorScheme.surface,
+		tonalElevation = 6.dp,
+		shape = MaterialTheme.shapes.large
+	)
 }
