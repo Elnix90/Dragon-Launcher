@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.dragon.internals
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults.connectedButtonCheckedShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape

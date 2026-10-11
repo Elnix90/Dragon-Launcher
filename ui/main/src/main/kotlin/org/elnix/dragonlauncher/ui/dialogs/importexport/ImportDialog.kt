@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.dialogs.importexport
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import io.github.elnix90.core.stores.SettingsStore
 import org.elnix.dragonlauncher.i18n.R

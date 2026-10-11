@@ -11,7 +11,6 @@ import androidx.compose.material3.ButtonGroupDefaults.connectedLeadingButtonShap
 import androidx.compose.material3.ButtonGroupDefaults.connectedMiddleButtonPressShape
 import androidx.compose.material3.ButtonGroupDefaults.connectedTrailingButtonPressShape
 import androidx.compose.material3.ButtonGroupDefaults.connectedTrailingButtonShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
