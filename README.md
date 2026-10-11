@@ -27,8 +27,8 @@
 ---
 [![GitHub license](https://img.shields.io/github/license/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/blob/dev/LICENSE)
 [![Discord](https://img.shields.io/discord/1454475177328115860?color=blue&label=Discord&logo=discord&style=for-the-badge)](https://discord.gg/6UyuP8EBWS)
-[![Offline First](https://img.shields.io/badge/Offline-First-orange.svg?style=for-the-badge&logo=rss&logoColor=white)]()
-[![Privacy](https://img.shields.io/badge/Privacy-100%25-green.svg?style=for-the-badge&logo=shield&logoColor=white)]()
+[![Offline](https://img.shields.io/badge/Offline-100%25-orange.svg?style=for-the-badge&logo=rss&logoColor=white)]()
+[![Privacy](https://img.shields.io/badge/Privacy-First-green.svg?style=for-the-badge&logo=shield&logoColor=white)]()
 ---
 [![GitHub downloads](https://img.shields.io/github/downloads/Elnix90/Dragon-Launcher/total.svg?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases)
 [![F-Droid downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.elnix.dragonlauncher.json&query=%24.total_downloads&logo=fdroid&label=Total%20Downloads%20(F-Droid)&style=for-the-badge)](https://f-droid.org/en/packages/org.elnix.dragonlauncher/)
@@ -134,37 +134,44 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 ## User Screenshots
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/elnix.jpga " width="22%" alt="Elnix Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/red__velvet_demo.gif" width="22%" alt="rev__velvet Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/ridwan.png" width="22%" alt="ridwan Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/unknown_user_1.jpg" width="22%" alt="Unknown user Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/akiraakemi.png" width="22%" alt="akiraakemi Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/elnix2.jpg" width="22%" alt="Elnix Screenshot 2"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/speedhog.jpg" width="22%" alt="speedhog Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/oniyon.jpg" width="22%" alt="oniyon Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/alyon.jpg" width="22%" alt="alyon Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/prizewhisper.webp" width="22%" alt="prizewhisper Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/opaline.webp" width="22%" alt="opaline Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/fede1.webp" width="22%" alt="fede1 Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/elnix.jpg" width="22%" alt="Elnix Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/red__velvet_demo.gif" width="22%" alt="rev__velvet Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/emerson_biggons.gif" width="22%" alt="emerson_biggons Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/notBlk7.gif" width="22%" alt="notBlk7 Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/ridwan.png" width="22%" alt="ridwan Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/_agumx.png" width="22%" alt="_agumx Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/akiraakemi.png" width="22%" alt="akiraakemi Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/alyon.jpg" width="22%" alt="alyon Screenshot"/>
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/buck_fpv.png" width="22%" alt="buck_fpv Screenshot"/>
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/buck_fpv_2.png" width="22%" alt="buck_fpv 2nd Screenshot"/>
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/dudeful.jpg" width="22%" alt"dudeful Screenshot"/>
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/elryantheexplorer.webp" width="22%" alt="elryantheexplorer Screenshot"/>
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/federico.webp" width="22%" alt="federico Screenshot"/>
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/hopekx.png" width="22%" alt="hopekx Screenshot"/>
+
+
+[//]: # (Should update those below here)
+[//]: # (    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/speedhog.jpg" width="22%" alt="speedhog Screenshot"/>)
+
+[//]: # (    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/prizewhisper.webp" width="22%" alt="prizewhisper Screenshot"/>)
+
+[//]: # (    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/opaline.webp" width="22%" alt="opaline Screenshot"/>)
+
+[//]: # (	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/infamous.webp" width="22%" alt="infamous Screenshot"/>)
+
+[//]: # (	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/sandsalamand.webp" width="22%" alt="sandsalamand Screenshot"/>)
+
+[//]: # (	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/yprum.webp" width="22%" alt="yprum Screenshot"/>)
 </p>
 
- <details>
-    <summary>More screenshots</summary>
-    <p align="center">
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/infamous.webp" width="22%" alt="infamous Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/m0n0lith.webp" width="22%" alt="m0n0lith Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/sandsalamand.webp" width="22%" alt="sandsalamand Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/buck_fpv.jpg" width="22%" alt="buck_fpv Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/drBrigth.jpg" width="22%" alt="drBrigth Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/acress1.webp" width="22%" alt="acress1 Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/yerminator.webp" width="22%" alt="yerminator Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/yprum.webp" width="22%" alt="yprum Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/buck_fpv.webp" width="22%" alt="buck fpv Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/elryantheexplorer.webp" width="22%" alt="elryantheexplorer Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/federico.webp" width="22%" alt="federico Screenshot"/>
-        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/hopekx.png" width="22%" alt="hopekx Screenshot"/>
-    </p>
-</details>
+[//]: # ( <details>)
+
+[//]: # (    <summary>More screenshots</summary>)
+
+[//]: # (    <p align="center">)
+
+[//]: # (    </p>)
+[//]: # (</details>)
 
 ---
 ## Signing
