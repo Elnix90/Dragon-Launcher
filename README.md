@@ -88,7 +88,8 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/elryantheexplorer.webp" width="22%" alt="elryantheexplorer Screenshot"/>
 	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/federico.webp" width="22%" alt="federico Screenshot"/>
 	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/hopekx.png" width="22%" alt="hopekx Screenshot"/>
-
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/sandsalamand.png" width="22%" alt="sandsalamand Screenshot"/>
+	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/yprum.png" width="22%" alt="yprum Screenshot"/>
 
 [//]: # (Should update those below here)
 [//]: # (    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/speedhog.jpg" width="22%" alt="speedhog Screenshot"/>)
@@ -99,9 +100,7 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 
 [//]: # (	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/infamous.webp" width="22%" alt="infamous Screenshot"/>)
 
-[//]: # (	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/sandsalamand.webp" width="22%" alt="sandsalamand Screenshot"/>)
 
-[//]: # (	<img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/yprum.webp" width="22%" alt="yprum Screenshot"/>)
 </p>
 
 [//]: # ( <details>)
