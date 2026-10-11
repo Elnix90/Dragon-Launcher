@@ -18,11 +18,6 @@ import org.elnix.dragonlauncher.base.model.serializables.CacheKey.Companion.comp
  * members of `Workspace.removedAppIds`, and the application key is even shown to the user in the
  * app info sheet. Their layout is `"$packageName#$userId"` and cannot change without a migration,
  * so both constructors deliberately pass **no** kind discriminator.
- *
- * ## In-memory formats
- * Point and icon keys never leave the process. They therefore carry a leading kind discriminator
- * (`point#`, `icon#`), which keeps them apart from each other *and* from the persisted
- * application keys.
  */
 @JvmInline
 @Serializable
@@ -36,12 +31,6 @@ value class CacheKey private constructor(
 		 * of the frozen application keys, so one constant rules both formats.
 		 */
 		private const val SEP = "#"
-
-		/** Kind discriminator for keys that identify a configured point. */
-		private const val KIND_POINT = "point"
-
-		/** Kind discriminator for keys that identify a resolved launcher icon. */
-		private const val KIND_ICON = "icon"
 
 		/**
 		 * Joins [parts] into a single cache key using [SEP].
@@ -74,7 +63,6 @@ value class CacheKey private constructor(
 	) : this(
 		cacheKey =
 			compose(
-				KIND_ICON,
 				subject,
 				appsRevision,
 				customIconHashCode,
@@ -88,7 +76,7 @@ value class CacheKey private constructor(
 	 *
 	 * In-memory only.
 	 */
-	constructor(point: Point) : this(cacheKey = compose(KIND_POINT, point.id, point.action))
+	constructor(point: Point) : this(cacheKey = compose(point.id, point.action))
 
 	/**
 	 * Application constructor, **persisted**.
