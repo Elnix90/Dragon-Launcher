@@ -41,11 +41,11 @@ import org.elnix.dragonlauncher.icons.loaders.GrayscaleMapIconPackInstaller
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import kotlin.math.roundToInt
 
-public class IconPackManager(
+class IconPackManager(
 	private val ctx: Context,
 	private val appDatabase: AppDatabase
 ) {
-	public fun getInstalledIconPacks(): Flow<List<IconPack>> =
+	fun getInstalledIconPacks(): Flow<List<IconPack>> =
 		appDatabase.iconDao().getInstalledIconPacks().map { packs ->
 			packs.map { IconPack(it) }
 		}

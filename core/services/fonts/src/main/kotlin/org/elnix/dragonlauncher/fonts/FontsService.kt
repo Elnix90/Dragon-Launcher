@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 
-public interface FontService {
-	public val fontFamily: Flow<FontFamily>
+interface FontService {
+	val fontFamily: Flow<FontFamily>
 }
 
 internal class FontServiceImpl(

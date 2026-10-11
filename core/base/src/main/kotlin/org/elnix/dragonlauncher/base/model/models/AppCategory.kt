@@ -16,10 +16,10 @@ public enum class AppCategory {
 	Other
 	;
 
-	public fun name(ctx: Context): String = ApplicationInfo.getCategoryTitle(ctx, ordinal)?.toString() ?: "Other"
+	fun name(ctx: Context): String = ApplicationInfo.getCategoryTitle(ctx, ordinal)?.toString() ?: "Other"
 
-	public companion object {
-		public fun mapSystemCategoryToSection(category: Int): AppCategory =
+	companion object {
+		fun mapSystemCategoryToSection(category: Int): AppCategory =
 			when (category) {
 				ApplicationInfo.CATEGORY_GAME -> Games
 				ApplicationInfo.CATEGORY_AUDIO -> Audio
@@ -34,7 +34,7 @@ public enum class AppCategory {
 				else -> Other
 			}
 
-		public fun mapAppToSection(app: ApplicationInfo): AppCategory =
+		fun mapAppToSection(app: ApplicationInfo): AppCategory =
 			mapSystemCategoryToSection(app.category)
 	}
 }

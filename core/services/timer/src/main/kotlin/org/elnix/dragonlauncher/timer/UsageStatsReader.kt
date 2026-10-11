@@ -20,7 +20,7 @@ import java.util.Calendar
  * They must stay synchronous: callers need the result immediately, an async
  * wrapper would always return the default value before the query finishes.
  */
-public class UsageStatsReader(
+class UsageStatsReader(
 	private val ctx: Context,
 	private val permissionManager: PermissionsManager
 ) {
@@ -29,7 +29,7 @@ public class UsageStatsReader(
 	 * or -1 if usage stats permission is not granted.
 	 */
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	public fun getTodayUsageMinutes(packageName: String): Long {
+	fun getTodayUsageMinutes(packageName: String): Long {
 		// hasPermissionBlocking is suspend, so the synchronous
 		// checkPermissionOnce is used here instead.
 		if (!permissionManager.checkPermissionOnce(PermissionGroup.UsageStat)) {
@@ -61,7 +61,7 @@ public class UsageStatsReader(
 	)
 
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	public fun getUsageStats(ctx: Context, packageName: String): AppUsageStats? =
+	fun getUsageStats(ctx: Context, packageName: String): AppUsageStats? =
 		try {
 			val usageStatsManager = ctx.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 			val now = System.currentTimeMillis()
@@ -90,7 +90,7 @@ public class UsageStatsReader(
 		}
 
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	public fun getMostUsedApps(): List<UsageStats> = try {
+	fun getMostUsedApps(): List<UsageStats> = try {
 		val usm = ctx.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 		val calendar = Calendar.getInstance()
 		calendar.add(Calendar.MONTH, -1)
@@ -110,7 +110,7 @@ public class UsageStatsReader(
 	 * Returns an empty string if permission is missing.
 	 */
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	public fun todayText(packageName: String): String =
+	fun todayText(packageName: String): String =
 		getTodayUsageMinutes(packageName)
 			.takeIf { it >= 0 }
 			?.formatDuration()
@@ -122,7 +122,7 @@ public class UsageStatsReader(
 	 * Uses multiple methods for better reliability.
 	 */
 	@RequiresPermission(Manifest.permission.PACKAGE_USAGE_STATS)
-	public fun getCurrentForegroundPackage(trackedPackage: String): String? {
+	fun getCurrentForegroundPackage(trackedPackage: String): String? {
 		// hasPermissionBlocking is suspend, so the synchronous
 		// checkPermissionOnce is used here instead.
 		if (!permissionManager.checkPermissionOnce(PermissionGroup.UsageStat)) {

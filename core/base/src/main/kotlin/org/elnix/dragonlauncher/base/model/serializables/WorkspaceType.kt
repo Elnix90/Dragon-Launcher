@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.i18n.R
 @Serializable
 @SerialName("WorkspaceType")
 public enum class WorkspaceType(
-	@param:DrawableRes public val icon: Int
+	@param:DrawableRes val icon: Int
 ) {
 	All(R.drawable.select_all),
 	NotInNests(R.drawable.nest_icon),

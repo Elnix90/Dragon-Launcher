@@ -14,9 +14,9 @@ import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 
-public interface ColorService {
-	public val extraColors: StateFlow<ExtraColors>
-	public val colors: StateFlow<ColorScheme>
+interface ColorService {
+	val extraColors: StateFlow<ExtraColors>
+	val colors: StateFlow<ColorScheme>
 }
 
 internal class ColorServiceImpl(

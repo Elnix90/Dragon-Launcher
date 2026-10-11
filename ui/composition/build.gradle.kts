@@ -1,13 +1,7 @@
-import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
-
 plugins {
 	alias(libs.plugins.dragon.library)
 	alias(libs.plugins.dragon.compose)
 	alias(libs.plugins.dragon.serialization)
-}
-
-kotlin {
-	explicitApi = ExplicitApiMode.Disabled
 }
 
 android {

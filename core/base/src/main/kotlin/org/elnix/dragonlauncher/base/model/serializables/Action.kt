@@ -58,15 +58,15 @@ public sealed class Action {
 		override val resId: Int = R.string.open_app
 
 		@Transient
-		public var appLabel: MutableState<String?> = mutableStateOf(null)
+		var appLabel: MutableState<String?> = mutableStateOf(null)
 
 		public constructor(application: Application) : this(
 			application.packageName,
 			application.profile
 		)
 
-		public companion object {
-			public val dummy: LaunchApp = LaunchApp(DummyApp())
+		companion object {
+			val dummy: LaunchApp = LaunchApp(DummyApp())
 		}
 	}
 
@@ -82,10 +82,10 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.ic_action_pinned_shortcut
 		override val resId: Int = R.string.pinned_shortcuts
 
-		public companion object {
-			public val dummy: LaunchShortcut = LaunchShortcut("", "", Process.myUserHandle())
+		companion object {
+			val dummy: LaunchShortcut = LaunchShortcut("", "", Process.myUserHandle())
 
-			public fun ShortcutInfo.toAction(): LaunchShortcut = LaunchShortcut(`package`, id, userHandle)
+			fun ShortcutInfo.toAction(): LaunchShortcut = LaunchShortcut(`package`, id, userHandle)
 		}
 	}
 
@@ -98,8 +98,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.web
 		override val resId: Int = R.string.open_url
 
-		public companion object {
-			public val dummy: OpenUrl = OpenUrl("")
+		companion object {
+			val dummy: OpenUrl = OpenUrl("")
 		}
 	}
 
@@ -113,8 +113,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.ic_action_open_file
 		override val resId: Int = R.string.open_file
 
-		public companion object {
-			public val dummy: OpenFile = OpenFile("")
+		companion object {
+			val dummy: OpenFile = OpenFile("")
 		}
 	}
 
@@ -127,8 +127,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.workspaces
 		override val resId: Int = R.string.app_drawer
 
-		public companion object {
-			public val dummy: OpenAppDrawer = OpenAppDrawer("Pick")
+		companion object {
+			val dummy: OpenAppDrawer = OpenAppDrawer("Pick")
 		}
 	}
 
@@ -141,8 +141,8 @@ public sealed class Action {
 		override val drawableId: Int = R.mipmap.dragon_launcher_foreground
 		override val resId: Int = R.string.dragon_launcher_settings
 
-		public companion object {
-			public val dummy: OpenDragonLauncherSettings = OpenDragonLauncherSettings()
+		companion object {
+			val dummy: OpenDragonLauncherSettings = OpenDragonLauncherSettings()
 		}
 	}
 
@@ -155,8 +155,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.nest_icon
 		override val resId: Int = R.string.open_nest
 
-		public companion object {
-			public val dummy: OpenNest = OpenNest(0)
+		companion object {
+			val dummy: OpenNest = OpenNest(0)
 		}
 	}
 
@@ -171,8 +171,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.widgets
 		override val resId: Int = R.string.widgets
 
-		public companion object {
-			public val dummy: OpenWidget = OpenWidget(0, "", "")
+		companion object {
+			val dummy: OpenWidget = OpenWidget(0, "", "")
 		}
 	}
 
@@ -186,8 +186,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.wifi
 		override val resId: Int = R.string.toggle_wifi
 
-		public companion object {
-			public val dummy: ToggleWifi = ToggleWifi()
+		companion object {
+			val dummy: ToggleWifi = ToggleWifi()
 		}
 	}
 
@@ -201,8 +201,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.bluetooth
 		override val resId: Int = R.string.toggle_bluetooth
 
-		public companion object {
-			public val dummy: ToggleBluetooth = ToggleBluetooth()
+		companion object {
+			val dummy: ToggleBluetooth = ToggleBluetooth()
 		}
 	}
 
@@ -216,8 +216,8 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.cellular_icon
 		override val resId: Int = R.string.toggle_mobile_data
 
-		public companion object {
-			public val dummy: ToggleData = ToggleData()
+		companion object {
+			val dummy: ToggleData = ToggleData()
 		}
 	}
 
@@ -231,15 +231,15 @@ public sealed class Action {
 		override val drawableId: Int = R.drawable.adb_icon
 		override val resId: Int = R.string.adb_command
 
-		public companion object {
-			public val dummy: RunAdbCommand = RunAdbCommand("")
+		companion object {
+			val dummy: RunAdbCommand = RunAdbCommand("")
 		}
 	}
 
 	@Immutable
 	@Serializable
 	@SerialName("Lock")
-	public object Lock : Action() {
+	object Lock : Action() {
 		override val drawableId: Int = R.drawable.lock
 		override val resId: Int = R.string.lock
 	}
@@ -247,7 +247,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("ReloadApps")
-	public object ReloadApps : Action() {
+	object ReloadApps : Action() {
 		override val drawableId: Int = R.drawable.reload
 		override val resId: Int = R.string.reload_apps
 	}
@@ -255,7 +255,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("OpenRecentApps")
-	public object OpenRecentApps : Action() {
+	object OpenRecentApps : Action() {
 		override val drawableId: Int = R.drawable.recent
 		override val resId: Int = R.string.recent_apps
 	}
@@ -263,7 +263,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("NotificationShade")
-	public object NotificationShade : Action() {
+	object NotificationShade : Action() {
 		override val drawableId: Int = R.drawable.notification
 		override val resId: Int = R.string.notifications
 	}
@@ -271,7 +271,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("ControlPanel")
-	public object ControlPanel : Action() {
+	object ControlPanel : Action() {
 		override val drawableId: Int = R.drawable.ic_action_grid
 		override val resId: Int = R.string.control_panel
 	}
@@ -279,7 +279,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("GoParentNest")
-	public object GoParentNest : Action() {
+	object GoParentNest : Action() {
 		override val drawableId: Int = R.drawable.fullscreen_exit
 		override val resId: Int = R.string.go_parent_nest
 	}
@@ -295,13 +295,13 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("None")
-	public object None : Action() {
+	object None : Action() {
 		override val drawableId: Int = R.drawable.remove
 		override val resId: Int = R.string.none
 	}
 
-	public companion object {
-		public fun Action?.actionColor(
+	companion object {
+		fun Action?.actionColor(
 			extraColors: ExtraColors,
 			customColor: Color? = null
 		): Color =
@@ -327,7 +327,7 @@ public sealed class Action {
 					None, null -> Color.Unspecified
 				}
 
-		public val allActions: List<Action> =
+		val allActions: List<Action> =
 			listOf(
 				OpenWidget.dummy,
 				LaunchApp.dummy,
@@ -350,8 +350,8 @@ public sealed class Action {
 				KillLauncher
 			)
 
-		public object ActionJson : DragonJson<Action>()
+		object ActionJson : DragonJson<Action>()
 
-		public val actionsNumber: Int = Action::class.sealedSubclasses.size
+		val actionsNumber: Int = Action::class.sealedSubclasses.size
 	}
 }

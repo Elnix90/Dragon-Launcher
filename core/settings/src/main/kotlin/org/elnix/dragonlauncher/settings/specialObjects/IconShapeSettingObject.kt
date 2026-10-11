@@ -25,7 +25,7 @@ public data class IconShapeSettingObject(
 	override fun decode(raw: Any?): IconShape = IconShape.Companion.IconShapeJson.decode(raw, default)
 }
 
-public fun MapSettingsStore.shape(
+fun MapSettingsStore.shape(
 	default: IconShape,
 	title: Int? = null,
 	description: Int? = null,

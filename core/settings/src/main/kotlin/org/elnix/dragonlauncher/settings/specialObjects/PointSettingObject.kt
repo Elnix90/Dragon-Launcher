@@ -25,7 +25,7 @@ public data class PointSettingObject(
 	override fun decode(raw: Any?): Point = Point.Companion.DefaultPointJson.decode(raw, default)
 }
 
-public fun MapSettingsStore.point(
+fun MapSettingsStore.point(
 	default: Point,
 	title: Int? = null,
 	description: Int? = null,

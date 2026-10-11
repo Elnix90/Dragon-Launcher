@@ -27,7 +27,7 @@ public data class ActionSettingObject(
 	override fun decode(raw: Any?): Action = Action.Companion.ActionJson.decode(raw, default)
 }
 
-public fun MapSettingsStore.action(
+fun MapSettingsStore.action(
 	default: Action,
 	title: Int? = null,
 	description: Int? = null,

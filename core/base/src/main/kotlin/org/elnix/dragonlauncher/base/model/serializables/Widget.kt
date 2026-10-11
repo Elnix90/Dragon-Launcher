@@ -23,12 +23,12 @@ public data class Widget(
 	val foreground: Boolean? = true,
 	val shape: IconShape? = null
 ) {
-	public companion object {
+	companion object {
 		public const val defaultGhosted: Boolean = false
 		public const val defaultForeground: Boolean = true
 
 		public const val MIN_SIZE: Float = 1.5f
 
-		public object WidgetsJson : DragonJson<List<Widget>>()
+		object WidgetsJson : DragonJson<List<Widget>>()
 	}
 }

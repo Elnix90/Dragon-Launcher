@@ -6,17 +6,17 @@ import org.elnix.dragonlauncher.ktx.jsonObjectOf
 import org.json.JSONObject
 
 public sealed interface IconPackComponent {
-	public val iconPack: String
+	val iconPack: String
 
-	public fun toDatabaseEntity(): IconEntity
+	fun toDatabaseEntity(): IconEntity
 }
 
 public sealed interface IconPackAppIcon : IconPackComponent {
-	public val packageName: String?
-	public val activityName: String?
-	public val name: String?
-	public val themed: Boolean
-	public val tint: Int?
+	val packageName: String?
+	val activityName: String?
+	val name: String?
+	val themed: Boolean
+	val tint: Int?
 }
 
 public data class IconBack(
@@ -131,7 +131,7 @@ public data class ClockIcon(
 		)
 }
 
-public fun icon(entity: IconEntity): IconPackComponent? {
+fun icon(entity: IconEntity): IconPackComponent? {
 	return when (entity.type) {
 		"iconback" -> {
 			IconBack(
@@ -203,7 +203,7 @@ public fun icon(entity: IconEntity): IconPackComponent? {
 	}
 }
 
-public fun iconPackAppIcon(entity: IconEntity): IconPackAppIcon? {
+fun iconPackAppIcon(entity: IconEntity): IconPackAppIcon? {
 	if (entity.type != "app" && entity.type != "calendar" && entity.type != "clock") return null
 	return icon(entity) as? IconPackAppIcon
 }

@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class BackupViewModel
+class BackupViewModel
 	@Inject
 	constructor(
 		application: Application,
-		public val backupService: BackupService
+		val backupService: BackupService
 	) : AndroidViewModel(application)

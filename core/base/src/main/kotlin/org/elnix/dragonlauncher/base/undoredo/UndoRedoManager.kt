@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.stateIn
  * in lockstep - a single [applyChange], [undo], or [redo] call snapshots
  * and restores all registered stacks simultaneously.
  */
-public class UndoRedoManager(
-	public val stacks: Array<out UndoRedoStack<*>>,
+class UndoRedoManager(
+	val stacks: Array<out UndoRedoStack<*>>,
 	scope: CoroutineScope
 ) {
-	public val canUndo: StateFlow<Boolean> =
+	val canUndo: StateFlow<Boolean> =
 		combine(stacks.map { it.canUndo }) { booleans ->
 			booleans.any { it }
 		}.stateIn(
@@ -25,7 +25,7 @@ public class UndoRedoManager(
 			initialValue = false
 		)
 
-	public val canRedo: StateFlow<Boolean> =
+	val canRedo: StateFlow<Boolean> =
 		combine(stacks.map { it.canRedo }) { booleans ->
 			booleans.any { it }
 		}.stateIn(
@@ -34,7 +34,7 @@ public class UndoRedoManager(
 			initialValue = false
 		)
 
-	public val undoSize: StateFlow<Int> =
+	val undoSize: StateFlow<Int> =
 		stacks
 			.first()
 			.undoStack.flow
@@ -46,7 +46,7 @@ public class UndoRedoManager(
 				initialValue = 0
 			)
 
-	public val redoSize: StateFlow<Int> =
+	val redoSize: StateFlow<Int> =
 		stacks
 			.first()
 			.redoStack.flow
@@ -64,25 +64,25 @@ public class UndoRedoManager(
 		mutator()
 	}
 
-	public fun undo() {
+	fun undo() {
 		stacks.forEach { stack ->
 			stack.undo()
 		}
 	}
 
-	public fun redo() {
+	fun redo() {
 		stacks.forEach { stack ->
 			stack.redo()
 		}
 	}
 
-	public fun undoAll() {
+	fun undoAll() {
 		stacks.forEach { stack ->
 			stack.undoAll()
 		}
 	}
 
-	public fun redoAll() {
+	fun redoAll() {
 		stacks.forEach { stack ->
 			stack.redoAll()
 		}

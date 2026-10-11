@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
  * The user must grant Notification Access in
  * Settings > Apps > Special App Access > Notification Access.
  */
-public class DragonNotificationListenerService : NotificationListenerService() {
+class DragonNotificationListenerService : NotificationListenerService() {
 	override fun onNotificationPosted(sbn: StatusBarNotification?) {
 		refreshNotifications()
 	}
@@ -42,10 +42,10 @@ public class DragonNotificationListenerService : NotificationListenerService() {
 		_notifications.value = packages
 	}
 
-	public companion object {
+	companion object {
 		private val _notifications = MutableStateFlow<List<String>>(emptyList())
 
 		/** Distinct package names of apps with active (non-ongoing) notifications. */
-		public val notifications: StateFlow<List<String>> = _notifications
+		val notifications: StateFlow<List<String>> = _notifications
 	}
 }

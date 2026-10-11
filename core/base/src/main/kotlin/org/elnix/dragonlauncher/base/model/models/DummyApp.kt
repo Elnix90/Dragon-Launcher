@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
  *
  * This is a class, as it has imported some public properties across the app and therefore made some core icons system completely destroyed
  */
-public class DummyApp : Application() {
+class DummyApp : Application() {
 	override val isSystem: Boolean = false
 	override val isLaunchable: Boolean = true
 	override val isSuspended: Boolean = false

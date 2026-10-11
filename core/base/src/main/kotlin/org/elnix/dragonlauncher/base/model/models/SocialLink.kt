@@ -10,31 +10,31 @@ public data class SocialLink(
 	val icon: Int
 )
 
-public fun buyMeACoffee(url: String): SocialLink =
+fun buyMeACoffee(url: String): SocialLink =
 	SocialLink(
 		url = url,
 		icon = R.drawable.buy_me_a_coffee
 	)
 
-public fun github(url: String): SocialLink =
+fun github(url: String): SocialLink =
 	SocialLink(
 		url = url,
 		icon = R.drawable.github_invertocat_white
 	)
 
-public fun gitlab(url: String): SocialLink =
+fun gitlab(url: String): SocialLink =
 	SocialLink(
 		url = url,
 		icon = R.drawable.gitlab_logo_500_rgb
 	)
 
-public fun codeberg(url: String): SocialLink =
+fun codeberg(url: String): SocialLink =
 	SocialLink(
 		url = url,
 		icon = R.drawable.codeberg_logo_icon_blue
 	)
 
-public fun openInNew(url: String): SocialLink =
+fun openInNew(url: String): SocialLink =
 	SocialLink(
 		url = url,
 		icon = R.drawable.open_in_new

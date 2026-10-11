@@ -9,10 +9,10 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class AppLifecycleViewModel
+class AppLifecycleViewModel
 	@Inject
 	constructor(
-		public val lifecycleService: LifecycleService
+		val lifecycleService: LifecycleService
 	) : ViewModel() {
 		init {
 			viewModelInitialized()

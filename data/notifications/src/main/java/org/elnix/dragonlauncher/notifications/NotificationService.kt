@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.NOTIFICATIONS_TAG
 import java.lang.ref.WeakReference
 
 @AndroidEntryPoint
-public class NotificationService : NotificationListenerService() {
+class NotificationService : NotificationListenerService() {
 	@Inject
 	public lateinit var notificationRepository: NotificationRepository
 
@@ -88,9 +88,9 @@ public class NotificationService : NotificationListenerService() {
 		logD(NOTIFICATIONS_TAG) { "Notification listener disconnected" }
 	}
 
-	public companion object {
+	companion object {
 		private var instance: WeakReference<NotificationService>? = null
 
-		public fun getInstance(): NotificationService? = instance?.get()
+		fun getInstance(): NotificationService? = instance?.get()
 	}
 }

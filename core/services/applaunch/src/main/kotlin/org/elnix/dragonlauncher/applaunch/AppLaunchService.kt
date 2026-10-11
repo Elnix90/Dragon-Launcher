@@ -33,19 +33,19 @@ import org.elnix.dragonlauncher.timer.AppTimerService
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
 
-public interface AppLaunchService {
-	public val hasUsageStatsPermission: StateFlow<Boolean>
-	public val pendingAppLaunch: Flow<Application?>
+interface AppLaunchService {
+	val hasUsageStatsPermission: StateFlow<Boolean>
+	val pendingAppLaunch: Flow<Application?>
 
-	public fun requestAppLaunch(launchAction: Action.LaunchApp)
+	fun requestAppLaunch(launchAction: Action.LaunchApp)
 
-	public fun requestAppLaunch(app: Application)
+	fun requestAppLaunch(app: Application)
 
 	public suspend fun startTimer(timeLimitMinutes: Int?, app: Application)
 
-	public fun onAppTimerServiceStarted(duration: Int?, application: Application)
+	fun onAppTimerServiceStarted(duration: Int?, application: Application)
 
-	public fun launchShortcut(action: Action.LaunchShortcut)
+	fun launchShortcut(action: Action.LaunchShortcut)
 }
 
 internal class AppLaunchServiceImpl(

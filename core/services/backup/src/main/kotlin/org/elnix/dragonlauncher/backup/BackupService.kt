@@ -23,10 +23,10 @@ import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import kotlin.time.Duration.Companion.milliseconds
 
-public interface BackupService {
-	public val result: SettingFlow<BackupResult?>
+interface BackupService {
+	val result: SettingFlow<BackupResult?>
 
-	public fun commandBackup()
+	fun commandBackup()
 }
 
 @OptIn(FlowPreview::class)

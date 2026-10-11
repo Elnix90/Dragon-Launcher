@@ -29,7 +29,7 @@ public data class StablePointValues(
 	val badgeBitmap: ImageBitmap?
 )
 
-public object PointStableCache : DragonCache<Int, StablePointValues>(200)
+object PointStableCache : DragonCache<Int, StablePointValues>(200)
 
 public data class DrawScopeText(
 	val offsetTextLayoutResult: TextLayoutResult,

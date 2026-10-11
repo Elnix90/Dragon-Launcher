@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicReference
  * returns to the foreground and publishes the outcome, which is what makes the
  * state update in real time.
  */
-public interface PermissionsManager {
+interface PermissionsManager {
 	/**
 	 * Sends the user to the system screen where [permissionGroup] is granted.
 	 *
@@ -49,7 +49,7 @@ public interface PermissionsManager {
 	 * itself, so this is safe to call from a view model. No result is delivered
 	 * back either, the grant is picked up by the automatic refresh on the way back.
 	 */
-	public fun requestPermission(permissionGroup: PermissionGroup)
+	fun requestPermission(permissionGroup: PermissionGroup)
 
 	/**
 	 * Reads [permissionGroup] straight from the system instead of returning the
@@ -58,7 +58,7 @@ public interface PermissionsManager {
 	 * Use this to gate an action on the current truth, and [hasPermission] to
 	 * observe it.
 	 */
-	public fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean
+	fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean
 
 	/**
 	 * The live granted state of [permissionGroup], republished on every foreground
@@ -67,7 +67,7 @@ public interface PermissionsManager {
 	 * A [StateFlow] so collectors both observe changes and can read
 	 * [StateFlow.value] synchronously when they need the latest known state.
 	 */
-	public fun hasPermission(permissionGroup: PermissionGroup): StateFlow<Boolean>
+	fun hasPermission(permissionGroup: PermissionGroup): StateFlow<Boolean>
 }
 
 internal class PermissionsManagerImpl(
@@ -331,7 +331,7 @@ internal interface PermissionsManagerEntryPoint {
 /**
  * The shared [PermissionsManager], reachable from any context.
  */
-public val Context.permissionsManager: PermissionsManager
+val Context.permissionsManager: PermissionsManager
 	get() = EntryPointAccessors
 		.fromApplication(
 			applicationContext,

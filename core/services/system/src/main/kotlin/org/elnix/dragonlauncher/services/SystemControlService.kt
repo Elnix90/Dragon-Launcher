@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.ACCESSIBILITY_TAG
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
 @SuppressLint("AccessibilityPolicy")
-public class SystemControlService : AccessibilityService() {
+class SystemControlService : AccessibilityService() {
 	private var systemLauncher: String? = null
 	private var autoRaiseEnabled = false
 
@@ -139,7 +139,7 @@ public class SystemControlService : AccessibilityService() {
 		logD(ACCESSIBILITY_TAG) { "Service ready - Gestures & window monitoring enabled" }
 	}
 
-	public fun openNotificationShade() {
+	fun openNotificationShade() {
 		performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
 	}
 
@@ -147,7 +147,7 @@ public class SystemControlService : AccessibilityService() {
 //        performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
 //    }
 
-	public fun openRecentApps() {
+	fun openRecentApps() {
 		performGlobalAction(GLOBAL_ACTION_RECENTS)
 	}
 
@@ -179,8 +179,8 @@ public class SystemControlService : AccessibilityService() {
 		}
 	}
 
-	public companion object {
-		public var instance: SystemControlService? = null
+	companion object {
+		var instance: SystemControlService? = null
 		private const val DEBOUNCE_DELAY_MS = 500L
 		private var lastLaunchTime = 0L
 		private val isSwitching = mutableStateOf(false)

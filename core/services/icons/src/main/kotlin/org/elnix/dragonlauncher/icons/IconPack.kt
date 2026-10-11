@@ -52,7 +52,7 @@ public data class IconPack(
 		themed = themed
 	)
 
-	public fun toDatabaseEntity(): IconPackEntity =
+	fun toDatabaseEntity(): IconPackEntity =
 		IconPackEntity(
 			name = name,
 			scale = scale,

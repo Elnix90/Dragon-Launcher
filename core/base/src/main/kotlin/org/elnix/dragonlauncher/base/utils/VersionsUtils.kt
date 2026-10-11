@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.utils
 import android.content.Context
 import android.os.Build
 
-public object VersionsUtils {
+object VersionsUtils {
 	private var _versionCode: Int? = null
 	private var _versionNumber: String? = null
 	private var _codeName: String? = null
@@ -35,7 +35,7 @@ public object VersionsUtils {
 	/**
 	 * @return the current app version code (e.g. `46`)
 	 */
-	public fun Context.getVersionCode(): Int =
+	fun Context.getVersionCode(): Int =
 		_versionCode ?: run {
 			load()
 			_versionCode!!
@@ -44,7 +44,7 @@ public object VersionsUtils {
 	/**
 	 * @return the current app code name, (e.g. `Labyrinth`)
 	 */
-	public fun Context.getCodeName(): String =
+	fun Context.getCodeName(): String =
 		_codeName ?: run {
 			load()
 			_codeName!!
@@ -53,7 +53,7 @@ public object VersionsUtils {
 	/**
 	 * @return the current app version number, (e.g. `4.1.1`)
 	 */
-	public fun Context.getVersionNumber(): String =
+	fun Context.getVersionNumber(): String =
 		_versionNumber ?: run {
 			load()
 			_versionNumber!!
@@ -62,7 +62,7 @@ public object VersionsUtils {
 	/**
 	 * @return the current build type (e.g. `release`, `debug` or `beta`)
 	 */
-	public fun Context.getBuildType(): String =
+	fun Context.getBuildType(): String =
 		_buildType ?: run {
 			load()
 			_buildType!!
@@ -73,5 +73,5 @@ public object VersionsUtils {
 	 *
 	 * @return [Boolean] whether the build is a `beta` or not
 	 */
-	public fun Context.isBetaVersion(): Boolean = getBuildType() == "beta"
+	fun Context.isBetaVersion(): Boolean = getBuildType() == "beta"
 }

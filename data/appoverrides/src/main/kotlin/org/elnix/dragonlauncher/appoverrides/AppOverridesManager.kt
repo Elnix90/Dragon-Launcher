@@ -21,14 +21,14 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.settings.stores.objects.AppOverridesSettingsStore
 
-public object AppOverridesJson : DragonJson<AppOverrideState>()
+object AppOverridesJson : DragonJson<AppOverrideState>()
 
-public class AppOverridesManager(
+class AppOverridesManager(
 	private val ctx: Context
 ) {
 	private val scope = CoroutineScope(Job() + Dispatchers.IO)
 
-	public val appOverrides: SettingFlow<AppOverrideState> = SettingFlow(defaultAppOverrides)
+	val appOverrides: SettingFlow<AppOverrideState> = SettingFlow(defaultAppOverrides)
 
 	init {
 		scope.launch { loadAppOverrides() }
@@ -69,15 +69,15 @@ public class AppOverridesManager(
 		persistAppOverrides()
 	}
 
-	public fun getAliasesForApp(app: Application): Flow<Set<String>> = appOverrides.flow.map { it[app.key]?.aliases ?: emptySet() }
+	fun getAliasesForApp(app: Application): Flow<Set<String>> = appOverrides.flow.map { it[app.key]?.aliases ?: emptySet() }
 
-	public fun addAliasToApp(alias: String, cacheKey: CacheKey) {
+	fun addAliasToApp(alias: String, cacheKey: CacheKey) {
 		update(cacheKey) { old ->
 			old.copy(aliases = (old.aliases ?: emptySet()).plus(alias))
 		}
 	}
 
-	public fun updateAliasToApp(old: String, new: String, cacheKey: CacheKey) {
+	fun updateAliasToApp(old: String, new: String, cacheKey: CacheKey) {
 		update(cacheKey) { override ->
 			val currentAliases = override.aliases ?: return
 			val newAliases =
@@ -92,26 +92,26 @@ public class AppOverridesManager(
 		}
 	}
 
-	public fun removeAliasFromApp(cacheKey: CacheKey, aliasToRemove: String) {
+	fun removeAliasFromApp(cacheKey: CacheKey, aliasToRemove: String) {
 		update(cacheKey) { old ->
 			val newAliases = old.aliases?.minus(aliasToRemove)?.takeIf { it.isNotEmpty() }
 			old.copy(aliases = newAliases)
 		}
 	}
 
-	public fun resetAliasForApp(cacheKey: CacheKey) {
+	fun resetAliasForApp(cacheKey: CacheKey) {
 		update(cacheKey) { old ->
 			old.copy(aliases = null)
 		}
 	}
 
-	public fun renameApp(cacheKey: CacheKey, customName: String?) {
+	fun renameApp(cacheKey: CacheKey, customName: String?) {
 		update(cacheKey) { old ->
 			old.copy(customName = customName?.takeIf { it.isNotEmpty() })
 		}
 	}
 
-	public fun setAppCustomization(
+	fun setAppCustomization(
 		cacheKey: CacheKey,
 		customIcon: CustomIcon?,
 		iconProperties: CustomIconProperties?
@@ -124,13 +124,13 @@ public class AppOverridesManager(
 		}
 	}
 
-	public fun setCustomCategory(cacheKey: CacheKey, categoryName: String?) {
+	fun setCustomCategory(cacheKey: CacheKey, categoryName: String?) {
 		update(cacheKey) { old ->
 			old.copy(customCategory = categoryName?.takeIf { it.isNotEmpty() })
 		}
 	}
 
-	public fun resetOverrides() {
+	fun resetOverrides() {
 		appOverrides.value = defaultAppOverrides
 
 		scope.launch {

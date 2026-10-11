@@ -2,10 +2,10 @@ package org.elnix.dragonlauncher.base.model.models
 
 import org.elnix.dragonlauncher.i18n.R
 
-public interface ADBCommands {
-	public val commandEnable: String
-	public val commandDisable: String
-	public val resId: Int
+interface ADBCommands {
+	val commandEnable: String
+	val commandDisable: String
+	val resId: Int
 }
 
 public enum class BluetoothADBCommands(

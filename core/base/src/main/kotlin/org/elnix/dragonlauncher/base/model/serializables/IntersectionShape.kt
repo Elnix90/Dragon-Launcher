@@ -49,7 +49,7 @@ public data class IntersectionShape(
 	 */
 	val pointsKeepTheirRelativePosition: Boolean? = null
 ) {
-//    public fun scaledBy(scale: Float, defaultIntersectionShape: IntersectionShape): IntersectionShape = this.copy(scale = this.getScale(defaultIntersectionShape) * scale)
+//    fun scaledBy(scale: Float, defaultIntersectionShape: IntersectionShape): IntersectionShape = this.copy(scale = this.getScale(defaultIntersectionShape) * scale)
 
 	/**
 	 * Returns the size of this [IntersectionShape], computed with the pixel density
@@ -101,14 +101,14 @@ public data class IntersectionShape(
 			?: defaultPointsKeepTheirRelativePosition
 
 	@Suppress("ConstPropertyName")
-	public companion object {
+	companion object {
 		/**
 		 * Used to derive a  size from the scale, the main parameter that defines the size of the shape stays the [scale]
 		 */
 		public const val defaultSize: Float = 300f
-		public val defaultBorderStroke: Dp = 2.dp
+		val defaultBorderStroke: Dp = 2.dp
 
-		public val defaultGlow: CustomGlow =
+		val defaultGlow: CustomGlow =
 			CustomGlow(
 				color = null,
 				radius = 5.dp
@@ -117,14 +117,14 @@ public data class IntersectionShape(
 		public const val defaultScale: Float = 1f
 		public const val defaultRotation: Int = 0
 
-		public val defaultOffset: Offset = Offset.Zero
-		public val defaultShape: IconShape = IconShape.Circle
+		val defaultOffset: Offset = Offset.Zero
+		val defaultShape: IconShape = IconShape.Circle
 		public const val defaultEraseBackground: Boolean = true
 		public const val defaultPointsKeepTheirRelativePosition: Boolean = true
 
-		public val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
+		val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
 
-		public val emptyIntersectionShape: IntersectionShape = IntersectionShape(-1)
+		val emptyIntersectionShape: IntersectionShape = IntersectionShape(-1)
 
 		@Suppress("NOTHING_TO_INLINE")
 		public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
@@ -143,6 +143,6 @@ public data class IntersectionShape(
 		public inline val IntersectionShape.isNotDefault: Boolean
 			get() = !isDefault
 
-		public object DefaultShapeJson : DragonJson<IntersectionShape>()
+		object DefaultShapeJson : DragonJson<IntersectionShape>()
 	}
 }

@@ -25,23 +25,23 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class SecurityViewModel
+class SecurityViewModel
 	@Inject
 	constructor(
 		application: Application,
 		private val securityService: SecurityService
 	) : AndroidViewModel(application) {
-		public val isLocked: SettingFlow<Boolean> = SettingFlow(false)
+		val isLocked: SettingFlow<Boolean> = SettingFlow(false)
 
-		public val signatureMatched: SettingFlow<Boolean> = SettingFlow(true)
-		public val useAnyways: SettingFlow<Boolean> = SettingFlow(false)
+		val signatureMatched: SettingFlow<Boolean> = SettingFlow(true)
+		val useAnyways: SettingFlow<Boolean> = SettingFlow(false)
 
 		init {
 			signatureMatched.value = application.checkSignature(DRAGON_LAUNCHER_SIGNATURE_HASH)
 			viewModelInitialized()
 		}
 
-		public fun removeLock() {
+		fun removeLock() {
 			viewModelScope.launch {
 				PrivateSettingsStore.settingsHash.reset(application)
 				PrivateSettingsStore.lockMethod.reset(application)
@@ -49,7 +49,7 @@ public class SecurityViewModel
 			}
 		}
 
-		public fun setPinLockMethod(pin: String) {
+		fun setPinLockMethod(pin: String) {
 			viewModelScope.launch {
 				val hash = securityService.hash(pin)
 				PrivateSettingsStore.settingsHash.set(application, hash)
@@ -59,7 +59,7 @@ public class SecurityViewModel
 			}
 		}
 
-		public fun setPatternLockMethod(pattern: String) {
+		fun setPatternLockMethod(pattern: String) {
 			viewModelScope.launch {
 				val hash = securityService.hash(pattern)
 				PrivateSettingsStore.settingsHash.set(application, hash)
@@ -69,7 +69,7 @@ public class SecurityViewModel
 			}
 		}
 
-		public fun setDeviceLockScreenMethod() {
+		fun setDeviceLockScreenMethod() {
 			viewModelScope.launch {
 				PrivateSettingsStore.settingsHash.reset(application)
 				PrivateSettingsStore.lockMethod.set(application, Device)
@@ -77,25 +77,25 @@ public class SecurityViewModel
 			}
 		}
 
-		public fun lock() {
+		fun lock() {
 			isLocked.value = true
 		}
 
-		public fun unlock() {
+		fun unlock() {
 			isLocked.value = false
 		}
 
 		public suspend fun verify(pin: String): Boolean = securityService.verify(pin)
 
-		public fun onEnterNewRoute(route: NavKey) {
+		fun onEnterNewRoute(route: NavKey) {
 			if (route !in NavigationRoute.settingsRoutes) {
 				lock()
 			}
 		}
 
-		public fun isDeviceUnlockAvailable(): Boolean = securityService.isDeviceUnlockAvailable(application)
+		fun isDeviceUnlockAvailable(): Boolean = securityService.isDeviceUnlockAvailable(application)
 
-		public fun showDeviceUnlockPrompt(
+		fun showDeviceUnlockPrompt(
 			activity: FragmentActivity,
 			onSuccess: () -> Unit,
 			onError: (String) -> Unit,

@@ -83,28 +83,28 @@ import org.elnix.dragonlauncher.widgets.WidgetsService
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.milliseconds
 
-public interface SwipeService {
-	public val globalDraggingMode: SettingFlow<GlobalDraggingMode>
+interface SwipeService {
+	val globalDraggingMode: SettingFlow<GlobalDraggingMode>
 
-	public val lineObject: SettingFlow<CustomObject>
-	public val angleObject: SettingFlow<CustomObject>
-	public val startObject: SettingFlow<CustomObject>
-	public val endObject: SettingFlow<CustomObject>
+	val lineObject: SettingFlow<CustomObject>
+	val angleObject: SettingFlow<CustomObject>
+	val startObject: SettingFlow<CustomObject>
+	val endObject: SettingFlow<CustomObject>
 
-	public val holdObject: SettingFlow<CustomObject>
-	public val holdMenuEntriesString: SettingFlow<List<NavigationRoute>>
+	val holdObject: SettingFlow<CustomObject>
+	val holdMenuEntriesString: SettingFlow<List<NavigationRoute>>
 
-	public val lineObjectOrder: SettingFlow<List<AngleLineObjects>>
-	public val mainScreenLayerOrder: SettingFlow<List<MainScreenLayer>>
+	val lineObjectOrder: SettingFlow<List<AngleLineObjects>>
+	val mainScreenLayerOrder: SettingFlow<List<MainScreenLayer>>
 
-	public val start: SettingFlow<Offset?>
-	public val current: SettingFlow<Offset?>
-	public val fixedOffset: SettingFlow<Offset?>
+	val start: SettingFlow<Offset?>
+	val current: SettingFlow<Offset?>
+	val fixedOffset: SettingFlow<Offset?>
 
 	/**
 	 * Clears the dragging values after a successful launch
 	 */
-	public fun clearAfterLaunch()
+	fun clearAfterLaunch()
 
 	public suspend fun PointerInputScope.mainDragGesture()
 
@@ -114,65 +114,65 @@ public interface SwipeService {
 	 */
 	public suspend fun PointerInputScope.holdGesture(context: CoroutineContext)
 
-	public fun loadAllFromDisk()
+	fun loadAllFromDisk()
 
-	public fun saveLineObjects()
+	fun saveLineObjects()
 
-	public fun resetLineObjects()
+	fun resetLineObjects()
 
-	public fun saveHoldObject()
+	fun saveHoldObject()
 
-	public fun resetHoldObject()
+	fun resetHoldObject()
 
-	public fun saveAngleLineOrder()
+	fun saveAngleLineOrder()
 
-	public fun resetAngleLineOrder()
+	fun resetAngleLineOrder()
 
-	public fun saveMainScreenLayers()
+	fun saveMainScreenLayers()
 
-	public fun resetMainScreenLayers()
+	fun resetMainScreenLayers()
 
-	public fun setHoldMenuEntries(newEntries: List<NavigationRoute>)
+	fun setHoldMenuEntries(newEntries: List<NavigationRoute>)
 
-	public fun saveHoldMenuEntries()
+	fun saveHoldMenuEntries()
 
-	public fun resetHoldMenuEntries()
+	fun resetHoldMenuEntries()
 
-	public fun saveGlobalDraggingMode()
+	fun saveGlobalDraggingMode()
 
-	public fun resetGlobalDraggingMode()
+	fun resetGlobalDraggingMode()
 
-	public fun setFixedOffset(mode: GlobalDraggingMode.Fixed)
+	fun setFixedOffset(mode: GlobalDraggingMode.Fixed)
 
-	public val holdAnchor: SettingFlow<Offset?>
-	public val holdProgress: State<Float>
-	public val showDropDownMenuSettings: SettingFlow<Boolean>
+	val holdAnchor: SettingFlow<Offset?>
+	val holdProgress: State<Float>
+	val showDropDownMenuSettings: SettingFlow<Boolean>
 
-	public val showFilePicker: SettingFlow<Action.OpenFile?>
+	val showFilePicker: SettingFlow<Action.OpenFile?>
 
-	public fun dismissFilePicker()
+	fun dismissFilePicker()
 
-	public fun onFilePicked(oldAction: Action.OpenFile, newAction: Action.OpenFile)
+	fun onFilePicked(oldAction: Action.OpenFile, newAction: Action.OpenFile)
 
-	public val navigatorChannel: Flow<NavigationRoute>
-	public val showShizukuCommandPrompter: SettingFlow<Action.RunAdbCommand?>
+	val navigatorChannel: Flow<NavigationRoute>
+	val showShizukuCommandPrompter: SettingFlow<Action.RunAdbCommand?>
 
-	public fun dismissCommandPrompt()
+	fun dismissCommandPrompt()
 
-	public fun launchAction(action: Action)
+	fun launchAction(action: Action)
 
-	public fun setting(route: NavigationRoute)
+	fun setting(route: NavigationRoute)
 
-	public fun dismissMenu()
+	fun dismissMenu()
 
-	public val longCLickSettingsDuration: StateFlow<Int>
-	public val holdToActivateSettingsTolerance: StateFlow<Dp>
-	public val holdDelayBeforeStartingLongClickSettings: StateFlow<Int>
-	public val rotationsPerSecond: StateFlow<Float>
-	public val holdRgbLoading: StateFlow<Boolean>
-	public val showToleranceOnMainScreen: StateFlow<Boolean>
-	public val pulsingRadius: StateFlow<Float>
-	public val pulsingDuration: StateFlow<Int>
+	val longCLickSettingsDuration: StateFlow<Int>
+	val holdToActivateSettingsTolerance: StateFlow<Dp>
+	val holdDelayBeforeStartingLongClickSettings: StateFlow<Int>
+	val rotationsPerSecond: StateFlow<Float>
+	val holdRgbLoading: StateFlow<Boolean>
+	val showToleranceOnMainScreen: StateFlow<Boolean>
+	val pulsingRadius: StateFlow<Float>
+	val pulsingDuration: StateFlow<Int>
 }
 
 internal class SwipeServiceImpl(

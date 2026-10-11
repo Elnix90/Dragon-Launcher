@@ -67,7 +67,7 @@ public data class Nest(
 //    override fun toString(): String = "Nest(id = $id, contains ${intersectionShapes.size} shapes)"
 //    override fun toString(): String = "Nest N°$id"
 
-//    public fun scaledBy(scale: Float, defaultNest: Nest, defaultIntersectionShape: IntersectionShape): Nest =
+//    fun scaledBy(scale: Float, defaultNest: Nest, defaultIntersectionShape: IntersectionShape): Nest =
 //        this.copy(intersectionShapes = this.getInterSectionShapes(defaultNest).mapTo(mutableSetOf()) { it.scaledBy(scale, defaultIntersectionShape) })
 
 	/**
@@ -109,8 +109,8 @@ public data class Nest(
 			?: defaultPreviewScaledFactor
 
 	@Suppress("ConstPropertyName")
-	public companion object {
-		public val defaultIntersectionShapes: Set<IntersectionShape> =
+	companion object {
+		val defaultIntersectionShapes: Set<IntersectionShape> =
 			setOf(
 				IntersectionShape(
 					id = 0
@@ -125,12 +125,12 @@ public data class Nest(
 				)
 			)
 
-		public val defaultCancelZone: Dp = 50.dp
+		val defaultCancelZone: Dp = 50.dp
 
 		public const val defaultPreviewScaledFactor: Float = 2f
 
-		public val emptyNest: Nest = Nest()
-		public val defaultNests: Nests = mapOf(
+		val emptyNest: Nest = Nest()
+		val defaultNests: Nests = mapOf(
 			0 to Nest()
 		)
 
@@ -148,9 +148,9 @@ public data class Nest(
 		public inline val Nest.isNotDefault: Boolean
 			get() = !isDefault
 
-		public object NestsJson : DragonJson<Set<Nest>>()
+		object NestsJson : DragonJson<Set<Nest>>()
 
-		public object DefaultNestJson : DragonJson<Nest>()
+		object DefaultNestJson : DragonJson<Nest>()
 	}
 }
 

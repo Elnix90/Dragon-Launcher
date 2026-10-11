@@ -15,24 +15,24 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.ktx.showToast
 import rikka.shizuku.Shizuku
 
-public interface ShizukuService {
-	public val outputValue: SettingFlow<OutputLine?>
+interface ShizukuService {
+	val outputValue: SettingFlow<OutputLine?>
 
-	public val showUnavailable: StateFlow<Boolean>
+	val showUnavailable: StateFlow<Boolean>
 
-	public fun clearOutput()
+	fun clearOutput()
 
-	public fun shizukuPermissionState(): StateFlow<Boolean>
+	fun shizukuPermissionState(): StateFlow<Boolean>
 
-	public fun requestShizukuPermission()
+	fun requestShizukuPermission()
 
-	public fun executeShizukuCommand(command: String)
+	fun executeShizukuCommand(command: String)
 
-	public fun setUnavailable()
+	fun setUnavailable()
 
-	public fun dismissUnavailableDialog()
+	fun dismissUnavailableDialog()
 
-	public fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand)
+	fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand)
 }
 
 internal class ShizukuServiceImpl(

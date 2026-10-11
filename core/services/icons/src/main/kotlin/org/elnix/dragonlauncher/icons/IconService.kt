@@ -76,7 +76,7 @@ private object ShortcutIconCache : DragonCache<CacheKey, LauncherIcon>(Action.ac
 
 private object DrawerIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
-public class IconService internal constructor(
+class IconService internal constructor(
 	private val ctx: Context,
 	private val iconPackManager: IconPackManager,
 	private val iconSettingsRepository: IconSettingsRepository,
@@ -249,38 +249,34 @@ public class IconService internal constructor(
 		}
 	}
 
-//    public fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
+//    fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
 
-	public fun getCustomAppIcon(application: Application): Flow<CustomIcon?> =
+	fun getCustomAppIcon(application: Application): Flow<CustomIcon?> =
 		appOverrideManager.appOverrides.flow.map {
 			it[application.key]?.customIcon
 		}
 
-	public fun getCustomIconProperties(application: Application): Flow<CustomIconProperties?> =
+	fun getCustomIconProperties(application: Application): Flow<CustomIconProperties?> =
 		appOverrideManager.appOverrides.flow.map {
 			it[application.key]?.iconProperties
 		}
 
-//    public fun reloadAppIcon(application: Application) {
+//    fun reloadAppIcon(application: Application) {
 //        scope.launch {
 //            getAppIcon(application, true).first()
 //        }
 //    }
 
-	public fun reloadAllAppIcons() {
-		DrawerIconCache.evictAll()
-	}
-
-	public fun incrementPointCacheSize() {
+	fun incrementPointCacheSize() {
 		PointIconCache.incrementCacheSize()
 	}
 
-	public fun updateMaxCacheSize(newSize: Int) {
+	fun updateMaxCacheSize(newSize: Int) {
 		PointIconCache.updateMaxCacheSize(newSize)
 	}
 
 	@OptIn(ExperimentalCoroutinesApi::class)
-	public fun getAppIcon(
+	fun getAppIcon(
 		application: Application,
 		reload: Boolean = false
 	): Flow<LauncherIcon?> {
@@ -297,11 +293,16 @@ public class IconService internal constructor(
 		}
 	}
 
-	public fun getActionIcon(
+	fun getActionIcon(
 		action: Action,
 		reload: Boolean = false
 	): Flow<LauncherIcon?> {
-		return combine(iconSize, iconProviders, transformations, appRepository.appsRevision) { iconSize, providers, transformations, revision ->
+		return combine(
+			iconSize,
+			iconProviders,
+			transformations,
+			appRepository.appsRevision
+		) { iconSize, providers, transformations, revision ->
 			val size = (iconSize * density.density).value.toInt()
 
 			val cacheKey =
@@ -334,19 +335,19 @@ public class IconService internal constructor(
 		}
 	}
 
-//    public fun reloadPointIcon(point: Point) {
+//    fun reloadPointIcon(point: Point) {
 //        scope.launch {
 //            getPointIcon(point, true).first()
 //        }
 //    }
 
-	public fun reloadAllPointIcons() {
+	fun reloadAllPointIcons() {
 		PointIconCache.evictAll()
 		pointService.recompose()
 	}
 
 	@OptIn(ExperimentalCoroutinesApi::class)
-	public fun getPointIcon(
+	fun getPointIcon(
 		point: Point,
 		reload: Boolean = false
 	): Flow<LauncherIcon?> =
@@ -355,11 +356,15 @@ public class IconService internal constructor(
 			resolveCustomPointIcon(point, size, reload)
 		}
 
-	public fun getShortcutIcon(
+	fun getShortcutIcon(
 		shortcut: Action.LaunchShortcut,
 		reload: Boolean = false
 	): Flow<LauncherIcon?> {
-		return combine(iconProviders, transformations, appRepository.appsRevision) { providers, transformations, revision ->
+		return combine(
+			iconProviders,
+			transformations,
+			appRepository.appsRevision
+		) { providers, transformations, revision ->
 
 			val cacheKey =
 				CacheKey(
@@ -398,7 +403,11 @@ public class IconService internal constructor(
 		customIcon: CustomIcon?,
 		iconProperties: CustomIconProperties?
 	): Flow<LauncherIcon?> {
-		return combine(iconProviders, transformations, appRepository.appsRevision) { providers, transformations, revision ->
+		return combine(
+			iconProviders,
+			transformations,
+			appRepository.appsRevision
+		) { providers, transformations, revision ->
 
 			val cacheKey =
 				CacheKey(
@@ -441,7 +450,12 @@ public class IconService internal constructor(
 		size: Dp,
 		reload: Boolean
 	): Flow<LauncherIcon?> {
-		return combine(iconProviders, transformations, extraColors, appRepository.appsRevision) { providers, transformations, _, revision ->
+		return combine(
+			iconProviders,
+			transformations,
+			extraColors,
+			appRepository.appsRevision
+		) { providers, transformations, _, revision ->
 			val customIcon = point.customIcon
 			val effectiveProperties =
 				(
@@ -508,7 +522,7 @@ public class IconService internal constructor(
 	 * bypassing the store and the override manager. Used by the icon editor to preview
 	 * changes live without touching the database.
 	 */
-	public suspend fun getAppIconOnce(
+	suspend fun getAppIconOnce(
 		application: Application,
 		size: Int,
 		customIcon: CustomIcon?,
@@ -520,7 +534,7 @@ public class IconService internal constructor(
 	 * bypassing the store and the override manager. Used by the icon editor to preview
 	 * changes live without touching the database.
 	 */
-	public suspend fun getPointIconOnce(
+	suspend fun getPointIconOnce(
 		point: Point,
 		size: Int,
 		customIcon: CustomIcon?,
@@ -607,7 +621,7 @@ public class IconService internal constructor(
 		return null
 	}
 
-	public fun requestIconPackListUpdate() {
+	fun requestIconPackListUpdate() {
 		scope.launch {
 			iconPackManager.updateIconPacks().also {
 				if (it) iconPacksUpdated.tryEmit(Unit)
@@ -615,16 +629,16 @@ public class IconService internal constructor(
 		}
 	}
 
-	public fun reinstallAllIconPacks() {
+	fun reinstallAllIconPacks() {
 		scope.launch {
 			iconPackManager.updateIconPacks(forceReinstall = true)
 			iconPacksUpdated.tryEmit(Unit)
 		}
 	}
 
-	public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
+	fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
 
-	public suspend fun getCustomIconSuggestions(
+	suspend fun getCustomIconSuggestions(
 		action: Action,
 		size: Int
 	): List<CustomIconWithPreview> {
@@ -734,7 +748,7 @@ public class IconService internal constructor(
 		return suggestions
 	}
 
-	public suspend fun getUncustomizedDefaultIcon(
+	suspend fun getUncustomizedDefaultIcon(
 		action: Action,
 		size: Int
 	): CustomIconWithPreview? {
@@ -748,7 +762,7 @@ public class IconService internal constructor(
 		)
 	}
 
-	public suspend fun searchCustomIcons(query: String, iconPack: IconPack?): List<CustomIconWithPreview> {
+	suspend fun searchCustomIcons(query: String, iconPack: IconPack?): List<CustomIconWithPreview> {
 		val transformations = this.transformations.first()
 		val tint: Color? = iconSettings.first().iconsTint
 		val tintArgb = tint?.toArgb()
@@ -805,7 +819,7 @@ public class IconService internal constructor(
 	}
 }
 
-public data class CustomIconWithPreview(
+data class CustomIconWithPreview(
 	val preview: LauncherIcon,
 	val customIcon: CustomIcon?
 )

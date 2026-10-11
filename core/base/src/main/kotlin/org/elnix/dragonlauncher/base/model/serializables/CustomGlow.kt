@@ -26,20 +26,20 @@ public data class CustomGlow(
 			"    color = ${color?.toHexWithAlpha}\n" +
 			")"
 
-	public companion object {
+	companion object {
 		@Stable
-		public val Unspecified: CustomGlow = CustomGlow(null, null)
+		val Unspecified: CustomGlow = CustomGlow(null, null)
 	}
 }
 
-public fun CustomGlow?.takeDefaults(default: CustomGlow?, constant: CustomGlow): CustomGlow =
+fun CustomGlow?.takeDefaults(default: CustomGlow?, constant: CustomGlow): CustomGlow =
 	CustomGlow(
 		radius = this?.radius ?: default?.radius ?: constant.radius,
 		color = this?.color ?: default?.color ?: constant.color
 	)
 
-public val CustomGlow?.isUnSpecified: Boolean
+val CustomGlow?.isUnSpecified: Boolean
 	get() = this == null || this == CustomGlow.Unspecified
 
-public val CustomGlow?.isSpecified: Boolean
+val CustomGlow?.isSpecified: Boolean
 	get() = !this.isUnSpecified

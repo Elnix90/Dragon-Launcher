@@ -16,7 +16,7 @@ import kotlin.random.Random
  *
  * @return this color if defined, or `null` if it is `null` or `Color.Unspecified`
  */
-public fun Color?.specifiedOrNull(): Color? =
+fun Color?.specifiedOrNull(): Color? =
 	this.takeIf { it != Color.Unspecified }
 
 /**
@@ -31,7 +31,7 @@ public fun Color?.specifiedOrNull(): Color? =
  * @param multiplier factor applied to the current alpha value
  * @return a copy of this color with the adjusted alpha
  */
-public fun Color.alphaMultiplier(multiplier: Float): Color =
+fun Color.alphaMultiplier(multiplier: Float): Color =
 	copy(alpha = alpha * multiplier)
 
 /**
@@ -44,7 +44,7 @@ public fun Color.alphaMultiplier(multiplier: Float): Color =
  * @param enabled whether the color should remain fully effective
  * @return this color, or a version with its alpha halved when disabled
  */
-public fun Color.semiTransparentIfDisabled(enabled: Boolean): Color =
+fun Color.semiTransparentIfDisabled(enabled: Boolean): Color =
 	if (enabled) this else alphaMultiplier(0.5f)
 
 /** Utility: convert Color -> #AARRGGBB */
@@ -62,7 +62,7 @@ public inline val Color.toHexWithAlpha: String
  * @return A [Color] parsed from the hex string
  * @throws IllegalArgumentException If the string is not a valid hex color format
  */
-public fun String.toColor(): Color {
+fun String.toColor(): Color {
 	val hex = this.trim().removePrefix("#")
 
 	val argb =
@@ -86,7 +86,7 @@ public fun String.toColor(): Color {
 	return Color(argb)
 }
 
-public fun randomColor(
+fun randomColor(
 	minLuminance: Float = 0f,
 	maxLuminance: Float = 1f,
 	alpha: Boolean = false

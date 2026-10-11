@@ -23,12 +23,12 @@ import org.elnix.dragonlauncher.database.entities.SavedSearchableEntity
 public abstract class AppDatabase : RoomDatabase() {
 	public abstract fun iconDao(): IconDao
 
-	public companion object {
+	companion object {
 		@Volatile
 		private var instance: AppDatabase? = null
 
 		@JvmStatic
-		public fun getInstance(ctx: Context): AppDatabase {
+		fun getInstance(ctx: Context): AppDatabase {
 			val instance =
 				instance
 					?: Room

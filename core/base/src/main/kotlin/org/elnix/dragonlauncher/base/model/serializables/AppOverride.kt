@@ -16,7 +16,7 @@ public data class AppOverride(
 	val customCategory: String? = null,
 	val aliases: Set<String>? = null
 ) {
-	public val isNotNullOrEmpty: Boolean
+	val isNotNullOrEmpty: Boolean
 		get() =
 			!customName.isNullOrEmpty() ||
 				customIcon != null ||
@@ -24,8 +24,8 @@ public data class AppOverride(
 				!customCategory.isNullOrEmpty() ||
 				!aliases.isNullOrEmpty()
 
-	public companion object {
-		public val defaultAppOverrides: AppOverrideState = emptyMap()
+	companion object {
+		val defaultAppOverrides: AppOverrideState = emptyMap()
 	}
 }
 

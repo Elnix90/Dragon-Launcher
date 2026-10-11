@@ -3,9 +3,9 @@ package org.elnix.dragonlauncher.base
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-public object Constants {
-	public object PackageNameLists {
-		public val systemLaunchers: List<String> =
+object Constants {
+	object PackageNameLists {
+		val systemLaunchers: List<String> =
 			listOf(
 				// Xiaomi/RedMagic/HyperOS/MIUI
 				"com.miui.home",
@@ -50,7 +50,7 @@ public object Constants {
 		/**
 		 * Known social media package names for auto-detection
 		 */
-		public val knownSocialMediaApps: Set<String> =
+		val knownSocialMediaApps: Set<String> =
 			setOf(
 				// Meta
 				"com.instagram.android",
@@ -92,7 +92,7 @@ public object Constants {
 				"com.tencent.mm"
 			)
 
-		public val knownClockPackages: List<String> =
+		val knownClockPackages: List<String> =
 			listOf(
 				"com.google.android.deskclock",
 				"com.android.deskclock",
@@ -101,20 +101,20 @@ public object Constants {
 			)
 	}
 
-	public object Signatures {
+	object Signatures {
 		public const val DRAGON_LAUNCHER_SIGNATURE_HASH: String = "63068d94e01eeae50efcb2a0c43dfa8ac503a421cdeaf353d45b69ab933c0a06"
 	}
 
-	public object PackageNames {
+	object PackageNames {
 		public const val SHIZUKU_PACKAGE_NAME: String = "moe.shizuku.privileged.api"
 	}
 
-	public object Paths {
+	object Paths {
 		public const val THEMES_DIR: String = "themes"
-		public val imageExts: List<String> = listOf("png", "jpg", "jpeg", "webp")
+		val imageExts: List<String> = listOf("png", "jpg", "jpeg", "webp")
 	}
 
-	public object URLs {
+	object URLs {
 		public const val ELNIX90_GITHUB_PROFILE_LINK: String = "https://github.com/Elnix90"
 		public const val ELNIX90_BUY_ME_A_COFFEE: String = "https://buymeacoffee.com/elnix90"
 		public const val GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher"
@@ -131,11 +131,11 @@ public object Constants {
 		public const val WEBLATE_LINK: String = "https://hosted.weblate.org/engage/dragon-launcher/"
 	}
 
-	public object Settings {
+	object Settings {
 		public const val TOUCH_THRESHOLD_PX: Float = 100f
 		public const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
 		public const val HOVER_POINT_DURATION: Long = 500L
-		public val HOVER_GRADIENT_RADIUS: Dp = 75.dp
+		val HOVER_GRADIENT_RADIUS: Dp = 75.dp
 
 		/**
 		 * Max items allowed in the settings drop down menu, for UX reasons, otherwise it would be a scrolling thing, and I don't like it that much.
@@ -150,12 +150,12 @@ public object Constants {
 		public const val DOUBLE_CLICK_ACTION_DELAY: Int = 500
 	}
 
-	public object Drawer {
+	object Drawer {
 		public const val DRAWER_DRAG_DOWN_THRESHOLD: Int = 50
 		public const val DRAWER_MAX_DRAG_DOWN: Int = 70
 	}
 
-	public object Extensions {
+	object Extensions {
 		//        const val INTERNET_PROXY_EXTENSION_PGK = "org.elnix.dragonlauncher.proxy"
 //        const val AUTO_UPDATE_EXTENSION_PKG = "org.elnix.dragonlauncher.autoupdate"
 		public const val FONT_EXTENSION_PKG: String = "org.elnix.dragonlauncher.fonts"

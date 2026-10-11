@@ -21,30 +21,30 @@ import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.widgetsCellSizeDp
 import kotlin.random.Random
 
-public interface WidgetsService {
-	public val widgets: SettingFlow<List<Widget>>
-	public val dm: DisplayMetrics
-	public val cellSizePx: StateFlow<Float>
+interface WidgetsService {
+	val widgets: SettingFlow<List<Widget>>
+	val dm: DisplayMetrics
+	val cellSizePx: StateFlow<Float>
 
-	public val undoRedo: UndoRedoManager
+	val undoRedo: UndoRedoManager
 
-	public fun save()
+	fun save()
 
-	public fun addWidget(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int)
+	fun addWidget(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int)
 
-	public fun removeWidget(widget: Widget, onDeleteId: (Int?) -> Unit)
+	fun removeWidget(widget: Widget, onDeleteId: (Int?) -> Unit)
 
-	public fun moveWidgetUp(appId: Int)
+	fun moveWidgetUp(appId: Int)
 
-	public fun moveWidgetDown(appId: Int)
+	fun moveWidgetDown(appId: Int)
 
-	public fun centerWidget(appId: Int)
+	fun centerWidget(appId: Int)
 
-	public fun resetWidgetSize(appId: Int, info: AppWidgetProviderInfo? = null)
+	fun resetWidgetSize(appId: Int, info: AppWidgetProviderInfo? = null)
 
-	public fun resetAllWidgets()
+	fun resetAllWidgets()
 
-	public fun updateWidget(
+	fun updateWidget(
 		appId: Int,
 		newWidget: (Widget) -> Widget
 	)

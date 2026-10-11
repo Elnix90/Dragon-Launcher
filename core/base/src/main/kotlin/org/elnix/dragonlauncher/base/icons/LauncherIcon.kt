@@ -36,7 +36,7 @@ public data class StaticLauncherIcon(
 	private var cachedProperties: CustomIconProperties? = null
 	private var renderSemaphore = Semaphore(1)
 
-	public fun getCachedBitmap(size: Int, settings: IconSettings): Bitmap? =
+	fun getCachedBitmap(size: Int, settings: IconSettings): Bitmap? =
 		if (cachedSettings == settings &&
 			cachedSize == size &&
 			cachedProperties == properties
@@ -183,6 +183,6 @@ public data class StaticLauncherIcon(
 	}
 }
 
-public interface DynamicLauncherIcon : LauncherIcon {
+interface DynamicLauncherIcon : LauncherIcon {
 	public suspend fun getIcon(time: Long): StaticLauncherIcon
 }

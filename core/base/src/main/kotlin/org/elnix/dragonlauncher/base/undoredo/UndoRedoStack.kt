@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.base.SettingFlow
  *
  * @see UndoRedoManager for multi-stack management.
  */
-public class UndoRedoStack<T>(
+class UndoRedoStack<T>(
 	private val snapshot: () -> T,
 	private val restore: (T) -> Unit
 ) {
@@ -28,7 +28,7 @@ public class UndoRedoStack<T>(
 	 * Emits `true` whenever there is at least one entry on the undo stack,
 	 * indicating that [undo] or [undoAll] would have effect.
 	 */
-	public val canUndo: Flow<Boolean> = undoStack.flow.map { it.isNotEmpty() }
+	val canUndo: Flow<Boolean> = undoStack.flow.map { it.isNotEmpty() }
 
 	private inline val _canUndo: Boolean get() = undoStack.value.isNotEmpty()
 
@@ -36,7 +36,7 @@ public class UndoRedoStack<T>(
 	 * Emits `true` whenever there is at least one entry on the redo stack,
 	 * indicating that [redo] or [redoAll] would have effect.
 	 */
-	public val canRedo: Flow<Boolean> = redoStack.flow.map { it.isNotEmpty() }
+	val canRedo: Flow<Boolean> = redoStack.flow.map { it.isNotEmpty() }
 
 	private inline val _canRedo: Boolean get() = redoStack.value.isNotEmpty()
 
@@ -47,7 +47,7 @@ public class UndoRedoStack<T>(
 	 * Pushing a new snapshot clears the redo stack, since a new mutation
 	 * diverges from any previously undone path.
 	 */
-	public fun push() {
+	fun push() {
 		undoStack.value += snapshot()
 		redoStack.value = emptyList()
 	}
@@ -59,7 +59,7 @@ public class UndoRedoStack<T>(
 	 * of the undo stack, and removes that entry. Does nothing when the
 	 * undo stack is empty.
 	 */
-	public fun undo() {
+	fun undo() {
 		if (!_canUndo) return
 		redoStack.value += snapshot()
 		restore(undoStack.value.last())
@@ -73,7 +73,7 @@ public class UndoRedoStack<T>(
 	 * of the redo stack, and removes that entry. Does nothing when the
 	 * redo stack is empty.
 	 */
-	public fun redo() {
+	fun redo() {
 		if (!_canRedo) return
 		undoStack.value += snapshot()
 		restore(redoStack.value.last())
@@ -93,7 +93,7 @@ public class UndoRedoStack<T>(
 	 * Then restores the first (oldest) undo entry and clears the undo stack.
 	 * Does nothing when the undo stack is empty.
 	 */
-	public fun undoAll() {
+	fun undoAll() {
 		if (!_canUndo) return
 		val target = undoStack.value.first()
 		redoStack.value = redoStack.value + listOf(snapshot()) + undoStack.value.drop(1).asReversed()
@@ -114,7 +114,7 @@ public class UndoRedoStack<T>(
 	 * Then restores the first (newest) redo entry and clears the redo stack.
 	 * Does nothing when the redo stack is empty.
 	 */
-	public fun redoAll() {
+	fun redoAll() {
 		if (!_canRedo) return
 		val target = redoStack.value.first()
 		undoStack.value = undoStack.value + listOf(snapshot()) + redoStack.value.drop(1).asReversed()

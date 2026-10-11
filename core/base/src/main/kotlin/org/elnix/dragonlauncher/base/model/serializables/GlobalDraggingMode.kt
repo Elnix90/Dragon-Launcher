@@ -52,12 +52,12 @@ public sealed class GlobalDraggingMode {
 		override val description: Int = R.string.dragging_mode_fixed_desc
 	}
 
-	public companion object {
-		public val default: GlobalDraggingMode by lazy {
+	companion object {
+		val default: GlobalDraggingMode by lazy {
 			Normal
 		}
 
-		public val DraggingModeList: List<GlobalDraggingMode> by lazy {
+		val DraggingModeList: List<GlobalDraggingMode> by lazy {
 			listOf(
 				Normal,
 				Fixed()
@@ -67,11 +67,11 @@ public sealed class GlobalDraggingMode {
 		/**
 		 * Returns the same dragging mode but
 		 */
-		public fun GlobalDraggingMode.toDummy(): GlobalDraggingMode = when (this) {
+		fun GlobalDraggingMode.toDummy(): GlobalDraggingMode = when (this) {
 			is Fixed -> Fixed(0f, 0f)
 			Normal -> Normal
 		}
 
-		public object GlobalDraggingModeJson : DragonJson<GlobalDraggingMode>()
+		object GlobalDraggingModeJson : DragonJson<GlobalDraggingMode>()
 	}
 }

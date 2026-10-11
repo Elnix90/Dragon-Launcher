@@ -268,7 +268,7 @@ public data class Point(
 		return this.pos ?: this.offset
 	}
 
-//    public fun getPos(compute: () -> Offset, isDefaultEditing: Boolean): Offset {
+//    fun getPos(compute: () -> Offset, isDefaultEditing: Boolean): Offset {
 //        if (this.collidingShapeId == null) return this.offset
 //        return this.pos ?: run {
 //            val pos = compute()
@@ -367,8 +367,8 @@ public data class Point(
 
 	override fun toString(): String = "Point(id = ${this.id}, offset = ${this.offset}, shapeId = ${this.shapeId})"
 
-	public companion object {
-		public fun dummySwipePoint(
+	companion object {
+		fun dummySwipePoint(
 			action: Action? = null,
 			id: Int? = null
 		): Point =
@@ -379,30 +379,30 @@ public data class Point(
 				id = id ?: -1
 			)
 
-		public val defaultBorderStroke: Dp = 1.dp
-		public val defaultBorderStrokeSelected: Dp = 3.dp
+		val defaultBorderStroke: Dp = 1.dp
+		val defaultBorderStrokeSelected: Dp = 3.dp
 		public const val defaultOpacity: Float = 1f
-		public val defaultInnerPadding: Dp = 5.dp
-		public val defaultSize: Dp = 22.dp
-		public val defaultBackgroundColor: Color = Color.Transparent
-		public val defaultBackgroundColorSelected: Color = Color.Transparent
-		public val defaultBorderShape: IconShape = IconShape.Circle
-		public val defaultBorderShapeSelected: IconShape = IconShape.Circle
+		val defaultInnerPadding: Dp = 5.dp
+		val defaultSize: Dp = 22.dp
+		val defaultBackgroundColor: Color = Color.Transparent
+		val defaultBackgroundColorSelected: Color = Color.Transparent
+		val defaultBorderShape: IconShape = IconShape.Circle
+		val defaultBorderShapeSelected: IconShape = IconShape.Circle
 		public const val defaultLiveNestPreviewDelayMs: Int = 500
 		public const val defaultLiveNestScale: Float = 0.65f
-		public val defaultLiveNestGraceDistance: Dp = 50.dp
+		val defaultLiveNestGraceDistance: Dp = 50.dp
 		public const val defaultLiveNestSnapsToFingerPosition: Boolean = true
 		public const val defaultHoldAndRunDelayMs: Int = 500
-		public val defaultHapticFeedback: CustomHapticFeedback? = null
+		val defaultHapticFeedback: CustomHapticFeedback? = null
 		public const val defaultCycleActionsLoopDelayMs: Int = 500
 		public const val defaultCycleActionsLoop: Boolean = true
 		public const val defaultFastActivation: Boolean = false
 		public const val defaultLiveNestMainNestOpacityPercent: Int = 50
-		public val defaultGlow: CustomGlow = CustomGlow(radius = 5.dp)
-		public val defaultGlowSelected: CustomGlow = CustomGlow(radius = 10.dp)
+		val defaultGlow: CustomGlow = CustomGlow(radius = 5.dp)
+		val defaultGlowSelected: CustomGlow = CustomGlow(radius = 10.dp)
 
-		public val emptyPoint: Point = dummySwipePoint()
-		public val defaultPoints: Points = emptyMap()
+		val emptyPoint: Point = dummySwipePoint()
+		val defaultPoints: Points = emptyMap()
 
 		public inline val Point.isDefault: Boolean
 			get() =
@@ -440,9 +440,9 @@ public data class Point(
 		public inline val Point.isNotDefault: Boolean
 			get() = !isDefault
 
-		public object PointsJson : DragonJson<Set<Point>>()
+		object PointsJson : DragonJson<Set<Point>>()
 
-		public object DefaultPointJson : DragonJson<Point>()
+		object DefaultPointJson : DragonJson<Point>()
 	}
 }
 

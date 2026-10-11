@@ -46,7 +46,7 @@ public sealed class MainScreenLayer {
 		override val enabled: Boolean = true,
 		val lineBeforeNests: Boolean = defaultLineBeforeNests
 	) : MainScreenLayer() {
-		public companion object {
+		companion object {
 			public const val defaultLineBeforeNests: Boolean = false
 		}
 	}
@@ -70,14 +70,14 @@ public sealed class MainScreenLayer {
 		@IntRange(from = 0, to = 5000)
 		val showAfterMs: Int = defaultShowAfterMs
 	) : MainScreenLayer() {
-		public companion object {
+		companion object {
 			public const val defaultDimAmount: Float = .5f
 			public const val defaultShowAfterMs: Int = 1000
 		}
 	}
 
-	public companion object {
-		public val defaultMainScreenLayers: List<MainScreenLayer> =
+	companion object {
+		val defaultMainScreenLayers: List<MainScreenLayer> =
 			listOf(
 				ChargingAnimation(),
 				StatusBar(),
@@ -87,7 +87,7 @@ public sealed class MainScreenLayer {
 				HoldToActivate()
 			)
 
-		public val MainScreenLayer.label: String
+		val MainScreenLayer.label: String
 			@Composable
 			get() =
 				stringResource(
@@ -101,7 +101,7 @@ public sealed class MainScreenLayer {
 					}
 				)
 
-		public fun MainScreenLayer.copyWithEnabled(enabled: Boolean): MainScreenLayer =
+		fun MainScreenLayer.copyWithEnabled(enabled: Boolean): MainScreenLayer =
 			when (this) {
 				is ChargingAnimation -> copy(enabled = enabled)
 				is DragOverlay -> copy(enabled = enabled)
@@ -111,6 +111,6 @@ public sealed class MainScreenLayer {
 				is CustomDim -> copy(enabled = enabled)
 			}
 
-		public object MainScreenLayerJson : DragonJson<List<MainScreenLayer>>()
+		object MainScreenLayerJson : DragonJson<List<MainScreenLayer>>()
 	}
 }

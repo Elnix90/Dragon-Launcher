@@ -115,7 +115,7 @@ public data class SystemApp(
 	}
 }
 
-public fun buildFakeComponentName(
+fun buildFakeComponentName(
 	packageName: String
 ): ComponentName {
 	// System apps don't have a launcher activity, create a synthetic one

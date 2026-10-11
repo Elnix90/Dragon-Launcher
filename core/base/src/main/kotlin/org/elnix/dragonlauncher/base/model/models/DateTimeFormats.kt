@@ -5,15 +5,15 @@ import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 
-public object DateTimeFormats {
-	public val dateShort: DateTimeFormat<LocalDate> =
+object DateTimeFormats {
+	val dateShort: DateTimeFormat<LocalDate> =
 		LocalDate.Format {
 			monthName(MonthNames.ENGLISH_ABBREVIATED)
 			chars(" ")
 			day()
 		}
 
-	public val dateMedium: DateTimeFormat<LocalDate> =
+	val dateMedium: DateTimeFormat<LocalDate> =
 		LocalDate.Format {
 			monthName(MonthNames.ENGLISH_ABBREVIATED)
 			chars(" ")
@@ -22,7 +22,7 @@ public object DateTimeFormats {
 			year()
 		}
 
-	public val dateLong: DateTimeFormat<LocalDate> =
+	val dateLong: DateTimeFormat<LocalDate> =
 		LocalDate.Format {
 			dayOfWeek(DayOfWeekNames.ENGLISH_FULL)
 			chars(", ")
@@ -33,7 +33,7 @@ public object DateTimeFormats {
 			year()
 		}
 
-	public val dateIso: DateTimeFormat<LocalDate> =
+	val dateIso: DateTimeFormat<LocalDate> =
 		LocalDate.Format {
 			year()
 			chars("-")
@@ -42,7 +42,7 @@ public object DateTimeFormats {
 			day()
 		}
 
-	public val dateUs: DateTimeFormat<LocalDate> =
+	val dateUs: DateTimeFormat<LocalDate> =
 		LocalDate.Format {
 			monthNumber()
 			chars("/")
@@ -51,7 +51,7 @@ public object DateTimeFormats {
 			year()
 		}
 
-	public val dateEu: DateTimeFormat<LocalDate> =
+	val dateEu: DateTimeFormat<LocalDate> =
 		LocalDate.Format {
 			day()
 			chars("/")
@@ -60,7 +60,7 @@ public object DateTimeFormats {
 			year()
 		}
 
-	public val time12Hour: DateTimeFormat<LocalTime> =
+	val time12Hour: DateTimeFormat<LocalTime> =
 		LocalTime.Format {
 			amPmHour()
 			chars(":")
@@ -69,14 +69,14 @@ public object DateTimeFormats {
 			amPmMarker("AM", "PM")
 		}
 
-	public val time24Hour: DateTimeFormat<LocalTime> =
+	val time24Hour: DateTimeFormat<LocalTime> =
 		LocalTime.Format {
 			hour()
 			chars(":")
 			minute()
 		}
 
-	public val time12HourSeconds: DateTimeFormat<LocalTime> =
+	val time12HourSeconds: DateTimeFormat<LocalTime> =
 		LocalTime.Format {
 			amPmHour()
 			chars(":")
@@ -87,7 +87,7 @@ public object DateTimeFormats {
 			amPmMarker("AM", "PM")
 		}
 
-	public val time24HourSeconds: DateTimeFormat<LocalTime> =
+	val time24HourSeconds: DateTimeFormat<LocalTime> =
 		LocalTime.Format {
 			hour()
 			chars(":")
@@ -96,7 +96,7 @@ public object DateTimeFormats {
 			second()
 		}
 
-	public val time12HourShort: DateTimeFormat<LocalTime> =
+	val time12HourShort: DateTimeFormat<LocalTime> =
 		LocalTime.Format {
 			amPmHour()
 			chars(":")
@@ -105,7 +105,7 @@ public object DateTimeFormats {
 			amPmMarker("AM", "PM")
 		}
 
-	public val time24HourShort: DateTimeFormat<LocalTime> =
+	val time24HourShort: DateTimeFormat<LocalTime> =
 		LocalTime.Format {
 			hour()
 			chars(":")
@@ -114,8 +114,8 @@ public object DateTimeFormats {
 }
 
 public enum class DateFormat(
-	public val pattern: String,
-	public val format: DateTimeFormat<LocalDate>
+	val pattern: String,
+	val format: DateTimeFormat<LocalDate>
 ) {
 	Short("MMM dd", DateTimeFormats.dateShort),
 	Medium("MMM dd, yyyy", DateTimeFormats.dateMedium),
@@ -127,8 +127,8 @@ public enum class DateFormat(
 }
 
 public enum class TimeFormat(
-	public val pattern: String,
-	public val format: DateTimeFormat<LocalTime>
+	val pattern: String,
+	val format: DateTimeFormat<LocalTime>
 ) {
 	H12("hh:mm a", DateTimeFormats.time12Hour),
 	H24("HH:mm", DateTimeFormats.time24Hour),

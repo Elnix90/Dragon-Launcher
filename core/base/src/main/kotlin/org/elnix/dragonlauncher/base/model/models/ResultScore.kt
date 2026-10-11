@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.models
 import com.aallam.similarity.JaroWinkler
 
 @JvmInline
-public value class ResultScore private constructor(
+value class ResultScore private constructor(
 	private val packed: Long
 ) : Comparable<ResultScore> {
 	public constructor(
@@ -21,40 +21,40 @@ public value class ResultScore private constructor(
 	/**
 	 * Whether the query is a literal prefix of the result.
 	 */
-	public val isPrefix: Boolean
+	val isPrefix: Boolean
 		get() = (packed and (1L shl 32)) != 0L
 
 	/**
 	 * Whether the query is a substring of the result.
 	 */
-	public val isSubstring: Boolean
+	val isSubstring: Boolean
 		get() = (packed and (1L shl 33)) != 0L
 
 	/**
 	 * Whether the query was matched against a primary field.
 	 */
-	public val isPrimary: Boolean
+	val isPrimary: Boolean
 		get() = (packed and (1L shl 34)) != 0L
 
 	/**
 	 * The Jaro-Winkler similarity between the query and the result.
 	 */
-	public val similarity: Float
+	val similarity: Float
 		get() = Float.fromBits((packed and 0xffffffffL).toInt())
 
 	/**
 	 * A total score for the result, combining the similarity with additional factors.
 	 * The score is normalized to be between 0 and 1.
 	 */
-	public val score: Float
+	val score: Float
 		get() =
 			(similarity + (if (isPrefix) 0.2f else 0f) + (if (isSubstring) 0.8f else 0f)).coerceIn(0f, 1f) *
 				(if (isPrimary) 1f else 0.8f)
 
 	override fun compareTo(other: ResultScore): Int = score.compareTo(other.score)
 
-	public companion object {
-		public fun from(
+	companion object {
+		fun from(
 			query: String,
 			primaryFields: Iterable<String> = emptyList(),
 			secondaryFields: Iterable<String> = emptyList()
@@ -84,7 +84,7 @@ public value class ResultScore private constructor(
 			return maxOf(bestPrimaryScore, bestSecondaryScore)
 		}
 
-		public val Zero: ResultScore =
+		val Zero: ResultScore =
 			ResultScore(
 				isPrefix = false,
 				isSubstring = false,
@@ -92,7 +92,7 @@ public value class ResultScore private constructor(
 				similarity = 0f
 			)
 
-		public val Unspecified: ResultScore =
+		val Unspecified: ResultScore =
 			ResultScore(
 				isPrefix = false,
 				isSubstring = false,

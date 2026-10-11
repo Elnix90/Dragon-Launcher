@@ -69,17 +69,16 @@ import javax.inject.Inject
  */
 @Stable
 @HiltViewModel
-public class PointsViewModel
+class PointsViewModel
 	@Inject
 	constructor(
 		application: Application,
-		private val colorService: ColorService,
 		private val iconService: IconService,
 		private val badgeService: BadgeService,
 		private val appRepository: AppRepository,
 		private val iconSettingsRepository: IconSettingsRepository,
-		public val pointsService: PointsService,
-		public val nestsNavigationService: NestsNavigationService
+		val pointsService: PointsService,
+		val nestsNavigationService: NestsNavigationService
 	) : AndroidViewModel(application) {
 		private val density: Density = Density(application.resources.displayMetrics.density)
 

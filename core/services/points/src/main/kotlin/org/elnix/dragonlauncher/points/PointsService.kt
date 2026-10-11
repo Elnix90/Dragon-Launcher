@@ -55,106 +55,106 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.cos
 import kotlin.math.sin
 
-public interface PointsService {
-	public val points: StateFlow<Points>
-	public val nests: StateFlow<Nests>
+interface PointsService {
+	val points: StateFlow<Points>
+	val nests: StateFlow<Nests>
 
-	public val defaultPoint: SettingFlow<Point>
-	public val defaultNest: SettingFlow<Nest>
-	public val defaultIntersectionShape: SettingFlow<IntersectionShape>
+	val defaultPoint: SettingFlow<Point>
+	val defaultNest: SettingFlow<Nest>
+	val defaultIntersectionShape: SettingFlow<IntersectionShape>
 
-	public val recomposeTrigger: SettingFlow<Int>
+	val recomposeTrigger: SettingFlow<Int>
 
-	public fun recompose()
+	fun recompose()
 
 	/**
 	 * Selected points ids, a [List] of all selected points, by order of selection.
 	 *
 	 * A *File* according to M.Morlong, thanks!
 	 */
-	public val selectedPointsIds: SettingFlow<List<Int>>
+	val selectedPointsIds: SettingFlow<List<Int>>
 
-	public val undoRedo: UndoRedoManager
+	val undoRedo: UndoRedoManager
 
-	public fun addPoint(select: Boolean = true, newPoint: (Int) -> Point): Int
+	fun addPoint(select: Boolean = true, newPoint: (Int) -> Point): Int
 
-	public fun removePoint(id: Int)
+	fun removePoint(id: Int)
 
-	public fun editPoint(
+	fun editPoint(
 		id: Int,
 		editedPoint: (Point) -> Point
 	)
 
-	public fun addNest(nestId: Int? = null): Int
+	fun addNest(nestId: Int? = null): Int
 
-	public fun duplicateNest(nestId: Int): Int
+	fun duplicateNest(nestId: Int): Int
 
-	public fun removeNest(id: Int, deleteAllRelatedPoints: Boolean)
+	fun removeNest(id: Int, deleteAllRelatedPoints: Boolean)
 
-	public fun editNest(
+	fun editNest(
 		id: Int,
 		editedNest: (Nest) -> Nest
 	)
 
-	public fun resetNest(id: Int)
+	fun resetNest(id: Int)
 
-	public fun movePointsInShapeBy(
+	fun movePointsInShapeBy(
 		netOffsetChange: Offset,
 		nestId: Int,
 		shapeId: Int?
 	)
 
-	public fun updateNest(
+	fun updateNest(
 		nestId: Int,
 		editedNest: (Nest) -> Nest
 	)
 
-	public fun editDefaultPoint(newDefaultPoint: Point)
+	fun editDefaultPoint(newDefaultPoint: Point)
 
-	public fun editDefaultNest(newDefaultNest: Nest)
+	fun editDefaultNest(newDefaultNest: Nest)
 
-	public fun editDefaultShape(newDefaultShape: IntersectionShape)
+	fun editDefaultShape(newDefaultShape: IntersectionShape)
 
-	public fun findPointById(id: Int): Point?
+	fun findPointById(id: Int): Point?
 
-	public fun findNestById(id: Int): Nest
+	fun findNestById(id: Int): Nest
 
 	/**
 	 * Select the given [Point] by it id
 	 * If `null` is provided, the [selectedPointsIds] is cleared
 	 */
-	public fun select(id: Int)
+	fun select(id: Int)
 
 	/**
 	 * Select ony one, means that either all selected points are removed from the list and only the one provided is added, or if it is null, they are all removed
 	 */
-	public fun selectOnyOne(id: Int?)
+	fun selectOnyOne(id: Int?)
 
 	/**
 	 * Pretty much self-explanatory ig
 	 */
-	public fun deselect(id: Int)
+	fun deselect(id: Int)
 
-	public fun selectAll(nestId: Int)
+	fun selectAll(nestId: Int)
 
-	public fun deselectAll()
+	fun deselectAll()
 
-	public fun invertSelection(nestId: Int)
+	fun invertSelection(nestId: Int)
 
 	/**
 	 * Persist the values: [points], [nests] and [defaultPoint] into datastore
 	 * Do not call this too repetitively to prevent I/O overhead
 	 */
-	public fun persist()
+	fun persist()
 
 	/** Reload all data from DataStore. */
-	public fun load()
+	fun load()
 
-	public val allDecodeSuccessful: SettingFlow<List<DecodeError>?>
-	public val writeToStorageAnyway: SettingFlow<Boolean>
+	val allDecodeSuccessful: SettingFlow<List<DecodeError>?>
+	val writeToStorageAnyway: SettingFlow<Boolean>
 
 	/** Set the given [points], [nests] and [defaultPoint] if not null. */
-	public fun set(
+	fun set(
 		newPoints: Points? = null,
 		newNests: Nests? = null,
 		newDefaultPoint: Point? = null,
@@ -168,7 +168,7 @@ public interface PointsService {
 	 * Must at least reset one of these
 	 * @throws [IllegalArgumentException] if all 3 parameters are false
 	 */
-	public fun reset(
+	fun reset(
 		resetPoints: Boolean,
 		resetNests: Boolean,
 		resetDefaultPoint: Boolean,
@@ -176,7 +176,7 @@ public interface PointsService {
 		resetDefaultShape: Boolean
 	)
 
-	public fun resolveLiveNestHit(
+	fun resolveLiveNestHit(
 		normalizedPos: Offset,
 		nestId: Int,
 		liveNestScale: Float,
@@ -189,21 +189,21 @@ public interface PointsService {
 	 *
 	 * @return [Offset] the relative position of the point in ths nest
 	 */
-	public fun computePointOffset(point: Point): Offset
+	fun computePointOffset(point: Point): Offset
 
-	public fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset
+	fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset
 
-	public fun getPointsForNest(
+	fun getPointsForNest(
 		nestId: Int,
 		skipSelected: Boolean
 	): Points
 
-	public fun getSelectedShapeIds(
+	fun getSelectedShapeIds(
 		nestId: Int,
 		lockedPoint: Point?
 	): Set<Int>
 
-	public fun getSelectedPoints(lockedPoint: Point?): List<Int>
+	fun getSelectedPoints(lockedPoint: Point?): List<Int>
 
 	/**
 	 * Compute the closest point relative to the [normalizedPos] given their [Point.offset] and the eventual [shape][Point.shapeId] they are tied to
@@ -212,7 +212,7 @@ public interface PointsService {
 	 *  - [points] is empty -> `null`
 	 *  - [points] contains a single element -> the single point
 	 */
-	public fun computeClosest(
+	fun computeClosest(
 		normalizedPos: Offset,
 		nestId: Int
 	): Point?
@@ -220,13 +220,13 @@ public interface PointsService {
 	/**
 	 * Same as [computeClosest] but ignores the given [ignoredPointId].
 	 */
-	public fun computeClosestExcept(
+	fun computeClosestExcept(
 		ignoredPointId: Array<Int>?,
 		normalizedPos: Offset,
 		nestId: Int
 	): Point?
 
-	public fun autoSeparate(
+	fun autoSeparate(
 		nestId: Int,
 		draggedPointId: Int
 	): Boolean
@@ -1100,7 +1100,7 @@ private fun circleBoundary(
  *  - Thanks to `@g2tx` (discord) who placed the first bricks of this huge improvement
  *  - Thanks to ------ who created a monster function
  */
-public fun polygonBoundary(
+fun polygonBoundary(
 	numSides: Int,
 	radius: Float,
 	angleRad: Float,

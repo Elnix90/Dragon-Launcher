@@ -11,7 +11,7 @@ public enum class DrawerAlign(
 	Top(R.string.top, R.drawable.keyboard_arrow_up),
 	Bottom(R.string.bottom, R.drawable.arrow_down);
 
-	public fun toAlignment(): Alignment.Vertical = when (this) {
+	fun toAlignment(): Alignment.Vertical = when (this) {
 		Top -> Alignment.Top
 		Bottom -> Alignment.Bottom
 	}

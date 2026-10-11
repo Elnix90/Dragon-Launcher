@@ -7,9 +7,9 @@ public abstract class DragonCache<K, V>(
 	initialMaxSize: Int
 ) {
 	private var maxSize = initialMaxSize
-	public val cacheUUID: UUID = UUID.randomUUID()
+	val cacheUUID: UUID = UUID.randomUUID()
 
-	public val cacheTrigger: SettingFlow<Int> = SettingFlow(0)
+	val cacheTrigger: SettingFlow<Int> = SettingFlow(0)
 
 	/**
 	 * Updates the maximum number of cached entries.
@@ -17,11 +17,11 @@ public abstract class DragonCache<K, V>(
 	 *
 	 * @param newSize The new maximum entry count.
 	 */
-	public fun updateMaxCacheSize(newSize: Int) {
+	fun updateMaxCacheSize(newSize: Int) {
 		maxSize = newSize
 	}
 
-	public fun incrementCacheSize(increment: Int = 1) {
+	fun incrementCacheSize(increment: Int = 1) {
 		maxSize += increment
 	}
 
@@ -48,7 +48,7 @@ public abstract class DragonCache<K, V>(
 	 * @param compute the function block used to compute the object, it returns [androidx.compose.ui.graphics.ImageBitmap]
 	 * @return [androidx.compose.ui.graphics.ImageBitmap] the actual object, not null
 	 */
-	public fun getOrCompute(
+	fun getOrCompute(
 		key: K,
 		compute: () -> V
 	): V =
@@ -58,23 +58,23 @@ public abstract class DragonCache<K, V>(
 		}
 
 	/** Compute simply a new object, don't return it */
-	public fun compute(key: K, compute: () -> V) {
+	fun compute(key: K, compute: () -> V) {
 		cacheTrigger.update { it + 1 }
 		items[key] = compute()
 	}
 
-	public fun getRandom(): K? =
+	fun getRandom(): K? =
 		if (items.isNotEmpty()) {
 			items.keys.random()
 		} else {
 			null
 		}
 
-	public fun evict(key: K) {
+	fun evict(key: K) {
 		items.remove(key)
 	}
 
-	public fun evictAll() {
+	fun evictAll() {
 		items.clear()
 	}
 
@@ -82,5 +82,5 @@ public abstract class DragonCache<K, V>(
 	 * The current number of entries held in the cache.
 	 * Useful for debugging or logging cache pressure.
 	 */
-	public val size: Int get() = items.size
+	val size: Int get() = items.size
 }

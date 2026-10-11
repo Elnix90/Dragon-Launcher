@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.database.entities.IconEntity
 import org.elnix.dragonlauncher.database.entities.IconPackEntity
 
 @Dao
-public interface IconDao {
+interface IconDao {
 	@Insert
 	public suspend fun insertAll(icons: List<IconEntity>)
 
@@ -38,19 +38,19 @@ public interface IconDao {
 	): List<IconEntity>
 
 	@Query("DELETE FROM Icons WHERE iconPack = :iconPack")
-	public fun deleteIcons(iconPack: String)
+	fun deleteIcons(iconPack: String)
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	public fun installIconPack(iconPack: IconPackEntity)
+	fun installIconPack(iconPack: IconPackEntity)
 
 	@Query("SELECT * FROM IconPack ORDER BY name ASC")
-	public fun getInstalledIconPacks(): Flow<List<IconPackEntity>>
+	fun getInstalledIconPacks(): Flow<List<IconPackEntity>>
 
 	@Query("SELECT * FROM IconPack WHERE packageName = :packageName LIMIT 1")
 	public suspend fun getIconPack(packageName: String): IconPackEntity?
 
 	@Delete
-	public fun deleteIconPack(iconPack: IconPackEntity)
+	fun deleteIconPack(iconPack: IconPackEntity)
 
 	@Query("SELECT drawable FROM Icons WHERE iconPack = :pack AND type = 'iconback'")
 	public suspend fun getIconBacks(pack: String): List<String>

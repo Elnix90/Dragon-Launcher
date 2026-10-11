@@ -27,8 +27,8 @@ import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
-public interface AppShortcutRepository {
-	//    public fun findMany(
+interface AppShortcutRepository {
+	//    fun findMany(
 //        componentName: ComponentName? = null,
 //        user: UserHandle = Process.myUserHandle(),
 //        manifest: Boolean = false,
@@ -38,9 +38,9 @@ public interface AppShortcutRepository {
 //        limit: Int = 5,
 //    ): Flow<ImmutableList<ShortcutInfo>>
 
-	public fun search(query: String): Flow<ImmutableList<ShortcutInfo>>
+	fun search(query: String): Flow<ImmutableList<ShortcutInfo>>
 
-	public fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?>
+	fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?>
 
 	public suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo?
 

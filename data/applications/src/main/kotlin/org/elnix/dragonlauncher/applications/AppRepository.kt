@@ -56,8 +56,8 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 
-public interface AppRepository {
-	public fun getAllApps(): Flow<ImmutableList<Application>>
+interface AppRepository {
+	fun getAllApps(): Flow<ImmutableList<Application>>
 
 	/**
 	 * Monotonic revision of the installed-app snapshot.
@@ -70,9 +70,9 @@ public interface AppRepository {
 	 * moment the app list becomes available or changes, instead of sampling a possibly-empty list
 	 * once and caching the `null` forever.
 	 */
-	public val appsRevision: StateFlow<Int>
+	val appsRevision: StateFlow<Int>
 
-	public fun search(
+	fun search(
 		query: String,
 		workspace: Workspace,
 		workspaceViewMode: WorkspaceViewMode
@@ -90,7 +90,7 @@ public interface AppRepository {
 	 * @param action the requested action to convert to application
 	 * @return A flow of the nullable app
 	 */
-	public fun findOne(action: Action.LaunchApp): Flow<Application?>
+	fun findOne(action: Action.LaunchApp): Flow<Application?>
 
 	/**
 	 * Retrieve the actual app from a [Action.LaunchApp].
@@ -102,9 +102,9 @@ public interface AppRepository {
 	 */
 	public suspend fun fromAction(action: Action.LaunchApp): Application?
 
-	public fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
+	fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
 
-	public fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int = 48): Bitmap?
+	fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int = 48): Bitmap?
 }
 
 internal class AppRepositoryImpl(

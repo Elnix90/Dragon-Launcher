@@ -286,8 +286,8 @@ public sealed class NavigationRoute : NavKey {
 
 	override fun hashCode(): Int = System.identityHashCode(this)
 
-	public companion object {
-		public val settingsRoutes: List<NavigationRoute> by lazy {
+	companion object {
+		val settingsRoutes: List<NavigationRoute> by lazy {
 			listOf(
 				PointsSettings,
 				Settings,
@@ -322,7 +322,7 @@ public sealed class NavigationRoute : NavKey {
 }
 
 /** List of routes that the routes killer ignores when the user leave the app for too long, usually files pickers */
-public val NavKey.isIgnoredReturnScreen: Boolean
+val NavKey.isIgnoredReturnScreen: Boolean
 	get() =
 		when (this) {
 			NavigationRoute.Welcome,
@@ -335,7 +335,7 @@ public val NavKey.isIgnoredReturnScreen: Boolean
 		}
 
 /** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
-public val NavKey.inTransparentScreen: Boolean
+val NavKey.inTransparentScreen: Boolean
 	get() =
 		when (this) {
 			NavigationRoute.Main,
@@ -350,7 +350,7 @@ public val NavKey.inTransparentScreen: Boolean
 		}
 
 /** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
-public val NavKey.halfTransparentScreen: Boolean
+val NavKey.halfTransparentScreen: Boolean
 	get() =
 		when (this) {
 			NavigationRoute.PointsSettings,

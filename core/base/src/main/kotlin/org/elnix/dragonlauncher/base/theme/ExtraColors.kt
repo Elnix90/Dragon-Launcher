@@ -26,7 +26,7 @@ public data class ExtraColors(
 	val runAdbCommand: Color
 )
 
-public val DefaultExtraColors: ExtraColors =
+val DefaultExtraColors: ExtraColors =
 	ExtraColors(
 		holdToActivate = Color(0xFF59007A),
 		angleLine = Color(0xFFFF0000),
@@ -49,4 +49,4 @@ public val DefaultExtraColors: ExtraColors =
 		runAdbCommand = Color(0xFF1BEE14)
 	)
 
-public val LocalExtraColors: ProvidableCompositionLocal<ExtraColors> = staticCompositionLocalOf { DefaultExtraColors }
+val LocalExtraColors: ProvidableCompositionLocal<ExtraColors> = staticCompositionLocalOf { DefaultExtraColors }

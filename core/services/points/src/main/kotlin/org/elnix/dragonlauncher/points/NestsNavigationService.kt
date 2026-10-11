@@ -4,15 +4,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-public interface NestsNavigationService {
+interface NestsNavigationService {
 	/**
 	 * Current nest id derived from the navigation stack.
 	 *
 	 * Falls back to root (0) when the stack is empty.
 	 */
-	public val currentNestId: StateFlow<Int>
+	val currentNestId: StateFlow<Int>
 
-	public fun goBack()
+	fun goBack()
 
 	/**
 	 * Go to nest [newNestId] and add its id to the stack
@@ -20,9 +20,9 @@ public interface NestsNavigationService {
 	 * If [clearStack] is `true`, the entire stack will be cleared, which means no go back nest.
 	 * This is useful for the nest management sheet which by natural logic shouldn't add to a stack the different nests you visit
 	 */
-	public fun goToNest(newNestId: Int, clearStack: Boolean = false)
+	fun goToNest(newNestId: Int, clearStack: Boolean = false)
 
-	public fun clearStack()
+	fun clearStack()
 }
 
 internal class NestsNavigationServiceImpl(

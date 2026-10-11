@@ -36,7 +36,7 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class DrawerViewModel
+class DrawerViewModel
 	@Inject
 	constructor(
 		private val appsRepository: AppRepository,
@@ -44,12 +44,12 @@ public class DrawerViewModel
 		private val recentsService: RecentsService,
 		private val permissionsManager: PermissionsManager,
 		private val iconPackManager: IconPackManager,
-		public val appOverrideManager: AppOverridesManager,
-		public val workspaceManager: WorkspacesManager
+		val appOverrideManager: AppOverridesManager,
+		val workspaceManager: WorkspacesManager
 	) : ViewModel() {
-		public var drawerHomeHandler: MutableState<(() -> Unit)?> = mutableStateOf(null)
+		var drawerHomeHandler: MutableState<(() -> Unit)?> = mutableStateOf(null)
 
-		public val allApps: StateFlow<List<Application>> =
+		val allApps: StateFlow<List<Application>> =
 			appsRepository.getAllApps().stateIn(
 				viewModelScope,
 				SharingStarted.Eagerly,
@@ -57,16 +57,16 @@ public class DrawerViewModel
 			)
 
 		// Only used for preview, the real user apps getter are using the appsForWorkspace function
-		public val userApps: StateFlow<List<Application>> =
+		val userApps: StateFlow<List<Application>> =
 			allApps
 				.map { list ->
 					list.filter { it.isLaunchable && !it.isWork && !it.isSystem && !it.isPrivate }
 				}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-		public val notifications: Array<out StatusBarNotification?>?
+		val notifications: Array<out StatusBarNotification?>?
 			get() = NotificationService.getInstance()?.activeNotifications
 
-		public fun isAppInstalled(packageName: String): StateFlow<Boolean> =
+		fun isAppInstalled(packageName: String): StateFlow<Boolean> =
 			allApps
 				.map { apps ->
 					apps.any { it.packageName == packageName }
@@ -76,17 +76,17 @@ public class DrawerViewModel
 					false
 				)
 
-		public val searchQuery: MutableState<String> = mutableStateOf("")
+		val searchQuery: MutableState<String> = mutableStateOf("")
 
-		public fun clearSearchQuery() {
+		fun clearSearchQuery() {
 			searchQuery.value = ""
 		}
 
-		public fun findOne(action: Action.LaunchApp): Flow<Application?> = appsRepository.findOne(action)
+		fun findOne(action: Action.LaunchApp): Flow<Application?> = appsRepository.findOne(action)
 
 		public suspend fun fromAction(action: Action.LaunchApp): Application? = appsRepository.fromAction(action)
 
-		public fun search(
+		fun search(
 			workspace: Workspace,
 			workspaceViewMode: WorkspaceViewMode = WorkspaceViewMode.Default
 		): StateFlow<List<Application>> =
@@ -101,14 +101,14 @@ public class DrawerViewModel
 					emptyList()
 				)
 
-		public fun reloadApps(): Job =
+		fun reloadApps(): Job =
 			viewModelScope.launch {
 				appsRepository.refreshApps()
 			}
 
-		public fun getRecentApps(count: Int): StateFlow<List<Application>> = recentsService.getRecentApps(count)
+		fun getRecentApps(count: Int): StateFlow<List<Application>> = recentsService.getRecentApps(count)
 
-		public val selectedWorkspaceId: StateFlow<String> =
+		val selectedWorkspaceId: StateFlow<String> =
 			workspaceManager.selectedWorkspaceId.stateIn(
 				scope = viewModelScope,
 				started = SharingStarted.Lazily,
@@ -120,7 +120,7 @@ public class DrawerViewModel
 		 * It shares the flow using [SharingStarted.Eagerly] and its really important,
 		 * so that the flow always receives the correct workspaces, and not an emptyList when it starts to collect it
 		 */
-		public val activeWorkspaces: StateFlow<List<Workspace>> =
+		val activeWorkspaces: StateFlow<List<Workspace>> =
 			workspaceManager.workspaces.flow
 				.map { workspaces ->
 					workspaces.filter { it.enabled }
@@ -130,20 +130,20 @@ public class DrawerViewModel
 					initialValue = emptyList()
 				)
 
-		public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> =
+		fun queryAppShortcuts(packageName: String): List<ShortcutInfo> =
 			appsRepository.queryAppShortcuts(
 				packageName
 			)
 
-		public fun hasNotificationsPermission(): StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.Notifications)
+		fun hasNotificationsPermission(): StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.Notifications)
 
-		public fun requestNotificationsPermission() {
+		fun requestNotificationsPermission() {
 			permissionsManager.requestPermission(PermissionGroup.Notifications)
 		}
 
-		public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
+		fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
 
-		public fun searchShortcuts(searchQuery: String): Flow<ImmutableList<ShortcutInfo>> =
+		fun searchShortcuts(searchQuery: String): Flow<ImmutableList<ShortcutInfo>> =
 			shortcutRepository.search(
 				searchQuery
 			)

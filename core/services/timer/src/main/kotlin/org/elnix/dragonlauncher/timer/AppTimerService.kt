@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * [TimerNotifications]; this service only orchestrates the tracking loop.
  */
 @AndroidEntryPoint
-public class AppTimerService : Service() {
+class AppTimerService : Service() {
 	private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
 	@Inject
@@ -47,7 +47,7 @@ public class AppTimerService : Service() {
 	@Inject
 	public lateinit var notifications: TimerNotifications
 
-	public companion object {
+	companion object {
 		public const val CHANNEL_TIMER: String = "dragon_timer_channel"
 		public const val CHANNEL_REMINDER: String = "dragon_reminder_channel"
 		public const val NOTIF_ID_TIMER: Int = 9001
@@ -68,7 +68,7 @@ public class AppTimerService : Service() {
 		public const val SHOW_LAUNCHER: String = "org.elnix.dragonlauncher.SHOW_LAUNCHER"
 		public const val EXTRA_APP_NAME: String = "extra_app_name"
 
-		public fun start(
+		fun start(
 			ctx: Context,
 			application: Application,
 			reminderEnabled: Boolean,
@@ -89,14 +89,14 @@ public class AppTimerService : Service() {
 			ctx.startForegroundService(intent)
 		}
 
-		public fun stop(ctx: Context) {
+		fun stop(ctx: Context) {
 			ctx.stopService(Intent(ctx, AppTimerService::class.java))
 		}
 
 		/**
 		 * Helper used by debug UI to send a one-off reminder notification for testing.
 		 */
-		public fun sendTestReminderNotification(ctx: Context, appName: String = "Dragon Launcher", minutes: Int = 5) {
+		fun sendTestReminderNotification(ctx: Context, appName: String = "Dragon Launcher", minutes: Int = 5) {
 			TimerNotifications(ctx).sendTestReminderNotification(appName, minutes)
 		}
 	}

@@ -29,7 +29,7 @@ public data class Profile(
 
 	public enum class Type(
 		@StringRes
-		public val resId: Int
+		val resId: Int
 	) {
 		/**
 		 * The default profile.
@@ -53,12 +53,12 @@ public data class Profile(
 
 	override fun toString(): String = "Profile(type = $type, userHandle = $userHandle, serial = $serial)"
 
-	public companion object {
-		public fun fromUserHandle(ctx: Context, userHandle: UserHandle): Profile {
+	companion object {
+		fun fromUserHandle(ctx: Context, userHandle: UserHandle): Profile {
 			val serial = userHandle.getSerialNumber(ctx)
 			return Profile(Type.Personal, userHandle, serial)
 		}
 
-		public fun dummy(): Profile = Profile(Type.Personal, Process.myUserHandle(), 0L)
+		fun dummy(): Profile = Profile(Type.Personal, Process.myUserHandle(), 0L)
 	}
 }

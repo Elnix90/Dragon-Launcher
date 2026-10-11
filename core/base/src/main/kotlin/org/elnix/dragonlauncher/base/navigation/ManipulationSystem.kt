@@ -14,14 +14,14 @@ import org.elnix.dragonlauncher.ktx.applyTransformations
 import org.elnix.dragonlauncher.ktx.undoTransformations
 
 @Stable
-public class ManipulationSystem(
-	public var center: Offset
+class ManipulationSystem(
+	var center: Offset
 ) {
-	public val offset: Animatable<Offset, AnimationVector2D> = Animatable(Offset.Zero, Offset.VectorConverter)
-	public val zoom: Animatable<Float, AnimationVector1D> = Animatable(1f)
-	public val angle: Animatable<Float, AnimationVector1D> = Animatable(0f)
+	val offset: Animatable<Offset, AnimationVector2D> = Animatable(Offset.Zero, Offset.VectorConverter)
+	val zoom: Animatable<Float, AnimationVector1D> = Animatable(1f)
+	val angle: Animatable<Float, AnimationVector1D> = Animatable(0f)
 
-	public fun canReset(): Boolean {
+	fun canReset(): Boolean {
 		val canResetOffset = offset.value != Offset.Zero
 		val canResetZoom = zoom.value != 1f
 		val canResetRotation = angle.value != 0f
@@ -45,7 +45,7 @@ public class ManipulationSystem(
 	 * Same as [reset], but animates the reset asynchronously.
 	 * All animations are launched in parallel within the provided [scope].
 	 */
-	public fun resetAnimated(scope: CoroutineScope) {
+	fun resetAnimated(scope: CoroutineScope) {
 		scope.launch { offset.animateTo(Offset.Zero, tween(easing = FastOutSlowInEasing)) }
 		scope.launch { zoom.animateTo(1f, tween(easing = FastOutSlowInEasing)) }
 		scope.launch { angle.animateTo(0f, tween(easing = FastOutSlowInEasing)) }
@@ -56,20 +56,20 @@ public class ManipulationSystem(
 	 *
 	 * It should take a **non-transformed** offset in entry and returns its offset normalized around [Offset.Zero], effectively subtracting [center] from it
 	 */
-	public fun normalize(offset: Offset): Offset = offset - center
+	fun normalize(offset: Offset): Offset = offset - center
 
 	/**
 	 * Undo normalization of a [org.elnix.dragonlauncher.base.model.serializables.Point.offset]
 	 * Basically adds [center]
 	 * @returns the `transformed` [Offset] corresponding to the offset in local coordinates space, when transformations are applied
 	 */
-	public fun undoNormalization(offset: Offset): Offset = offset + center
+	fun undoNormalization(offset: Offset): Offset = offset + center
 
 	/**
 	 * Transform a pointer position [Offset] into its coordinated, after applying [offset], [zoom] and [angle] transformations.
 	 * The resulted [Offset] is meant to be used within the [androidx.compose.ui.graphics.graphicsLayer] block in the Main drawing block
 	 */
-	public fun transform(offset: Offset): Offset =
+	fun transform(offset: Offset): Offset =
 		offset.applyTransformations(
 			zoom = this.zoom.value,
 			offset = this.offset.value,
@@ -83,7 +83,7 @@ public class ManipulationSystem(
 	 *
 	 * May be removed in the future
 	 */
-	public fun undoTransformation(offset: Offset): Offset =
+	fun undoTransformation(offset: Offset): Offset =
 		offset.undoTransformations(
 			zoom = this.zoom.value,
 			offset = this.offset.value,
@@ -91,5 +91,5 @@ public class ManipulationSystem(
 		)
 
 	/** [undoNormalization] then [undoTransformation] */
-	public fun undoBoth(offset: Offset): Offset = undoTransformation(undoNormalization(offset))
+	fun undoBoth(offset: Offset): Offset = undoTransformation(undoNormalization(offset))
 }

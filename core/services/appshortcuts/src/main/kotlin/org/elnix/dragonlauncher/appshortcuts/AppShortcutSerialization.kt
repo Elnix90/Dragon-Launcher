@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.permissionsManager
 
 @SuppressLint("InlinedApi")
-public fun deserialize(serialized: Action.LaunchShortcut, ctx: Context): ShortcutInfo? {
+fun deserialize(serialized: Action.LaunchShortcut, ctx: Context): ShortcutInfo? {
 	try {
 		val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 

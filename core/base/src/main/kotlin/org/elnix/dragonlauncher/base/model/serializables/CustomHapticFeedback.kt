@@ -12,10 +12,10 @@ import org.elnix.dragonlauncher.ktx.vibrate
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-public class CustomHapticBuilder {
+class CustomHapticBuilder {
 	private val sequence = mutableListOf<HapticEntry>()
 
-	public fun haptic(durationMs: Int) {
+	fun haptic(durationMs: Int) {
 		sequence.add(
 			HapticEntry(
 				isVibration = true,
@@ -24,7 +24,7 @@ public class CustomHapticBuilder {
 		)
 	}
 
-	public fun pause(durationMs: Int) {
+	fun pause(durationMs: Int) {
 		sequence.add(
 			HapticEntry(
 				isVibration = false,
@@ -40,7 +40,7 @@ public class CustomHapticBuilder {
 @Immutable
 @Serializable
 @SerialName("CustomHapticFeedback")
-public value class CustomHapticFeedback(
+value class CustomHapticFeedback(
 	/**
 	 * The custom haptics, they are resolved one by one when performing the haptic feedback,
 	 * when the key is `true`, a vibration is performed, when it's `false` a delay is applied.
@@ -48,7 +48,7 @@ public value class CustomHapticFeedback(
 	 * The value is the duration of the vibration/delay
 	 */
 	@SerialName("haptics")
-	public val haptics: List<HapticEntry>
+	val haptics: List<HapticEntry>
 ) {
 	/**
 	 * Plays a custom haptic feedback pattern by sequentially resolving each step in [haptics].
@@ -70,20 +70,20 @@ public value class CustomHapticFeedback(
 		}
 	}
 
-	public companion object {
-		public fun build(builder: CustomHapticBuilder.() -> Unit): CustomHapticFeedback {
+	companion object {
+		fun build(builder: CustomHapticBuilder.() -> Unit): CustomHapticFeedback {
 			val sequence = CustomHapticBuilder().apply(builder).build()
 			return CustomHapticFeedback(sequence)
 		}
 
 		/** Like a subtle confirmation */
-		public val singleTap: CustomHapticFeedback =
+		val singleTap: CustomHapticFeedback =
 			build {
 				haptic(20)
 			}
 
 		/** Vibrate, pause, vibrate */
-		public val doubleTap: CustomHapticFeedback =
+		val doubleTap: CustomHapticFeedback =
 			build {
 				haptic(20)
 				pause(80)
@@ -91,7 +91,7 @@ public value class CustomHapticFeedback(
 			}
 
 		/** Three quick pulses */
-		public val tripleTap: CustomHapticFeedback =
+		val tripleTap: CustomHapticFeedback =
 			build {
 				haptic(20)
 				pause(60)
@@ -101,13 +101,13 @@ public value class CustomHapticFeedback(
 			}
 
 		/** One long strong buzz */
-		public val heavy: CustomHapticFeedback =
+		val heavy: CustomHapticFeedback =
 			build {
 				haptic(80)
 			}
 
 		/** Short, pause, long */
-		public val heartbeat: CustomHapticFeedback =
+		val heartbeat: CustomHapticFeedback =
 			build {
 				haptic(20)
 				pause(40)
@@ -115,7 +115,7 @@ public value class CustomHapticFeedback(
 			}
 
 		/** Three uneven jolts */
-		public val error: CustomHapticFeedback =
+		val error: CustomHapticFeedback =
 			build {
 				haptic(50)
 				pause(30)
@@ -125,13 +125,13 @@ public value class CustomHapticFeedback(
 			}
 
 		/** Barely-there nudge */
-		public val tick: CustomHapticFeedback =
+		val tick: CustomHapticFeedback =
 			build {
 				haptic(8)
 			}
 
 		/** Short then long, like a reward */
-		public val success: CustomHapticFeedback =
+		val success: CustomHapticFeedback =
 			build {
 				haptic(15)
 				pause(50)
@@ -139,7 +139,7 @@ public value class CustomHapticFeedback(
 			}
 
 		/** Rapid-fire tiny pulses */
-		public val buzzRoll: CustomHapticFeedback =
+		val buzzRoll: CustomHapticFeedback =
 			build {
 				haptic(10)
 				pause(20)
@@ -151,7 +151,7 @@ public value class CustomHapticFeedback(
 			}
 
 		/** Slow build, short finish */
-		public val longPress: CustomHapticFeedback =
+		val longPress: CustomHapticFeedback =
 			build {
 				haptic(60)
 				pause(100)
@@ -159,7 +159,7 @@ public value class CustomHapticFeedback(
 			}
 
 		/** Lists all default presets and map them to their i18n name stringRessource */
-		public val allPresets: List<Pair<Int, CustomHapticFeedback>> =
+		val allPresets: List<Pair<Int, CustomHapticFeedback>> =
 			listOf(
 				R.string.haptic_preset_single to singleTap,
 				R.string.haptic_preset_double to doubleTap,
@@ -189,10 +189,10 @@ public data class HapticEntry(
 ) {
 	val id: Long = System.nanoTime() + Random.nextLong()
 
-	public val resetEnabled: Boolean
+	val resetEnabled: Boolean
 		get() = if (isVibration) durationMs != defaultVibrationDuration else durationMs != defaultHapticDuration
 
-	public companion object {
+	companion object {
 		public const val defaultHapticDuration: Int = 100
 		public const val defaultVibrationDuration: Int = 50
 	}

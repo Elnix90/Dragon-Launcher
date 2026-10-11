@@ -17,12 +17,12 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class FontViewModel
+class FontViewModel
 	@Inject
 	constructor(
 		fontService: FontService
 	) : ViewModel() {
-		public val fontFamily: StateFlow<FontFamily> =
+		val fontFamily: StateFlow<FontFamily> =
 			fontService.fontFamily
 				.stateIn(
 					scope = viewModelScope,
@@ -30,7 +30,7 @@ public class FontViewModel
 					initialValue = FontFamily.Default
 				)
 
-		public val typography: StateFlow<Typography> =
+		val typography: StateFlow<Typography> =
 			fontFamily
 				.map { fontFamily ->
 					Typography.copy(

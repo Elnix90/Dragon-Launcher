@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-public val Typography: Typography =
+val Typography: Typography =
 	Typography(
 		bodyLarge =
 			TextStyle(

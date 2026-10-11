@@ -17,18 +17,18 @@ import timber.log.Timber
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 
-public interface LogsService {
-	public val alertFlow: StateFlow<LogAlert?>
+interface LogsService {
+	val alertFlow: StateFlow<LogAlert?>
 
-	public fun updateEnableLogging(enable: Boolean)
+	fun updateEnableLogging(enable: Boolean)
 
-	public fun getAllLogFiles(): List<File>
+	fun getAllLogFiles(): List<File>
 
-	public fun clearLogs()
+	fun clearLogs()
 
-	public fun readLogFile(file: File): String
+	fun readLogFile(file: File): String
 
-	public fun deleteLogFile(file: File)
+	fun deleteLogFile(file: File)
 }
 
 internal class LogsServiceIml(

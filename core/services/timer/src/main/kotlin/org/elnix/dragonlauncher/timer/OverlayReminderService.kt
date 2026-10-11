@@ -46,8 +46,8 @@ import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
  * Uses WindowManager with FLAG_NOT_FOCUSABLE + FLAG_NOT_TOUCH_MODAL so
  * touches outside the popup pass through to the app below.
  */
-public class OverlayReminderService : Service() {
-	public companion object {
+class OverlayReminderService : Service() {
+	companion object {
 		public const val EXTRA_APP_NAME: String = "extra_app_name"
 		public const val EXTRA_MODE: String = "extra_mode" // "reminder" or "time_warning"
 		public const val EXTRA_SESSION_TIME: String = "extra_session_time"
@@ -57,7 +57,7 @@ public class OverlayReminderService : Service() {
 
 		private const val DISMISS_DELAY = 7000L
 
-		public fun show(
+		fun show(
 			ctx: Context,
 			appName: String,
 			sessionTime: String,

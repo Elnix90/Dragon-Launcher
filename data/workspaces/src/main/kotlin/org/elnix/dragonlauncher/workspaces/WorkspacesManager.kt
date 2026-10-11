@@ -21,15 +21,15 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
 private object WorkspaceJson : DragonJson<List<Workspace>>()
 
-public class WorkspacesManager(
+class WorkspacesManager(
 	private val ctx: Context
 ) {
 	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-	public val workspaces: SettingFlow<List<Workspace>> = SettingFlow(defaultWorkspaces)
-	public val selectedWorkspaceId: Flow<String> = DrawerSettingsStore.lastWorkspaceUsed.flow(ctx)
+	val workspaces: SettingFlow<List<Workspace>> = SettingFlow(defaultWorkspaces)
+	val selectedWorkspaceId: Flow<String> = DrawerSettingsStore.lastWorkspaceUsed.flow(ctx)
 
-//    public val selectedWorkspace: Flow<Workspace?> = combine(workspaces.flow, selectedWorkspaceId) { workspaces, selected ->
+//    val selectedWorkspace: Flow<Workspace?> = combine(workspaces.flow, selectedWorkspaceId) { workspaces, selected ->
 //        if (workspaces.isEmpty()) return@combine null
 //        workspaces.firstOrNull { it.id == selected } ?: workspaces.first()
 //    }
@@ -55,7 +55,7 @@ public class WorkspacesManager(
 			}
 		}
 
-	public fun persistWorkspaces() {
+	fun persistWorkspaces() {
 		scope.launch(Dispatchers.IO) {
 			if (workspaces.value == defaultWorkspaces) return@launch
 			val json = WorkspaceJson.encode(workspaces.value)
@@ -76,7 +76,7 @@ public class WorkspacesManager(
 		}
 	}
 
-//    public fun selectWorkspace(id: String) {
+//    fun selectWorkspace(id: String) {
 //        selectedWorkspaceId.value = id
 //
 //        scope.launch {
@@ -85,13 +85,13 @@ public class WorkspacesManager(
 //    }
 
 	/** Enable/disable a workspace */
-	public fun setWorkspaceEnabled(id: String, enabled: Boolean) {
+	fun setWorkspaceEnabled(id: String, enabled: Boolean) {
 		updateWs(id) { old ->
 			old.copy(enabled = enabled)
 		}
 	}
 
-	public fun createWorkspace(name: String, type: WorkspaceType) {
+	fun createWorkspace(name: String, type: WorkspaceType) {
 		update { old ->
 			old +
 				Workspace(
@@ -104,29 +104,29 @@ public class WorkspacesManager(
 		}
 	}
 
-	public fun editWorkspace(oldId: String, newId: String, type: WorkspaceType) {
+	fun editWorkspace(oldId: String, newId: String, type: WorkspaceType) {
 		updateWs(oldId) { old ->
 			old.copy(id = newId, type = type)
 		}
 	}
 
-	public fun deleteWorkspace(id: String) {
+	fun deleteWorkspace(id: String) {
 		update { old ->
 			old.filterNot { it.id == id }
 		}
 	}
 
-	public fun setWorkspaceOrder(newOrder: List<Workspace>) {
+	fun setWorkspaceOrder(newOrder: List<Workspace>) {
 		update { newOrder }
 	}
 
-	public fun resetWorkspace(id: String) {
+	fun resetWorkspace(id: String) {
 		updateWs(id) { old ->
 			old.copy(removedAppIds = emptySet(), appIds = emptySet())
 		}
 	}
 
-	public fun addAppToWorkspace(id: String, cacheKey: CacheKey) {
+	fun addAppToWorkspace(id: String, cacheKey: CacheKey) {
 		updateWs(id) { old ->
 			old.copy(
 				appIds = old.appIds?.plus(cacheKey) ?: setOf(cacheKey),
@@ -135,7 +135,7 @@ public class WorkspacesManager(
 		}
 	}
 
-	public fun addAppsToWorkspace(id: String, apps: Set<CacheKey>) {
+	fun addAppsToWorkspace(id: String, apps: Set<CacheKey>) {
 		updateWs(id) { old ->
 			old.copy(
 				appIds = old.appIds?.plus(apps) ?: apps,
@@ -144,7 +144,7 @@ public class WorkspacesManager(
 		}
 	}
 
-	public fun removeAppFromWorkspace(id: String, cacheKey: CacheKey) {
+	fun removeAppFromWorkspace(id: String, cacheKey: CacheKey) {
 		updateWs(id) { old ->
 			old.copy(
 				appIds = old.appIds?.minus(cacheKey),
@@ -153,7 +153,7 @@ public class WorkspacesManager(
 		}
 	}
 
-	public fun resetWorkspaces() {
+	fun resetWorkspaces() {
 		workspaces.value = defaultWorkspaces
 
 		scope.launch {

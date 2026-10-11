@@ -17,12 +17,12 @@ import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
-public object ExtensionManager {
-	public fun installExtension(ctx: Context, extension: ExtensionModel) {
+object ExtensionManager {
+	fun installExtension(ctx: Context, extension: ExtensionModel) {
 		ctx.openUrl(extension.downloadUrl)
 	}
 
-	public fun installApk(ctx: Context, uri: Uri) {
+	fun installApk(ctx: Context, uri: Uri) {
 		try {
 			if (!ctx.packageManager.canRequestPackageInstalls()) {
 				val intent =

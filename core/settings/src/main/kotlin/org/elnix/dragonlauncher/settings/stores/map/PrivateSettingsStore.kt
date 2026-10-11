@@ -117,7 +117,7 @@ object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 //     * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection
 //     */
 //    @SettingKey
-//    public val welcomeScreenTempPage =
+//    val welcomeScreenTempPage =
 //        int(
 //            default = 0,
 //            allowedRange = 0..6

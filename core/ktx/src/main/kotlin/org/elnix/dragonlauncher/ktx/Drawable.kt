@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.Px
 import androidx.core.graphics.drawable.toBitmap
 
-public fun Drawable.toBitmapOrNull(
+fun Drawable.toBitmapOrNull(
 	@Px width: Int = intrinsicWidth,
 	@Px height: Int = intrinsicHeight,
 	config: Bitmap.Config? = null
@@ -17,7 +17,7 @@ public fun Drawable.toBitmapOrNull(
 	return toBitmap(width, height, config)
 }
 
-public fun Drawable.drawWithColorFilter(canvas: Canvas, colorFilter: ColorFilter?) {
+fun Drawable.drawWithColorFilter(canvas: Canvas, colorFilter: ColorFilter?) {
 	val cf = this.colorFilter
 	this.colorFilter = colorFilter
 	this.draw(canvas)

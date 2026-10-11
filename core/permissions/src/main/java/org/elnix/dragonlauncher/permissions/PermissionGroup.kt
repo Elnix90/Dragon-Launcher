@@ -8,9 +8,9 @@ import org.elnix.dragonlauncher.i18n.R
  * A permission the launcher needs, with the strings describing it to the user.
  */
 public enum class PermissionGroup(
-	@StringRes public val title: Int,
-	@StringRes public val description: Int,
-	@DrawableRes public val icon: Int
+	@StringRes val title: Int,
+	@StringRes val description: Int,
+	@DrawableRes val icon: Int
 ) {
 	Notifications(
 		R.string.permission_notifications_title,

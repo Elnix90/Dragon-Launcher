@@ -14,8 +14,8 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerial
 @Serializable
 @SerialName("CustomIcon")
 public sealed class CustomIcon {
-	public companion object {
-		public fun CustomIcon.getProperties(): CustomIconProperties =
+	companion object {
+		fun CustomIcon.getProperties(): CustomIconProperties =
 			when (this) {
 				is AdaptifiedLegacyIcon -> this.properties
 				is CustomIconPackIcon -> this.properties
@@ -26,7 +26,7 @@ public sealed class CustomIcon {
 				is UnmodifiedSystemDefaultIcon -> this.properties
 			}
 
-		public fun CustomIcon.setProperties(properties: CustomIconProperties): CustomIcon =
+		fun CustomIcon.setProperties(properties: CustomIconProperties): CustomIcon =
 			when (this) {
 				is AdaptifiedLegacyIcon -> this.copy(properties = properties)
 				is CustomIconPackIcon -> this.copy(properties = properties)
@@ -62,7 +62,7 @@ public data class AdaptifiedLegacyIcon(
 	val bgColor: Int = UnspecifiedColor,
 	val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon() {
-	public companion object {
+	companion object {
 		/**
 		 * Extract color from foreground icon
 		 */
@@ -138,7 +138,7 @@ public data class CustomIconProperties(
 	/** Vertical scale multiplier. */
 	val scaleY: Float? = null
 ) {
-	public val isNotEmpty: Boolean
+	val isNotEmpty: Boolean
 		get() =
 			tint != null ||
 				opacity != null ||
@@ -147,7 +147,7 @@ public data class CustomIconProperties(
 				scaleX != null ||
 				scaleY != null
 
-	public companion object {
+	companion object {
 		public const val defaultOpacity: Float = 1f
 		public const val defaultRotationDeg: Int = 0
 		public const val defaultScaleX: Float = 1f

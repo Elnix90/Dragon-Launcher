@@ -34,7 +34,7 @@ import java.security.MessageDigest
  * @param message Can be a String, StringRes Int, or null
  * @param duration Toast duration ([Toast.LENGTH_SHORT] or [Toast.LENGTH_LONG])
  */
-public fun Context.showToast(
+fun Context.showToast(
 	message: Any?,
 	duration: Int = Toast.LENGTH_SHORT
 ) {
@@ -64,20 +64,20 @@ public fun Context.showToast(
 }
 
 @Deprecated("Use Uri Handler instead")
-public fun Context.openUrl(url: String) {
+fun Context.openUrl(url: String) {
 	if (url.isEmpty()) return
 	val intent = Intent(Intent.ACTION_VIEW)
 	intent.data = url.toUri()
 	startActivity(intent)
 }
 
-public fun Context.openSearch(query: String) {
+fun Context.openSearch(query: String) {
 	val intent = Intent(Intent.ACTION_WEB_SEARCH)
 	intent.putExtra(SearchManager.QUERY, query)
 	startActivity(intent)
 }
 
-public fun Context.expandQuickActionsDrawer() {
+fun Context.expandQuickActionsDrawer() {
 	try {
 		//  (Android 12+)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -102,7 +102,7 @@ public fun Context.expandQuickActionsDrawer() {
 	}
 }
 
-public fun Context.getFilePathFromUri(uri: Uri): String {
+fun Context.getFilePathFromUri(uri: Uri): String {
 	// 1. Try SAF document path reconstruction
 	if (DocumentsContract.isDocumentUri(this, uri)) {
 		val docId = DocumentsContract.getDocumentId(uri)
@@ -140,12 +140,12 @@ private fun Context.getUriDisplayName(uri: Uri): String? =
 		null
 	}
 
-public fun Context.hasUriReadPermission(uri: Uri): Boolean {
+fun Context.hasUriReadPermission(uri: Uri): Boolean {
 	val perms = contentResolver.persistedUriPermissions
 	return perms.any { it.uri == uri && it.isReadPermission }
 }
 
-public fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
+fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
 	val perms = contentResolver.persistedUriPermissions
 	return perms.any { perm ->
 		perm.uri == uri &&
@@ -177,16 +177,16 @@ public fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
 //    return mode == AppOpsManager.MODE_ALLOWED
 // }
 
-public val Context.dp: Float
+val Context.dp: Float
 	get() = resources.displayMetrics.density
 
-public fun Context.checkPermission(permission: String): Boolean =
+fun Context.checkPermission(permission: String): Boolean =
 	ContextCompat.checkSelfPermission(
 		this,
 		permission
 	) == PackageManager.PERMISSION_GRANTED
 
-public fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean =
+fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean =
 	try {
 		startActivity(intent, bundle)
 		true
@@ -196,7 +196,7 @@ public fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boo
 		false
 	}
 
-public fun Context.getInstallSource(
+fun Context.getInstallSource(
 	packageName: String
 ): InstallSourceInfoCompat {
 	val pm = this.packageManager
@@ -221,7 +221,7 @@ public fun Context.getInstallSource(
  * Walks up the Context wrapper chain to find the hosting FragmentActivity.
  * Compose's `LocalContext.current` may be wrapped by ContextThemeWrapper or similar.
  */
-public fun Context.findFragmentActivity(): FragmentActivity? {
+fun Context.findFragmentActivity(): FragmentActivity? {
 	var ctx: Context? = this
 	var depth = 0
 	while (ctx != null && depth < 20) { // Prevent infinite loops
@@ -263,7 +263,7 @@ public data class InstallSourceInfoCompat(
 @Deprecated(
 	"Prefer using LocalHapticFeedback instead of this low level api that doesn't account for the user preferences about haptic feedback"
 )
-public fun Context.vibrate(milliseconds: Long) {
+fun Context.vibrate(milliseconds: Long) {
 	val vibrator =
 		if (Build.VERSION.SDK_INT >= 31) {
 			val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
@@ -276,7 +276,7 @@ public fun Context.vibrate(milliseconds: Long) {
 	vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
 }
 
-public fun Context.checkSignature(expectedHash: String): Boolean {
+fun Context.checkSignature(expectedHash: String): Boolean {
 	return try {
 		val packageInfo =
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

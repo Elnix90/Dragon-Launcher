@@ -9,10 +9,10 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class ColorsViewModel
+class ColorsViewModel
 	@Inject
 	constructor(
-		public val colorService: ColorService
+		val colorService: ColorService
 	) : ViewModel() {
 		init {
 			viewModelInitialized()

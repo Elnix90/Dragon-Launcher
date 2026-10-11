@@ -21,14 +21,14 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
 
-public object ImageUtils {
-	//    public fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
+object ImageUtils {
+	//    fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
 //        ctx.contentResolver.openInputStream(uri).use {
 //            return BitmapFactory.decodeStream(it!!)
 //        }
 //    }
 
-	public fun loadDrawableAsBitmap(
+	fun loadDrawableAsBitmap(
 		drawable: Drawable,
 		width: Int,
 		height: Int
@@ -70,7 +70,7 @@ public object ImageUtils {
 		return bitmap
 	}
 
-//    public fun cropCenterSquare(src: Bitmap): Bitmap {
+//    fun cropCenterSquare(src: Bitmap): Bitmap {
 //        val size = minOf(src.width, src.height)
 //        val left = (src.width - size) / 2
 //        val top = (src.height - size) / 2
@@ -78,10 +78,10 @@ public object ImageUtils {
 //        return Bitmap.createBitmap(src, left, top, size, size)
 //    }
 
-//    public fun resize(src: Bitmap, size: Int): Bitmap =
+//    fun resize(src: Bitmap, size: Int): Bitmap =
 //        src.scale(size, size)
 
-//    public fun base64ToImageBitmap(base64: String?): ImageBitmap? {
+//    fun base64ToImageBitmap(base64: String?): ImageBitmap? {
 //        return try {
 //            base64?.let {
 //                val bytes = Base64.decode(it, Base64.DEFAULT)
@@ -104,7 +104,7 @@ public object ImageUtils {
 //        }
 //    }
 
-//    public fun uriToBase64(ctx: Context, uri: Uri): String? {
+//    fun uriToBase64(ctx: Context, uri: Uri): String? {
 //        return try {
 //            val bmp = loadBitmap(ctx, uri)
 //                .let(ImageUtils::cropCenterSquare)
@@ -117,7 +117,7 @@ public object ImageUtils {
 //        }
 //    }
 
-//    public fun imageBitmapToBase64(imageBitmap: ImageBitmap): String? {
+//    fun imageBitmapToBase64(imageBitmap: ImageBitmap): String? {
 //        return try {
 //            val androidBitmap = imageBitmap.asAndroidBitmap()
 //            bitmapToBase64(androidBitmap)
@@ -127,7 +127,7 @@ public object ImageUtils {
 //        }
 //    }
 
-//    public fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
+//    fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
 //        if (radius <= 0f) return bitmap
 //
 //        val scaleFactor = (25f - radius) / 25f.coerceAtLeast(0.1f)
@@ -156,7 +156,7 @@ public object ImageUtils {
 //    }
 
 //
-//    public fun textToBitmap(
+//    fun textToBitmap(
 //        text: String,
 //        sizePx: Int,
 //        color: Int = 0xFFFFFFFF.toInt()
@@ -187,7 +187,7 @@ public object ImageUtils {
 //        return bitmap.asImageBitmap()
 //    }
 
-//    public fun Bitmap.tintedWith(color: Int?): Bitmap {
+//    fun Bitmap.tintedWith(color: Int?): Bitmap {
 //        if (color == null) return this
 //        val bitmap = createBitmap(width, height)
 //        val canvas = Canvas(bitmap)
@@ -211,7 +211,7 @@ public object ImageUtils {
 		return bitmap
 	}
 
-//    public fun Context.loadDrawableResAsBitmap(
+//    fun Context.loadDrawableResAsBitmap(
 //        resId: Int,
 //        width: Int,
 //        height: Int
@@ -222,7 +222,7 @@ public object ImageUtils {
 //        return loadDrawableAsBitmap(drawable, width, height)
 //    }
 
-	public fun Context.loadDrawableResAsImageBitmap(
+	fun Context.loadDrawableResAsImageBitmap(
 		resId: Int,
 		width: Int,
 		height: Int
@@ -234,7 +234,7 @@ public object ImageUtils {
 		return loadDrawableAsBitmap(drawable, width, height).asImageBitmap()
 	}
 
-//    public fun createUntintedBitmap(
+//    fun createUntintedBitmap(
 //        action: Action,
 //        ctx: Context,
 //        width: Int,
@@ -315,7 +315,7 @@ public object ImageUtils {
 //        }
 //    }
 
-//    public fun resolveCustomIconProperties(
+//    fun resolveCustomIconProperties(
 //        base: Bitmap,
 //        properties: CustomIconProperties,
 //        sizePx: Int,
@@ -405,7 +405,7 @@ public object ImageUtils {
  * Clips the canvas to the [properties] shape, falling back to [iconShape] when
  * the properties do not override it. Applied per icon before drawing.
  */
-public fun Canvas.clipToShape(
+fun Canvas.clipToShape(
 	properties: CustomIconProperties,
 	iconShape: IconShape,
 	sizePx: Int,

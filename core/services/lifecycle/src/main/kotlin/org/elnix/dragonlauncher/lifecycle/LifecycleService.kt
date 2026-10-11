@@ -13,28 +13,28 @@ import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.SettingFlow
 import kotlin.time.Duration.Companion.milliseconds
 
-public interface LifecycleService {
+interface LifecycleService {
 	/**  Tracks the home events */
-	public val homeEvents: Flow<Unit>
+	val homeEvents: Flow<Unit>
 
 	/** Computes when the app goes background, to return main screen after cooldown */
-	public val lastInteraction: SettingFlow<Long>
+	val lastInteraction: SettingFlow<Long>
 
-	public fun onHomeAction()
+	fun onHomeAction()
 
 	/**
 	 * Update the value, to be able to compute on return
 	 * */
-	public fun updateLastInteraction()
+	fun updateLastInteraction()
 
 	/**
 	 * Block home actions temporarily for [BLOCK_DELAY]ms, to prevent them to fire,
 	 * when user returns to launcher right after launching an action, such as launching an app
 	 */
-	public fun blockHomeActionsTemporarily()
+	fun blockHomeActionsTemporarily()
 
 	/** Return true if the time elapsed is inferior to the delta provided (if it can stay on the screen) */
-	public fun isTimeoutExceeded(timeoutSeconds: Long): Boolean
+	fun isTimeoutExceeded(timeoutSeconds: Long): Boolean
 }
 
 private const val HOME_REENTER_WINDOW_MS = 80L

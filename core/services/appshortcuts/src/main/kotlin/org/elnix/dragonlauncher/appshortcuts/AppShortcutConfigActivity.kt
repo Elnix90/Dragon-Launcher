@@ -10,18 +10,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.text.Collator
 
-public class AppShortcutConfigActivity(
+class AppShortcutConfigActivity(
 	private val launcherActivityInfo: LauncherActivityInfo
 ) : Comparable<AppShortcutConfigActivity> {
-	public val label: String = launcherActivityInfo.label.toString()
+	val label: String = launcherActivityInfo.label.toString()
 
-	public fun getIcon(context: Context): Flow<Drawable?> =
+	fun getIcon(context: Context): Flow<Drawable?> =
 		flow {
 			val icon = launcherActivityInfo.getIcon(context.resources.displayMetrics.densityDpi)
 			emit(icon)
 		}
 
-	public fun getIntent(context: Context): IntentSender? {
+	fun getIntent(context: Context): IntentSender? {
 		val launcherApps = context.getSystemService<LauncherApps>()!!
 		return launcherApps.getShortcutConfigActivityIntent(launcherActivityInfo)
 	}

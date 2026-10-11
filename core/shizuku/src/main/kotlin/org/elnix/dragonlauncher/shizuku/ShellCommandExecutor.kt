@@ -16,7 +16,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.io.InterruptedIOException
 
-public class ShellCommandExecutor {
+class ShellCommandExecutor {
 	private var currentProcess: Process? = null
 	private var shizukuProcess: ShizukuRemoteProcess? = null
 	private var currentDir = "/storage/emulated/0/"
@@ -135,7 +135,7 @@ public class ShellCommandExecutor {
 //    }.flowOn(Dispatchers.IO)
 
 	@Suppress("DEPRECATION")
-	public fun runShizuku(commandText: String): Flow<OutputLine> =
+	fun runShizuku(commandText: String): Flow<OutputLine> =
 		flow {
 			val actualCommand = handleCdCommand(commandText)
 
@@ -203,7 +203,7 @@ public class ShellCommandExecutor {
 			}
 		}.flowOn(Dispatchers.IO)
 
-	public fun stop() {
+	fun stop() {
 		currentProcess?.destroy()
 		currentProcess = null
 		shizukuProcess?.destroy()

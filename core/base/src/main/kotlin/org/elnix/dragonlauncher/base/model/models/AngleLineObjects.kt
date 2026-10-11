@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.models
 import org.elnix.dragonlauncher.i18n.R
 
 public enum class AngleLineObjects(
-	public val resId: Int
+	val resId: Int
 ) {
 	Line(R.string.line_object),
 	Angle(R.string.angle_object),

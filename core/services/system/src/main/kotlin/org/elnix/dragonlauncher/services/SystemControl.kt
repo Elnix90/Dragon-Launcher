@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.permissionsManager
 
-public object SystemControl {
+object SystemControl {
 	/**
 	 * Whether the accessibility service is granted.
 	 *
@@ -19,29 +19,29 @@ public object SystemControl {
 	 * app. The comparison there matches the whole component name, unlike the
 	 * substring match done here, which also matched on partial package names.
 	 */
-	public fun isServiceEnabled(ctx: Context): Boolean =
+	fun isServiceEnabled(ctx: Context): Boolean =
 		ctx.permissionsManager.checkPermissionOnce(PermissionGroup.Accessibility)
 
 	/**
 	 * Opens the accessibility settings screen, through the manager so the request
 	 * path is the same one the permissions screen uses.
 	 */
-	public fun openServiceSettings(ctx: Context) {
+	fun openServiceSettings(ctx: Context) {
 		ctx.permissionsManager.requestPermission(PermissionGroup.Accessibility)
 	}
 
 	/**
 	 * Called by SystemControlService.onCreate() to store a static instance.
 	 */
-	public fun attachInstance(service: SystemControlService) {
+	fun attachInstance(service: SystemControlService) {
 		SystemControlService.instance = service
 	}
 
-	public fun expandNotifications() {
+	fun expandNotifications() {
 		SystemControlService.instance?.openNotificationShade()
 	}
 
-	public fun expandQuickSettings(ctx: Context) {
+	fun expandQuickSettings(ctx: Context) {
 		try {
 			val statusBarService = ctx.getSystemService("statusbar")
 			val statusBarManagerClass = Class.forName("android.app.StatusBarManager")
@@ -55,7 +55,7 @@ public object SystemControl {
 	}
 
 	@RequiresApi(Build.VERSION_CODES.P)
-	public fun lockScreen(ctx: Context) {
+	fun lockScreen(ctx: Context) {
 		if (!isServiceEnabled(ctx)) {
 			openServiceSettings(ctx)
 			return
@@ -65,7 +65,7 @@ public object SystemControl {
 		)
 	}
 
-	public fun openRecentApps(ctx: Context) {
+	fun openRecentApps(ctx: Context) {
 		if (!isServiceEnabled(ctx)) {
 			ctx.showToast("Please enable accessibility settings to use that feature")
 			openServiceSettings(ctx)
@@ -74,7 +74,7 @@ public object SystemControl {
 		SystemControlService.instance?.openRecentApps()
 	}
 
-	public fun launchDragon(ctx: Context) {
+	fun launchDragon(ctx: Context) {
 		val intent =
 			Intent(Intent.ACTION_MAIN).apply {
 				addCategory(Intent.CATEGORY_HOME)

@@ -53,9 +53,9 @@ public sealed class StatusBar {
 		@Serializable(with = DpSerializer::class)
 		val iconSize: Dp = defaultIconSize
 	) : StatusBar() {
-		public companion object {
+		companion object {
 			public const val defaultMaxIcons: Int = 8
-			public val defaultIconSize: Dp = 18.dp
+			val defaultIconSize: Dp = 18.dp
 		}
 	}
 
@@ -74,7 +74,7 @@ public sealed class StatusBar {
 		@Serializable(with = DpSerializer::class)
 		val iconSize: Dp = defaultIconSize
 	) : StatusBar() {
-		public companion object {
+		companion object {
 			public const val defaultAirplaneMode: Boolean = true
 			public const val defaultShowWifi: Boolean = true
 			public const val defaultShowBluetooth: Boolean = true
@@ -83,7 +83,7 @@ public sealed class StatusBar {
 			public const val defaultShowHotspot: Boolean = true
 			public const val defaultShowUsb: Boolean = true
 			public const val defaultUpdateFrequency: Int = 5
-			public val defaultIconSize: Dp = 18.dp
+			val defaultIconSize: Dp = 18.dp
 		}
 	}
 
@@ -101,9 +101,9 @@ public sealed class StatusBar {
 			Cutout
 		}
 
-		public companion object {
-			public val defaultWidth: Dp = 0.dp
-			public val defaultSpacerMode: SpacerMode = SpacerMode.Cutout
+		companion object {
+			val defaultWidth: Dp = 0.dp
+			val defaultSpacerMode: SpacerMode = SpacerMode.Cutout
 		}
 	}
 
@@ -127,7 +127,7 @@ public sealed class StatusBar {
 	) : StatusBar()
 }
 
-public val allStatusBars: List<StatusBar> =
+val allStatusBars: List<StatusBar> =
 	listOf(
 		StatusBar.Time(),
 		StatusBar.Date(),
@@ -139,4 +139,4 @@ public val allStatusBars: List<StatusBar> =
 		StatusBar.Spacer()
 	)
 
-public object StatusBarJson : DragonJson<List<StatusBar>>()
+object StatusBarJson : DragonJson<List<StatusBar>>()

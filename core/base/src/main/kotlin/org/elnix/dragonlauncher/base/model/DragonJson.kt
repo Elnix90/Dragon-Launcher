@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.JSON_TAG
  * access via the inline functions in [DragonJson]. Always prefer using [DragonJson.encode] and
  * [DragonJson.decode] for type-safe and logged operations.
  */
-public val json: Json =
+val json: Json =
 	Json {
 		explicitNulls = false
 		ignoreUnknownKeys = true

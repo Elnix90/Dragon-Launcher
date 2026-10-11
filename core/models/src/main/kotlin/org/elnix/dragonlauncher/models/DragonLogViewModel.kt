@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class DragonLogViewModel
+class DragonLogViewModel
 	@Inject
 	constructor(
 		application: Application,
-		public val logsService: LogsService
+		val logsService: LogsService
 	) : AndroidViewModel(application)

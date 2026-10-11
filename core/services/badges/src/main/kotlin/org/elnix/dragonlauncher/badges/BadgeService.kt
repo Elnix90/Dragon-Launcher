@@ -20,8 +20,8 @@ import org.elnix.dragonlauncher.notifications.NotificationRepository
 import org.elnix.dragonlauncher.profiles.ProfileManager
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
-public interface BadgeService {
-	public fun getBadge(application: Application): Flow<Badge?>
+interface BadgeService {
+	fun getBadge(application: Application): Flow<Badge?>
 }
 
 internal class BadgeServiceImpl(

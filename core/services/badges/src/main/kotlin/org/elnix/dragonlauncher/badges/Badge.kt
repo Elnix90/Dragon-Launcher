@@ -5,29 +5,29 @@ import androidx.annotation.DrawableRes
 
 public sealed interface BadgeIcon {
 	@JvmInline
-	public value class Drawable(
-		public val drawable: android.graphics.drawable.Drawable
+	value class Drawable(
+		val drawable: android.graphics.drawable.Drawable
 	) : BadgeIcon
 
 	@JvmInline
-	public value class Vector(
-		@param:DrawableRes public val iconRes: Int
+	value class Vector(
+		@param:DrawableRes val iconRes: Int
 	) : BadgeIcon
 }
 
-public fun BadgeIcon(drawable: Drawable): BadgeIcon = BadgeIcon.Drawable(drawable)
+fun BadgeIcon(drawable: Drawable): BadgeIcon = BadgeIcon.Drawable(drawable)
 
-public fun BadgeIcon(
+fun BadgeIcon(
 	@DrawableRes iconRes: Int
 ): BadgeIcon = BadgeIcon.Vector(iconRes)
 
-public interface Badge {
-	public val number: Int?
-	public val progress: Float?
-	public val icon: BadgeIcon?
+interface Badge {
+	val number: Int?
+	val progress: Float?
+	val icon: BadgeIcon?
 }
 
-public fun Badge(
+fun Badge(
 	number: Int? = null,
 	progress: Float? = null,
 	icon: BadgeIcon? = null
@@ -39,7 +39,7 @@ internal data class MutableBadge(
 	override var icon: BadgeIcon? = null
 ) : Badge
 
-public fun Collection<Badge>.combine(): Badge? {
+fun Collection<Badge>.combine(): Badge? {
 	if (isEmpty()) return null
 	val badge = MutableBadge()
 	var progresses = 0

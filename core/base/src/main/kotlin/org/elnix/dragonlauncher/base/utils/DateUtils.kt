@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatter
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-public object DateUtils {
-	public fun Context.openAlarmApp2(): Boolean {
+object DateUtils {
+	fun Context.openAlarmApp2(): Boolean {
 		val pm = this.packageManager
 
 		// 1. Official alarm UI
@@ -110,7 +110,7 @@ public object DateUtils {
 		return false
 	}
 
-	public fun Context.openAlarmApp() {
+	fun Context.openAlarmApp() {
 		val pm = this.packageManager
 
 		// Try official alarm actions in priority order
@@ -137,7 +137,7 @@ public object DateUtils {
 		logD(TAG) { "No alarm app found" }
 	}
 
-	public fun Context.openCalendar() {
+	fun Context.openCalendar() {
 		try {
 			val calendarUri =
 				CalendarContract.CONTENT_URI
@@ -186,7 +186,7 @@ public object DateUtils {
 	 *
 	 * @return [String] formatted as [defaultDateTimeFormatter]
 	 */
-	public fun Long.formatDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
+	fun Long.formatDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
 		val instant = Instant.fromEpochMilliseconds(this)
 		val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 		return localDateTime.format(format)
@@ -198,7 +198,7 @@ public object DateUtils {
 	 * @param format the datetime format to apply
 	 * @return [String] the current datetime formatted according to the specified format
 	 */
-	public fun nowFormattedDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
+	fun nowFormattedDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
 		val instant = Clock.System.now()
 		val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 		return localDateTime.format(format)
@@ -210,7 +210,7 @@ public object DateUtils {
 	 * @param format the time format to apply (default: 24-hour with seconds)
 	 * @return [String] the current time formatted according to the specified format
 	 */
-	public fun nowFormattedTime(
+	fun nowFormattedTime(
 		format: DateTimeFormat<kotlinx.datetime.LocalTime> = DateTimeFormats.time24HourSeconds
 	): String {
 		val instant = Clock.System.now()
@@ -224,7 +224,7 @@ public object DateUtils {
 	 * @param format the date format to apply (default: European format)
 	 * @return [String] the current date formatted according to the specified format
 	 */
-	public fun nowFormattedDate(format: DateTimeFormat<kotlinx.datetime.LocalDate> = DateTimeFormats.dateEu): String {
+	fun nowFormattedDate(format: DateTimeFormat<kotlinx.datetime.LocalDate> = DateTimeFormats.dateEu): String {
 		val instant = Clock.System.now()
 		val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 		return localDateTime.date.format(format)
@@ -237,7 +237,7 @@ public object DateUtils {
 	 *
 	 * @return [String] the formatted duration
 	 */
-	public fun Long.formatDuration(): String =
+	fun Long.formatDuration(): String =
 		when {
 			this >= 60 -> {
 				val hours = this / 60
@@ -250,7 +250,7 @@ public object DateUtils {
 			}
 		}
 
-	public fun isValidTimeFormat(formatter: String): Boolean =
+	fun isValidTimeFormat(formatter: String): Boolean =
 		try {
 			val timeFormatter = DateTimeFormatter.ofPattern(formatter)
 			val now = LocalTime.now()
@@ -261,7 +261,7 @@ public object DateUtils {
 			false
 		}
 
-	public fun isValidDateFormat(formatter: String): Boolean =
+	fun isValidDateFormat(formatter: String): Boolean =
 		try {
 			val dateFormatter = DateTimeFormatter.ofPattern(formatter)
 			val today = LocalDate.now()

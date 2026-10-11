@@ -12,4 +12,4 @@ import org.elnix.dragonlauncher.base.model.serializables.IconShape
  * I really don't want to handle the cache invalidation of this thing, so I'll keep it at 200 and call it a day.
  * Usually ppl don't usually have more than 200 points with sizes and shapes different, or they might be psychopaths
  */
-public object DrawPathCache : DragonCache<Pair<IconShape, Size>, Path>(200)
+object DrawPathCache : DragonCache<Pair<IconShape, Size>, Path>(200)

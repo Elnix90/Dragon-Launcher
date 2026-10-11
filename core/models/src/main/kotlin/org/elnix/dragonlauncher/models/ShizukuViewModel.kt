@@ -9,10 +9,10 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class ShizukuViewModel
+class ShizukuViewModel
 	@Inject
 	constructor(
-		public val shizukuService: ShizukuService
+		val shizukuService: ShizukuService
 	) : ViewModel() {
 		init {
 			viewModelInitialized()

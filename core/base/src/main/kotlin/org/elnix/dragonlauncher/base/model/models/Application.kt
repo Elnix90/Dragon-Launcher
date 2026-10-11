@@ -46,13 +46,13 @@ public abstract class Application : Comparable<Application> {
 
 	public abstract fun overrideCategory(categoryName: String?): Application
 
-	public val effectiveCategory: String
+	val effectiveCategory: String
 		get() = categoryOverride ?: category.name
 
 	public abstract val profile: Profile
-	public val userSerialNumber: Long
+	val userSerialNumber: Long
 		get() = profile.serial
-	public val user: UserHandle
+	val user: UserHandle
 		get() = profile.userHandle
 
 	public abstract val isSystem: Boolean
@@ -70,12 +70,12 @@ public abstract class Application : Comparable<Application> {
 	/**
 	 * Return whether the app was installed recently
 	 */
-	public fun isRecent(daysToKeep: Int): Boolean = System.currentTimeMillis() - installTime < ONE_DAY_SECONDS * daysToKeep
+	fun isRecent(daysToKeep: Int): Boolean = System.currentTimeMillis() - installTime < ONE_DAY_SECONDS * daysToKeep
 
-	public val isPrivate: Boolean
+	val isPrivate: Boolean
 		get() = profile.type == Profile.Type.Private
 
-	public val isWork: Boolean
+	val isWork: Boolean
 		get() = profile.type == Profile.Type.Work
 
 	/**
@@ -85,17 +85,17 @@ public abstract class Application : Comparable<Application> {
 	 */
 	public abstract var cachedNormalizerResult: Pair<String, String>?
 
-	public val action: Action.LaunchApp by lazy {
+	val action: Action.LaunchApp by lazy {
 		Action.LaunchApp(packageName, profile)
 	}
 
-	public val key: CacheKey by lazy {
+	val key: CacheKey by lazy {
 		CacheKey(this)
 	}
 
 	public abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
 
-	public fun launch(ctx: Context, options: Bundle?): Boolean {
+	fun launch(ctx: Context, options: Bundle?): Boolean {
 		val launcherApps = ctx.getSystemService<LauncherApps>()!!
 		if (isAtLeastApiLevel(31)) {
 			options?.putInt("android.activity.splashScreenStyle", 1)
@@ -117,7 +117,7 @@ public abstract class Application : Comparable<Application> {
 		return true
 	}
 
-	public fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon =
+	fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon =
 		StaticLauncherIcon(
 			foregroundLayer =
 				StaticIconLayer(
@@ -130,13 +130,13 @@ public abstract class Application : Comparable<Application> {
 
 	public abstract fun getStoreDetails(ctx: Context): StoreLink?
 
-	public fun uninstall(ctx: Context) {
+	fun uninstall(ctx: Context) {
 		val intent = Intent(Intent.ACTION_DELETE)
 		intent.data = "package:$packageName".toUri()
 		ctx.startActivity(intent)
 	}
 
-	public fun openAppDetails(ctx: Context) {
+	fun openAppDetails(ctx: Context) {
 		val launcherApps = ctx.getSystemService<LauncherApps>()!!
 
 		launcherApps.startAppDetailsActivity(
@@ -182,7 +182,7 @@ public abstract class Application : Comparable<Application> {
 		}
 	}
 
-	public fun getActivityInfo(ctx: Context): ActivityInfo? =
+	fun getActivityInfo(ctx: Context): ActivityInfo? =
 		try {
 			ctx.packageManager.getActivityInfo(componentName, 0)
 		} catch (_: PackageManager.NameNotFoundException) {
@@ -198,8 +198,8 @@ public abstract class Application : Comparable<Application> {
 			.compare(label1, label2)
 	}
 
-	public companion object {
-		public fun Application.getStoreLinkForInstaller(
+	companion object {
+		fun Application.getStoreLinkForInstaller(
 			installerPackage: String?
 		): StoreLink? =
 			when (installerPackage) {
@@ -248,14 +248,14 @@ public abstract class Application : Comparable<Application> {
 				}
 			}
 
-		public fun getPackageVersionName(ctx: Context, packageName: String): String? =
+		fun getPackageVersionName(ctx: Context, packageName: String): String? =
 			try {
 				ctx.packageManager.getPackageInfo(packageName, 0).versionName
 			} catch (_: PackageManager.NameNotFoundException) {
 				null
 			}
 
-		public fun isSuspended(ctx: Context, packageName: String): Boolean =
+		fun isSuspended(ctx: Context, packageName: String): Boolean =
 			try {
 				ctx.packageManager
 					.getApplicationInfo(
@@ -266,7 +266,7 @@ public abstract class Application : Comparable<Application> {
 				false
 			}
 
-		public fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
+		fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
 	}
 }
 

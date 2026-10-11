@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 
-public val AmoledDragonColorScheme: ColorScheme =
+val AmoledDragonColorScheme: ColorScheme =
 	ColorScheme(
 		primary = Color(0xFF8059EE),
 		onPrimary = Color(0xFFCECECE),
@@ -55,7 +55,7 @@ public val AmoledDragonColorScheme: ColorScheme =
 		inverseOnSurface = Color.Black
 	)
 
-public val DarkDragonColorScheme: ColorScheme =
+val DarkDragonColorScheme: ColorScheme =
 	ColorScheme(
 		primary = Color(0xFF9842B7),
 		onPrimary = Color.Black,
@@ -107,7 +107,7 @@ public val DarkDragonColorScheme: ColorScheme =
 		inverseOnSurface = Color.Black
 	)
 
-public val LightDragonColorScheme: ColorScheme =
+val LightDragonColorScheme: ColorScheme =
 	ColorScheme(
 		primary = Color(0xFFA351E7),
 		onPrimary = Color.Black,

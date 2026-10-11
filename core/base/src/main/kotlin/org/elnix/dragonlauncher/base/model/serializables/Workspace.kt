@@ -14,9 +14,9 @@ public data class Workspace(
 	val removedAppIds: Set<CacheKey>? = setOf(CacheKey("org.elnix.dragonlauncher", 0)),
 	val enabled: Boolean = true
 ) {
-	public companion object {
+	companion object {
 		// I disable non-user workspaces by default, enable it if you need it (only used for nerds) (those who download my app are btw :) )
-		public val defaultWorkspaces: List<Workspace> =
+		val defaultWorkspaces: List<Workspace> =
 			listOf(
 				Workspace(
 					id = "User",

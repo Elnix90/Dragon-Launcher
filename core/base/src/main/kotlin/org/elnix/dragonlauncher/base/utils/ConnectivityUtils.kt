@@ -18,13 +18,13 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.permissionsManager
 
-public object ConnectivityUtils {
-	public fun Context.isBluetoothEnabled(): Boolean {
+object ConnectivityUtils {
+	fun Context.isBluetoothEnabled(): Boolean {
 		val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 		return bluetoothManager.adapter?.isEnabled == true
 	}
 
-	public fun Context.isHotspotEnabled(): Boolean {
+	fun Context.isHotspotEnabled(): Boolean {
 		val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
 		return try {
 			val method = wifiManager.javaClass.getDeclaredMethod("isWifiApEnabled")
@@ -39,7 +39,7 @@ public object ConnectivityUtils {
 		}
 	}
 
-	public fun Context.isWifiEnabled(): Boolean =
+	fun Context.isWifiEnabled(): Boolean =
 		try {
 			val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
 			wifiManager.isWifiEnabled
@@ -50,7 +50,7 @@ public object ConnectivityUtils {
 		}
 
 	@SuppressLint("MissingPermission")
-	public fun Context.getMobileDataStatus(): Pair<Boolean, String> {
+	fun Context.getMobileDataStatus(): Pair<Boolean, String> {
 		val resolver = contentResolver
 		val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -106,7 +106,7 @@ public object ConnectivityUtils {
 		return true to "Data ON"
 	}
 
-	public fun Context.isVpnEnabled(): Boolean {
+	fun Context.isVpnEnabled(): Boolean {
 		val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 		return connectivityManager.allNetworks.any { network ->
@@ -114,7 +114,7 @@ public object ConnectivityUtils {
 		}
 	}
 
-	public fun Context.isAirplaneMode(): Boolean =
+	fun Context.isAirplaneMode(): Boolean =
 		Settings.Global.getInt(
 			contentResolver,
 			Settings.Global.AIRPLANE_MODE_ON,
@@ -130,7 +130,7 @@ public object ConnectivityUtils {
  * rest of the app sees.
  */
 @Composable
-public fun rememberIsDefaultLauncher(): State<Boolean> {
+fun rememberIsDefaultLauncher(): State<Boolean> {
 	val ctx = LocalContext.current
 
 	return ctx.permissionsManager

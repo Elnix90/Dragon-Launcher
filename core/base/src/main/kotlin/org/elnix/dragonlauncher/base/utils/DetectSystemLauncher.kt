@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.systemLaunchers
 
-public fun Context.detectSystemLauncher(): String? {
+fun Context.detectSystemLauncher(): String? {
 	val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
 	// Method 1: Check foreground task (most reliable)

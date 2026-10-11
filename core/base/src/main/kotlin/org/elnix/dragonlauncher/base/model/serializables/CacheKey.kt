@@ -27,10 +27,10 @@ import org.elnix.dragonlauncher.base.model.serializables.CacheKey.Companion.comp
 @JvmInline
 @Serializable
 @SerialName("CacheKey")
-public value class CacheKey private constructor(
-	public val cacheKey: String
+value class CacheKey private constructor(
+	val cacheKey: String
 ) {
-	public companion object {
+	companion object {
 		/**
 		 * The single separator used by every key. It is intentionally the same character as the `#`
 		 * of the frozen application keys, so one constant rules both formats.
@@ -65,7 +65,7 @@ public value class CacheKey private constructor(
 	 * @param subject what is being drawn - an [Application] key, a [Point] key, or an action
 	 * @param appsRevision the installed-app snapshot [subject] was resolved against
 	 */
-	public constructor(
+	constructor(
 		subject: Any,
 		appsRevision: Int,
 		customIconHashCode: Int,
@@ -88,19 +88,19 @@ public value class CacheKey private constructor(
 	 *
 	 * In-memory only.
 	 */
-	public constructor(point: Point) : this(cacheKey = compose(KIND_POINT, point.id, point.action))
+	constructor(point: Point) : this(cacheKey = compose(KIND_POINT, point.id, point.action))
 
 	/**
 	 * Application constructor, **persisted**.
 	 * Its output must not change.
 	 * @see Workspace
 	 */
-	public constructor(app: Application) : this(cacheKey = compose(app.packageName, app.user.hashCode()))
+	constructor(app: Application) : this(cacheKey = compose(app.packageName, app.user.hashCode()))
 
 	/**
 	 * Package/user constructor, **persisted**.
 	 * Its output must not change.
 	 * @see Workspace
 	 */
-	public constructor(packageName: String, userId: Int) : this(cacheKey = compose(packageName, userId))
+	constructor(packageName: String, userId: Int) : this(cacheKey = compose(packageName, userId))
 }

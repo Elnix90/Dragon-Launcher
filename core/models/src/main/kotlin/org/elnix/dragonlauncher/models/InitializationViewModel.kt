@@ -36,7 +36,7 @@ import javax.inject.Inject
  */
 @Stable
 @HiltViewModel
-public class InitializationViewModel
+class InitializationViewModel
 	@Inject
 	constructor(
 		application: Application,
@@ -49,8 +49,8 @@ public class InitializationViewModel
 			viewModelInitialized()
 		}
 
-		public val howMany: SettingFlow<Int> = SettingFlow(30)
-		public val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat)
+		val howMany: SettingFlow<Int> = SettingFlow(30)
+		val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat)
 
 		private fun initializeSwipeSettings(
 			points: Points,
@@ -63,7 +63,7 @@ public class InitializationViewModel
 			}
 		}
 
-		public fun initializeFresh() {
+		fun initializeFresh() {
 			val nests = mapOf(
 				0 to emptyNest
 			)
@@ -71,7 +71,7 @@ public class InitializationViewModel
 			initializeSwipeSettings(emptyMap(), nests)
 		}
 
-		public fun initializeWithRecentApps() {
+		fun initializeWithRecentApps() {
 			val points = initializePoints()
 			val nests = initializeNests(points)
 

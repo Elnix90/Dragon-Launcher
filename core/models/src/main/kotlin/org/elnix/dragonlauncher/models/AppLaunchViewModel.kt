@@ -9,11 +9,11 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class AppLaunchViewModel
+class AppLaunchViewModel
 	@Inject
 	constructor(
 		application: android.app.Application,
-		public val appLaunchService: AppLaunchService
+		val appLaunchService: AppLaunchService
 	) : AndroidViewModel(application) {
 		init {
 			viewModelInitialized()

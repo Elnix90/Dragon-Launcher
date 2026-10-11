@@ -12,12 +12,12 @@ import javax.inject.Inject
 
 @Stable
 @HiltViewModel
-public class SwipeViewModel
+class SwipeViewModel
 	@Inject
 	constructor(
 		application: Application,
 		private val widgetsService: WidgetsService,
-		public val swipeService: SwipeService,
+		val swipeService: SwipeService,
 		private val nestsNavigationService: NestsNavigationService
 	) : AndroidViewModel(application) {
 		init {

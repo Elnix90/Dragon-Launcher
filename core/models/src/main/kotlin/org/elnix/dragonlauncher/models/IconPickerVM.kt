@@ -17,26 +17,26 @@ import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconService
 import kotlin.time.Duration.Companion.milliseconds
 
-public class IconPickerVM(
+class IconPickerVM(
 	app: Application,
 	private val iconService: IconService
 ) {
 	private val action = Action.LaunchApp(app)
 
-	public fun getDefaultIcon(size: Int): Flow<CustomIconWithPreview?> =
+	fun getDefaultIcon(size: Int): Flow<CustomIconWithPreview?> =
 		flow {
 			emit(iconService.getUncustomizedDefaultIcon(action, size))
 		}
 
-	public fun getIconSuggestions(size: Int): Flow<List<CustomIconWithPreview>> =
+	fun getIconSuggestions(size: Int): Flow<List<CustomIconWithPreview>> =
 		flow {
 			emit(iconService.getCustomIconSuggestions(action, size))
 		}
 
-	public val installedIconPacks: Flow<List<IconPack>> = iconService.getInstalledIconPacks()
+	val installedIconPacks: Flow<List<IconPack>> = iconService.getInstalledIconPacks()
 
-	public val iconSearchResults: MutableState<List<CustomIconWithPreview>> = mutableStateOf(emptyList())
-	public val isSearchingIcons: MutableState<Boolean> = mutableStateOf(false)
+	val iconSearchResults: MutableState<List<CustomIconWithPreview>> = mutableStateOf(emptyList())
+	val isSearchingIcons: MutableState<Boolean> = mutableStateOf(false)
 
 	private var debounceSearchJob: Job? = null
 

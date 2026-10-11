@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
-public fun Shape.toPath(
+fun Shape.toPath(
 	size: Size,
 	density: Density
 ): Path {
@@ -26,7 +26,7 @@ public fun Shape.toPath(
 	}
 }
 
-public fun DrawScope.toPath(
+fun DrawScope.toPath(
 	shape: Shape,
 	size: Size
 ): Path = shape.toPath(size, this)

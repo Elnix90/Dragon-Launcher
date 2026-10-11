@@ -27,15 +27,15 @@ public enum class DrawerActions(
 	Disabled(R.string.disabled, R.drawable.disabled_by_default)
 	;
 
-	public companion object {
-		public val defaultLeftDrawerAction: DrawerActions = Disabled
-		public val defaultRightDrawerAction: DrawerActions = Disabled
-		public val defaultEnterAction: DrawerActions = Clear
-		public val defaultHomeAction: DrawerActions = Close
-		public val defaultScrollDownAction: DrawerActions = Close
-		public val defaultScrollUpAction: DrawerActions = CloseKb
-		public val defaultClickSearchAction: DrawerActions = SearchWeb
-		public val defaultBackAction: DrawerActions = Close
+	companion object {
+		val defaultLeftDrawerAction: DrawerActions = Disabled
+		val defaultRightDrawerAction: DrawerActions = Disabled
+		val defaultEnterAction: DrawerActions = Clear
+		val defaultHomeAction: DrawerActions = Close
+		val defaultScrollDownAction: DrawerActions = Close
+		val defaultScrollUpAction: DrawerActions = CloseKb
+		val defaultClickSearchAction: DrawerActions = SearchWeb
+		val defaultBackAction: DrawerActions = Close
 
 		public inline val DrawerActions.isUsed: Boolean
 			get() = notNone && notDisabled

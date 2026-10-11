@@ -22,14 +22,14 @@ public inline infix fun Offset.distanceTo(b: Offset): Float =
 public inline infix fun Offset.distanceSquaredTo(other: Offset): Float =
 	(other.x - x).pow(2) + (other.y - y).pow(2)
 
-public fun angle360FromOffset(center: Offset, offset: Offset): Float {
+fun angle360FromOffset(center: Offset, offset: Offset): Float {
 	if (center == offset) return 0f
 	return (offset - center).angleDeg()
 }
 
-public fun Offset.angleRad(): Float = atan2(y, x)
+fun Offset.angleRad(): Float = atan2(y, x)
 
-public fun Offset.angleRad360(): Float {
+fun Offset.angleRad360(): Float {
 	var rad = this.angleRad()
 	if (rad < 0f) rad += TWO_PI_F
 	return rad
@@ -93,7 +93,7 @@ public inline fun Offset.undoTransformations(
  * Snaps both x and y of the Offset to integers if they cross the threshold.
  * @param threshold The distance from an integer to trigger snapping
  */
-public fun Offset.snapToRound(snapTo: Offset, threshold: Float): Offset =
+fun Offset.snapToRound(snapTo: Offset, threshold: Float): Offset =
 	Offset(
 		x = x.snapToRound(snapTo.x, threshold),
 		y = y.snapToRound(snapTo.y, threshold)
@@ -103,7 +103,7 @@ public fun Offset.snapToRound(snapTo: Offset, threshold: Float): Offset =
  * Snaps both x and y of the Offset to the closest multiple of [cellSizePx].
  * @param cellSizePx The size of the virtual grid to be snapped on
  */
-public fun Offset.snapToGrid(cellSizePx: Float): Offset =
+fun Offset.snapToGrid(cellSizePx: Float): Offset =
 	Offset(
 		x = this.x.snapToGrid(cellSizePx),
 		y = this.y.snapToGrid(cellSizePx)
@@ -114,7 +114,7 @@ public fun Offset.snapToGrid(cellSizePx: Float): Offset =
  *
  * @return the formatter string
  */
-public fun Offset.cleanString(): String =
+fun Offset.cleanString(): String =
 	"${x.fastRoundToInt()} ; ${y.fastRoundToInt()}"
 
 /**

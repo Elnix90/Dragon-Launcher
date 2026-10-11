@@ -14,11 +14,11 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import java.security.MessageDigest
 
-public interface SecurityService {
+interface SecurityService {
 	/**
 	 * Hashes a PIN using SHA-256.
 	 */
-	public fun hash(pin: String): String
+	fun hash(pin: String): String
 
 	/**
 	 * Verifies a PIN against the stored hash
@@ -28,13 +28,13 @@ public interface SecurityService {
 	/**
 	 * Checks if device unlock (biometric or device credentials) is available.
 	 */
-	public fun isDeviceUnlockAvailable(ctx: Context): Boolean
+	fun isDeviceUnlockAvailable(ctx: Context): Boolean
 
 	/**
 	 * Shows a device unlock prompt that supports biometric (fingerprint/face)
 	 * with automatic fallback to device credentials (PIN/pattern/password).
 	 */
-	public fun showDeviceUnlockPrompt(
+	fun showDeviceUnlockPrompt(
 		activity: FragmentActivity,
 		onSuccess: () -> Unit,
 		onError: (String) -> Unit,

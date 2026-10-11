@@ -58,8 +58,8 @@ public data class CustomObject(
 	 */
 	val alignsWithDragAngle: Boolean = false
 ) {
-	public companion object {
-		public val defaultLineCustomObject: CustomObject =
+	companion object {
+		val defaultLineCustomObject: CustomObject =
 			CustomObject(
 				stroke = 2.dp,
 				color = null, // RGB Color according to the angle
@@ -74,7 +74,7 @@ public data class CustomObject(
 				alignsWithDragAngle = false
 			)
 
-		public val defaultAngleCustomObject: CustomObject =
+		val defaultAngleCustomObject: CustomObject =
 			CustomObject(
 				stroke = 2.dp,
 				color = null, // RGB Color according to the angle
@@ -89,7 +89,7 @@ public data class CustomObject(
 				alignsWithDragAngle = false
 			)
 
-		public val defaultStartCustomObject: CustomObject =
+		val defaultStartCustomObject: CustomObject =
 			CustomObject(
 				stroke = 4.dp,
 				color = null, // RGB Color according to the angle
@@ -104,7 +104,7 @@ public data class CustomObject(
 				alignsWithDragAngle = false
 			)
 
-		public val defaultEndCustomObject: CustomObject =
+		val defaultEndCustomObject: CustomObject =
 			CustomObject(
 				stroke = (-.5f).dp,
 				color = null, // RGB Color according to the angle
@@ -119,7 +119,7 @@ public data class CustomObject(
 				alignsWithDragAngle = false
 			)
 
-		public val defaultHoldCustomObject: CustomObject =
+		val defaultHoldCustomObject: CustomObject =
 			CustomObject(
 				stroke = 4.dp,
 				color = null,
