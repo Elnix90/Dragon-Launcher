@@ -1,0 +1,12 @@
+4.5.0 (Komodo)
+2026-10-11
+[NEW]
+* Permissions tab in settings
+* 2 modes for the dragging overlay, to choose whether to render the nests or not
+* Add a new workspace: the apps not yet in the nests
+* New settings to make the categories openable by clicking on them (and apps)
+[IMPROVED]
+* Small UI improvements everywhere
+[FIXED]
+* Big icons loading issue due to race-conditions in core points logic
+* Small issues with reset behavior
