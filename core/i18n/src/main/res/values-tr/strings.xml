@@ -388,7 +388,7 @@
     <string name="time_limit_encourage_very_long">Bu çok fazla ekran süresi. Belkide öncelikle daha kısa bir oturum denemelisin? 😅</string>
     <string name="time_limit_start">Başla</string>
     <string name="time_limit_cancel">İptal Et</string>
-    <string name="timer_notification_title">Dragon seni izliyor 🐉 (ve büyük ihtimalle telefonuna bağlı olarak, telefonunu satın aldığın şirket ve verilerini sattıkları diğer yerler...)</string>
+    <string name="timer_notification_title">Dragon seni izliyor 🐉 (ve büyük ihtimalle telefonuna bağlı olarak, telefonunu satın aldığın şirket ve verilerini sattıkları diğer yerler…)</string>
     <string name="timer_notification_text">%2$s\'de %1$s kaldı</string>
     <string name="time_warning_subtitle">Oturumun neredeyse tamamlanacak ⚡</string>
     <string name="time_exceeded_title">Süre doldu!</string>
@@ -397,7 +397,7 @@
     <string name="time_exceeded_ok">Anlaşıldı, teşekkürler Dragon</string>
     <string name="time_exceeded_header">Oturum sonlandı</string>
     <string name="encouragement_walk">Bir yürüyüşe git 🚶</string>
-    <string name="encouragement_grass">Biraz çimene dokun 🌿 (Evet, imkansız değil...)</string>
+    <string name="encouragement_grass">Biraz çimene dokun 🌿 (Evet, imkansız değil…)</string>
     <string name="encouragement_water">Biraz su iç 💧</string>
     <string name="encouragement_stretch">Vücudunu esnet 🤸‍♂️</string>
     <string name="encouragement_window">Camdan dışarı bak 🪟</string>
