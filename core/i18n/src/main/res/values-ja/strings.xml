@@ -227,7 +227,6 @@
     <string name="show_app_icon_start_drag_position">ドラッグ開始位置にアプリアイコンを表示</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d 件選択中</string>
-
     <string name="tap_circle_to_place">サークルをタップしてアプリを配置</string>
     <string name="multi_select_drawer_hint">💡 アプリを長押しして複数を一度に選択</string>
     <string name="deselect_all">すべて選択解除</string>
@@ -383,7 +382,6 @@
     <string name="usage_permission_needed">使用状況へのアクセス権限が必要</string>
     <string name="grant_usage_permission">権限を付与する</string>
     <string name="reminder_mode_title">使用状況リマインダー</string>
-
     <string name="reminder_interval">通知期間</string>
     <string name="reminder_interval_description">…分ごとに通知</string>
     <string name="overlay_permission_required">オーバーレイ権限</string>
@@ -1024,9 +1022,70 @@
     <string name="show_google_lockdown_warning_desc">無効時、ロックダウン警告が上部に表示されません</string>
     <string name="top">上部</string>
     <string name="bottom">下部</string>
-
     <string name="drawer_align">ドロワー配置</string>
     <string name="ime_padding_drawer">キーボードのパディング</string>
     <string name="ime_padding_drawer_desc">キーボードがアプリと重なるか</string>
     <string name="add_apps">アプリを追加</string>
+    <string name="app_icon_overlay_scale">アプリアイコンのオーバーレイサイズ</string>
+    <string name="encouragement_grass">草原へ手を伸ばしてみましょう🌿</string>
+    <string name="place_app_where">配置する場所を選択</string>
+    <string name="permission_notifications_title">通知へのアクセス</string>
+    <string name="permission_notifications_desc">Dragon Launcherに通知の取得を許可することで、通知をステータスバーに表示できるようになります。</string>
+    <string name="permission_app_shortcuts_title">アプリショートカット</string>
+    <string name="permission_app_shortcuts_desc">Dragon Launcherにショートカットの取得を許可することで、ドロワーや検索時に表示されるようになります。</string>
+    <string name="permission_accessibility_title">アクセシビリティサービス</string>
+    <string name="permission_accessibility_desc">許可することで、Dragon Launcherで通知シェード、設定パネル、最近使用したアプリを開くことができるようになります。主にサードパーティランチャーでジェスチャーナビゲーションが使用できないデバイスで必要となります。</string>
+    <string name="permission_manage_profiles_title">デフォルトランチャー</string>
+    <string name="permission_manage_profiles_desc">Dragon Launcherを使えば、仕事用プロファイルとプライベート用プロファイルを管理できるので、一時停止、ロック、切り替えが可能です。</string>
+    <string name="permission_usage_stat_title">使用状況へのアクセス</string>
+    <string name="permission_usage_stat_desc">Dragon Launcherにアプリの使用状況データを読み取ることを許可することで、スクリーンタイムなどのウェルビーイング機能が動作するようになります。</string>
+    <string name="permission_display_over_other_apps_title">他のアプリの上に重ねて表示</string>
+    <string name="permission_display_over_other_apps_desc">Dragon Launcherが他のアプリの上にオーバーレイを表示することを許可することで、アプリタイマーの通知が表示されるようになります</string>
+    <string name="has_seen_welcome">「ようこそ」画面を見たことがある</string>
+    <string name="has_seen_welcome_desc">新しいようこそ画面に表示されるメッセージ用</string>
+    <string name="lets_begin">始めましょう！</string>
+    <string name="auto_import_apps">アプリを自動インポート</string>
+    <string name="start_fresh">新たなスタートを切る</string>
+    <string name="initialize_apps">アプリを初期化</string>
+    <string name="the_number_of_apps_you_want_to_add">最初に追加したいアプリの数</string>
+    <string name="has_initialized_desc">「始めましょう」画面を表示</string>
+    <string name="or">もしくは…</string>
+    <string name="permission_granted">権限が付与されました！</string>
+    <string name="global_dragging_mode">グローバルドラッグモード</string>
+    <string name="global_dragging_mode_setup">ドラッグモードのセットアップ</string>
+    <string name="global_dragging_mode_setup_reset">本当に現在のドラッグモードをリセットしますか？</string>
+    <string name="global_dragging_mode_desc">ランチャー全体のドラッグモード</string>
+    <string name="nests_settings">ネスト設定</string>
+    <string name="configure_dragging_mode">ドラッグモードを設定</string>
+    <string name="dragging_mode_normal">通常</string>
+    <string name="dragging_mode_normal_desc">デフォルトのモードで、どこからスワイプしてもネストを表示できます</string>
+    <string name="dragging_mode_fixed">固定</string>
+    <string name="dragging_mode_fixed_desc">ネストの位置を固定し、常に表示され、どこにでもドラッグできます。中心から有効になります</string>
+    <string name="status_bar_warning">⚠️カスタムステータスバーは、アプリがフルスクリーン設定でない場合表示されません</string>
+    <string name="decode_error">デコードエラー！</string>
+    <string name="decode_error_desc">ポイントのデコード中にエラーが発生しました。データの損失を防ぐため、エクスポートをお勧めします。</string>
+    <string name="decode_error_share_to_dev">このバグをできるだけ早く修正できるよう、ぜひ共有してください！</string>
+    <string name="decode_error_allow_anyway">Dragonがデータを上書きすることを許可する</string>
+    <string name="share_logs">ログを共有</string>
+    <string name="custom_category">カスタムカテゴリ</string>
+    <string name="default_category">デフォルトカテゴリ</string>
+    <string name="recently_installed_apps_duration">最近インストールされたアプリの期間</string>
+    <string name="recently_installed_apps_duration_desc">最近インストールされたアプリにバッジを付与する期間 (日)</string>
+    <string name="show_current_selected_point">選択されたポイントを表示</string>
+    <string name="show_current_selected_point_desc">ドラッグ中に選択しているポイントを表示する</string>
+    <string name="auto_show_unlock_profile">ロック解除プロファイルの自動表示</string>
+    <string name="auto_show_unlock_profile_desc">ドロワー内でロックされたプロファイルに入る際に、自動でロック解除画面を表示する</string>
+    <string name="top_bar_depth">トップバーの奥行き</string>
+    <string name="top_bar_depth_desc">上部のバーに表示されるポイントが描画される最大深度。(ライブネストである場合)</string>
+    <string name="point_preview_mode">ポイントプレビューモード</string>
+    <string name="point_preview_mode_new">ネスト内のポイントをそのまま表示する</string>
+    <string name="point_preview_mode_legacy">サイズ変更がされたアクションが表示されるが、精度が低くなる</string>
+    <string name="use_app_even_if_signature_does_not_match">署名が一致しない場合でもアプリを使用する</string>
+    <string name="use_app_even_if_signature_does_not_match_desc">デバッグバージョンを使用する際に表示される大きな警告画面を非表示にする</string>
+    <string name="openable_categories">展開可能なカテゴリ</string>
+    <string name="openable_categories_help">カテゴリ上のアプリはタップできず、タップした際はカテゴリを開く</string>
+    <string name="drawer_align_top_desc">アイコンは最初から自然に整列する</string>
+    <string name="drawer_align_bottom_desc">アイコンは下から並んでいます。閉じるためのスクロールは反転していません</string>
+    <string name="reminder_mode_notification">時間が終了すると、Dragonから通知が届きます！</string>
+    <string name="reminder_mode_overlay">PiPオーバーレイが表示され、終わりにする時間だと通知されます！</string>
 </resources>
