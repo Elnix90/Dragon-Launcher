@@ -14,7 +14,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
 			pluginManager.apply("com.google.dagger.hilt.android")
 			pluginManager.apply("com.autonomousapps.dependency-analysis")
 
-			configureKotlinAndroid(false)
+			configureKotlinAndroid()
 			forceKotlinMetadataResolution()
 
 			extensions.configure(ApplicationExtension::class.java) {
