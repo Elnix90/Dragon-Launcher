@@ -897,7 +897,6 @@
     <string name="set_category">Définir la catégorie</string>
     <string name="create_category">Créer une nouvelle catégorie</string>
     <string name="category_name">Nom de la catégorie</string>
-    <string name="use_default_category">Utiliser la catégorie par défaut</string>
     <string name="disabled_system_categories">Catégories système désactivées</string>
     <string name="yoann_desc">Extensions, performances, widgets</string>
     <string name="lucky_desc">Bien être numérique &amp; reminders</string>

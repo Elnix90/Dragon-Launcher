@@ -856,7 +856,6 @@
     <string name="animation_when_snapping_desc">スナップ時に表現力豊かなアニメーションを使用する</string>
     <string name="snap_shapes_offset">形状のオフセットをスナップ</string>
     <string name="snap_shapes_center">形状を中央にスナップ</string>
-    <string name="snap_shapes_scale">形状の大きさをスナップ</string>
     <string name="snap_shapes_angle">形状の角度をスナップ</string>
     <string name="nest_debug_info">ネストのデバッグ情報</string>
     <string name="nest_debug_info_desc">ネストの編集画面でデバッグ情報を表示</string>
@@ -1002,7 +1001,6 @@
     <string name="set_category">カテゴリを設定</string>
     <string name="create_category">新しいカテゴリを作成</string>
     <string name="category_name">カテゴリ名</string>
-    <string name="use_default_category">デフォルトのカテゴリを使用</string>
     <string name="disabled_system_categories">無効化されたシステムカテゴリ</string>
     <string name="disabled_system_categories_desc">ドロワーから非表示にするシステムカテゴリを選択</string>
     <string name="personal_profile">個人</string>

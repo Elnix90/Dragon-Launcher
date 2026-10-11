@@ -526,7 +526,6 @@
 	<string name="set_category">Set category</string>
 	<string name="create_category">Create new category</string>
 	<string name="category_name">Category name</string>
-	<string name="use_default_category">Use default category</string>
 	<string name="disabled_system_categories">Disabled system categories</string>
 	<string name="disabled_system_categories_desc">Choose which system categories to hide in the drawer</string>
 	<string name="long_click_settings_duration">Long Click Settings Duration (ms)</string>
@@ -915,7 +914,6 @@
 	<string name="animation_when_snapping_desc">Use expressive animation to animate the snapping</string>
 	<string name="snap_shapes_offset">Snap shapes offset</string>
 	<string name="snap_shapes_center">Snap shapes center</string>
-	<string name="snap_shapes_scale">Snap shapes scale</string>
 	<string name="snap_shapes_angle">Snap shapes angle</string>
 	<string name="nest_debug_info">Nest debug info</string>
 	<string name="nest_debug_info_desc">Show debug info in nest editing screen</string>

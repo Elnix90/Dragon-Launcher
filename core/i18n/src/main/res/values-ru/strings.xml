@@ -508,7 +508,6 @@
     <string name="set_category">Задать категорию</string>
     <string name="create_category">Создать категорию</string>
     <string name="category_name">Название категории</string>
-    <string name="use_default_category">Категория по умолчанию</string>
     <string name="disabled_system_categories">Отключённые системные категории</string>
     <string name="disabled_system_categories_desc">Выберите, какие системные категории скрыть в меню</string>
     <string name="long_click_settings_duration">Длительность нажатия для входа в настройки (мс)</string>
@@ -885,7 +884,6 @@
     <string name="animation_when_snapping_desc">Использовать выразительную анимацию при привязке</string>
     <string name="snap_shapes_offset">Привязка смещения фигур</string>
     <string name="snap_shapes_center">Привязка центра фигур</string>
-    <string name="snap_shapes_scale">Привязка масштаба фигур</string>
     <string name="snap_shapes_angle">Привязка угла фигур</string>
     <string name="nest_debug_info">Отладка гнезда</string>
     <string name="nest_debug_info_desc">Показывать отладочную информацию на экране редактирования гнезда</string>
