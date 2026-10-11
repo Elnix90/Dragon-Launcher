@@ -135,9 +135,9 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/elnix.jpg" width="22%" alt="Elnix Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/red__velvet_demo.gif" width="22%" alt="rev__velvet Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/emerson_biggons.gif" width="22%" alt="emerson_biggons Screenshot"/>
-    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/notBlk7.gif" width="22%" alt="notBlk7 Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/gifs/red__velvet_demo.gif" width="22%" alt="rev__velvet Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/gifs/emerson_biggons.gif" width="22%" alt="emerson_biggons Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/gifs/notBlk7.gif" width="22%" alt="notBlk7 Screenshot"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/ridwan.png" width="22%" alt="ridwan Screenshot"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/_agumx.png" width="22%" alt="_agumx Screenshot"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/pictures/akiraakemi.png" width="22%" alt="akiraakemi Screenshot"/>
