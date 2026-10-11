@@ -906,8 +906,8 @@
     <string name="version">Version</string>
     <string name="encouragement_grass">Prenez l’air 🌤</string>
     <string name="app_info_installer_package">Clef de l’installateur de paquet : %1$s</string>
-    <string name="permission_notifications_title">Accès aux notifications</string>
-    <string name="permission_notifications_desc">Autorisez Dragon Launcher à lire vos notifications pour qu’elles puissent être affichés dans la barre de statuts à côté de vos applications.</string>
+    <string name="permission_notifications_access_title">Accès aux notifications</string>
+    <string name="permission_notifications_access_desc">Autorisez Dragon Launcher à lire vos notifications pour qu’elles puissent être affichés dans la barre de statuts à côté de vos applications.</string>
     <string name="permission_app_shortcuts_title">Raccourcis d’applications</string>
     <string name="permission_app_shortcuts_desc">Autorisez Dragon Launcher lire les raccourcis publiés par vos applications pour qu’ils puissent apparaître dans le tiroir d’app et dans les résultats de recherche.</string>
     <string name="permission_accessibility_title">Services d’accessibilité</string>

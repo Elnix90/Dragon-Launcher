@@ -648,8 +648,10 @@
 	<string name="federico_desc">Live nests features &amp; translations</string>
 	<string name="copied_to_clipboard">Copied to clipboard!</string>
 	<string name="usage_access">Usage Statistics Access</string>
-	<string name="permission_notifications_title">Notification Access</string>
-	<string name="permission_notifications_desc">Allows Dragon Launcher to read your notifications, so they can be displayed in the status bar alongside your apps.</string>
+	<string name="permission_notifications_title">Notifications</string>
+	<string name="permission_notifications_desc">Allow dragon to send notifications</string>
+	<string name="permission_notifications_access_title">Notification Access</string>
+	<string name="permission_notifications_access_desc">Allows Dragon Launcher to read your notifications, so they can be displayed in the status bar alongside your apps.</string>
 	<string name="permission_app_shortcuts_title">App Shortcuts</string>
 	<string name="permission_app_shortcuts_desc">Allows Dragon Launcher to read the shortcuts published by your apps, so they appear in the app drawer and in search results.</string>
 	<string name="permission_accessibility_title">Accessibility Service</string>

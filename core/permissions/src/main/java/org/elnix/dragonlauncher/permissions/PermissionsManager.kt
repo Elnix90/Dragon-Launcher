@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.permissions
 
+import android.Manifest
 import android.app.Activity
 import android.app.AppOpsManager
 import android.app.Application
@@ -11,6 +12,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Process
 import android.provider.Settings
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -123,6 +126,11 @@ internal class PermissionsManagerImpl(
 		val settingsIntent =
 			when (permissionGroup) {
 				PermissionGroup.Notifications -> {
+					Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+						.putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+				}
+
+				PermissionGroup.NotificationsAccess -> {
 					Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
 				}
 
@@ -159,6 +167,15 @@ internal class PermissionsManagerImpl(
 
 	override fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean =
 		when (permissionGroup) {
+			PermissionGroup.Notifications -> {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+					ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) ==
+						PackageManager.PERMISSION_GRANTED
+				} else {
+					NotificationManagerCompat.from(ctx).areNotificationsEnabled()
+				}
+			}
+
 			PermissionGroup.AppShortcuts -> {
 				ctx
 					.getSystemService<LauncherApps>()
@@ -180,7 +197,7 @@ internal class PermissionsManagerImpl(
 			// secure setting is the source of truth. Reading it directly also makes
 			// the state correct before any of our services has been bound, which a
 			// report from the service itself could not guarantee.
-			PermissionGroup.Notifications -> {
+			PermissionGroup.NotificationsAccess -> {
 				isComponentEnabled(ENABLED_NOTIFICATION_LISTENERS)
 			}
 

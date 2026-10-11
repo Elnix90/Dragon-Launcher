@@ -17,6 +17,12 @@ enum class PermissionGroup(
 		R.string.permission_notifications_desc,
 		R.drawable.notification
 	),
+
+	NotificationsAccess(
+		R.string.permission_notifications_access_title,
+		R.string.permission_notifications_access_desc,
+		R.drawable.notification
+	),
 	Accessibility(
 		R.string.permission_accessibility_title,
 		R.string.permission_accessibility_desc,

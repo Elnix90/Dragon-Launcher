@@ -624,8 +624,8 @@
     <string name="federico_desc">Живые гнёзда и переводы</string>
     <string name="copied_to_clipboard">Скопировано в буфер обмена!</string>
     <string name="usage_access">Доступ к статистике использования</string>
-    <string name="permission_notifications_title">Доступ к уведомлениям</string>
-    <string name="permission_notifications_desc">Позволяет Dragon Launcher читать уведомления, чтобы показывать их в строке состояния рядом с приложениями.</string>
+    <string name="permission_notifications_access_title">Доступ к уведомлениям</string>
+    <string name="permission_notifications_access_desc">Позволяет Dragon Launcher читать уведомления, чтобы показывать их в строке состояния рядом с приложениями.</string>
     <string name="permission_app_shortcuts_title">Ярлыки приложений</string>
     <string name="permission_app_shortcuts_desc">Позволяет Dragon Launcher читать ярлыки, которые публикуют приложения, чтобы они появлялись в меню и в результатах поиска.</string>
     <string name="permission_accessibility_title">Служба специальных возможностей</string>

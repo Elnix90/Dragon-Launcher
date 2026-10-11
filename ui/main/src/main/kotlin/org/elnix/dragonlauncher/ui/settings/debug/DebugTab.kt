@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +44,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.timer.AppTimerService
 import org.elnix.dragonlauncher.timer.OverlayReminderService
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.Icon
@@ -350,6 +352,19 @@ fun DebugTab(
 				}
 			) {
 				Text(text = "Test: Limit overlay")
+			}
+
+			val hasNotificationsPermission by viewModel.notificationsPermissions.collectAsState()
+			DragonButton(
+				onClick = {
+					if (hasNotificationsPermission) {
+						AppTimerService.sendTestReminderNotification(ctx)
+					} else {
+						viewModel.requestNotificationsPermission()
+					}
+				}
+			) {
+				Text(text = "Test: Reminder notification")
 			}
 		}
 
