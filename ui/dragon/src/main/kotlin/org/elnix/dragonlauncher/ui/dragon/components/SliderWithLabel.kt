@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -233,19 +234,22 @@ private fun DragonGroupScope.SliderWithLabelInternal(
 		}
 
 		Slider(
-			value = value,
-			enabled = enabled,
+			state = rememberSliderState(
+				value = value,
+				steps = steps,
+				trackRange = valueRange
+			),
 			onValueChange = {
 				onChange(it)
 				onDragStateChange?.invoke(true)
 			},
+			modifier = Modifier.height(25.dp),
+			enabled = enabled,
 			onValueChangeFinished = {
 				onDragStateChange?.invoke(false)
 			},
-			valueRange = valueRange,
-			steps = steps,
 			colors = AppObjectsColors.sliderColors(color),
-			modifier = Modifier.height(25.dp)
+			interactionSource = interactionSource
 		)
 	}
 }
