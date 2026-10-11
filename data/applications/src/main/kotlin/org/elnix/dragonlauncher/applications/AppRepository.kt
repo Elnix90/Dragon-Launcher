@@ -72,6 +72,14 @@ interface AppRepository {
 	 */
 	val appsRevision: StateFlow<Int>
 
+	/**
+	 * Number of currently known apps, including system-only ones.
+	 *
+	 * Exists so app-derived caches can be sized from the real app list instead of a fixed
+	 * capacity.
+	 */
+	val appsCount: StateFlow<Int>
+
 	fun search(
 		query: String,
 		workspace: Workspace,
@@ -127,6 +135,9 @@ internal class AppRepositoryImpl(
 
 	private val _appsRevision = MutableStateFlow(0)
 	override val appsRevision: StateFlow<Int> = _appsRevision.asStateFlow()
+
+	private val _appsCount = MutableStateFlow(0)
+	override val appsCount: StateFlow<Int> = _appsCount.asStateFlow()
 
 	/**
 	 * Keys of the last published app set. Only ever touched while holding [mutex], so it needs
@@ -231,6 +242,7 @@ internal class AppRepositoryImpl(
 			installedApps.value = allApps
 			launchableApps.value = launchable
 			systemApps.value = system
+			_appsCount.value = allApps.size
 
 			// Publish a new revision only when the set of apps actually changed, so app-derived
 			// consumers (icons, badges) re-resolve on real add/remove events without thrashing

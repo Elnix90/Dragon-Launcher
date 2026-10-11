@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ICONS_TAG
@@ -133,6 +134,13 @@ class IconService internal constructor(
 		)
 
 		iconPacksUpdated.tryEmit(Unit)
+
+		// Size the drawer cache from the real app list instead of a fixed capacity.
+		scope.launch {
+			appRepository.appsCount.collect { count ->
+				DrawerIconCache.updateMaxCacheSize(count)
+			}
+		}
 
 		// Icon Settings reactive update to keep providers up-to-date
 		scope.launch {
@@ -435,22 +443,51 @@ class IconService internal constructor(
 		}
 	}
 
+	@OptIn(ExperimentalCoroutinesApi::class)
 	private fun resolveCustomPointIcon(
 		point: Point,
 		size: Dp,
 		reload: Boolean
 	): Flow<LauncherIcon?> {
+		// A point that launches an app must track that app's overrides, so editing the app's icon in
+		// the drawer propagates here. A point-level custom icon always wins over the app's.
+		// findOne performs the profile correction, so the app resolved here is the very same one the
+		// drawer uses to key its overrides.
+		val launchApp = point.action as? Action.LaunchApp
+		val app: Flow<Application?> = launchApp?.let { appRepository.findOne(it) } ?: flowOf(null)
+
+		val appOverrides: Flow<Pair<CustomIcon?, CustomIconProperties?>> =
+			app.flatMapLatest { resolved ->
+				if (resolved != null) {
+					combine(getCustomAppIcon(resolved), getCustomIconProperties(resolved)) { icon, properties ->
+						icon to properties
+					}
+				} else {
+					flowOf(null to null)
+				}
+			}
+
 		return combine(
 			iconProviders,
 			transformations,
 			extraColors,
-			appRepository.appsRevision
-		) { providers, transformations, _, revision ->
-			val customIcon = point.customIcon
+			appRepository.appsRevision,
+			appOverrides
+		) { providers, transformations, _, revision, overrides ->
+			val (appCustomIcon, appProperties) = overrides
+
+			val pointCustomIcon = point.customIcon
+			val customIcon = pointCustomIcon ?: appCustomIcon
+
+			// Mirror the icon that is actually in effect: a point icon carries the point's own
+			// properties, an icon inherited from the app carries the app's.
 			val effectiveProperties =
 				(
-					customIcon?.getProperties()?.takeIf { it.isNotEmpty }
-						?: point.iconProperties
+					if (pointCustomIcon != null) {
+						pointCustomIcon.getProperties().takeIf { it.isNotEmpty } ?: point.iconProperties
+					} else {
+						appCustomIcon?.getProperties()?.takeIf { it.isNotEmpty } ?: appProperties
+					}
 				).takeIf { it?.isNotEmpty == true }
 
 			val cacheKey =
@@ -473,7 +510,6 @@ class IconService internal constructor(
 								DrawerIconCache[cacheKey]
 							}
 
-							// TODO
 							is Action.LaunchShortcut -> {
 								ShortcutIconCache[cacheKey]
 							}
