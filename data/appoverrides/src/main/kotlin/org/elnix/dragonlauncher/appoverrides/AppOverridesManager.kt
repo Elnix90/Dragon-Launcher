@@ -129,12 +129,4 @@ class AppOverridesManager(
 			old.copy(customCategory = categoryName?.takeIf { it.isNotEmpty() })
 		}
 	}
-
-	fun resetOverrides() {
-		appOverrides.value = defaultAppOverrides
-
-		scope.launch {
-			AppOverridesSettingsStore.resetAll(ctx)
-		}
-	}
 }

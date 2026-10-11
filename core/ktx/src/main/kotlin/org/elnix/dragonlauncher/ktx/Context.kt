@@ -20,7 +20,6 @@ import android.provider.OpenableColumns
 import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.RequiresPermission
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import io.github.elnix90.logging.logD
@@ -179,12 +178,6 @@ fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
 
 val Context.dp: Float
 	get() = resources.displayMetrics.density
-
-fun Context.checkPermission(permission: String): Boolean =
-	ContextCompat.checkSelfPermission(
-		this,
-		permission
-	) == PackageManager.PERMISSION_GRANTED
 
 fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean =
 	try {

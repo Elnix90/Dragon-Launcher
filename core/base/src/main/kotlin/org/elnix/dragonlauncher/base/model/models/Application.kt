@@ -4,8 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -50,8 +48,6 @@ abstract class Application : Comparable<Application> {
 		get() = categoryOverride ?: category.name
 
 	abstract val profile: Profile
-	val userSerialNumber: Long
-		get() = profile.serial
 	val user: UserHandle
 		get() = profile.userHandle
 
@@ -182,13 +178,6 @@ abstract class Application : Comparable<Application> {
 		}
 	}
 
-	fun getActivityInfo(ctx: Context): ActivityInfo? =
-		try {
-			ctx.packageManager.getActivityInfo(componentName, 0)
-		} catch (_: PackageManager.NameNotFoundException) {
-			null
-		}
-
 	override fun compareTo(other: Application): Int {
 		val label1 = labelOverride ?: label
 		val label2 = other.labelOverride ?: other.label
@@ -253,17 +242,6 @@ abstract class Application : Comparable<Application> {
 				ctx.packageManager.getPackageInfo(packageName, 0).versionName
 			} catch (_: PackageManager.NameNotFoundException) {
 				null
-			}
-
-		fun isSuspended(ctx: Context, packageName: String): Boolean =
-			try {
-				ctx.packageManager
-					.getApplicationInfo(
-						packageName,
-						0
-					).flags and ApplicationInfo.FLAG_SUSPENDED != 0
-			} catch (_: PackageManager.NameNotFoundException) {
-				false
 			}
 
 		fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)

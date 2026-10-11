@@ -25,17 +25,6 @@ sealed class CustomIcon {
 				is ForceThemedIcon -> this.properties
 				is UnmodifiedSystemDefaultIcon -> this.properties
 			}
-
-		fun CustomIcon.setProperties(properties: CustomIconProperties): CustomIcon =
-			when (this) {
-				is AdaptifiedLegacyIcon -> this.copy(properties = properties)
-				is CustomIconPackIcon -> this.copy(properties = properties)
-				is CustomTextIcon -> this.copy(properties = properties)
-				is CustomThemedIcon -> this.copy(properties = properties)
-				is DefaultPlaceholderIcon -> this.copy(properties = properties)
-				is ForceThemedIcon -> this.copy(properties = properties)
-				is UnmodifiedSystemDefaultIcon -> this.copy(properties = properties)
-			}
 	}
 }
 

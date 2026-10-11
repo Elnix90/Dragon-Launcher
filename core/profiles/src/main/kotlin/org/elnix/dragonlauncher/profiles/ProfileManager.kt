@@ -260,6 +260,4 @@ class ProfileManager(
 			logE(PROFILES_TAG, e) { "Failed to lock the ${profile.type} profile" }
 		}
 	}
-
-	fun isUserUnlocked(userHandle: UserHandle): Boolean = userManager.isUserUnlocked(userHandle)
 }

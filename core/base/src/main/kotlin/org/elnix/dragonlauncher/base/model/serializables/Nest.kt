@@ -70,12 +70,6 @@ data class Nest(
 //    fun scaledBy(scale: Float, defaultNest: Nest, defaultIntersectionShape: IntersectionShape): Nest =
 //        this.copy(intersectionShapes = this.getInterSectionShapes(defaultNest).mapTo(mutableSetOf()) { it.scaledBy(scale, defaultIntersectionShape) })
 
-	/**
-	 * I cannot name this one `getName` as it's a primal functions created by the data class
-	 */
-	inline fun nameOrId(): String =
-		this.name ?: id.toString()
-
 	inline fun getInterSectionShapes(defaultNest: Nest, isDefaultEditing: Boolean): Set<IntersectionShape> =
 		this.intersectionShapes ?: (defaultNest.intersectionShapes unless isDefaultEditing) ?: defaultIntersectionShapes
 

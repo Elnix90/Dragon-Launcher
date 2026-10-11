@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import org.elnix.dragonlauncher.applications.AppRepository
-import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.widgets.WidgetsService
@@ -19,8 +18,7 @@ class WidgetsViewModel
 	constructor(
 		application: Application,
 		val widgetsService: WidgetsService,
-		private val appsRepository: AppRepository,
-		private val shortcutRepository: AppShortcutRepository
+		private val appsRepository: AppRepository
 	) : AndroidViewModel(application) {
 		init {
 			viewModelInitialized()

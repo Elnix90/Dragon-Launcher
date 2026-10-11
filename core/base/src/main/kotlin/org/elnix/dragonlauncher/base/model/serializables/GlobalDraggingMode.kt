@@ -64,14 +64,6 @@ sealed class GlobalDraggingMode {
 			)
 		}
 
-		/**
-		 * Returns the same dragging mode but
-		 */
-		fun GlobalDraggingMode.toDummy(): GlobalDraggingMode = when (this) {
-			is Fixed -> Fixed(0f, 0f)
-			Normal -> Normal
-		}
-
 		object GlobalDraggingModeJson : DragonJson<GlobalDraggingMode>()
 	}
 }

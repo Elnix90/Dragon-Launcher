@@ -202,11 +202,4 @@ class ShellCommandExecutor {
 				shizukuProcess = null
 			}
 		}.flowOn(Dispatchers.IO)
-
-	fun stop() {
-		currentProcess?.destroy()
-		currentProcess = null
-		shizukuProcess?.destroy()
-		shizukuProcess = null
-	}
 }

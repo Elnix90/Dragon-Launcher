@@ -89,10 +89,6 @@ class AppTimerService : Service() {
 			ctx.startForegroundService(intent)
 		}
 
-		fun stop(ctx: Context) {
-			ctx.stopService(Intent(ctx, AppTimerService::class.java))
-		}
-
 		/**
 		 * Helper used by debug UI to send a one-off reminder notification for testing.
 		 */

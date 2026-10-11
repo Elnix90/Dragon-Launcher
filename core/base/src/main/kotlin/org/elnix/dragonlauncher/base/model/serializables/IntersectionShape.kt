@@ -119,7 +119,6 @@ data class IntersectionShape(
 
 		val defaultOffset: Offset = Offset.Zero
 		val defaultShape: IconShape = IconShape.Circle
-		const val defaultEraseBackground: Boolean = true
 		const val defaultPointsKeepTheirRelativePosition: Boolean = true
 
 		val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap

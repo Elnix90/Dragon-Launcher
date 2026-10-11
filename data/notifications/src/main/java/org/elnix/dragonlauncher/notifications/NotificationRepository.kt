@@ -29,8 +29,4 @@ class NotificationRepository {
 		notification1: Notification,
 		notification2: Notification
 	): Boolean = notification1.key == notification2.key
-
-	fun cancelNotification(notification: Notification) {
-		NotificationService.getInstance()?.cancelNotification(notification.key)
-	}
 }

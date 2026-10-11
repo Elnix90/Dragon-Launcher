@@ -14,16 +14,3 @@ data class SavedSearchableEntity(
 	@ColumnInfo(name = "hidden", defaultValue = "0") val visibility: Int,
 	@ColumnInfo(defaultValue = "0.0") val weight: Double
 )
-
-data class SavedSearchableUpdatePinEntity(
-	val key: String,
-	val type: String,
-	@ColumnInfo(name = "searchable") val serializedSearchable: String,
-	val pinPosition: Int? = null
-)
-
-data class SavedSearchableUpdateContentEntity(
-	val key: String,
-	val type: String,
-	@ColumnInfo(name = "searchable") val serializedSearchable: String
-)

@@ -1,13 +1,11 @@
 package org.elnix.dragonlauncher.base
 
 import java.util.Collections
-import java.util.UUID
 
 abstract class DragonCache<K, V>(
 	initialMaxSize: Int
 ) {
 	private var maxSize = initialMaxSize
-	val cacheUUID: UUID = UUID.randomUUID()
 
 	val cacheTrigger: SettingFlow<Int> = SettingFlow(0)
 
@@ -19,10 +17,6 @@ abstract class DragonCache<K, V>(
 	 */
 	fun updateMaxCacheSize(newSize: Int) {
 		maxSize = newSize
-	}
-
-	fun incrementCacheSize(increment: Int = 1) {
-		maxSize += increment
 	}
 
 	private val items =
@@ -62,13 +56,6 @@ abstract class DragonCache<K, V>(
 		cacheTrigger.update { it + 1 }
 		items[key] = compute()
 	}
-
-	fun getRandom(): K? =
-		if (items.isNotEmpty()) {
-			items.keys.random()
-		} else {
-			null
-		}
 
 	fun evict(key: K) {
 		items.remove(key)

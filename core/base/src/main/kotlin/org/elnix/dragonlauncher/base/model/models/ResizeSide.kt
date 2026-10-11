@@ -6,10 +6,3 @@ enum class ResizeSide {
 	Left,
 	Bottom
 }
-
-enum class ResizeCorner {
-	TopLeft,
-	TopRight,
-	BottomLeft,
-	BottomRight
-}

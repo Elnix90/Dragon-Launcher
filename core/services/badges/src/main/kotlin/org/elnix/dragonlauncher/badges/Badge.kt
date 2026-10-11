@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.badges
 
-import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 
 sealed interface BadgeIcon {
@@ -14,8 +13,6 @@ sealed interface BadgeIcon {
 		@param:DrawableRes val iconRes: Int
 	) : BadgeIcon
 }
-
-fun BadgeIcon(drawable: Drawable): BadgeIcon = BadgeIcon.Drawable(drawable)
 
 fun BadgeIcon(
 	@DrawableRes iconRes: Int

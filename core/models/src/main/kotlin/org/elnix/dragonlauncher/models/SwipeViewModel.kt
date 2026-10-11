@@ -5,9 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.AndroidViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
-import org.elnix.dragonlauncher.points.NestsNavigationService
 import org.elnix.dragonlauncher.swipe.SwipeService
-import org.elnix.dragonlauncher.widgets.WidgetsService
 import javax.inject.Inject
 
 @Stable
@@ -16,9 +14,7 @@ class SwipeViewModel
 	@Inject
 	constructor(
 		application: Application,
-		private val widgetsService: WidgetsService,
-		val swipeService: SwipeService,
-		private val nestsNavigationService: NestsNavigationService
+		val swipeService: SwipeService
 	) : AndroidViewModel(application) {
 		init {
 			viewModelInitialized()

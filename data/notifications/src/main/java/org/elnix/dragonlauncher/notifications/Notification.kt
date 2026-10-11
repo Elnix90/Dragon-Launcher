@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.notifications
 
 import android.app.PendingIntent
 import android.graphics.drawable.Icon
-import android.media.session.MediaSession
 import android.os.Bundle
 import android.service.notification.NotificationListenerService.Ranking
 import android.service.notification.StatusBarNotification
@@ -56,9 +55,6 @@ data class Notification(
 		extras = notification.extras,
 		contentIntent = notification.contentIntent
 	)
-
-	val mediaSessionToken: MediaSession.Token?
-		get() = extras.getParcelable(NotificationCompat.EXTRA_MEDIA_SESSION) as? MediaSession.Token
 
 	val progress: Int?
 		get() =

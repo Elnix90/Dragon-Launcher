@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -135,10 +134,10 @@ class DrawerViewModel
 				packageName
 			)
 
-		fun hasNotificationsPermission(): StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.Notifications)
+		fun hasNotificationsPermission(): StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.NotificationsAccess)
 
 		fun requestNotificationsPermission() {
-			permissionsManager.requestPermission(PermissionGroup.Notifications)
+			permissionsManager.requestPermission(PermissionGroup.NotificationsAccess)
 		}
 
 		fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()

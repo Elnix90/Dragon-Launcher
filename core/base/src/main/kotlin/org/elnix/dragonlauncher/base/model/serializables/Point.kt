@@ -2,7 +2,6 @@
 
 package org.elnix.dragonlauncher.base.model.serializables
 
-import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
@@ -156,9 +155,6 @@ data class Point(
 	 * Shape of the selected border icon, default is a circle
 	 */
 	val borderShapeSelected: IconShape? = null,
-	/** Global opacity multiplier (0.0 – 1.0) applied to the whole swipe point. */
-	@FloatRange(0.0, 1.0)
-	val opacity: Float? = null,
 	/**
 	 * Custom haptic feedback triggered when the point is selected on Main screen
 	 * @see CustomHapticFeedback
@@ -317,9 +313,6 @@ data class Point(
 			this.glow.takeDefaults((defaultPoint.glow unless isDefaultEditing), defaultGlow)
 		}
 
-	inline fun getOpacity(defaultPoint: Point, isDefaultEditing: Boolean): Float =
-		this.opacity ?: (defaultPoint.opacity unless isDefaultEditing) ?: defaultOpacity
-
 	inline fun getInnerPadding(defaultPoint: Point, isDefaultEditing: Boolean): Dp =
 		(this.innerPadding ?: (defaultPoint.innerPadding unless isDefaultEditing) ?: defaultInnerPadding).coerceAtLeast(
 			1.dp
@@ -381,7 +374,6 @@ data class Point(
 
 		val defaultBorderStroke: Dp = 1.dp
 		val defaultBorderStrokeSelected: Dp = 3.dp
-		const val defaultOpacity: Float = 1f
 		val defaultInnerPadding: Dp = 5.dp
 		val defaultSize: Dp = 22.dp
 		val defaultBackgroundColor: Color = Color.Transparent
@@ -419,7 +411,6 @@ data class Point(
 					this.backgroundColorSelected == null &&
 					this.borderShape == null &&
 					this.borderShapeSelected == null &&
-					this.opacity == null &&
 					this.haptic == null &&
 					this.customName == null &&
 					this.innerPadding == null &&
