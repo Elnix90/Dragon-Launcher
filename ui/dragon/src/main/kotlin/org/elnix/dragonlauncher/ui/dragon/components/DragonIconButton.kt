@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors

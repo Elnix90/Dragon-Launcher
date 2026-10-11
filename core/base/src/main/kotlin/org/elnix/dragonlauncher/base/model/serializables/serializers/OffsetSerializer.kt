@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.base.model.serializables.serializers
 
 import androidx.compose.ui.geometry.Offset
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
