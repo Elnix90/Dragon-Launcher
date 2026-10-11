@@ -423,8 +423,8 @@
     <string name="on_tertiary_fixed_color">மூன்றாம் நிலை நிலையானது</string>
     <string name="on_tertiary_fixed_variant_color">மூன்றாம் நிலை நிலையான மாறுபாட்டில்</string>
     <string name="custom_colors">விருப்ப நிறங்கள்</string>
-	<string name="reset_all_points">அனைத்து புள்ளிகளையும் மீட்டமைக்கவும்</string>
-    <string name="reset_all_points_desc">உங்கள் செயல்கள் அனைத்தும் மீட்டமைக்கப்படும், இதைச் செயல்தவிர்க்க முடியாது!</string>
+
+
     <string name="use_categories">வகைகளைப் பயன்படுத்தவும்</string>
     <string name="use_categories_desc">வரையறுக்கப்பட்ட வகைகளின்படி டிராயரில் உள்ள பயன்பாடுகளை குழுவாக்கவும்</string>
     <string name="show_app_icons_in_drawer">டிராயரில் ஆப்ச் ஐகான்களைக் காட்டு</string>

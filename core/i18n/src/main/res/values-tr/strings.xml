@@ -477,8 +477,8 @@
     <string name="on_tertiary_fixed_variant_color">Sabit Üçüncül Çeşidi Üzerindeki</string>
     <string name="custom_colors">Özel Renkler</string>
     <string name="custom_colors_desc">Başlatıcı eylemleri tarafından kullanılan renkler</string>
-    <string name="reset_all_points">Tüm noktaları sıfırla</string>
-    <string name="reset_all_points_desc">Tüm eylemlerin sıfırlanacak, bu geri alınamaz!</string>
+
+
     <string name="use_categories">Kategorileri Kullan</string>
     <string name="use_categories_desc">Çekmecedeki uygulamaları tanımlanmış kategorilerine göre gruplandır</string>
     <string name="show_app_icons_in_drawer">Çekmecede Uygulama İkonlarını Göster</string>

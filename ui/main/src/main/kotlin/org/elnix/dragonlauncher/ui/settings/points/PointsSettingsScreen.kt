@@ -8,20 +8,27 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -31,9 +38,11 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
@@ -79,18 +88,19 @@ import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.snapToGrid
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
-import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.PointPreview
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
@@ -103,11 +113,14 @@ import org.elnix.dragonlauncher.ui.dialogs.InitializationSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.editors.PointEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
@@ -126,8 +139,7 @@ fun PointsSettingsScreen(
 	viewModel: PointsSettingsViewModel,
 	iconsViewModel: IconsViewModel = activityViewModel(),
 	pointsViewModel: PointsViewModel = activityViewModel(),
-	drawerViewModel: DrawerViewModel = activityViewModel(),
-	initializationViewModel: InitializationViewModel = activityViewModel()
+	drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
 	val navigator = LocalNavigator.current
 	val density = LocalDensity.current
@@ -963,7 +975,7 @@ fun PointsSettingsScreen(
 					) {
 						Icon(painter = painterResource(R.drawable.delete_forever), null)
 						Spacer(5.dp)
-						Text(stringResource(R.string.reset_all_points))
+						Text(stringResource(R.string.point_reset_options))
 					}
 				}
 			}
@@ -1136,18 +1148,20 @@ fun PointsSettingsScreen(
 	}
 
 	if (showResetPointsAndNestsDialog) {
-		UserValidation(
-			title = stringResource(R.string.reset_all_points),
-			message = stringResource(R.string.reset_all_points_desc),
-			onDismiss = { showResetPointsAndNestsDialog = false }
-		) {
+		ResetPointsDialog(
+			onDismiss = {
+				showResetPointsAndNestsDialog = false
+			}
+		) { resetPoints, resetNests, resetDefaultPoint, resetDefaultNest, resetDefaultShape ->
 			pointsService.reset(
-				resetPoints = true,
-				resetNests = true,
-				resetDefaultPoint = true
+				resetPoints = resetPoints,
+				resetNests = resetNests,
+				resetDefaultPoint = resetDefaultPoint,
+				resetDefaultNest = resetDefaultNest,
+				resetDefaultShape = resetDefaultShape
 			)
 
-			initializationViewModel.initialize()
+			hasInitialized = false
 			showResetPointsAndNestsDialog = false
 		}
 	}
@@ -1172,5 +1186,112 @@ fun PointsSettingsScreen(
 				pointsService.findPointById(it)
 			}
 		Text("first selected point: $firstPoint")
+	}
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun ResetPointsDialog(
+	onDismiss: () -> Unit,
+	onReset: (
+		resetPoints: Boolean,
+		resetNests: Boolean,
+		resetDefaultPoint: Boolean,
+		resetDefaultNest: Boolean,
+		resetDefaultShape: Boolean
+	) -> Unit
+) {
+	var resetPoints by rememberSaveable { mutableStateOf(true) }
+	var resetNests by rememberSaveable { mutableStateOf(true) }
+	var resetDefaultPoint by rememberSaveable { mutableStateOf(true) }
+	var resetDefaultNest by rememberSaveable { mutableStateOf(true) }
+	var resetDefaultShape by rememberSaveable { mutableStateOf(true) }
+
+	CustomAlertDialog(
+		onDismissRequest = onDismiss,
+		alignment = Alignment.Center,
+		modifier = Modifier.padding(16.dp),
+		confirmButton = {
+			ValidateCancelButtons(
+				validateText = stringResource(R.string.ok),
+				cancelText = stringResource(R.string.cancel),
+				onCancel = onDismiss,
+				validateEnabled = resetPoints || resetNests || resetDefaultPoint || resetDefaultNest || resetDefaultShape,
+				onConfirm = {
+					onReset(resetPoints, resetNests, resetDefaultPoint, resetDefaultNest, resetDefaultShape)
+					onDismiss()
+				}
+			)
+		},
+		icon = {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier =
+					Modifier
+						.size(48.dp)
+						.background(
+							color = MaterialTheme.colorScheme.errorContainer,
+							shape = MaterialShapes.Pill.toShape()
+						)
+			) {
+				Icon(
+					painter = painterResource(R.drawable.warning),
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.onErrorContainer,
+					modifier = Modifier.padding(5.dp)
+				)
+			}
+		},
+		title = {
+			DialogTitle(
+				text = stringResource(R.string.point_reset_options),
+				modifier =
+					Modifier
+						.fillMaxWidth()
+						.padding(bottom = 4.dp)
+						.clip(MaterialTheme.shapes.large)
+						.background(MaterialTheme.colorScheme.surface)
+						.padding(8.dp)
+			)
+		},
+		text = {
+			DragonSettingsGroup {
+				ResetOption(R.string.reset_points, resetPoints) { resetPoints = !resetPoints }
+				ResetOption(R.string.reset_nests, resetNests) { resetNests = !resetNests }
+				ResetOption(R.string.reset_default_point, resetDefaultPoint) { resetDefaultPoint = !resetDefaultPoint }
+				ResetOption(R.string.reset_default_nest, resetDefaultNest) { resetDefaultNest = !resetDefaultNest }
+				ResetOption(R.string.reset_default_shape, resetDefaultShape) { resetDefaultShape = !resetDefaultShape }
+			}
+		}
+	)
+}
+
+@Composable
+private fun DragonGroupScope.ResetOption(
+	text: Int,
+	checked: Boolean,
+	onCheckedChange: () -> Unit
+) {
+	val interactionSource = rememberInteractionSource()
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(8.dp),
+		modifier = Modifier
+			.dragonSettingGroup {
+				clickable(interactionSource = interactionSource, onClick = onCheckedChange)
+			}
+	) {
+		Checkbox(
+			checked = checked,
+			onCheckedChange = null,
+			interactionSource = interactionSource,
+			colors = AppObjectsColors.checkboxColors()
+		)
+		Text(
+			text = stringResource(text),
+			style = MaterialTheme.typography.bodySmall,
+			color = MaterialTheme.colorScheme.onSurface,
+			modifier = Modifier.padding(end = 8.dp)
+		)
 	}
 }

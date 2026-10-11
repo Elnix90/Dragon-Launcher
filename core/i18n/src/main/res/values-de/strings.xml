@@ -407,8 +407,8 @@
     <string name="on_tertiary_fixed_color">Im Tertiärbereich fest</string>
     <string name="on_tertiary_fixed_variant_color">Zur tertiären festen Variante</string>
     <string name="custom_colors">Benutzerdefinierte Farben</string>
-    <string name="reset_all_points">Alle Punkte zurücksetzen</string>
-    <string name="reset_all_points_desc">Alle Ihre Aktionen werden zurückgesetzt, dies kann nicht rückgängig gemacht werden!</string>
+
+
     <string name="use_categories">Verwenden Sie Kategorien</string>
     <string name="use_categories_desc">Gruppieren Sie Apps in der Schublade nach ihren definierten Kategorien</string>
     <string name="show_app_icons_in_drawer">App-Symbole in der Schublade anzeigen</string>

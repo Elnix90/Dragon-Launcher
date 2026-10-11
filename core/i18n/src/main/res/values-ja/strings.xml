@@ -480,8 +480,8 @@
     <string name="on_tertiary_fixed_color">固定三次色上の文字色</string>
     <string name="on_tertiary_fixed_variant_color">固定三次色バリアント上の文字色</string>
     <string name="custom_colors">カスタムカラー</string>
-    <string name="reset_all_points">全てのポイントをリセット</string>
-    <string name="reset_all_points_desc">全てのアクションがリセットされます、元に戻すことはできません！</string>
+
+
     <string name="use_categories">カテゴリ分けを使用</string>
     <string name="use_categories_desc">ドロワー上でアプリに定義されたカテゴリを利用してグループ分けする</string>
     <string name="show_app_icons_in_drawer">ドロワー上にアイコンを表示する</string>

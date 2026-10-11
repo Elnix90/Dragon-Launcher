@@ -462,8 +462,6 @@
 	<string name="on_tertiary_fixed_variant_color">On Tertiary Fixed Variant</string>
 	<string name="custom_colors">Custom Colors</string>
 	<string name="custom_colors_desc">The colors used by the launcher Actions</string>
-	<string name="reset_all_points">Reset All points</string>
-	<string name="reset_all_points_desc">All your actions will be reset, this can\'t be undone!</string>
 	<string name="use_categories">Use Categories</string>
 	<string name="use_categories_desc">Group apps in drawer by their defined categories</string>
 	<string name="show_app_icons_in_drawer">Show App Icons in Drawer</string>
@@ -1115,4 +1113,10 @@
 	<string name="reminder_mode_overlay">A PiP overlay spawns and tells you it\'s time to stop!</string>
     <string name="are_you_sure_to_delete_the_nest">Are you sure you want to delete the nest \"%1$s\" ?</string>
 	<string name="delete_all_related_points">Delete all related points? This will delete all the points that open that nest as well as all the points in that nest (not recursive)</string>
+	<string name="point_reset_options">Points reset options</string>
+	<string name="reset_nests">Reset Nests</string>
+	<string name="reset_points">Reset Points</string>
+	<string name="reset_default_point">Reset default Point</string>
+	<string name="reset_default_nest">Reset default Nest</string>
+	<string name="reset_default_shape">Reset default Shape</string>
 </resources>

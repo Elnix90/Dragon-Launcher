@@ -64,7 +64,7 @@ fun InitializationSheet(
 
 			DragonButton(
 				onClick = {
-					initializationViewModel.initialize()
+					initializationViewModel.initializeWithRecentApps()
 				},
 				enabled = hasPermission
 			) {
@@ -84,7 +84,7 @@ fun InitializationSheet(
 				onClick = {
 					// Hacky but should work
 					initializationViewModel.howMany.value = 30
-					initializationViewModel.initialize()
+					initializationViewModel.initializeFresh()
 				}
 			) {
 				val text = stringResource(R.string.start_fresh)

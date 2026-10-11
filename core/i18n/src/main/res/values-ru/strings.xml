@@ -458,8 +458,8 @@
     <string name="custom_colors">Свои цвета</string>
     <string name="custom_colors_desc">Цвета, используемые действиями лаунчера</string>
     <string name="normal_colors">Обычные цвета</string>
-    <string name="reset_all_points">Сбросить все точки</string>
-    <string name="reset_all_points_desc">Все ваши действия будут сброшены, это нельзя отменить!</string>
+
+
     <string name="use_categories">Использовать категории</string>
     <string name="use_categories_desc">Группировать приложения в меню по категориям</string>
     <string name="show_app_icons_in_drawer">Значки приложений в меню</string>

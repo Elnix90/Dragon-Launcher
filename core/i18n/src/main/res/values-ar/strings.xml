@@ -505,8 +505,8 @@
     <string name="on_tertiary_fixed_color">فوق الثلاثي الثابت</string>
     <string name="on_tertiary_fixed_variant_color">فوق بديل الثلاثي الثابت</string>
     <string name="custom_colors">ألوان مخصصة</string>
-	<string name="reset_all_points">إعادة ضبط جميع النقاط</string>
-    <string name="reset_all_points_desc">سيتم إعادة ضبط جميع إجراءاتك، لا يمكن التراجع عن هذا!</string>
+
+
     <string name="use_categories">استخدام الفئات</string>
     <string name="use_categories_desc">تجميع التطبيقات في الدرج حسب فئاتها المحددة</string>
     <string name="show_app_icons_in_drawer">إظهار أيقونات التطبيقات في الدرج</string>

@@ -423,8 +423,8 @@
     <string name="on_tertiary_fixed_color">固定第三内容色</string>
     <string name="on_tertiary_fixed_variant_color">固定第三内容色变体</string>
     <string name="custom_colors">自定义颜色</string>
-	<string name="reset_all_points">重置所有配置点</string>
-    <string name="reset_all_points_desc">您所有的快捷操作点都将被清空，此操作不可撤销！</string>
+
+
     <string name="use_categories">使用分类</string>
     <string name="use_categories_desc">在抽屉中根据应用自身定义的类别进行分组归类</string>
     <string name="show_app_icons_in_drawer">在抽屉中显示应用图标</string>

@@ -402,6 +402,7 @@ public data class Point(
 		public val defaultGlowSelected: CustomGlow = CustomGlow(radius = 10.dp)
 
 		public val emptyPoint: Point = dummySwipePoint()
+		public val defaultPoints: Points = emptyMap()
 
 		public inline val Point.isDefault: Boolean
 			get() =

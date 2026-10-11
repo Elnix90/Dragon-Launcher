@@ -27,11 +27,13 @@ import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Compa
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.DefaultNestJson
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestsJson
+import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.defaultNests
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.emptyNest
 import org.elnix.dragonlauncher.base.model.serializables.Nests
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.DefaultPointJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultPoints
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.emptyPoint
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
@@ -167,11 +169,11 @@ public interface PointsService {
 	 * @throws [IllegalArgumentException] if all 3 parameters are false
 	 */
 	public fun reset(
-		resetPoints: Boolean = false,
-		resetNests: Boolean = false,
-		resetDefaultPoint: Boolean = false,
-		resetDefaultNest: Boolean = false,
-		resetDefaultShape: Boolean = false
+		resetPoints: Boolean,
+		resetNests: Boolean,
+		resetDefaultPoint: Boolean,
+		resetDefaultNest: Boolean,
+		resetDefaultShape: Boolean
 	)
 
 	public fun resolveLiveNestHit(
@@ -244,10 +246,10 @@ internal class PointsServiceImpl(
 	override val defaultIntersectionShape: SettingFlow<IntersectionShape> = SettingFlow(emptyIntersectionShape)
 
 	private val _points = MutableStateFlow(ConcurrentHashMap<Int, Point>())
-	override val points: StateFlow<Map<Int, Point>> = _points.asStateFlow()
+	override val points: StateFlow<Points> = _points.asStateFlow()
 
 	private val _nests = MutableStateFlow(ConcurrentHashMap<Int, Nest>())
-	override val nests: StateFlow<Map<Int, Nest>> = _nests.asStateFlow()
+	override val nests: StateFlow<Nests> = _nests.asStateFlow()
 
 	override val recomposeTrigger: SettingFlow<Int> = SettingFlow(0)
 
@@ -677,14 +679,14 @@ internal class PointsServiceImpl(
 
 		applyChange {
 			if (resetPoints) {
-				_points.value.clear()
+				_points.value = ConcurrentHashMap(defaultPoints)
 				selectedPointsIds.value = emptyList()
 
 				PointStableCache.evictAll()
 				deselectAll()
 			}
 			if (resetNests) {
-				_nests.value.clear()
+				_nests.value = ConcurrentHashMap(defaultNests)
 				NestIntersectionShapesPathCache.evictAll()
 			}
 			if (resetDefaultPoint) {

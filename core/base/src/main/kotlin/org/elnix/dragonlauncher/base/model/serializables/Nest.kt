@@ -130,6 +130,9 @@ public data class Nest(
 		public const val defaultPreviewScaledFactor: Float = 2f
 
 		public val emptyNest: Nest = Nest()
+		public val defaultNests: Nests = mapOf(
+			0 to Nest()
+		)
 
 		public inline val Nest.isDefault: Boolean
 			get() =

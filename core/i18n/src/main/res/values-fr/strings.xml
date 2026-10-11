@@ -427,8 +427,8 @@
     <string name="on_tertiary_fixed_variant_color">Sur la variante fixe tertiaire</string>
     <string name="custom_colors">Couleurs personnalisées</string>
     <string name="custom_colors_desc">Couleurs personalisées</string>
-    <string name="reset_all_points">Réinitialisez tous les points</string>
-    <string name="reset_all_points_desc">Toutes vos actions seront réinitialisées, cela ne peut pas être annulé !</string>
+
+
     <string name="use_categories">Catégories d’utilisation</string>
     <string name="use_categories_desc">Regroupez les applications dans le tiroir selon leurs catégories définies</string>
     <string name="show_app_icons_in_drawer">Afficher les icônes de l’application dans le tiroir</string>

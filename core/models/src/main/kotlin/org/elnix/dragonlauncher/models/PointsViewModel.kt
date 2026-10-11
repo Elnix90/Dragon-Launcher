@@ -32,6 +32,7 @@ import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.model.models.IconSettings
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.util.ImageUtils
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
@@ -140,7 +141,7 @@ public class PointsViewModel
 		 *
 		 * @param points the current points map read from [PointsService.points]
 		 */
-		private fun synchronizePointTracking(points: Map<Int, Point>?) {
+		private fun synchronizePointTracking(points: Points?) {
 			if (points == null) return
 
 			val currentIds = points.keys

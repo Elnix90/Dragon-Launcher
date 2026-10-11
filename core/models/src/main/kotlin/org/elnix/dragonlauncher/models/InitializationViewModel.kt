@@ -16,6 +16,7 @@ import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.emptyNest
 import org.elnix.dragonlauncher.base.model.serializables.Nests
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Points
@@ -51,23 +52,30 @@ public class InitializationViewModel
 		public val howMany: SettingFlow<Int> = SettingFlow(30)
 		public val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat)
 
-		public fun initializeSwipeSettings(
+		private fun initializeSwipeSettings(
 			points: Points,
-			nests: Nests,
-			defaultPoint: Point?
+			nests: Nests
 		) {
 			viewModelScope.launch {
-				pointsService.set(points, nests, defaultPoint)
+				pointsService.set(points, nests)
 				pointsService.persist()
 				PrivateSettingsStore.hasInitialized.set(application, true)
 			}
 		}
 
-		public fun initialize() {
+		public fun initializeFresh() {
+			val nests = mapOf(
+				0 to emptyNest
+			)
+
+			initializeSwipeSettings(emptyMap(), nests)
+		}
+
+		public fun initializeWithRecentApps() {
 			val points = initializePoints()
 			val nests = initializeNests(points)
 
-			initializeSwipeSettings(points, nests, null)
+			initializeSwipeSettings(points, nests)
 		}
 
 		private fun initializePoints(): Points {

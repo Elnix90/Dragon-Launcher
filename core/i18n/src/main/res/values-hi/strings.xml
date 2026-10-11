@@ -404,8 +404,8 @@
     <string name="on_tertiary_fixed_color">तृतीयक पर निश्चित</string>
     <string name="on_tertiary_fixed_variant_color">तृतीयक निश्चित संस्करण पर</string>
     <string name="custom_colors">कस्टम रंग</string>
-    <string name="reset_all_points">सभी बिंदु रीसेट करें</string>
-    <string name="reset_all_points_desc">आपके सभी कार्य रीसेट कर दिए जाएंगे, इसे पूर्ववत नहीं किया जा सकता!</string>
+
+
     <string name="use_categories">श्रेणियों का प्रयोग करें</string>
     <string name="use_categories_desc">ऐप्स को उनकी परिभाषित श्रेणियों के अनुसार ड्रॉअर में समूहित करें</string>
     <string name="show_app_icons_in_drawer">ड्रॉअर में ऐप आइकन दिखाएं</string>

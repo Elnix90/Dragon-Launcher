@@ -407,8 +407,8 @@
     <string name="on_tertiary_fixed_color">En Terciario Fijo</string>
     <string name="on_tertiary_fixed_variant_color">Sobre la variante fija terciaria</string>
     <string name="custom_colors">Colores personalizados</string>
-	<string name="reset_all_points">Restablecer todos los puntos</string>
-    <string name="reset_all_points_desc">Todas tus acciones se restablecerán, ¡esto no se puede deshacer!</string>
+
+
     <string name="use_categories">Usar categorías</string>
     <string name="use_categories_desc">Agrupar aplicaciones en el cajón por sus categorías definidas</string>
     <string name="show_app_icons_in_drawer">Mostrar íconos de aplicaciones en el cajón</string>
