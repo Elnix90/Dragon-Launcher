@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 @Immutable
 @Serializable
 @SerialName("CustomGlow")
-public data class CustomGlow(
+data class CustomGlow(
 	@Serializable(with = DpSerializer::class)
 	val radius: Dp? = null,
 	@Serializable(with = ColorSerializer::class)

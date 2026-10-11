@@ -6,7 +6,7 @@ import com.aallam.similarity.JaroWinkler
 value class ResultScore private constructor(
 	private val packed: Long
 ) : Comparable<ResultScore> {
-	public constructor(
+	constructor(
 		isPrefix: Boolean,
 		isSubstring: Boolean,
 		isPrimary: Boolean,
@@ -101,6 +101,3 @@ value class ResultScore private constructor(
 			)
 	}
 }
-
-public inline val ResultScore.isUnspecified: Boolean
-	get() = this == ResultScore.Unspecified

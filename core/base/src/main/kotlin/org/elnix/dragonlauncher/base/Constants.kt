@@ -102,39 +102,39 @@ object Constants {
 	}
 
 	object Signatures {
-		public const val DRAGON_LAUNCHER_SIGNATURE_HASH: String = "63068d94e01eeae50efcb2a0c43dfa8ac503a421cdeaf353d45b69ab933c0a06"
+		const val DRAGON_LAUNCHER_SIGNATURE_HASH: String = "63068d94e01eeae50efcb2a0c43dfa8ac503a421cdeaf353d45b69ab933c0a06"
 	}
 
 	object PackageNames {
-		public const val SHIZUKU_PACKAGE_NAME: String = "moe.shizuku.privileged.api"
+		const val SHIZUKU_PACKAGE_NAME: String = "moe.shizuku.privileged.api"
 	}
 
 	object Paths {
-		public const val THEMES_DIR: String = "themes"
+		const val THEMES_DIR: String = "themes"
 		val imageExts: List<String> = listOf("png", "jpg", "jpeg", "webp")
 	}
 
 	object URLs {
-		public const val ELNIX90_GITHUB_PROFILE_LINK: String = "https://github.com/Elnix90"
-		public const val ELNIX90_BUY_ME_A_COFFEE: String = "https://buymeacoffee.com/elnix90"
-		public const val GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher"
-		public const val GITLAB_REPO_LINK: String = "https://gitlab.com/Elnix91/Dragon-Launcher"
-		public const val CODEBERG_REPO_LINK: String = "https://codeberg.org/Elnix90/Dragon-Launcher"
-		public const val GITHUB_REPO_RELEASES_LINK: String = "$GITHUB_REPO_LINK/releases/latest"
-		public const val GITHUB_REPO_ISSUES_LINK: String = "$GITHUB_REPO_LINK/issues/new"
-		public const val EXTENSIONS_GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher-Extensions"
-		public const val DISCORD_INVITE_LINK: String = "https://discord.gg/6UyuP8EBWS"
-		public const val REDDIT_LINK: String = "https://www.reddit.com/r/dragonlauncher/"
-		public const val MAILTO_LINK: String = "mailto:elnix91@proton.me"
-		public const val DRAGON_WEBSITE: String = "https://dragonlauncher.lthb.fr/"
-		public const val URL_SHIZUKU_SITE: String = "https://shizuku.rikka.app"
-		public const val WEBLATE_LINK: String = "https://hosted.weblate.org/engage/dragon-launcher/"
+		const val ELNIX90_GITHUB_PROFILE_LINK: String = "https://github.com/Elnix90"
+		const val ELNIX90_BUY_ME_A_COFFEE: String = "https://buymeacoffee.com/elnix90"
+		const val GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher"
+		const val GITLAB_REPO_LINK: String = "https://gitlab.com/Elnix91/Dragon-Launcher"
+		const val CODEBERG_REPO_LINK: String = "https://codeberg.org/Elnix90/Dragon-Launcher"
+		const val GITHUB_REPO_RELEASES_LINK: String = "$GITHUB_REPO_LINK/releases/latest"
+		const val GITHUB_REPO_ISSUES_LINK: String = "$GITHUB_REPO_LINK/issues/new"
+		const val EXTENSIONS_GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher-Extensions"
+		const val DISCORD_INVITE_LINK: String = "https://discord.gg/6UyuP8EBWS"
+		const val REDDIT_LINK: String = "https://www.reddit.com/r/dragonlauncher/"
+		const val MAILTO_LINK: String = "mailto:elnix91@proton.me"
+		const val DRAGON_WEBSITE: String = "https://dragonlauncher.lthb.fr/"
+		const val URL_SHIZUKU_SITE: String = "https://shizuku.rikka.app"
+		const val WEBLATE_LINK: String = "https://hosted.weblate.org/engage/dragon-launcher/"
 	}
 
 	object Settings {
-		public const val TOUCH_THRESHOLD_PX: Float = 100f
-		public const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
-		public const val HOVER_POINT_DURATION: Long = 500L
+		const val TOUCH_THRESHOLD_PX: Float = 100f
+		const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
+		const val HOVER_POINT_DURATION: Long = 500L
 		val HOVER_GRADIENT_RADIUS: Dp = 75.dp
 
 		/**
@@ -145,19 +145,19 @@ object Constants {
 		 *
 		 * For now, I'll only increase it a bit. from 5 to
 		 */
-		public const val MAX_ITEMS_ALLOWED: Int = 8
+		const val MAX_ITEMS_ALLOWED: Int = 8
 
-		public const val DOUBLE_CLICK_ACTION_DELAY: Int = 500
+		const val DOUBLE_CLICK_ACTION_DELAY: Int = 500
 	}
 
 	object Drawer {
-		public const val DRAWER_DRAG_DOWN_THRESHOLD: Int = 50
-		public const val DRAWER_MAX_DRAG_DOWN: Int = 70
+		const val DRAWER_DRAG_DOWN_THRESHOLD: Int = 50
+		const val DRAWER_MAX_DRAG_DOWN: Int = 70
 	}
 
 	object Extensions {
 		//        const val INTERNET_PROXY_EXTENSION_PGK = "org.elnix.dragonlauncher.proxy"
 //        const val AUTO_UPDATE_EXTENSION_PKG = "org.elnix.dragonlauncher.autoupdate"
-		public const val FONT_EXTENSION_PKG: String = "org.elnix.dragonlauncher.fonts"
+		const val FONT_EXTENSION_PKG: String = "org.elnix.dragonlauncher.fonts"
 	}
 }

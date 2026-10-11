@@ -50,7 +50,7 @@ class IconPackManager(
 			packs.map { IconPack(it) }
 		}
 
-	public suspend fun getIconPack(packageName: String): IconPack? =
+	suspend fun getIconPack(packageName: String): IconPack? =
 		withContext(Dispatchers.IO) {
 			appDatabase.iconDao().getIconPack(packageName)?.let {
 				IconPack(it)
@@ -59,7 +59,7 @@ class IconPackManager(
 
 	private var updateIconPacksMutex = Mutex()
 
-	public suspend fun updateIconPacks(forceReinstall: Boolean = false): Boolean {
+	suspend fun updateIconPacks(forceReinstall: Boolean = false): Boolean {
 		var iconsHaveBeenUpdated = false
 		updateIconPacksMutex.lock()
 		val installers =
@@ -93,7 +93,7 @@ class IconPackManager(
 		}
 	}
 
-	public suspend fun getIcon(
+	suspend fun getIcon(
 		iconPack: String,
 		packageName: String,
 		activityName: String?,
@@ -129,7 +129,7 @@ class IconPackManager(
 			}
 		}
 
-	public suspend fun getIcon(
+	suspend fun getIcon(
 		iconPack: String,
 		icon: IconPackAppIcon,
 		tint: Int?,
@@ -159,7 +159,7 @@ class IconPackManager(
 		}
 
 	@SuppressLint("DiscouragedApi")
-	public suspend fun generateIcon(
+	suspend fun generateIcon(
 		ctx: Context,
 		iconPack: String,
 		baseIcon: Drawable,
@@ -268,7 +268,7 @@ class IconPackManager(
 			)
 		}
 
-	public suspend fun getAllIconPackIcons(componentName: ComponentName): List<IconPackAppIcon> {
+	suspend fun getAllIconPackIcons(componentName: ComponentName): List<IconPackAppIcon> {
 		val iconDao = appDatabase.iconDao()
 		return iconDao
 			.getIconsFromAllPacks(componentName.packageName, componentName.shortClassName)
@@ -536,7 +536,7 @@ class IconPackManager(
 		}
 	}
 
-	public suspend fun searchIconPackIcon(query: String, iconPack: IconPack?): List<IconPackAppIcon> {
+	suspend fun searchIconPackIcon(query: String, iconPack: IconPack?): List<IconPackAppIcon> {
 		val iconDao = appDatabase.iconDao()
 		val drawableQuery = query.replace(" ", "_").lowercase()
 		return iconDao

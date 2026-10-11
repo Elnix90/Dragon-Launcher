@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.ktx.getSerialNumber
 
 @Serializable
 @SerialName("Profile")
-public data class Profile(
+data class Profile(
 	val type: Type,
 	@Serializable(with = UserHandleSerializer::class)
 	val userHandle: UserHandle,
@@ -27,7 +27,7 @@ public data class Profile(
 
 	override fun hashCode(): Int = userHandle.hashCode()
 
-	public enum class Type(
+	enum class Type(
 		@StringRes
 		val resId: Int
 	) {
@@ -47,7 +47,7 @@ public data class Profile(
 		Private(R.string.private_profile)
 	}
 
-	public data class State(
+	data class State(
 		val locked: Boolean = false
 	)
 

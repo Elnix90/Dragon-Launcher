@@ -17,7 +17,7 @@ fun RectF.translate(x: Float, y: Float): RectF {
 	return this
 }
 
-public infix fun RectF.copyTo(other: RectF) {
+infix fun RectF.copyTo(other: RectF) {
 	other.top = top
 	other.left = left
 	other.right = right

@@ -9,7 +9,7 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 @Serializable
 @Immutable
 @SerialName("Widget")
-public data class Widget(
+data class Widget(
 	val id: Int,
 	val appWidgetId: Int? = null,
 	val nestId: Int?,
@@ -24,10 +24,10 @@ public data class Widget(
 	val shape: IconShape? = null
 ) {
 	companion object {
-		public const val defaultGhosted: Boolean = false
-		public const val defaultForeground: Boolean = true
+		const val defaultGhosted: Boolean = false
+		const val defaultForeground: Boolean = true
 
-		public const val MIN_SIZE: Float = 1.5f
+		const val MIN_SIZE: Float = 1.5f
 
 		object WidgetsJson : DragonJson<List<Widget>>()
 	}

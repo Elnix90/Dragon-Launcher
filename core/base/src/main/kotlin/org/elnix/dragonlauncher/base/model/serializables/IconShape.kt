@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 @Immutable
 @Serializable
 @SerialName("IconShape")
-public sealed class IconShape {
+sealed class IconShape {
 	@Serializable
 	@SerialName("PlatformDefault")
 	object PlatformDefault : IconShape()

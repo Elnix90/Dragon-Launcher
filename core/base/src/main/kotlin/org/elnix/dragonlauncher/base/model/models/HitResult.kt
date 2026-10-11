@@ -9,7 +9,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
  * @property isOutsideBounds True when the pointer has moved beyond the outermost ring.
  * @property isInCancelZone True when the drag is in the cancel zone
  */
-public data class HitResult(
+data class HitResult(
 	val selectedPoint: Point?,
 	val isOutsideBounds: Boolean,
 	val isInCancelZone: Boolean,

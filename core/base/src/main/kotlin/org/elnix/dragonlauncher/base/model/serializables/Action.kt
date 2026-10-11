@@ -35,17 +35,17 @@ import org.elnix.dragonlauncher.i18n.R
 @Immutable
 @Serializable
 @SerialName("Action")
-public sealed class Action {
+sealed class Action {
 	@get:DrawableRes
-	public abstract val drawableId: Int
+	abstract val drawableId: Int
 
 	@get:StringRes
-	public abstract val resId: Int
+	abstract val resId: Int
 
 	@Immutable
 	@Serializable
 	@SerialName("LaunchApp")
-	public data class LaunchApp(
+	data class LaunchApp(
 		val packageName: String,
 		val profile: Profile,
 		@Transient
@@ -60,7 +60,7 @@ public sealed class Action {
 		@Transient
 		var appLabel: MutableState<String?> = mutableStateOf(null)
 
-		public constructor(application: Application) : this(
+		constructor(application: Application) : this(
 			application.packageName,
 			application.profile
 		)
@@ -73,7 +73,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("LaunchShortcut")
-	public data class LaunchShortcut(
+	data class LaunchShortcut(
 		val packageName: String,
 		val shortcutId: String,
 		@Serializable(UserHandleSerializer::class)
@@ -92,7 +92,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("OpenUrl")
-	public data class OpenUrl(
+	data class OpenUrl(
 		val url: String
 	) : Action() {
 		override val drawableId: Int = R.drawable.web
@@ -106,7 +106,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("OpenFile")
-	public data class OpenFile(
+	data class OpenFile(
 		val uri: String,
 		val mimeType: String? = null
 	) : Action() {
@@ -121,7 +121,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("OpenAppDrawer")
-	public data class OpenAppDrawer(
+	data class OpenAppDrawer(
 		val workspaceId: String? = null
 	) : Action() {
 		override val drawableId: Int = R.drawable.workspaces
@@ -135,7 +135,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("OpenDragonLauncherSettings")
-	public data class OpenDragonLauncherSettings(
+	data class OpenDragonLauncherSettings(
 		val route: NavigationRoute = NavigationRoute.PointsSettings
 	) : Action() {
 		override val drawableId: Int = R.mipmap.dragon_launcher_foreground
@@ -149,7 +149,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("OpenCircleNest")
-	public data class OpenNest(
+	data class OpenNest(
 		val nestId: Int
 	) : Action() {
 		override val drawableId: Int = R.drawable.nest_icon
@@ -163,7 +163,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("OpenWidget")
-	public data class OpenWidget(
+	data class OpenWidget(
 		val widgetId: Int,
 		val providerPackage: String,
 		val providerClass: String
@@ -179,7 +179,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("ToggleWifi")
-	public data class ToggleWifi(
+	data class ToggleWifi(
 		val command: WifiADBCommands = WifiADBCommands.Svc,
 		val toast: Boolean? = false
 	) : Action() {
@@ -194,7 +194,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("ToggleBluetooth")
-	public data class ToggleBluetooth(
+	data class ToggleBluetooth(
 		val command: BluetoothADBCommands = BluetoothADBCommands.Cmd,
 		val toast: Boolean? = false
 	) : Action() {
@@ -209,7 +209,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("ToggleData")
-	public data class ToggleData(
+	data class ToggleData(
 		val command: DataADBCommands = DataADBCommands.Svc,
 		val toast: Boolean? = false
 	) : Action() {
@@ -224,7 +224,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("RunAdbCommand")
-	public data class RunAdbCommand(
+	data class RunAdbCommand(
 		val command: String,
 		val toast: Boolean? = false
 	) : Action() {
@@ -287,7 +287,7 @@ public sealed class Action {
 	@Immutable
 	@Serializable
 	@SerialName("KillLauncher")
-	public data object KillLauncher : Action() {
+	data object KillLauncher : Action() {
 		override val drawableId: Int = R.drawable.ic_action_kill
 		override val resId: Int = R.string.kill_launcher
 	}

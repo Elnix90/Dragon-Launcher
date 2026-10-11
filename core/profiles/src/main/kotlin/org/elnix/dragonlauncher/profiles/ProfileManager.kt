@@ -205,7 +205,7 @@ class ProfileManager(
 	 * id and older persisted data may carry a wrong one. The `serial` is a stable,
 	 * device-wide unique identifier, so it is preferred when it matches.
 	 */
-	public suspend fun resolveProfile(profile: Profile): Profile? {
+	suspend fun resolveProfile(profile: Profile): Profile? {
 		if (profileStates.value.none { it != null }) {
 			runCatching { refreshProfiles() }
 		}

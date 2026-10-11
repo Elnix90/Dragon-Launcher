@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerial
 @Immutable
 @Serializable
 @SerialName("CustomIcon")
-public sealed class CustomIcon {
+sealed class CustomIcon {
 	companion object {
 		fun CustomIcon.getProperties(): CustomIconProperties =
 			when (this) {
@@ -42,7 +42,7 @@ public sealed class CustomIcon {
 @Immutable
 @Serializable
 @SerialName("CustomIconPackIcon")
-public data class CustomIconPackIcon(
+data class CustomIconPackIcon(
 	val iconPackPackage: String,
 	val packType: String,
 	val drawable: String?,
@@ -54,7 +54,7 @@ public data class CustomIconPackIcon(
 @Immutable
 @Serializable
 @SerialName("AdaptifiedLegacyIcon")
-public data class AdaptifiedLegacyIcon(
+data class AdaptifiedLegacyIcon(
 	val fgScale: Float,
 	/**
 	 * The background color in ARGB format or [UnspecifiedColor] or [ThemeColor]
@@ -66,19 +66,19 @@ public data class AdaptifiedLegacyIcon(
 		/**
 		 * Extract color from foreground icon
 		 */
-		public const val UnspecifiedColor: Int = 1
+		const val UnspecifiedColor: Int = 1
 
 		/**
 		 * Use color from theme
 		 */
-		public const val ThemeColor: Int = 0
+		const val ThemeColor: Int = 0
 	}
 }
 
 @Immutable
 @Serializable
 @SerialName("CustomThemedIcon")
-public data class CustomThemedIcon(
+data class CustomThemedIcon(
 	val iconPackageName: String,
 	val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon()
@@ -86,7 +86,7 @@ public data class CustomThemedIcon(
 @Immutable
 @Serializable
 @SerialName("ForceThemedIcon")
-public data class ForceThemedIcon(
+data class ForceThemedIcon(
 	val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon()
 
@@ -96,14 +96,14 @@ public data class ForceThemedIcon(
 @Immutable
 @Serializable
 @SerialName("UnmodifiedSystemDefaultIcon")
-public data class UnmodifiedSystemDefaultIcon(
+data class UnmodifiedSystemDefaultIcon(
 	val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon()
 
 @Immutable
 @Serializable
 @SerialName("CustomTextIcon")
-public data class CustomTextIcon(
+data class CustomTextIcon(
 	val text: String,
 	val color: Int = 0,
 	val properties: CustomIconProperties = CustomIconProperties()
@@ -115,13 +115,13 @@ public data class CustomTextIcon(
 @Immutable
 @Serializable
 @SerialName("DefaultPlaceholderIcon")
-public data class DefaultPlaceholderIcon(
+data class DefaultPlaceholderIcon(
 	val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon()
 
 @Immutable
 @Serializable
-public data class CustomIconProperties(
+data class CustomIconProperties(
 	/** Tint color (ARGB) applied after rendering. */
 	@Serializable(with = ColorSerializer::class)
 	val tint: Color? = null,
@@ -148,9 +148,9 @@ public data class CustomIconProperties(
 				scaleY != null
 
 	companion object {
-		public const val defaultOpacity: Float = 1f
-		public const val defaultRotationDeg: Int = 0
-		public const val defaultScaleX: Float = 1f
-		public const val defaultScaleY: Float = 1f
+		const val defaultOpacity: Float = 1f
+		const val defaultRotationDeg: Int = 0
+		const val defaultScaleX: Float = 1f
+		const val defaultScaleY: Float = 1f
 	}
 }

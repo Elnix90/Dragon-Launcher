@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference
 @AndroidEntryPoint
 class NotificationService : NotificationListenerService() {
 	@Inject
-	public lateinit var notificationRepository: NotificationRepository
+	lateinit var notificationRepository: NotificationRepository
 
 	private val scope = CoroutineScope(Job() + Dispatchers.Default)
 

@@ -8,7 +8,7 @@ interface ADBCommands {
 	val resId: Int
 }
 
-public enum class BluetoothADBCommands(
+enum class BluetoothADBCommands(
 	override val commandEnable: String,
 	override val commandDisable: String,
 	override val resId: Int
@@ -35,7 +35,7 @@ public enum class BluetoothADBCommands(
 	)
 }
 
-public enum class WifiADBCommands(
+enum class WifiADBCommands(
 	override val commandEnable: String,
 	override val commandDisable: String,
 	override val resId: Int
@@ -47,7 +47,7 @@ public enum class WifiADBCommands(
 	)
 }
 
-public enum class DataADBCommands(
+enum class DataADBCommands(
 	override val commandEnable: String,
 	override val commandDisable: String,
 	override val resId: Int

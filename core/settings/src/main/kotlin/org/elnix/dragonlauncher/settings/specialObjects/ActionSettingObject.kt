@@ -10,7 +10,7 @@ import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
 @Immutable
-public data class ActionSettingObject(
+data class ActionSettingObject(
 	override val key: String,
 	override val default: Action,
 	override val title: Int?,

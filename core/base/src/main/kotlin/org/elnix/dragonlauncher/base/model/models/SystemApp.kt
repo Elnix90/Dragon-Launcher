@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 
-public data class SystemApp(
+data class SystemApp(
 	private val ctx: Context,
 	private val applicationInfo: ApplicationInfo,
 	override val versionName: String?,

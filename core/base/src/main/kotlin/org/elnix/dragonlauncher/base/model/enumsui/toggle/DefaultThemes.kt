@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.enumsui.toggle
 import org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
-public enum class DefaultThemes(
+enum class DefaultThemes(
 	override val resId: Int,
 	override val iconEnabled: Int? = null,
 	override val iconDisabled: Int? = null

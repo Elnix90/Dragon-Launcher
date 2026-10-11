@@ -85,7 +85,7 @@ class SecurityViewModel
 			isLocked.value = false
 		}
 
-		public suspend fun verify(pin: String): Boolean = securityService.verify(pin)
+		suspend fun verify(pin: String): Boolean = securityService.verify(pin)
 
 		fun onEnterNewRoute(route: NavKey) {
 			if (route !in NavigationRoute.settingsRoutes) {

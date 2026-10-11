@@ -8,7 +8,7 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.Point
 
-public data class PointSettingObject(
+data class PointSettingObject(
 	override val key: String,
 	override val default: Point,
 	override val title: Int?,

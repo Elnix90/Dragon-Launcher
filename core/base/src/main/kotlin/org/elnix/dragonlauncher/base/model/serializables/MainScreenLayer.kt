@@ -15,53 +15,53 @@ import org.elnix.dragonlauncher.i18n.R
 @Immutable
 @Serializable
 @SerialName("MainScreenLayer")
-public sealed class MainScreenLayer {
-	public abstract val enabled: Boolean
+sealed class MainScreenLayer {
+	abstract val enabled: Boolean
 
 	@Immutable
 	@Serializable
 	@SerialName("ChargingAnimation")
-	public data class ChargingAnimation(
+	data class ChargingAnimation(
 		override val enabled: Boolean = true
 	) : MainScreenLayer()
 
 	@Immutable
 	@Serializable
 	@SerialName("Widgets")
-	public data class Widgets(
+	data class Widgets(
 		override val enabled: Boolean = true
 	) : MainScreenLayer()
 
 	@Immutable
 	@Serializable
 	@SerialName("StatusBar")
-	public data class StatusBar(
+	data class StatusBar(
 		override val enabled: Boolean = false
 	) : MainScreenLayer()
 
 	@Immutable
 	@Serializable
 	@SerialName("DragOverlay")
-	public data class DragOverlay(
+	data class DragOverlay(
 		override val enabled: Boolean = true,
 		val lineBeforeNests: Boolean = defaultLineBeforeNests
 	) : MainScreenLayer() {
 		companion object {
-			public const val defaultLineBeforeNests: Boolean = false
+			const val defaultLineBeforeNests: Boolean = false
 		}
 	}
 
 	@Immutable
 	@Serializable
 	@SerialName("HoldToActivate")
-	public data class HoldToActivate(
+	data class HoldToActivate(
 		override val enabled: Boolean = true
 	) : MainScreenLayer()
 
 	@Immutable
 	@Serializable
 	@SerialName("CustomDim")
-	public data class CustomDim(
+	data class CustomDim(
 		override val enabled: Boolean = true,
 		/** How powerful the fim is */
 		@FloatRange(from = 0.0, to = 1.0)
@@ -71,8 +71,8 @@ public sealed class MainScreenLayer {
 		val showAfterMs: Int = defaultShowAfterMs
 	) : MainScreenLayer() {
 		companion object {
-			public const val defaultDimAmount: Float = .5f
-			public const val defaultShowAfterMs: Int = 1000
+			const val defaultDimAmount: Float = .5f
+			const val defaultShowAfterMs: Int = 1000
 		}
 	}
 

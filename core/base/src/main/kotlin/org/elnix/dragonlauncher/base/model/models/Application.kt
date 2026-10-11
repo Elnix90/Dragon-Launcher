@@ -33,39 +33,39 @@ import java.io.File
 import java.text.Collator
 
 @Immutable
-public abstract class Application : Comparable<Application> {
-	public abstract val label: String
-	public abstract val defaultLabel: String
-	public abstract val labelOverride: String?
+abstract class Application : Comparable<Application> {
+	abstract val label: String
+	abstract val defaultLabel: String
+	abstract val labelOverride: String?
 
-	public abstract fun overrideLabel(label: String): Application
+	abstract fun overrideLabel(label: String): Application
 
-	public abstract val category: AppCategory
+	abstract val category: AppCategory
 
-	public abstract val categoryOverride: String?
+	abstract val categoryOverride: String?
 
-	public abstract fun overrideCategory(categoryName: String?): Application
+	abstract fun overrideCategory(categoryName: String?): Application
 
 	val effectiveCategory: String
 		get() = categoryOverride ?: category.name
 
-	public abstract val profile: Profile
+	abstract val profile: Profile
 	val userSerialNumber: Long
 		get() = profile.serial
 	val user: UserHandle
 		get() = profile.userHandle
 
-	public abstract val isSystem: Boolean
-	public abstract val isLaunchable: Boolean
+	abstract val isSystem: Boolean
+	abstract val isLaunchable: Boolean
 
-	public abstract val isSuspended: Boolean
-	public abstract val componentName: ComponentName
+	abstract val isSuspended: Boolean
+	abstract val componentName: ComponentName
 
-	public abstract val packageName: String
+	abstract val packageName: String
 
-	public abstract val versionName: String?
+	abstract val versionName: String?
 
-	public abstract val installTime: Long
+	abstract val installTime: Long
 
 	/**
 	 * Return whether the app was installed recently
@@ -83,7 +83,7 @@ public abstract class Application : Comparable<Application> {
 	 * First string is the normalizer ID
 	 * Second string is the normalized label
 	 */
-	public abstract var cachedNormalizerResult: Pair<String, String>?
+	abstract var cachedNormalizerResult: Pair<String, String>?
 
 	val action: Action.LaunchApp by lazy {
 		Action.LaunchApp(packageName, profile)
@@ -93,7 +93,7 @@ public abstract class Application : Comparable<Application> {
 		CacheKey(this)
 	}
 
-	public abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
+	abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
 
 	fun launch(ctx: Context, options: Bundle?): Boolean {
 		val launcherApps = ctx.getSystemService<LauncherApps>()!!
@@ -128,7 +128,7 @@ public abstract class Application : Comparable<Application> {
 			backgroundLayer = ColorLayer(0xff3dda84.toInt())
 		)
 
-	public abstract fun getStoreDetails(ctx: Context): StoreLink?
+	abstract fun getStoreDetails(ctx: Context): StoreLink?
 
 	fun uninstall(ctx: Context) {
 		val intent = Intent(Intent.ACTION_DELETE)
@@ -147,7 +147,7 @@ public abstract class Application : Comparable<Application> {
 		)
 	}
 
-	public suspend fun shareApkFile(ctx: Context) {
+	suspend fun shareApkFile(ctx: Context) {
 		val launcherApps = ctx.getSystemService<LauncherApps>()!!
 		val fileCopy =
 			File(
@@ -270,7 +270,7 @@ public abstract class Application : Comparable<Application> {
 	}
 }
 
-public data class StoreLink(
+data class StoreLink(
 	val label: String,
 	val url: String,
 	@DrawableRes

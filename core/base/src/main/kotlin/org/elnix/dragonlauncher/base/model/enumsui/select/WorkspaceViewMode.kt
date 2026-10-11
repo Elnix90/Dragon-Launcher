@@ -5,7 +5,7 @@ import androidx.compose.runtime.compositionLocalOf
 import org.elnix.dragonlauncher.base.model.enumsui.SelectButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
-public enum class WorkspaceViewMode(
+enum class WorkspaceViewMode(
 	override val resId: Int,
 	override val iconResId: Int? = null
 ) : SelectButtonOption {

@@ -4,7 +4,7 @@ import androidx.compose.ui.Alignment
 import org.elnix.dragonlauncher.base.model.enumsui.SelectButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
-public enum class DrawerAlign(
+enum class DrawerAlign(
 	override val resId: Int,
 	override val iconResId: Int?
 ) : SelectButtonOption {

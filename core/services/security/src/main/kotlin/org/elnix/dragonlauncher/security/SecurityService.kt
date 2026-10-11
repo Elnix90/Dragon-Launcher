@@ -23,7 +23,7 @@ interface SecurityService {
 	/**
 	 * Verifies a PIN against the stored hash
 	 */
-	public suspend fun verify(pin: String): Boolean
+	suspend fun verify(pin: String): Boolean
 
 	/**
 	 * Checks if device unlock (biometric or device credentials) is available.

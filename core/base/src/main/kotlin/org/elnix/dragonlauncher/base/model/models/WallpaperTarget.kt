@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.base.model.models
 
 import android.app.WallpaperManager
 
-public enum class WallpaperTarget(
+enum class WallpaperTarget(
 	val flags: Int
 ) {
 	Home(WallpaperManager.FLAG_SYSTEM),

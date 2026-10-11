@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.base.model.models
 
 import androidx.compose.ui.graphics.Color
 
-public data class IconSettings(
+data class IconSettings(
 	val iconPack: String? = null,
 	val iconsTint: Color? = null,
 	val themedIcons: Boolean = false,

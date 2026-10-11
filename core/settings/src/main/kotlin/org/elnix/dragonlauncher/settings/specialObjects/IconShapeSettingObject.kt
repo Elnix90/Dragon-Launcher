@@ -8,7 +8,7 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 
-public data class IconShapeSettingObject(
+data class IconShapeSettingObject(
 	override val key: String,
 	override val default: IconShape,
 	override val title: Int?,

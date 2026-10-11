@@ -211,7 +211,7 @@ internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
 	}
 }
 
-public data class ClockIconConfig(
+data class ClockIconConfig(
 	val hourLayer: Int,
 	val minuteLayer: Int,
 	val secondLayer: Int,

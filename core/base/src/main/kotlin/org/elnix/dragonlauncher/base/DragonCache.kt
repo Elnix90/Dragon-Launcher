@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base
 import java.util.Collections
 import java.util.UUID
 
-public abstract class DragonCache<K, V>(
+abstract class DragonCache<K, V>(
 	initialMaxSize: Int
 ) {
 	private var maxSize = initialMaxSize
@@ -38,7 +38,7 @@ public abstract class DragonCache<K, V>(
 			}
 		)
 
-	public operator fun get(key: K): V? = items[key]
+	operator fun get(key: K): V? = items[key]
 
 	/**
 	 * Get or compute, used in the [org.elnix.dragonlauncher.base.util.ImageUtils] object, to directly compute [V] when it is not in the cache.

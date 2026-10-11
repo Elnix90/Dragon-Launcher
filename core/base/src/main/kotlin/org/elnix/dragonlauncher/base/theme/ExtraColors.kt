@@ -4,7 +4,7 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-public data class ExtraColors(
+data class ExtraColors(
 	val holdToActivate: Color,
 	val angleLine: Color,
 	val shapes: Color,

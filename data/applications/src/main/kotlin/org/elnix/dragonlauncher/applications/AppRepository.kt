@@ -78,7 +78,7 @@ interface AppRepository {
 		workspaceViewMode: WorkspaceViewMode
 	): Flow<ImmutableList<Application>>
 
-	public suspend fun refreshApps()
+	suspend fun refreshApps()
 
 	/**
 	 * Finds an app from a [Action.LaunchApp].
@@ -100,7 +100,7 @@ interface AppRepository {
 	 * @param action the requested action to convert to application
 	 * @return the found corresponding application or null if none matches     *
 	 */
-	public suspend fun fromAction(action: Action.LaunchApp): Application?
+	suspend fun fromAction(action: Action.LaunchApp): Application?
 
 	fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
 

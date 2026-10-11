@@ -84,7 +84,7 @@ internal class BackupServiceIml(
 	}
 }
 
-public data class BackupResult(
+data class BackupResult(
 	val export: Boolean,
 	val error: Boolean,
 	val title: String,

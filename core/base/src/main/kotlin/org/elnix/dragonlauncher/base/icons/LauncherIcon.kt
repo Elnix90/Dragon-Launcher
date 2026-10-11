@@ -22,9 +22,9 @@ import org.elnix.dragonlauncher.base.util.clipToShape
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
 import java.lang.ref.WeakReference
 
-public sealed interface LauncherIcon
+sealed interface LauncherIcon
 
-public data class StaticLauncherIcon(
+data class StaticLauncherIcon(
 	val foregroundLayer: LauncherIconLayer,
 	val backgroundLayer: LauncherIconLayer,
 	/** Customization properties applied at render time. Defaults to empty (no-op). */
@@ -52,7 +52,7 @@ public data class StaticLauncherIcon(
 	 * Applies [properties] (opacity, tint, rotation, scale and shape) on a single
 	 * clean canvas. The fast path (empty properties) keeps the previous behavior.
 	 */
-	public suspend fun render(size: Int, settings: IconSettings): Bitmap {
+	suspend fun render(size: Int, settings: IconSettings): Bitmap {
 		val cachedBmp = cachedBitmap?.get()
 		if (cachedSettings == settings && cachedSize == size && cachedProperties == properties && cachedBmp != null) {
 			return cachedBmp
@@ -184,5 +184,5 @@ public data class StaticLauncherIcon(
 }
 
 interface DynamicLauncherIcon : LauncherIcon {
-	public suspend fun getIcon(time: Long): StaticLauncherIcon
+	suspend fun getIcon(time: Long): StaticLauncherIcon
 }

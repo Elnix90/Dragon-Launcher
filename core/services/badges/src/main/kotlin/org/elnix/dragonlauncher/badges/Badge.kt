@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.badges
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 
-public sealed interface BadgeIcon {
+sealed interface BadgeIcon {
 	@JvmInline
 	value class Drawable(
 		val drawable: android.graphics.drawable.Drawable

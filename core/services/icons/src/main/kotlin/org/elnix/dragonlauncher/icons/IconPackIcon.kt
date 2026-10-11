@@ -5,13 +5,13 @@ import org.elnix.dragonlauncher.icons.compat.ClockIconConfig
 import org.elnix.dragonlauncher.ktx.jsonObjectOf
 import org.json.JSONObject
 
-public sealed interface IconPackComponent {
+sealed interface IconPackComponent {
 	val iconPack: String
 
 	fun toDatabaseEntity(): IconEntity
 }
 
-public sealed interface IconPackAppIcon : IconPackComponent {
+sealed interface IconPackAppIcon : IconPackComponent {
 	val packageName: String?
 	val activityName: String?
 	val name: String?
@@ -19,7 +19,7 @@ public sealed interface IconPackAppIcon : IconPackComponent {
 	val tint: Int?
 }
 
-public data class IconBack(
+data class IconBack(
 	val drawable: String,
 	override val iconPack: String
 ) : IconPackComponent {
@@ -31,7 +31,7 @@ public data class IconBack(
 		)
 }
 
-public data class IconUpon(
+data class IconUpon(
 	val drawable: String,
 	override val iconPack: String
 ) : IconPackComponent {
@@ -43,7 +43,7 @@ public data class IconUpon(
 		)
 }
 
-public data class IconMask(
+data class IconMask(
 	val drawable: String,
 	override val iconPack: String
 ) : IconPackComponent {
@@ -55,7 +55,7 @@ public data class IconMask(
 		)
 }
 
-public data class AppIcon(
+data class AppIcon(
 	val drawable: String,
 	override val iconPack: String,
 	override val packageName: String? = null,
@@ -77,7 +77,7 @@ public data class AppIcon(
 		)
 }
 
-public data class CalendarIcon(
+data class CalendarIcon(
 	val drawables: List<String>,
 	override val iconPack: String,
 	override val packageName: String?,
@@ -99,7 +99,7 @@ public data class CalendarIcon(
 		)
 }
 
-public data class ClockIcon(
+data class ClockIcon(
 	val drawable: String,
 	override val iconPack: String,
 	override val packageName: String? = null,

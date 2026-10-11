@@ -13,11 +13,11 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerialize
 @Stable
 @Serializable
 @SerialName("StatusBar")
-public sealed class StatusBar {
+sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("Time")
-	public data class Time(
+	data class Time(
 		val formatter: String = "HH:mm:ss",
 		val action: Action? = null,
 		val fontSize: Int = 16,
@@ -28,7 +28,7 @@ public sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("Date")
-	public data class Date(
+	data class Date(
 		val formatter: String = "MMM dd",
 		val action: Action? = null,
 		val fontSize: Int = 14,
@@ -39,7 +39,7 @@ public sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("Bandwidth")
-	public data class Bandwidth(
+	data class Bandwidth(
 		val merge: Boolean = false,
 		val fontSize: Int = 12,
 		val colorHex: String? = null
@@ -48,13 +48,13 @@ public sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("Notifications")
-	public data class Notifications(
+	data class Notifications(
 		val maxIcons: Int = defaultMaxIcons,
 		@Serializable(with = DpSerializer::class)
 		val iconSize: Dp = defaultIconSize
 	) : StatusBar() {
 		companion object {
-			public const val defaultMaxIcons: Int = 8
+			const val defaultMaxIcons: Int = 8
 			val defaultIconSize: Dp = 18.dp
 		}
 	}
@@ -62,7 +62,7 @@ public sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("Connectivity")
-	public data class Connectivity(
+	data class Connectivity(
 		val showAirplaneMode: Boolean = defaultAirplaneMode,
 		val showWifi: Boolean = defaultShowWifi,
 		val showBluetooth: Boolean = defaultShowBluetooth,
@@ -75,14 +75,14 @@ public sealed class StatusBar {
 		val iconSize: Dp = defaultIconSize
 	) : StatusBar() {
 		companion object {
-			public const val defaultAirplaneMode: Boolean = true
-			public const val defaultShowWifi: Boolean = true
-			public const val defaultShowBluetooth: Boolean = true
-			public const val defaultShowVpn: Boolean = true
-			public const val defaultShowMobileData: Boolean = true
-			public const val defaultShowHotspot: Boolean = true
-			public const val defaultShowUsb: Boolean = true
-			public const val defaultUpdateFrequency: Int = 5
+			const val defaultAirplaneMode: Boolean = true
+			const val defaultShowWifi: Boolean = true
+			const val defaultShowBluetooth: Boolean = true
+			const val defaultShowVpn: Boolean = true
+			const val defaultShowMobileData: Boolean = true
+			const val defaultShowHotspot: Boolean = true
+			const val defaultShowUsb: Boolean = true
+			const val defaultUpdateFrequency: Int = 5
 			val defaultIconSize: Dp = 18.dp
 		}
 	}
@@ -90,12 +90,12 @@ public sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("Spacer")
-	public data class Spacer(
+	data class Spacer(
 		@Serializable(with = DpSerializer::class)
 		val width: Dp = defaultWidth,
 		val mode: SpacerMode = defaultSpacerMode
 	) : StatusBar() {
-		public enum class SpacerMode {
+		enum class SpacerMode {
 			Width,
 			Fill,
 			Cutout
@@ -110,7 +110,7 @@ public sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("Battery")
-	public data class Battery(
+	data class Battery(
 		val showIcon: Boolean = false,
 		val showPercentage: Boolean = true,
 		val fontSize: Int = 14,
@@ -120,7 +120,7 @@ public sealed class StatusBar {
 	@Stable
 	@Serializable
 	@SerialName("NextAlarm")
-	public data class NextAlarm(
+	data class NextAlarm(
 		val formatter: String = "HH:mm",
 		val fontSize: Int = 12,
 		val colorHex: String? = null

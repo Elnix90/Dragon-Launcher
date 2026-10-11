@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.ktx.unless
 @Immutable
 @Serializable
 @SerialName("IntersectionShape")
-public data class IntersectionShape(
+data class IntersectionShape(
 	val id: Int,
 	val shape: IconShape? = null,
 	@FloatRange(from = 0.0)
@@ -54,7 +54,7 @@ public data class IntersectionShape(
 	/**
 	 * Returns the size of this [IntersectionShape], computed with the pixel density
 	 */
-	public inline fun getSize(
+	inline fun getSize(
 		density: Float,
 		defaultIntersectionShape: IntersectionShape,
 		isDefaultEditing: Boolean
@@ -65,37 +65,37 @@ public data class IntersectionShape(
 				density
 		)
 
-	public inline fun getOffset(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Offset =
+	inline fun getOffset(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Offset =
 		this.offset ?: (defaultIntersectionShape.offset unless isDefaultEditing) ?: defaultOffset
 
-	public inline fun getOffsetX(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+	inline fun getOffsetX(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
 		(this.offset?.x ?: defaultIntersectionShape.offset?.x.unless(isDefaultEditing) ?: defaultOffset.x).round(2)
 
-	public inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+	inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
 		(this.offset?.y ?: defaultIntersectionShape.offset?.y.unless(isDefaultEditing) ?: defaultOffset.y).round(2)
 
-	public inline fun getScale(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+	inline fun getScale(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
 		(this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale).round(2)
 
-	public inline fun getRotation(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Int =
+	inline fun getRotation(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Int =
 		this.rotation ?: (defaultIntersectionShape.rotation unless isDefaultEditing) ?: defaultRotation
 
-	public inline fun getColor(defaultIntersectionShape: IntersectionShape, extraColors: ExtraColors, isDefaultEditing: Boolean): Color =
+	inline fun getColor(defaultIntersectionShape: IntersectionShape, extraColors: ExtraColors, isDefaultEditing: Boolean): Color =
 		this.color ?: (defaultIntersectionShape.color unless isDefaultEditing) ?: extraColors.shapes
 
-	public inline fun getShape(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): IconShape =
+	inline fun getShape(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): IconShape =
 		this.shape ?: (defaultIntersectionShape.shape unless isDefaultEditing) ?: defaultShape
 
-	public inline fun getBorderStroke(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Dp =
+	inline fun getBorderStroke(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Dp =
 		this.borderStroke ?: (defaultIntersectionShape.borderStroke unless isDefaultEditing) ?: defaultBorderStroke
 
-	public inline fun getGlow(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomGlow =
+	inline fun getGlow(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomGlow =
 		this.glow ?: (defaultIntersectionShape.glow unless isDefaultEditing) ?: defaultGlow
 
-	public inline fun getHapticFeedback(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomHapticFeedback =
+	inline fun getHapticFeedback(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomHapticFeedback =
 		this.haptic ?: (defaultIntersectionShape.haptic unless isDefaultEditing) ?: defaultHapticFeedback
 
-	public inline fun getPointsKeepTheirRelativePosition(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Boolean =
+	inline fun getPointsKeepTheirRelativePosition(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Boolean =
 		this.pointsKeepTheirRelativePosition
 			?: (defaultIntersectionShape.pointsKeepTheirRelativePosition unless isDefaultEditing)
 			?: defaultPointsKeepTheirRelativePosition
@@ -105,7 +105,7 @@ public data class IntersectionShape(
 		/**
 		 * Used to derive a  size from the scale, the main parameter that defines the size of the shape stays the [scale]
 		 */
-		public const val defaultSize: Float = 300f
+		const val defaultSize: Float = 300f
 		val defaultBorderStroke: Dp = 2.dp
 
 		val defaultGlow: CustomGlow =
@@ -114,23 +114,23 @@ public data class IntersectionShape(
 				radius = 5.dp
 			)
 
-		public const val defaultScale: Float = 1f
-		public const val defaultRotation: Int = 0
+		const val defaultScale: Float = 1f
+		const val defaultRotation: Int = 0
 
 		val defaultOffset: Offset = Offset.Zero
 		val defaultShape: IconShape = IconShape.Circle
-		public const val defaultEraseBackground: Boolean = true
-		public const val defaultPointsKeepTheirRelativePosition: Boolean = true
+		const val defaultEraseBackground: Boolean = true
+		const val defaultPointsKeepTheirRelativePosition: Boolean = true
 
 		val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
 
 		val emptyIntersectionShape: IntersectionShape = IntersectionShape(-1)
 
 		@Suppress("NOTHING_TO_INLINE")
-		public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
+		inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
 			if (selected) this.copy(glow = CustomGlow(color = color, radius = 30.dp)) else this
 
-		public inline val IntersectionShape.isDefault: Boolean
+		inline val IntersectionShape.isDefault: Boolean
 			get() =
 				this.shape == null &&
 					this.scale == null &&
@@ -140,7 +140,7 @@ public data class IntersectionShape(
 					this.glow == null &&
 					this.color == null &&
 					this.pointsKeepTheirRelativePosition == null
-		public inline val IntersectionShape.isNotDefault: Boolean
+		inline val IntersectionShape.isNotDefault: Boolean
 			get() = !isDefault
 
 		object DefaultShapeJson : DragonJson<IntersectionShape>()

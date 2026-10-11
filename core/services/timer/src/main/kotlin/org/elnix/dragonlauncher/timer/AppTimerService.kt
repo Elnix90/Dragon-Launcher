@@ -39,34 +39,34 @@ class AppTimerService : Service() {
 	private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
 	@Inject
-	public lateinit var permissionManager: PermissionsManager
+	lateinit var permissionManager: PermissionsManager
 
 	@Inject
-	public lateinit var usageStats: UsageStatsReader
+	lateinit var usageStats: UsageStatsReader
 
 	@Inject
-	public lateinit var notifications: TimerNotifications
+	lateinit var notifications: TimerNotifications
 
 	companion object {
-		public const val CHANNEL_TIMER: String = "dragon_timer_channel"
-		public const val CHANNEL_REMINDER: String = "dragon_reminder_channel"
-		public const val NOTIF_ID_TIMER: Int = 9001
-		public const val NOTIF_ID_REMINDER: Int = 9002
+		const val CHANNEL_TIMER: String = "dragon_timer_channel"
+		const val CHANNEL_REMINDER: String = "dragon_reminder_channel"
+		const val NOTIF_ID_TIMER: Int = 9001
+		const val NOTIF_ID_REMINDER: Int = 9002
 
-		public const val EXTRA_PACKAGE_NAME: String = "extra_package_name"
+		const val EXTRA_PACKAGE_NAME: String = "extra_package_name"
 
 		// Reminder mode
-		public const val EXTRA_REMINDER_ENABLED: String = "extra_reminder_enabled"
-		public const val EXTRA_REMINDER_INTERVAL_MINUTES: String = "extra_reminder_interval_min"
-		public const val EXTRA_REMINDER_MODE: String = "extra_reminder_mode" // "Notification" | "Overlay"
+		const val EXTRA_REMINDER_ENABLED: String = "extra_reminder_enabled"
+		const val EXTRA_REMINDER_INTERVAL_MINUTES: String = "extra_reminder_interval_min"
+		const val EXTRA_REMINDER_MODE: String = "extra_reminder_mode" // "Notification" | "Overlay"
 
 		// Return-to-launcher mode
-		public const val EXTRA_TIME_LIMIT_ENABLED: String = "extra_time_limit_enabled"
-		public const val EXTRA_TIME_LIMIT_MINUTES: String = "extra_time_limit_min"
+		const val EXTRA_TIME_LIMIT_ENABLED: String = "extra_time_limit_enabled"
+		const val EXTRA_TIME_LIMIT_MINUTES: String = "extra_time_limit_min"
 
-		public const val ACTION_STOP: String = "org.elnix.dragonlauncher.STOP_TIMER"
-		public const val SHOW_LAUNCHER: String = "org.elnix.dragonlauncher.SHOW_LAUNCHER"
-		public const val EXTRA_APP_NAME: String = "extra_app_name"
+		const val ACTION_STOP: String = "org.elnix.dragonlauncher.STOP_TIMER"
+		const val SHOW_LAUNCHER: String = "org.elnix.dragonlauncher.SHOW_LAUNCHER"
+		const val EXTRA_APP_NAME: String = "extra_app_name"
 
 		fun start(
 			ctx: Context,

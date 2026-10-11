@@ -6,7 +6,7 @@ import org.elnix.dragonlauncher.i18n.R
 /**
  * Available methods for locking the settings screen.
  */
-public enum class LockMethod(
+enum class LockMethod(
 	override val resId: Int,
 	override val iconEnabled: Int? = null,
 	override val iconDisabled: Int? = null

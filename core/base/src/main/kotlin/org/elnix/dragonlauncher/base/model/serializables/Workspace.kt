@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Stable
 @Serializable
 @SerialName("Workspace")
-public data class Workspace(
+data class Workspace(
 	val id: String,
 	val type: WorkspaceType,
 	val appIds: Set<CacheKey>? = null,
@@ -50,4 +50,4 @@ public data class Workspace(
 	}
 }
 
-public typealias WorkspaceState = List<Workspace>
+typealias WorkspaceState = List<Workspace>

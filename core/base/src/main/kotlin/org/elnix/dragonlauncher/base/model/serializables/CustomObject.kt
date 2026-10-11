@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.ktx.round
 @Stable
 @Serializable
 @SerialName("CustomObject")
-public data class CustomObject(
+data class CustomObject(
 	/**
 	 * Stroke of the object.
 	 *
@@ -135,7 +135,7 @@ public data class CustomObject(
 			)
 
 		@Stable
-		public data class CustomObjectBlockProperties(
+		data class CustomObjectBlockProperties(
 			val allowStrokeCustomization: Boolean = true,
 			val allowColorCustomization: Boolean = true,
 			val allowShapeCustomization: Boolean = true,

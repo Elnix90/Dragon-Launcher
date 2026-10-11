@@ -48,12 +48,12 @@ import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
  */
 class OverlayReminderService : Service() {
 	companion object {
-		public const val EXTRA_APP_NAME: String = "extra_app_name"
-		public const val EXTRA_MODE: String = "extra_mode" // "reminder" or "time_warning"
-		public const val EXTRA_SESSION_TIME: String = "extra_session_time"
-		public const val EXTRA_TODAY_TIME: String = "extra_today_time"
-		public const val EXTRA_REMAINING_TIME: String = "extra_remaining_time"
-		public const val EXTRA_HAS_LIMIT: String = "extra_has_limit"
+		const val EXTRA_APP_NAME: String = "extra_app_name"
+		const val EXTRA_MODE: String = "extra_mode" // "reminder" or "time_warning"
+		const val EXTRA_SESSION_TIME: String = "extra_session_time"
+		const val EXTRA_TODAY_TIME: String = "extra_today_time"
+		const val EXTRA_REMAINING_TIME: String = "extra_remaining_time"
+		const val EXTRA_HAS_LIMIT: String = "extra_has_limit"
 
 		private const val DISMISS_DELAY = 7000L
 

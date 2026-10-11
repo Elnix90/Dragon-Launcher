@@ -86,7 +86,7 @@ import org.jetbrains.annotations.ApiStatus
 @Immutable
 @Serializable
 @SerialName("Point")
-public data class Point(
+data class Point(
 	/**
 	 * The main parameter of any point; it's offset from center position
 	 *
@@ -263,7 +263,7 @@ public data class Point(
 	 *
 	 * @return the offset of the point [pos] the point it has a shape and a [shape][IntersectionShape]
 	 */
-	public inline fun getPos(): Offset {
+	inline fun getPos(): Offset {
 		if (this.shapeId == null) return this.offset
 		return this.pos ?: this.offset
 	}
@@ -279,7 +279,7 @@ public data class Point(
 
 	val key: CacheKey by lazy { CacheKey(this) }
 
-	public inline fun getBorderStroke(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): Dp =
+	inline fun getBorderStroke(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): Dp =
 		if (selected) {
 			this.borderStrokeSelected ?: (defaultPoint.borderStrokeSelected unless isDefaultEditing)
 				?: defaultBorderStrokeSelected
@@ -287,14 +287,14 @@ public data class Point(
 			this.borderStroke ?: (defaultPoint.borderStroke unless isDefaultEditing) ?: defaultBorderStroke
 		}
 
-	public inline fun getBorderColor(selected: Boolean, defaultPoint: Point, extraColors: ExtraColors, isDefaultEditing: Boolean): Color =
+	inline fun getBorderColor(selected: Boolean, defaultPoint: Point, extraColors: ExtraColors, isDefaultEditing: Boolean): Color =
 		if (selected) {
 			this.borderColorSelected ?: (defaultPoint.borderColorSelected unless isDefaultEditing)
 		} else {
 			this.borderColor ?: (defaultPoint.borderColor unless isDefaultEditing)
 		} ?: extraColors.shapes
 
-	public inline fun getBackgroundColor(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): Color =
+	inline fun getBackgroundColor(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): Color =
 		if (selected) {
 			this.backgroundColorSelected ?: (defaultPoint.backgroundColorSelected unless isDefaultEditing)
 				?: defaultBackgroundColorSelected
@@ -302,7 +302,7 @@ public data class Point(
 			this.backgroundColor ?: (defaultPoint.backgroundColor unless isDefaultEditing) ?: defaultBackgroundColor
 		}
 
-	public inline fun getBorderShape(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): IconShape =
+	inline fun getBorderShape(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): IconShape =
 		if (selected) {
 			this.borderShapeSelected ?: (defaultPoint.borderShapeSelected unless isDefaultEditing)
 				?: defaultBorderShapeSelected
@@ -310,57 +310,57 @@ public data class Point(
 			this.borderShape ?: (defaultPoint.borderShape unless isDefaultEditing) ?: defaultBorderShape
 		}
 
-	public inline fun getGlow(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): CustomGlow =
+	inline fun getGlow(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): CustomGlow =
 		if (selected) {
 			this.glowSelected.takeDefaults((defaultPoint.glowSelected unless isDefaultEditing), defaultGlowSelected)
 		} else {
 			this.glow.takeDefaults((defaultPoint.glow unless isDefaultEditing), defaultGlow)
 		}
 
-	public inline fun getOpacity(defaultPoint: Point, isDefaultEditing: Boolean): Float =
+	inline fun getOpacity(defaultPoint: Point, isDefaultEditing: Boolean): Float =
 		this.opacity ?: (defaultPoint.opacity unless isDefaultEditing) ?: defaultOpacity
 
-	public inline fun getInnerPadding(defaultPoint: Point, isDefaultEditing: Boolean): Dp =
+	inline fun getInnerPadding(defaultPoint: Point, isDefaultEditing: Boolean): Dp =
 		(this.innerPadding ?: (defaultPoint.innerPadding unless isDefaultEditing) ?: defaultInnerPadding).coerceAtLeast(
 			1.dp
 		)
 
-	public inline fun getSize(defaultPoint: Point, isDefaultEditing: Boolean): Dp =
+	inline fun getSize(defaultPoint: Point, isDefaultEditing: Boolean): Dp =
 		(this.size ?: (defaultPoint.size unless isDefaultEditing) ?: defaultSize).coerceAtLeast(1.dp)
 
-	public inline fun getLiveNestPreviewDelayMs(defaultPoint: Point, isDefaultEditing: Boolean): Int =
+	inline fun getLiveNestPreviewDelayMs(defaultPoint: Point, isDefaultEditing: Boolean): Int =
 		this.liveNestPreviewDelayMs ?: (defaultPoint.liveNestPreviewDelayMs unless isDefaultEditing)
 			?: defaultLiveNestPreviewDelayMs
 
-	public inline fun getLiveNestScale(defaultPoint: Point, isDefaultEditing: Boolean): Float =
+	inline fun getLiveNestScale(defaultPoint: Point, isDefaultEditing: Boolean): Float =
 		this.liveNestScale ?: (defaultPoint.liveNestScale unless isDefaultEditing) ?: defaultLiveNestScale
 
-	public inline fun getLiveNestGraceDistance(defaultPoint: Point, isDefaultEditing: Boolean): Dp =
+	inline fun getLiveNestGraceDistance(defaultPoint: Point, isDefaultEditing: Boolean): Dp =
 		this.liveNestGraceDistance ?: (defaultPoint.liveNestGraceDistance unless isDefaultEditing)
 			?: defaultLiveNestGraceDistance
 
-	public inline fun getLiveNestSnapsToFingerPosition(defaultPoint: Point, isDefaultEditing: Boolean): Boolean =
+	inline fun getLiveNestSnapsToFingerPosition(defaultPoint: Point, isDefaultEditing: Boolean): Boolean =
 		this.liveNestSnapsToFingerPosition ?: (defaultPoint.liveNestSnapsToFingerPosition unless isDefaultEditing)
 			?: defaultLiveNestSnapsToFingerPosition
 
-	public inline fun getHoldAndRunDelayMs(defaultPoint: Point, isDefaultEditing: Boolean): Int =
+	inline fun getHoldAndRunDelayMs(defaultPoint: Point, isDefaultEditing: Boolean): Int =
 		this.holdAndRunDelayMs ?: (defaultPoint.holdAndRunDelayMs unless isDefaultEditing) ?: defaultHoldAndRunDelayMs
 
-	public inline fun getCycleActionsStageLoopDelayMs(defaultPoint: Point, isDefaultEditing: Boolean): Int =
+	inline fun getCycleActionsStageLoopDelayMs(defaultPoint: Point, isDefaultEditing: Boolean): Int =
 		this.cycleActionsLoopDelayMs ?: (defaultPoint.cycleActionsLoopDelayMs unless isDefaultEditing)
 			?: defaultCycleActionsLoopDelayMs
 
-	public inline fun getCycleActionsStageLoop(defaultPoint: Point, isDefaultEditing: Boolean): Boolean =
+	inline fun getCycleActionsStageLoop(defaultPoint: Point, isDefaultEditing: Boolean): Boolean =
 		this.cycleActionsLoop ?: (defaultPoint.cycleActionsLoop unless isDefaultEditing) ?: defaultCycleActionsLoop
 
-	public inline fun getLiveNestMainNestOpacityPercent(defaultPoint: Point, isDefaultEditing: Boolean): Int =
+	inline fun getLiveNestMainNestOpacityPercent(defaultPoint: Point, isDefaultEditing: Boolean): Int =
 		this.liveNestSubNestOpacityPercent ?: (defaultPoint.liveNestSubNestOpacityPercent unless isDefaultEditing)
 			?: defaultLiveNestMainNestOpacityPercent
 
-	public inline fun getHaptic(defaultPoint: Point, isDefaultEditing: Boolean): CustomHapticFeedback? =
+	inline fun getHaptic(defaultPoint: Point, isDefaultEditing: Boolean): CustomHapticFeedback? =
 		this.haptic ?: (defaultPoint.haptic unless isDefaultEditing) ?: defaultHapticFeedback
 
-	public inline fun getFastActivation(defaultPoint: Point, isDefaultEditing: Boolean): Boolean =
+	inline fun getFastActivation(defaultPoint: Point, isDefaultEditing: Boolean): Boolean =
 		this.fastActivation ?: (defaultPoint.fastActivation unless isDefaultEditing) ?: defaultFastActivation
 
 	override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
@@ -381,30 +381,30 @@ public data class Point(
 
 		val defaultBorderStroke: Dp = 1.dp
 		val defaultBorderStrokeSelected: Dp = 3.dp
-		public const val defaultOpacity: Float = 1f
+		const val defaultOpacity: Float = 1f
 		val defaultInnerPadding: Dp = 5.dp
 		val defaultSize: Dp = 22.dp
 		val defaultBackgroundColor: Color = Color.Transparent
 		val defaultBackgroundColorSelected: Color = Color.Transparent
 		val defaultBorderShape: IconShape = IconShape.Circle
 		val defaultBorderShapeSelected: IconShape = IconShape.Circle
-		public const val defaultLiveNestPreviewDelayMs: Int = 500
-		public const val defaultLiveNestScale: Float = 0.65f
+		const val defaultLiveNestPreviewDelayMs: Int = 500
+		const val defaultLiveNestScale: Float = 0.65f
 		val defaultLiveNestGraceDistance: Dp = 50.dp
-		public const val defaultLiveNestSnapsToFingerPosition: Boolean = true
-		public const val defaultHoldAndRunDelayMs: Int = 500
+		const val defaultLiveNestSnapsToFingerPosition: Boolean = true
+		const val defaultHoldAndRunDelayMs: Int = 500
 		val defaultHapticFeedback: CustomHapticFeedback? = null
-		public const val defaultCycleActionsLoopDelayMs: Int = 500
-		public const val defaultCycleActionsLoop: Boolean = true
-		public const val defaultFastActivation: Boolean = false
-		public const val defaultLiveNestMainNestOpacityPercent: Int = 50
+		const val defaultCycleActionsLoopDelayMs: Int = 500
+		const val defaultCycleActionsLoop: Boolean = true
+		const val defaultFastActivation: Boolean = false
+		const val defaultLiveNestMainNestOpacityPercent: Int = 50
 		val defaultGlow: CustomGlow = CustomGlow(radius = 5.dp)
 		val defaultGlowSelected: CustomGlow = CustomGlow(radius = 10.dp)
 
 		val emptyPoint: Point = dummySwipePoint()
 		val defaultPoints: Points = emptyMap()
 
-		public inline val Point.isDefault: Boolean
+		inline val Point.isDefault: Boolean
 			get() =
 				this.shapeId == null &&
 					this.customIcon == null &&
@@ -437,7 +437,7 @@ public data class Point(
 					this.holdAndRunAction == null &&
 					this.fastActivation == null
 
-		public inline val Point.isNotDefault: Boolean
+		inline val Point.isNotDefault: Boolean
 			get() = !isDefault
 
 		object PointsJson : DragonJson<Set<Point>>()
@@ -446,4 +446,4 @@ public data class Point(
 	}
 }
 
-public typealias Points = Map<Int, Point>
+typealias Points = Map<Int, Point>

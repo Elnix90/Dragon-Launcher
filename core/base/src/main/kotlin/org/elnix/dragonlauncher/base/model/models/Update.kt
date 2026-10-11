@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import java.util.Date
 
 @Immutable
-public data class Update(
+data class Update(
 	val versionCode: Int,
 	val versionName: String,
 	val codeName: String?,

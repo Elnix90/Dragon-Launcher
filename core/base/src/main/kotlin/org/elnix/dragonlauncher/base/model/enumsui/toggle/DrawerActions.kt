@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.enumsui.toggle
 import org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
-public enum class DrawerActions(
+enum class DrawerActions(
 	override val resId: Int,
 	override val iconEnabled: Int,
 	override val iconDisabled: Int? = null
@@ -37,12 +37,12 @@ public enum class DrawerActions(
 		val defaultClickSearchAction: DrawerActions = SearchWeb
 		val defaultBackAction: DrawerActions = Close
 
-		public inline val DrawerActions.isUsed: Boolean
+		inline val DrawerActions.isUsed: Boolean
 			get() = notNone && notDisabled
 
-		public inline val DrawerActions.notNone: Boolean
+		inline val DrawerActions.notNone: Boolean
 			get() = this != None
-		public inline val DrawerActions.notDisabled: Boolean
+		inline val DrawerActions.notDisabled: Boolean
 			get() = this != Disabled
 	}
 }

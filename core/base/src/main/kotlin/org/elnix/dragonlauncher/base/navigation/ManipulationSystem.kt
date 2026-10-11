@@ -35,7 +35,7 @@ class ManipulationSystem(
 	 * This function needs to be called from a coroutine scope. it does not use the [CoroutineScope] receiver,
 	 * because all animations are instant and therefore doesn't need async calls
 	 */
-	public suspend fun reset() {
+	suspend fun reset() {
 		offset.snapTo(Offset.Zero)
 		zoom.snapTo(1f)
 		angle.snapTo(0f)

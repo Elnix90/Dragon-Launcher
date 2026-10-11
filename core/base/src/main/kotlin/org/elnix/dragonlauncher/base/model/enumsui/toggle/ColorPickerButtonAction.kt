@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.enumsui.toggle
 import org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
-public enum class ColorPickerButtonAction(
+enum class ColorPickerButtonAction(
 	override val iconEnabled: Int,
 	override val resId: Int? = null,
 	override val iconDisabled: Int? = null

@@ -47,7 +47,7 @@ object ExtensionManager {
 		}
 	}
 
-	public suspend fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
+	suspend fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
 		logD(EXTENSION_MANAGER_TAG) { "Checking extension installed for: $packageNameOrId" }
 
 		val disableSigCheck = DebugSettingsStore.disableExtensionSignatureCheck.get(ctx)

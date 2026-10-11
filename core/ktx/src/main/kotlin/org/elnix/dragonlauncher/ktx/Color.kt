@@ -48,7 +48,7 @@ fun Color.semiTransparentIfDisabled(enabled: Boolean): Color =
 	if (enabled) this else alphaMultiplier(0.5f)
 
 /** Utility: convert Color -> #AARRGGBB */
-public inline val Color.toHexWithAlpha: String
+inline val Color.toHexWithAlpha: String
 	get() = "#%08X".format(this.toArgb())
 
 /**

@@ -11,7 +11,7 @@ package org.elnix.dragonlauncher.ktx
  * Malformed JSON returns `false`. This is a lightweight structural check
  * that does not fully validate JSON syntax.
  */
-public inline val String?.isBlankJson: Boolean
+inline val String?.isBlankJson: Boolean
 	get() {
 		if (this == null) return true
 		val trimmed = trim()
@@ -30,5 +30,5 @@ public inline val String?.isBlankJson: Boolean
  * This is a lightweight structural check and does not validate
  * whether the string is well-formed JSON.
  */
-public inline val String?.isNotBlankJson: Boolean
+inline val String?.isNotBlankJson: Boolean
 	get() = !isBlankJson

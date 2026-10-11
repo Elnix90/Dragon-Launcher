@@ -42,9 +42,9 @@ interface AppShortcutRepository {
 
 	fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?>
 
-	public suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo?
+	suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo?
 
-	public suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity>
+	suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity>
 }
 
 internal class AppShortcutRepositoryImpl(

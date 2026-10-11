@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.i18n.R
 /**
  * A permission the launcher needs, with the strings describing it to the user.
  */
-public enum class PermissionGroup(
+enum class PermissionGroup(
 	@StringRes val title: Int,
 	@StringRes val description: Int,
 	@DrawableRes val icon: Int

@@ -7,14 +7,14 @@ import androidx.compose.runtime.Immutable
 import org.elnix.dragonlauncher.database.entities.IconPackEntity
 
 @Immutable
-public data class IconPack(
+data class IconPack(
 	val name: String,
 	val packageName: String,
 	val version: String,
 	val scale: Float = 1f,
 	val themed: Boolean = false
 ) {
-	public constructor(entity: IconPackEntity) : this(
+	constructor(entity: IconPackEntity) : this(
 		name = entity.name,
 		packageName = entity.packageName,
 		version = entity.version,

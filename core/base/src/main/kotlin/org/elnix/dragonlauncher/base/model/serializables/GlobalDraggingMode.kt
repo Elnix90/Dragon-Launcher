@@ -14,9 +14,9 @@ import org.elnix.dragonlauncher.i18n.R
 @Serializable
 @SerialName("GlobalDraggingMode")
 @Stable
-public sealed class GlobalDraggingMode {
-	public abstract val title: Int
-	public abstract val description: Int
+sealed class GlobalDraggingMode {
+	abstract val title: Int
+	abstract val description: Int
 // 	public abstract val icon: Int
 
 	/**
@@ -25,7 +25,7 @@ public sealed class GlobalDraggingMode {
 	 */
 	@Serializable
 	@SerialName("Normal")
-	public data object Normal : GlobalDraggingMode() {
+	data object Normal : GlobalDraggingMode() {
 		@Transient
 		override val title: Int = R.string.dragging_mode_normal
 
@@ -39,7 +39,7 @@ public sealed class GlobalDraggingMode {
 	 */
 	@Serializable
 	@SerialName("Fixed")
-	public data class Fixed(
+	data class Fixed(
 		@FloatRange(0.0, 1.0)
 		val xRatio: Float = 0.5f,
 		@FloatRange(0.0, 1.0)

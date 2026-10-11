@@ -55,7 +55,7 @@ class UsageStatsReader(
 		}
 	}
 
-	public data class AppUsageStats(
+	data class AppUsageStats(
 		val yesterdayMinutes: Long,
 		val todayMinutes: Long
 	)

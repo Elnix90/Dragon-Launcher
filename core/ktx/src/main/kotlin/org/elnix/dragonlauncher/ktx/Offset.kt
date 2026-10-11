@@ -12,14 +12,14 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 /** Euclidean distance from [this@distance] to [b] in pixels. */
-public inline infix fun Offset.distanceTo(b: Offset): Float =
+inline infix fun Offset.distanceTo(b: Offset): Float =
 	hypot(b.x - x, b.y - y)
 
 /**
  * Return the distance squared to the receiver [Offset] of [other]
  * Use this to avoid computing the square root when you only need to compare offsets lengths together
  */
-public inline infix fun Offset.distanceSquaredTo(other: Offset): Float =
+inline infix fun Offset.distanceSquaredTo(other: Offset): Float =
 	(other.x - x).pow(2) + (other.y - y).pow(2)
 
 fun angle360FromOffset(center: Offset, offset: Offset): Float {
@@ -36,7 +36,7 @@ fun Offset.angleRad360(): Float {
 }
 
 /** Angle 0..360 from [this] (east = 0, clockwise). */
-public inline fun Offset.angleDeg(): Float {
+inline fun Offset.angleDeg(): Float {
 	var deg = this.angleRad().degrees.toFloat()
 	if (deg < 0f) deg += 360f
 	return deg
@@ -50,7 +50,7 @@ public inline fun Offset.angleDeg(): Float {
  *
  * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
  */
-public inline fun Offset.rotateBy(angle: Float): Offset {
+inline fun Offset.rotateBy(angle: Float): Offset {
 	if (angle == 0f || angle == 360f) return this
 
 	val angleInRadians: Double = angle.radians
@@ -71,7 +71,7 @@ public inline fun Offset.rotateBy(angle: Float): Offset {
  * Note: ORDER MATTERS!!
  * If you put undo rotation first, it'll break the whole chain for some reason.
  */
-public inline fun Offset.applyTransformations(
+inline fun Offset.applyTransformations(
 	zoom: Float,
 	offset: Offset,
 	angle: Float
@@ -83,7 +83,7 @@ public inline fun Offset.applyTransformations(
  * Note: ORDER MATTERS!!
  * If you put undo rotation first, it'll break the whole chain for some reason.
  */
-public inline fun Offset.undoTransformations(
+inline fun Offset.undoTransformations(
 	angle: Float,
 	zoom: Float,
 	offset: Offset
@@ -123,7 +123,7 @@ fun Offset.cleanString(): String =
  * @param size value given to [x][Offset.x] and [y][Offset.y]
  * @return the newly created offset
  */
-public inline fun Offset.Companion.rect(size: Float): Offset =
+inline fun Offset.Companion.rect(size: Float): Offset =
 	Offset(size, size)
 
 /**
@@ -132,5 +132,5 @@ public inline fun Offset.Companion.rect(size: Float): Offset =
  * @param size value given to [x][IntOffset.x] and [y][IntOffset.y]
  * @return the newly created offset
  */
-public inline fun IntOffset.Companion.rect(size: Int): IntOffset =
+inline fun IntOffset.Companion.rect(size: Int): IntOffset =
 	IntOffset(size, size)

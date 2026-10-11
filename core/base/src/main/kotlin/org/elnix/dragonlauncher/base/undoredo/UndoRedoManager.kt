@@ -59,7 +59,7 @@ class UndoRedoManager(
 			)
 
 	/** Snapshot all stacks, then run the mutation. Clears all redo histories. */
-	public inline fun applyChange(mutator: () -> Unit) {
+	inline fun applyChange(mutator: () -> Unit) {
 		stacks.forEach { stack -> stack.push() }
 		mutator()
 	}

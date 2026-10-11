@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Serializable
 @SerialName("WorkspaceType")
-public enum class WorkspaceType(
+enum class WorkspaceType(
 	@param:DrawableRes val icon: Int
 ) {
 	All(R.drawable.select_all),

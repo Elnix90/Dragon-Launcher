@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.ktx.unless
 @Immutable
 @Serializable
 @SerialName("Nest")
-public data class Nest(
+data class Nest(
 	/**
 	 *  By default, the id 0 is the first nest that is available,
 	 *  I'll try to make the old system importable, to avoid breaking changes like empty actions circle
@@ -73,16 +73,16 @@ public data class Nest(
 	/**
 	 * I cannot name this one `getName` as it's a primal functions created by the data class
 	 */
-	public inline fun nameOrId(): String =
+	inline fun nameOrId(): String =
 		this.name ?: id.toString()
 
-	public inline fun getInterSectionShapes(defaultNest: Nest, isDefaultEditing: Boolean): Set<IntersectionShape> =
+	inline fun getInterSectionShapes(defaultNest: Nest, isDefaultEditing: Boolean): Set<IntersectionShape> =
 		this.intersectionShapes ?: (defaultNest.intersectionShapes unless isDefaultEditing) ?: defaultIntersectionShapes
 
-	public inline fun getCancelZone(defaultNest: Nest, isDefaultEditing: Boolean): Dp =
+	inline fun getCancelZone(defaultNest: Nest, isDefaultEditing: Boolean): Dp =
 		this.cancelZone ?: (defaultNest.cancelZone unless isDefaultEditing) ?: defaultCancelZone
 
-	public inline fun getShowAllPointsInCurrentNest(
+	inline fun getShowAllPointsInCurrentNest(
 		defaultNest: Nest,
 		showAllPointsInCurrentNestSettings: Boolean,
 		isDefaultEditing: Boolean
@@ -90,7 +90,7 @@ public data class Nest(
 		this.showAllPointsInCurrentNest ?: (defaultNest.showAllPointsInCurrentNest unless isDefaultEditing)
 			?: showAllPointsInCurrentNestSettings
 
-	public inline fun getShowAllPointsInCurrentShape(
+	inline fun getShowAllPointsInCurrentShape(
 		defaultNest: Nest,
 		showAllPointsInCurrentShapeSetting: Boolean,
 		isDefaultEditing: Boolean
@@ -98,13 +98,13 @@ public data class Nest(
 		this.showAllPointsInCurrentShape ?: (defaultNest.showAllPointsInCurrentShape unless isDefaultEditing)
 			?: showAllPointsInCurrentShapeSetting
 
-	public inline fun getShowCurrentShape(defaultNest: Nest, showCurrentShapeInNestSetting: Boolean, isDefaultEditing: Boolean): Boolean =
+	inline fun getShowCurrentShape(defaultNest: Nest, showCurrentShapeInNestSetting: Boolean, isDefaultEditing: Boolean): Boolean =
 		this.showCurrentShape ?: (defaultNest.showCurrentShape unless isDefaultEditing) ?: showCurrentShapeInNestSetting
 
-	public inline fun getShowAllShapes(defaultNest: Nest, showAllShapesSetting: Boolean, isDefaultEditing: Boolean): Boolean =
+	inline fun getShowAllShapes(defaultNest: Nest, showAllShapesSetting: Boolean, isDefaultEditing: Boolean): Boolean =
 		this.showAllShapes ?: (defaultNest.showAllShapes unless isDefaultEditing) ?: showAllShapesSetting
 
-	public inline fun getPreviewScaleFactor(defaultNest: Nest, isDefaultEditing: Boolean): Float =
+	inline fun getPreviewScaleFactor(defaultNest: Nest, isDefaultEditing: Boolean): Float =
 		this.previewScaleFactor ?: (defaultNest.previewScaleFactor unless isDefaultEditing)
 			?: defaultPreviewScaledFactor
 
@@ -127,14 +127,14 @@ public data class Nest(
 
 		val defaultCancelZone: Dp = 50.dp
 
-		public const val defaultPreviewScaledFactor: Float = 2f
+		const val defaultPreviewScaledFactor: Float = 2f
 
 		val emptyNest: Nest = Nest()
 		val defaultNests: Nests = mapOf(
 			0 to Nest()
 		)
 
-		public inline val Nest.isDefault: Boolean
+		inline val Nest.isDefault: Boolean
 			get() =
 				this.cancelZone == null &&
 					this.intersectionShapes == null &&
@@ -145,7 +145,7 @@ public data class Nest(
 					this.showAllShapes == null &&
 					this.previewScaleFactor == null
 
-		public inline val Nest.isNotDefault: Boolean
+		inline val Nest.isNotDefault: Boolean
 			get() = !isDefault
 
 		object NestsJson : DragonJson<Set<Nest>>()
@@ -154,4 +154,4 @@ public data class Nest(
 	}
 }
 
-public typealias Nests = Map<Int, Nest>
+typealias Nests = Map<Int, Nest>

@@ -5,7 +5,7 @@ import org.elnix.dragonlauncher.i18n.R
 /**
  * Data class used to link an URL to an icon in the res folder
  */
-public data class SocialLink(
+data class SocialLink(
 	val url: String,
 	val icon: Int
 )

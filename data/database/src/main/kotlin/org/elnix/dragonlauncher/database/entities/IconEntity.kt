@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Icons")
-public data class IconEntity(
+data class IconEntity(
 	val type: String,
 	val packageName: String? = null,
 	val activityName: String? = null,

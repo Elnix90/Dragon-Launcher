@@ -40,7 +40,7 @@ class IconPickerVM(
 
 	private var debounceSearchJob: Job? = null
 
-	public suspend fun searchIcon(query: String, iconPack: IconPack?) {
+	suspend fun searchIcon(query: String, iconPack: IconPack?) {
 		debounceSearchJob?.cancelAndJoin()
 		if (query.isBlank()) {
 			iconSearchResults.value = emptyList()

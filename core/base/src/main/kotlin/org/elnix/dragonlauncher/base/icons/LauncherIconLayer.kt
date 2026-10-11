@@ -3,21 +3,21 @@ package org.elnix.dragonlauncher.base.icons
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 
-public sealed interface LauncherIconLayer {
+sealed interface LauncherIconLayer {
 	val tint: Int?
 }
 
-public data class ColorLayer(
+data class ColorLayer(
 	override val tint: Int = 0
 ) : LauncherIconLayer
 
-public data class StaticIconLayer(
+data class StaticIconLayer(
 	val icon: Drawable,
 	val scale: Float,
 	override val tint: Int?
 ) : LauncherIconLayer
 
-public data class ClockLayer(
+data class ClockLayer(
 	val sublayers: List<ClockSublayer>,
 	val defaultHour: Int = 0,
 	val defaultMinute: Int = 0,
@@ -26,12 +26,12 @@ public data class ClockLayer(
 	override val tint: Int? = null
 ) : LauncherIconLayer
 
-public data class TextLayer(
+data class TextLayer(
 	val text: String,
 	override val tint: Int? = null
 ) : LauncherIconLayer
 
-public data class VectorLayer(
+data class VectorLayer(
 	@param:DrawableRes val icon: Int,
 	override val tint: Int? = null
 ) : LauncherIconLayer
@@ -40,12 +40,12 @@ object TransparentLayer : LauncherIconLayer {
 	override val tint: Int = 0
 }
 
-public data class ClockSublayer(
+data class ClockSublayer(
 	val drawable: Drawable,
 	val role: ClockSublayerRole
 )
 
-public enum class ClockSublayerRole {
+enum class ClockSublayerRole {
 	Hour,
 	Minute,
 	Second,

@@ -11,7 +11,7 @@ import java.util.Date
 import java.util.Locale
 
 // TODO Move to changelogs service
-public suspend fun loadChangelogs(
+suspend fun loadChangelogs(
 	ctx: Context,
 	currentVersionCode: Int
 ): List<Update> =

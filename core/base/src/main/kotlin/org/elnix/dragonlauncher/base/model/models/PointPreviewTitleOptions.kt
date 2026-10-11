@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.models
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 
-public data class PointPreviewTitleOptions(
+data class PointPreviewTitleOptions(
 	val showLabel: Boolean,
 	val showIcon: Boolean,
 	val pointPreviewMode: PointPreviewMode,
@@ -13,7 +13,7 @@ public data class PointPreviewTitleOptions(
 	val topPadding: Dp
 )
 
-public enum class PointPreviewMode {
+enum class PointPreviewMode {
 	New,
 	Legacy
 }

@@ -34,7 +34,7 @@ val json: Json =
  * @param T The generic type associated with the JSON operations (not strictly enforced due to inline functions).
  * @constructor Creates an empty [DragonJson] instance. Subclasses can extend this for custom logic.
  */
-public abstract class DragonJson<T> {
+abstract class DragonJson<T> {
 	/**
 	 * Encodes a Kotlin object to a JSON string.
 	 *
@@ -45,7 +45,7 @@ public abstract class DragonJson<T> {
 	 * @return The JSON string representation of [value], or `null` if encoding fails.
 	 * @see json
 	 */
-	public inline fun <reified T : Any> encode(value: T): String? =
+	inline fun <reified T : Any> encode(value: T): String? =
 		runCatching {
 			json.encodeToString(value)
 		}.onFailure { e ->
@@ -62,7 +62,7 @@ public abstract class DragonJson<T> {
 	 * @return The deserialized object of type [T], or `null` if decoding fails.
 	 * @see json
 	 */
-	public inline fun <reified T : Any> decode(string: Any?): T? {
+	inline fun <reified T : Any> decode(string: Any?): T? {
 		return runCatching {
 			val stringifiedString = string?.toString() ?: return null
 			if (stringifiedString.isEmpty()) return null
@@ -88,7 +88,7 @@ public abstract class DragonJson<T> {
 	 * @return The deserialized object of type [T], or [fallback] if decoding fails.
 	 * @see json
 	 */
-	public inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
+	inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
 		return runCatching {
 			val stringifiedString = string?.toString() ?: return fallback
 			if (stringifiedString.isEmpty()) return fallback
@@ -113,7 +113,7 @@ public abstract class DragonJson<T> {
 	 * @see json
 	 * @see decode
 	 */
-	public inline fun <reified T : Any> decodeAndThrow(string: Any?): T? {
+	inline fun <reified T : Any> decodeAndThrow(string: Any?): T? {
 		val stringifiedString = string?.toString() ?: return null
 		if (stringifiedString.isEmpty()) return null
 

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("AppOverride")
-public data class AppOverride(
+data class AppOverride(
 	val customName: String? = null,
 	val customIcon: CustomIcon? = null,
 	/**
@@ -29,4 +29,4 @@ public data class AppOverride(
 	}
 }
 
-public typealias AppOverrideState = Map<CacheKey, AppOverride>
+typealias AppOverrideState = Map<CacheKey, AppOverride>

@@ -1077,7 +1077,7 @@ internal class PointsServiceImpl(
 		Pair((offset.x / gridSize).toInt(), (offset.y / gridSize).toInt())
 }
 
-public data class DecodeError(
+data class DecodeError(
 	val type: String,
 	val exception: Exception,
 	val json: String

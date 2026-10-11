@@ -6,7 +6,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 
-public data class PointApp(
+data class PointApp(
 	private val point: Point
 ) : Application() {
 	override val isSystem: Boolean = false

@@ -47,7 +47,7 @@ internal abstract class IconPackInstaller(
 }
 
 interface IconPackInstallerScope {
-	public suspend fun addIcon(icon: IconPackComponent)
+	suspend fun addIcon(icon: IconPackComponent)
 
-	public suspend fun updatePackInfo(update: (IconPack) -> IconPack)
+	suspend fun updatePackInfo(update: (IconPack) -> IconPack)
 }

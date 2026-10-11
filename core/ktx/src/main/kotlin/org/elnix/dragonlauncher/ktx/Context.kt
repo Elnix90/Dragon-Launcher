@@ -247,7 +247,7 @@ fun Context.findFragmentActivity(): FragmentActivity? {
 	return null
 }
 
-public data class InstallSourceInfoCompat(
+data class InstallSourceInfoCompat(
 	val originatingPackageName: String?,
 	val initiatingPackageName: String?,
 	val installingPackageName: String?

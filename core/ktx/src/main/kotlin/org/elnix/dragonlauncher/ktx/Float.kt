@@ -8,25 +8,25 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-public const val TWO_PI_F: Float = (2.0 * PI).toFloat()
-public const val PI_F: Float = PI.toFloat()
+const val TWO_PI_F: Float = (2.0 * PI).toFloat()
+const val PI_F: Float = PI.toFloat()
 
-public inline val Float.radians: Double
+inline val Float.radians: Double
 	get() = Math.toRadians(this.toDouble())
 
-public inline val Float.degrees: Double
+inline val Float.degrees: Double
 	get() = Math.toDegrees(this.toDouble())
 
-public inline val Int.radians: Double
+inline val Int.radians: Double
 	get() = Math.toRadians(this.toDouble())
 
-public inline val Int.degrees: Double
+inline val Int.degrees: Double
 	get() = Math.toDegrees(this.toDouble())
 
-public inline val Double.radians: Double
+inline val Double.radians: Double
 	get() = Math.toRadians(this)
 
-public inline val Double.degrees: Double
+inline val Double.degrees: Double
 	get() = Math.toDegrees(this)
 
 fun Float.round(decimals: Int): Float {

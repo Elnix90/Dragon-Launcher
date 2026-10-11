@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.base.DragonCache
  * @property iconSize size of the icon bounding box derived from [borderRadii]
  * @property imageBitmap the rendered icon bitmap, or null if the point has no icon
  */
-public data class StablePointValues(
+data class StablePointValues(
 	val sizePx: Float,
 	val innerPaddingPx: Float,
 	val borderRadii: Float,
@@ -31,7 +31,7 @@ public data class StablePointValues(
 
 object PointStableCache : DragonCache<Int, StablePointValues>(200)
 
-public data class DrawScopeText(
+data class DrawScopeText(
 	val offsetTextLayoutResult: TextLayoutResult,
 	val topLeft: Offset
 )

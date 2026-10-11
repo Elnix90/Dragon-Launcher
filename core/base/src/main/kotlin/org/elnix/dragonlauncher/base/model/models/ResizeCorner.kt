@@ -1,13 +1,13 @@
 package org.elnix.dragonlauncher.base.model.models
 
-public enum class ResizeSide {
+enum class ResizeSide {
 	Top,
 	Right,
 	Left,
 	Bottom
 }
 
-public enum class ResizeCorner {
+enum class ResizeCorner {
 	TopLeft,
 	TopRight,
 	BottomLeft,

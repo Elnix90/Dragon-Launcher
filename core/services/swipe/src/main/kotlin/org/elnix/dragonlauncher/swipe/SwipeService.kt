@@ -106,13 +106,13 @@ interface SwipeService {
 	 */
 	fun clearAfterLaunch()
 
-	public suspend fun PointerInputScope.mainDragGesture()
+	suspend fun PointerInputScope.mainDragGesture()
 
 	/**
 	 * This function NEEDS this [context] parameter, otherwise it crashes and complains that it want a [androidx.compose.runtime.MonotonicFrameClock] in the coroutine context.
 	 * The [context] is passed by compose and got using `rememberCoroutintScope()`
 	 */
-	public suspend fun PointerInputScope.holdGesture(context: CoroutineContext)
+	suspend fun PointerInputScope.holdGesture(context: CoroutineContext)
 
 	fun loadAllFromDisk()
 

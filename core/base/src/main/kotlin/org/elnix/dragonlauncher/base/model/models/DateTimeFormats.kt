@@ -113,7 +113,7 @@ object DateTimeFormats {
 		}
 }
 
-public enum class DateFormat(
+enum class DateFormat(
 	val pattern: String,
 	val format: DateTimeFormat<LocalDate>
 ) {
@@ -126,7 +126,7 @@ public enum class DateFormat(
 	Custom("", DateTimeFormats.dateShort)
 }
 
-public enum class TimeFormat(
+enum class TimeFormat(
 	val pattern: String,
 	val format: DateTimeFormat<LocalTime>
 ) {

@@ -41,7 +41,7 @@ interface AppLaunchService {
 
 	fun requestAppLaunch(app: Application)
 
-	public suspend fun startTimer(timeLimitMinutes: Int?, app: Application)
+	suspend fun startTimer(timeLimitMinutes: Int?, app: Application)
 
 	fun onAppTimerServiceStarted(duration: Int?, application: Application)
 

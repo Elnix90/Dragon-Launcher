@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Immutable
 @Serializable
 @SerialName("ExtensionModel")
-public data class ExtensionModel(
+data class ExtensionModel(
 	@SerialName("name") val name: String,
 	@SerialName("package") val packageName: String,
 	@SerialName("version") val version: String?,

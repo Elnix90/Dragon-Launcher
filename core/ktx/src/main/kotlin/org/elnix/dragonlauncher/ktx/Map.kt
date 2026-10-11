@@ -8,7 +8,7 @@ import android.util.ArraySet
  *
  * @return The [destination] map.
  **/
-public inline fun <T, K, M : MutableMap<in K, MutableSet<T>>> Iterable<T>.groupByTo(
+inline fun <T, K, M : MutableMap<in K, MutableSet<T>>> Iterable<T>.groupByTo(
 	destination: M,
 	keySelector: (T) -> K
 ): M {

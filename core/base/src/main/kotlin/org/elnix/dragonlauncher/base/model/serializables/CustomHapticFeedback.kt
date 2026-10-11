@@ -59,7 +59,7 @@ value class CustomHapticFeedback(
 	 *
 	 * Must be called from a coroutine as it suspends between steps.
 	 */
-	public suspend fun perform(ctx: Context) {
+	suspend fun perform(ctx: Context) {
 		haptics.forEach { (vibrationOrSilent, duration) ->
 			if (vibrationOrSilent) {
 				// I need to use the custom vibrate because its handled anyway by the DisableHapticFeedbackGlobally
@@ -183,7 +183,7 @@ value class CustomHapticFeedback(
  * @constructor Create empty Haptic entry
  */
 @Serializable
-public data class HapticEntry(
+data class HapticEntry(
 	val isVibration: Boolean,
 	val durationMs: Int
 ) {
@@ -193,7 +193,7 @@ public data class HapticEntry(
 		get() = if (isVibration) durationMs != defaultVibrationDuration else durationMs != defaultHapticDuration
 
 	companion object {
-		public const val defaultHapticDuration: Int = 100
-		public const val defaultVibrationDuration: Int = 50
+		const val defaultHapticDuration: Int = 100
+		const val defaultVibrationDuration: Int = 50
 	}
 }

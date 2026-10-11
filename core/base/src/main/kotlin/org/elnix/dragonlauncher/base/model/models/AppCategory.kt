@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.models
 import android.content.Context
 import android.content.pm.ApplicationInfo
 
-public enum class AppCategory {
+enum class AppCategory {
 	Games,
 	Audio,
 	Video,

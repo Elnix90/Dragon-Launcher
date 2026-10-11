@@ -20,8 +20,8 @@ import org.elnix.dragonlauncher.database.entities.SavedSearchableEntity
 	exportSchema = true
 )
 @TypeConverters(ComponentNameConverter::class)
-public abstract class AppDatabase : RoomDatabase() {
-	public abstract fun iconDao(): IconDao
+abstract class AppDatabase : RoomDatabase() {
+	abstract fun iconDao(): IconDao
 
 	companion object {
 		@Volatile

@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.IntSize
  * @param side value given to [width][Size.width] and [height][Size.height]
  * @return the newly created offset
  */
-public inline fun Size.Companion.rect(side: Float): Size =
+inline fun Size.Companion.rect(side: Float): Size =
 	Size(side, side)
 
 /**
@@ -20,5 +20,5 @@ public inline fun Size.Companion.rect(side: Float): Size =
  * @param side value given to [width][IntSize.width] and [height][IntSize.height]
  * @return the newly created offset
  */
-public inline fun IntSize.Companion.rect(side: Int): IntSize =
+inline fun IntSize.Companion.rect(side: Int): IntSize =
 	IntSize(side, side)
