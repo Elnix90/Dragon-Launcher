@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -204,20 +205,12 @@ private fun GradientBackground() {
 						colors =
 							listOf(
 								BgTop,
-								Color.lerp(BgBottom, AccentPurple.copy(alpha = 0.15f), shift)
+								lerp(BgBottom, AccentPurple.copy(alpha = 0.15f), shift)
 							)
 					)
 				)
 	)
 }
-
-private fun Color.Companion.lerp(a: Color, b: Color, t: Float): Color =
-	Color(
-		red = a.red + (b.red - a.red) * t,
-		green = a.green + (b.green - a.green) * t,
-		blue = a.blue + (b.blue - a.blue) * t,
-		alpha = a.alpha + (b.alpha - a.alpha) * t
-	)
 
 @Composable
 private fun PulsingHourglass(modifier: Modifier = Modifier) {
