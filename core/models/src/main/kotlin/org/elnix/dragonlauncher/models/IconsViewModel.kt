@@ -74,23 +74,6 @@ class IconsViewModel
 				null
 			)
 
-//    /**
-//     * One-shot icon load that does NOT create a permanent [StateFlow] subscription.
-//     * Prefer this over [getIcon] when you only need the current value.
-//     */
-//    public suspend fun getPointIconOnce(point: Point): LauncherIcon? =
-//        iconsService.getPointIcon(point).first()
-//
-//    public suspend fun getShortcutIconOnce(shortcut: Action.LaunchShortcut): LauncherIcon? =
-//        iconsService.getShortcutIcon(shortcut).first()
-//
-//    public suspend fun getActionIconOnce(action: Action): LauncherIcon? =
-//        iconsService.getActionIcon(action).first()
-
-//    fun reloadIcon(app: Application): Unit = iconsService.reloadAppIcon(app)
-//    fun reloadIcon(point: Point): Unit = iconsService.reloadPointIcon(point)
-//    fun reloadIcon(shortcut: Action.LaunchShortcut): Unit = iconsService.reloadShortcutIcon(shortcut)
-
 		/**
 		 * One-shot preview of a single app icon with the given [customIcon] and [properties],
 		 * bypassing the store and the override manager. Used by the icon editor to render

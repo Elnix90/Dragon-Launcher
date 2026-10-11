@@ -261,17 +261,7 @@ class IconService internal constructor(
 			it[application.key]?.iconProperties
 		}
 
-//    fun reloadAppIcon(application: Application) {
-//        scope.launch {
-//            getAppIcon(application, true).first()
-//        }
-//    }
-
-	fun incrementPointCacheSize() {
-		PointIconCache.incrementCacheSize()
-	}
-
-	fun updateMaxCacheSize(newSize: Int) {
+	fun updateMaxPointsCacheSize(newSize: Int) {
 		PointIconCache.updateMaxCacheSize(newSize)
 	}
 

@@ -123,6 +123,7 @@ class PointsViewModel
 						val points = pointsService.points.value
 
 						PointStableCache.updateMaxCacheSize(points.size)
+						iconService.updateMaxPointsCacheSize(points.size)
 						synchronizePointTracking(points)
 					}
 			}
