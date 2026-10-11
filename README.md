@@ -2,36 +2,26 @@
 
 # [KEEP ANDROID OPEN](https://keepandroidopen.org/)
 
-# [![Keep Android Open](https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/keep-android-open.jpg)](https://keepandroidopen.org/)
-
----
 
 <img src="https://github.com/Elnix90/Dragon-Launcher/blob/60e6a8a50312d18eb9342fcd9a1e9fd12eead6a1/core/common/src/main/res/drawable/dragon_launcher_foreground.png" width="22%" alt="App Icon"/>
 
 # Dragon Launcher - Fast Gesture based android launcher
 
-### Dragon Launcher is a highly customizable, *gestures based* Android launcher focused on speed and efficiency.
+[![GitHub release](https://img.shields.io/github/v/release/Elnix90/Dragon-Launcher.svg?include_prereleases&style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases/latest)
+
+[![Discord](https://img.shields.io/discord/1454475177328115860?color=blue&label=Discord&logo=discord&style=for-the-badge)](https://discord.gg/6UyuP8EBWS)
+[![GitHub downloads](https://img.shields.io/github/downloads/Elnix90/Dragon-Launcher/total.svg?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases)
+[![F-Droid downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.elnix.dragonlauncher.json&query=%24.total_downloads&logo=fdroid&label=F-Droid%20Downloads%20(All-time)&style=for-the-badge)](https://f-droid.org/en/packages/org.elnix.dragonlauncher/)
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge)](https://kotlinlang.org/)
 [![Jetpack Compose](https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label=)](https://developer.android.com/compose)
+[![Offline](https://img.shields.io/badge/Offline-100%25-orange.svg?style=for-the-badge&logo=rss&logoColor=white)]()
+[![Privacy](https://img.shields.io/badge/Privacy-First-green.svg?style=for-the-badge&logo=shield&logoColor=white)]()
 
 [<img src="https://hosted.weblate.org/widgets/dragon-launcher/-/287x66-grey.png" alt="Translation Status">](https://hosted.weblate.org/engage/dragon-launcher/)
 
-[![Website](https://img.shields.io/badge/website-dragonlauncher.lthb.fr-blue?style=for-the-badge)](https://dragonlauncher.lthb.fr/)
+[![Website](https://img.shields.io/badge/website%20By%20Lucky-dragonlauncher.lthb.fr-blue?style=for-the-badge)](https://dragonlauncher.lthb.fr/)
 
-[![GitHub release](https://img.shields.io/github/v/release/Elnix90/Dragon-Launcher.svg?include_prereleases&style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases/latest)
-[![GitHub stars](https://img.shields.io/github/stars/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/issues)
-[![GitHub forks](https://img.shields.io/github/forks/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/forks)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/pull)
----
-[![GitHub license](https://img.shields.io/github/license/Elnix90/Dragon-Launcher?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/blob/dev/LICENSE)
-[![Discord](https://img.shields.io/discord/1454475177328115860?color=blue&label=Discord&logo=discord&style=for-the-badge)](https://discord.gg/6UyuP8EBWS)
-[![Offline](https://img.shields.io/badge/Offline-100%25-orange.svg?style=for-the-badge&logo=rss&logoColor=white)]()
-[![Privacy](https://img.shields.io/badge/Privacy-First-green.svg?style=for-the-badge&logo=shield&logoColor=white)]()
----
-[![GitHub downloads](https://img.shields.io/github/downloads/Elnix90/Dragon-Launcher/total.svg?style=for-the-badge)](https://github.com/Elnix90/Dragon-Launcher/releases)
-[![F-Droid downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Forg.elnix.dragonlauncher.json&query=%24.total_downloads&logo=fdroid&label=Total%20Downloads%20(F-Droid)&style=for-the-badge)](https://f-droid.org/en/packages/org.elnix.dragonlauncher/)
 ---
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/org.elnix.dragonlauncher/)
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/org.elnix.dragonlauncher)
@@ -55,54 +45,6 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 
 * You can customize your list of fast access apps easily in the settings
 * Use the app drawer to pick an app and browse apps
-
-## Permissions
-
-Dragon Launcher is a launcher: some of the permissions below are required by Android itself for core launcher duties (listing apps, setting the wallpaper, reacting to boot). This is the full list of permissions declared in the app manifests and why each one is used. None of them are used to collect or transmit data - the app has **no internet access** and does not even declare the `INTERNET` permission.
-
-| Permission                                          | Type                | Why it is used                                                                                                                      |
-|-----------------------------------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `android.permission.POST_NOTIFICATIONS`             | Runtime             | Notifications from the app, e.g. Wellbeing app timers and break reminders. Also uses to display the download progress of the fonts  |
-| `android.permission.QUERY_ALL_PACKAGES`             | Install             | List every installed app to power the app drawer, app/app-shortcut/widget pickers and icons.                                        |
-| `android.permission.ACCESS_NETWORK_STATE`           | Install             | Show network connectivity (Wi-Fi / mobile data) in the status bar.                                                                  |
-| `android.permission.READ_BASIC_PHONE_STATE`         | Install (app op)    | Basic phone state only, to display the mobile data / hotspot type in the status bar.                                                |
-| `android.permission.VIBRATE`                        | Install             | Haptic feedback on gestures and interactions.                                                                                       |
-| `android.permission.SET_WALLPAPER`                  | Install             | Set the home screen wallpaper from the launcher.                                                                                    |
-| `android.permission.RECEIVE_BOOT_COMPLETED`         | Install             | Restore the launcher and restart services after the device reboots.                                                                 |
-| `android.permission.EXPAND_STATUS_BAR`              | Install (signature) | Expand the notification shade / quick settings from a swipe action.                                                                 |
-| `android.permission.REQUEST_INSTALL_PACKAGES`       | Special access      | Install APK files opened through a launcher action.                                                                                 |
-| `android.permission.REQUEST_DELETE_PACKAGES`        | Install             | Offer to uninstall an app from the launcher (the system asks for confirmation).                                                     |
-| `android.permission.BIND_APPWIDGET`                 | Install             | Bind widgets to the home screen.                                                                                                    |
-| `com.android.alarm.permission.SET_ALARM`            | Install             | Start the system alarm-clock flow from an action.                                                                                   |
-| `android.permission.SCHEDULE_EXACT_ALARM`           | Special access      | Schedule exact alarms for Wellbeing timers.                                                                                         |
-| `android.permission.FOREGROUND_SERVICE`             | Install             | Run foreground services (Wellbeing timers, overlay reminders).                                                                      |
-| `android.permission.FOREGROUND_SERVICE_SPECIAL_USE` | Install             | Foreground service type `specialUse` for the timer overlay.                                                                         |
-| `android.permission.SYSTEM_ALERT_WINDOW`            | Special access      | Show the Wellbeing "time to stop" popup over other apps.                                                                            |
-| `android.permission.PACKAGE_USAGE_STATS`            | Special access      | Optional: usage statistics for the Wellbeing feature.                                                                               |
-| `android.permission.INTERACT_ACROSS_USERS`          | Install (signature) | Interact with the work profile / other Android users.                                                                               |
-| `android.permission.INTERACT_ACROSS_USERS_FULL`     | Install (signature) | Full cross-user access (work profile, private space).                                                                               |
-| `android.permission.ACCESS_HIDDEN_PROFILES`         | Install             | Android 15+: access apps in Private Space and other hidden profiles.                                                                |
-
-## Privacy & security
-
-* **No** data collection
-* Dragon Launcher has no access to the internet -> it cannot steal your data
-* Uses Accessibility permissions (optionally) to:
-    1. Expand notifications panel (needed by android)
-        - Uses accessibility to expand the notifications panel
-        - Expanding the quick actions / notifications isn't required on some Android version, there is a hidden settings
-          in the debug tab, to change the way it opens the quick actions, cause on my phone, the notifications action
-          opens the quick actions
-    2. Lock screen (needed by android)
-        - It uses accessibility to lock the screen, as you pressed the lock button
-    3. Open recent apps (needed by Android)
-        - You can choose to open the recent apps, just like when you click on the Square button, or do the recent apps
-          gesture
-    4. Auto launch Dragon on system launcher detected (used by some Xiaomi users that cannot set another default launcher without losing the gesture navigation)
-        - It will launch Dragon Launcher when the accessibility detects that you entered your system launcher, for a
-          default launcher-like experience when it cannot be set as android default (configurable in debug settings)
-* All data stored locally (you can backup manually or use the auto backup feature)
-
 ---
 
 ## Screenshots
@@ -114,7 +56,6 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/0.jpg" width="22%" alt="App Screenshot 0"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="22%" alt="App Screenshot 1"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="22%" alt="App Screenshot 2"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="22%" alt="App Screenshot 3"/>
@@ -127,7 +68,6 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/10.jpg" width="22%" alt="App Screenshot 10"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/11.jpg" width="22%" alt="App Screenshot 11"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/12.jpg" width="22%" alt="App Screenshot 12"/>
-  <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/13.jpg" width="22%" alt="App Screenshot 13"/>
 </p>
 
 
@@ -172,6 +112,54 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 
 [//]: # (    </p>)
 [//]: # (</details>)
+
+
+## Permissions
+
+Dragon Launcher is a launcher: some of the permissions below are required by Android itself for core launcher duties (listing apps, setting the wallpaper, reacting to boot). This is the full list of permissions declared in the app manifests and why each one is used. None of them are used to collect or transmit data - the app has **no internet access** and does not even declare the `INTERNET` permission.
+
+| Permission                                          | Type                | Why it is used                                                                                                                      |
+|-----------------------------------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `android.permission.POST_NOTIFICATIONS`             | Runtime             | Notifications from the app, e.g. Wellbeing app timers and break reminders. Also uses to display the download progress of the fonts  |
+| `android.permission.QUERY_ALL_PACKAGES`             | Install             | List every installed app to power the app drawer, app/app-shortcut/widget pickers and icons.                                        |
+| `android.permission.ACCESS_NETWORK_STATE`           | Install             | Show network connectivity (Wi-Fi / mobile data) in the status bar.                                                                  |
+| `android.permission.READ_BASIC_PHONE_STATE`         | Install (app op)    | Basic phone state only, to display the mobile data / hotspot type in the status bar.                                                |
+| `android.permission.VIBRATE`                        | Install             | Haptic feedback on gestures and interactions.                                                                                       |
+| `android.permission.SET_WALLPAPER`                  | Install             | Set the home screen wallpaper from the launcher.                                                                                    |
+| `android.permission.RECEIVE_BOOT_COMPLETED`         | Install             | Restore the launcher and restart services after the device reboots.                                                                 |
+| `android.permission.EXPAND_STATUS_BAR`              | Install (signature) | Expand the notification shade / quick settings from a swipe action.                                                                 |
+| `android.permission.REQUEST_INSTALL_PACKAGES`       | Special access      | Install APK files opened through a launcher action.                                                                                 |
+| `android.permission.REQUEST_DELETE_PACKAGES`        | Install             | Offer to uninstall an app from the launcher (the system asks for confirmation).                                                     |
+| `android.permission.BIND_APPWIDGET`                 | Install             | Bind widgets to the home screen.                                                                                                    |
+| `com.android.alarm.permission.SET_ALARM`            | Install             | Start the system alarm-clock flow from an action.                                                                                   |
+| `android.permission.SCHEDULE_EXACT_ALARM`           | Special access      | Schedule exact alarms for Wellbeing timers.                                                                                         |
+| `android.permission.FOREGROUND_SERVICE`             | Install             | Run foreground services (Wellbeing timers, overlay reminders).                                                                      |
+| `android.permission.FOREGROUND_SERVICE_SPECIAL_USE` | Install             | Foreground service type `specialUse` for the timer overlay.                                                                         |
+| `android.permission.SYSTEM_ALERT_WINDOW`            | Special access      | Show the Wellbeing "time to stop" popup over other apps.                                                                            |
+| `android.permission.PACKAGE_USAGE_STATS`            | Special access      | Optional: usage statistics for the Wellbeing feature.                                                                               |
+| `android.permission.INTERACT_ACROSS_USERS`          | Install (signature) | Interact with the work profile / other Android users.                                                                               |
+| `android.permission.INTERACT_ACROSS_USERS_FULL`     | Install (signature) | Full cross-user access (work profile, private space).                                                                               |
+| `android.permission.ACCESS_HIDDEN_PROFILES`         | Install             | Android 15+: access apps in Private Space and other hidden profiles.                                                                |
+
+## Privacy & security
+
+* **No** data collection
+* Dragon Launcher has no access to the internet -> it cannot steal your data
+* Uses Accessibility permissions (optionally) to:
+	1. Expand notifications panel (needed by android)
+		- Uses accessibility to expand the notifications panel
+		- Expanding the quick actions / notifications isn't required on some Android version, there is a hidden settings
+		  in the debug tab, to change the way it opens the quick actions, cause on my phone, the notifications action
+		  opens the quick actions
+	2. Lock screen (needed by android)
+		- It uses accessibility to lock the screen, as you pressed the lock button
+	3. Open recent apps (needed by Android)
+		- You can choose to open the recent apps, just like when you click on the Square button, or do the recent apps
+		  gesture
+	4. Auto launch Dragon on system launcher detected (used by some Xiaomi users that cannot set another default launcher without losing the gesture navigation)
+		- It will launch Dragon Launcher when the accessibility detects that you entered your system launcher, for a
+		  default launcher-like experience when it cannot be set as android default (configurable in debug settings)
+* All data stored locally (you can backup manually or use the auto backup feature)
 
 ---
 ## Signing
