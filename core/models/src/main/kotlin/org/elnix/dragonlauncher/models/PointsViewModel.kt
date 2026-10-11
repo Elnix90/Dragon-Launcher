@@ -44,7 +44,6 @@ import org.elnix.dragonlauncher.points.NestsNavigationService
 import org.elnix.dragonlauncher.points.PointsService
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 /**
  * ViewModel responsible for maintaining [PointStableCache] entries for all points
@@ -83,6 +82,16 @@ public class PointsViewModel
 	) : AndroidViewModel(application) {
 		private val density: Density = Density(application.resources.displayMetrics.density)
 
+		/**
+		 * Last known snapshot of each point, used to detect data changes via
+		 * structural equality without requiring the [PointsService.points] StateFlow
+		 * to emit on in-place mutations.
+		 */
+		private val lastKnownPoints = ConcurrentHashMap<Int, Point>()
+
+		/** Per-point cache observation jobs, keyed by point id. */
+		private val pointTrackingJobs = ConcurrentHashMap<Int, Job>()
+
 		init {
 			viewModelScope.launch(Dispatchers.Default) {
 				pointsService.recomposeTrigger.flow
@@ -120,16 +129,6 @@ public class PointsViewModel
 
 			viewModelInitialized()
 		}
-
-		/**
-		 * Last known snapshot of each point, used to detect data changes via
-		 * structural equality without requiring the [PointsService.points] StateFlow
-		 * to emit on in-place mutations.
-		 */
-		private val lastKnownPoints by lazy { ConcurrentHashMap<Int, Point>() }
-
-		/** Per-point cache observation jobs, keyed by point id. */
-		private val pointTrackingJobs by lazy { ConcurrentHashMap<Int, Job>() }
 
 		/**
 		 * Compares the current points with [lastKnownPoints] and starts, restarts, or
