@@ -22,9 +22,7 @@
     <string name="extension_manual_install_desc">Если у вас нет расширения для установки, скачайте APK и выберите его ниже.</string>
     <string name="select_apk">Выбрать APK</string>
     <string name="version">Версия</string>
-    <string name="version_arg">Версия %1$s</string>
     <string name="export_cancelled">Экспорт отменён</string>
-    <string name="import_cancelled">Импорт отменён</string>
     <string name="backup">Резервное копирование</string>
     <string name="backup_restore_text">Резервное копирование и восстановление настроек и действий приложения. Автоматические копии создаются при каждом запуске, сворачивании или закрытии приложения, а также по кнопке «Создать копию» ниже</string>
     <string name="export_settings">Экспорт настроек</string>
@@ -34,7 +32,6 @@
     <string name="import_successful">Импорт выполнен</string>
     <string name="export_successful">Экспорт выполнен</string>
     <string name="unknown_error">Неизвестная ошибка</string>
-    <string name="no_file_picked">Файл не выбран</string>
     <string name="color_selector_text">Выберите цветовую тему</string>
     <string name="color_mode_all">Все цвета</string>
     <string name="reset">Сбросить</string>
@@ -89,7 +86,6 @@
     <string name="font_catalog">Каталог</string>
     <string name="font_import">Импорт</string>
     <string name="font_installed_fonts">Установленные шрифты</string>
-    <string name="font_available_in_extension">Доступно в расширении (%1$d)</string>
     <string name="font_download_all_started">Загрузка всех шрифтов началась. Следите за уведомлениями.</string>
     <string name="font_confirm_delete">Подтвердить (%1$d)</string>
     <string name="font_search_placeholder">Поиск шрифтов…</string>
@@ -128,8 +124,6 @@
     <string name="keep_screen_on">Не выключать экран</string>
     <string name="back_action">Действие «Назад»</string>
     <string name="double_click_action">Действие двойного нажатия</string>
-    <string name="privacy_first">Приватность прежде всего</string>
-    <string name="quick_tutorial">Краткое руководство</string>
     <string name="long_click_to_access_settings">Долгое нажатие - вход в настройки</string>
     <string name="swipe_to_open_app">Проведите пальцем, чтобы открыть настроенные приложения и ярлыки</string>
     <string name="configure_your_apps">Настройте свои приложения и ярлыки в настройках</string>
@@ -255,7 +249,6 @@
     <string name="copy">Копировать</string>
     <string name="pick_a_nest">Выберите гнездо</string>
     <string name="create_new_nest">Создать гнездо</string>
-    <string name="open_burger_menu">Открыть меню</string>
     <string name="selected_text">Выбрано</string>
     <string name="unselected">Не выбрано</string>
     <string name="inner_padding">Внутренний отступ</string>
@@ -309,7 +302,6 @@
     <string name="close_kb">Закрыть клавиатуру</string>
     <string name="open_kb">Открыть клавиатуру</string>
     <string name="open_settings">Открыть настройки</string>
-    <string name="clear_all">Очистить всё</string>
     <string name="wellbeing">Цифровое благополучие</string>
     <string name="wellbeing_help">Возьмите под контроль свои цифровые привычки. Делайте паузу перед открытием отвлекающих приложений и задумывайтесь о том, как вы их используете.</string>
     <string name="social_media_pause">Пауза для соцсетей</string>
@@ -457,8 +449,6 @@
     <string name="on_tertiary_fixed_variant_color">На варианте третичного фиксированного</string>
     <string name="custom_colors">Свои цвета</string>
     <string name="custom_colors_desc">Цвета, используемые действиями лаунчера</string>
-    <string name="normal_colors">Обычные цвета</string>
-
 
     <string name="use_categories">Использовать категории</string>
     <string name="use_categories_desc">Группировать приложения в меню по категориям</string>
@@ -503,7 +493,6 @@
     <string name="authentication_error">Ошибка аутентификации: %s</string>
     <string name="select_default_workspace">Рабочая область по умолчанию</string>
     <string name="select_workspace_hint">Выберите, какая рабочая область открывается по умолчанию. Переключаться можно свайпом влево или вправо в меню приложений.</string>
-    <string name="workspace_default">По умолчанию</string>
     <string name="pinned_shortcut_failed">Не удалось добавить ярлык</string>
     <string name="pinned_shortcuts">Ярлыки</string>
     <string name="no_pinned_shortcuts">Нет доступных ярлыков</string>
@@ -527,8 +516,6 @@
     <string name="hold_delay_before_starting_long_click_settings">Задержка перед началом загрузки настроек (мс)</string>
     <string name="hold_delay_before_starting_long_click_settings_desc">Сколько нужно удерживать, прежде чем начнёт заполняться индикатор входа в настройки</string>
     <string name="keep_screen_on_desc">Не выключать и не блокировать экран, пока Dragon на переднем плане</string>
-    <string name="drag_zone_padding">Отступ зоны перетаскивания</string>
-    <string name="drag_zone_padding_desc">Настроить общую область, где работает перетаскивание</string>
     <string name="points_settings">Настройки точек</string>
     <string name="default_point_live_nest_defaults">Параметры живого гнезда по умолчанию</string>
     <string name="default_point_live_nest_defaults_summary">Применяются, когда вы выбираете целевое гнездо для точки (задержка превью, масштаб, запас, затемнение).</string>
@@ -539,7 +526,6 @@
     <string name="pick_a_settings_screen">Выберите экран настроек</string>
     <string name="app_preview_settings">Превью приложения</string>
     <string name="app_preview_settings_desc">Настроить внешний вид превью</string>
-    <string name="not_implemented">Не реализовано</string>
     <string name="show_status_bar_desc">Показывать строку состояния. Если выключено, ничего не отображается</string>
     <string name="disable_haptic_globally">Отключить виброотклик полностью</string>
     <string name="disable_haptic_globally_desc">Запретить Dragon любую вибрацию при выборе точек, если она вам не нравится</string>
@@ -547,8 +533,6 @@
     <string name="personal_profile">Личный</string>
     <string name="work_profile">Рабочий</string>
     <string name="private_profile">Частный</string>
-    <string name="private_space_locked">Частное пространство заблокировано</string>
-    <string name="private_space_authenticating">Проверка…</string>
     <string name="app_info_cache_key">Ключ кэша = %1$s</string>
     <string name="app_info_installer_package">Пакет установщика = %1$s</string>
     <string name="no_apps">Нет приложений</string>
@@ -640,18 +624,7 @@
     <string name="lucky_desc">Цифровое благополучие и напоминания</string>
     <string name="federico_desc">Живые гнёзда и переводы</string>
     <string name="copied_to_clipboard">Скопировано в буфер обмена!</string>
-    <string name="permission_tab_help">Управление разрешениями приложения и доступом внешних расширений</string>
-    <string name="special_system_access">Специальный системный доступ</string>
-    <string name="notification_access">Доступ к уведомлениям</string>
-    <string name="notification_access_desc">Позволяет показывать точки уведомлений на значках</string>
-    <string name="install_from_unknown_source_permission">Установка из неизвестных источников (APK)</string>
-    <string name="install_from_unknown_source_permission_desc">Нужно для установки расширений</string>
-    <string name="accessibility_service">Служба специальных возможностей</string>
-    <string name="accessibility_service_desc">Используется для открытия панели уведомлений жестами.</string>
     <string name="usage_access">Доступ к статистике использования</string>
-    <string name="android_permissions">Разрешения Android</string>
-    <string name="manage_in_system_settings">Управляется в системных настройках.</string>
-    <string name="permission_external_storage_desc">Даёт Dragon Launcher доступ ко всему хранилищу. Нужно для чтения и записи файлов, например резервных копий, и для открытия файлов из других приложений.</string>
     <string name="permission_notifications_title">Доступ к уведомлениям</string>
     <string name="permission_notifications_desc">Позволяет Dragon Launcher читать уведомления, чтобы показывать их в строке состояния рядом с приложениями.</string>
     <string name="permission_app_shortcuts_title">Ярлыки приложений</string>
@@ -698,7 +671,6 @@
     <string name="hold_settings_help">Настройки дуги, которая появляется при достаточно долгом удержании на главном экране. Полностью отключить её нельзя: иначе можно потерять последний путь в настройки, если что-то пошло не так, и придётся сбрасывать приложение.</string>
     <string name="rotation_per_second">Оборотов в секунду</string>
     <string name="rotation_per_second_desc">Сколько оборотов вокруг себя делается за секунду</string>
-    <string name="enable_backup">Включить резервное копирование</string>
     <string name="choose_a_auto_backup_file">Выберите файл автокопии</string>
     <string name="minus_one_means_random">-1 - случайно при запуске</string>
     <string name="search_bar">Строка поиска</string>
@@ -732,7 +704,6 @@
     <string name="points_cell_size_desc">Размер виртуальной сетки, к которой привязываются точки</string>
     <string name="off_screen_timeout">Тайм-аут вне главного экрана (с)</string>
     <string name="off_screen_timeout_desc">Через сколько приложение вернётся на главный экран, если вы находитесь на другом экране. Не действует на некоторых экранах, например резервного копирования (там выбирается файл). -1 - не возвращаться</string>
-    <string name="refresh">Обновить</string>
     <string name="crash">Приложение аварийно завершилось!</string>
     <string name="access_app">Открыть приложение (сбой может повториться)</string>
     <string name="shizuku_unavailable">Shizuku недоступен</string>
@@ -752,7 +723,6 @@
     <string name="pick_a">Выбрать</string>
     <string name="command">команду</string>
     <string name="show_toast">Показывать уведомление</string>
-    <string name="show_tooltips">Показывать подсказки</string>
     <string name="gradient">Градиент</string>
     <string name="sliders">Ползунки</string>
     <string name="common_settings">Общие настройки</string>
@@ -817,7 +787,6 @@
     <string name="green">Зелёный</string>
     <string name="blue">Синий</string>
     <string name="move_around_mode">Режим перемещения</string>
-    <string name="reset_rotation">Сбросить поворот</string>
     <string name="reset_zoom">Сбросить масштаб</string>
     <string name="edit_workspace">Изменить рабочую область</string>
     <string name="random">Случайно</string>
@@ -886,7 +855,6 @@
     <string name="right_padding_status_bar_desc">Пустое место справа в строке состояния</string>
     <string name="top_padding_status_bar_desc">Кто этим пользуется - странные люди</string>
     <string name="bottom_padding_status_bar_desc">А вот это я ещё могу понять</string>
-    <string name="pick_stores_to_display">Выберите хранилища для отображения</string>
     <string name="profile">Профиль</string>
     <string name="themed_icons_desc">Использовать ли тематические значки Material</string>
     <string name="force_themed_icons_desc">Применять тематические значки даже к тем, что обычно их не поддерживают</string>
@@ -905,7 +873,6 @@
     <string name="nest_debug_overlay_desc">Добавляет визуальную отладку при отрисовке гнёзд</string>
     <string name="auto_merge">Автообъединение</string>
     <string name="auto_merge_desc">Позволяет выполнять действия при наведении одной точки на другую, например объединять их в новое гнездо</string>
-    <string name="show_more_sheet">Показать панель «Ещё»</string>
     <string name="show_angle_preview">Показывать угол</string>
     <plurals name="n_points_selected">
         <item quantity="one">точка выбрана</item>
@@ -949,7 +916,6 @@
     <string name="align_with_angle_desc">Поворачивать фигуру по углу перетаскивания, помогает добиться аккуратного результата</string>
     <string name="how_many_question">Сколько?</string>
     <string name="gamble_apps">Случайные приложения</string>
-    <string name="show_app_launch_preview_desc">Показывать выбранную точку на главном экране</string>
     <string name="stroke_width_explanation">-1 = не рисовать; &lt; 0 = заливка; 0 = 1 пиксель; &gt; 0 = значение</string>
     <string name="shape_offset">Смещение</string>
     <string name="custom_object">Свой объект</string>
@@ -976,8 +942,6 @@
     <string name="name_and_action">Название и действие</string>
     <string name="copy_to_clipboard">Копировать в буфер обмена</string>
     <string name="import_from_clipboard">Импорт из буфера обмена</string>
-    <string name="points_keep_their_relative_position">Точки сохраняют относительное положение</string>
-    <string name="points_keep_their_relative_position_desc">При перемещении фигуры смещения точек подстраиваются так, чтобы сохранить их исходный угол относительно фигуры,\nили не учитываются, и фигура двигается независимо от точек на ней.\nЕсли выключено, точки могут вращаться вокруг своего скрытого смещения при движении фигуры</string>
     <string name="duplicate">Дублировать</string>
     <string name="flashbang_theme">Тема «Светошумовая»</string>
     <string name="line">Линия</string>
@@ -1001,14 +965,6 @@
     <string name="snap_points_to_shapes">Привязка точек к фигурам</string>
     <string name="signature_not_matched">ПОДПИСЬ НЕ СОВПАДАЕТ!!! Приложение не подписано официальным ключом разработчика. Ваши данные могут быть под угрозой!</string>
     <string name="use_anyways">Всё равно использовать</string>
-    <string name="migrating_settings">Перенос настроек…</string>
-    <string name="migrate_from_322">Перенос с версии 3.3.2</string>
-    <string name="migrate_from_322_desc">Похоже, ваша резервная копия создана в версии 3.2.2, и её нужно перенести на новую версию. Продолжить?</string>
-    <string name="migrate_from_322_desc_forced">Добро пожаловать в новую версию Dragon! Чтобы продолжить, настройки будут автоматически перенесены в новую систему. Рекомендуем сохранить старый файл резервной копии на случай проблем. Если что-то пойдёт не так, сразу напишите мне (Elnix90) любым удобным способом (см. раздел «О приложении» в настройках), чтобы я как можно скорее это исправил</string>
-    <string name="migrating_settings_desc">Преобразование резервной копии из формата 3.2.2 в 4.0.0. Подождите.</string>
-    <string name="migrating_settings_desc_kidding">Шучу, это не так долго :)</string>
-    <string name="migration_complete">Перенос завершён</string>
-    <string name="migration_had_issues">При переносе возникли проблемы</string>
     <string name="render_foreground">Отрисовывать передний слой</string>
     <string name="render_foreground_desc">Отрисовывать ли передний слой значков</string>
     <string name="render_background">Отрисовывать фон</string>
@@ -1032,12 +988,9 @@
     <string name="paste">Вставить</string>
     <string name="open_backup_file">Открыть файл копии</string>
     <string name="show_reselect_backup_banner">Баннер повторного выбора копии</string>
-    <string name="show_reselect_backup_banner_desc">Если включено и Dragon не может получить доступ к выбранному файлу копии, вам предложат выбрать его заново</string>
     <string name="select_stores">Выбрать хранилища</string>
     <string name="secret_unlock_button">Секретная кнопка разблокировки</string>
     <string name="secret_unlock_button_desc">Добавляет секретную нажимаемую зону (без каких-либо обозначений), которая разблокирует экран (если вы забыли пароль)</string>
-    <string name="actions_lock_method">Блокировка действий</string>
-    <string name="actions_lock_method_desc">Способ блокировки для запуска действий. Можно настроить, какие типы действий защищены, и использовать тот же пароль, что и для настроек</string>
     <string name="fine_grained">Детальная настройка</string>
     <string name="snap_points_angle_threshold">Шаг привязки угла точек</string>
     <string name="snap_points_angle_threshold_desc">Угол, к которому привязываются точки. Для лучшего результата используйте делитель 360</string>
@@ -1047,7 +1000,6 @@
     <string name="use_snapped_angle_or_real_angle">Привязанный или реальный угол</string>
     <string name="use_snapped_angle_or_real_angle_desc">При привязке к точке вычисляемый угол - реальный или угол выбранной точки?</string>
     <string name="widget_not_found">Виджет не найден</string>
-    <string name="by_elnix">от Elnix90</string>
     <string name="app_tagline">Быстрый лаунчер для Android на жестах</string>
     <string name="code_name_string">Кодовое имя</string>
     <string name="version_code">Код версии</string>
