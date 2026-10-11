@@ -543,7 +543,6 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 							),
 						depth = Int.MAX_VALUE,
 						eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f),
-						pointSettingsDisplay = true,
 						showCancelZone = true,
 						hideShapes = true
 					)

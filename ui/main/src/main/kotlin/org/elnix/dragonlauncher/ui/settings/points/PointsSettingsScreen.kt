@@ -505,7 +505,6 @@ fun PointsSettingsScreen(
 						center = center,
 						nest = currentNest,
 						eraseColor = eraseColor,
-						pointSettingsDisplay = true,
 						hideShapes = false,
 						skipSelected = true
 					)
@@ -591,8 +590,7 @@ fun PointsSettingsScreen(
 							modifier = Modifier.graphicsLayer { alpha = 0.4f },
 							center = pointOffset,
 							nest = nestedNest,
-							eraseColor = eraseColor,
-							pointSettingsDisplay = true
+							eraseColor = eraseColor
 						)
 					}
 

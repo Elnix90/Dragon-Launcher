@@ -35,7 +35,6 @@ fun NestOverlay(
 	depth: Int = 1,
 	eraseColor: Color,
 	allowShowPointCenter: Boolean = false,
-	pointSettingsDisplay: Boolean = false,
 	showCancelZone: Boolean = false,
 	hideShapes: Boolean = false,
 	skipSelected: Boolean = false
@@ -45,9 +44,9 @@ fun NestOverlay(
 			eraseColor = eraseColor,
 			isDefaultEditing = false,
 			isTopPoint = false,
+			pointSettingsDisplay = true,
 			allowShowPointCenter = allowShowPointCenter,
 			showCancelZone = showCancelZone,
-			pointSettingsDisplay = pointSettingsDisplay,
 			hideShapes = hideShapes,
 			skipSelected = skipSelected
 		)

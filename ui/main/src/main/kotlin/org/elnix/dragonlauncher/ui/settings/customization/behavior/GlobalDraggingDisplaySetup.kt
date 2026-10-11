@@ -51,7 +51,6 @@ fun GlobalDraggingModeSetup(
 				center = offset,
 				eraseColor = MaterialTheme.colorScheme.background,
 				allowShowPointCenter = false,
-				pointSettingsDisplay = true,
 				showCancelZone = false,
 				hideShapes = false,
 				skipSelected = false
