@@ -24,8 +24,8 @@ extensions.configure<ApplicationExtension> {
 
 	defaultConfig {
 		applicationId = "org.elnix.dragonlauncher"
-		versionName = "4.5.0"
-		versionCode = 71
+		versionName = "4.5.1"
+		versionCode = 72
 	}
 
 	val hasSigningConfig =

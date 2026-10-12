@@ -1,0 +1,11 @@
+4.5.1 (Komodo)
+2026-10-12
+[NEW]
+* More fine-grained dialogs for reset and improved UX
+* Option to delete all points when deleting a nest
+* Add Russian in app locales config
+[IMPROVED]
+* Applied numerous fixes to the whole codebase, removing unused ressources
+[FIXED]
+* Crash when having no glow on shapes
+* Point icons loading that was desynchronized from the drawer icons
