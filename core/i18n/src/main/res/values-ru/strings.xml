@@ -331,7 +331,6 @@
     <string name="usage_permission_needed">Нужен доступ к статистике использования</string>
     <string name="grant_usage_permission">Предоставить доступ</string>
     <string name="reminder_mode_title">Напоминания об использовании</string>
-
     <string name="reminder_interval">Интервал напоминаний</string>
     <string name="reminder_interval_description">Напоминать каждые … минут</string>
     <string name="overlay_permission_required">Разрешение на наложение</string>
@@ -449,7 +448,6 @@
     <string name="on_tertiary_fixed_variant_color">На варианте третичного фиксированного</string>
     <string name="custom_colors">Свои цвета</string>
     <string name="custom_colors_desc">Цвета, используемые действиями лаунчера</string>
-
     <string name="use_categories">Использовать категории</string>
     <string name="use_categories_desc">Группировать приложения в меню по категориям</string>
     <string name="show_app_icons_in_drawer">Значки приложений в меню</string>
@@ -1028,7 +1026,6 @@
     <string name="show_google_lockdown_warning_desc">Если выключено, оно не будет показываться вверху настроек</string>
     <string name="top">Сверху</string>
     <string name="bottom">Снизу</string>
-
     <string name="drawer_align">Выравнивание в меню</string>
     <string name="ime_padding_drawer">Отступ под клавиатуру в меню</string>
     <string name="ime_padding_drawer_desc">Перекрывает ли клавиатура приложения</string>
@@ -1043,4 +1040,54 @@
     <string name="permission_granted">Разрешение получено!</string>
     <string name="app_info_name">имя = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
+    <string name="permission_notifications_title">Уведомления</string>
+    <string name="permission_notifications_desc">Разрешить дракону отправлять уведомления</string>
+    <string name="app_icon_overlay_scale">Масштаб наложения иконок приложений</string>
+    <string name="encouragement_grass">Потрогай траву 🌿</string>
+    <string name="global_dragging_mode">Глобальный режим перетаскивания</string>
+    <string name="global_dragging_mode_setup">Настройка режима перетаскивания</string>
+    <string name="global_dragging_mode_setup_help">Настройте параметр для выбранного вами текущего режима перетаскивания.</string>
+    <string name="global_dragging_mode_setup_reset">Вы уверены, что хотите сбросить текущий режим перетаскивания?</string>
+    <string name="global_dragging_mode_desc">Режим перетаскивания для всего лаунчера</string>
+    <string name="nests_settings">Настройки гнёзд</string>
+    <string name="configure_dragging_mode">Конфигурирование режима перетаскивания</string>
+    <string name="dragging_mode_normal">Обычный</string>
+    <string name="dragging_mode_normal_desc">Режим перетаскивания по умолчанию: проведите пальцем в любом месте экрана, чтобы появились гнёзда</string>
+    <string name="dragging_mode_fixed">Фиксированный</string>
+    <string name="dragging_mode_fixed_desc">Разместите свои гнёзда в одном месте: они всегда видны, и вы можете перетаскивать их из любой точки; активация происходит из центра</string>
+    <string name="status_bar_warning">⚠️ Пользовательская строка состояния отображается только в полноэкранном режиме приложения</string>
+    <string name="decode_error">Ошибка декодирования!</string>
+    <string name="decode_error_desc">При декодировании точек произошла ошибка. Рекомендуется экспортировать данные, чтобы избежать их потери.</string>
+    <string name="show_current_selected_point_desc">Отображать точку, на которую вы наводите при перетаскивании</string>
+    <string name="decode_error_share_to_dev">Пожалуйста, отправьте мне информацию об этой ошибке любым способом, чтобы я мог исправить её как можно скорее!</string>
+    <string name="decode_error_allow_anyway">Разрешить Dragon в любом случае переопределять данные</string>
+    <string name="share_logs">Поделиться логами</string>
+    <string name="custom_category">Пользовательская категория</string>
+    <string name="default_category">Категория по умолчанию</string>
+    <string name="recently_installed_apps_duration">Длительность отображения недавно установленных приложений</string>
+    <string name="recently_installed_apps_duration_desc">Сколько дней отображается значок «Недавно установлено»</string>
+    <string name="show_current_selected_point">Показывать текущую выбранную точку</string>
+    <string name="drawer_align_bottom_desc">Иконки выравниваются снизу. Прокрутка для закрытия не инвертирована</string>
+    <string name="auto_show_unlock_profile">Автоматически показывать разблокировку профиля</string>
+    <string name="auto_show_unlock_profile_desc">Когда вы входите в заблокированный профиль в меню приложений, приглашение разблокировки появляется автоматически</string>
+    <string name="top_bar_depth">Глубина верхней панели</string>
+    <string name="top_bar_depth_desc">Максимальная глубина, на которой отрисовываются точки в верхней панели. (когда они являются живыми гнёздами)</string>
+    <string name="point_preview_mode">Режим предпросмотра точки</string>
+    <string name="point_preview_mode_new">Отображает точку так, как она выглядит в гнёздах</string>
+    <string name="point_preview_mode_legacy">Отображает действие текущей точки в уменьшенном размере, менее точно</string>
+    <string name="use_app_even_if_signature_does_not_match">Использовать приложение, даже если подпись не совпадает</string>
+    <string name="use_app_even_if_signature_does_not_match_desc">Скрывает большой экран предупреждения при использовании отладочной версии</string>
+    <string name="openable_categories">Открываемые категории</string>
+    <string name="openable_categories_help">Приложения внутри категорий нельзя нажать; любое нажатие открывает категорию</string>
+    <string name="drawer_align_top_desc">Иконки выравниваются от начала естественным образом</string>
+    <string name="reset_default_shape">Сбросить форму по умолчанию</string>
+    <string name="reminder_mode_notification">Dragon отправляет вам уведомление, когда время выходит!</string>
+    <string name="reminder_mode_overlay">Появляется PiP-оверлей и сообщает, что пора остановиться!</string>
+    <string name="are_you_sure_to_delete_the_nest">Вы уверены, что хотите удалить гнездо \"%1$s\"?</string>
+    <string name="delete_all_related_points">Удалить все связанные точки? Это удалит все точки, которые открывают это гнездо, а также все точки в этом гнезде (не рекурсивно)</string>
+    <string name="point_reset_options">Параметры сброса точек</string>
+    <string name="reset_nests">Сбросить гнёзда</string>
+    <string name="reset_points">Сбросить точки</string>
+    <string name="reset_default_point">Сбросить точку по умолчанию</string>
+    <string name="reset_default_nest">Сбросить гнездо по умолчанию</string>
 </resources>
