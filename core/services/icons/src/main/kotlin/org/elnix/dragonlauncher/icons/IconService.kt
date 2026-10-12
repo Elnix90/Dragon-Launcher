@@ -269,6 +269,29 @@ class IconService internal constructor(
 			it[application.key]?.iconProperties
 		}
 
+	/**
+	 * Overrides attached to the app [action] launches, exposed as a flow so callers can stay
+	 * reactive to drawer edits.
+	 *
+	 * Resolution goes through [AppRepository.findOne], which performs the profile correction, so the
+	 * very same [Application] the drawer keys its overrides with is the one used here.
+	 */
+	@OptIn(ExperimentalCoroutinesApi::class)
+	private fun appOverridesFlow(action: Action): Flow<Pair<CustomIcon?, CustomIconProperties?>> =
+		if (action is Action.LaunchApp) {
+			appRepository.findOne(action).flatMapLatest { app ->
+				if (app != null) {
+					combine(getCustomAppIcon(app), getCustomIconProperties(app)) { icon, properties ->
+						icon to properties
+					}
+				} else {
+					flowOf(null to null)
+				}
+			}
+		} else {
+			flowOf(null to null)
+		}
+
 	fun updateMaxPointsCacheSize(newSize: Int) {
 		PointIconCache.updateMaxCacheSize(newSize)
 	}
@@ -451,21 +474,7 @@ class IconService internal constructor(
 	): Flow<LauncherIcon?> {
 		// A point that launches an app must track that app's overrides, so editing the app's icon in
 		// the drawer propagates here. A point-level custom icon always wins over the app's.
-		// findOne performs the profile correction, so the app resolved here is the very same one the
-		// drawer uses to key its overrides.
-		val launchApp = point.action as? Action.LaunchApp
-		val app: Flow<Application?> = launchApp?.let { appRepository.findOne(it) } ?: flowOf(null)
-
-		val appOverrides: Flow<Pair<CustomIcon?, CustomIconProperties?>> =
-			app.flatMapLatest { resolved ->
-				if (resolved != null) {
-					combine(getCustomAppIcon(resolved), getCustomIconProperties(resolved)) { icon, properties ->
-						icon to properties
-					}
-				} else {
-					flowOf(null to null)
-				}
-			}
+		val appOverrides = appOverridesFlow(point.action)
 
 		return combine(
 			iconProviders,
@@ -557,15 +566,26 @@ class IconService internal constructor(
 
 	/**
 	 * One-shot resolution of a single point icon with [customIcon] and [properties] applied,
-	 * bypassing the store and the override manager. Used by the icon editor to preview
-	 * changes live without touching the database.
+	 * bypassing the icon caches. Used by the icon editor to preview changes live.
+	 *
+	 * A point that launches an app inherits that app's overrides, so the preview matches what the
+	 * point actually renders on screen. Whatever the caller passes explicitly still wins.
 	 */
 	suspend fun getPointIconOnce(
 		point: Point,
 		size: Int,
 		customIcon: CustomIcon?,
 		properties: CustomIconProperties?
-	): LauncherIcon? = resolveIconOnce(point.action, size, customIcon, properties)
+	): LauncherIcon? {
+		val (appIcon, appProperties) = appOverridesFlow(point.action).first()
+
+		return resolveIconOnce(
+			action = point.action,
+			size = size,
+			customIcon = customIcon ?: appIcon,
+			properties = properties?.takeIf { it.isNotEmpty } ?: appProperties ?: properties
+		)
+	}
 
 	private suspend fun resolveIconOnce(
 		action: Action,
