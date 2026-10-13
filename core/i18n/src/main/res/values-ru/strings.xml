@@ -587,7 +587,7 @@
     <string name="edit_nest">Изменить гнездо</string>
     <string name="edit_default_nest">Изменить гнездо по умолчанию</string>
     <string name="edit_nest_arg">Изменить гнездо %1$d</string>
-    <string name="angle_line">Линия угла</string>
+    <string name="angle_line">Угол Линия</string>
     <string name="angle_line_help">Настройте вид линии, которая появляется при перетаскивании на главном экране</string>
     <string name="show_start_object_preview">Показывать начальный объект</string>
     <string name="show_start_object_preview_desc">Показывать ли объект (по умолчанию круг) в начальной точке перетаскивания</string>
