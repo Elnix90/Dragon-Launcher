@@ -405,6 +405,16 @@ private fun CategoryGrid(
 	val drawerSettings = LocalDrawerSettings.current
 	val gridCells = drawerSettings.categoryGridCells
 
+	val totalCellsInGrid = gridCells * gridCells
+	val maxAppNumber = totalCellsInGrid - 1
+	val appNumber = apps.size
+	val sanitizedAppNumber =
+		if (appNumber == totalCellsInGrid) {
+			totalCellsInGrid + 1
+		} else {
+			min(appNumber, maxAppNumber)
+		}
+
 	CompositionLocalProvider(
 		LocalDrawerSettings provides
 			drawerSettings.copy(showAppLabelsInDrawer = false)
@@ -416,14 +426,12 @@ private fun CategoryGrid(
 				modifier =
 					modifier
 						.aspectRatio(1f)
-						.clickable(onClick = onOpenCategory)
-						.padding(10.dp)
+						.clickable(
+							enabled = appNumber > totalCellsInGrid,
+							onClick = onOpenCategory
+						).padding(10.dp)
 			) {
 				var appIndex = 0
-
-				val appNumber = apps.size
-				val maxAppNumber = gridCells * gridCells - 1
-				val sanitizedAppNumber = min(appNumber, maxAppNumber)
 
 				Column(
 					modifier = Modifier
@@ -446,21 +454,27 @@ private fun CategoryGrid(
 
 										AppItemGrid(
 											app = app,
-											clickable = !drawerSettings.openableCategories,
+											clickable = !drawerSettings.openableCategories || appNumber <= maxAppNumber,
 											selected = false,
 											onLongClick = null,
 											longPressPopup = longPressPopup,
 											onClick = { onClick?.invoke(app) }
 										)
-									} else if (appIndex == maxAppNumber) {
-										Box(
+									} else if (appIndex == maxAppNumber && appNumber > maxAppNumber) {
+										Column(
 											modifier = Modifier.fillMaxSize(),
-											contentAlignment = Alignment.Center
+											verticalArrangement = Arrangement.spacedBy((-2).dp, Alignment.CenterVertically),
+											horizontalAlignment = Alignment.CenterHorizontally
 										) {
 											Icon(
 												painter = painterResource(R.drawable.more_horiz),
 												contentDescription = "More",
 												tint = contentColorFor(drawerSettings.categoryColor)
+											)
+											Text(
+												text = appNumber.toString(),
+												color = contentColorFor(drawerSettings.categoryColor),
+												style = MaterialTheme.typography.labelSmallEmphasized
 											)
 										}
 									}
