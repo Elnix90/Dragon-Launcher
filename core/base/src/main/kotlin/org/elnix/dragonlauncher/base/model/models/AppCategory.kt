@@ -36,5 +36,15 @@ enum class AppCategory {
 
 		fun mapAppToSection(app: ApplicationInfo): AppCategory =
 			mapSystemCategoryToSection(app.category)
+
+		val all = AppCategory.entries.map { it.name }
 	}
+}
+
+fun String.categoryName(ctx: Context): String {
+	val idx = AppCategory.all.indexOf(this)
+	if (idx != -1) {
+		return AppCategory.valueOf(this).name(ctx)
+	}
+	return this
 }
