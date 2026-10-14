@@ -35,7 +35,10 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-fun PointPreviewTitle(point: Point?) {
+fun PointPreviewTitle(
+	point: Point?,
+	useActionIcon: Boolean = false
+) {
 	if (point == null) return
 
 	val options = LocalPointPreviewTitleOptions.current
@@ -58,13 +61,19 @@ fun PointPreviewTitle(point: Point?) {
 			.padding(top = options.topPadding),
 		contentAlignment = Alignment.TopCenter
 	) {
-		PointPreview(point)
+		PointPreview(point, useActionIcon)
 	}
 }
 
+/**
+ * @param useActionIcon Resolve the icon from [Point.action] instead of the point-id keyed
+ *   [org.elnix.dragonlauncher.base.cache.PointStableCache]. A staged Cycle Actions stage reuses the
+ *   point's id with a different action, so only an action-derived icon can reflect it live.
+ */
 @Composable
 fun PointPreview(
-	point: Point
+	point: Point,
+	useActionIcon: Boolean = false
 ) {
 	val extraColors = LocalExtraColors.current
 	val options = LocalPointPreviewTitleOptions.current
@@ -76,8 +85,12 @@ fun PointPreview(
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		if (options.showIcon) {
-			when (options.pointPreviewMode) {
-				PointPreviewMode.New -> {
+			when {
+				useActionIcon || options.pointPreviewMode == PointPreviewMode.Legacy -> {
+					FinalPointIcon(point, size = options.appIconOverlaySize)
+				}
+
+				else -> {
 					BoxWithConstraints(Modifier.requiredSize(options.appIconOverlaySize)) {
 						val center = constraints.getCenter()
 						PointIcon(
@@ -88,10 +101,6 @@ fun PointPreview(
 							eraseColor = Color.Transparent
 						)
 					}
-				}
-
-				PointPreviewMode.Legacy -> {
-					FinalPointIcon(point, size = options.appIconOverlaySize)
 				}
 			}
 		}

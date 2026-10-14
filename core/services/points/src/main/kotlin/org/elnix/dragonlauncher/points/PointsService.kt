@@ -74,6 +74,16 @@ interface PointsService {
 	 */
 	val selectedPointsIds: SettingFlow<List<Int>>
 
+	/**
+	 * Action of the Cycle Actions stage the finger is currently resting on, or null when the base
+	 * stage is current.
+	 *
+	 * Written by the overlay's cycle controller while a point is held, and consumed by the swipe
+	 * service on release. It lives here rather than in Compose state precisely because the code
+	 * that performs the launch does not run in a composition, so it cannot read Compose state.
+	 */
+	val cycleStageAction: SettingFlow<Action?>
+
 	val undoRedo: UndoRedoManager
 
 	fun addPoint(select: Boolean = true, newPoint: (Int) -> Point): Int
@@ -258,6 +268,8 @@ internal class PointsServiceImpl(
 	}
 
 	override val selectedPointsIds: SettingFlow<List<Int>> = SettingFlow(emptyList())
+
+	override val cycleStageAction: SettingFlow<Action?> = SettingFlow(null)
 
 	override val undoRedo: UndoRedoManager =
 		UndoRedoManager(

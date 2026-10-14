@@ -189,22 +189,13 @@ fun MainScreenOverlay(
 				hp
 			}
 		}
-//
-//    // Reload the point icon depending on the action in the cycleController
-//    LaunchedEffect(hoveredPoint?.id, cycleActionsController.currentStageIndex) {
-//        if (!isDragging) return@LaunchedEffect
-//        val hp = hoveredPoint ?: return@LaunchedEffect
-//        if (hp.cycleActions.isNullOrEmpty()) return@LaunchedEffect
-//        val dp = displayPoint ?: return@LaunchedEffect
-//        iconsViewModel.reloadIcon(dp)
-//    }
-
 	val holdAndRun =
 		rememberHoldAndRunController(
 			currentPoint = hoveredPoint,
 			isDragging = isDragging
 		) { firedPoint ->
-			swipeService.launchAction(firedPoint.action)
+			// Hold & Run auto-fires mid-hold, so the cycle stage under the finger is what must fire.
+			swipeService.launchAction(pointsService.cycleStageAction.value ?: firedPoint.action)
 		}
 
 	LaunchedEffect(hoveredPoint?.id, liveNestControllersStack.count { it.isActive }) {
@@ -529,7 +520,11 @@ fun MainScreenOverlay(
 		}
 	}
 
-	PointPreviewTitle(displayPoint)
+	// A staged Cycle Actions stage keeps the point's id but changes its action, so the id-keyed
+	// icon cache cannot reflect it; fall back to the action-derived icon while a stage is active.
+	val cycleStageActive = displayPoint != null && displayPoint.action != hoveredPoint.action
+
+	PointPreviewTitle(displayPoint, useActionIcon = cycleStageActive)
 }
 
 fun defaultHapticFeedback(): CustomHapticFeedback =

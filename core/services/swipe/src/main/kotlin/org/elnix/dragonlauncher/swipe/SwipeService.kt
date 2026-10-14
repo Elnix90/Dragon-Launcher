@@ -236,6 +236,7 @@ internal class SwipeServiceImpl(
 	override fun clearAfterLaunch() {
 		start.value = null
 		current.value = null
+		pointsService.cycleStageAction.value = null
 		pointsService.deselectAll()
 	}
 
@@ -309,7 +310,10 @@ internal class SwipeServiceImpl(
 					} else {
 						pointsService.selectedPointsIds.value.firstOrNull()?.let { selectedPointId ->
 							pointsService.findPointById(selectedPointId)?.let { point ->
-								launchAction(point.action)
+								// A cycle stage under the finger overrides the point's own action;
+								// the overlay publishes it while the point is held.
+								val staged = pointsService.cycleStageAction.value
+								launchAction(staged ?: point.action)
 							}
 						}
 						clearAfterLaunch()

@@ -39,15 +39,12 @@ private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<
  * @property currentStageIndex 0 = base action; 1..N = timed stages; N+1 = "Loop Over" when loop is on.
  * @property currentStageAction Action for the current extra stage or Loop Over (last stage's action).
  *   Null when on the base stage.
- * @property resolveOnRelease Returns the extra-stage action to fire on release, or null when the
- *   base stage is current (caller should fire the point's own action in that case).
  * @property clear Resets all cycle state; call after a launch or after a cancel.
  */
 data class CycleActionsState(
 	val isActive: Boolean,
 	val currentStageIndex: Int,
 	val currentStageAction: Action?,
-	val resolveOnRelease: () -> Action?,
 	val clear: () -> Unit
 )
 
@@ -87,12 +84,13 @@ fun rememberCycleActionsController(
 		stages,
 		currentAction?.cycleActionsLoopDelayMs
 	) {
-		// When isDragging goes false, do NOT reset here: let the overlay's release resolution logic
-		// read the final stage index via resolveOnRelease() before cleaning up.
+		// When isDragging goes false, do NOT reset the published stage here: the swipe service reads
+		// it on release to decide the launch, and clears it itself once consumed.
 		if (!isDragging) return@LaunchedEffect
 
 		// New gesture or hovered point changed: start fresh.
 		currentStageIndex = 0
+		pointsService.cycleStageAction.value = null
 		if (stages.isNullOrEmpty()) return@LaunchedEffect
 
 		val loopDelayMs =
@@ -129,6 +127,10 @@ fun rememberCycleActionsController(
 			if (newIndex != currentStageIndex) {
 				currentStageIndex = newIndex
 
+				// Publish the staged action so the swipe service, which performs the launch on
+				// release, can see which stage the finger is resting on.
+				pointsService.cycleStageAction.value = stages.getOrNull(newIndex - 1)?.action
+
 				// Haptic feedback for stage entries `1..N` and loop-wrap to Base (0).
 				if (!disableHapticFeedbackGlobally && newIndex != lastFiredStageIndex) {
 					val haptic =
@@ -159,20 +161,6 @@ fun rememberCycleActionsController(
 		}
 	}
 
-	val resolveOnRelease: () -> Action? =
-		remember(stages) {
-			{
-				val idx = currentStageIndex
-				if (idx == 0 || stages.isNullOrEmpty()) {
-					null
-				} else if (idx in 1..stages.size) {
-					stages[idx - 1].action
-				} else {
-					null
-				}
-			}
-		}
-
 	val clear: () -> Unit = remember { { currentStageIndex = 0 } }
 
 	val safeStageIndex = currentStageIndex.coerceIn(0, stages?.size ?: 0)
@@ -189,7 +177,6 @@ fun rememberCycleActionsController(
 		isActive = isDragging && !stages.isNullOrEmpty(),
 		currentStageIndex = safeStageIndex,
 		currentStageAction = currentStageAction,
-		resolveOnRelease = resolveOnRelease,
 		clear = clear
 	)
 }
