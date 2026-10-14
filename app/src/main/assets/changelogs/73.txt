@@ -1,0 +1,8 @@
+4.5.2 (Komodo)
+2026-10-14
+[IMPROVED]
+* Improved categories UI in the drawer
+[FIXED]
+* Crash in wellbeing tab
+* Crash in app categories when duplicate key is present
+* Cycle action fix
