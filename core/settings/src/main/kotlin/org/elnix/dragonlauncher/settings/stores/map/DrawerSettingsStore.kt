@@ -250,7 +250,7 @@ object DrawerSettingsStore : MapSettingsStore() {
 			title = R.string.category_grid_cells,
 			description = R.string.category_grid_cells_desc,
 			icon = R.drawable.more_horiz,
-			default = 3,
+			default = 2,
 			allowedRange = 2..5
 		)
 
@@ -260,7 +260,7 @@ object DrawerSettingsStore : MapSettingsStore() {
 			title = R.string.category_cells,
 			description = R.string.category_cells_desc,
 			icon = R.drawable.more_horiz,
-			default = 3,
+			default = 2,
 			allowedRange = 1..4
 		)
 
