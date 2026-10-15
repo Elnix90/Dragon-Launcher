@@ -74,8 +74,8 @@ fun AppItemHorizontal(
 								}
 							},
 							onClick = { onClick?.invoke() }
-						).padding(5.dp)
-					}.padding(5.dp)
+						)
+					}
 		) {
 			if (drawerSettings.showAppIconsInDrawer) {
 				AppIcon(app, drawerSettings.iconSize)
