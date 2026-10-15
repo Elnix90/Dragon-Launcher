@@ -31,14 +31,12 @@ fun DrawScope.PointBg(
 	val colorScheme = drawParams.colorScheme
 	val defaultPoint = drawParams.pointsService.defaultPoint.value
 
-	val cached =
-		PointStableCache[point.id] ?: run {
-			missingPoint(drawParams, center)
-			return
-		}
+	val cached = PointStableCache[point.id]
+	if (cached == null) {
+		missingPoint(drawParams, center)
+		return
+	}
 
-	val iconBitmap = cached.imageBitmap
-	val badgeBitmap = cached.badgeBitmap
 	val iconSize = cached.iconSize
 
 	if (depth > 1 || !drawParams.isTopPoint) {
@@ -75,6 +73,14 @@ fun DrawScope.PointBg(
 			)
 		}
 	}
+
+	if (drawParams.showOnlyQuestionMarkIcons) {
+		missingPoint(drawParams, center)
+		return
+	}
+
+	val iconBitmap = cached.imageBitmap
+	val badgeBitmap = cached.badgeBitmap
 
 	if (iconBitmap != null) {
 		val sizePx = cached.sizePx

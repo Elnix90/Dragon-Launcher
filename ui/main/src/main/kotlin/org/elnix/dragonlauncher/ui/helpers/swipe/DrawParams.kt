@@ -60,7 +60,8 @@ data class DrawParams(
 	val showShape: Boolean,
 	val showAllShapesInNest: Boolean,
 	val textMeasurer: TextMeasurer,
-	val globalDraggingMode: GlobalDraggingMode
+	val globalDraggingMode: GlobalDraggingMode,
+	val showOnlyQuestionMarkIcons: Boolean
 )
 
 /**
@@ -112,6 +113,8 @@ fun rememberDrawParams(
 
 	val globalDraggingMode by swipeViewModel.swipeService.globalDraggingMode.asState()
 
+	val showOnlyQuestionMarkIcons by UiSettingsStore.showOnlyQuestionMarkIcons.asState()
+
 	return remember(
 		extraColors,
 		colorScheme,
@@ -132,7 +135,8 @@ fun rememberDrawParams(
 		showShape,
 		showAllShapesInNest,
 		textMeasurer,
-		globalDraggingMode
+		globalDraggingMode,
+		showOnlyQuestionMarkIcons
 	) {
 		DrawParams(
 			ctx = ctx,
@@ -159,7 +163,8 @@ fun rememberDrawParams(
 			showShape = showShape,
 			showAllShapesInNest = showAllShapesInNest,
 			textMeasurer = textMeasurer,
-			globalDraggingMode = globalDraggingMode
+			globalDraggingMode = globalDraggingMode,
+			showOnlyQuestionMarkIcons = showOnlyQuestionMarkIcons
 		)
 	}
 }

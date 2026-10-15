@@ -407,4 +407,13 @@ object UiSettingsStore : MapSettingsStore() {
 			icon = R.drawable.wallpaper,
 			default = PointPreviewMode.New
 		)
+
+	@SettingKey
+	val showOnlyQuestionMarkIcons =
+		boolean(
+			title = R.string.show_only_question_mark_icons,
+			description = R.string.show_only_question_mark_icons_desc,
+			icon = R.drawable.question_mark,
+			default = false
+		)
 }

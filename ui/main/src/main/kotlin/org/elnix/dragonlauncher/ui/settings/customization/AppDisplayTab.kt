@@ -114,6 +114,10 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 			Setting(UiSettingsStore.maxNestsDepth)
 			Setting(UiSettingsStore.maxLiveNestsDepth)
 		}
+
+		DragonSettingsGroup(R.string.weird) {
+			Setting(UiSettingsStore.showOnlyQuestionMarkIcons)
+		}
 	}
 
 	val points by pointsViewModel.pointsService.points.collectAsState()

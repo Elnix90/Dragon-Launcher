@@ -1120,4 +1120,7 @@
 	<string name="reset_default_point">Reset default Point</string>
 	<string name="reset_default_nest">Reset default Nest</string>
 	<string name="reset_default_shape">Reset default Shape</string>
+    <string name="show_only_question_mark_icons">Show only qustion mark icons</string>
+	<string name="show_only_question_mark_icons_desc">If you\'re a psychopath, or like weird stuff, enable this</string>
+	<string name="weird">Weird</string>
 </resources>
