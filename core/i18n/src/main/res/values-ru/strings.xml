@@ -1090,4 +1090,5 @@
     <string name="reset_points">Сбросить точки</string>
     <string name="reset_default_point">Сбросить точку по умолчанию</string>
     <string name="reset_default_nest">Сбросить гнездо по умолчанию</string>
+    <string name="reminder_mode_description">Когда активно, каждые X минут вам напоминают, что они всё ещё находятся в приложении на паузе.</string>
 </resources>
