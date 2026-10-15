@@ -4,6 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +25,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -52,12 +54,14 @@ fun WorkspacePickerDialog(
 		Spacer(10.dp)
 
 		DragonSettingsGroup {
-			LazyColumnWithScrollIndicator(
-				items = workspacesDisplayed,
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(5.dp),
 				modifier = Modifier.heightIn(max = 500.dp)
-			) { workspace ->
-				WorkspaceCard(workspace) {
-					onActionPicked(Action.OpenAppDrawer(workspace?.id))
+			) {
+				items(workspacesDisplayed) { workspace ->
+					WorkspaceCard(workspace) {
+						onActionPicked(Action.OpenAppDrawer(workspace?.id))
+					}
 				}
 			}
 		}
@@ -74,6 +78,7 @@ private fun DragonGroupScope.WorkspaceCard(
 			Modifier
 				.dragonSettingGroup {
 					clickable(onClick = onClick)
+						.padding(5.dp)
 				},
 		verticalAlignment = Alignment.CenterVertically,
 		horizontalArrangement = Arrangement.spacedBy(5.dp)
