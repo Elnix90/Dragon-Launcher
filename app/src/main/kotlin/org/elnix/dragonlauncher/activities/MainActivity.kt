@@ -8,7 +8,6 @@ import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -273,16 +272,6 @@ class MainActivity :
 
 	private val fontsReceiver = FontReceiver()
 
-//    private val filter = IntentFilter().apply {
-//        addAction(Intent.ACTION_PACKAGE_ADDED)
-//        addAction(Intent.ACTION_PACKAGE_REMOVED)
-//        addAction(Intent.ACTION_PACKAGE_REPLACED)
-//        addAction(Intent.ACTION_PACKAGES_SUSPENDED)
-//        addAction(Intent.ACTION_PACKAGES_UNSUSPENDED)
-//        addAction(Intent.ACTION_PACKAGE_CHANGED)
-//        addDataScheme("package")
-//    }
-
 	@SuppressLint("SourceLockedOrientationActivity")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		val startTime = System.currentTimeMillis()
@@ -312,8 +301,6 @@ class MainActivity :
 		appWidgetHost.startListening()
 
 		enableEdgeToEdge()
-
-		requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
 		WindowInsetsControllerCompat(window, window.decorView).let { controller ->
 			controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE

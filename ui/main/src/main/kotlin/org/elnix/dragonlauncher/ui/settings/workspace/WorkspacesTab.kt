@@ -71,7 +71,7 @@ fun WorkspacesTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 			helpText = stringResource(R.string.workspace_help),
 			resetText = stringResource(R.string.reset_workspaces),
 			onReset = { workspaceManager.resetWorkspaces() },
-			lasyListState = lazyListState,
+			lazyListState = lazyListState,
 			bottomContent = {
 				Row(
 					modifier =

@@ -75,7 +75,7 @@ fun MainScreeLayersTab(
 			swipeService.saveMainScreenLayers()
 			navigator.onBack()
 		},
-		lasyListState = lazyListState,
+		lazyListState = lazyListState,
 		resetTitle = stringResource(R.string.main_screen_layers_reset_title),
 		resetText = stringResource(R.string.main_screen_layers_reset),
 		lazyContent = {

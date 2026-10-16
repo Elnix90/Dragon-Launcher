@@ -3,9 +3,10 @@ package org.elnix.dragonlauncher.ui.helpers.settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
@@ -58,11 +59,11 @@ fun SettingsScaffold(
 	applyPadding: Boolean = true,
 	scrollableContent: Boolean = true,
 	imePadding: Boolean = true,
-	lasyListState: LazyListState? = null,
+	lazyListState: LazyListState? = null,
 	scrollState: ScrollState? = null,
 	topContent: @Composable (ColumnScope.() -> Unit)? = null,
 	bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
-	specialSettingsTitleContent: @Composable (RowScope.() -> Unit)? = null,
+	specialSettingsTitleContent: @Composable (() -> Unit)? = null,
 	lazyContent: (LazyListScope.() -> Unit)? = null,
 	content: @Composable (ColumnScope.() -> Unit)? = null
 ) {
@@ -77,88 +78,172 @@ fun SettingsScaffold(
 	val handleBack = onBack ?: { navigator.onBack() }
 	BackHandler(onBack = handleBack)
 
-	Scaffold(
-		containerColor = Color.Transparent,
-		modifier =
-			Modifier
-				.fillMaxSize()
-				.conditional(imePadding) {
-					imePadding()
-				},
-		contentWindowInsets =
-			WindowInsets.safeDrawing.add(
-				WindowInsets(
-					top = 8.dp,
-					left = horizontalPadding,
-					right = horizontalPadding
-				)
-			),
-		bottomBar = {
-			val insets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
-			Column(
+	BoxWithConstraints {
+		if (maxWidth <= 500.dp) {
+			Scaffold(
+				containerColor = Color.Transparent,
 				modifier =
 					Modifier
-						.fillMaxWidth()
-						.windowInsetsPadding(insets)
-			) {
-				if (bottomContent != null) {
-					bottomContent()
-					Spacer(5.dp)
-				}
-
-				SettingsTitle(
-					title = title,
-					moreOptions = moreOptions,
-					onBack = handleBack
-				) {
-					specialSettingsTitleContent?.invoke(this)
-
-					if (onReset != null) {
-						ResetIcon { showResetDialog = true }
-					}
-
-					if (helpText != null) {
-						DragonIconButton(
-							onClick = { showHelpDialog = true },
-							icon = R.drawable.help,
-							contentDescription = R.string.help
+						.fillMaxSize()
+						.conditional(imePadding) {
+							imePadding()
+						},
+				contentWindowInsets =
+					WindowInsets.safeDrawing.add(
+						WindowInsets(
+							top = 8.dp,
+							left = horizontalPadding,
+							right = horizontalPadding
 						)
+					),
+				bottomBar = {
+					val insets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
+					Column(
+						modifier =
+							Modifier
+								.fillMaxWidth()
+								.windowInsetsPadding(insets)
+					) {
+						if (bottomContent != null) {
+							bottomContent()
+							Spacer(5.dp)
+						}
+
+						SettingsTitleRow(
+							title = title,
+							moreOptions = moreOptions,
+							onBack = handleBack
+						) {
+							specialSettingsTitleContent?.invoke()
+
+							if (onReset != null) {
+								ResetIcon { showResetDialog = true }
+							}
+
+							if (helpText != null) {
+								DragonIconButton(
+									onClick = { showHelpDialog = true },
+									icon = R.drawable.help,
+									contentDescription = R.string.help
+								)
+							}
+						}
 					}
 				}
-			}
-		}
-	) { paddingValues ->
+			) { paddingValues ->
 
-		Column(
-			modifier =
-				Modifier
-					.conditional(applyPadding) {
-						padding(paddingValues)
-							.fillMaxSize()
-					}
-		) {
-			if (topContent != null) {
-				topContent()
-			}
-
-			if (lazyContent != null) {
-				LazyColumn(
-					verticalArrangement = Arrangement.spacedBy(16.dp),
-					horizontalAlignment = Alignment.CenterHorizontally,
-					modifier = Modifier.fillMaxSize(),
-					state = lasyListState ?: rememberLazyListState()
-				) { lazyContent() }
-			} else {
 				Column(
-					verticalArrangement = Arrangement.spacedBy(16.dp),
-					horizontalAlignment = Alignment.CenterHorizontally,
 					modifier =
 						Modifier
-							.fillMaxSize()
-							.conditional(scrollableContent) {
-								verticalScroll(scrollState ?: rememberScrollState())
+							.conditional(applyPadding) {
+								padding(paddingValues)
+							}.fillMaxSize()
+				) {
+					if (topContent != null) {
+						topContent()
+					}
+
+					if (lazyContent != null) {
+						LazyColumn(
+							verticalArrangement = Arrangement.spacedBy(16.dp),
+							horizontalAlignment = Alignment.CenterHorizontally,
+							modifier = Modifier.fillMaxSize(),
+							state = lazyListState ?: rememberLazyListState()
+						) { lazyContent() }
+					} else {
+						Column(
+							verticalArrangement = Arrangement.spacedBy(16.dp),
+							horizontalAlignment = Alignment.CenterHorizontally,
+							modifier =
+								Modifier
+									.fillMaxSize()
+									.conditional(scrollableContent) {
+										verticalScroll(scrollState ?: rememberScrollState())
+									}
+						) { content!!() }
+					}
+				}
+			}
+		} else {
+			Scaffold(
+				containerColor = Color.Transparent,
+				modifier =
+					Modifier
+						.fillMaxSize()
+						.conditional(imePadding) {
+							imePadding()
+						},
+				contentWindowInsets =
+					WindowInsets.safeDrawing.add(
+						WindowInsets(
+							top = 8.dp,
+							left = horizontalPadding,
+							right = horizontalPadding
+						)
+					)
+			) { paddingValues ->
+
+				Row(
+					modifier = Modifier
+						.conditional(applyPadding) {
+							padding(paddingValues)
+						}.fillMaxSize(),
+					horizontalArrangement = Arrangement.spacedBy(12.dp)
+				) {
+// 						if (bottomContent != null) {
+// 							bottomContent()
+// 							Spacer(5.dp)
+// 						}
+
+					SettingsTitleColumn(
+						title = title,
+						moreOptions = moreOptions,
+						modifier = Modifier.fillMaxWidth(0.3f),
+						onBack = handleBack,
+						resetAndHelp = {
+							if (onReset != null) {
+								ResetIcon { showResetDialog = true }
 							}
-				) { content!!() }
+
+							if (helpText != null) {
+								DragonIconButton(
+									onClick = { showHelpDialog = true },
+									icon = R.drawable.help,
+									contentDescription = R.string.help
+								)
+							}
+						},
+						specialContent = {
+							specialSettingsTitleContent?.invoke()
+						}
+					)
+
+					Column(Modifier.fillMaxSize()) {
+						if (topContent != null) {
+							topContent()
+						}
+
+						if (lazyContent != null) {
+							LazyColumn(
+								verticalArrangement = Arrangement.spacedBy(16.dp),
+								horizontalAlignment = Alignment.CenterHorizontally,
+								modifier = Modifier.fillMaxSize(),
+								state = lazyListState ?: rememberLazyListState()
+							) { lazyContent() }
+						} else {
+							Column(
+								verticalArrangement = Arrangement.spacedBy(16.dp),
+								horizontalAlignment = Alignment.CenterHorizontally,
+								modifier =
+									Modifier
+										.fillMaxSize()
+										.conditional(scrollableContent) {
+											verticalScroll(scrollState ?: rememberScrollState())
+										}
+							) { content!!() }
+						}
+					}
+				}
 			}
 		}
 	}
