@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
 import androidx.compose.material3.ElevatedCard
@@ -87,7 +86,7 @@ fun AngleLineObjectsOrderDialog(
 							CardDefaults.cardColors(
 								containerColor = MaterialTheme.colorScheme.surface
 							),
-						shape = RoundedCornerShape(12.dp)
+						shape = MaterialTheme.shapes.large
 					) {
 						Row(
 							verticalAlignment = Alignment.CenterVertically,

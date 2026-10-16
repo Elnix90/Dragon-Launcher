@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.settings.debug
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -22,6 +21,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.AllStores
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.importexport.DebugJsonStoresDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -76,7 +76,7 @@ fun SettingsDebugTab() {
 					Text("Select visibles stores")
 				}
 
-				Spacer(Modifier.weight(1f))
+				Spacer()
 
 				DragonIconButton(
 					onClick = { forceAllKeys = !forceAllKeys },

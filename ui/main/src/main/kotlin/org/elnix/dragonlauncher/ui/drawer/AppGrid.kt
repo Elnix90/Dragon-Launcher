@@ -454,7 +454,7 @@ private fun CategoryGrid(
 
 										AppItemGrid(
 											app = app,
-											clickable = !drawerSettings.openableCategories || appNumber <= maxAppNumber,
+											clickable = !drawerSettings.openableCategories || (appNumber <= totalCellsInGrid),
 											selected = false,
 											onLongClick = null,
 											longPressPopup = longPressPopup,
@@ -472,7 +472,7 @@ private fun CategoryGrid(
 												tint = contentColorFor(drawerSettings.categoryColor)
 											)
 											Text(
-												text = appNumber.toString(),
+												text = "+ " + (appNumber - maxAppNumber).toString(),
 												color = contentColorFor(drawerSettings.categoryColor),
 												style = MaterialTheme.typography.labelSmallEmphasized
 											)

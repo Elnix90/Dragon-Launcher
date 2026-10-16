@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -399,10 +398,10 @@ private fun TimeLimitPickerUI(
 					contentAlignment = Alignment.Center,
 					modifier =
 						Modifier
-							.clip(RoundedCornerShape(20.dp))
+							.clip(MaterialTheme.shapes.large)
 							.clickable { selectedMinutes = minutes }
 							.background(chipColor)
-							.border(1.dp, borderColor, RoundedCornerShape(20.dp))
+							.border(1.dp, borderColor, MaterialTheme.shapes.large)
 							.padding(horizontal = 20.dp, vertical = 12.dp)
 				) {
 					Text(
@@ -654,9 +653,9 @@ private fun GlassCard(
 	Column(
 		modifier =
 			modifier
-				.clip(RoundedCornerShape(24.dp))
+				.clip(MaterialTheme.shapes.largeIncreased)
 				.background(Color.White.copy(alpha = 0.08f))
-				.border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(24.dp))
+				.border(1.dp, Color.White.copy(alpha = 0.15f), MaterialTheme.shapes.large)
 				.padding(24.dp),
 		horizontalAlignment = Alignment.CenterHorizontally,
 		content = content

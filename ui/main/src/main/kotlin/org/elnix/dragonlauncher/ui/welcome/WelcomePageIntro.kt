@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -73,7 +72,7 @@ fun WelcomePageIntro(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center
 	) {
-		Spacer(Modifier.weight(1f))
+		Spacer()
 
 		Image(
 			painter = painterResource(R.mipmap.dragon_launcher_foreground),
@@ -161,7 +160,7 @@ fun WelcomePageIntro(
 			)
 		}
 
-		Spacer(Modifier.weight(1f))
+		Spacer()
 
 		ImportBackupButton(
 			onConfirm = {

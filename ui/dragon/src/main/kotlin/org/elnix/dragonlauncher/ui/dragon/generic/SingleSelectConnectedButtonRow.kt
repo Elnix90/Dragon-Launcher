@@ -1,9 +1,7 @@
 package org.elnix.dragonlauncher.ui.dragon.generic
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Icon
@@ -17,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.enumsui.SelectButtonOption
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHapticParam
 
@@ -65,7 +64,7 @@ fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
 						}
 
 						if (entry.resId != null && entry.iconResId != null) {
-							Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+							Spacer(ToggleButtonDefaults.IconSpacing)
 						}
 
 						entry.resId?.let { res ->
