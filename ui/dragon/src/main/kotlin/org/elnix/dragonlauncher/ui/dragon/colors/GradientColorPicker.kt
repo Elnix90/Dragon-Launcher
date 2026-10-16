@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -158,7 +157,7 @@ fun GradientColorPicker(
 					Modifier
 						.fillMaxWidth()
 						.height(25.dp)
-						.clip(RoundedCornerShape(5.dp))
+						.clip(MaterialTheme.shapes.medium)
 						.background(
 							Brush.horizontalGradient(
 								colors = (360 downTo 0 step 30).map { Color.hsv(it.toFloat(), 1f, 1f) }

@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -288,11 +287,11 @@ private fun GlassEncouragementCard() {
 		modifier =
 			Modifier
 				.fillMaxWidth()
-				.clip(RoundedCornerShape(20.dp))
+				.clip(MaterialTheme.shapes.large)
 				.background(Color.White.copy(alpha = 0.06f))
 				.border(
-					1.dp,
-					Brush.linearGradient(
+					width = 1.dp,
+					brush = Brush.linearGradient(
 						colors =
 							listOf(
 								AccentTeal.copy(alpha = 0.3f),
@@ -300,7 +299,7 @@ private fun GlassEncouragementCard() {
 								Color.Transparent
 							)
 					),
-					RoundedCornerShape(20.dp)
+					shape = MaterialTheme.shapes.large
 				).padding(20.dp),
 		contentAlignment = Alignment.Center
 	) {
