@@ -472,7 +472,7 @@ private fun CategoryGrid(
 												tint = contentColorFor(drawerSettings.categoryColor)
 											)
 											Text(
-												text = appNumber.toString(),
+												text = "+ " + (appNumber - maxAppNumber).toString(),
 												color = contentColorFor(drawerSettings.categoryColor),
 												style = MaterialTheme.typography.labelSmallEmphasized
 											)
