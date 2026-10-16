@@ -454,7 +454,7 @@ private fun CategoryGrid(
 
 										AppItemGrid(
 											app = app,
-											clickable = !drawerSettings.openableCategories || appNumber <= maxAppNumber,
+											clickable = !drawerSettings.openableCategories || (appNumber <= totalCellsInGrid),
 											selected = false,
 											onLongClick = null,
 											longPressPopup = longPressPopup,
