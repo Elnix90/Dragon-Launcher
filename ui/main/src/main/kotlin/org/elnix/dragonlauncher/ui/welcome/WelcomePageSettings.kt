@@ -6,7 +6,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,8 +37,7 @@ fun WelcomePageSettings(
 		FloatingParticles()
 
 		WelcomePagerHeader {
-			androidx.compose.foundation.layout
-				.Spacer(Modifier.weight(1f))
+			Spacer()
 
 			DragonSettingsGroup(
 				title = R.string.set_default_launcher,
@@ -115,8 +113,7 @@ fun WelcomePageSettings(
 				}
 			}
 
-			androidx.compose.foundation.layout
-				.Spacer(Modifier.weight(1f))
+			Spacer()
 
 			Text(
 				text = stringResource(R.string.swipe_up_to_start_using_directly),

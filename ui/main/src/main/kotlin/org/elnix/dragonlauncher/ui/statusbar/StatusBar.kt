@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.areStatusBarsVisible
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -142,7 +140,7 @@ fun StatusBar(
 					} else {
 						when (element.mode) {
 							StatusBar.Spacer.SpacerMode.Width -> {
-								Spacer(Modifier.width(element.width))
+								Spacer(element.width)
 							}
 
 							StatusBar.Spacer.SpacerMode.Fill -> {

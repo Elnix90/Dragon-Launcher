@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -637,7 +636,7 @@ fun PointEditor(
 											fontSize = 16.sp,
 											fontWeight = FontWeight.Medium
 										)
-										Spacer(Modifier.weight(1f))
+										Spacer()
 										Icon(
 											painter = painterResource(R.drawable.edit_rounded),
 											contentDescription = stringResource(R.string.edit_action),
