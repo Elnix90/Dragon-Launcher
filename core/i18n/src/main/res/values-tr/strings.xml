@@ -136,7 +136,7 @@
     <string name="search_apps">Uygulamaları Ara</string>
     <string name="search_widgets">Widgetları ara…</string>
     <string name="search_shortcuts">Kısayolları ara…</string>
-    <string name="precision_mode_active">Hassasiyet/Keskinlik Modu</string>
+    <string name="precision_mode_active">Hassasiyet Modu</string>
     <string name="remove_from_workspace">Çalışma Alanından Kaldır</string>
     <string name="add_to_workspace">Çalışma Alanına Ekle</string>
     <string name="change_app_icon">İkonu Değiştir</string>
@@ -358,7 +358,6 @@
     <string name="usage_permission_needed">Kullanım iznine erişim gerekli</string>
     <string name="grant_usage_permission">İzin Ver</string>
     <string name="reminder_mode_title">Kullanım Hatırlatıcısı</string>
-
     <string name="reminder_interval">Hatırlatma aralığı</string>
     <string name="reminder_interval_description">Bana her … dakikada bir hatırlat</string>
     <string name="overlay_permission_required">Üzerinde Görüntüleme İzni</string>
@@ -477,8 +476,6 @@
     <string name="on_tertiary_fixed_variant_color">Sabit Üçüncül Çeşidi Üzerindeki</string>
     <string name="custom_colors">Özel Renkler</string>
     <string name="custom_colors_desc">Başlatıcı eylemleri tarafından kullanılan renkler</string>
-
-
     <string name="use_categories">Kategorileri Kullan</string>
     <string name="use_categories_desc">Çekmecedeki uygulamaları tanımlanmış kategorilerine göre gruplandır</string>
     <string name="show_app_icons_in_drawer">Çekmecede Uygulama İkonlarını Göster</string>
@@ -501,4 +498,45 @@
     <string name="tap_circle_to_place">Uygulamayı koymak için daireye tıkla</string>
     <string name="multi_select_drawer_hint">💡Aynı anda birden fazla uygulama seçmek için bir uygulamaya uzun tıkla</string>
     <string name="deselect_all">Tümünün seçimini kaldır</string>
+    <string name="reminder_mode_description">Aktifken, her X dakikada durdurulmuş bir uygulamada olduğunun hatırlatmasını alırsın.</string>
+    <string name="prompt_shortcuts_when_adding_app">Uygulama eklerken kısayollar için seçim penceresi göster</string>
+    <string name="prompt_shortcuts_when_adding_app_desc">Aktifleştirildiğinde, uygulama veya uygulama kısayolları arasında seçim yapmanız için size sorulacak. Kapatıldığında, uygulama direkt olarak eklenecek.</string>
+    <string name="lock_settings_description">Kendi başlatıcı ayarlarını bir güvenlik metoduyla koru</string>
+    <string name="lock_method">Kilitleme Metodu</string>
+    <string name="lock_none">Hiçbir şey</string>
+    <string name="lock_pin">PIN Kodu</string>
+    <string name="lock_device_unlock">Cihaz kilit açma</string>
+    <string name="enter_pin">PIN girin</string>
+    <string name="confirm_pin">PIN\'i doğrulayın</string>
+    <string name="set_pin">PIN\'i ayarlayın</string>
+    <string name="pin_mismatch">PIN\'ler eşleşmiyor</string>
+    <string name="pin_set_success">PIN başarıyla ayarlandı</string>
+    <string name="wrong_pin">Hatalı PIN</string>
+    <string name="unlock_settings">Ayarların Kilidini Aç</string>
+    <string name="biometric_prompt_title">Dragon Ayarlarının Kilidini Aç</string>
+    <string name="biometric_prompt_subtitle">Ayarlara erişmek için doğrulamayı tamamla</string>
+    <string name="device_credentials_not_available">Hiçbir cihaz ekranı kilidi ayarlı değil</string>
+    <string name="authentication_failed">Doğrulama başarısız oldu</string>
+    <string name="authentication_error">Doğrulama hatası: %s</string>
+    <string name="select_default_workspace">Varsayılan çalışma alanı olarak seç</string>
+    <string name="select_workspace_hint">Varsayılan olarak hangi çalışma alanının açıldığını seç. Her zaman çekmecede sağa veya sola kaydırarak değiştirebilirsin.</string>
+    <string name="pinned_shortcut_failed">Kısayol ekleme başarısız oldu</string>
+    <string name="pinned_shortcuts">Kısayollar</string>
+    <string name="no_pinned_shortcuts">Kullanılabilir kısayol yok</string>
+    <string name="select_shortcut_action_title">%1$s için eylem seç</string>
+    <string name="no_extra_shortcuts">Kullanılabilir daha fazla eylem mevcut değil.</string>
+    <string name="just_open_app">Sadece aç: %1$s</string>
+    <string name="recently_used_apps">Son kullanılan uygulamalar</string>
+    <string name="show_recently_used_apps">Son kullanılan uygulamaları göster</string>
+    <string name="show_recently_used_apps_desc">Son kullanılan uygulamaları çekmecenin üst kısmında göster</string>
+    <string name="recently_used_apps_count">Son uygulamaların sayısı</string>
+    <string name="show_category_name">Kategori isimlerini göster</string>
+    <string name="show_category_name_desc">Kategori isimlerini kategorinin altında göster</string>
+    <string name="set_category">Kategori ayarla</string>
+    <string name="create_category">Yeni kategori oluştur</string>
+    <string name="category_name">Kategori ismi</string>
+    <string name="disabled_system_categories">Kapatılmış sistem kategorileri</string>
+    <string name="disabled_system_categories_desc">Hangi sistem kategorilerinin çekmecede gizleneceğini seç</string>
+    <string name="long_click_settings_duration">Uzun Tıklama Ayarları Süresi (ms)</string>
+    <string name="long_click_settings_duration_desc">Ayarlara erişmek için ne kadar uzun süre uzun tıklaman gerektiğini ayarla</string>
 </resources>
