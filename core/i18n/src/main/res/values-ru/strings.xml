@@ -1091,4 +1091,7 @@
     <string name="reset_default_point">Сбросить точку по умолчанию</string>
     <string name="reset_default_nest">Сбросить гнездо по умолчанию</string>
     <string name="reminder_mode_description">Когда активно, каждые X минут вам напоминают, что они всё ещё находятся в приложении на паузе.</string>
+    <string name="show_only_question_mark_icons">Показывать только иконки в виде вопросительного знака</string>
+    <string name="show_only_question_mark_icons_desc">Если вы психопат или любите странное — включите это</string>
+    <string name="weird">Странное</string>
 </resources>
