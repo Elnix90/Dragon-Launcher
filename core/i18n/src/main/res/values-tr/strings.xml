@@ -539,4 +539,24 @@
     <string name="disabled_system_categories_desc">Hangi sistem kategorilerinin çekmecede gizleneceğini seç</string>
     <string name="long_click_settings_duration">Uzun Tıklama Ayarları Süresi (ms)</string>
     <string name="long_click_settings_duration_desc">Ayarlara erişmek için ne kadar uzun süre uzun tıklaman gerektiğini ayarla</string>
+    <string name="pick_a_settings_screen">Bir ayarlar ekranı seçin</string>
+    <string name="app_preview_settings_desc">Ön görünümün nasıl olacağını seçin</string>
+    <string name="personal_profile">Kişisel</string>
+    <string name="work_profile">İş</string>
+    <string name="private_profile">Özel</string>
+    <string name="activate_debug_mode">Hata ayıklama modunu aktifleştir</string>
+    <string name="activate_debug_mode_desc">Uygulamalar arasında hata ayıklama özelliğini aç</string>
+    <string name="show_debug_infos">Hata ayıklama bilgilerini göster</string>
+    <string name="show_debug_infos_settings">Hata ayıklama bilgilerini ayarlarda göster</string>
+    <string name="auto_raise_dragon_on_system_launcher">Dragonu sistem başlatıcısı olarak otomatik başlatın</string>
+    <string name="are_you_sure">Emin misin?</string>
+    <string name="debug_infos">Hata ayıklama bilgileri</string>
+    <string name="super_warning_mode_desc">Yanlış şifre girdiğinde komik bir şey yap</string>
+    <string name="alarm_sound">Alarm Sesi</string>
+    <string name="metal_pipes_sound">Metal borular sesi</string>
+    <string name="metal_pipes_sound_desc">Yanlış şifre girildiğinde metal boru sesi çal</string>
+    <string name="app_icon_overlay_scale">Uygulama ikonunun kapladığı alan büyüklüğü</string>
+    <string name="language">Dil</string>
+    <string name="force_app_language_selector">Uygulamayı dil seçimine zorla</string>
+    <string name="force_app_language_selector_desc">Mevcut olduğunda android dilini seçmeyin, her zaman uygulamanın yerlisini kullanır</string>
 </resources>
