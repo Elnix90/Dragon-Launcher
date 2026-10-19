@@ -182,6 +182,13 @@ sealed class NavigationRoute : NavKey {
 	}
 
 	@Serializable
+	@SerialName("ChargingAnimation")
+	data object ChargingAnimation : NavigationRoute() {
+		override val resId: Int = R.string.charging_animation
+		override val icon: Int = R.drawable.battery_charging
+	}
+
+	@Serializable
 	@SerialName("DigitalPauseScreen")
 	data class DigitalPauseScreen(
 		val appToLaunch: Action.LaunchApp

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import android.view.Surface
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,15 +17,20 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.settings.stores.map.ChargingAnimationSettingsStore
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -36,6 +42,13 @@ fun ChargingAnimation() {
 	val ctx = LocalContext.current
 	val density = LocalDensity.current.density
 	val scope = rememberCoroutineScope()
+
+	val sizeMultiplier by ChargingAnimationSettingsStore.sizeMultiplier.asState()
+
+	val amountMultiplier by ChargingAnimationSettingsStore.amountMultiplier.asState()
+	val amountDerived by rememberUpdatedState(amountMultiplier)
+
+	val color by ChargingAnimationSettingsStore.color.asState()
 
 	var intensity by remember { mutableIntStateOf(0) }
 
@@ -57,7 +70,7 @@ fun ChargingAnimation() {
 					}
 					return
 				}
-				intensity = (current / 100000f).roundToInt().takeIf { it > 0 } ?: 1
+				intensity = ((current / 100000f) * amountDerived).roundToInt().takeIf { it > 0 } ?: 1
 			} else {
 				intensity = 0
 			}
@@ -86,14 +99,15 @@ fun ChargingAnimation() {
 
 	var bubbles by remember { mutableStateOf(arrayOf<Bubble>()) }
 
-	LaunchedEffect(intensity) {
+	LaunchedEffect(intensity, amountDerived) {
+		val currentIntensity = intensity * amountDerived
+
 		bubbles =
-			Array(intensity) {
+			Array(currentIntensity) {
 				FloatArray(6)
 			}
-		if (intensity == 0) return@LaunchedEffect
+		if (currentIntensity == 0) return@LaunchedEffect
 		while (isActive) {
-			val currentIntensity = intensity
 			val newBubbles = Array(currentIntensity) { FloatArray(6) }
 			withInfiniteAnimationFrameMillis {}
 			for (i in 0 until currentIntensity) {
@@ -119,16 +133,31 @@ fun ChargingAnimation() {
 		}
 	}
 
+	val view = LocalView.current
+	LocalConfiguration.current // read it so we recompose on rotation
+	val degrees = when (view.display?.rotation) {
+		Surface.ROTATION_90 -> -90f
+		Surface.ROTATION_180 -> 180f
+		Surface.ROTATION_270 -> 90f
+		else -> 0f
+	}
+
 	Canvas(modifier = Modifier.fillMaxSize()) {
-		for (bubble in bubbles) {
-			val x = size.width / 2 + bubble.posX
-			val y = size.height - bubble.posY
-			drawCircle(
-				color = Color.White,
-				radius = bubble.radius,
-				alpha = bubble.lifetime / 255,
-				center = Offset(x, y)
-			)
+		// In landscape, the "height" of the virtual portrait space is the canvas width
+		val h = if (degrees == 90f || degrees == -90f) size.width else size.height
+
+		rotate(degrees, pivot = center) {
+			for (bubble in bubbles) {
+				val x = center.x + bubble.posX
+				val y = center.y + h / 2 - bubble.posY
+
+				drawCircle(
+					color = color,
+					radius = bubble.radius * sizeMultiplier,
+					alpha = bubble.lifetime / 255f,
+					center = Offset(x, y)
+				)
+			}
 		}
 	}
 }

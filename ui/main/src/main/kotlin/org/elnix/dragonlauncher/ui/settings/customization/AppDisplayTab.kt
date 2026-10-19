@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asMutableState
@@ -15,6 +16,9 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.Legacy
 import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.New
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -23,8 +27,8 @@ import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
+import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 
 @Composable
 fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
@@ -46,15 +50,7 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 	) {
 		DragonSettingsGroup(R.string.common_settings) {
 			Setting(UiSettingsStore.fullScreen)
-
-			var showChargingAnimation by showChargingAnimation()
-
-			SwitchRow(
-				title = R.string.charging_animation,
-				description = R.string.charging_animation_desc,
-				icon = R.drawable.battery_charging,
-				state = showChargingAnimation
-			) { showChargingAnimation = it }
+			RouteItem(NavigationRoute.ChargingAnimation)
 		}
 
 		DragonSettingsGroup(R.string.app_preview_settings) {
@@ -121,7 +117,13 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 	}
 
 	val points by pointsViewModel.pointsService.points.collectAsState()
-	val randomPoint = remember(showPreview) { points.values.random() }
+	val randomPoint = remember(showPreview) {
+		points.values.randomOrNull() ?: Point(
+			offset = Offset.Unspecified,
+			action = Action.OpenDragonLauncherSettings(),
+			id = 0
+		) // When the list of points is empty, it happened to me once
+	}
 
 	if (showPreview) {
 		PointPreviewTitle(randomPoint)

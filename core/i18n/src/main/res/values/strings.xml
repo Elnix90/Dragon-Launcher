@@ -1120,7 +1120,15 @@
 	<string name="reset_default_point">Reset default Point</string>
 	<string name="reset_default_nest">Reset default Nest</string>
 	<string name="reset_default_shape">Reset default Shape</string>
-    <string name="show_only_question_mark_icons">Show only qustion mark icons</string>
+    <string name="show_only_question_mark_icons">Show only question mark icons</string>
 	<string name="show_only_question_mark_icons_desc">If you\'re a psychopath, or like weird stuff, enable this</string>
 	<string name="weird">Weird</string>
+    <string name="charging_animation_help">Configure the charging animation</string>
+	<string name="charging_animation_reset">Are you sure you want to reset the charging animation settings?</string>
+	<string name="charging_animation_color">Charging animation color</string>
+	<string name="charging_animation_size_multiplier">Size Multiplier</string>
+	<string name="charging_animation_size_multiplier_desc">The amount by which the size of all bubbles is multiplied</string>
+	<string name="charging_animation_amount_multiplier">Amount Multiplier</string>
+	<string name="charging_animation_amount_multiplier_desc">Higher = more bubbles</string>
+	<string name="charging_animation_warning_not_charging">💡 Charge your phone to see the animation</string>
 </resources>
