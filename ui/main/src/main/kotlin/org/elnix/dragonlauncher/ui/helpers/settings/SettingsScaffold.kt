@@ -190,15 +190,10 @@ fun SettingsScaffold(
 						}.fillMaxSize(),
 					horizontalArrangement = Arrangement.spacedBy(12.dp)
 				) {
-// 						if (bottomContent != null) {
-// 							bottomContent()
-// 							Spacer(5.dp)
-// 						}
-
 					SettingsTitleColumn(
 						title = title,
 						moreOptions = moreOptions,
-						modifier = Modifier.fillMaxWidth(0.3f),
+						modifier = Modifier.fillMaxWidth(0.2f),
 						onBack = handleBack,
 						resetAndHelp = {
 							if (onReset != null) {
@@ -227,7 +222,7 @@ fun SettingsScaffold(
 							LazyColumn(
 								verticalArrangement = Arrangement.spacedBy(16.dp),
 								horizontalAlignment = Alignment.CenterHorizontally,
-								modifier = Modifier.fillMaxSize(),
+								modifier = Modifier.weight(1f),
 								state = lazyListState ?: rememberLazyListState()
 							) { lazyContent() }
 						} else {
@@ -236,11 +231,16 @@ fun SettingsScaffold(
 								horizontalAlignment = Alignment.CenterHorizontally,
 								modifier =
 									Modifier
-										.fillMaxSize()
+										.weight(1f)
 										.conditional(scrollableContent) {
 											verticalScroll(scrollState ?: rememberScrollState())
 										}
 							) { content!!() }
+						}
+
+						if (bottomContent != null) {
+							bottomContent()
+							Spacer(5.dp)
 						}
 					}
 				}
