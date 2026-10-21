@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.helpers.settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,18 +57,85 @@ fun DragonGroupScope.SettingsItem(
 }
 
 @Composable
+fun DragonGroupScope.SplitSettingsItem(
+	title: String,
+	icon: Int,
+	description: String? = null,
+	vararg trailingIcons: SocialLink,
+	firstHalfOnClick: () -> Unit,
+	firstHalfEnabled: Boolean = true
+) {
+	val uriHandler = LocalUriHandler.current
+	Row(
+		modifier = Modifier.dragonSettingGroupSpecialOuter(),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+	) {
+		Row(
+			modifier = with(this@SplitSettingsItem) {
+				Modifier.dragonSettingGroupSpecialInner(true) {
+					clickable(
+						enabled = firstHalfEnabled,
+						onClick = firstHalfOnClick
+					)
+				}
+			},
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(16.dp)
+		) {
+			BoxedIcon(icon, firstHalfEnabled)
+
+			TextWithDescription(
+				text = title,
+				description = description,
+				modifier = Modifier.weight(1f),
+				enabled = firstHalfEnabled
+			)
+		}
+
+		Row(
+			modifier = with(this@SplitSettingsItem) {
+				Modifier.dragonSettingGroupSpecialInner(false)
+			},
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(16.dp)
+		) {
+			trailingIcons.forEach {
+				BoxedIcon(it.icon) {
+					uriHandler.openUri(it.url)
+				}
+			}
+		}
+	}
+}
+
+@Composable
 fun DragonGroupScope.RouteItem(
 	route: NavigationRoute,
-	vararg trailingIcons: SocialLink,
 	enabled: Boolean = true
 ) {
 	val navigator = LocalNavigator.current
 	SettingsItem(
 		title = stringResource(route.resId),
 		enabled = enabled,
-		trailingIcons = trailingIcons,
 		icon = route.icon
 	) {
 		navigator.navigate(route)
 	}
+}
+
+@Composable
+fun DragonGroupScope.RouteItem(
+	route: NavigationRoute,
+	vararg trailingIcons: SocialLink,
+	enabled: Boolean = true
+) {
+	val navigator = LocalNavigator.current
+	SplitSettingsItem(
+		title = stringResource(route.resId),
+		trailingIcons = trailingIcons,
+		icon = route.icon,
+		firstHalfEnabled = enabled,
+		firstHalfOnClick = { navigator.navigate(route) }
+	)
 }

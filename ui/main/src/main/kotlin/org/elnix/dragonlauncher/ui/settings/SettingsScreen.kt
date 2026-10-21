@@ -101,11 +101,13 @@ import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
 import org.elnix.dragonlauncher.ui.components.VersionCodeChip
 import org.elnix.dragonlauncher.ui.components.VersionNumberChip
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.helpers.settings.SplitSettingsItem
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningReminder
 
@@ -217,7 +219,7 @@ fun SettingsScreen(
 				modifier =
 					Modifier
 						.height(60.dp)
-						.dragonSettingGroup(),
+						.dragonSettingGroup(padding = false),
 				horizontalArrangement = Arrangement.SpaceEvenly,
 				verticalAlignment = Alignment.CenterVertically
 			) {
@@ -243,7 +245,7 @@ fun SettingsScreen(
 									painter = painterResource(ic),
 									contentDescription = null,
 									tint = Color.Unspecified,
-									modifier = Modifier.size(24.dp)
+									modifier = Modifier.size(32.dp)
 								)
 							}
 						}
@@ -280,12 +282,14 @@ fun SettingsScreen(
 				codeberg(CODEBERG_REPO_LINK)
 			) { uriHandler.openUri(GITHUB_REPO_LINK) }
 
-			SettingsItem(
+			SplitSettingsItem(
 				title = stringResource(R.string.changelogs),
 				icon = R.drawable.source_notes,
-				description = null,
-				openInNew("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/$versionCode.txt")
-			) { navigator.navigate(NavigationRoute.Changelogs) }
+				description = stringResource(R.string.see_changelogs),
+				openInNew("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/$versionCode.txt"),
+				firstHalfEnabled = true,
+				firstHalfOnClick = { navigator.navigate(NavigationRoute.Changelogs) }
+			)
 
 			SettingsItem(
 				title = stringResource(R.string.check_for_update),
@@ -382,6 +386,17 @@ fun SettingsScreen(
 						)
 					}
 				}
+			}
+
+			DragonButton(
+				onClick = {
+					uriHandler.openUri(WEBLATE_LINK)
+				}
+			) {
+				Text(
+					text = stringResource(R.string.contribute_in_translations),
+					style = MaterialTheme.typography.labelMediumEmphasized
+				)
 			}
 		}
 

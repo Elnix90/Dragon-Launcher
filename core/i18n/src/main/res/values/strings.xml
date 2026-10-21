@@ -1131,4 +1131,6 @@
 	<string name="charging_animation_amount_multiplier">Amount Multiplier</string>
 	<string name="charging_animation_amount_multiplier_desc">Higher = more bubbles</string>
 	<string name="charging_animation_warning_not_charging">💡 Charge your phone to see the animation</string>
+	<string name="see_changelogs">See the changelogs since first version</string>
+	<string name="contribute_in_translations">Contribute in translations</string>
 </resources>
