@@ -1134,4 +1134,9 @@
 	<string name="see_changelogs">See the changelogs since first version</string>
 	<string name="contribute_in_translations">Contribute in translations</string>
 	<string name="drawer_preview">Drawer preview</string>
+	<string name="drawer_appearance">Drawer appearance</string>
+	<string name="drawer_behavior">Drawer behavior</string>
+	<string name="drawer_appearance_help">Configure the look of your drawer</string>
+	<string name="drawer_behavior_help">Configure the behavior of your drawer</string>
+	<string name="drawer_actions_help">Configure the actions your drawer can execute for you</string>
 </resources>

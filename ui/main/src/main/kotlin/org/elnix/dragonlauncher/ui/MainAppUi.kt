@@ -118,6 +118,9 @@ import org.elnix.dragonlauncher.ui.settings.customization.behavior.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.behavior.BehaviorTabViewModel
 import org.elnix.dragonlauncher.ui.settings.customization.behavior.GlobalDraggingModeSetup
 import org.elnix.dragonlauncher.ui.settings.customization.behavior.GlobalDraggingModeSetupViewModel
+import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerActionsTab
+import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerAppearanceTab
+import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerBehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.customization.hold.HoldToActivateTab
 import org.elnix.dragonlauncher.ui.settings.customization.hold.HoldToActivateTabViewModel
@@ -416,6 +419,9 @@ fun MainAppUi(
 								GlobalDraggingModeSetup(viewModel)
 							}
 							entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) { DrawerTab() }
+							entry<NavigationRoute.DrawerActions>(metadata = horizontalMetadata) { DrawerActionsTab() }
+							entry<NavigationRoute.DrawerAppearance>(metadata = horizontalMetadata) { DrawerAppearanceTab() }
+							entry<NavigationRoute.DrawerBehavior>(metadata = horizontalMetadata) { DrawerBehaviorTab() }
 							entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab() }
 							entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen() }
 							entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab() }

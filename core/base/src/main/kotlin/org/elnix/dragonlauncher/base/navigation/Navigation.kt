@@ -161,6 +161,27 @@ sealed class NavigationRoute : NavKey {
 	}
 
 	@Serializable
+	@SerialName("DrawerAppearance")
+	data object DrawerAppearance : NavigationRoute() {
+		override val resId: Int = R.string.drawer_appearance
+		override val icon: Int = R.drawable.apps_plus
+	}
+
+	@Serializable
+	@SerialName("DrawerBehavior")
+	data object DrawerBehavior : NavigationRoute() {
+		override val resId: Int = R.string.drawer_behavior
+		override val icon: Int = R.drawable.settings_applications
+	}
+
+	@Serializable
+	@SerialName("DrawerActions")
+	data object DrawerActions : NavigationRoute() {
+		override val resId: Int = R.string.drawer_actions
+		override val icon: Int = R.drawable.action_key
+	}
+
+	@Serializable
 	@SerialName("Workspace")
 	data object Workspace : NavigationRoute() {
 		override val resId: Int = R.string.workspaces
@@ -300,6 +321,7 @@ sealed class NavigationRoute : NavKey {
 				Settings,
 				Appearance,
 				AppDisplay,
+				ChargingAnimation,
 				Colors,
 				Wallpaper,
 				Widgets,
@@ -312,6 +334,8 @@ sealed class NavigationRoute : NavKey {
 				MainScreenLayers,
 				Behavior,
 				DrawerSettings,
+				DrawerAppearance,
+				DrawerBehavior,
 				Workspace,
 				Backup,
 				Wellbeing,
