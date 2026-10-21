@@ -1133,4 +1133,5 @@
 	<string name="charging_animation_warning_not_charging">💡 Charge your phone to see the animation</string>
 	<string name="see_changelogs">See the changelogs since first version</string>
 	<string name="contribute_in_translations">Contribute in translations</string>
+	<string name="drawer_preview">Drawer preview</string>
 </resources>
