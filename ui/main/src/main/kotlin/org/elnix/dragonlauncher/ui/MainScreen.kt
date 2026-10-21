@@ -112,7 +112,7 @@ fun MainScreen(
 				.pointerInput(Unit) {
 					with(swipeService) { mainDragGesture() }
 				}.pointerInput(Unit) {
-					with(swipeService) { holdGesture(scope.coroutineContext) }
+					with(swipeService) { holdGesture(scope.coroutineContext, true) }
 				}
 	) {
 		mainScreenLayers.filter { it.enabled }.forEach { layer ->

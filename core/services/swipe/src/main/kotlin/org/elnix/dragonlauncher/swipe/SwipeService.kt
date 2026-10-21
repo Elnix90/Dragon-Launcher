@@ -111,8 +111,10 @@ interface SwipeService {
 	/**
 	 * This function NEEDS this [context] parameter, otherwise it crashes and complains that it want a [androidx.compose.runtime.MonotonicFrameClock] in the coroutine context.
 	 * The [context] is passed by compose and got using `rememberCoroutintScope()`
+	 *
+	 * @param enabled whether the finished gesture launches the corresponding action. It is disabled in the HoldToActivateTab for demo purposes obviously
 	 */
-	suspend fun PointerInputScope.holdGesture(context: CoroutineContext)
+	suspend fun PointerInputScope.holdGesture(context: CoroutineContext, enabled: Boolean)
 
 	fun loadAllFromDisk()
 
@@ -330,7 +332,10 @@ internal class SwipeServiceImpl(
 		}
 	}
 
-	override suspend fun PointerInputScope.holdGesture(context: CoroutineContext) {
+	override suspend fun PointerInputScope.holdGesture(
+		context: CoroutineContext,
+		enabled: Boolean
+	) {
 		awaitEachGesture {
 			val down = awaitFirstDown()
 			holdAnchor.value = down.position
