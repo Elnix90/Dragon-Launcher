@@ -32,6 +32,7 @@ fun ChargingAnimationTab() {
 	val ctx = LocalContext.current
 	val scope = rememberCoroutineScope()
 
+	var showChargingAnimation by showChargingAnimation()
 	var isCharging by remember { mutableStateOf(false) }
 
 	DisposableEffect(null) {
@@ -70,8 +71,6 @@ fun ChargingAnimationTab() {
 			}
 		) {
 			DragonSettingsGroup {
-				var showChargingAnimation by showChargingAnimation()
-
 				SwitchRow(
 					title = R.string.charging_animation,
 					description = R.string.charging_animation_desc,
@@ -92,6 +91,8 @@ fun ChargingAnimationTab() {
 			}
 		}
 
-		ChargingAnimation()
+		if (showChargingAnimation) {
+			ChargingAnimation()
+		}
 	}
 }

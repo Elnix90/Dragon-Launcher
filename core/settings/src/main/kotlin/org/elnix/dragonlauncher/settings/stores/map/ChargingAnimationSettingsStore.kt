@@ -30,6 +30,6 @@ object ChargingAnimationSettingsStore : MapSettingsStore() {
 		default = 1,
 		title = R.string.charging_animation_amount_multiplier,
 		description = R.string.charging_animation_amount_multiplier_desc,
-		allowedRange = 1..5
+		allowedRange = 1..20
 	)
 }

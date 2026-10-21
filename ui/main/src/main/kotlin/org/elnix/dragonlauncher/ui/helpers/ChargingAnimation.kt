@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -27,6 +28,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -34,8 +37,25 @@ import org.elnix.dragonlauncher.settings.stores.map.ChargingAnimationSettingsSto
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
-// Copied from Kvastisto
+// Copied from Kvaesitso
 // https://github.com/MM2-0/Kvaesitso/blob/07e3e9669f8990e76d9d4062492dc741793e49a5/app/ui/src/main/java/de/mm20/launcher2/ui/component/NavBarEffects.kt
+
+/**
+ * Hard cap on simultaneously drawn bubbles so a fast charger (or a misbehaving current
+ * sensor reporting an absurd value) can't spawn thousands of circles per frame.
+ */
+private const val MAX_BUBBLES = 300
+
+/** The physics below were tuned for 60 fps; one reference frame is ~16.67 ms. */
+private const val REFERENCE_FRAME_MS = 1000f / 60f
+
+/**
+ * Longest single step we ever apply, so a frame stall (GC pause, screen off, window
+ * switch, ...) doesn't teleport every bubble across the screen.
+ */
+private const val MAX_FRAME_MS = REFERENCE_FRAME_MS * 3f
+
+private val EMPTY_BUBBLES = arrayOf<Bubble>()
 
 @Composable
 fun ChargingAnimation() {
@@ -70,16 +90,25 @@ fun ChargingAnimation() {
 					}
 					return
 				}
-				intensity = ((current / 100000f) * amountDerived).roundToInt().takeIf { it > 0 } ?: 1
+				intensity = (current / 100000f).roundToInt().takeIf { it > 0 } ?: 1
 			} else {
 				intensity = 0
 			}
 		}
 
+		// BATTERY_PROPERTY_CURRENT_NOW is a binder call into the battery HAL that can block
+		// for several milliseconds on low-end devices. Run every update on a single
+		// off-main lane: broadcasts stay serialized (no stale overwrites) and the main
+		// thread never stalls. Only the latest broadcast matters, so a pending/retrying
+		// update is canceled when a new one arrives.
+		val updateDispatcher = Dispatchers.IO.limitedParallelism(1)
+		var updateJob: Job? = null
+
 		val receiver =
 			object : BroadcastReceiver() {
 				override fun onReceive(ctx: Context?, intent: Intent?) {
-					scope.launch {
+					updateJob?.cancel()
+					updateJob = scope.launch(updateDispatcher) {
 						update(intent, false)
 					}
 				}
@@ -88,32 +117,69 @@ fun ChargingAnimation() {
 		val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
 
 		val intent = ctx.registerReceiver(receiver, intentFilter)
-		scope.launch {
+		updateJob = scope.launch(updateDispatcher) {
 			update(intent, true)
 		}
 
 		onDispose {
+			updateJob.cancel()
 			ctx.unregisterReceiver(receiver)
 		}
 	}
 
-	var bubbles by remember { mutableStateOf(arrayOf<Bubble>()) }
+	// The pool is mutated in place every frame. neverEqualPolicy lets writing the same
+	// array instance still invalidate the draw pass, so the animation loop never has to
+	// allocate a fresh array per frame just to trigger a redraw.
+	var bubbles by remember { mutableStateOf(EMPTY_BUBBLES, neverEqualPolicy()) }
 
-	LaunchedEffect(intensity, amountDerived) {
-		val currentIntensity = intensity * amountDerived
+	// Only restart the loop when charging starts/stops. The intensity and the amount
+	// setting are read on every frame instead, so a fluctuating battery current no longer
+	// restarts (and re-randomizes) the whole animation on every battery broadcast.
+	val isCharging = intensity > 0
+	LaunchedEffect(isCharging) {
+		if (!isCharging) {
+			bubbles = EMPTY_BUBBLES
+			return@LaunchedEffect
+		}
 
-		bubbles =
-			Array(currentIntensity) {
-				FloatArray(6)
-			}
-		if (currentIntensity == 0) return@LaunchedEffect
+		var lastFrameMs = -1L
 		while (isActive) {
-			val newBubbles = Array(currentIntensity) { FloatArray(6) }
-			withInfiniteAnimationFrameMillis {}
-			for (i in 0 until currentIntensity) {
-				val bubble = newBubbles[i]
-				val oldBubble = bubbles[i]
-				if (oldBubble.lifetime <= 0f) {
+			// Frame time of the current vsync. Reading it via the return value keeps the
+			// frame callback capture-free (and therefore allocation-free).
+			val nowMs = withInfiniteAnimationFrameMillis { it }
+
+			val frameMs =
+				if (lastFrameMs < 0L) {
+					REFERENCE_FRAME_MS
+				} else {
+					(nowMs - lastFrameMs).coerceIn(0L, MAX_FRAME_MS.toLong()).toFloat()
+				}
+			lastFrameMs = nowMs
+
+			// Advance by elapsed time instead of one fixed step per frame, so the animation
+			// keeps a constant speed on 90/120 Hz panels and while frames are being dropped
+			val frameScale = frameMs / REFERENCE_FRAME_MS
+
+			val targetCount =
+				(intensity.toLong() * amountDerived).coerceIn(0L, MAX_BUBBLES.toLong()).toInt()
+
+			if (targetCount <= 0) {
+				if (bubbles.isNotEmpty()) bubbles = EMPTY_BUBBLES
+				continue
+			}
+
+			var pool = bubbles
+			if (pool.size != targetCount) {
+				// Resize only when the count actually changes, and keep already-living
+				// bubbles alive so intensity fluctuations don't reset the animation
+				val previous = pool
+				pool = Array(targetCount) { i -> if (i < previous.size) previous[i] else FloatArray(6) }
+				bubbles = pool
+			}
+
+			for (i in pool.indices) {
+				val bubble = pool[i]
+				if (bubble.lifetime <= 0f) {
 					bubble.posX = (Math.random() * 48 - 24).toFloat() * density
 					bubble.posY = 0f
 					bubble.deltaX = (Math.random() - 0.5).toFloat() * 1f * density
@@ -121,15 +187,15 @@ fun ChargingAnimation() {
 					bubble.radius = (Math.random() * 2 + 2).toFloat() * density
 					bubble.lifetime = (Math.random() * 80 + 40).toInt().toFloat()
 				} else {
-					bubble.posX = oldBubble.deltaX + oldBubble.posX
-					bubble.posY = oldBubble.deltaY + oldBubble.posY
-					bubble.lifetime = oldBubble.lifetime - 1
-					bubble.deltaX = oldBubble.deltaX
-					bubble.deltaY = oldBubble.deltaY
-					bubble.radius = oldBubble.radius
+					bubble.posX += bubble.deltaX * frameScale
+					bubble.posY += bubble.deltaY * frameScale
+					bubble.lifetime -= frameScale
 				}
 			}
-			bubbles = newBubbles
+
+			// The same instance is written back on purpose: neverEqualPolicy turns this
+			// into a plain draw-phase invalidation without allocating anything
+			bubbles = pool
 		}
 	}
 
