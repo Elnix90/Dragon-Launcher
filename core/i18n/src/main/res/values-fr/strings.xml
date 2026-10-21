@@ -304,7 +304,6 @@
     <string name="grant_usage_permission">Accorder la permission</string>
     <!--  ─────────────  Wellbeing: Reminder Mode  ─────────────  -->
     <string name="reminder_mode_title">Rappel d\'utilisation</string>
-
     <string name="reminder_interval">Intervalle de rappel</string>
     <string name="reminder_interval_description">Me le rapeller toutes les … minutes</string>
     <string name="overlay_permission_required">Permission de superposition</string>
@@ -427,8 +426,6 @@
     <string name="on_tertiary_fixed_variant_color">Sur la variante fixe tertiaire</string>
     <string name="custom_colors">Couleurs personnalisées</string>
     <string name="custom_colors_desc">Couleurs personalisées</string>
-
-
     <string name="use_categories">Catégories d’utilisation</string>
     <string name="use_categories_desc">Regroupez les applications dans le tiroir selon leurs catégories définies</string>
     <string name="show_app_icons_in_drawer">Afficher les icônes de l’application dans le tiroir</string>
@@ -916,4 +913,10 @@
     <string name="permission_manage_profiles_desc">Autorisez Dragon Launcher à gérer vos profils pros et persos pour que vous puissiez les mettre en pause, les verrouiller et passer de l’un à l’autre.</string>
     <string name="permission_usage_stat_desc">Autorisez Dragon Launcher à accéder à vos statistiques d’utilisation. Nécessaire aux temps d’écran, aux minuteurs d’applications et au bien-être numérique.</string>
     <string name="permission_display_over_other_apps_title">Affichage par-dessus les autres applications</string>
+    <string name="show_only_question_mark_icons_desc">Activer si vous êtes un psychopathe ou un amateur d’étrangetés</string>
+    <string name="weird">Étrange</string>
+    <string name="app_icon_overlay_scale">Échelle de la surcouche des icônes d’app</string>
+    <string name="reminder_mode_description">Activés, vous recevrez un rappel toutes les X minutes qu’ils sont toujours sur l’app.</string>
+    <string name="permission_notifications_title">Notifications</string>
+    <string name="permission_notifications_desc">Autoriser Dragon à vous envoyer des notifs</string>
 </resources>
