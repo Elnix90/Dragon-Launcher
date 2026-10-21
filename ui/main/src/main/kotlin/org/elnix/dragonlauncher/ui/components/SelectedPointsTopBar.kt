@@ -8,8 +8,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -87,6 +90,7 @@ fun SelectedPointsTopBar(
 		transitionSpec = { barsContentTransform },
 		contentAlignment = Alignment.Center,
 		modifier = modifier
+			.padding(WindowInsets.safeDrawing.asPaddingValues())
 	) { previewToShow ->
 		@Suppress("UnusedExpression")
 		when (previewToShow) {
@@ -100,7 +104,7 @@ fun SelectedPointsTopBar(
 					LocalPointPreviewTitleOptions provides LocalPointPreviewTitleOptions.current.copy(
 						showIcon = true,
 						showLabel = true,
-						topPadding = 30.dp
+						topPadding = 0.dp
 					)
 				) {
 					PointPreviewTitle(frozenPoints[previewPointId])
@@ -111,7 +115,6 @@ fun SelectedPointsTopBar(
 				Row(
 					modifier =
 						Modifier
-							.padding(top = 10.dp)
 							.shapedClickable { showSelectedPointsDialog = true }
 							.background(MaterialTheme.colorScheme.surfaceContainerHigh)
 							.padding(10.dp),
