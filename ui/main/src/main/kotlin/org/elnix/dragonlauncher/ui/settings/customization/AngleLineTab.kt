@@ -7,9 +7,10 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
@@ -114,13 +115,15 @@ private data class AngleLinePreset(
 			"    startObject = $startObject,\n" +
 			"    showEndObjectPreview = $showEndObjectPreview,\n" +
 			"    endObject = $endObject,\n" +
-			"    angleLineObjectsOrder = ${if (angleLineObjectsOrder != null) {
-				"[" + angleLineObjectsOrder.joinToString(
-					", "
-				) { it.name } + "]"
-			} else {
-				null
-			}},\n" +
+			"    angleLineObjectsOrder = ${
+				if (angleLineObjectsOrder != null) {
+					"[" + angleLineObjectsOrder.joinToString(
+						", "
+					) { it.name } + "]"
+				} else {
+					null
+				}
+			},\n" +
 			"    color = ${color?.let { "Color(0x${color.toHexWithAlpha.replace("#", "")}" }})\n" +
 			")"
 }
@@ -180,335 +183,660 @@ fun AngleLineTab(
 	val pickedRememberShapeEnd = remember(endObject.shape) { endObject.shape.resolveShape() }
 	val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep)
 
-	Canvas(Modifier.fillMaxSize()) {
-		/**
-		 * The line color uses a [Int] angle, that it converts to a float, to prevent tiny difference in colors.
-		 * This method can only produce at most 360 different colors.
-		 *
-		 * This is needed by the [org.elnix.dragonlauncher.ui.helpers.customobjects.customGlowPaint] to provide optimizations when dealing with the low-level Paint APIs.
-		 * This prevents the [org.elnix.dragonlauncher.ui.helpers.customobjects.PaintCache] to be made useless by too much different [android.graphics.Paint] requests
-		 */
-		val lineColor: Color =
-			if (rgbLine) {
-				Color.hsv(sweepState.sweepAngle().angle360().toFloat(), 1f, 1f)
-			} else {
-				extraColors.angleLine
-			}
+	BoxWithConstraints {
+		if (maxWidth <= 500.dp) {
+			SettingsScaffold(
+				title = stringResource(R.string.angle_line),
+				onBack = {
+					swipeService.saveLineObjects()
+					swipeService.saveAngleLineOrder()
+					navigator.onBack()
+				},
+				helpText = stringResource(R.string.angle_line_help),
+				resetText = stringResource(R.string.reset_angle_tab),
+				onReset = {
+					swipeService.resetLineObjects()
+					swipeService.resetAngleLineOrder()
+				},
+				specialSettingsTitleContent = {
+					AnimatedFab(
+						onClick = { showOrderDialog = true },
+						icon = R.drawable.height
+					)
+				},
+				scrollableContent = false,
+				topContent = {
+					var height by remember { mutableIntStateOf(0) }
+					var isFirstPositioning by remember { mutableStateOf(true) }
 
-		actionLine(
-			start = startOffset.value,
-			end = endOffset.value,
-			sweepAngle = sweepAngle,
-			lineColor = lineColor,
-			order = order,
-			eraseColor = backgroundColor,
-			showLineObjectPreview = showLineObjectPreview,
-			showAngleLineObjectPreview = showAngleLineObjectPreview,
-			showStartObjectPreview = showStartObjectPreview,
-			showEndObjectPreview = showEndObjectPreview,
-			pickedRememberShapeAngle = pickedRememberShapeAngle,
-			pickedRememberRotationAngle = pickedRememberRotationAngle,
-			pickedRememberRotationStart = pickedRememberRotationStart,
-			pickedRememberShapeStart = pickedRememberShapeStart,
-			pickedRememberRotationEnd = pickedRememberRotationEnd,
-			pickedRememberShapeEnd = pickedRememberShapeEnd,
-			lineCustomObject = lineObject,
-			angleLineCustomObject = angleObject,
-			startCustomObject = startObject,
-			endCustomObject = endObject
-		)
-	}
+					Canvas(
+						modifier =
+							Modifier
+								.fillMaxWidth()
+								.height(height.toDp)
+								.onGloballyPositioned { layoutCoordinates ->
+									if (isFirstPositioning) {
+										height = layoutCoordinates.size.width
+										isFirstPositioning = false
+									}
+								}.pointerInput(Unit) {
+									detectDragGestures(
+										onDragStart = { position: Offset ->
+											val distanceToStart = startOffset.value distanceSquaredTo position
+											val distanceToEnd = endOffset.value distanceSquaredTo position
 
-	SettingsScaffold(
-		title = stringResource(R.string.angle_line),
-		onBack = {
-			swipeService.saveLineObjects()
-			swipeService.saveAngleLineOrder()
-			navigator.onBack()
-		},
-		helpText = stringResource(R.string.angle_line_help),
-		resetText = stringResource(R.string.reset_angle_tab),
-		onReset = {
-			swipeService.resetLineObjects()
-			swipeService.resetAngleLineOrder()
-		},
-		specialSettingsTitleContent = {
-			AnimatedFab(
-				onClick = { showOrderDialog = true },
-				icon = R.drawable.height
-			)
-		},
-		scrollableContent = false,
-		topContent = {
-			var height by remember { mutableIntStateOf(0) }
-			var isFirstPositioning by remember { mutableStateOf(true) }
-
-			Box(
-				modifier =
-					Modifier
-						.fillMaxWidth()
-						.height(height.toDp)
-						.onGloballyPositioned { layoutCoordinates ->
-							if (isFirstPositioning) {
-								height = layoutCoordinates.size.width
-								isFirstPositioning = false
-							}
-						}.pointerInput(Unit) {
-							detectDragGestures(
-								onDragStart = { position: Offset ->
-									val distanceToStart = startOffset.value distanceSquaredTo position
-									val distanceToEnd = endOffset.value distanceSquaredTo position
-
-									moveStartOrEnd =
-										if (distanceToEnd < distanceToStart) {
-											false
-										} else {
-											true
+											moveStartOrEnd =
+												if (distanceToEnd < distanceToStart) {
+													false
+												} else {
+													true
+												}
+										},
+										onDrag = { change, _ ->
+											scope.launch {
+												if (moveStartOrEnd) {
+													startOffset.animateTo(
+														targetValue = change.position,
+														animationSpec = bouncySpec()
+													)
+												} else {
+													endOffset.animateTo(
+														targetValue = change.position,
+														animationSpec = bouncySpec()
+													)
+												}
+											}
 										}
-								},
-								onDrag = { change, _ ->
+									)
+								}.onGloballyPositioned { coordinates ->
+									val rect = coordinates.boundsInRoot()
+									val rectHeight = (rect.height / 2.5f).toInt()
+									val rectWidth = (rect.width / 2.5f).toInt()
+
+									fun randomPosition(): Offset =
+										Offset(
+											rect.center.x + (-rectWidth..rectWidth).random(),
+											rect.center.y + (-rectHeight..rectHeight).random()
+										)
+
 									scope.launch {
-										if (moveStartOrEnd) {
-											startOffset.animateTo(
-												targetValue = change.position,
-												animationSpec = bouncySpec()
-											)
-										} else {
-											endOffset.animateTo(
-												targetValue = change.position,
-												animationSpec = bouncySpec()
-											)
+										startOffset.animateTo(
+											targetValue = randomPosition(),
+											animationSpec = bouncySpec()
+										)
+									}
+
+									scope.launch {
+										endOffset.animateTo(
+											targetValue = randomPosition(),
+											animationSpec = bouncySpec()
+										)
+									}
+								}
+					) {
+						/**
+						 * The line color uses a [Int] angle, that it converts to a float, to prevent tiny difference in colors.
+						 * This method can only produce at most 360 different colors.
+						 *
+						 * This is needed by the [org.elnix.dragonlauncher.ui.helpers.customobjects.customGlowPaint] to provide optimizations when dealing with the low-level Paint APIs.
+						 * This prevents the [org.elnix.dragonlauncher.ui.helpers.customobjects.PaintCache] to be made useless by too much different [android.graphics.Paint] requests
+						 */
+						val lineColor: Color =
+							if (rgbLine) {
+								Color.hsv(sweepState.sweepAngle().angle360().toFloat(), 1f, 1f)
+							} else {
+								extraColors.angleLine
+							}
+
+						actionLine(
+							start = startOffset.value,
+							end = endOffset.value,
+							sweepAngle = sweepAngle,
+							lineColor = lineColor,
+							order = order,
+							eraseColor = backgroundColor,
+							showLineObjectPreview = showLineObjectPreview,
+							showAngleLineObjectPreview = showAngleLineObjectPreview,
+							showStartObjectPreview = showStartObjectPreview,
+							showEndObjectPreview = showEndObjectPreview,
+							pickedRememberShapeAngle = pickedRememberShapeAngle,
+							pickedRememberRotationAngle = pickedRememberRotationAngle,
+							pickedRememberRotationStart = pickedRememberRotationStart,
+							pickedRememberShapeStart = pickedRememberShapeStart,
+							pickedRememberRotationEnd = pickedRememberRotationEnd,
+							pickedRememberShapeEnd = pickedRememberShapeEnd,
+							lineCustomObject = lineObject,
+							angleLineCustomObject = angleObject,
+							startCustomObject = startObject,
+							endCustomObject = endObject
+						)
+					}
+
+					VerticalDragZone { height += it.toInt() }
+				}
+			) {
+				PresetRow(
+					presets = listOf(
+						AngleLinePreset("Default"),
+						AngleLinePreset(
+							name = "Elnix",
+							rgbLine = true,
+							startAndAngleShareSameRandomAngle = true,
+							useSnappedAngleOrRealAngle = true,
+							showLineObjectPreview = true,
+							lineObject = CustomObject(
+								stroke = 2.0.dp,
+								color = null,
+								glow = CustomGlow(
+									radius = 10.0.dp,
+									color = null
+								),
+								shape = IconShape.Circle,
+								size = 0.0.dp,
+								rotation = 0,
+								mirror = false,
+								eraseBackground = false,
+								alignsWithDragAngle = false
+							),
+							showAngleLineObjectPreview = true,
+							angleObject = CustomObject(
+								stroke = 4.0.dp,
+								color = null,
+								glow = CustomGlow(
+									radius = 10.47.dp,
+									color = null
+								),
+								shape = IconShape.Pebble,
+								size = 74.10462.dp,
+								rotation = 0,
+								mirror = false,
+								eraseBackground = false,
+								alignsWithDragAngle = true
+							),
+							showStartObjectPreview = true,
+							startObject = CustomObject(
+								stroke = 4.0.dp,
+								color = null,
+								glow = CustomGlow(
+									radius = 10.8.dp,
+									color = null
+								),
+								shape = IconShape.Pebble,
+								size = 30.0.dp,
+								rotation = 0,
+								mirror = false,
+								eraseBackground = true,
+								alignsWithDragAngle = true
+							),
+							showEndObjectPreview = true,
+							endObject = CustomObject(
+								stroke = 4.0.dp,
+								color = null,
+								glow = CustomGlow(
+									radius = 12.0.dp,
+									color = null
+								),
+								shape = IconShape.Pebble,
+								size = 70.0.dp,
+								rotation = 0,
+								mirror = false,
+								eraseBackground = true,
+								alignsWithDragAngle = true
+							),
+							angleLineObjectsOrder = listOf(Angle, Line, Start, End),
+							color = Color(0xFFFF0000)
+						)
+					),
+					get = {
+						AngleLinePreset(
+							name = "new",
+							rgbLine = rgbLine,
+							startAndAngleShareSameRandomAngle = startAndAngleShareSameRandomAngle,
+							useSnappedAngleOrRealAngle = useSnappedAngleOrRealAngle,
+							showLineObjectPreview = showLineObjectPreview,
+							lineObject = lineObject,
+							showAngleLineObjectPreview = showAngleLineObjectPreview,
+							angleObject = angleObject,
+							showStartObjectPreview = showStartObjectPreview,
+							startObject = startObject,
+							showEndObjectPreview = showEndObjectPreview,
+							endObject = endObject,
+							angleLineObjectsOrder = order,
+							color = extraColors.angleLine
+						)
+					},
+					set = { preset ->
+						scope.launch {
+							swipeService.lineObject.value = preset.lineObject
+							swipeService.angleObject.value = preset.angleObject
+							swipeService.startObject.value = preset.startObject
+							swipeService.endObject.value = preset.endObject
+
+							AngleLineSettingsStore.startAndAngleShareSameRandomAngle.set(ctx, preset.startAndAngleShareSameRandomAngle)
+							AngleLineSettingsStore.useSnappedAngleOrRealAngle.set(ctx, preset.useSnappedAngleOrRealAngle)
+							AngleLineSettingsStore.showLineObjectPreview.set(ctx, preset.showLineObjectPreview)
+							AngleLineSettingsStore.showAngleLineObjectPreview.set(ctx, preset.showAngleLineObjectPreview)
+							AngleLineSettingsStore.showStartObjectPreview.set(ctx, preset.showStartObjectPreview)
+							AngleLineSettingsStore.showEndObjectPreview.set(ctx, preset.showEndObjectPreview)
+							AngleLineSettingsStore.angleLineObjectsOrder.set(ctx, preset.angleLineObjectsOrder?.joinToString(",") { it.name })
+							ColorSettingsStore.angleLineColor.set(ctx, preset.color)
+						}
+					}
+				)
+
+				SingleSelectConnectedButtonRow(
+					entries = AngleObject.entries,
+					checked = { currentEditObject == it }
+				) { currentEditObject = it }
+
+				Column(
+					modifier =
+						Modifier
+							.verticalScroll(rememberScrollState()),
+					verticalArrangement = Arrangement.spacedBy(15.dp)
+				) {
+					AnimatedContent(currentEditObject) { currentEditObject ->
+						Column(
+							verticalArrangement = Arrangement.spacedBy(5.dp)
+						) {
+							when (currentEditObject) {
+								AngleObject.Line -> {
+									DragonSettingsGroup { Setting(AngleLineSettingsStore.showLineObjectPreview) }
+
+									AnimatedVisibility(showLineObjectPreview) {
+										EditCustomObjectBlock(
+											title = R.string.line_object,
+											editObject = lineObject,
+											default = defaultLineCustomObject,
+											properties =
+												CustomObjectBlockProperties(
+													allowSizeCustomization = false,
+													allowShapeCustomization = false,
+													allowRotationCustomization = false,
+													allowAlignCustomization = false
+												)
+										) { swipeService.lineObject.value = it }
+									}
+								}
+
+								AngleObject.Angle -> {
+									DragonSettingsGroup { Setting(AngleLineSettingsStore.showAngleLineObjectPreview) }
+
+									AnimatedVisibility(showAngleLineObjectPreview) {
+										EditCustomObjectBlock(
+											title = R.string.angle_object,
+											editObject = angleObject,
+											default = defaultAngleCustomObject
+										) { swipeService.angleObject.value = it }
+									}
+								}
+
+								AngleObject.Start -> {
+									DragonSettingsGroup { Setting(AngleLineSettingsStore.showStartObjectPreview) }
+
+									AnimatedVisibility(showStartObjectPreview) {
+										EditCustomObjectBlock(
+											title = R.string.start_object,
+											editObject = startObject,
+											default = defaultStartCustomObject
+										) { swipeService.startObject.value = it }
+									}
+								}
+
+								AngleObject.End -> {
+									DragonSettingsGroup { Setting(AngleLineSettingsStore.showEndObjectPreview) }
+
+									AnimatedVisibility(showEndObjectPreview) {
+										EditCustomObjectBlock(
+											title = R.string.end_object,
+											editObject = endObject,
+											default = defaultEndCustomObject
+										) { swipeService.endObject.value = it }
+									}
+								}
+							}
+						}
+					}
+
+					DragonSettingsGroup(R.string.other) {
+						Setting(AngleLineSettingsStore.rgbLine)
+						Setting(AngleLineSettingsStore.startAndAngleShareSameRandomAngle)
+						Setting(UiSettingsStore.linePreviewSnapToAction) { enabled ->
+							if (!enabled) {
+								scope.launch {
+									UiSettingsStore.animationWhenSnapping.set(ctx, false)
+								}
+							}
+						}
+						val snap by UiSettingsStore.linePreviewSnapToAction.asState()
+						Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
+						Setting(AngleLineSettingsStore.useSnappedAngleOrRealAngle, enabled = snap)
+						Setting(ColorSettingsStore.angleLineColor)
+					}
+				}
+			}
+		} else {
+			SettingsScaffold(
+				title = stringResource(R.string.angle_line),
+				onBack = {
+					swipeService.saveLineObjects()
+					swipeService.saveAngleLineOrder()
+					navigator.onBack()
+				},
+				helpText = stringResource(R.string.angle_line_help),
+				resetText = stringResource(R.string.reset_angle_tab),
+				onReset = {
+					swipeService.resetLineObjects()
+					swipeService.resetAngleLineOrder()
+				},
+				specialSettingsTitleContent = {
+					AnimatedFab(
+						onClick = { showOrderDialog = true },
+						icon = R.drawable.height
+					)
+				},
+				scrollableContent = false
+			) {
+				Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+					Canvas(
+						modifier = Modifier
+							.fillMaxWidth(0.5f)
+							.fillMaxHeight()
+							.pointerInput(Unit) {
+								detectDragGestures(
+									onDragStart = { position: Offset ->
+										val distanceToStart = startOffset.value distanceSquaredTo position
+										val distanceToEnd = endOffset.value distanceSquaredTo position
+
+										moveStartOrEnd =
+											if (distanceToEnd < distanceToStart) {
+												false
+											} else {
+												true
+											}
+									},
+									onDrag = { change, _ ->
+										scope.launch {
+											if (moveStartOrEnd) {
+												startOffset.animateTo(
+													targetValue = change.position,
+													animationSpec = bouncySpec()
+												)
+											} else {
+												endOffset.animateTo(
+													targetValue = change.position,
+													animationSpec = bouncySpec()
+												)
+											}
+										}
+									}
+								)
+							}.onGloballyPositioned { coordinates ->
+								val rect = coordinates.boundsInRoot()
+								val rectHeight = (rect.height / 2.5f).toInt()
+								val rectWidth = (rect.width / 2.5f).toInt()
+
+								fun randomPosition(): Offset =
+									Offset(
+										rect.center.x + (-rectWidth..rectWidth).random(),
+										rect.center.y + (-rectHeight..rectHeight).random()
+									)
+
+								scope.launch {
+									startOffset.animateTo(
+										targetValue = randomPosition(),
+										animationSpec = bouncySpec()
+									)
+								}
+
+								scope.launch {
+									endOffset.animateTo(
+										targetValue = randomPosition(),
+										animationSpec = bouncySpec()
+									)
+								}
+							}
+					) {
+						/**
+						 * The line color uses a [Int] angle, that it converts to a float, to prevent tiny difference in colors.
+						 * This method can only produce at most 360 different colors.
+						 *
+						 * This is needed by the [org.elnix.dragonlauncher.ui.helpers.customobjects.customGlowPaint] to provide optimizations when dealing with the low-level Paint APIs.
+						 * This prevents the [org.elnix.dragonlauncher.ui.helpers.customobjects.PaintCache] to be made useless by too much different [android.graphics.Paint] requests
+						 */
+						val lineColor: Color =
+							if (rgbLine) {
+								Color.hsv(sweepState.sweepAngle().angle360().toFloat(), 1f, 1f)
+							} else {
+								extraColors.angleLine
+							}
+
+						actionLine(
+							start = startOffset.value,
+							end = endOffset.value,
+							sweepAngle = sweepAngle,
+							lineColor = lineColor,
+							order = order,
+							eraseColor = backgroundColor,
+							showLineObjectPreview = showLineObjectPreview,
+							showAngleLineObjectPreview = showAngleLineObjectPreview,
+							showStartObjectPreview = showStartObjectPreview,
+							showEndObjectPreview = showEndObjectPreview,
+							pickedRememberShapeAngle = pickedRememberShapeAngle,
+							pickedRememberRotationAngle = pickedRememberRotationAngle,
+							pickedRememberRotationStart = pickedRememberRotationStart,
+							pickedRememberShapeStart = pickedRememberShapeStart,
+							pickedRememberRotationEnd = pickedRememberRotationEnd,
+							pickedRememberShapeEnd = pickedRememberShapeEnd,
+							lineCustomObject = lineObject,
+							angleLineCustomObject = angleObject,
+							startCustomObject = startObject,
+							endCustomObject = endObject
+						)
+					}
+
+					Column {
+						PresetRow(
+							presets = listOf(
+								AngleLinePreset("Default"),
+								AngleLinePreset(
+									name = "Elnix",
+									rgbLine = true,
+									startAndAngleShareSameRandomAngle = true,
+									useSnappedAngleOrRealAngle = true,
+									showLineObjectPreview = true,
+									lineObject = CustomObject(
+										stroke = 2.0.dp,
+										color = null,
+										glow = CustomGlow(
+											radius = 10.0.dp,
+											color = null
+										),
+										shape = IconShape.Circle,
+										size = 0.0.dp,
+										rotation = 0,
+										mirror = false,
+										eraseBackground = false,
+										alignsWithDragAngle = false
+									),
+									showAngleLineObjectPreview = true,
+									angleObject = CustomObject(
+										stroke = 4.0.dp,
+										color = null,
+										glow = CustomGlow(
+											radius = 10.47.dp,
+											color = null
+										),
+										shape = IconShape.Pebble,
+										size = 74.10462.dp,
+										rotation = 0,
+										mirror = false,
+										eraseBackground = false,
+										alignsWithDragAngle = true
+									),
+									showStartObjectPreview = true,
+									startObject = CustomObject(
+										stroke = 4.0.dp,
+										color = null,
+										glow = CustomGlow(
+											radius = 10.8.dp,
+											color = null
+										),
+										shape = IconShape.Pebble,
+										size = 30.0.dp,
+										rotation = 0,
+										mirror = false,
+										eraseBackground = true,
+										alignsWithDragAngle = true
+									),
+									showEndObjectPreview = true,
+									endObject = CustomObject(
+										stroke = 4.0.dp,
+										color = null,
+										glow = CustomGlow(
+											radius = 12.0.dp,
+											color = null
+										),
+										shape = IconShape.Pebble,
+										size = 70.0.dp,
+										rotation = 0,
+										mirror = false,
+										eraseBackground = true,
+										alignsWithDragAngle = true
+									),
+									angleLineObjectsOrder = listOf(Angle, Line, Start, End),
+									color = Color(0xFFFF0000)
+								)
+							),
+							get = {
+								AngleLinePreset(
+									name = "new",
+									rgbLine = rgbLine,
+									startAndAngleShareSameRandomAngle = startAndAngleShareSameRandomAngle,
+									useSnappedAngleOrRealAngle = useSnappedAngleOrRealAngle,
+									showLineObjectPreview = showLineObjectPreview,
+									lineObject = lineObject,
+									showAngleLineObjectPreview = showAngleLineObjectPreview,
+									angleObject = angleObject,
+									showStartObjectPreview = showStartObjectPreview,
+									startObject = startObject,
+									showEndObjectPreview = showEndObjectPreview,
+									endObject = endObject,
+									angleLineObjectsOrder = order,
+									color = extraColors.angleLine
+								)
+							},
+							set = { preset ->
+								scope.launch {
+									swipeService.lineObject.value = preset.lineObject
+									swipeService.angleObject.value = preset.angleObject
+									swipeService.startObject.value = preset.startObject
+									swipeService.endObject.value = preset.endObject
+
+									AngleLineSettingsStore.startAndAngleShareSameRandomAngle.set(ctx, preset.startAndAngleShareSameRandomAngle)
+									AngleLineSettingsStore.useSnappedAngleOrRealAngle.set(ctx, preset.useSnappedAngleOrRealAngle)
+									AngleLineSettingsStore.showLineObjectPreview.set(ctx, preset.showLineObjectPreview)
+									AngleLineSettingsStore.showAngleLineObjectPreview.set(ctx, preset.showAngleLineObjectPreview)
+									AngleLineSettingsStore.showStartObjectPreview.set(ctx, preset.showStartObjectPreview)
+									AngleLineSettingsStore.showEndObjectPreview.set(ctx, preset.showEndObjectPreview)
+									AngleLineSettingsStore.angleLineObjectsOrder.set(ctx, preset.angleLineObjectsOrder?.joinToString(",") { it.name })
+									ColorSettingsStore.angleLineColor.set(ctx, preset.color)
+								}
+							}
+						)
+
+						SingleSelectConnectedButtonRow(
+							entries = AngleObject.entries,
+							checked = { currentEditObject == it }
+						) { currentEditObject = it }
+
+						Column(
+							modifier =
+								Modifier
+									.verticalScroll(rememberScrollState()),
+							verticalArrangement = Arrangement.spacedBy(15.dp)
+						) {
+							AnimatedContent(currentEditObject) { currentEditObject ->
+								Column(
+									verticalArrangement = Arrangement.spacedBy(5.dp)
+								) {
+									when (currentEditObject) {
+										AngleObject.Line -> {
+											DragonSettingsGroup { Setting(AngleLineSettingsStore.showLineObjectPreview) }
+
+											AnimatedVisibility(showLineObjectPreview) {
+												EditCustomObjectBlock(
+													title = R.string.line_object,
+													editObject = lineObject,
+													default = defaultLineCustomObject,
+													properties =
+														CustomObjectBlockProperties(
+															allowSizeCustomization = false,
+															allowShapeCustomization = false,
+															allowRotationCustomization = false,
+															allowAlignCustomization = false
+														)
+												) { swipeService.lineObject.value = it }
+											}
+										}
+
+										AngleObject.Angle -> {
+											DragonSettingsGroup { Setting(AngleLineSettingsStore.showAngleLineObjectPreview) }
+
+											AnimatedVisibility(showAngleLineObjectPreview) {
+												EditCustomObjectBlock(
+													title = R.string.angle_object,
+													editObject = angleObject,
+													default = defaultAngleCustomObject
+												) { swipeService.angleObject.value = it }
+											}
+										}
+
+										AngleObject.Start -> {
+											DragonSettingsGroup { Setting(AngleLineSettingsStore.showStartObjectPreview) }
+
+											AnimatedVisibility(showStartObjectPreview) {
+												EditCustomObjectBlock(
+													title = R.string.start_object,
+													editObject = startObject,
+													default = defaultStartCustomObject
+												) { swipeService.startObject.value = it }
+											}
+										}
+
+										AngleObject.End -> {
+											DragonSettingsGroup { Setting(AngleLineSettingsStore.showEndObjectPreview) }
+
+											AnimatedVisibility(showEndObjectPreview) {
+												EditCustomObjectBlock(
+													title = R.string.end_object,
+													editObject = endObject,
+													default = defaultEndCustomObject
+												) { swipeService.endObject.value = it }
+											}
 										}
 									}
 								}
-							)
-						}.onGloballyPositioned { coordinates ->
-							val rect = coordinates.boundsInRoot()
-							val rectHeight = (rect.height / 2.5f).toInt()
-							val rectWidth = (rect.width / 2.5f).toInt()
-
-							fun randomPosition(): Offset =
-								Offset(
-									rect.center.x + (-rectWidth..rectWidth).random(),
-									rect.center.y + (-rectHeight..rectHeight).random()
-								)
-
-							scope.launch {
-								startOffset.animateTo(
-									targetValue = randomPosition(),
-									animationSpec = bouncySpec()
-								)
 							}
 
-							scope.launch {
-								endOffset.animateTo(
-									targetValue = randomPosition(),
-									animationSpec = bouncySpec()
-								)
-							}
-						}
-			)
-
-			VerticalDragZone { height += it.toInt() }
-		}
-	) {
-		PresetRow(
-			presets = listOf(
-				AngleLinePreset("Default"),
-				AngleLinePreset(
-					name = "Elnix",
-					rgbLine = true,
-					startAndAngleShareSameRandomAngle = true,
-					useSnappedAngleOrRealAngle = true,
-					showLineObjectPreview = true,
-					lineObject = CustomObject(
-						stroke = 2.0.dp,
-						color = null,
-						glow = CustomGlow(
-							radius = 10.0.dp,
-							color = null
-						),
-						shape = IconShape.Circle,
-						size = 0.0.dp,
-						rotation = 0,
-						mirror = false,
-						eraseBackground = false,
-						alignsWithDragAngle = false
-					),
-					showAngleLineObjectPreview = true,
-					angleObject = CustomObject(
-						stroke = 4.0.dp,
-						color = null,
-						glow = CustomGlow(
-							radius = 10.47.dp,
-							color = null
-						),
-						shape = IconShape.Pebble,
-						size = 74.10462.dp,
-						rotation = 0,
-						mirror = false,
-						eraseBackground = false,
-						alignsWithDragAngle = true
-					),
-					showStartObjectPreview = true,
-					startObject = CustomObject(
-						stroke = 4.0.dp,
-						color = null,
-						glow = CustomGlow(
-							radius = 10.8.dp,
-							color = null
-						),
-						shape = IconShape.Pebble,
-						size = 30.0.dp,
-						rotation = 0,
-						mirror = false,
-						eraseBackground = true,
-						alignsWithDragAngle = true
-					),
-					showEndObjectPreview = true,
-					endObject = CustomObject(
-						stroke = 4.0.dp,
-						color = null,
-						glow = CustomGlow(
-							radius = 12.0.dp,
-							color = null
-						),
-						shape = IconShape.Pebble,
-						size = 70.0.dp,
-						rotation = 0,
-						mirror = false,
-						eraseBackground = true,
-						alignsWithDragAngle = true
-					),
-					angleLineObjectsOrder = listOf(Angle, Line, Start, End),
-					color = Color(0xFFFF0000)
-				)
-			),
-			get = {
-				AngleLinePreset(
-					name = "new",
-					rgbLine = rgbLine,
-					startAndAngleShareSameRandomAngle = startAndAngleShareSameRandomAngle,
-					useSnappedAngleOrRealAngle = useSnappedAngleOrRealAngle,
-					showLineObjectPreview = showLineObjectPreview,
-					lineObject = lineObject,
-					showAngleLineObjectPreview = showAngleLineObjectPreview,
-					angleObject = angleObject,
-					showStartObjectPreview = showStartObjectPreview,
-					startObject = startObject,
-					showEndObjectPreview = showEndObjectPreview,
-					endObject = endObject,
-					angleLineObjectsOrder = order,
-					color = extraColors.angleLine
-				)
-			},
-			set = { preset ->
-				scope.launch {
-					swipeService.lineObject.value = preset.lineObject
-					swipeService.angleObject.value = preset.angleObject
-					swipeService.startObject.value = preset.startObject
-					swipeService.endObject.value = preset.endObject
-
-					AngleLineSettingsStore.startAndAngleShareSameRandomAngle.set(ctx, preset.startAndAngleShareSameRandomAngle)
-					AngleLineSettingsStore.useSnappedAngleOrRealAngle.set(ctx, preset.useSnappedAngleOrRealAngle)
-					AngleLineSettingsStore.showLineObjectPreview.set(ctx, preset.showLineObjectPreview)
-					AngleLineSettingsStore.showAngleLineObjectPreview.set(ctx, preset.showAngleLineObjectPreview)
-					AngleLineSettingsStore.showStartObjectPreview.set(ctx, preset.showStartObjectPreview)
-					AngleLineSettingsStore.showEndObjectPreview.set(ctx, preset.showEndObjectPreview)
-					AngleLineSettingsStore.angleLineObjectsOrder.set(ctx, preset.angleLineObjectsOrder?.joinToString(",") { it.name })
-					ColorSettingsStore.angleLineColor.set(ctx, preset.color)
-				}
-			}
-		)
-
-		SingleSelectConnectedButtonRow(
-			entries = AngleObject.entries,
-			checked = { currentEditObject == it }
-		) { currentEditObject = it }
-
-		Column(
-			modifier =
-				Modifier
-					.verticalScroll(rememberScrollState()),
-			verticalArrangement = Arrangement.spacedBy(15.dp)
-		) {
-			AnimatedContent(currentEditObject) { currentEditObject ->
-				Column(
-					verticalArrangement = Arrangement.spacedBy(5.dp)
-				) {
-					when (currentEditObject) {
-						AngleObject.Line -> {
-							DragonSettingsGroup { Setting(AngleLineSettingsStore.showLineObjectPreview) }
-
-							AnimatedVisibility(showLineObjectPreview) {
-								EditCustomObjectBlock(
-									title = R.string.line_object,
-									editObject = lineObject,
-									default = defaultLineCustomObject,
-									properties =
-										CustomObjectBlockProperties(
-											allowSizeCustomization = false,
-											allowShapeCustomization = false,
-											allowRotationCustomization = false,
-											allowAlignCustomization = false
-										)
-								) { swipeService.lineObject.value = it }
-							}
-						}
-
-						AngleObject.Angle -> {
-							DragonSettingsGroup { Setting(AngleLineSettingsStore.showAngleLineObjectPreview) }
-
-							AnimatedVisibility(showAngleLineObjectPreview) {
-								EditCustomObjectBlock(
-									title = R.string.angle_object,
-									editObject = angleObject,
-									default = defaultAngleCustomObject
-								) { swipeService.angleObject.value = it }
-							}
-						}
-
-						AngleObject.Start -> {
-							DragonSettingsGroup { Setting(AngleLineSettingsStore.showStartObjectPreview) }
-
-							AnimatedVisibility(showStartObjectPreview) {
-								EditCustomObjectBlock(
-									title = R.string.start_object,
-									editObject = startObject,
-									default = defaultStartCustomObject
-								) { swipeService.startObject.value = it }
-							}
-						}
-
-						AngleObject.End -> {
-							DragonSettingsGroup { Setting(AngleLineSettingsStore.showEndObjectPreview) }
-
-							AnimatedVisibility(showEndObjectPreview) {
-								EditCustomObjectBlock(
-									title = R.string.end_object,
-									editObject = endObject,
-									default = defaultEndCustomObject
-								) { swipeService.endObject.value = it }
+							DragonSettingsGroup(R.string.other) {
+								Setting(AngleLineSettingsStore.rgbLine)
+								Setting(AngleLineSettingsStore.startAndAngleShareSameRandomAngle)
+								Setting(UiSettingsStore.linePreviewSnapToAction) { enabled ->
+									if (!enabled) {
+										scope.launch {
+											UiSettingsStore.animationWhenSnapping.set(ctx, false)
+										}
+									}
+								}
+								val snap by UiSettingsStore.linePreviewSnapToAction.asState()
+								Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
+								Setting(AngleLineSettingsStore.useSnappedAngleOrRealAngle, enabled = snap)
+								Setting(ColorSettingsStore.angleLineColor)
 							}
 						}
 					}
 				}
-			}
-
-			DragonSettingsGroup(R.string.other) {
-				Setting(AngleLineSettingsStore.rgbLine)
-				Setting(AngleLineSettingsStore.startAndAngleShareSameRandomAngle)
-				Setting(UiSettingsStore.linePreviewSnapToAction) { enabled ->
-					if (!enabled) {
-						scope.launch {
-							UiSettingsStore.animationWhenSnapping.set(ctx, false)
-						}
-					}
-				}
-				val snap by UiSettingsStore.linePreviewSnapToAction.asState()
-				Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
-				Setting(AngleLineSettingsStore.useSnappedAngleOrRealAngle, enabled = snap)
-				Setting(ColorSettingsStore.angleLineColor)
 			}
 		}
 	}
