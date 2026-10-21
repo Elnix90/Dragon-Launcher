@@ -42,6 +42,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.specialObjects.ActionSettingObject
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
+import org.elnix.dragonlauncher.ui.actions.ActivityIcon
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -122,6 +123,13 @@ fun DragonGroupScope.ActionSelector(
 //                                    )
 //                                }
 //                            }
+							is Action.LaunchActivity -> {
+								ActivityIcon(
+									action = currentAction,
+									size = 30.dp
+								)
+							}
+
 							else -> {
 								ActionIcon(
 									action = currentAction,

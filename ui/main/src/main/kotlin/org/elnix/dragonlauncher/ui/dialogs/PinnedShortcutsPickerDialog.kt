@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.drawer.AppShortcutSearch
+import org.elnix.dragonlauncher.ui.drawer.ListSearch
 
 /**
  * Represents a pinned shortcut with extra metadata for display.
@@ -114,7 +114,7 @@ fun PinnedShortcutsPickerDialog(
 		DialogTitle(stringResource(R.string.pinned_shortcuts))
 		Spacer(10.dp)
 
-		AppShortcutSearch(searchQuery) { searchQuery = it }
+		ListSearch(R.string.search_shortcuts, searchQuery) { searchQuery = it }
 		Spacer(10.dp)
 
 		when {

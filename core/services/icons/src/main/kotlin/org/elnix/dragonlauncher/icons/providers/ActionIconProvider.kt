@@ -32,6 +32,10 @@ internal class ActionIconProvider(
 				if (action != Action.LaunchShortcut.dummy) return null
 			}
 
+			is Action.LaunchActivity -> {
+				if (action != Action.LaunchActivity.dummy) return null
+			}
+
 			else -> { /* no-op */ }
 		}
 

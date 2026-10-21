@@ -48,6 +48,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.UnmodifiedSystemDefaultIcon
 import org.elnix.dragonlauncher.colors.ColorService
 import org.elnix.dragonlauncher.icons.providers.ActionIconProvider
+import org.elnix.dragonlauncher.icons.providers.ActivityIconProvider
 import org.elnix.dragonlauncher.icons.providers.CalendarIconProvider
 import org.elnix.dragonlauncher.icons.providers.CompatIconProvider
 import org.elnix.dragonlauncher.icons.providers.CustomIconPackIconProvider
@@ -73,7 +74,9 @@ private object PointIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
 private object ActionIconCache : DragonCache<CacheKey, LauncherIcon>(Action.actionsNumber)
 
-private object ShortcutIconCache : DragonCache<CacheKey, LauncherIcon>(Action.actionsNumber)
+private object ShortcutIconCache : DragonCache<CacheKey, LauncherIcon>(50)
+
+private object ActivityIconCache : DragonCache<CacheKey, LauncherIcon>(50)
 
 private object DrawerIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
@@ -174,6 +177,14 @@ class IconService internal constructor(
 						)
 					)
 
+					providers.add(
+						ActivityIconProvider(
+							ctx = ctx,
+							themed = settings.themedIcons,
+							tint = tint()
+						)
+					)
+
 					if (!settings.iconPack.isNullOrBlank()) {
 						val pack = iconPackManager.getIconPack(settings.iconPack!!)
 						if (pack != null) {
@@ -256,8 +267,6 @@ class IconService internal constructor(
 			}
 		}
 	}
-
-//    fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
 
 	fun getCustomAppIcon(application: Application): Flow<CustomIcon?> =
 		appOverrideManager.appOverrides.flow.map {
@@ -382,10 +391,12 @@ class IconService internal constructor(
 		reload: Boolean = false
 	): Flow<LauncherIcon?> {
 		return combine(
+			iconSize,
 			iconProviders,
 			transformations,
 			appRepository.appsRevision
-		) { providers, transformations, revision ->
+		) { iconSize, providers, transformations, revision ->
+			val size = (iconSize * density.density).value.toInt()
 
 			val cacheKey =
 				CacheKey(
@@ -407,11 +418,59 @@ class IconService internal constructor(
 				return@combine icon
 			}
 
-			icon = providers.getFirstIcon(shortcut, 56)
+			icon = providers.getFirstIcon(shortcut, size)
 
 			if (icon != null) {
 				icon = icon.transform(transformations)
 				ShortcutIconCache.compute(cacheKey) { icon }
+			}
+			return@combine icon
+		}
+	}
+
+	/**
+	 * Icon of a single launcher activity from an [Action.LaunchActivity].
+	 *
+	 * Unlike [getActionIcon], the cache is keyed by the action *instance*: apps exposing more
+	 * than one launcher activity (e.g. the MIUI dialer) must not share a single class-keyed icon.
+	 */
+	fun getActivityIcon(
+		activity: Action.LaunchActivity,
+		reload: Boolean = false
+	): Flow<LauncherIcon?> {
+		return combine(
+			iconSize,
+			iconProviders,
+			transformations,
+			appRepository.appsRevision
+		) { iconSize, providers, transformations, revision ->
+			val size = (iconSize * density.density).value.toInt()
+
+			val cacheKey =
+				CacheKey(
+					subject = activity,
+					appsRevision = revision,
+					customIconHashCode = 0,
+					providersHashCode = providers.hashCode(),
+					transformationsHashcode = transformations.hashCode()
+				)
+
+			var icon =
+				if (!reload) {
+					ActivityIconCache[cacheKey]
+				} else {
+					null
+				}
+
+			if (!reload && icon != null) {
+				return@combine icon
+			}
+
+			icon = providers.getFirstIcon(activity, size)
+
+			if (icon != null) {
+				icon = icon.transform(transformations)
+				ActivityIconCache.compute(cacheKey) { icon }
 			}
 			return@combine icon
 		}
@@ -521,6 +580,10 @@ class IconService internal constructor(
 
 							is Action.LaunchShortcut -> {
 								ShortcutIconCache[cacheKey]
+							}
+
+							is Action.LaunchActivity -> {
+								ActivityIconCache[cacheKey]
 							}
 
 							else -> {

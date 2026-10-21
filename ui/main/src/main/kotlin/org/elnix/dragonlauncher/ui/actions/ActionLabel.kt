@@ -1,9 +1,14 @@
 package org.elnix.dragonlauncher.ui.actions
 
+import android.content.ComponentName
+import android.content.pm.LauncherApps
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
@@ -76,6 +81,36 @@ fun actionLabel(
 			when {
 				!shortcutLabel.isNullOrBlank() -> "$appLabel: $shortcutLabel"
 				else -> appLabel
+			}
+		}
+
+		is Action.LaunchActivity -> {
+			var resolvedActivityLabel by remember(action) { mutableStateOf<String?>(null) }
+
+			LaunchedEffect(action) {
+				val launcherApps = ctx.getSystemService(LauncherApps::class.java)
+				val component = ComponentName(action.packageName, action.activityName)
+
+				val activityLabel =
+					try {
+						launcherApps
+							.getActivityList(action.packageName, action.profile.userHandle)
+							.firstOrNull { it.componentName == component }
+							?.label
+							?.toString()
+					} catch (_: Exception) {
+						null
+					}
+
+				resolvedActivityLabel = activityLabel ?: action.activityName.substringAfterLast('.')
+			}
+
+			val appLabel = actionLabel(Action.LaunchApp(action.packageName, action.profile))
+
+			when {
+				resolvedActivityLabel == null -> ""
+				appLabel.isNotEmpty() -> "$appLabel: ${resolvedActivityLabel!!}"
+				else -> resolvedActivityLabel!!
 			}
 		}
 

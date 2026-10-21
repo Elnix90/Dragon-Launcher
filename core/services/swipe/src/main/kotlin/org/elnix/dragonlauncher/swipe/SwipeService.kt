@@ -453,6 +453,10 @@ internal class SwipeServiceImpl(
 				appLaunchService.launchShortcut(action)
 			}
 
+			is Action.LaunchActivity -> {
+				appLaunchService.launchActivity(action)
+			}
+
 			is Action.OpenUrl -> {
 				val i = Intent(Intent.ACTION_VIEW, action.url.toUri())
 				ctx.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))

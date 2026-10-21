@@ -78,6 +78,7 @@ fun ActionPickerDialog(
 	var showNestPicker by remember { mutableStateOf(false) }
 	var showWorkspacePicker by remember { mutableStateOf(false) }
 	var showPinnedShortcutsPicker by remember { mutableStateOf(false) }
+	var showActivityPicker by remember { mutableStateOf(false) }
 	var showSettingsPagePicker by remember { mutableStateOf(false) }
 
 	val showKillLauncherActionInActionPicker by DebugSettingsStore.showKillLauncherActionInActionPicker.asState()
@@ -138,6 +139,10 @@ fun ActionPickerDialog(
 
 									is Action.LaunchShortcut -> {
 										showPinnedShortcutsPicker = true
+									}
+
+									is Action.LaunchActivity -> {
+										showActivityPicker = true
 									}
 
 									is Action.OpenAppDrawer -> {
@@ -362,6 +367,16 @@ fun ActionPickerDialog(
 			}
 		)
 	}
+
+	if (showActivityPicker) {
+		LaunchActivityPickerDialog(
+			onDismiss = { showActivityPicker = false },
+			onActivitySelected = { activityAction ->
+				onActionPicked(activityAction)
+				showActivityPicker = false
+			}
+		)
+	}
 }
 
 @Composable
@@ -375,6 +390,7 @@ private fun ActionItem(
 		when (action) {
 			is Action.LaunchApp -> stringResource(R.string.open_app)
 			is Action.LaunchShortcut -> stringResource(R.string.pinned_shortcuts)
+			is Action.LaunchActivity -> stringResource(R.string.launch_activity)
 			is Action.OpenUrl -> stringResource(R.string.open_url)
 			is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
 			is Action.OpenFile -> stringResource(R.string.open_file)

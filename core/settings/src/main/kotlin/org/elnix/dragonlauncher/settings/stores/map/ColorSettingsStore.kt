@@ -485,6 +485,13 @@ object ColorSettingsStore : MapSettingsStore() {
 			default = DefaultExtraColors.runAdbCommand
 		)
 
+	@SettingKey
+	val launchActivityColor =
+		color(
+			title = R.string.launch_activity_color,
+			default = DefaultExtraColors.launchActivity
+		)
+
 	suspend fun setAllRandomColors(ctx: Context) {
 		setAllColors(ctx) { randomColor() }
 	}

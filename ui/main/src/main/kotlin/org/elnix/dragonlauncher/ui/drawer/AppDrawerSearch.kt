@@ -93,7 +93,8 @@ fun AppDrawerSearch(
 }
 
 @Composable
-fun AppShortcutSearch(
+fun ListSearch(
+	title: Int,
 	searchQuery: String,
 	onValueChange: (String) -> Unit
 ) {
@@ -110,7 +111,7 @@ fun AppShortcutSearch(
 		leadingIcon = {
 			Icon(
 				painter = painterResource(R.drawable.search),
-				contentDescription = stringResource(R.string.search_shortcuts)
+				contentDescription = stringResource(title)
 			)
 		},
 		trailingIcon = {
@@ -123,7 +124,7 @@ fun AppShortcutSearch(
 		},
 		placeholder = {
 			Text(
-				text = stringResource(R.string.search_shortcuts),
+				text = stringResource(title),
 				color = MaterialTheme.colorScheme.onSurface
 			)
 		},

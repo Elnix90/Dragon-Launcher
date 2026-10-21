@@ -701,7 +701,7 @@ fun PointEditor(
 						description = null,
 						currentColor = editPoint.customActionColor,
 						defaultColor = null,
-						enabled = editPoint.action !is Action.LaunchApp && editPoint.action !is Action.LaunchShortcut
+						enabled = editPoint.action !is Action.LaunchApp && editPoint.action !is Action.LaunchShortcut && editPoint.action !is Action.LaunchActivity
 					) { selectedColor ->
 						editPoint = editPoint.copy(customActionColor = selectedColor)
 					}

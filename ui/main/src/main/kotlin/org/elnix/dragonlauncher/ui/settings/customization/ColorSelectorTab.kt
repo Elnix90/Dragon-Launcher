@@ -436,6 +436,7 @@ fun ColorSelectorTab() {
 				Setting(ColorSettingsStore.angleLineColor)
 				Setting(ColorSettingsStore.shapesColor)
 				Setting(ColorSettingsStore.launchAppColor)
+				Setting(ColorSettingsStore.launchActivityColor)
 				Setting(ColorSettingsStore.openUrlColor)
 				Setting(ColorSettingsStore.notificationShadeColor)
 				Setting(ColorSettingsStore.controlPanelColor)

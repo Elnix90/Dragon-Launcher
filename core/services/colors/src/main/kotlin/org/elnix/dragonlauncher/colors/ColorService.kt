@@ -42,6 +42,7 @@ internal class ColorServiceImpl(
 	private val toggleData = ColorSettingsStore.toggleData.flow(ctx)
 	private val toggleWifi = ColorSettingsStore.toggleWifi.flow(ctx)
 	private val runAdbCommand = ColorSettingsStore.runAdbCommand.flow(ctx)
+	private val launchActivityColor = ColorSettingsStore.launchActivityColor.flow(ctx)
 	private val holdToActivateColor = ColorSettingsStore.holdToActivateColor.flow(ctx)
 
 	override val extraColors: StateFlow<ExtraColors> =
@@ -64,6 +65,7 @@ internal class ColorServiceImpl(
 			toggleData,
 			toggleWifi,
 			runAdbCommand,
+			launchActivityColor,
 			holdToActivateColor
 		) { extraColors ->
 			ExtraColors(
@@ -85,7 +87,8 @@ internal class ColorServiceImpl(
 				toggleData = extraColors[15],
 				toggleWifi = extraColors[16],
 				runAdbCommand = extraColors[17],
-				holdToActivate = extraColors[18]
+				launchActivity = extraColors[18],
+				holdToActivate = extraColors[19]
 			)
 		}.stateIn(
 			scope = scope,

@@ -89,6 +89,30 @@ sealed class Action {
 		}
 	}
 
+	/**
+	 * Launches a specific launcher activity of an app, identified by its [android.content.ComponentName]
+	 * (package + activity class) instead of only the package name.
+	 *
+	 * Apps such as the MIUI/HyperOS dialer expose more than one launcher activity
+	 * (e.g. Contacts and Phone in `com.android.contacts`), which cannot be represented
+	 * by a plain [LaunchApp] action as the app list is keyed by package name (see #468).
+	 */
+	@Immutable
+	@Serializable
+	@SerialName("LaunchActivity")
+	data class LaunchActivity(
+		val packageName: String,
+		val activityName: String,
+		val profile: Profile
+	) : Action() {
+		override val drawableId: Int = R.drawable.open_in_new
+		override val resId: Int = R.string.launch_activity
+
+		companion object {
+			val dummy: LaunchActivity = LaunchActivity("", "", Profile.dummy())
+		}
+	}
+
 	@Immutable
 	@Serializable
 	@SerialName("OpenUrl")
@@ -308,6 +332,7 @@ sealed class Action {
 			customColor
 				?: when (this) {
 					is LaunchApp, is LaunchShortcut, is OpenWidget -> extraColors.launchApp
+					is LaunchActivity -> extraColors.launchActivity
 					is OpenUrl -> extraColors.openUrl
 					is OpenAppDrawer -> extraColors.openAppDrawer
 					is OpenDragonLauncherSettings -> extraColors.launcherSettings
@@ -334,6 +359,7 @@ sealed class Action {
 				OpenNest.dummy,
 				GoParentNest,
 				LaunchShortcut.dummy,
+				LaunchActivity.dummy,
 				OpenUrl.dummy,
 				OpenFile.dummy,
 				NotificationShade,

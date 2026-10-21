@@ -67,6 +67,16 @@ class IconsViewModel
 					null
 				)
 
+		fun getIcon(activity: Action.LaunchActivity): StateFlow<LauncherIcon?> =
+			iconsService
+				.getActivityIcon(
+					activity
+				).stateIn(
+					viewModelScope,
+					SharingStarted.Eagerly,
+					null
+				)
+
 		fun getIcon(action: Action): StateFlow<LauncherIcon?> =
 			iconsService.getActionIcon(action).stateIn(
 				viewModelScope,

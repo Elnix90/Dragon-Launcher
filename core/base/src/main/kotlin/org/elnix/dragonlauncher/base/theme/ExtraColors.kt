@@ -23,7 +23,8 @@ data class ExtraColors(
 	val toggleWifi: Color,
 	val toggleBluetooth: Color,
 	val toggleData: Color,
-	val runAdbCommand: Color
+	val runAdbCommand: Color,
+	val launchActivity: Color
 )
 
 val DefaultExtraColors: ExtraColors =
@@ -46,7 +47,8 @@ val DefaultExtraColors: ExtraColors =
 		toggleWifi = Color(0xFF0FFFFF),
 		toggleData = Color(0xFF806E00),
 		toggleBluetooth = Color(0xFF2196F3),
-		runAdbCommand = Color(0xFF1BEE14)
+		runAdbCommand = Color(0xFF1BEE14),
+		launchActivity = Color(0xFFFF9944)
 	)
 
 val LocalExtraColors: ProvidableCompositionLocal<ExtraColors> = staticCompositionLocalOf { DefaultExtraColors }

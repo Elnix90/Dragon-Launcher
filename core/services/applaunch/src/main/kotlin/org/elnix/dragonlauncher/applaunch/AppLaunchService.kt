@@ -1,8 +1,11 @@
 package org.elnix.dragonlauncher.applaunch
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.LauncherApps
 import android.os.Bundle
+import android.os.Process
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
@@ -46,6 +49,8 @@ interface AppLaunchService {
 	fun onAppTimerServiceStarted(duration: Int?, application: Application)
 
 	fun launchShortcut(action: Action.LaunchShortcut)
+
+	fun launchActivity(action: Action.LaunchActivity)
 }
 
 internal class AppLaunchServiceImpl(
@@ -152,6 +157,76 @@ internal class AppLaunchServiceImpl(
 	override fun launchShortcut(action: Action.LaunchShortcut) {
 		action.takeIf { it.packageName.isNotEmpty() }?.let {
 			packageManagerCompat.launchShortcut(it.packageName, it.shortcutId)
+		}
+	}
+
+	/**
+	 * Launches a specific launcher activity identified by its [android.content.ComponentName],
+	 * not just the package's default one. Needed for apps exposing more than one launcher
+	 * activity, such as the MIUI dialer (see #468).
+	 */
+	override fun launchActivity(action: Action.LaunchActivity) {
+		viewModelScope.launch {
+			val profile = profileManager.resolveProfile(action.profile)
+			if (profile == null) {
+				logW(APP_LAUNCH_TAG) { "Profile ${action.profile} not found for ${action.packageName}/${action.activityName}" }
+				return@launch
+			}
+
+			if (isAtLeastApiLevel(28) && profileManager.isProfileLocked(profile)) {
+				logI(APP_LAUNCH_TAG) { "Unlocking ${profile.type} profile to launch ${action.packageName}/${action.activityName}" }
+				profileManager.unlockProfile(profile)
+				if (!waitForProfileUnlock(profile)) return@launch
+			}
+
+			launchActivityDirectly(action, profile)
+		}
+	}
+
+	private fun launchActivityDirectly(action: Action.LaunchActivity, profile: Profile) {
+		val launcherApps = ctx.getSystemService(LauncherApps::class.java)
+		val componentName = ComponentName(action.packageName, action.activityName)
+
+		val options = Bundle()
+
+		if (isAtLeastApiLevel(31)) {
+			options.putInt("android.activity.splashScreenStyle", 1)
+		}
+
+		try {
+			launcherApps.startMainActivity(
+				componentName,
+				profile.userHandle,
+				null,
+				options
+			)
+		} catch (e: SecurityException) {
+			logE(APP_LAUNCH_TAG, e) { "Security error launching ${action.packageName}/${action.activityName}" }
+			fallbackLaunchActivityWithIntent(componentName, profile)
+		} catch (e: Exception) {
+			logE(APP_LAUNCH_TAG, e) { "Failed to launch ${action.packageName}/${action.activityName}" }
+			fallbackLaunchActivityWithIntent(componentName, profile)
+		}
+	}
+
+	/**
+	 * Second chance for [launchActivityDirectly]: an explicit intent only works for the current
+	 * user, but it can still start activities [LauncherApps.startMainActivity] refused.
+	 */
+	private fun fallbackLaunchActivityWithIntent(componentName: ComponentName, profile: Profile) {
+		if (profile.userHandle != Process.myUserHandle()) return
+
+		try {
+			val intent =
+				Intent(Intent.ACTION_MAIN).apply {
+					addCategory(Intent.CATEGORY_LAUNCHER)
+					this.component = componentName
+					addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+				}
+
+			ctx.startActivity(intent)
+		} catch (e: Exception) {
+			logE(APP_LAUNCH_TAG, e) { "Fallback launch failed for $componentName" }
 		}
 	}
 

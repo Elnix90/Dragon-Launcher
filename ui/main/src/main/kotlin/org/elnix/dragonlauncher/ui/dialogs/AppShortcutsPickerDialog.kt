@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.drawer.AppShortcutSearch
+import org.elnix.dragonlauncher.ui.drawer.ListSearch
 
 private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): Boolean = q.isBlank() || appName.contains(q, ignoreCase = true) ||
 	`package`.contains(q, ignoreCase = true) ||
@@ -70,7 +70,7 @@ fun AppShortcutPickerDialog(
 					.heightIn(max = 600.dp)
 					.verticalScroll(rememberScrollState())
 		) {
-			AppShortcutSearch(searchQuery) { searchQuery = it }
+			ListSearch(R.string.search_shortcuts, searchQuery) { searchQuery = it }
 
 			when {
 				shortcuts.isEmpty() -> {

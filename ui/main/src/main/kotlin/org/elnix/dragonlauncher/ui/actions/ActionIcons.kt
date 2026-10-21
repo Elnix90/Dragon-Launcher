@@ -45,6 +45,10 @@ fun FinalPointIcon(
 			ShortcutIcon(action, pointSize)
 		}
 
+		is Action.LaunchActivity -> {
+			ActivityIcon(action, pointSize, modifier)
+		}
+
 		else -> {
 			ActionIcon(
 				action = action,
@@ -81,6 +85,22 @@ fun ShortcutIcon(
 	iconsViewModel: IconsViewModel = activityViewModel()
 ) {
 	val icon by iconsViewModel.getIcon(shortcut).collectAsStateWithLifecycle()
+
+	ShapedLauncherIcon(
+		modifier = modifier,
+		size = size,
+		icon = { icon }
+	)
+}
+
+@Composable
+fun ActivityIcon(
+	action: Action.LaunchActivity,
+	size: Dp,
+	modifier: Modifier = Modifier,
+	iconsViewModel: IconsViewModel = activityViewModel()
+) {
+	val icon by iconsViewModel.getIcon(action).collectAsStateWithLifecycle()
 
 	ShapedLauncherIcon(
 		modifier = modifier,

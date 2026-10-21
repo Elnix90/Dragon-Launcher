@@ -50,6 +50,7 @@
 	<string name="launcher_settings_color">Launcher Settings Color</string>
 	<string name="lock_color">Lock Color</string>
 	<string name="open_file_color">Open File Color</string>
+	<string name="launch_activity_color">Launch Activity Color</string>
 	<string name="reload_color">Reload Apps Color</string>
 	<string name="reset_to_default_colors_explanation">This will restore all colors to their original default values</string>
 	<string name="make_every_colors_random_explanation">Generate completely random colors for all theme elements</string>
@@ -514,6 +515,8 @@
 	<string name="pinned_shortcut_failed">Failed to add shortcut</string>
 	<string name="pinned_shortcuts">Shortcuts</string>
 	<string name="no_pinned_shortcuts">No shortcuts available</string>
+	<string name="launch_activity">Launch Activity</string>
+	<string name="no_activities_found">No activities available</string>
 	<string name="select_shortcut_action_title">Select action for %1$s</string>
 	<string name="no_extra_shortcuts">No extra actions available.</string>
 	<string name="just_open_app">Just open %1$s</string>
@@ -1139,4 +1142,5 @@
 	<string name="drawer_appearance_help">Configure the look of your drawer</string>
 	<string name="drawer_behavior_help">Configure the behavior of your drawer</string>
 	<string name="drawer_actions_help">Configure the actions your drawer can execute for you</string>
+	<string name="search_activities">Search activities</string>
 </resources>
