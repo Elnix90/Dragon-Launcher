@@ -393,6 +393,12 @@ fun SettingsScreen(
 					uriHandler.openUri(WEBLATE_LINK)
 				}
 			) {
+				Image(
+					painter = painterResource(R.drawable.weblate_icon),
+					contentDescription = stringResource(R.string.contribute_in_translations),
+					modifier = Modifier.size(32.dp)
+				)
+				Spacer(5.dp)
 				Text(
 					text = stringResource(R.string.contribute_in_translations),
 					style = MaterialTheme.typography.labelMediumEmphasized
