@@ -30,7 +30,7 @@ fun SettingsWithTitle(
 			Row(
 				modifier =
 					Modifier
-						.padding(start = 10.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
+						.padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
 						.fillMaxWidth(),
 				verticalAlignment = Alignment.CenterVertically
 			) {
