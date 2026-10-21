@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.settings.customization.hold
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -507,7 +506,7 @@ fun HoldToActivateTab(
 										with(swipeService) {
 											holdGesture(scope.coroutineContext, false)
 										}
-									}.background(Color.Blue)
+									}
 						) {
 							val center =
 								if (!manualMode) {
