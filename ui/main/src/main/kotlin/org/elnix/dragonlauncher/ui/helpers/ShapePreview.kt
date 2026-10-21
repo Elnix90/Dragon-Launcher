@@ -57,9 +57,9 @@ fun ShapePreview(
 			modifier
 				.aspectRatio(1f, true)
 				.size(size)
-				.clip(MaterialTheme.shapes.extraLarge)
 				.conditional(onClick) {
-					combinedClickable(onLongClick = onLongClick, onClick = it)
+					clip(iconShape.resolveShape())
+						.combinedClickable(onLongClick = onLongClick, onClick = it)
 				},
 		contentAlignment = Alignment.Center
 	) {
