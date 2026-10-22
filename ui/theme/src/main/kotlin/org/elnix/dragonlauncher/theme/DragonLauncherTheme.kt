@@ -1,8 +1,12 @@
 package org.elnix.dragonlauncher.theme
 
+import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MotionScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
@@ -10,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
@@ -27,21 +32,38 @@ import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 fun rememberCurrentColorScheme(
 	colorsViewModel: ColorsViewModel = activityViewModel()
 ): State<ColorScheme> {
+	val ctx = LocalContext.current
+
+	val darkTheme = isSystemInDarkTheme()
+	val dynamicColors by ColorModesSettingsStore.dynamicColors.asState()
+
 	val defaultTheme by ColorModesSettingsStore.defaultTheme.asState()
 	val customScheme by colorsViewModel.colorService.colors.collectAsState()
-	val systemScheme = systemColorScheme()
+	val systemScheme = systemColorScheme(dynamicColors, darkTheme)
 
 	return remember(
 		defaultTheme,
 		systemScheme,
-		customScheme
+		customScheme,
+		dynamicColors,
+		darkTheme
 	) {
 		derivedStateOf {
 			when (defaultTheme) {
-				DefaultThemes.Light -> LightDragonColorScheme
-				DefaultThemes.Dark -> DarkDragonColorScheme
+				DefaultThemes.Light -> if (dynamicColors &&
+					Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+				) {
+					dynamicLightColorScheme(ctx)
+				} else {
+					LightDragonColorScheme
+				}
+
+				DefaultThemes.Dark -> if (dynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) dynamicDarkColorScheme(ctx) else DarkDragonColorScheme
+
 				DefaultThemes.Amoled -> AmoledDragonColorScheme
+
 				DefaultThemes.System -> systemScheme
+
 				DefaultThemes.Custom -> customScheme
 			}
 		}
