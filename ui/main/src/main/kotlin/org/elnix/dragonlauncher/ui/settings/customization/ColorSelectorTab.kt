@@ -420,8 +420,7 @@ fun ColorSelectorTab() {
 				}
 			}
 
-			// Only show the dynamic colors switch when in SYSTEM view
-			AnimatedVisibility(defaultTheme == System) {
+			AnimatedVisibility(defaultTheme != Custom) {
 				Setting(ColorModesSettingsStore.dynamicColors)
 			}
 
