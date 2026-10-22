@@ -1,6 +1,8 @@
 package org.elnix.dragonlauncher.compat
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
@@ -19,6 +21,7 @@ import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.APPS_TAG
 import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.PM_COMPAT_TAG
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.i18n.R
 
@@ -32,6 +35,18 @@ interface PackageManagerCompat {
 	 * Get only launchable apps
 	 */
 	fun getLaunchableApps(): List<LauncherActivityInfo>
+
+	/**
+	 * Lists every launcher activity of every app for the given [profiles], merging
+	 * [LauncherApps.getActivityList] (valid for every profile) with a raw
+	 * [PackageManager.queryIntentActivities] query for the current user.
+	 *
+	 * The second source is needed because some ROMs (e.g. MIUI/HyperOS)
+	 * filter [LauncherApps] down to one activity per package, while
+	 * a plain PackageManager query still
+	 * lists every launcher activity. Sorted by package name, then label.
+	 */
+	fun getLauncherActivities(profiles: List<Profile>): List<LauncherActivity>
 
 	fun isSystemApp(appInfo: ApplicationInfo): Boolean
 
@@ -112,6 +127,58 @@ internal class PackageManagerCompatImpl(
 			}
 		}
 		return result
+	}
+
+	override fun getLauncherActivities(profiles: List<Profile>): List<LauncherActivity> {
+		val loaded = mutableListOf<LauncherActivity>()
+		val seen = mutableSetOf<Pair<Profile, ComponentName>>()
+
+		fun add(label: CharSequence?, componentName: ComponentName, profile: Profile) {
+			if (!seen.add(profile to componentName)) return
+			loaded +=
+				LauncherActivity(
+					componentName = componentName,
+					label = label?.toString() ?: componentName.className,
+					profile = profile
+				)
+		}
+
+		// Primary source: LauncherApps, works for every profile
+		profiles.forEach { profile ->
+			try {
+				launcherApps.getActivityList(null, profile.userHandle)?.forEach { info ->
+					add(info.label, info.componentName, profile)
+				}
+			} catch (e: Exception) {
+				logE(PM_COMPAT_TAG, e) { "Error getting launcher activities for ${profile.type}" }
+			}
+		}
+
+		// Secondary source: raw PackageManager query for the current user
+		val currentProfile = profiles.firstOrNull { it.userHandle == myUserHandle() }
+		if (currentProfile != null) {
+			listOf(
+				Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER),
+				Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_INFO)
+			).forEach { intent ->
+				try {
+					pm.queryIntentActivities(intent, PackageManager.MATCH_ALL).forEach { resolveInfo ->
+						val activityInfo = resolveInfo.activityInfo ?: return@forEach
+						val componentName = ComponentName(activityInfo.packageName, activityInfo.name)
+						add(resolveInfo.loadLabel(pm), componentName, currentProfile)
+					}
+				} catch (e: Exception) {
+					logE(PM_COMPAT_TAG, e) { "Error querying PackageManager for launcher activities" }
+				}
+			}
+		}
+
+		logD(PM_COMPAT_TAG) { "Found ${loaded.size} launcher activities across ${profiles.size} profiles" }
+
+		return loaded.sortedWith(
+			compareBy<LauncherActivity> { it.packageName.lowercase() }
+				.thenBy { it.label.lowercase() }
+		)
 	}
 
 	override fun getAppIcon(packageName: String, userId: Int, isPrivate: Boolean): Drawable {

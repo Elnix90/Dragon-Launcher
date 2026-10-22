@@ -60,6 +60,7 @@ dependencies {
 	api(project(":core:services:security"))
 	api(project(":core:services:lifecycle"))
 	api(project(":core:services:applaunch"))
+	api(project(":core:services:compat"))
 
 	implementation(project(":data:notifications"))
 	api(project(":data:applications"))

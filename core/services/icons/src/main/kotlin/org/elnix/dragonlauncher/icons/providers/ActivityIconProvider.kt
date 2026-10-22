@@ -1,8 +1,11 @@
 package org.elnix.dragonlauncher.icons.providers
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.graphics.drawable.AdaptiveIconDrawable
+import android.graphics.drawable.Drawable
+import android.os.Process
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,8 +21,8 @@ import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 /**
  * Resolves the icon of a specific launcher activity from an [Action.LaunchActivity].
  *
- * Apps such as the MIUI/HyperOS dialer expose more than one launcher activity, so the icon
- * must come from the activity itself and not from the package's default one (see #468).
+ * Some apps expose more than one launcher activity, so the icon
+ * must come from the activity itself and not from the package's default one
  */
 internal class ActivityIconProvider(
 	private val ctx: Context,
@@ -29,23 +32,8 @@ internal class ActivityIconProvider(
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		if (action !is Action.LaunchActivity) return null
 
-		val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-
 		val icon =
-			withContext(Dispatchers.IO) {
-				try {
-					launcherApps
-						.getActivityList(action.packageName, action.profile.userHandle)
-						.firstOrNull { it.componentName.className == action.activityName }
-						?.getIcon(ctx.resources.displayMetrics.densityDpi)
-				} catch (e: SecurityException) {
-					logE(ICONS_TAG, e) { "Security Exception when getting activity icon; Dragon is probably not the default launcher" }
-					null
-				} catch (e: Exception) {
-					logE(ICONS_TAG, e) { "Failed to get activity icon for ${action.packageName}/${action.activityName}" }
-					null
-				}
-			} ?: return null
+			withContext(Dispatchers.IO) { resolveIcon(action) } ?: return null
 
 		if (icon is AdaptiveIconDrawable) {
 			if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
@@ -88,5 +76,37 @@ internal class ActivityIconProvider(
 				),
 			backgroundLayer = TransparentLayer
 		)
+	}
+
+	/**
+	 * Resolves the activity's icon, falling back to a raw [android.content.pm.PackageManager]
+	 * lookup for activities the ROM hides from [LauncherApps]
+	 * The fallback only works for the current user, as other profiles require [LauncherApps]
+	 */
+	private fun resolveIcon(action: Action.LaunchActivity): Drawable? {
+		val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
+		try {
+			launcherApps
+				.getActivityList(action.packageName, action.profile.userHandle)
+				.firstOrNull { it.componentName.className == action.activityName }
+				?.getIcon(ctx.resources.displayMetrics.densityDpi)
+				?.let { return it }
+		} catch (e: SecurityException) {
+			logE(ICONS_TAG, e) { "Security Exception when getting activity icon; Dragon is probably not the default launcher" }
+		} catch (e: Exception) {
+			logE(ICONS_TAG, e) { "Failed to get activity icon for ${action.packageName}/${action.activityName}" }
+		}
+
+		if (action.profile.userHandle == Process.myUserHandle()) {
+			try {
+				return ctx.packageManager
+					.getActivityInfo(ComponentName(action.packageName, action.activityName), 0)
+					.loadIcon(ctx.packageManager)
+			} catch (_: Exception) {
+			}
+		}
+
+		return null
 	}
 }

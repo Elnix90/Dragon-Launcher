@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,13 +17,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
+import org.elnix.dragonlauncher.compat.LauncherActivity
+import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackManager
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
@@ -43,6 +48,7 @@ class DrawerViewModel
 		private val recentsService: RecentsService,
 		private val permissionsManager: PermissionsManager,
 		private val iconPackManager: IconPackManager,
+		private val packageManagerCompat: PackageManagerCompat,
 		val appOverrideManager: AppOverridesManager,
 		val workspaceManager: WorkspacesManager
 	) : ViewModel() {
@@ -133,6 +139,14 @@ class DrawerViewModel
 			appsRepository.queryAppShortcuts(
 				packageName
 			)
+
+		/**
+		 * Lists every launcher activity of every app for the given [profiles]
+		 */
+		suspend fun getLauncherActivities(profiles: List<Profile>): List<LauncherActivity> =
+			withContext(Dispatchers.IO) {
+				packageManagerCompat.getLauncherActivities(profiles)
+			}
 
 		fun hasNotificationsPermission(): StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.NotificationsAccess)
 

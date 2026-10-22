@@ -193,6 +193,28 @@ internal class AppLaunchServiceImpl(
 			options.putInt("android.activity.splashScreenStyle", 1)
 		}
 
+		logI(APP_LAUNCH_TAG) { "Launching activity ${componentName.flattenToString()} for ${profile.type}" }
+
+		// For the current user, prefer a plain explicit intent: it is what `am start` and most
+		// third-party launchers do, and LauncherApps.startMainActivity() silently does nothing
+		// on some ROMs (e.g. MIUI/HyperOS) for a package's secondary launcher activity,
+		// so no exception would ever trigger a fallback (see #468).
+		if (profile.userHandle == Process.myUserHandle()) {
+			try {
+				val intent =
+					Intent(Intent.ACTION_MAIN).apply {
+						addCategory(Intent.CATEGORY_LAUNCHER)
+						this.component = componentName
+						addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+					}
+
+				ctx.startActivity(intent, options)
+				return
+			} catch (e: Exception) {
+				logW(APP_LAUNCH_TAG, e) { "Explicit intent failed for ${componentName.flattenToString()}, trying LauncherApps" }
+			}
+		}
+
 		try {
 			launcherApps.startMainActivity(
 				componentName,
@@ -202,31 +224,8 @@ internal class AppLaunchServiceImpl(
 			)
 		} catch (e: SecurityException) {
 			logE(APP_LAUNCH_TAG, e) { "Security error launching ${action.packageName}/${action.activityName}" }
-			fallbackLaunchActivityWithIntent(componentName, profile)
 		} catch (e: Exception) {
 			logE(APP_LAUNCH_TAG, e) { "Failed to launch ${action.packageName}/${action.activityName}" }
-			fallbackLaunchActivityWithIntent(componentName, profile)
-		}
-	}
-
-	/**
-	 * Second chance for [launchActivityDirectly]: an explicit intent only works for the current
-	 * user, but it can still start activities [LauncherApps.startMainActivity] refused.
-	 */
-	private fun fallbackLaunchActivityWithIntent(componentName: ComponentName, profile: Profile) {
-		if (profile.userHandle != Process.myUserHandle()) return
-
-		try {
-			val intent =
-				Intent(Intent.ACTION_MAIN).apply {
-					addCategory(Intent.CATEGORY_LAUNCHER)
-					this.component = componentName
-					addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-				}
-
-			ctx.startActivity(intent)
-		} catch (e: Exception) {
-			logE(APP_LAUNCH_TAG, e) { "Fallback launch failed for $componentName" }
 		}
 	}
 

@@ -1,7 +1,5 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-import android.content.pm.LauncherActivityInfo
-import android.content.pm.LauncherApps
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,14 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.compat.LauncherActivity
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
@@ -41,21 +36,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.drawer.ListSearch
-
-private data class ActivityItem(
-	val activityInfo: LauncherActivityInfo,
-	val profile: Profile,
-	val packageName: String
-) {
-	val activityLabel: String get() = activityInfo.label.toString()
-	val className: String get() = activityInfo.componentName.className
-
-	fun matchesSearch(q: String, appName: String): Boolean =
-		activityLabel.contains(q, ignoreCase = true) ||
-			appName.contains(q, ignoreCase = true) ||
-			packageName.contains(q, ignoreCase = true) ||
-			className.contains(q, ignoreCase = true)
-}
 
 /**
  * Dialog that lists every launcher activity of every app (grouped by app), including secondary
@@ -70,42 +50,18 @@ fun LaunchActivityPickerDialog(
 	onDismiss: () -> Unit,
 	onActivitySelected: (Action.LaunchActivity) -> Unit
 ) {
-	val ctx = LocalContext.current
-
 	var searchQuery by remember { mutableStateOf("") }
 
 	val profiles by profilesViewModel.profiles.collectAsStateWithLifecycle(emptyList())
 	val applications by drawerViewModel.allApps.collectAsStateWithLifecycle()
 
-	var activities by remember { mutableStateOf<List<ActivityItem>>(emptyList()) }
+	var activities by remember { mutableStateOf<List<LauncherActivity>>(emptyList()) }
 
 	LaunchedEffect(profiles) {
-		val launcherApps = ctx.getSystemService(LauncherApps::class.java) ?: return@LaunchedEffect
-
-		activities =
-			withContext(Dispatchers.IO) {
-				profiles
-					.filterNotNull()
-					.mapNotNull { profile ->
-						try {
-							launcherApps.getActivityList(null, profile.userHandle)?.mapNotNull { info ->
-								ActivityItem(
-									activityInfo = info,
-									profile = profile,
-									packageName = info.componentName.packageName
-								)
-							}
-						} catch (_: Exception) {
-							null
-						}
-					}.flatten()
-			}.sortedWith(
-				compareBy<ActivityItem> { it.packageName.lowercase() }
-					.thenBy { it.activityLabel.lowercase() }
-			)
+		activities = drawerViewModel.getLauncherActivities(profiles.filterNotNull())
 	}
 
-	val groupedActivities: Map<String, List<ActivityItem>> =
+	val groupedActivities: Map<String, List<LauncherActivity>> =
 		remember(activities, applications, searchQuery) {
 			activities
 				.mapNotNull { item ->
@@ -113,7 +69,7 @@ fun LaunchActivityPickerDialog(
 						applications
 							.firstOrNull {
 								it.packageName == item.packageName && it.profile == item.profile
-							}?.label ?: item.activityLabel
+							}?.label ?: item.label
 
 					item.takeIf { searchQuery.isBlank() || it.matchesSearch(searchQuery, appName) }?.let { it to appName }
 				}.groupBy({ it.second }, { it.first })
@@ -186,7 +142,7 @@ fun LaunchActivityPickerDialog(
 
 @Composable
 private fun DragonGroupScope.ActivityItemRow(
-	item: ActivityItem,
+	item: LauncherActivity,
 	onClick: () -> Unit
 ) {
 	Row(
@@ -208,7 +164,7 @@ private fun DragonGroupScope.ActivityItemRow(
 			size = 36.dp
 		)
 		TextWithDescription(
-			text = item.activityLabel,
+			text = item.label,
 			description = item.className
 		)
 	}
