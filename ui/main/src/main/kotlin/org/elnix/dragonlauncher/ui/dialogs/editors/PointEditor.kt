@@ -48,7 +48,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
-import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerSheet
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
@@ -1035,7 +1035,7 @@ fun PointEditor(
 	}
 
 	if (showEditActionDialog) {
-		ActionPickerDialog(
+		ActionPickerSheet(
 			onDismiss = { showEditActionDialog = false },
 			onActionSelected = { selectedAction ->
 				editPoint = editPoint.copy(action = selectedAction)
@@ -1045,7 +1045,7 @@ fun PointEditor(
 	}
 
 	if (showHoldAndRunActionDialog) {
-		ActionPickerDialog(
+		ActionPickerSheet(
 			onDismiss = { showHoldAndRunActionDialog = false },
 			onActionSelected = { selectedAction ->
 				editPoint = editPoint.copy(holdAndRunAction = selectedAction)
@@ -1127,7 +1127,7 @@ fun PointEditor(
 
 	if (editingCycleStageActionIndex != null) {
 		val idx = editingCycleStageActionIndex!!
-		ActionPickerDialog(
+		ActionPickerSheet(
 			onDismiss = { editingCycleStageActionIndex = null },
 			onActionSelected = { selectedAction ->
 				val current = editPoint.cycleActions ?: emptyList()

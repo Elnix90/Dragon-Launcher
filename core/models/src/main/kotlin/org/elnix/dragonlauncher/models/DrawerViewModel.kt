@@ -156,10 +156,7 @@ class DrawerViewModel
 
 		fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
 
-		fun searchShortcuts(searchQuery: String): Flow<ImmutableList<ShortcutInfo>> =
-			shortcutRepository.search(
-				searchQuery
-			)
+		fun searchShortcuts(searchQuery: String): Flow<ImmutableList<ShortcutInfo>> = shortcutRepository.search(searchQuery)
 
 		init {
 			viewModelInitialized()

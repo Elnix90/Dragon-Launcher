@@ -134,7 +134,7 @@ fun DebugTab(
 				Text(text = "Show Google lockdown warning")
 			}
 			Setting(DebugSettingsStore.showGoogleLockDownWarning)
-			Setting(DebugSettingsStore.showKillLauncherActionInActionPicker)
+			Setting(DebugSettingsStore.showSpecialActions)
 			Setting(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
 		}
 

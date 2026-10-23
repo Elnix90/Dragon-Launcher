@@ -875,8 +875,6 @@
 	<string name="enable_logging.desc">Store all logs in app storage, and can be copied or exported</string>
 	<string name="disable_extension_signature_check">Disable extension signature check</string>
 	<string name="disable_extension_signature_check_desc">Allow extensions not signed with the official key</string>
-	<string name="show_kill_launcher_action">Show the kill launcher action in action selector</string>
-	<string name="show_kill_launcher_action_desc">If false, the kill launcher action is hidden</string>
 	<string name="files_log_level">Files log level</string>
 	<string name="snackbar_log_level">snackbar_log_level</string>
 	<string name="snackbar_log_level_desc" translatable="false">e</string>
@@ -1143,4 +1141,10 @@
 	<string name="drawer_behavior_help">Configure the behavior of your drawer</string>
 	<string name="drawer_actions_help">Configure the actions your drawer can execute for you</string>
 	<string name="search_activities">Search activities</string>
+    <string name="adb">ADB</string>
+	<string name="apps">Apps</string>
+	<string name="nests">Nests</string>
+	<string name="show_special_actions_in_picker">Show special actions in picker</string>
+	<string name="show_special_actions_in_picker_desc">Some actions are, not for everyone, or not really used widely, and therefore hidden by default</string>
+	<string name="special">Special</string>
 </resources>

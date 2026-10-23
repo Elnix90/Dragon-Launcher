@@ -312,7 +312,7 @@ sealed class Action {
 	@Serializable
 	@SerialName("KillLauncher")
 	data object KillLauncher : Action() {
-		override val drawableId: Int = R.drawable.ic_action_kill
+		override val drawableId: Int = R.drawable.skull
 		override val resId: Int = R.string.kill_launcher
 	}
 
@@ -356,10 +356,10 @@ sealed class Action {
 			listOf(
 				OpenWidget.dummy,
 				LaunchApp.dummy,
+				LaunchActivity.dummy,
 				OpenNest.dummy,
 				GoParentNest,
 				LaunchShortcut.dummy,
-				LaunchActivity.dummy,
 				OpenUrl.dummy,
 				OpenFile.dummy,
 				NotificationShade,

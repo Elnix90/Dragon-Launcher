@@ -814,8 +814,8 @@
     <string name="enable_logging.desc">全てのログをアプリストレージに保存し、コピーまたはエクスポートできるようにする</string>
     <string name="disable_extension_signature_check">拡張機能の署名チェックを無効化</string>
     <string name="disable_extension_signature_check_desc">公式キーで署名されていない拡張機能を許可する</string>
-    <string name="show_kill_launcher_action">アクションセレクターで「ランチャーの強制終了」アクションを表示する</string>
-    <string name="show_kill_launcher_action_desc">無効である場合、ランチャーを強制終了するアクションは表示されません</string>
+
+
     <string name="files_log_level">ファイルのログレベル</string>
     <string name="snackbar_log_level">スナックバーのログレベル</string>
     <string name="recently_used_apps_count_desc">ドロワーに表示する最近のアプリの量</string>

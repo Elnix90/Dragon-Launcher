@@ -811,8 +811,8 @@
     <string name="show_fps_desc">Affiche le nombre d\'images par secondes, en haut, par dessus tout</string>
     <string name="disable_extension_signature_check">Désactiver la vérification automatique de la signature des extensions</string>
     <string name="disable_extension_signature_check_desc">Autorise les extensions qui ne sont pas signées avec la clé officielle</string>
-    <string name="show_kill_launcher_action">Afficher l\'action \"Tuer le Launcher\" dans la liste des actions possibles</string>
-    <string name="show_kill_launcher_action_desc">Si désactivé, elle ne sera pas visible</string>
+
+
     <string name="recently_used_apps_count_desc">Combien d\'applications récentes sont affichées dans le tiroir d\'apps</string>
     <string name="themed_icons">Icônes à theme</string>
     <string name="force_themed">Force les icônes à theme</string>

@@ -173,11 +173,11 @@ object DebugSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
-	val showKillLauncherActionInActionPicker =
+	val showSpecialActions =
 		boolean(
-			title = R.string.show_kill_launcher_action,
-			description = R.string.show_kill_launcher_action_desc,
-			icon = R.drawable.ic_action_kill,
+			title = R.string.show_special_actions_in_picker,
+			description = R.string.show_special_actions_in_picker_desc,
+			icon = R.drawable.warning,
 			default = false
 		)
 

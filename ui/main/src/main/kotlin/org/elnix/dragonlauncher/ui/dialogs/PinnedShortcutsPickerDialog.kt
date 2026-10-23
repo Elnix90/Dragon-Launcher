@@ -3,12 +3,10 @@ package org.elnix.dragonlauncher.ui.dialogs
 import android.content.pm.ShortcutInfo
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,17 +19,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
+import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.permissions.PermissionGroup
+import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -68,6 +71,9 @@ fun PinnedShortcutsPickerDialog(
 	onDismiss: () -> Unit,
 	onShortcutSelected: (Action.LaunchShortcut) -> Unit
 ) {
+	val ctx = LocalContext.current
+	val isDefaultLauncher by rememberIsDefaultLauncher()
+
 	var searchQuery by remember { mutableStateOf("") }
 
 	val shortcuts by drawerViewModel.searchShortcuts(searchQuery).collectAsStateWithLifecycle(emptyList())
@@ -109,7 +115,7 @@ fun PinnedShortcutsPickerDialog(
 
 	DragonModalBottomSheet(
 		onDismissRequest = onDismiss,
-		sheetGesturesEnabled = true
+		skipPartiallyExpanded = true
 	) {
 		DialogTitle(stringResource(R.string.pinned_shortcuts))
 		Spacer(10.dp)
@@ -117,47 +123,48 @@ fun PinnedShortcutsPickerDialog(
 		ListSearch(R.string.search_shortcuts, searchQuery) { searchQuery = it }
 		Spacer(10.dp)
 
-		when {
-			groupedShortcuts.isEmpty() -> {
-				Column(
-					modifier =
-						Modifier
-							.fillMaxWidth()
-							.padding(16.dp),
-					horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.Center
-				) {
+		Column(
+			modifier =
+				Modifier
+					.fillMaxWidth()
+					.height(800.dp)
+					.verticalScroll(rememberScrollState()),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Center
+		) {
+			when {
+				!isDefaultLauncher -> {
+					DragonSettingsGroup {
+						DragonButton(
+							onClick = {
+								ctx.permissionsManager.requestPermission(PermissionGroup.DefaultLauncher)
+							}
+						) {
+							Text(stringResource(R.string.set_default_launcher))
+						}
+					}
+				}
+
+				groupedShortcuts.isEmpty() || (filteredGrouped.isEmpty() && searchQuery.isNotEmpty()) -> {
+					val text = stringResource(
+						if (groupedShortcuts.isEmpty() && searchQuery.isNotEmpty()) {
+							R.string.no_search_match
+						} else {
+							R.string.no_pinned_shortcuts
+						}
+					)
 					Text(
-						text = stringResource(R.string.no_pinned_shortcuts),
-						style = MaterialTheme.typography.bodyLarge,
-						color = MaterialTheme.colorScheme.onSurfaceVariant
+						text = text,
+						style = MaterialTheme.typography.bodyLarge
+					)
+
+					Text(
+						text = "¯\\_(ツ)_/¯",
+						style = MaterialTheme.typography.bodyLargeEmphasized
 					)
 				}
-			}
 
-			filteredGrouped.isEmpty() && searchQuery.isNotEmpty() -> {
-				Box(
-					modifier =
-						Modifier
-							.fillMaxWidth()
-							.padding(vertical = 24.dp),
-					contentAlignment = Alignment.Center
-				) {
-					Text(
-						text = stringResource(R.string.no_search_match),
-						style = MaterialTheme.typography.bodyLarge,
-						color = MaterialTheme.colorScheme.onSurfaceVariant
-					)
-				}
-			}
-
-			else -> {
-				Column(
-					modifier =
-						Modifier
-							.heightIn(max = 500.dp)
-							.verticalScroll(rememberScrollState())
-				) {
+				else -> {
 					filteredGrouped.forEach { (appName, shortcuts) ->
 						DragonSettingsGroup(appName) {
 							shortcuts.forEach { item ->

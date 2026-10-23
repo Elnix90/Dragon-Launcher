@@ -47,7 +47,7 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
@@ -193,7 +193,7 @@ fun DragonGroupScope.ActionSelector(
 	}
 
 	if (showDialog) {
-		ActionPickerDialog(
+		ActionPickerSheet(
 			onDismiss = { showDialog = false },
 			onActionSelected = {
 				onSelected(it)

@@ -107,7 +107,7 @@ import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerSheet
 import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.InitializationSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
@@ -1020,7 +1020,7 @@ fun PointsSettingsScreen(
 	}
 
 	if (showAddDialog) {
-		ActionPickerDialog(
+		ActionPickerSheet(
 			onDismiss = {
 				showAddDialog = false
 			},

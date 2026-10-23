@@ -90,7 +90,7 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
-import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
@@ -433,7 +433,7 @@ fun WidgetsTab(
 	var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
 
 	if (showAddDialog) {
-		ActionPickerDialog(
+		ActionPickerSheet(
 			onDismiss = { showAddDialog = false },
 			allowWidgets = true,
 			onActionSelected = { action ->

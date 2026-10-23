@@ -6,16 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,7 +35,6 @@ import org.elnix.dragonlauncher.base.model.models.DataADBCommands
 import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
-import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.allActions
 import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
@@ -51,13 +46,13 @@ import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalGridApi::class)
 @Composable
-fun ActionPickerDialog(
+fun ActionPickerSheet(
 	drawerViewModel: DrawerViewModel = activityViewModel(),
 	allowWidgets: Boolean = false,
 	onDismiss: () -> Unit,
@@ -81,17 +76,8 @@ fun ActionPickerDialog(
 	var showActivityPicker by remember { mutableStateOf(false) }
 	var showSettingsPagePicker by remember { mutableStateOf(false) }
 
-	val showKillLauncherActionInActionPicker by DebugSettingsStore.showKillLauncherActionInActionPicker.asState()
+	val showSpecialActions by DebugSettingsStore.showSpecialActions.asState()
 	val promptForShortcuts by BehaviorSettingsStore.promptForShortcutsWhenAddingApp.asState()
-
-	val actualActions =
-		allActions.filter {
-			when (it) {
-				Action.KillLauncher -> showKillLauncherActionInActionPicker
-				is Action.OpenWidget -> allowWidgets
-				else -> true
-			}
-		}
 
 	var selectedApp by remember { mutableStateOf<Application?>(null) }
 	var shortcutDialogVisible by remember { mutableStateOf(false) }
@@ -106,8 +92,7 @@ fun ActionPickerDialog(
 	}
 
 	DragonModalBottomSheet(
-		onDismissRequest = onDismiss,
-		skipPartiallyExpanded = true
+		onDismissRequest = onDismiss
 	) {
 		DialogTitle(stringResource(R.string.choose_action))
 
@@ -115,82 +100,68 @@ fun ActionPickerDialog(
 
 		Column(
 			verticalArrangement = Arrangement.spacedBy(5.dp),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			modifier = Modifier.heightIn(max = 600.dp)
+			horizontalAlignment = Alignment.CenterHorizontally
 		) {
-			val gridState = rememberLazyGridState()
+			Grid(
+				config = {
+					column(1.fr)
+					column(1.fr)
+					gap(5.dp)
 
-			Box {
-				LazyVerticalGrid(
-					modifier = Modifier.clip(MaterialTheme.shapes.large),
-					columns = GridCells.Fixed(2),
-					state = gridState,
-					verticalArrangement = Arrangement.spacedBy(5.dp),
-					horizontalArrangement = Arrangement.spacedBy(5.dp)
+					repeat(5) {}
+				}
+			) {
+				if (allowWidgets) {
+					ActionItem(
+						action = Action.OpenWidget.dummy,
+						modifier = Modifier.gridItem(columnSpan = 2)
+					) { onActionPicked(Action.OpenWidget.dummy) }
+				}
+
+				DragonSettingsGroup(
+					title = R.string.apps,
+					modifier = Modifier.gridItem(rowSpan = 2)
 				) {
-					items(actualActions) { action ->
-						ActionItem(
-							action = action,
-							onSelected = {
-								when (action) {
-									is Action.LaunchApp -> {
-										showAppPicker = true
-									}
+					ActionItem(Action.LaunchApp.dummy) { showAppPicker = true }
+					ActionItem(Action.LaunchActivity.dummy) { showActivityPicker = true }
+					ActionItem(Action.LaunchShortcut.dummy) { showPinnedShortcutsPicker = true }
+					ActionItem(Action.OpenAppDrawer.dummy) { showWorkspacePicker = true }
+				}
 
-									is Action.LaunchShortcut -> {
-										showPinnedShortcutsPicker = true
-									}
+				DragonSettingsGroup(R.string.notifications) {
+					ActionItem(Action.NotificationShade) { onActionPicked(Action.NotificationShade) }
+					ActionItem(Action.ControlPanel) { onActionPicked(Action.ControlPanel) }
+				}
 
-									is Action.LaunchActivity -> {
-										showActivityPicker = true
-									}
+				DragonSettingsGroup(R.string.nests) {
+					ActionItem(Action.OpenNest.dummy) { showNestPicker = true }
+					ActionItem(Action.GoParentNest) { onActionPicked(Action.GoParentNest) }
+				}
 
-									is Action.OpenAppDrawer -> {
-										showWorkspacePicker = true
-									}
+				DragonSettingsGroup(R.string.miscellaneous) {
+					ActionItem(Action.OpenFile.dummy) { showFilePicker = true }
+					ActionItem(Action.OpenUrl.dummy) { showUrlInput = true }
+					ActionItem(Action.OpenDragonLauncherSettings.dummy) { showSettingsPagePicker = true }
+				}
 
-									is Action.OpenNest -> {
-										showNestPicker = true
-									}
+				DragonSettingsGroup(R.string.accessibility) {
+					ActionItem(Action.Lock) { onActionPicked(Action.Lock) }
+					ActionItem(Action.OpenRecentApps) { onActionPicked(Action.OpenRecentApps) }
+				}
 
-									is Action.OpenDragonLauncherSettings -> {
-										showSettingsPagePicker = true
-									}
+				DragonSettingsGroup(R.string.adb) {
+					ActionItem(Action.ToggleWifi.dummy) { showWifiCommandInput = true }
+					ActionItem(Action.ToggleData.dummy) { showDataCommandInput = true }
+					ActionItem(Action.ToggleBluetooth.dummy) { showBluetoothCommandInput = true }
+					ActionItem(Action.RunAdbCommand.dummy) { showAdbCommandInput = true }
+				}
 
-									is Action.OpenFile -> {
-										showFilePicker = true
-									}
-
-									is Action.OpenUrl -> {
-										showUrlInput = true
-									}
-
-									is Action.RunAdbCommand -> {
-										showAdbCommandInput = true
-									}
-
-									is Action.ToggleData -> {
-										showDataCommandInput = true
-									}
-
-									is Action.ToggleWifi -> {
-										showWifiCommandInput = true
-									}
-
-									is Action.ToggleBluetooth -> {
-										showBluetoothCommandInput = true
-									}
-
-									else -> {
-										onActionPicked(action)
-									}
-								}
-							}
-						)
-						this@Column.Spacer(8.dp)
+				if (showSpecialActions) {
+					DragonSettingsGroup(R.string.special) {
+						ActionItem(Action.ReloadApps) { onActionPicked(Action.ReloadApps) }
+						ActionItem(Action.KillLauncher) { onActionPicked(Action.KillLauncher) }
 					}
 				}
-				VerticalScrollIndicator(gridState.canScrollForward)
 			}
 		}
 	}
@@ -382,6 +353,7 @@ fun ActionPickerDialog(
 @Composable
 private fun ActionItem(
 	action: Action,
+	modifier: Modifier = Modifier,
 	onSelected: () -> Unit
 ) {
 	val extraColors = LocalExtraColors.current
@@ -395,13 +367,14 @@ private fun ActionItem(
 			is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
 			is Action.OpenFile -> stringResource(R.string.open_file)
 			is Action.OpenNest -> stringResource(R.string.open_nest)
+			is Action.OpenDragonLauncherSettings -> stringResource(R.string.dragon_launcher_settings)
 			else -> actionLabel(action)
 		}
 
 	val color = action.actionColor(extraColors)
 	Row(
 		modifier =
-			Modifier
+			modifier
 				.fillMaxWidth()
 				.clip(MaterialTheme.shapes.large)
 				.background(color.alphaMultiplier(0.5f))
@@ -418,7 +391,7 @@ private fun ActionItem(
 		Text(
 			text = name,
 			maxLines = 2,
-			modifier = Modifier.basicMarquee(Int.MAX_VALUE),
+			modifier = Modifier.basicMarquee(3),
 			style = MaterialTheme.typography.titleMediumEmphasized
 		)
 	}

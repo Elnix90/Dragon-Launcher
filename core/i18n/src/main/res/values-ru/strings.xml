@@ -840,8 +840,8 @@
     <string name="enable_logging.desc">Сохранять все журналы в хранилище приложения, их можно скопировать или экспортировать</string>
     <string name="disable_extension_signature_check">Отключить проверку подписи расширений</string>
     <string name="disable_extension_signature_check_desc">Разрешить расширения, не подписанные официальным ключом</string>
-    <string name="show_kill_launcher_action">Действие «Завершить лаунчер» в списке действий</string>
-    <string name="show_kill_launcher_action_desc">Если выключено, действие «Завершить лаунчер» скрыто</string>
+
+
     <string name="files_log_level">Уровень журнала в файлах</string>
     <string name="recently_used_apps_count_desc">Сколько недавних приложений показывать в меню</string>
     <string name="themed_icons">Тематические значки</string>
