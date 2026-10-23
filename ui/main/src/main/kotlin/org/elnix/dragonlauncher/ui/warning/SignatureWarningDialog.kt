@@ -88,7 +88,7 @@ fun SignatureWarningDialog(
 				val ctx = LocalContext.current
 				ValidateCancelButtons(
 					cancelText = stringResource(R.string.use_anyways),
-					validateText = "${stringResource(R.string.uninstall)} ☠\uFE0F",
+					confirmText = "${stringResource(R.string.uninstall)} ☠\uFE0F",
 					onCancel = { showConfirmDialog = true },
 					onConfirm = {
 						ctx.startActivity(

@@ -66,7 +66,7 @@ fun ShizukuUnavailableDialog(
 		},
 		confirmButton = {
 			ValidateCancelButtons(
-				validateText = stringResource(R.string.shizuku),
+				confirmText = stringResource(R.string.shizuku),
 				onConfirm = onConfirm,
 				onCancel = onDismiss
 			)

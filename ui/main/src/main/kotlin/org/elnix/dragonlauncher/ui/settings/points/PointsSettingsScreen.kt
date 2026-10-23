@@ -1155,7 +1155,7 @@ private fun ResetPointsDialog(
 		modifier = Modifier.padding(16.dp),
 		confirmButton = {
 			ValidateCancelButtons(
-				validateText = stringResource(R.string.ok),
+				confirmText = stringResource(R.string.ok),
 				cancelText = stringResource(R.string.cancel),
 				onCancel = onDismiss,
 				validateEnabled = resetPoints || resetNests || resetDefaultPoint || resetDefaultNest || resetDefaultShape,

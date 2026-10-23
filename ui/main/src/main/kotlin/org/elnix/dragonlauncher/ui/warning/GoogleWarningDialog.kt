@@ -111,7 +111,7 @@ fun GoogleWarningDialog(
 
 				ValidateCancelButtons(
 					cancelText = stringResource(R.string.do_something),
-					validateText = "${stringResource(R.string.ok)} \uD83D\uDE2D",
+					confirmText = "${stringResource(R.string.ok)} \uD83D\uDE2D",
 					onCancel = { uriHandler.openUri("https://keepandroidopen.org/") },
 					onConfirm = onDismissRequest
 				)

@@ -73,7 +73,7 @@ fun GamblingInputDialog(
 		},
 		confirmButton = {
 			ValidateCancelButtons(
-				validateText = stringResource(R.string.ok),
+				confirmText = stringResource(R.string.ok),
 				onCancel = onDismiss
 			) {
 				val number =

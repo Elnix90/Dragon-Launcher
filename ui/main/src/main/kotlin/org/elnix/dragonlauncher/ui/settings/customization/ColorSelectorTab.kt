@@ -594,7 +594,7 @@ fun ColorSelectorTab() {
 			onDismissRequest = { showAllColorsValidation = false },
 			confirmButton = {
 				ValidateCancelButtons(
-					validateText = stringResource(R.string.apply),
+					confirmText = stringResource(R.string.apply),
 					onCancel = { showAllColorsValidation = false }
 				) {
 					scope.launch {

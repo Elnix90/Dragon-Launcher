@@ -55,7 +55,7 @@ class ValidateCancelButtonsTest {
 		composeTestRule.setContent {
 			TestTheme {
 				ValidateCancelButtons(
-					validateText = "Save",
+					confirmText = "Save",
 					cancelText = "Cancel",
 					onCancel = {},
 					onConfirm = {}
@@ -74,7 +74,7 @@ class ValidateCancelButtonsTest {
 		composeTestRule.setContent {
 			TestTheme {
 				ValidateCancelButtons(
-					validateText = "OK",
+					confirmText = "OK",
 					cancelText = "Cancel",
 					onCancel = {},
 					onConfirm = { confirmed = true }
@@ -93,7 +93,7 @@ class ValidateCancelButtonsTest {
 		composeTestRule.setContent {
 			TestTheme {
 				ValidateCancelButtons(
-					validateText = "Save",
+					confirmText = "Save",
 					cancelText = "Cancel",
 					onCancel = { cancelled = true },
 					onConfirm = {}
@@ -110,7 +110,7 @@ class ValidateCancelButtonsTest {
 		composeTestRule.setContent {
 			TestTheme {
 				ValidateCancelButtons(
-					validateText = "OK",
+					confirmText = "OK",
 					cancelText = "Cancel",
 					onCancel = null,
 					onConfirm = {}
@@ -129,7 +129,7 @@ class ValidateCancelButtonsTest {
 		composeTestRule.setContent {
 			TestTheme {
 				ValidateCancelButtons(
-					validateText = "Save",
+					confirmText = "Save",
 					cancelText = "Cancel",
 					validateEnabled = false,
 					onCancel = {},
@@ -150,7 +150,7 @@ class ValidateCancelButtonsTest {
 		composeTestRule.setContent {
 			TestTheme {
 				ValidateCancelButtons(
-					validateText = "Accept",
+					confirmText = "Accept",
 					cancelText = "Decline",
 					onCancel = {},
 					onConfirm = {}

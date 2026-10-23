@@ -29,7 +29,6 @@ fun CustomAlertDialog(
 	scroll: Boolean = true,
 	alignment: Alignment = Alignment.BottomCenter,
 	confirmButton: @Composable (() -> Unit)? = null,
-	dismissButton: @Composable (() -> Unit)? = null,
 	icon: @Composable (() -> Unit)? = null,
 	title: @Composable (() -> Unit)? = null,
 	text: @Composable (() -> Unit)? = null
@@ -52,7 +51,7 @@ fun CustomAlertDialog(
 						.heightIn(max = maxDialogHeight)
 						.clip(MaterialTheme.shapes.large)
 						.background(MaterialTheme.colorScheme.surfaceContainerLow)
-						.padding(top = 15.dp),
+						.padding(15.dp),
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.spacedBy(15.dp)
 			) {
@@ -62,7 +61,7 @@ fun CustomAlertDialog(
 							.fillMaxWidth()
 							.padding(horizontal = 15.dp),
 					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.Center
+					horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
 				) {
 					icon?.invoke()
 					title?.invoke()
@@ -84,14 +83,10 @@ fun CustomAlertDialog(
 				}
 
 				Row(
-					modifier =
-						Modifier
-							.fillMaxWidth()
-							.padding(horizontal = 15.dp),
+					modifier = Modifier.fillMaxWidth(),
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.Center
 				) {
-					dismissButton?.invoke()
 					confirmButton?.invoke()
 				}
 			}

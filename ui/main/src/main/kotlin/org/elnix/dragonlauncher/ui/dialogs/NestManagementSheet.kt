@@ -373,7 +373,7 @@ private fun DeleteNestConfirmDialog(
 		onDismissRequest = onDismiss,
 		confirmButton = {
 			ValidateCancelButtons(
-				validateText = stringResource(R.string.ok),
+				confirmText = stringResource(R.string.ok),
 				cancelText = stringResource(R.string.cancel),
 				onCancel = onDismiss,
 				onConfirm = {

@@ -79,7 +79,7 @@ fun UserValidation(
 		onDismissRequest = onDismiss ?: onValidate,
 		confirmButton = {
 			ValidateCancelButtons(
-				validateText = validateText,
+				confirmText = validateText,
 				cancelText = cancelText,
 				onCancel = onDismiss,
 				onConfirm = onValidate

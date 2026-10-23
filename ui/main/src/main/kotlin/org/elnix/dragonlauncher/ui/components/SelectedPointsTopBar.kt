@@ -188,7 +188,7 @@ fun SelectedPointsTopBar(
 			scroll = false,
 			alignment = Alignment.Center,
 			confirmButton = {
-				ValidateCancelButtons(validateText = stringResource(R.string.ok)) { showSelectedPointsDialog = false }
+				ValidateCancelButtons(confirmText = stringResource(R.string.ok)) { showSelectedPointsDialog = false }
 			},
 			title = {
 				Text(
