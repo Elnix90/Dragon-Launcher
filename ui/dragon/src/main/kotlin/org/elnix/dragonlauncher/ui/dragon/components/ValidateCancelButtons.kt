@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -23,7 +21,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
@@ -44,18 +41,17 @@ fun ValidateCancelButtons(
 		if (onCancel != null) {
 			customItem(
 				buttonGroupContent = {
-					Button(
+					DragonButton(
 						onClick =
 							withHaptic(HapticFeedbackType.Reject) {
 								onCancel()
 							},
-						shapes = ButtonDefaults.shapes(),
 						modifier =
 							Modifier
 								.weight(1f)
 								.animateWidth(interactionSources[0]),
 						interactionSource = interactionSources[0],
-						colors = AppObjectsColors.cancelButtonColors()
+						isCancel = true
 					) {
 						Icon(
 							painter = painterResource(R.drawable.close),
@@ -73,7 +69,7 @@ fun ValidateCancelButtons(
 
 		customItem(
 			buttonGroupContent = {
-				Button(
+				DragonButton(
 					onClick =
 						withHaptic(HapticFeedbackType.Confirm) {
 							onConfirm()
@@ -83,8 +79,7 @@ fun ValidateCancelButtons(
 						Modifier
 							.weight(1f)
 							.animateWidth(interactionSources[1]),
-					interactionSource = interactionSources[1],
-					shapes = ButtonDefaults.shapes()
+					interactionSource = interactionSources[1]
 				) {
 					Icon(
 						painter = painterResource(R.drawable.check),
@@ -120,19 +115,18 @@ fun ValidateCancelButtonsWithLoading(
 		if (onCancel != null) {
 			customItem(
 				buttonGroupContent = {
-					Button(
+					DragonButton(
 						onClick =
 							withHaptic(HapticFeedbackType.Reject) {
 								onCancel()
 							},
 						enabled = !hasClickedValidate,
-						shapes = ButtonDefaults.shapes(),
 						modifier =
 							Modifier
 								.weight(1f)
 								.animateWidth(interactionSources[0]),
 						interactionSource = interactionSources[0],
-						colors = AppObjectsColors.cancelButtonColors()
+						isCancel = true
 					) {
 						Icon(
 							painter = painterResource(R.drawable.close),
@@ -158,14 +152,13 @@ fun ValidateCancelButtonsWithLoading(
 							.animateWidth(interactionSources[1])
 				) { hasClickedImport ->
 					if (hasClickedImport) {
-						Button(
+						DragonButton(
 							onClick =
 								withHaptic(HapticFeedbackType.Confirm) {
 									onConfirm()
 								},
 							enabled = validateEnabled,
-							interactionSource = interactionSources[1],
-							shapes = ButtonDefaults.shapes()
+							interactionSource = interactionSources[1]
 						) {
 							Icon(
 								painter = painterResource(R.drawable.check),

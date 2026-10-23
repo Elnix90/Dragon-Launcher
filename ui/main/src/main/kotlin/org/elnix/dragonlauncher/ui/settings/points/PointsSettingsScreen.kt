@@ -10,6 +10,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -775,7 +777,8 @@ fun PointsSettingsScreen(
 													val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape, false)
 													val angleDeg = pointRelativeOffset.angleDeg()
 													val gridOffset = snapPointAngleLinesStartAngle.mod(snapPointAngleThreshold)
-													val snappedAngle = (angleDeg - gridOffset).snapToGrid(snapPointAngleThreshold.toFloat()) + gridOffset
+													val snappedAngle =
+														(angleDeg - gridOffset).snapToGrid(snapPointAngleThreshold.toFloat()) + gridOffset
 
 													/**
 													 * By how much the final offset has to rotate to match the asked angle
@@ -884,18 +887,51 @@ fun PointsSettingsScreen(
 						.verticalScroll(rememberScrollState()),
 				verticalArrangement = Arrangement.spacedBy(5.dp)
 			) {
-				DragonButton(
-					onClick = {
-						pointsService.deselectAll()
-						pointsService.persist()
-						navigator.navigate(NavigationRoute.NestEdit)
-						showMoreSheet = false
-					},
+				val interactionSources = remember { List(2) { MutableInteractionSource() } }
+
+				ButtonGroup(
+					overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
 					modifier = Modifier.fillMaxWidth()
 				) {
-					Icon(painter = painterResource(R.drawable.edit_rounded), null)
-					Spacer(5.dp)
-					Text(stringResource(R.string.edit_nest_arg, nestId))
+					customItem(
+						buttonGroupContent = {
+							DragonButton(
+								onClick = {
+									pointsService.deselectAll()
+									navigator.navigate(NavigationRoute.NestEdit)
+									showMoreSheet = false
+								},
+								modifier =
+									Modifier
+										.weight(1f)
+										.animateWidth(interactionSources[0]),
+								interactionSource = interactionSources[0]
+							) {
+								Icon(painter = painterResource(R.drawable.edit_nest), null)
+								Spacer(5.dp)
+								Text(stringResource(R.string.edit_nest_arg, nestId))
+							}
+						},
+						menuContent = {}
+					)
+
+					customItem(
+						buttonGroupContent = {
+							DragonButton(
+								onClick = { showEditDefaultPoint = true },
+								modifier =
+									Modifier
+										.weight(1f)
+										.animateWidth(interactionSources[1]),
+								interactionSource = interactionSources[1]
+							) {
+								Icon(painter = painterResource(R.drawable.edit_rounded), null)
+								Spacer(5.dp)
+								Text(stringResource(R.string.edit_default_point))
+							}
+						},
+						menuContent = { }
+					)
 				}
 
 				DragonSettingsGroup(R.string.snapping) {
@@ -917,12 +953,21 @@ fun PointsSettingsScreen(
 //                    Setting(UiSettingsStore.autoSeparatePoints)
 				}
 
-				DragonSettingsGroup(R.string.miscellaneous) {
-					DragonButton(onClick = { showEditDefaultPoint = true }) {
-						Icon(painter = painterResource(R.drawable.edit_rounded), null)
-						Spacer(5.dp)
-						Text(stringResource(R.string.edit_default_point))
+				DragonSettingsGroup(R.string.advanced) {
+					Setting(UiSettingsStore.allowFreePoints)
+					AnimatedVisibility(allowFreePoints) {
+						Column(
+							verticalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+						) {
+							this@DragonSettingsGroup.Setting(UiSettingsStore.snapPoints)
+							this@DragonSettingsGroup.Setting(UiSettingsStore.snapPointsToShapes)
+							this@DragonSettingsGroup.Setting(UiSettingsStore.pointsCellSizeDp)
+							this@DragonSettingsGroup.Setting(UiSettingsStore.showGridWhenSnappingIsOn)
+						}
 					}
+				}
+
+				DragonSettingsGroup(R.string.miscellaneous) {
 					DragonButton(
 						onClick = {
 							pointsService.selectAll(nestId)
@@ -938,6 +983,9 @@ fun PointsSettingsScreen(
 						Spacer(5.dp)
 						Text(stringResource(R.string.gamble_apps))
 					}
+				}
+
+				DragonSettingsGroup(R.string.dangerous_actions) {
 					DragonButton(
 						onClick = {
 							hasInitialized = false
@@ -948,23 +996,6 @@ fun PointsSettingsScreen(
 						Spacer(5.dp)
 						Text(stringResource(R.string.has_initialized_desc))
 					}
-				}
-
-				DragonSettingsGroup(R.string.advanced) {
-					Setting(UiSettingsStore.allowFreePoints)
-					AnimatedVisibility(allowFreePoints) {
-						Column(
-							verticalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-						) {
-							this@DragonSettingsGroup.Setting(UiSettingsStore.snapPoints)
-							this@DragonSettingsGroup.Setting(UiSettingsStore.snapPointsToShapes)
-							this@DragonSettingsGroup.Setting(UiSettingsStore.pointsCellSizeDp)
-							this@DragonSettingsGroup.Setting(UiSettingsStore.showGridWhenSnappingIsOn)
-						}
-					}
-				}
-
-				DragonSettingsGroup(R.string.dangerous_actions) {
 					DragonButton(
 						onClick = { showResetPointsAndNestsDialog = true },
 						isCancel = true
