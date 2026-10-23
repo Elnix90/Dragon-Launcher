@@ -155,6 +155,7 @@ fun PointsSettingsScreen(
 	val snapPointsAngle by UiSettingsStore.snapPointsAngle.asState()
 	val snapPointAngleThreshold by UiSettingsStore.snapPointAngleThreshold.asState()
 	val showSnapPointAngleLines by UiSettingsStore.showSnapPointAngleLines.asState()
+	val snapPointAngleLinesStartAngle by UiSettingsStore.snapPointAngleLinesStartAngle.asState()
 
 	val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
 	val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
@@ -473,10 +474,11 @@ fun PointsSettingsScreen(
 							)
 						}
 
-						if (showSnapPointAngleLines) {
-							var a = 0
-							val defaultOffset = Offset(1000f, 0f)
-							while (a < 360) {
+						if (showSnapPointAngleLines && snapPointsAngle) {
+							var a = snapPointAngleLinesStartAngle
+							val finalAngle = 360 + snapPointAngleLinesStartAngle
+							val defaultOffset = Offset(5000f, 0f)
+							while (a < finalAngle) {
 								val endPos = defaultOffset.rotateBy(a.toFloat())
 								drawLine(
 									start = center,
@@ -771,7 +773,8 @@ fun PointsSettingsScreen(
 												if (snapPointsAngle && shape != null) {
 													val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape, false)
 													val angleDeg = pointRelativeOffset.angleDeg()
-													val snappedAngle = angleDeg.snapToGrid(snapPointAngleThreshold.toFloat())
+													val gridOffset = snapPointAngleLinesStartAngle.mod(snapPointAngleThreshold)
+													val snappedAngle = (angleDeg - gridOffset).snapToGrid(snapPointAngleThreshold.toFloat()) + gridOffset
 
 													/**
 													 * By how much the final offset has to rotate to match the asked angle
@@ -894,15 +897,20 @@ fun PointsSettingsScreen(
 					Text(stringResource(R.string.edit_nest_arg, nestId))
 				}
 
-				DragonSettingsGroup(R.string.move_around_mode) {
+				DragonSettingsGroup(R.string.snapping) {
 					Setting(UiSettingsStore.snapPointsAngle)
 					AnimatedVisibility(snapPointsAngle) {
 						Setting(UiSettingsStore.snapPointAngleThreshold)
 					}
 					AnimatedVisibility(snapPointsAngle) {
+						Setting(UiSettingsStore.snapPointAngleLinesStartAngle)
+					}
+					AnimatedVisibility(snapPointsAngle) {
 						Setting(UiSettingsStore.showSnapPointAngleLines)
 					}
+				}
 
+				DragonSettingsGroup {
 					Setting(UiSettingsStore.autoMerge)
 					Setting(UiSettingsStore.multiSelectPoints)
 //                    Setting(UiSettingsStore.autoSeparatePoints)

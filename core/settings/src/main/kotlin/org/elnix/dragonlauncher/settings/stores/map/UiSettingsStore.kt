@@ -351,6 +351,16 @@ object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val snapPointAngleLinesStartAngle =
+		int(
+			title = R.string.snap_point_angle_lines_start_angle,
+			description = R.string.snap_point_angle_lines_start_angle_desc,
+			icon = R.drawable.rotate_90_degrees_cw,
+			default = 0,
+			allowedRange = 0..359
+		)
+
+	@SettingKey
 	val allowFreePoints =
 		boolean(
 			title = R.string.allow_free_points,

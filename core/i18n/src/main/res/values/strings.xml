@@ -1147,4 +1147,7 @@
 	<string name="show_special_actions_in_picker">Show special actions in picker</string>
 	<string name="show_special_actions_in_picker_desc">Some actions are, not for everyone, or not really used widely, and therefore hidden by default</string>
 	<string name="special">Special</string>
+	<string name="snap_point_angle_lines_start_angle">Snap point angle lines start angle</string>
+	<string name="snap_point_angle_lines_start_angle_desc">The angle at which the loop starts (to adjust the rotation)</string>
+	<string name="snapping">Snapping</string>
 </resources>
