@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,11 +52,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asMutableStateNull
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
@@ -72,8 +68,6 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.GoParent
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.ResetSystem
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.SelectedPointEditTools
-import org.elnix.dragonlauncher.base.model.models.PointPreviewMode
-import org.elnix.dragonlauncher.base.model.models.PointPreviewTitleOptions
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -101,11 +95,10 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
+import org.elnix.dragonlauncher.ui.components.ActionPlacementTopBar
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
-import org.elnix.dragonlauncher.ui.components.PointPreview
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerSheet
 import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
@@ -1025,7 +1018,6 @@ fun PointsSettingsScreen(
 				showAddDialog = false
 			},
 			onMultipleActionsSelected = { actions ->
-				manualPlacementQueue.clear()
 				manualPlacementQueue.addAll(actions)
 				showAddDialog = false
 			}
@@ -1073,57 +1065,7 @@ fun PointsSettingsScreen(
 	if (isInPlacementMode) {
 		val remaining = manualPlacementQueue.size
 		val currentPoint = Point.dummySwipePoint(manualPlacementQueue.first())
-
-		Box(
-			modifier =
-				Modifier
-					.fillMaxWidth()
-					.padding(horizontal = 16.dp, vertical = 8.dp),
-			contentAlignment = Alignment.TopCenter
-		) {
-			Column(
-				horizontalAlignment = Alignment.CenterHorizontally,
-				modifier =
-					Modifier
-						.background(
-							MaterialTheme.colorScheme.primaryContainer,
-							shape = MaterialTheme.shapes.medium
-						).padding(horizontal = 16.dp, vertical = 12.dp)
-			) {
-				Text(
-					text = stringResource(R.string.place_app_where),
-					color = MaterialTheme.colorScheme.onPrimaryContainer,
-					fontWeight = FontWeight.Bold,
-					textAlign = TextAlign.Center,
-					fontSize = 14.sp
-				)
-
-				CompositionLocalProvider(
-					LocalPointPreviewTitleOptions provides PointPreviewTitleOptions(
-						showIcon = true,
-						showLabel = true,
-						pointPreviewMode = PointPreviewMode.Legacy,
-						appIconOverlaySize = 30.dp,
-						appLabelOverlaySize = 18.sp,
-						appIconOverlayScale = 1f,
-						topPadding = Dp.Unspecified
-					)
-				) {
-					PointPreview(currentPoint)
-				}
-
-				Text(
-					text = stringResource(R.string.multi_select_count, remaining),
-					color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-					fontSize = 12.sp
-				)
-				Text(
-					text = stringResource(R.string.tap_circle_to_place),
-					color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
-					fontSize = 11.sp
-				)
-			}
-		}
+		ActionPlacementTopBar(remaining, currentPoint)
 	}
 
 	if (showEditDefaultPoint) {

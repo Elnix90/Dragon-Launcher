@@ -483,8 +483,8 @@
 	<string name="category_grid_cells_desc">Number of apps in a row/column of a category</string>
 	<!--  ─────────────  Multi Select  ─────────────  -->
 	<string name="multi_select_count">%d selected</string>
+	<string name="multi_select_left_text">left</string>
 	<string name="place_app_where">Where do you want to place</string>
-	<string name="tap_circle_to_place">Tap on the circle to place the app</string>
 	<string name="multi_select_drawer_hint">💡 Long press an app to select multiple at once</string>
 	<string name="deselect_all">Deselect all</string>
 	<!--  ─────────────  Shortcuts Settings  ─────────────  -->

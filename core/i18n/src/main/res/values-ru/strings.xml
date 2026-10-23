@@ -467,7 +467,7 @@
     <string name="category_grid_cells_desc">Количество приложений в строке/столбце категории</string>
     <string name="multi_select_count">Выбрано: %d</string>
     <string name="place_app_where">Куда вы хотите поместить</string>
-    <string name="tap_circle_to_place">Нажмите на круг, чтобы поместить приложение</string>
+
     <string name="multi_select_drawer_hint">💡 Долгое нажатие на приложение позволяет выбрать несколько сразу</string>
     <string name="deselect_all">Снять выделение</string>
     <string name="prompt_shortcuts_when_adding_app">Предлагать ярлыки при добавлении приложения</string>
