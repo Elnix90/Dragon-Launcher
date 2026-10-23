@@ -559,4 +559,15 @@
     <string name="language">Dil</string>
     <string name="force_app_language_selector">Uygulamayı dil seçimine zorla</string>
     <string name="force_app_language_selector_desc">Mevcut olduğunda android dilini seçmeyin, her zaman uygulamanın yerlisini kullanır</string>
+    <string name="disable_haptic_globally">Dokunma titreşim geri bildirimini devre dışı bırak</string>
+    <string name="disable_haptic_globally_desc">Dragonun dokunma geri bildirimi yapmasını engelle (Eğer beğenmezsen)</string>
+    <string name="haptic_feedback_editor">Dokunma Geri Bildirim Düzenleyicisi</string>
+    <string name="haptic_preset_single">Tek dokunuş</string>
+    <string name="haptic_preset_double">Çift dokunuş</string>
+    <string name="haptic_preset_triple">Üç dokunuş</string>
+    <string name="haptic_preset_heartbeat">Kalp atışı</string>
+    <string name="hold_delay_before_starting_long_click_settings_desc">Yükleme ayarlarının yüklenmeden önce ne kadar süre basılı tutulacağı</string>
+    <string name="keep_screen_on_desc">Ekranı kapatıp kilitlemeyin, Dragon odaklandığında her zaman açık tutun</string>
+    <string name="points_settings">Nokta Ayarları</string>
+    <string name="default_point_live_nest_defaults">Canlı Ağ varsayılanları</string>
 </resources>
