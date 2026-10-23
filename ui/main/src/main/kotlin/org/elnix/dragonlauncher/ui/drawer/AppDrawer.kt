@@ -72,6 +72,7 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Clear
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Close
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.CloseKb
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.isUsed
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.notDisabled
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Disabled
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.None
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.OpenFirstApp
@@ -473,7 +474,10 @@ fun AppDrawerScreen(
 			modifier =
 				Modifier
 					.fillMaxSize()
-					.padding(start = leftDrawerWidth, end = rightDrawerWidth),
+					.padding(
+						start = if (leftDrawerAction.notDisabled) leftDrawerWidth else 0.dp,
+						end = if (rightDrawerAction.notDisabled) rightDrawerWidth else 0.dp
+					),
 			state = pagerState
 		) { pageIndex ->
 
