@@ -7,7 +7,7 @@ object VersionsUtils {
 	private var _versionCode: Int? = null
 	private var _versionNumber: String? = null
 	private var _codeName: String? = null
-	private var _buildType: String? = null
+	private var _buildType: BuildType? = null
 
 	/**
 	 * Reads from the [android.content.pm.PackageManager] and splits the version.
@@ -20,7 +20,9 @@ object VersionsUtils {
 
 		_versionNumber = fullVersion.substringBefore(' ')
 		_codeName = fullVersion.substringAfter('(').substringBefore(')')
-		_buildType = if ('-' in fullVersion) fullVersion.substringAfterLast('-') else "release"
+
+		val buildTypeString = if ('-' in fullVersion) fullVersion.substringAfterLast('-') else "release"
+		_buildType = BuildType.valueOf(buildTypeString)
 
 		_versionCode =
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -60,9 +62,9 @@ object VersionsUtils {
 		}
 
 	/**
-	 * @return the current build type (e.g. `release`, `debug` or `beta`)
+	 * @return the current [BuildType]
 	 */
-	fun Context.getBuildType(): String =
+	fun Context.getBuildType(): BuildType =
 		_buildType ?: run {
 			load()
 			_buildType!!
@@ -73,5 +75,29 @@ object VersionsUtils {
 	 *
 	 * @return [Boolean] whether the build is a `beta` or not
 	 */
-	fun Context.isBetaVersion(): Boolean = getBuildType() == "beta"
+	fun Context.isBetaVersion(): Boolean = getBuildType() == BuildType.beta
+
+	@Suppress("EnumEntryName")
+	enum class BuildType {
+		/**
+		 * F-Droid or any freely distributed build
+		 */
+		release,
+
+		/**
+		 * Unminified build, for testing only
+		 */
+		debug,
+
+		/**
+		 * Minified build, but with another version name and package, to be installed alongside the main app
+		 */
+		beta,
+
+		/**
+		 * The Google Play Store build.
+		 * As I'm writing this I dunno whether I'll limit what it can do or make it paid, but for sure, it won't be the same as [release]
+		 */
+		playstore
+	}
 }

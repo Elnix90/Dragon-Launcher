@@ -73,7 +73,7 @@ fun VersionCodeChip(modifier: Modifier = Modifier) {
 fun BuildTypeChip(modifier: Modifier = Modifier) {
 	val buildType = LocalContext.current.getBuildType()
 	BaseVersionChip(
-		text = buildType,
+		text = buildType.name,
 		color = MaterialTheme.colorScheme.tertiaryFixed,
 		modifier = modifier
 	)

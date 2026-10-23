@@ -45,8 +45,19 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
 
 					create("beta") {
 						isMinifyEnabled = true
+						isShrinkResources = true
 						applicationIdSuffix = ".beta"
 						versionNameSuffix = " ($CODE_NAME)-beta"
+						proguardFiles(
+							getDefaultProguardFile("proguard-android-optimize.txt"),
+							"proguard-rules.pro"
+						)
+					}
+
+					create("playstore") {
+						isMinifyEnabled = true
+						isShrinkResources = true
+						versionNameSuffix = " ($CODE_NAME)"
 						proguardFiles(
 							getDefaultProguardFile("proguard-android-optimize.txt"),
 							"proguard-rules.pro"

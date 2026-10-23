@@ -28,10 +28,13 @@ class DragonAndroidLibraryPlugin : Plugin<Project> {
 					getByName("release") {
 						isMinifyEnabled = false
 					}
-					getByName("debug") {
+					create("playstore") {
 						isMinifyEnabled = false
 					}
 					create("beta") {
+						isMinifyEnabled = false
+					}
+					getByName("debug") {
 						isMinifyEnabled = false
 					}
 				}

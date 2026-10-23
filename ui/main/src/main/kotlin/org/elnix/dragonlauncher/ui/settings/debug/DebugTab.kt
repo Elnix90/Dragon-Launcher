@@ -34,6 +34,7 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.BuildType
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getBuildType
 import org.elnix.dragonlauncher.base.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R
@@ -111,7 +112,7 @@ fun DebugTab(
 			Setting(PrivateSettingsStore.hasSeenWelcomeScreen)
 			val signatureMatched by securityViewModel.signatureMatched.asState()
 			// The old has seen welcome toggle, only show when in signed debug version (only I should be able to have it)
-			if (ctx.getBuildType() == "debug" && signatureMatched) {
+			if (ctx.getBuildType() == BuildType.debug && signatureMatched) {
 				Setting(PrivateSettingsStore.hasSeenWelcome)
 			}
 
