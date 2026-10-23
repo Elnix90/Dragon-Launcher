@@ -36,7 +36,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
@@ -48,7 +47,6 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun MainScreeLayersTab(
 	swipeViewModel: SwipeViewModel = activityViewModel()
 ) {
-	val navigator = LocalNavigator.current
 	val swipeService = swipeViewModel.swipeService
 
 	val order by swipeService.mainScreenLayerOrder.asState()
@@ -68,13 +66,8 @@ fun MainScreeLayersTab(
 	SettingsScaffold(
 		title = stringResource(R.string.main_screen_layers),
 		helpText = stringResource(R.string.main_screen_layers_help),
-		onReset = {
-			swipeService.resetMainScreenLayers()
-		},
-		onBack = {
-			swipeService.saveMainScreenLayers()
-			navigator.onBack()
-		},
+		onReset = swipeService::resetMainScreenLayers,
+		onExit = swipeService::saveMainScreenLayers,
 		lazyListState = lazyListState,
 		resetTitle = stringResource(R.string.main_screen_layers_reset_title),
 		resetText = stringResource(R.string.main_screen_layers_reset),

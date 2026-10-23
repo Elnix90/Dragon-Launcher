@@ -27,6 +27,17 @@ interface BackupService {
 	val result: SettingFlow<BackupResult?>
 
 	fun commandBackup()
+
+	/**
+	 * Persists which stores should be included in backups, on this service's own scope so it
+	 * survives the caller's composition (e.g. a settings screen being disposed on exit).
+	 *
+	 * @param storeNames the names of the stores to back up, or `null` to reset to the default
+	 *   (all backupable stores).
+	 */
+	fun saveBackupStores(storeNames: Set<String>?)
+
+	fun resetBackupStores()
 }
 
 @OptIn(FlowPreview::class)
@@ -50,6 +61,22 @@ internal class BackupServiceIml(
 
 	override fun commandBackup() {
 		backupTrigger.tryEmit(Unit)
+	}
+
+	override fun saveBackupStores(storeNames: Set<String>?) {
+		scope.launch {
+			if (storeNames == null) {
+				BackupSettingsStore.backupStores.reset(ctx)
+			} else {
+				BackupSettingsStore.backupStores.set(ctx, storeNames)
+			}
+		}
+	}
+
+	override fun resetBackupStores() {
+		scope.launch {
+			BackupSettingsStore.resetAll(ctx)
+		}
 	}
 
 	private suspend fun performBackup() {

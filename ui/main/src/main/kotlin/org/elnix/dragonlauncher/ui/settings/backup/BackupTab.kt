@@ -52,7 +52,6 @@ import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.importexport.ExportDialog
 import org.elnix.dragonlauncher.ui.dialogs.importexport.SelectedActionRow
 import org.elnix.dragonlauncher.ui.dialogs.importexport.StoreItemsNotScrollable
@@ -68,7 +67,6 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 	val ctx = LocalContext.current
-	val navigator = LocalNavigator.current
 	val scope = rememberCoroutineScope()
 
 	val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
@@ -98,29 +96,22 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 
 	SettingsScaffold(
 		title = ctx.getString(R.string.backup),
-		onBack = {
-			scope.launch {
-				if (snapshotStateMapStores.count { it.value } == backupableStores.size) {
-					BackupSettingsStore.backupStores.reset(ctx)
+		onExit = {
+			val allSelected = snapshotStateMapStores.count { it.value } == backupableStores.size
+			val final =
+				if (allSelected) {
+					null
 				} else {
-					val final =
-						snapshotStateMapStores
-							.filter { it.value }
-							.keys
-							.mapTo(mutableSetOf()) { it.name }
-
-					BackupSettingsStore.backupStores.set(ctx, final)
+					snapshotStateMapStores
+						.filter { it.value }
+						.keys
+						.mapTo(mutableSetOf()) { it.name }
 				}
-				navigator.onBack()
-			}
+			backupViewModel.backupService.saveBackupStores(final)
 		},
 		helpText = ctx.getString(R.string.backup_restore_text),
 		resetText = stringResource(R.string.reset_backup_tab),
-		onReset = {
-			scope.launch {
-				BackupSettingsStore.resetAll(ctx)
-			}
-		}
+		onReset = { backupViewModel.backupService.resetBackupStores() }
 	) {
 		Row(
 			Modifier.fillMaxWidth(),

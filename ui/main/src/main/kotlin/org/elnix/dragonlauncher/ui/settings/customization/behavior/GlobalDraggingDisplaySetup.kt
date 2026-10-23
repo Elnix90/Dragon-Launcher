@@ -13,7 +13,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 
@@ -22,7 +21,6 @@ fun GlobalDraggingModeSetup(
 	viewModel: GlobalDraggingModeSetupViewModel,
 	pointsViewModel: PointsViewModel = activityViewModel()
 ) {
-	val navigator = LocalNavigator.current
 	val offset by viewModel.offset.asState()
 
 	val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
@@ -34,10 +32,7 @@ fun GlobalDraggingModeSetup(
 		resetText = stringResource(R.string.global_dragging_mode_setup_reset),
 		onReset = null,
 		scrollableContent = false,
-		onBack = {
-			viewModel.save()
-			navigator.onBack()
-		}
+		onExit = viewModel::save
 	) {
 		Box(
 			modifier = Modifier

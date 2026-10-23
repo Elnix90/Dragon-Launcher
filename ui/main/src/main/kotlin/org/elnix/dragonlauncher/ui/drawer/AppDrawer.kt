@@ -234,7 +234,10 @@ fun AppDrawerScreen(
 		}
 	}
 
-	BackHandler {
+	// Only intercept back when a custom drawer action is configured. When it is Close
+	// (the default), defer to NavDisplay so the predictive-back gesture plays the pop
+	// animation - which is exactly what Close would have done anyway
+	BackHandler(enabled = drawerSettings.drawerBackAction != Close) {
 		launchDrawerAction(drawerSettings.drawerBackAction)
 	}
 

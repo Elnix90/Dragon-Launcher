@@ -139,7 +139,6 @@ fun SettingsScreen(
 
 	SettingsScaffold(
 		title = stringResource(R.string.settings),
-		onBack = navigator::onBack,
 		helpText = stringResource(R.string.settings),
 		resetTitle = stringResource(R.string.reset_all_settings),
 		resetText = stringResource(R.string.every_setting_will_return_to_its_default_state_this_cannot_be_undone_the_app_will_kill_itself),

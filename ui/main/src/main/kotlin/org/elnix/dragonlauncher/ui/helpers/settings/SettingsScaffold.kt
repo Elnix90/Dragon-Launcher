@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +53,7 @@ fun SettingsScaffold(
 	resetTitle: String = stringResource(R.string.reset_default_settings),
 	resetText: String?,
 	onReset: (() -> Unit)?,
-	onBack: (() -> Unit)? = null,
+	onExit: (() -> Unit)? = null,
 	moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
 	horizontalPadding: Dp = 16.dp,
 	applyPadding: Boolean = true,
@@ -75,8 +75,11 @@ fun SettingsScaffold(
 	) { "Must provide exactly one of content or lazyContent, not both or neither" }
 
 	val navigator = LocalNavigator.current
-	val handleBack = onBack ?: { navigator.onBack() }
-	BackHandler(onBack = handleBack)
+
+	// Exit hook: runs whenever this screen leaves composition
+	DisposableEffect(Unit) {
+		onDispose { onExit?.invoke() }
+	}
 
 	BoxWithConstraints {
 		if (maxWidth <= 500.dp) {
@@ -112,7 +115,7 @@ fun SettingsScaffold(
 						SettingsTitleRow(
 							title = title,
 							moreOptions = moreOptions,
-							onBack = handleBack
+							onBack = navigator::onBack
 						) {
 							specialSettingsTitleContent?.invoke()
 
@@ -194,7 +197,7 @@ fun SettingsScaffold(
 						title = title,
 						moreOptions = moreOptions,
 						modifier = Modifier.fillMaxWidth(0.2f),
-						onBack = handleBack,
+						onBack = navigator::onBack,
 						resetAndHelp = {
 							if (onReset != null) {
 								ResetIcon { showResetDialog = true }

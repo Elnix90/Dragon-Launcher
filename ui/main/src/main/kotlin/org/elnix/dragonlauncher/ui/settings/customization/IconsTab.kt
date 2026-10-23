@@ -44,7 +44,6 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -61,7 +60,6 @@ fun IconsTab(
 	iconsViewModel: IconsViewModel = activityViewModel()
 ) {
 	val ctx = LocalContext.current
-	val navigator = LocalNavigator.current
 	val scope = rememberCoroutineScope()
 
 	val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
@@ -72,10 +70,7 @@ fun IconsTab(
 
 	SettingsScaffold(
 		title = stringResource(NavigationRoute.Icons.resId),
-		onBack = {
-			iconsViewModel.reloadAllPointsIcons()
-			navigator.onBack()
-		},
+		onExit = iconsViewModel::reloadAllPointsIcons,
 		helpText = stringResource(R.string.icon_pack_help),
 		resetText = stringResource(R.string.reset_icon_packs_tab),
 		onReset = {

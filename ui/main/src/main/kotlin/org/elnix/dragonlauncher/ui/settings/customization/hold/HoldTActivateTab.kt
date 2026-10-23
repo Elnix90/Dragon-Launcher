@@ -58,7 +58,6 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.Preset
 import org.elnix.dragonlauncher.ui.components.PresetRow
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -111,7 +110,6 @@ fun HoldToActivateTab(
 ) {
 	val ctx = LocalContext.current
 	val extraColors = LocalExtraColors.current
-	val navigator = LocalNavigator.current
 
 	val scope = rememberCoroutineScope()
 
@@ -140,10 +138,7 @@ fun HoldToActivateTab(
 		if (maxWidth <= 500.dp) {
 			SettingsScaffold(
 				title = stringResource(R.string.hold_settings),
-				onBack = {
-					swipeService.saveHoldObject()
-					navigator.onBack()
-				},
+				onExit = swipeService::saveHoldObject,
 				helpText = stringResource(R.string.hold_settings_help),
 				resetText = stringResource(R.string.reset_hold_tab),
 				onReset = {
@@ -406,10 +401,7 @@ fun HoldToActivateTab(
 		} else {
 			SettingsScaffold(
 				title = stringResource(R.string.hold_settings),
-				onBack = {
-					swipeService.saveHoldObject()
-					navigator.onBack()
-				},
+				onExit = swipeService::saveHoldObject,
 				scrollableContent = false,
 				helpText = stringResource(R.string.hold_settings_help),
 				resetText = stringResource(R.string.reset_hold_tab),

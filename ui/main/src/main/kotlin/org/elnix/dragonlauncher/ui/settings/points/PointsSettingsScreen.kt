@@ -283,23 +283,19 @@ fun PointsSettingsScreen(
 		}
 	}
 
-	val handleBack = {
-		if (isInPlacementMode) {
-			manualPlacementQueue.clear()
-		} else if (selectedPointsIds.isNotEmpty()) {
-			pointsService.deselectAll()
-		} else if (nestId != 0) {
-			nestsNavigationService.goBack()
-		} else {
-			pointsService.persist()
-			navigator.onBack()
+	BackHandler(
+		enabled = isInPlacementMode || selectedPointsIds.isNotEmpty() || nestId != 0
+	) {
+		when {
+			isInPlacementMode -> manualPlacementQueue.clear()
+			selectedPointsIds.isNotEmpty() -> pointsService.deselectAll()
+			else -> nestsNavigationService.goBack()
 		}
 	}
-	BackHandler(onBack = handleBack)
 
 	SettingsScaffold(
 		title = stringResource(R.string.points_settings),
-		onBack = handleBack,
+		onExit = { pointsService.persist() },
 		helpText = null,
 		onReset = null,
 		resetText = null,

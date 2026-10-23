@@ -91,11 +91,13 @@ fun MainScreen(
     /*
      * 1. Tests if the current nest is the main, if not, go back one nest
      * 2. Activate the back actions
+     * Only intercept back when there is nest history or a configured back action to run;
+     * otherwise defer to NavDisplay (at the root there is nothing to pop, so this is a no-op).
      */
-	BackHandler {
+	BackHandler(enabled = nestId != 0 || backAction != null) {
 		if (nestId != 0) {
 			nestNavigationService.goBack()
-		} else if (backAction != null) {
+		} else {
 			swipeService.launchAction(backAction!!)
 		}
 	}

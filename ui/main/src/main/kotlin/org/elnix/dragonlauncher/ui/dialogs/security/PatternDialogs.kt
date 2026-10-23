@@ -283,6 +283,10 @@ private fun PatternPrompt(
 		}
 	}
 
+	/*
+	 * This back handler is required and cannot be removed to let the NavDisplay handle the back gesture,
+	 * because it handles the back to cancel when setting a pin
+	 */
 	BackHandler(onBack = onDismiss)
 
 	LockScreenScaffold { paddingValues ->

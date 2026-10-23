@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
 import android.content.ComponentName
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -89,7 +90,6 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
@@ -121,7 +121,6 @@ fun WidgetsTab(
 	onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
 	onRemoveWidget: (Widget) -> Unit
 ) {
-	val navigator = LocalNavigator.current
 	val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
 
 	val widgetsService = widgetsViewModel.widgetsService
@@ -156,16 +155,11 @@ fun WidgetsTab(
 	val zoom = manipulationSystem.zoom
 	val angle = manipulationSystem.angle
 
+	BackHandler(enabled = selected != null) { selected = null }
+
 	SettingsScaffold(
 		title = stringResource(R.string.widgets),
-		onBack = {
-			if (selected != null) {
-				selected = null
-			} else {
-				widgetsService.save()
-				navigator.onBack()
-			}
-		},
+		onExit = widgetsService::save,
 		helpText = stringResource(R.string.widgets_tab_help),
 		resetText = stringResource(R.string.reset_widgets_tab),
 		onReset = { widgetsService.resetAllWidgets() },

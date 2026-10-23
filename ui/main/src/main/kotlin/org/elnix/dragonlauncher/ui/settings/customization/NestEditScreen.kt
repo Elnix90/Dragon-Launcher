@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -85,7 +86,6 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.editors.IntersectionShapeEditor
 import org.elnix.dragonlauncher.ui.dialogs.editors.NestEditor
@@ -106,7 +106,6 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
-	val navigator = LocalNavigator.current
 	val density = LocalDensity.current
 	val scope = rememberCoroutineScope()
 
@@ -236,16 +235,15 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 			(((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
 		}
 
+	// Unwind an active shape selection before leaving; otherwise defer to NavDisplay so the
+	// predictive-back gesture animates the pop (and onExit persists the nest).
+	BackHandler(enabled = selectedShapeId != null) { selectedShapeId = null }
+
 	SettingsScaffold(
 		title = stringResource(R.string.edit_nest_arg, nestId),
-		onBack = {
-			if (selectedShapeId != null) {
-				selectedShapeId = null
-			} else {
-				saveCurrentNest()
-				pointsService.persist()
-				navigator.onBack()
-			}
+		onExit = {
+			saveCurrentNest()
+			pointsService.persist()
 		},
 		onReset = { pointsService.resetNest(nestId) },
 		helpText = stringResource(R.string.edit_nest_help),

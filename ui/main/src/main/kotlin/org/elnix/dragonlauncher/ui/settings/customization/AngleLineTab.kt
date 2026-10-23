@@ -70,7 +70,6 @@ import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.Preset
 import org.elnix.dragonlauncher.ui.components.PresetRow
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
@@ -133,7 +132,6 @@ fun AngleLineTab(
 	swipeViewModel: SwipeViewModel = activityViewModel()
 ) {
 	val ctx = LocalContext.current
-	val navigator = LocalNavigator.current
 	val extraColors = LocalExtraColors.current
 	val scope = rememberCoroutineScope()
 
@@ -187,10 +185,9 @@ fun AngleLineTab(
 		if (maxWidth <= 500.dp) {
 			SettingsScaffold(
 				title = stringResource(R.string.angle_line),
-				onBack = {
+				onExit = {
 					swipeService.saveLineObjects()
 					swipeService.saveAngleLineOrder()
-					navigator.onBack()
 				},
 				helpText = stringResource(R.string.angle_line_help),
 				resetText = stringResource(R.string.reset_angle_tab),
@@ -518,10 +515,9 @@ fun AngleLineTab(
 		} else {
 			SettingsScaffold(
 				title = stringResource(R.string.angle_line),
-				onBack = {
+				onExit = {
 					swipeService.saveLineObjects()
 					swipeService.saveAngleLineOrder()
-					navigator.onBack()
 				},
 				helpText = stringResource(R.string.angle_line_help),
 				resetText = stringResource(R.string.reset_angle_tab),
