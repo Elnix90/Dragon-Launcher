@@ -90,7 +90,12 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 	var showDeleteDialog by remember { mutableStateOf<File?>(null) }
 
 	val windowInfo = LocalWindowInfo.current
+
+	val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 	val memInfo = ActivityManager.MemoryInfo()
+	// My bad I remove that line before, never do that again you stupid! (it made the memory info 0 and therefore crashed by dividing by 0
+	am.getMemoryInfo(memInfo)
+
 	val currentLauncher = ctx.detectSystemLauncher()
 	val isDefault by rememberIsDefaultLauncher()
 	val versionNumber = ctx.getVersionNumber()
@@ -112,13 +117,18 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 			}
 			appendLine("Arch: ${Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"}")
 			appendLine("Display: ${windowInfo.containerSize.width}x${windowInfo.containerSize.height}px")
-			appendLine(
-				"RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
-					(memInfo.totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
-					memInfo.totalMem / 1024.0 / 1024 / 1024,
-					memInfo.availMem * 100 / memInfo.totalMem
+			val totalMem = memInfo.totalMem.takeIf { it != 0L }
+			if (totalMem != null) {
+				appendLine(
+					"RAM: %.1fGB used / %.1fGB total (%d%% available)".format(
+						(totalMem - memInfo.availMem) / 1024.0 / 1024 / 1024,
+						totalMem / 1024.0 / 1024 / 1024,
+						memInfo.availMem * 100 / totalMem
+					)
 				)
-			)
+			} else {
+				appendLine("RAM: Unknown usage")
+			}
 			appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
 			appendLine("App version: $versionNumber ($codeName) ($versionCode)")
 
