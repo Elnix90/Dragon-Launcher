@@ -35,6 +35,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.base.components.AnimatedFab
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.generic.SingleSelectConnectedButtonRow
+import io.github.elnix90.shared.ui.dragon.settings.Setting
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.animation.bouncySpec
@@ -65,14 +70,10 @@ import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.Preset
 import org.elnix.dragonlauncher.ui.components.PresetRow
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine

@@ -21,6 +21,7 @@ dependencies {
 
 	runtimeOnly(libs.androidx.lifecycle.process)
 
+	implementation(libs.shared.ui)
 	api(libs.androidx.compose.material3)
 	api(libs.androidx.compose.runtime)
 	api(libs.androidx.ui.graphics)

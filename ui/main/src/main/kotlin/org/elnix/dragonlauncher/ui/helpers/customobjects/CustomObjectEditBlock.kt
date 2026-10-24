@@ -7,6 +7,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SliderWithLabel
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
@@ -14,9 +17,6 @@ import org.elnix.dragonlauncher.base.model.serializables.isSpecified
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable

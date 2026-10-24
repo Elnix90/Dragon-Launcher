@@ -30,14 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.animation.barsContentTransform
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

@@ -37,14 +37,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.base.modifiers.conditional
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
+import io.github.elnix90.shared.ui.dragon.components.ResetIcon
+import io.github.elnix90.shared.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
-import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
 fun SettingsScaffold(

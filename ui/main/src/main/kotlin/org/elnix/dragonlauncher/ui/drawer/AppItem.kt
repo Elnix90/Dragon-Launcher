@@ -19,15 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.base.modifiers.conditional
+import io.github.elnix90.shared.ui.dragon.components.DragonDropDownMenu
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.ktx.specifiedOrNull
 import org.elnix.dragonlauncher.ui.actions.AppIcon
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressPopup
-import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 
 @Composable
 fun AppItemHorizontal(

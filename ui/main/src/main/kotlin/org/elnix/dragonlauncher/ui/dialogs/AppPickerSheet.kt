@@ -38,6 +38,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
+import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
+import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -47,11 +52,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.drawer.AppGrid
 import org.elnix.dragonlauncher.ui.drawer.WorkspaceLockedContent

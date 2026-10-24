@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import `in`.hridayan.shapeindicators.ShapeIndicatorColumn
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
+import io.github.elnix90.shared.ui.base.animation.slideInHorizontalBouncy
+import io.github.elnix90.shared.ui.base.animation.slideOutHorizontalBouncy
+import io.github.elnix90.shared.ui.base.components.VerticalScrollIndicator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
-import org.elnix.dragonlauncher.ui.base.animation.slideInHorizontalBouncy
-import org.elnix.dragonlauncher.ui.base.animation.slideOutHorizontalBouncy
-import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import kotlin.time.Duration.Companion.milliseconds
 

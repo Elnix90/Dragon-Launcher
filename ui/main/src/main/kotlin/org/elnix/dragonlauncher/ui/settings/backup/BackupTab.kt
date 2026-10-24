@@ -39,6 +39,9 @@ import androidx.core.net.toUri
 import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.settings.Setting
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.BACKUP_TAG
@@ -51,12 +54,9 @@ import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.importexport.ExportDialog
 import org.elnix.dragonlauncher.ui.dialogs.importexport.SelectedActionRow
 import org.elnix.dragonlauncher.ui.dialogs.importexport.StoreItemsNotScrollable
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher

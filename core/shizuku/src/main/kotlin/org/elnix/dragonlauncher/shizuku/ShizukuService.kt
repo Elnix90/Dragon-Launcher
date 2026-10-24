@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.shizuku
 
 import android.content.Context
 import io.github.elnix90.logging.logD
+import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.SHIZUKU_TAG
-import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.ktx.showToast
 import rikka.shizuku.Shizuku

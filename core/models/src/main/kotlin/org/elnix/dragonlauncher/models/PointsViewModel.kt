@@ -136,7 +136,7 @@ class PointsViewModel
 		 * cancels per-point cache observation as needed.
 		 *
 		 * Uses structural equality on [Point] (a data class) to detect additions,
-		 * edits, and removals without relying on [org.elnix.dragonlauncher.base.SettingFlow]
+		 * edits, and removals without relying on [io.github.elnix90.shared.base.SettingFlow]
 		 * emission semantics.
 		 *
 		 * @param points the current points map read from [PointsService.points]

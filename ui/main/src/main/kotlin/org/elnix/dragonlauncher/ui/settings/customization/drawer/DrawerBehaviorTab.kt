@@ -2,11 +2,11 @@ package org.elnix.dragonlauncher.ui.settings.customization.drawer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable

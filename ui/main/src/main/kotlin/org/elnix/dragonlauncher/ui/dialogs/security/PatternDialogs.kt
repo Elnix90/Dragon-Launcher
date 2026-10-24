@@ -37,6 +37,13 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.lock.PatternLock
 import io.github.elnix90.lock.patttern.PatternLockOptions
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.animation.slideInVerticalBouncyUp
+import io.github.elnix90.shared.ui.base.animation.slideOutVerticalBouncyUp
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
+import io.github.elnix90.shared.ui.dragon.dialogs.UserValidation
+import io.github.elnix90.shared.ui.dragon.settings.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.vibrate
@@ -44,13 +51,6 @@ import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.slideInVerticalBouncyUp
-import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncyUp
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
-import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 
 /**
  * Dialog for entering a PIN to unlock settings.

@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.modifiers.shapedClickable
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 
 /**

@@ -28,18 +28,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.loadExtensionRegistry
 import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.tryStartActivity
 import org.elnix.dragonlauncher.services.ExtensionManager
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -165,7 +165,7 @@ private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
 			if (isInstalled) {
 				val pkg = extension.packageName
 
-				org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
+				io.github.elnix90.shared.ui.dragon.components.DragonButton(
 					onClick = {
 						val intent = ctx.packageManager.getLaunchIntentForPackage(pkg)
 						if (intent != null) {
@@ -188,7 +188,7 @@ private fun DragonGroupScope.ExtensionItem(extension: ExtensionModel) {
 				}
 			}
 
-			org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
+			io.github.elnix90.shared.ui.dragon.components.DragonButton(
 				onClick = {
 					if (!isInstalled) {
 						ExtensionManager.installExtension(ctx, extension)

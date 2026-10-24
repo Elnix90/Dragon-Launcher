@@ -11,7 +11,6 @@ android {
 dependencies {
 	implementation(libs.kotlin.stdlib)
 	implementation(libs.kotlin.reflect)
-	api(libs.androidx.ui)
 	implementation(platform(libs.androidx.compose.bom))
 	implementation(libs.androidx.graphics.shapes)
 	implementation(libs.androidx.compose.material3)
@@ -37,6 +36,8 @@ dependencies {
 	api(libs.androidx.compose.ui.text)
 	api(libs.androidx.compose.ui.unit)
 	api(libs.androidx.ui.graphics)
+	api(libs.shared.ui)
+	api(libs.androidx.ui)
 
 	runtimeOnly(libs.kotlinx.coroutines.android)
 

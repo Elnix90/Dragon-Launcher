@@ -28,10 +28,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.components.Spacer
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.BuildTypeChip
 import org.elnix.dragonlauncher.ui.components.CodeNameChip
 import org.elnix.dragonlauncher.ui.components.VersionCodeChip

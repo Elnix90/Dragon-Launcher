@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import io.github.elnix90.shared.ui.base.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
@@ -39,7 +40,6 @@ import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions

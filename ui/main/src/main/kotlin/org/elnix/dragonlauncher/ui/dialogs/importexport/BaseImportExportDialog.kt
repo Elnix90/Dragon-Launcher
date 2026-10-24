@@ -8,10 +8,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.stores.SettingsStore
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtonsWithLoading
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtonsWithLoading
+import io.github.elnix90.shared.ui.dragon.dialogs.CustomAlertDialog
+import io.github.elnix90.shared.ui.dragon.text.DialogTitle
+import org.elnix.dragonlauncher.i18n.R
 
 @Composable
 internal fun BaseImportExportDialog(
@@ -36,6 +37,8 @@ internal fun BaseImportExportDialog(
 		onDismissRequest = onDismiss,
 		confirmButton = {
 			ValidateCancelButtonsWithLoading(
+				cancelText = stringResource(R.string.cancel),
+				confirmText = stringResource(R.string.save),
 				onCancel = onDismiss,
 				hasClickedValidate = hasClickedConfirm
 			) {

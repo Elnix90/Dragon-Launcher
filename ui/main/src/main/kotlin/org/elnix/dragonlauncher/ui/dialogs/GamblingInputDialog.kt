@@ -19,14 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
+import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 @Composable
 fun GamblingInputDialog(
@@ -73,6 +73,7 @@ fun GamblingInputDialog(
 		},
 		confirmButton = {
 			ValidateCancelButtons(
+				cancelText = stringResource(R.string.cancel),
 				confirmText = stringResource(R.string.ok),
 				onCancel = onDismiss
 			) {

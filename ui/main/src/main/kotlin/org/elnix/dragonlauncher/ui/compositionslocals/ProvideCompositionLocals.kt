@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
+import io.github.elnix90.shared.ui.base.compositionlocals.LocalFullscreen
 import org.elnix.dragonlauncher.base.model.models.PointPreviewTitleOptions
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
@@ -16,8 +18,6 @@ import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalFullscreen
 import org.elnix.dragonlauncher.ui.composition.LocalColorPickerMode
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions

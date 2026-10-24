@@ -16,10 +16,10 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
+import io.github.elnix90.shared.ui.base.components.BoxedIcon
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.base.model.models.SocialLink
-import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
-import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

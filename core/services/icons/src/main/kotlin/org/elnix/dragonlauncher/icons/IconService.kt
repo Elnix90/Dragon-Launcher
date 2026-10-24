@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import io.github.elnix90.logging.logW
+import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +30,6 @@ import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.base.DragonCache
-import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
@@ -525,7 +525,6 @@ class IconService internal constructor(
 		}
 	}
 
-	@OptIn(ExperimentalCoroutinesApi::class)
 	private fun resolveCustomPointIcon(
 		point: Point,
 		size: Dp,

@@ -8,9 +8,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.objects.SettingObject
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 
 @Composable
 fun DragonGroupScope.Setting(

@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.lock.PinLock
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.dialogs.UserValidation
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.vibrate
@@ -44,8 +46,6 @@ import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 /**
  * Dialog for entering a PIN to unlock settings.

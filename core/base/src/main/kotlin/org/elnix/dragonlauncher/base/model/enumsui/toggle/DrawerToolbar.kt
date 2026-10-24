@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.base.model.enumsui.toggle
 
-import org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption
+import io.github.elnix90.shared.ui.base.model.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
 enum class DrawerToolbar(

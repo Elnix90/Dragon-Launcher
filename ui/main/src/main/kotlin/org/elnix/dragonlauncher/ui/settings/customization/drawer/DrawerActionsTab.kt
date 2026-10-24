@@ -21,16 +21,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.modifiers.semiTransparentIfDisabled
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.ResetIcon
+import io.github.elnix90.shared.ui.dragon.components.SliderWithLabel
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.notDisabled
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.notNone
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 

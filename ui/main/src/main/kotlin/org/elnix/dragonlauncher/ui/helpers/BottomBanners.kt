@@ -20,13 +20,13 @@ import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import io.github.elnix90.shared.ui.base.components.Spacer
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
 fun BottomBanners(currentRoute: NavKey) {

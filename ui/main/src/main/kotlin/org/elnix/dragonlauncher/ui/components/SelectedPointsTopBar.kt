@@ -31,6 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.animation.barsContentTransform
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.base.modifiers.shapedClickable
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
+import io.github.elnix90.shared.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Points
@@ -38,15 +44,9 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
-import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
 fun SelectedPointsTopBar(
@@ -188,7 +188,10 @@ fun SelectedPointsTopBar(
 			scroll = false,
 			alignment = Alignment.Center,
 			confirmButton = {
-				ValidateCancelButtons(confirmText = stringResource(R.string.ok)) { showSelectedPointsDialog = false }
+				ValidateCancelButtons(
+					cancelText = stringResource(R.string.cancel),
+					confirmText = stringResource(R.string.ok)
+				) { showSelectedPointsDialog = false }
 			},
 			title = {
 				Text(

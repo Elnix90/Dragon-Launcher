@@ -29,6 +29,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
+import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SliderWithLabel
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
+import io.github.elnix90.shared.ui.dragon.generic.SingleSelectConnectedButtonRow
+import io.github.elnix90.shared.ui.dragon.settings.TextRow
+import io.github.elnix90.shared.ui.dragon.text.DialogTitle
+import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.base.model.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -45,7 +56,6 @@ import org.elnix.dragonlauncher.ktx.round
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerSheet
@@ -54,16 +64,6 @@ import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementSheet
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.settings.TextRow
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @OptIn(ExperimentalMaterial3Api::class)

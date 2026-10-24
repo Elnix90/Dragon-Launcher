@@ -65,6 +65,9 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.base.modifiers.conditional
+import io.github.elnix90.shared.ui.base.modifiers.shapedClickable
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
@@ -95,9 +98,6 @@ import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings

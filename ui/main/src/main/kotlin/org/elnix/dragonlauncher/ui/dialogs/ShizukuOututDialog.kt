@@ -5,12 +5,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.dragon.dialogs.CustomAlertDialog
+import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
 fun ShizukuOutputDialog(

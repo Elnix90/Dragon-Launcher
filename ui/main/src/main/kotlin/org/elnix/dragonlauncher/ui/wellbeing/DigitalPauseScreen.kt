@@ -74,6 +74,8 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.utils.DateUtils.formatDuration
@@ -84,9 +86,7 @@ import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.timer.UsageStatsReader
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds

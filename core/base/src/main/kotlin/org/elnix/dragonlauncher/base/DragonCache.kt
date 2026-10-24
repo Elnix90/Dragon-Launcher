@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.base
 
+import io.github.elnix90.shared.base.SettingFlow
 import java.util.Collections
 
 abstract class DragonCache<K, V>(

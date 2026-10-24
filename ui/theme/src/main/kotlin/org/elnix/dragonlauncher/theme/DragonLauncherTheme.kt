@@ -27,6 +27,7 @@ import org.elnix.dragonlauncher.models.FontViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
+import io.github.elnix90.shared.ui.composition.LocalUseCustomColorChannels as LocalSharedUseCustomColorChannels
 
 @Composable
 fun rememberCurrentColorScheme(
@@ -84,7 +85,8 @@ fun DragonLauncherTheme(
 
 	CompositionLocalProvider(
 		LocalExtraColors provides extraColors,
-		LocalUseCustomColorChannels provides useCustomColorChannels
+		LocalUseCustomColorChannels provides useCustomColorChannels,
+		LocalSharedUseCustomColorChannels provides useCustomColorChannels
 	) {
 		MaterialExpressiveTheme(
 			colorScheme = colorScheme,

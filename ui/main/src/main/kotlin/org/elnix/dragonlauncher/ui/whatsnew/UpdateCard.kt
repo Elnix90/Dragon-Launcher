@@ -17,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.components.Spacer
 import org.elnix.dragonlauncher.base.model.models.Update
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.BaseVersionChip
 import java.text.SimpleDateFormat
 

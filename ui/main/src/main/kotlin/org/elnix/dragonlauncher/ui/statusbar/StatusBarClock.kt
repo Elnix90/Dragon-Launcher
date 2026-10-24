@@ -14,13 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.logging.logE
+import io.github.elnix90.shared.ui.base.modifiers.conditional
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.utils.DateUtils.openAlarmApp
 import org.elnix.dragonlauncher.base.utils.DateUtils.openCalendar
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter

@@ -12,14 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import io.github.elnix90.shared.ui.base.components.HorizontalScrollIndicator
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getInstallSource
-import org.elnix.dragonlauncher.ui.base.components.HorizontalScrollIndicator
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
-import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

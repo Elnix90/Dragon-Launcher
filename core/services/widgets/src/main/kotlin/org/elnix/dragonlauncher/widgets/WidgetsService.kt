@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.widgets
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
 import android.util.DisplayMetrics
+import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.model.serializables.Widget.Companion.WidgetsJson

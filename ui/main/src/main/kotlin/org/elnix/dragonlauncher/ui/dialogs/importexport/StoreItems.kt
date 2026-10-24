@@ -12,9 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.stores.SettingsStore
-import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
-import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.base.components.LazyColumnWithScrollIndicator
+import io.github.elnix90.shared.ui.base.remember.rememberInteractionSource
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
 
 @Composable
 fun DragonGroupScope.StoreItems(

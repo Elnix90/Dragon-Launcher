@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.base.model.enumsui.select
 
 import androidx.compose.ui.Alignment
-import org.elnix.dragonlauncher.base.model.enumsui.SelectButtonOption
+import io.github.elnix90.shared.ui.base.model.SelectButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
 enum class DrawerAlign(

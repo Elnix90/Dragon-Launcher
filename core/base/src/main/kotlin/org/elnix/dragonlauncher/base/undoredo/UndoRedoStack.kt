@@ -1,8 +1,8 @@
 package org.elnix.dragonlauncher.base.undoredo
 
+import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.elnix.dragonlauncher.base.SettingFlow
 
 /**
  * Manages a single undo/redo stack pair for recording and navigating

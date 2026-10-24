@@ -28,15 +28,15 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.components.AnimatedFab
+import io.github.elnix90.shared.ui.base.remember.rememberInteractionSource
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
+import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
-import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -135,6 +135,7 @@ fun AppAliasesDialog(
 		},
 		confirmButton = {
 			ValidateCancelButtons(
+				cancelText = stringResource(R.string.cancel),
 				confirmText = stringResource(R.string.ok),
 				onConfirm = onDismiss
 			)

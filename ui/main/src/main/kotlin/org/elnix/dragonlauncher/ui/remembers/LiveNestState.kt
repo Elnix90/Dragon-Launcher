@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.SWIPE_TAG
@@ -25,7 +26,6 @@ import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import kotlin.math.acos
 import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.milliseconds

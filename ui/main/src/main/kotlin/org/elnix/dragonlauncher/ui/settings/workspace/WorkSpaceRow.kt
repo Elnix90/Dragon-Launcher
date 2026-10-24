@@ -21,11 +21,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable

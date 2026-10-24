@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
+import io.github.elnix90.shared.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.json.JSONObject
 

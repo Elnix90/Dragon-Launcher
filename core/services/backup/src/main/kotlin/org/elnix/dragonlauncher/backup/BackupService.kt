@@ -7,6 +7,7 @@ import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logV
 import io.github.elnix90.logging.logW
+import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.BACKUP_TAG
-import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.backupableStores

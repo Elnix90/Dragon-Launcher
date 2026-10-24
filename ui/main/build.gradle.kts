@@ -77,8 +77,8 @@ dependencies {
 	api(libs.dagger)
 	api(libs.jakarta.inject)
 	api(libs.javax.inject)
+	api(libs.shared.ui)
 
-	api(project(":ui:dragon"))
 	implementation(project(":ui:theme"))
 	implementation(project(":ui:composition"))
 	implementation(project(":ui:base"))

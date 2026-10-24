@@ -45,6 +45,18 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.graphics.shapes.RoundedPolygon
 import io.github.elnix90.runtime.asMutableState
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.colors.DefaultColorPicker
+import io.github.elnix90.shared.ui.dragon.colors.GradientColorPicker
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SliderWithLabel
+import io.github.elnix90.shared.ui.dragon.generic.MultiSelectConnectedButtonRow
+import io.github.elnix90.shared.ui.dragon.generic.SingleSelectConnectedButtonRow
+import io.github.elnix90.shared.ui.dragon.text.DialogTitle
+import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.ColorActions
@@ -61,16 +73,6 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.ktx.specifiedOrNull
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
-import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -125,10 +127,6 @@ fun DragonGroupScope.ColorPickerRow(
 ) {
 	val ctx = LocalContext.current
 
-	// The picker must never animate or draw [Color.Unspecified]. It packs to the sentinel
-	// value 0x10L whose color-space id (16) is rejected by [android.graphics.Paint.setColor]
-	// on API 29+, throwing "Invalid ID, must be in the range [0..16)". Fall back to a real
-	// color so the preview, the hex text and the animations always render something valid.
 	val initialColorNotNull = currentColor.specifiedOrNull() ?: Color.Transparent
 
 	var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
@@ -383,9 +381,6 @@ private fun DrawScope.pngBackgroundTexture(
 ) {
 	val cellSizePx = gridSize.toPx()
 
-	// [color] may be [Color.Unspecified] when no color is saved yet. Drawing it calls
-	// android.graphics.Paint.setColor with an invalid color-space id and crashes with
-	// "Invalid ID, must be in the range [0..16)", so fall back to transparent.
 	val drawColor = color.specifiedOrNull() ?: Color.Transparent
 
 	val size = (this.size.width / cellSizePx).roundToInt()

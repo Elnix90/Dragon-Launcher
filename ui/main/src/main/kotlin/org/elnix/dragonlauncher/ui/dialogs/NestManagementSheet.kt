@@ -54,6 +54,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.base.animation.Icon
+import io.github.elnix90.shared.ui.base.animation.rememberAnimatedIcon
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.base.remember.rememberInteractionSource
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonDropDownMenu
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.MoreIcon
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
+import io.github.elnix90.shared.ui.dragon.text.DialogDescription
+import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -61,23 +76,8 @@ import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.Icon
-import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
-import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.MoreIcon
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.text.DialogDescription
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @OptIn(ExperimentalMaterial3Api::class)

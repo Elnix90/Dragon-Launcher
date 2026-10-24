@@ -23,14 +23,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.dragon.components.ResetIcon
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @Composable
 fun TextEditorDialog(
@@ -101,6 +102,8 @@ fun TextEditorDialog(
 		},
 		confirmButton = {
 			ValidateCancelButtons(
+				cancelText = stringResource(R.string.cancel),
+				confirmText = stringResource(R.string.save),
 				validateEnabled = textFieldValue.text.trim() != "",
 				onCancel = onDismiss
 			) { onValidate(textFieldValue.text.trim()) }

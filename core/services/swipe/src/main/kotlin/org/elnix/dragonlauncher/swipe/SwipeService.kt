@@ -22,6 +22,7 @@ import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
+import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -38,7 +39,6 @@ import org.elnix.dragonlauncher.applaunch.AppLaunchService
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.Constants.Settings.DOUBLE_CLICK_ACTION_DELAY
 import org.elnix.dragonlauncher.base.Constants.Settings.MAX_ITEMS_ALLOWED
-import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.json
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects

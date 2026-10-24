@@ -21,6 +21,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -37,8 +39,6 @@ import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.helpers.DebugZone

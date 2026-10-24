@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,18 +28,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.text.TextDividerOld
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -81,6 +83,8 @@ fun ToolbarsOrderDialog(onDismiss: () -> Unit) {
 		containerColor = MaterialTheme.colorScheme.surface,
 		confirmButton = {
 			ValidateCancelButtons(
+				cancelText = stringResource(R.string.cancel),
+				confirmText = stringResource(R.string.save),
 				onCancel = onDismiss
 			) {
 				scope.launch {
@@ -119,12 +123,28 @@ fun ToolbarsOrderDialog(onDismiss: () -> Unit) {
 										.padding(horizontal = 12.dp, vertical = 8.dp)
 							) {
 								if (item == DrawerToolbar.Spacer) {
-									@Suppress("DEPRECATION")
-									TextDividerOld(
-										text = stringResource(item.resId),
-										thickness = 5.dp,
-										modifier = Modifier.weight(1f)
-									)
+									Row(
+										modifier = Modifier.weight(1f),
+										verticalAlignment = Alignment.CenterVertically,
+										horizontalArrangement = Arrangement.Center
+									) {
+										HorizontalDivider(
+											modifier = Modifier.weight(1f).clip(CircleShape),
+											color = MaterialTheme.colorScheme.outline,
+											thickness = 5.dp
+										)
+										Text(
+											text = stringResource(item.resId),
+											color = MaterialTheme.colorScheme.outline,
+											style = MaterialTheme.typography.labelMedium,
+											modifier = Modifier.padding(horizontal = 8.dp)
+										)
+										HorizontalDivider(
+											modifier = Modifier.weight(1f).clip(CircleShape),
+											color = MaterialTheme.colorScheme.outline,
+											thickness = 5.dp
+										)
+									}
 								} else {
 									val checked =
 										if (item == DrawerToolbar.RecentlyUsed) {

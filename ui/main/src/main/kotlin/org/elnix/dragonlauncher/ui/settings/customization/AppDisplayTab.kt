@@ -13,6 +13,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
+import io.github.elnix90.shared.ui.dragon.settings.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.Legacy
 import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.New
@@ -24,9 +27,6 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 

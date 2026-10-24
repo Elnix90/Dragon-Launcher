@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -48,6 +49,16 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.base.components.LazyRowWithScrollIndicator
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.DragonTooltip
+import io.github.elnix90.shared.ui.dragon.components.SliderWithLabel
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
+import io.github.elnix90.shared.ui.dragon.generic.ActionSelectorRow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.base.model.models.DateFormat
@@ -65,23 +76,14 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.ui.helpers.ActionSelector
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.util.UUID
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StatusBar(
 	launchAction: ((Action) -> Unit)?
@@ -430,7 +432,7 @@ fun EditStatusBar() {
 								horizontalArrangement = Arrangement.spacedBy(8.dp)
 							) {
 								DateFormat.entries.filter { it != DateFormat.Custom }.forEach { format ->
-									org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
+									io.github.elnix90.shared.ui.dragon.components.DragonButton(
 										onClick = { updateElement(item.copy(formatter = format.pattern)) }
 									) {
 										Text(DateUtils.nowFormattedDate(format.format))
@@ -484,7 +486,7 @@ fun EditStatusBar() {
 								horizontalArrangement = Arrangement.spacedBy(8.dp)
 							) {
 								TimeFormat.entries.filter { it != TimeFormat.Custom }.forEach { format ->
-									org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
+									io.github.elnix90.shared.ui.dragon.components.DragonButton(
 										onClick = { updateElement(item.copy(formatter = format.pattern)) }
 									) {
 										Text(DateUtils.nowFormattedTime(format.format))

@@ -14,11 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.components.ResetIcon
+import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
-import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
 fun DragonGroupScope.ShapeRow(

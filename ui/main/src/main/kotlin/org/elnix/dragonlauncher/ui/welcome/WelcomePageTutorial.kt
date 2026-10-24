@@ -29,10 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.base.components.Spacer
 import org.elnix.dragonlauncher.base.Constants.URLs.DISCORD_INVITE_LINK
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @OptIn(ExperimentalGridApi::class)
 @Composable

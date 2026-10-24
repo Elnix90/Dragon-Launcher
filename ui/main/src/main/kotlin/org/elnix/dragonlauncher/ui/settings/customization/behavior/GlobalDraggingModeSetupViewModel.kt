@@ -8,8 +8,8 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.shared.base.SettingFlow
 import jakarta.inject.Inject
-import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
 import org.elnix.dragonlauncher.swipe.SwipeService
 

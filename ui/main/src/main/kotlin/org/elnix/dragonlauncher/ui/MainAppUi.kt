@@ -43,6 +43,8 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
@@ -75,13 +77,11 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.compositionslocals.Navigator
 import org.elnix.dragonlauncher.ui.compositionslocals.ProvideGlobalCompositionLocals
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
-import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
+import org.elnix.dragonlauncher.ui.dialogs.BackupResultSheet
 import org.elnix.dragonlauncher.ui.dialogs.DecodingErrorSheet
 import org.elnix.dragonlauncher.ui.dialogs.FilePickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.GoogleLockingWarningDialog
@@ -438,7 +438,7 @@ fun MainAppUi(
 									)
 								}
 							}
-							entry<NavigationRoute.ChargingAnimation> { key -> ChargingAnimationTab() }
+							entry<NavigationRoute.ChargingAnimation> { ChargingAnimationTab() }
 							entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }
 
 							entry<NavigationRoute.Debug>(metadata = horizontalMetadata) {
@@ -653,7 +653,7 @@ fun MainAppUi(
 					BottomBanners(currentRoute)
 					ShizukuOutputDialog()
 					WhatsNewBottomSheet()
-					BackupResultDialog()
+					BackupResultSheet()
 					GoogleLockingWarningDialog()
 					SignatureWarningDialog()
 				}

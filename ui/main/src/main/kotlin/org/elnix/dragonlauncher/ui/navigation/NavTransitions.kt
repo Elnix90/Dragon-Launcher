@@ -14,7 +14,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
-import org.elnix.dragonlauncher.ui.base.animation.navigationBouncySpec
+import io.github.elnix90.shared.ui.base.animation.navigationBouncySpec
 
 val verticalMetadata: Map<String, Any> =
 	NavDisplay.transitionSpec {

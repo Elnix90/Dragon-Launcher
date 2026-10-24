@@ -14,12 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.dragon.components.DragonRow
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
+import io.github.elnix90.shared.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
 fun AdbCommandInputDialog(
@@ -69,6 +69,8 @@ fun AdbCommandInputDialog(
 		},
 		confirmButton = {
 			ValidateCancelButtons(
+				cancelText = stringResource(R.string.cancel),
+				confirmText = stringResource(R.string.save),
 				onCancel = onDismiss
 			) {
 				onActionSelected(Action.RunAdbCommand(commandText, toast))

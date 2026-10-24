@@ -9,11 +9,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.SHAPES_TAG
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable

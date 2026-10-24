@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -14,8 +16,6 @@ import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import kotlin.time.Duration.Companion.milliseconds
 

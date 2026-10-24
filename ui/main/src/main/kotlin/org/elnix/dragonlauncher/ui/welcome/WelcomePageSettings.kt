@@ -14,16 +14,16 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.settings.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 import org.elnix.dragonlauncher.ui.wellbeing.FloatingParticles
 

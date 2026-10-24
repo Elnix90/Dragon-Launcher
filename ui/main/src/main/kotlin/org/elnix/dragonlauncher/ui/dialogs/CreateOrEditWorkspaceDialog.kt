@@ -13,12 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
+import io.github.elnix90.shared.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +69,8 @@ fun CreateOrEditWorkspaceDialog(
 		}
 
 		ValidateCancelButtons(
+			cancelText = stringResource(R.string.cancel),
+			confirmText = stringResource(R.string.save),
 			onCancel = onDismiss,
 			onConfirm = {
 				onConfirm(selectedType)

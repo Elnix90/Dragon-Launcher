@@ -12,10 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @Composable
 fun UrlInputDialog(
@@ -51,6 +51,8 @@ fun UrlInputDialog(
 		},
 		confirmButton = {
 			ValidateCancelButtons(
+				cancelText = stringResource(R.string.cancel),
+				confirmText = stringResource(R.string.save),
 				onCancel = onDismiss
 			) {
 				val ok = text.startsWith("http://") || text.startsWith("https://")

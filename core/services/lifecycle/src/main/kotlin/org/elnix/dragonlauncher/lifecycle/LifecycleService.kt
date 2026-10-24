@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.lifecycle
 
 import io.github.elnix90.logging.logD
+import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.TAG
-import org.elnix.dragonlauncher.base.SettingFlow
 import kotlin.time.Duration.Companion.milliseconds
 
 interface LifecycleService {

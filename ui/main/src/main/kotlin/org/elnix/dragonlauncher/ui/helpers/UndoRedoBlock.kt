@@ -18,16 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.base.remember.rememberInteractionSource
+import io.github.elnix90.shared.ui.base.withHapticParam
+import io.github.elnix90.shared.ui.dragon.components.DragonTooltip
+import io.github.elnix90.shared.ui.dragon.generic.connectedLeadingButtonShapes
+import io.github.elnix90.shared.ui.dragon.generic.connectedMiddleButtonShapes
+import io.github.elnix90.shared.ui.dragon.generic.connectedTrailingButtonShapes
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
-import org.elnix.dragonlauncher.ui.base.withHapticParam
-import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
-import org.elnix.dragonlauncher.ui.dragon.generic.connectedLeadingButtonShapes
-import org.elnix.dragonlauncher.ui.dragon.generic.connectedMiddleButtonShapes
-import org.elnix.dragonlauncher.ui.dragon.generic.connectedTrailingButtonShapes
 
 @Composable
 fun UndoRedoBlock(undoRedo: UndoRedoManager) {

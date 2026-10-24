@@ -50,6 +50,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.dragon.text.SettingsWithTitle
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
@@ -60,10 +62,8 @@ import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.IconPickerVM
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
-import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
 @Composable
 fun IconPicker(

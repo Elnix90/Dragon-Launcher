@@ -60,6 +60,10 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.util.clearAllData
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.base.asState
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.URLs.CODEBERG_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DISCORD_INVITE_LINK
@@ -91,8 +95,6 @@ import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.components.BuildTypeChip
@@ -101,8 +103,6 @@ import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
 import org.elnix.dragonlauncher.ui.components.VersionCodeChip
 import org.elnix.dragonlauncher.ui.components.VersionNumberChip
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem

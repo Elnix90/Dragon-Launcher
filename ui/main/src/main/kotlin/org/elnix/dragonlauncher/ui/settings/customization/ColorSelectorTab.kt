@@ -52,6 +52,19 @@ import androidx.compose.ui.window.DialogProperties
 import io.github.elnix90.core.objects.ColorSettingObject
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import io.github.elnix90.shared.ui.base.components.AnimatedFab
+import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.base.modifiers.conditional
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
+import io.github.elnix90.shared.ui.dragon.components.ValidateCancelButtons
+import io.github.elnix90.shared.ui.dragon.dialogs.UserValidation
+import io.github.elnix90.shared.ui.dragon.expandable.ExpandableSection
+import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
+import io.github.elnix90.shared.ui.dragon.model.ExpandableSectionState
+import io.github.elnix90.shared.ui.dragon.settings.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
@@ -64,22 +77,10 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
-import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
-import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -594,6 +595,7 @@ fun ColorSelectorTab() {
 			onDismissRequest = { showAllColorsValidation = false },
 			confirmButton = {
 				ValidateCancelButtons(
+					cancelText = stringResource(R.string.cancel),
 					confirmText = stringResource(R.string.apply),
 					onCancel = { showAllColorsValidation = false }
 				) {

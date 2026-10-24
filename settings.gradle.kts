@@ -44,7 +44,6 @@ include(":core:permissions")
 include(":ui:main")
 include(":ui:base")
 include(":ui:theme")
-include(":ui:dragon")
 include(":ui:composition")
 
 include(":core:services:logs")
