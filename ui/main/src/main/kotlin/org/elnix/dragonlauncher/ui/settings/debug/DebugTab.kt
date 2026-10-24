@@ -40,8 +40,8 @@ import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.expandable.ExpandableSection
 import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
-import io.github.elnix90.shared.ui.dragon.settings.Setting
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils

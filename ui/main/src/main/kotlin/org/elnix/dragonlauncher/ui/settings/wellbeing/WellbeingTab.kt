@@ -28,8 +28,8 @@ import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
 import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
-import io.github.elnix90.shared.ui.dragon.settings.Setting
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
+import io.github.elnix90.ui.Setting
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.i18n.R

@@ -72,7 +72,7 @@ import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import io.github.elnix90.shared.ui.dragon.generic.MultiSelectConnectedButtonRow
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout

@@ -50,9 +50,9 @@ import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.dialogs.UserValidation
 import io.github.elnix90.shared.ui.dragon.expandable.ExpandableSection
 import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
-import io.github.elnix90.shared.ui.dragon.settings.Setting
 import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
+import io.github.elnix90.ui.Setting
 import org.elnix.dragonlauncher.LOGS_TAG
 import org.elnix.dragonlauncher.base.loadExtensionRegistry
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute

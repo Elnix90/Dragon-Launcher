@@ -21,7 +21,7 @@ import io.github.elnix90.shared.ui.dragon.components.SwitchRow
 import io.github.elnix90.shared.ui.dragon.expandable.ExpandableSection
 import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
 import io.github.elnix90.shared.ui.dragon.generic.ActionSelectorRow
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Device
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.None

@@ -72,6 +72,7 @@ dependencies {
 	api(libs.androidx.ui.graphics)
 	api(libs.reorderable)
 	api(libs.settings.core)
+	implementation(libs.settings.ui)
 	debugApi(libs.reorderable.android.debug)
 	api(libs.androidx.lifecycle.viewmodel.base)
 	api(libs.dagger)

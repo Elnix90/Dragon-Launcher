@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.generic.MultiSelectConnectedButtonRow
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.select.DrawerAlign.Bottom
 import org.elnix.dragonlauncher.base.model.enumsui.select.DrawerAlign.Top

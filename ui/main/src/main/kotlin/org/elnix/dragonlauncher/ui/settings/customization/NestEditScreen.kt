@@ -63,7 +63,7 @@ import io.github.elnix90.shared.ui.dragon.components.DragonDropDownMenu
 import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.generic.MultiSelectConnectedButtonRow
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.EnterNest

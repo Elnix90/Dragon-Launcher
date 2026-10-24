@@ -34,8 +34,8 @@ import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.components.SliderWithLabel
 import io.github.elnix90.shared.ui.dragon.components.SwitchRow
-import io.github.elnix90.shared.ui.dragon.settings.TextRow
 import io.github.elnix90.shared.ui.dragon.text.DialogTitle
+import io.github.elnix90.ui.TextRow
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.emptyNest

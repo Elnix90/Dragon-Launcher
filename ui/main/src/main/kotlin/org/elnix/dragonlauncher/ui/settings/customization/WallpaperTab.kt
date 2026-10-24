@@ -26,7 +26,7 @@ import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.generic.ActionSelector
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.WallpaperHelper
 import org.elnix.dragonlauncher.base.model.models.WallpaperTarget

@@ -39,7 +39,7 @@ import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.components.AnimatedFab
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.generic.SingleSelectConnectedButtonRow
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.animation.bouncySpec

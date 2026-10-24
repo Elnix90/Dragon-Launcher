@@ -37,9 +37,9 @@ import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.components.SliderWithLabel
 import io.github.elnix90.shared.ui.dragon.components.SwitchRow
 import io.github.elnix90.shared.ui.dragon.generic.SingleSelectConnectedButtonRow
-import io.github.elnix90.shared.ui.dragon.settings.TextRow
 import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
+import io.github.elnix90.ui.TextRow
 import org.elnix.dragonlauncher.base.model.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.base.model.serializables.Action

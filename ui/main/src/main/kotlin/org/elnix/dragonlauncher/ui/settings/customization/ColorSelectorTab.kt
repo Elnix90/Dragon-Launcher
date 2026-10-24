@@ -64,7 +64,7 @@ import io.github.elnix90.shared.ui.dragon.dialogs.UserValidation
 import io.github.elnix90.shared.ui.dragon.expandable.ExpandableSection
 import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
 import io.github.elnix90.shared.ui.dragon.model.ExpandableSectionState
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes

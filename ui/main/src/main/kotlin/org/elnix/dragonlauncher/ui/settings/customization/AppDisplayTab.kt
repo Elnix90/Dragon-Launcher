@@ -15,7 +15,7 @@ import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.components.SwitchRow
-import io.github.elnix90.shared.ui.dragon.settings.Setting
+import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.Legacy
 import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.New
