@@ -88,6 +88,14 @@ internal class AppShortcutRepositoryImpl(
 				}
 			}
 		)
+
+		scope.launch {
+			permissionsManager.hasPermission(PermissionGroup.DefaultLauncher).collect { hasPermission ->
+				if (hasPermission) {
+					refreshShortcuts()
+				}
+			}
+		}
 	}
 
 //    override fun findMany(
@@ -154,7 +162,6 @@ internal class AppShortcutRepositoryImpl(
 		}
 	}
 
-	@SuppressLint("InlinedApi")
 	override fun search(query: String): Flow<ImmutableList<ShortcutInfo>> {
 		val normalizedQuery = stringNormalizer.normalize(query)
 
