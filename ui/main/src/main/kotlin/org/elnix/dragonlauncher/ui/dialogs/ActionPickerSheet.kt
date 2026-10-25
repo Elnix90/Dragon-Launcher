@@ -284,7 +284,7 @@ fun ActionPickerSheet(
 
 	if (shortcutDialogVisible && selectedApp != null) {
 		val app = selectedApp!!
-		AppShortcutPickerDialog(
+		AppShortcutPickerSheet(
 			app = app,
 			shortcuts = shortcuts,
 			onDismiss = { shortcutDialogVisible = false },
@@ -330,7 +330,7 @@ fun ActionPickerSheet(
 	}
 
 	if (showPinnedShortcutsPicker) {
-		PinnedShortcutsPickerDialog(
+		PinnedShortcutsPickerSheet(
 			onDismiss = { showPinnedShortcutsPicker = false },
 			onShortcutSelected = { shortcutAction ->
 				onActionPicked(shortcutAction)
@@ -340,7 +340,7 @@ fun ActionPickerSheet(
 	}
 
 	if (showActivityPicker) {
-		LaunchActivityPickerDialog(
+		LaunchActivityPickerSheet(
 			onDismiss = { showActivityPicker = false },
 			onActivitySelected = { activityAction ->
 				onActionPicked(activityAction)

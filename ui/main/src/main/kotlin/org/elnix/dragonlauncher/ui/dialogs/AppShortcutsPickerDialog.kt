@@ -39,7 +39,7 @@ private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): B
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppShortcutPickerDialog(
+fun AppShortcutPickerSheet(
 	app: Application,
 	shortcuts: List<ShortcutInfo>,
 	onDismiss: () -> Unit,
@@ -70,38 +70,35 @@ fun AppShortcutPickerDialog(
 					.heightIn(max = 600.dp)
 					.verticalScroll(rememberScrollState())
 		) {
+			if (shortcuts.isEmpty()) {
+				Text(
+					text = stringResource(R.string.no_extra_shortcuts),
+					style = MaterialTheme.typography.bodyLarge
+				)
+				return@Column
+			}
+
 			ListSearch(R.string.search_shortcuts, searchQuery) { searchQuery = it }
 
-			when {
-				shortcuts.isEmpty() -> {
+			if (filteredShortcuts.isEmpty() && searchQuery.isNotEmpty()) {
+				Box(
+					modifier =
+						Modifier
+							.fillMaxWidth()
+							.padding(vertical = 16.dp),
+					contentAlignment = Alignment.Center
+				) {
 					Text(
-						text = stringResource(R.string.no_extra_shortcuts),
-						style = MaterialTheme.typography.bodyLarge
+						stringResource(R.string.no_search_match),
+						style = MaterialTheme.typography.bodyLarge,
+						color = MaterialTheme.colorScheme.onSurfaceVariant
 					)
 				}
-
-				filteredShortcuts.isEmpty() && searchQuery.isNotEmpty() -> {
-					Box(
-						modifier =
-							Modifier
-								.fillMaxWidth()
-								.padding(vertical = 16.dp),
-						contentAlignment = Alignment.Center
-					) {
-						Text(
-							stringResource(R.string.no_search_match),
-							style = MaterialTheme.typography.bodyLarge,
-							color = MaterialTheme.colorScheme.onSurfaceVariant
-						)
-					}
-				}
-
-				else -> {
-					DragonSettingsGroup(R.string.pinned_shortcuts) {
-						filteredShortcuts.forEach { shortcut ->
-							ShortcutItem(shortcut) {
-								onShortcutSelected(shortcut)
-							}
+			} else {
+				DragonSettingsGroup(R.string.pinned_shortcuts) {
+					filteredShortcuts.forEach { shortcut ->
+						ShortcutItem(shortcut) {
+							onShortcutSelected(shortcut)
 						}
 					}
 				}

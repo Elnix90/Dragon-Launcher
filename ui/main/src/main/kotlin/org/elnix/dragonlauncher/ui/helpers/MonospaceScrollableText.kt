@@ -36,16 +36,15 @@ fun MonospaceScrollableText(
 
 	val thumbColor = MaterialTheme.colorScheme.primary
 
-	val scrollBar =
-		remember(thumbColor) {
-			ScrollbarSettings(
-				alwaysShowScrollbar = true,
-				thumbThickness = 10.dp,
-				thumbUnselectedColor = thumbColor.alphaMultiplier(0.5f),
-				thumbSelectedColor = thumbColor,
-				selectionMode = ScrollbarSelectionMode.Full
-			)
-		}
+	val scrollBar = remember {
+		ScrollbarSettings(
+			alwaysShowScrollbar = true,
+			thumbThickness = 10.dp,
+			thumbUnselectedColor = thumbColor.alphaMultiplier(0.5f),
+			thumbSelectedColor = thumbColor,
+			selectionMode = ScrollbarSelectionMode.Full
+		)
+	}
 
 	fun lineColor(idx: Int): Color? {
 		if (idx !in lines.indices) return null

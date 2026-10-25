@@ -66,7 +66,7 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PinnedShortcutsPickerDialog(
+fun PinnedShortcutsPickerSheet(
 	drawerViewModel: DrawerViewModel = activityViewModel(),
 	onDismiss: () -> Unit,
 	onShortcutSelected: (Action.LaunchShortcut) -> Unit
@@ -119,10 +119,6 @@ fun PinnedShortcutsPickerDialog(
 	) {
 		DialogTitle(stringResource(R.string.pinned_shortcuts))
 		Spacer(10.dp)
-
-		ListSearch(R.string.search_shortcuts, searchQuery) { searchQuery = it }
-		Spacer(10.dp)
-
 		Column(
 			modifier =
 				Modifier
@@ -145,19 +141,11 @@ fun PinnedShortcutsPickerDialog(
 					}
 				}
 
-				groupedShortcuts.isEmpty() || (filteredGrouped.isEmpty() && searchQuery.isNotEmpty()) -> {
-					val text = stringResource(
-						if (groupedShortcuts.isEmpty() && searchQuery.isNotEmpty()) {
-							R.string.no_search_match
-						} else {
-							R.string.no_pinned_shortcuts
-						}
-					)
+				shortcuts.isEmpty() -> {
 					Text(
-						text = text,
+						text = stringResource(R.string.no_pinned_shortcuts),
 						style = MaterialTheme.typography.bodyLarge
 					)
-
 					Text(
 						text = "¯\\_(ツ)_/¯",
 						style = MaterialTheme.typography.bodyLargeEmphasized
@@ -165,21 +153,31 @@ fun PinnedShortcutsPickerDialog(
 				}
 
 				else -> {
-					filteredGrouped.forEach { (appName, shortcuts) ->
-						DragonSettingsGroup(appName) {
-							shortcuts.forEach { item ->
-								ShortcutItem(
-									shortcut = item.shortcutInfo,
-									onClick = {
-										onShortcutSelected(
-											Action.LaunchShortcut(
-												packageName = item.packageName,
-												shortcutId = item.shortcutInfo.id,
-												user = item.shortcutInfo.userHandle
+					ListSearch(R.string.search_shortcuts, searchQuery) { searchQuery = it }
+					Spacer(10.dp)
+
+					if (filteredGrouped.isEmpty() && searchQuery.isNotEmpty()) {
+						Text(
+							text = stringResource(R.string.no_search_match),
+							style = MaterialTheme.typography.bodyLarge
+						)
+					} else {
+						filteredGrouped.forEach { (appName, shortcuts) ->
+							DragonSettingsGroup(appName) {
+								shortcuts.forEach { item ->
+									ShortcutItem(
+										shortcut = item.shortcutInfo,
+										onClick = {
+											onShortcutSelected(
+												Action.LaunchShortcut(
+													packageName = item.packageName,
+													shortcutId = item.shortcutInfo.id,
+													user = item.shortcutInfo.userHandle
+												)
 											)
-										)
-									}
-								)
+										}
+									)
+								}
 							}
 						}
 					}

@@ -44,7 +44,7 @@ import org.elnix.dragonlauncher.ui.drawer.ListSearch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LaunchActivityPickerDialog(
+fun LaunchActivityPickerSheet(
 	profilesViewModel: ProfilesViewModel = activityViewModel(),
 	drawerViewModel: DrawerViewModel = activityViewModel(),
 	onDismiss: () -> Unit,
@@ -82,10 +82,6 @@ fun LaunchActivityPickerDialog(
 	) {
 		DialogTitle(stringResource(R.string.launch_activity))
 		Spacer(10.dp)
-
-		ListSearch(R.string.search_activities, searchQuery) { searchQuery = it }
-		Spacer(10.dp)
-
 		Column(
 			modifier =
 				Modifier
@@ -95,43 +91,44 @@ fun LaunchActivityPickerDialog(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center
 		) {
-			when {
-				activities.isEmpty() || (groupedActivities.isEmpty() && searchQuery.isNotEmpty()) -> {
-					val text = stringResource(
-						if (groupedActivities.isEmpty() && searchQuery.isNotEmpty()) {
-							R.string.no_search_match
-						} else {
-							R.string.no_activities_found
-						}
-					)
-					Text(
-						text = text,
-						style = MaterialTheme.typography.bodyLarge
-					)
+			if (activities.isEmpty()) {
+				Text(
+					text = stringResource(R.string.no_activities_found),
+					style = MaterialTheme.typography.bodyLarge
+				)
 
-					Text(
-						text = "¯\\_(ツ)_/¯",
-						style = MaterialTheme.typography.bodyLargeEmphasized
-					)
-				}
+				Text(
+					text = "¯\\_(ツ)_/¯",
+					style = MaterialTheme.typography.bodyLargeEmphasized
+				)
 
-				else -> {
-					groupedActivities.forEach { (appName, items) ->
-						DragonSettingsGroup(appName) {
-							items.forEach { item ->
-								ActivityItemRow(
-									item = item,
-									onClick = {
-										onActivitySelected(
-											Action.LaunchActivity(
-												packageName = item.packageName,
-												activityName = item.className,
-												profile = item.profile
-											)
+				return@Column
+			}
+
+			ListSearch(R.string.search_activities, searchQuery) { searchQuery = it }
+			Spacer(10.dp)
+
+			if (groupedActivities.isEmpty() && searchQuery.isNotEmpty()) {
+				Text(
+					text = stringResource(R.string.no_search_match),
+					style = MaterialTheme.typography.bodyLarge
+				)
+			} else {
+				groupedActivities.forEach { (appName, items) ->
+					DragonSettingsGroup(appName) {
+						items.forEach { item ->
+							ActivityItemRow(
+								item = item,
+								onClick = {
+									onActivitySelected(
+										Action.LaunchActivity(
+											packageName = item.packageName,
+											activityName = item.className,
+											profile = item.profile
 										)
-									}
-								)
-							}
+									)
+								}
+							)
 						}
 					}
 				}
