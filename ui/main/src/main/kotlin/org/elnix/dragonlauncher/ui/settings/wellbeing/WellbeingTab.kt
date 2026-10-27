@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
@@ -32,6 +33,7 @@ import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import io.github.elnix90.ui.Setting
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -43,6 +45,7 @@ import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
 import org.elnix.dragonlauncher.ui.dialogs.OverlayPermissionDialog
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
+@SettingScreen(NavigationRoute.Wellbeing::class)
 @Composable
 fun WellbeingTab(
 	drawerViewModel: DrawerViewModel = activityViewModel(),

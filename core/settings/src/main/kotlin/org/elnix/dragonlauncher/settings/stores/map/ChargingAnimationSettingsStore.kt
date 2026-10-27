@@ -14,6 +14,7 @@ object ChargingAnimationSettingsStore : MapSettingsStore() {
 	@SettingKey
 	val color = color(
 		default = Color.White,
+		icon = R.drawable.format_paint,
 		title = R.string.charging_animation_color
 	)
 
@@ -22,6 +23,7 @@ object ChargingAnimationSettingsStore : MapSettingsStore() {
 		default = 1f,
 		title = R.string.charging_animation_size_multiplier,
 		description = R.string.charging_animation_size_multiplier_desc,
+		icon = R.drawable.format_size,
 		allowedRange = 0.5f..5f
 	)
 
@@ -30,6 +32,7 @@ object ChargingAnimationSettingsStore : MapSettingsStore() {
 		default = 1,
 		title = R.string.charging_animation_amount_multiplier,
 		description = R.string.charging_animation_amount_multiplier_desc,
+		icon = R.drawable.bubble_chart,
 		allowedRange = 1..20
 	)
 }

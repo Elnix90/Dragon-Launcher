@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
@@ -45,6 +46,7 @@ import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.BACKUP_TAG
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.DateUtils
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
@@ -64,6 +66,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSettingsExportLauncher
 import kotlin.time.Duration.Companion.seconds
 
 @SuppressLint("LocalContextGetResourceValueCall")
+@SettingScreen(NavigationRoute.Backup::class)
 @Composable
 fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 	val ctx = LocalContext.current

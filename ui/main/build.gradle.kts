@@ -3,6 +3,7 @@ plugins {
 	alias(libs.plugins.dragon.compose)
 	alias(libs.plugins.dragon.serialization)
 	alias(libs.plugins.dragon.hilt)
+	alias(libs.plugins.settings)
 }
 
 android {
@@ -72,6 +73,7 @@ dependencies {
 	api(libs.androidx.ui.graphics)
 	api(libs.reorderable)
 	api(libs.settings.core)
+	implementation(libs.settings.annotations)
 	implementation(libs.settings.ui)
 	debugApi(libs.reorderable.android.debug)
 	api(libs.androidx.lifecycle.viewmodel.base)

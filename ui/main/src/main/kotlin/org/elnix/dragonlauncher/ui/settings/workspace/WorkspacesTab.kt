@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.components.AnimatedFab
 import io.github.elnix90.shared.ui.base.components.Spacer
@@ -33,6 +34,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
+@SettingScreen(NavigationRoute.Workspace::class)
 @Composable
 fun WorkspacesTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 	val navigator = LocalNavigator.current

@@ -12,6 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import io.github.elnix90.shared.ui.base.components.Spacer
@@ -19,6 +20,7 @@ import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.permissions.PermissionGroup
@@ -27,6 +29,7 @@ import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 import org.elnix.dragonlauncher.ui.wellbeing.FloatingParticles
 
+@SettingScreen(NavigationRoute.Welcome::class)
 @Composable
 fun WelcomePageSettings(
 	onEnterSettings: () -> Unit

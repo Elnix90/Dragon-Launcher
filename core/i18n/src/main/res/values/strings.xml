@@ -1150,4 +1150,7 @@
 	<string name="snap_point_angle_lines_start_angle">Snap point angle lines start angle</string>
 	<string name="snap_point_angle_lines_start_angle_desc">The angle at which the loop starts (to adjust the rotation)</string>
 	<string name="snapping">Snapping</string>
+	<string name="search_settings">Search settings</string>
+	<string name="n_settings_found">%1$d settings found</string>
+	<string name="clear">Clear</string>
 </resources>

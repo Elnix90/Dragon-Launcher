@@ -14,6 +14,7 @@ object StatusBarSettingsStore : MapSettingsStore() {
 	val barBackgroundColor =
 		color(
 			title = R.string.status_bar_background,
+			icon = R.drawable.format_paint,
 			default = Color.Transparent
 		)
 
@@ -21,6 +22,7 @@ object StatusBarSettingsStore : MapSettingsStore() {
 	val barTextColor =
 		color(
 			title = R.string.status_bar_text_color,
+			icon = R.drawable.format_paint,
 			default = Color.White
 		)
 

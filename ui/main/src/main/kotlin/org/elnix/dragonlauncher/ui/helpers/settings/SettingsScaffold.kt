@@ -82,7 +82,7 @@ fun SettingsScaffold(
 	}
 
 	BoxWithConstraints {
-		if (maxWidth <= 500.dp) {
+		if (maxWidth <= maxHeight) {
 			Scaffold(
 				containerColor = Color.Transparent,
 				modifier =

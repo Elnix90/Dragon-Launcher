@@ -57,6 +57,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.runtime.asMutableStateNull
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.theme.AppObjectsColors
@@ -130,6 +131,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
+@SettingScreen(NavigationRoute.PointsSettings::class)
 @Composable
 fun PointsSettingsScreen(
 	viewModel: PointsSettingsViewModel,

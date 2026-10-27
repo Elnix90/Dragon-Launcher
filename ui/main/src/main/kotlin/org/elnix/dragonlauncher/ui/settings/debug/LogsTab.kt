@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logLevelName
@@ -74,6 +75,7 @@ import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 
+@SettingScreen(NavigationRoute.Logs::class)
 @Composable
 fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 	val ctx = LocalContext.current

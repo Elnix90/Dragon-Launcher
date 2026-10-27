@@ -56,6 +56,7 @@ object BehaviorSettingsStore : MapSettingsStore() {
 			default = 60,
 			title = R.string.left_padding,
 			description = R.string.left_padding_desc,
+			icon = R.drawable.arrow_drop_left,
 			allowedRange = 0..300
 		)
 
@@ -65,6 +66,7 @@ object BehaviorSettingsStore : MapSettingsStore() {
 			default = 60,
 			title = R.string.right_padding,
 			description = R.string.right_padding_desc,
+			icon = R.drawable.arrow_drop_right,
 			allowedRange = 0..300
 		)
 
@@ -74,6 +76,7 @@ object BehaviorSettingsStore : MapSettingsStore() {
 			default = 80,
 			title = R.string.top_padding,
 			description = R.string.top_padding_desc,
+			icon = R.drawable.arrow_drop_up,
 			allowedRange = 0..300
 		)
 
@@ -83,6 +86,7 @@ object BehaviorSettingsStore : MapSettingsStore() {
 			default = 100,
 			title = R.string.bottom_padding,
 			description = R.string.bottom_padding_desc,
+			icon = R.drawable.arrow_drop_down,
 			allowedRange = 0..300
 		)
 
@@ -137,6 +141,7 @@ object BehaviorSettingsStore : MapSettingsStore() {
 			default = 100,
 			title = R.string.super_warning_mode_sound,
 			description = R.string.super_warning_mode_sound_desc,
+			icon = R.drawable.campaign,
 			allowedRange = 0..100
 		)
 
@@ -155,6 +160,7 @@ object BehaviorSettingsStore : MapSettingsStore() {
 			default = 10,
 			title = R.string.off_screen_timeout,
 			description = R.string.off_screen_timeout_desc,
+			icon = R.drawable.timer_10_alt_1,
 			allowedRange = -1..60
 		)
 

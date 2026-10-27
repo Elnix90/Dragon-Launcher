@@ -368,6 +368,7 @@ object DrawerSettingsStore : MapSettingsStore() {
 	val categoryColor =
 		color(
 			default = AmoledDragonColorScheme.surfaceVariant,
+			icon = R.drawable.format_paint,
 			title = R.string.category_color
 		)
 

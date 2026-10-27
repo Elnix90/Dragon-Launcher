@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.annotations.SettingHidden
 import io.github.elnix90.lock.PatternLock
 import io.github.elnix90.lock.patttern.PatternLockOptions
 import io.github.elnix90.runtime.asState
@@ -182,6 +183,7 @@ fun PatternSetup(
 }
 
 @SuppressLint("UseOfNonLambdaOffsetOverload", "MissingPermission")
+@SettingHidden
 @Composable
 private fun PatternPrompt(
 	title: String,

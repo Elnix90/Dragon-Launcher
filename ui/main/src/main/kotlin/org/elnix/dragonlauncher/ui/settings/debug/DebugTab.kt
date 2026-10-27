@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.theme.AppObjectsColors
 import io.github.elnix90.shared.ui.base.animation.Icon
@@ -63,6 +64,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
+@SettingScreen(NavigationRoute.Debug::class)
 @Composable
 fun DebugTab(
 	viewModel: DebugTabViewModel,

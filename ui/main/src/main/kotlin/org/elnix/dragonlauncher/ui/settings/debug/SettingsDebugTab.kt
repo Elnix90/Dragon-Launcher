@@ -16,11 +16,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.core.SettingsBackupManager
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.AllStores
@@ -29,6 +31,7 @@ import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.json.JSONObject
 
+@SettingScreen(NavigationRoute.SettingsJson::class)
 @Composable
 fun SettingsDebugTab() {
 	val scope = rememberCoroutineScope()

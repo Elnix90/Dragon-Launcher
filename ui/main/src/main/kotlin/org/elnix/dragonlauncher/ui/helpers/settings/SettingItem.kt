@@ -17,6 +17,7 @@ import org.elnix.dragonlauncher.base.model.models.SocialLink
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 
+@Deprecated("replace the string with an int for both the title and description, and annotate with @SettingEntry")
 @Composable
 fun DragonGroupScope.SettingsItem(
 	title: String,
@@ -56,6 +57,7 @@ fun DragonGroupScope.SettingsItem(
 	}
 }
 
+@Deprecated("replace the string with an int for both the title and description, and annotate with @SettingEntry")
 @Composable
 fun DragonGroupScope.SplitSettingsItem(
 	title: String,

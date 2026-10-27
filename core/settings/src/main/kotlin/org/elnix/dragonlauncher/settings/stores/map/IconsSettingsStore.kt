@@ -31,6 +31,7 @@ object IconsSettingsStore : MapSettingsStore() {
 	val iconsTint =
 		color(
 			title = R.string.icons_tint,
+			icon = R.drawable.format_paint,
 			default = Color.Unspecified
 		)
 

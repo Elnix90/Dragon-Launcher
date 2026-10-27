@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
@@ -35,6 +36,7 @@ import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.loadExtensionRegistry
 import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.tryStartActivity
 import org.elnix.dragonlauncher.services.ExtensionManager
@@ -43,6 +45,7 @@ import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import kotlin.time.Duration.Companion.milliseconds
 
+@SettingScreen(NavigationRoute.Extensions::class)
 @Composable
 fun ExtensionsTab() {
 	val ctx = LocalContext.current

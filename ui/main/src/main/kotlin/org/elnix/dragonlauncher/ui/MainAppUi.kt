@@ -101,42 +101,43 @@ import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
 import org.elnix.dragonlauncher.ui.navigation.welcomeMetadata
 import org.elnix.dragonlauncher.ui.settings.SettingsScreen
+import org.elnix.dragonlauncher.ui.settings.SettingsScreenViewModel
+import org.elnix.dragonlauncher.ui.settings.angleline.AngleLineTab
+import org.elnix.dragonlauncher.ui.settings.appdisplay.AppDisplayTab
+import org.elnix.dragonlauncher.ui.settings.appearance.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
-import org.elnix.dragonlauncher.ui.settings.customization.AngleLineTab
-import org.elnix.dragonlauncher.ui.settings.customization.AppDisplayTab
-import org.elnix.dragonlauncher.ui.settings.customization.AppearanceTab
-import org.elnix.dragonlauncher.ui.settings.customization.ChargingAnimationTab
-import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
-import org.elnix.dragonlauncher.ui.settings.customization.FontTab
-import org.elnix.dragonlauncher.ui.settings.customization.IconsTab
-import org.elnix.dragonlauncher.ui.settings.customization.NestEditScreen
-import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
-import org.elnix.dragonlauncher.ui.settings.customization.ThemesTab
-import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
-import org.elnix.dragonlauncher.ui.settings.customization.WidgetsTab
-import org.elnix.dragonlauncher.ui.settings.customization.behavior.BehaviorTab
-import org.elnix.dragonlauncher.ui.settings.customization.behavior.BehaviorTabViewModel
-import org.elnix.dragonlauncher.ui.settings.customization.behavior.GlobalDraggingModeSetup
-import org.elnix.dragonlauncher.ui.settings.customization.behavior.GlobalDraggingModeSetupViewModel
-import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerActionsTab
-import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerAppearanceTab
-import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerBehaviorTab
-import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
-import org.elnix.dragonlauncher.ui.settings.customization.hold.HoldToActivateTab
-import org.elnix.dragonlauncher.ui.settings.customization.hold.HoldToActivateTabViewModel
+import org.elnix.dragonlauncher.ui.settings.behavior.BehaviorTab
+import org.elnix.dragonlauncher.ui.settings.behavior.BehaviorTabViewModel
+import org.elnix.dragonlauncher.ui.settings.behavior.GlobalDraggingModeSetup
+import org.elnix.dragonlauncher.ui.settings.behavior.GlobalDraggingModeSetupViewModel
+import org.elnix.dragonlauncher.ui.settings.charging.ChargingAnimationTab
+import org.elnix.dragonlauncher.ui.settings.colors.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTabViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.LogsTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
-import org.elnix.dragonlauncher.ui.settings.debug.PermissionsTab
-import org.elnix.dragonlauncher.ui.settings.debug.PermissionsViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.SettingsDebugTab
+import org.elnix.dragonlauncher.ui.settings.drawer.DrawerActionsTab
+import org.elnix.dragonlauncher.ui.settings.drawer.DrawerAppearanceTab
+import org.elnix.dragonlauncher.ui.settings.drawer.DrawerBehaviorTab
+import org.elnix.dragonlauncher.ui.settings.drawer.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
+import org.elnix.dragonlauncher.ui.settings.fonts.FontTab
+import org.elnix.dragonlauncher.ui.settings.hold.HoldToActivateTab
+import org.elnix.dragonlauncher.ui.settings.hold.HoldToActivateTabViewModel
+import org.elnix.dragonlauncher.ui.settings.icons.IconsTab
+import org.elnix.dragonlauncher.ui.settings.nests.NestEditScreen
+import org.elnix.dragonlauncher.ui.settings.permissions.PermissionsTab
+import org.elnix.dragonlauncher.ui.settings.permissions.PermissionsViewModel
 import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsScreen
 import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsViewModel
+import org.elnix.dragonlauncher.ui.settings.themes.ThemesTab
+import org.elnix.dragonlauncher.ui.settings.wallpaper.WallpaperTab
 import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
+import org.elnix.dragonlauncher.ui.settings.widgets.WidgetsTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspacesTab
+import org.elnix.dragonlauncher.ui.statusbar.StatusBarTab
 import org.elnix.dragonlauncher.ui.warning.SignatureWarningDialog
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
 import org.elnix.dragonlauncher.ui.welcome.WelcomeViewModel
@@ -408,7 +409,10 @@ fun MainAppUi(
 								val viewModel: PointsSettingsViewModel = hiltViewModel()
 								PointsSettingsScreen(viewModel)
 							}
-							entry<NavigationRoute.Settings>(metadata = horizontalMetadata) { SettingsScreen() }
+							entry<NavigationRoute.Settings>(metadata = horizontalMetadata) {
+								val viewModel: SettingsScreenViewModel = hiltViewModel()
+								SettingsScreen(viewModel)
+							}
 							entry<NavigationRoute.Appearance>(metadata = horizontalMetadata) { AppearanceTab() }
 							entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) {
 								val viewModel: BehaviorTabViewModel = hiltViewModel()

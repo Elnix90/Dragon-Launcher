@@ -1,0 +1,133 @@
+package org.elnix.dragonlauncher.ui.settings.appdisplay
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import io.github.elnix90.annotations.SettingScreen
+import io.github.elnix90.runtime.asMutableState
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.components.SwitchRow
+import io.github.elnix90.ui.Setting
+import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.Legacy
+import org.elnix.dragonlauncher.base.model.models.PointPreviewMode.New
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
+import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
+import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+
+@SettingScreen(NavigationRoute.AppDisplay::class)
+@Composable
+fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+
+	var showPreview by remember { mutableStateOf(false) }
+
+	SettingsScaffold(
+		title = stringResource(R.string.app_display),
+		helpText = stringResource(R.string.app_display_desc),
+		resetText = stringResource(R.string.reset_app_display_tab),
+		onReset = {
+			showPreview = false
+			scope.launch {
+				UiSettingsStore.resetAll(ctx)
+			}
+		}
+	) {
+		DragonSettingsGroup(R.string.common_settings) {
+			Setting(UiSettingsStore.fullScreen)
+			RouteItem(NavigationRoute.ChargingAnimation)
+		}
+
+		DragonSettingsGroup(R.string.app_preview_settings) {
+			SwitchRow(
+				state = showPreview,
+				title = R.string.show_app_launch_preview,
+				description = R.string.app_preview_settings_desc,
+				icon = R.drawable.visibility
+			) { showPreview = it }
+
+			Setting(UiSettingsStore.pointPreviewMode) {
+				when (it) {
+					New -> stringResource(R.string.point_preview_mode_new)
+					Legacy -> stringResource(R.string.point_preview_mode_legacy)
+				}
+			}
+			val mode by UiSettingsStore.pointPreviewMode.asState()
+
+			Setting(UiSettingsStore.showLaunchingAppLabel)
+			Setting(UiSettingsStore.showLaunchingAppIcon)
+			Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
+			Setting(UiSettingsStore.appIconOverlaySize)
+
+			AnimatedVisibility(mode == New) {
+				Setting(UiSettingsStore.appIconOverlayScale)
+			}
+			AnimatedVisibility(mode == New) {
+				Setting(UiSettingsStore.maxTopBarDepth)
+			}
+		}
+
+		DragonSettingsGroup(R.string.dragging_display) {
+			Setting(UiSettingsStore.showCurrentSelectedPoint)
+
+			var showAllActionsOnCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asMutableState()
+			Setting(UiSettingsStore.showAllPointsInCurrentShape) { enabled ->
+				if (!enabled) showAllActionsOnCurrentNest = false
+			}
+
+			val showAllActionsOnCurrentCircle by UiSettingsStore.showAllPointsInCurrentShape.asState()
+			Setting(UiSettingsStore.showAllPointsInCurrentNest, enabled = showAllActionsOnCurrentCircle)
+
+			Setting(UiSettingsStore.showPointPreviewCenterStartPosition)
+
+			val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
+			Setting(UiSettingsStore.showCurrentShape, enabled = !showAllShapes)
+
+			var showShape by UiSettingsStore.showCurrentShape.asMutableState()
+			Setting(UiSettingsStore.showAllShapesInNest) { enabled ->
+				if (enabled) showShape = true
+			}
+
+			Setting(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
+		}
+
+		DragonSettingsGroup(R.string.depth) {
+			Setting(UiSettingsStore.maxNestsDepth)
+			Setting(UiSettingsStore.maxLiveNestsDepth)
+		}
+
+		DragonSettingsGroup(R.string.weird) {
+			Setting(UiSettingsStore.showOnlyQuestionMarkIcons)
+		}
+	}
+
+	val points by pointsViewModel.pointsService.points.collectAsState()
+	val randomPoint = remember(showPreview) {
+		points.values.randomOrNull() ?: Point(
+			offset = Offset.Unspecified,
+			action = Action.OpenDragonLauncherSettings(),
+			id = 0
+		) // When the list of points is empty, it happened to me once
+	}
+
+	if (showPreview) {
+		PointPreviewTitle(randomPoint)
+	}
+}
