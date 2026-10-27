@@ -661,13 +661,23 @@ fun SettingsScreen(
 			val lazyListState = rememberLazyListState()
 
 			Spacer(5.dp)
-			DragonSettingsGroup {
-				LazyColumnScrollbar(lazyListState, settings = scrollBarSettings) {
+			LazyColumnScrollbar(lazyListState, settings = scrollBarSettings) {
+				DragonSettingsGroup {
 					LazyColumn(
 						state = lazyListState,
 						verticalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
 						modifier = Modifier.fillMaxSize()
 					) {
+						if (isDebugModeEnabled) {
+							item {
+								Text(
+									text = stringResource(R.string.n_settings_found, results.size),
+									style = MaterialTheme.typography.bodyLargeEmphasized,
+									modifier = Modifier.dragonSettingGroup()
+								)
+							}
+						}
+
 						items(
 							items = results,
 							key = { it.key }
