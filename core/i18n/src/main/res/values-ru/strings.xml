@@ -67,7 +67,7 @@
     <string name="drawer_tab_text">Здесь можно настроить внешний вид и поведение меню приложений</string>
     <string name="set_default_launcher">Сделать лаунчером по умолчанию</string>
     <string name="close">Закрыть</string>
-    <string name="dragging_distance_selection">Выбор расстояния перетаскивания</string>
+    <string name="dragging_distance_selection">Дальность свайпа</string>
     <string name="cancel_zone">Зона отмены</string>
     <string name="preview_scale_factor">Масштаб превью</string>
     <string name="preview_scale_factor_desc">Насколько уменьшается гнездо при показе превью (когда оно вложено в текущее гнездо)</string>
@@ -123,7 +123,7 @@
     <string name="behavior_help">Здесь можно изменить настройки поведения приложения.</string>
     <string name="keep_screen_on">Не выключать экран</string>
     <string name="back_action">Действие «Назад»</string>
-    <string name="double_click_action">Действие двойного нажатия</string>
+    <string name="double_click_action">Двойное нажатие</string>
     <string name="long_click_to_access_settings">Долгое нажатие - вход в настройки</string>
     <string name="swipe_to_open_app">Проведите пальцем, чтобы открыть настроенные приложения и ярлыки</string>
     <string name="configure_your_apps">Настройте свои приложения и ярлыки в настройках</string>
@@ -195,7 +195,7 @@
     <string name="lock">Блокировка</string>
     <string name="reload_apps">Перезагрузить приложения</string>
     <string name="auto_separate">Авторазнесение</string>
-    <string name="auto_separate_desc">Раздвигает все точки, которые оказались слишком близко к перемещённым, по радиусу. Разнесение может распространяться дальше, пока все точки не окажутся на достаточном расстоянии друг от друга</string>
+    <string name="auto_separate_desc">Разносит точки: всё, что оказалось слишком близко к вашей траектории, отодвигается по радиусу. Разнесение распространяется дальше, пока все точки не окажутся на достаточном расстоянии друг от друга</string>
     <string name="add_widget">Добавить виджет</string>
     <string name="widgets">Виджеты</string>
     <string name="edit">Изменить</string>
@@ -272,7 +272,7 @@
     <string name="rgb_line_selector_description">Окрашивать линию выбора действия (следующую за пальцем) в RGB-градиент в зависимости от угла</string>
     <string name="show_launching_app_label_description">Показывать название приложения/действия вверху экрана, когда действие выбрано</string>
     <string name="show_launching_app_icon_description">Показывать значок приложения/действия вверху экрана, когда действие выбрано</string>
-    <string name="show_app_line_preview_desc">Показывать след от начальной точки перетаскивания до пальца</string>
+    <string name="show_app_line_preview_desc">Показывать след от точки начала свайпа до пальца</string>
     <string name="show_app_angle_preview_description">Показывать индикатор угла на линии</string>
     <string name="show_app_icon_start_drag_position_description">Показывать выбранное приложение в точке, откуда началось перетаскивание</string>
     <string name="line_preview_snap_to_action_description">Линия не двигается свободно, а притягивается к выбранному действию, если оно есть</string>
@@ -467,7 +467,6 @@
     <string name="category_grid_cells_desc">Количество приложений в строке/столбце категории</string>
     <string name="multi_select_count">Выбрано: %d</string>
     <string name="place_app_where">Куда вы хотите поместить</string>
-
     <string name="multi_select_drawer_hint">💡 Долгое нажатие на приложение позволяет выбрать несколько сразу</string>
     <string name="deselect_all">Снять выделение</string>
     <string name="prompt_shortcuts_when_adding_app">Предлагать ярлыки при добавлении приложения</string>
@@ -590,9 +589,9 @@
     <string name="angle_line">Угол Линия</string>
     <string name="angle_line_help">Настройте вид линии, которая появляется при перетаскивании на главном экране</string>
     <string name="show_start_object_preview">Показывать начальный объект</string>
-    <string name="show_start_object_preview_desc">Показывать ли объект (по умолчанию круг) в начальной точке перетаскивания</string>
+    <string name="show_start_object_preview_desc">Показывать ли объект (по умолчанию круг) в начальной точке свайпа</string>
     <string name="show_end_object_preview">Показывать конечный объект</string>
-    <string name="show_end_object_preview_desc">Показывать ли объект (по умолчанию маленький круг) в конечной точке перетаскивания</string>
+    <string name="show_end_object_preview_desc">Показывать ли объект (по умолчанию маленький круг) в конечной точке свайпа</string>
     <string name="stroke">Обводка</string>
     <string name="edit_shape">Изменить фигуру</string>
     <string name="edit_default_shape">Изменить фигуру по умолчанию</string>
@@ -605,7 +604,7 @@
     <string name="start_object">Начальный объект</string>
     <string name="end_object">Конечный объект</string>
     <string name="show_all_actions_in_current_nest">Все действия текущего гнезда</string>
-    <string name="show_all_actions_in_current_nest_desc">Показывать все точки текущего гнезда во время перетаскивания</string>
+    <string name="show_all_actions_in_current_nest_desc">Показывать все точки текущего гнезда во время свайпа</string>
     <string name="configure_draw_order">Порядок отрисовки</string>
     <string name="debug_mode_already_enabled">Режим отладки уже включён</string>
     <string name="not_supported_in_this_android_version">Не поддерживается в этой версии Android</string>
@@ -660,7 +659,7 @@
     <string name="haptic_preset_long_press">Подтверждение долгого нажатия</string>
     <string name="presets">Пресеты</string>
     <string name="steps">Шаги</string>
-    <string name="edit_nest_help">Настройте размер гнезда, расстояния перетаскивания, виброотклик и другие полезные параметры</string>
+    <string name="edit_nest_help">Настройте размер гнезда, дальность свайпа, виброотклик и другие полезные параметры</string>
     <string name="reset_nest">Вернуть это гнездо в исходное состояние?</string>
     <string name="reset_nest_desc">Все изменённые вами значения будут потеряны!</string>
     <string name="use_custom_color_channels">Свои цветовые каналы</string>
@@ -688,7 +687,7 @@
     <string name="main_screen_layers_reset_title">Сброс слоёв главного экрана</string>
     <string name="custom_dim">Своё затемнение</string>
     <string name="show_after">Показывать через</string>
-    <string name="show_after_help">Через сколько времени после начала перетаскивания появляется</string>
+    <string name="show_after_help">Задержка перед появлением после начала свайпа</string>
     <string name="dim_amount">Степень затемнения</string>
     <string name="dim_amount_help">Насколько сильно затемняется экран (цветом обоев)</string>
     <string name="snap_rotation">Привязка поворота к 15°</string>
@@ -723,7 +722,7 @@
     <string name="gradient">Градиент</string>
     <string name="sliders">Ползунки</string>
     <string name="common_settings">Общие настройки</string>
-    <string name="dragging_display">Отображение перетаскивания</string>
+    <string name="dragging_display">Отображение свайпа</string>
     <string name="select_settings_to_export">Выберите настройки для экспорта</string>
     <string name="select_settings_to_import">Выберите настройки для импорта</string>
     <string name="edit_hold_to_activate_elements">Элементы удержания</string>
@@ -840,8 +839,6 @@
     <string name="enable_logging.desc">Сохранять все журналы в хранилище приложения, их можно скопировать или экспортировать</string>
     <string name="disable_extension_signature_check">Отключить проверку подписи расширений</string>
     <string name="disable_extension_signature_check_desc">Разрешить расширения, не подписанные официальным ключом</string>
-
-
     <string name="files_log_level">Уровень журнала в файлах</string>
     <string name="recently_used_apps_count_desc">Сколько недавних приложений показывать в меню</string>
     <string name="themed_icons">Тематические значки</string>
@@ -1044,17 +1041,17 @@
     <string name="permission_notifications_desc">Разрешить дракону отправлять уведомления</string>
     <string name="app_icon_overlay_scale">Масштаб наложения иконок приложений</string>
     <string name="encouragement_grass">Потрогай траву 🌿</string>
-    <string name="global_dragging_mode">Глобальный режим перетаскивания</string>
-    <string name="global_dragging_mode_setup">Настройка режима перетаскивания</string>
-    <string name="global_dragging_mode_setup_help">Настройте параметр для выбранного вами текущего режима перетаскивания.</string>
-    <string name="global_dragging_mode_setup_reset">Вы уверены, что хотите сбросить текущий режим перетаскивания?</string>
-    <string name="global_dragging_mode_desc">Режим перетаскивания для всего лаунчера</string>
+    <string name="global_dragging_mode">Глобальный режим свайпа</string>
+    <string name="global_dragging_mode_setup">Настройка режима свайпа</string>
+    <string name="global_dragging_mode_setup_help">Настройте параметры выбранного режима свайпа.</string>
+    <string name="global_dragging_mode_setup_reset">Вы уверены, что хотите сбросить текущий режим свайпа?</string>
+    <string name="global_dragging_mode_desc">Режим свайпа для всего лаунчера</string>
     <string name="nests_settings">Настройки гнёзд</string>
-    <string name="configure_dragging_mode">Конфигурирование режима перетаскивания</string>
-    <string name="dragging_mode_normal">Обычный</string>
-    <string name="dragging_mode_normal_desc">Режим перетаскивания по умолчанию: проведите пальцем в любом месте экрана, чтобы появились гнёзда</string>
+    <string name="configure_dragging_mode">Настроить режим свайпа</string>
+    <string name="dragging_mode_normal">Нормальный</string>
+    <string name="dragging_mode_normal_desc">Режим по умолчанию: свайпните из любой точки экрана, и гнёзда появятся</string>
     <string name="dragging_mode_fixed">Фиксированный</string>
-    <string name="dragging_mode_fixed_desc">Разместите свои гнёзда в одном месте: они всегда видны, и вы можете перетаскивать их из любой точки; активация происходит из центра</string>
+    <string name="dragging_mode_fixed_desc">Разместите гнёзда в одном месте: они всегда видны, а свайп работает из любой точки — активация идёт от центра</string>
     <string name="status_bar_warning">⚠️ Пользовательская строка состояния отображается только в полноэкранном режиме приложения</string>
     <string name="decode_error">Ошибка декодирования!</string>
     <string name="decode_error_desc">При декодировании точек произошла ошибка. Рекомендуется экспортировать данные, чтобы избежать их потери.</string>
@@ -1094,4 +1091,32 @@
     <string name="show_only_question_mark_icons">Показывать только иконки в виде вопросительного знака</string>
     <string name="show_only_question_mark_icons_desc">Если вы психопат или любите странное — включите это</string>
     <string name="weird">Странное</string>
+    <string name="launch_activity">Запуск Activity</string>
+    <string name="no_activities_found">Нет доступных активити</string>
+    <string name="charging_animation_help">Конфигурация анимации зарядки</string>
+    <string name="charging_animation_reset">Вы уверены что хотите сбросить настройки анимации загрузки?</string>
+    <string name="charging_animation_color">Цвет анимации загрузки</string>
+    <string name="charging_animation_size_multiplier">Множитель размера</string>
+    <string name="launch_activity_color">Цвет запуска Activity</string>
+    <string name="charging_animation_size_multiplier_desc">Величина, на которую умножается размер всех пузырей</string>
+    <string name="charging_animation_amount_multiplier">Множитель увеличения</string>
+    <string name="charging_animation_amount_multiplier_desc">Выше = больше пузырей</string>
+    <string name="charging_animation_warning_not_charging">💡 Подключите телефон к зарядке, чтобы увидеть анимацию</string>
+    <string name="see_changelogs">Ознакомьтесь с изменениями, начиная с первой версии</string>
+    <string name="contribute_in_translations">Участвуйте в переводах</string>
+    <string name="drawer_preview">Предварительный просмотр панели</string>
+    <string name="drawer_appearance">Внешний вид меню приложений</string>
+    <string name="drawer_behavior">Поведение меню приложений</string>
+    <string name="drawer_appearance_help">Настройте внешний вид меню приложений</string>
+    <string name="drawer_behavior_help">Настройте поведение меню приложений</string>
+    <string name="drawer_actions_help">Настройте действия, которые меню приложений может выполнять для вас</string>
+    <string name="search_activities">Найти активити</string>
+    <string name="adb">ADB</string>
+    <string name="apps">Приложения</string>
+    <string name="nests">Гнезда</string>
+    <string name="show_special_actions_in_picker">Отображать специальные действия в средстве выбора</string>
+    <string name="show_special_actions_in_picker_desc">Некоторые действия доступны не всем или не используются широко, поэтому по умолчанию скрыты</string>
+    <string name="special">Специальное</string>
+    <string name="snap_point_angle_lines_start_angle">Начальный угол линий привязки</string>
+    <string name="snap_point_angle_lines_start_angle_desc">Угол, под которым начинается петля (для регулировки вращения)</string>
 </resources>
