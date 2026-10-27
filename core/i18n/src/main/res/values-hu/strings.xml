@@ -1,3 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="help">Segítség</string>
+    <string name="reset_default_settings">Alapértelmezett beállítások visszaállítása</string>
+    <string name="reset_settings_in_this_tab">Az alapértelmezett beállítások visszaállítása ezen a lapon</string>
+    <string name="ok">Oké</string>
+    <string name="cancel">Mégse</string>
+    <string name="do_not_remind_me_again">Ne emlékeztess rá még egyszer</string>
+    <string name="settings">Beállítások</string>
+    <string name="appearance">Megjelenés</string>
+    <string name="appearance_tab_text">A megjelenési beállítások módosítása</string>
+    <string name="fullscreen_app">Teljes képernyős alkalmazás</string>
+    <string name="app_display">Az alkalmazás megjelenítése</string>
+    <string name="app_display_desc">Az alkalmazás általános megjelenésével kapcsolatos beállítások módosítása az indítóprogram keretében, a színekkel nem kapcsolatos</string>
+    <string name="color_selector">Színválasztó</string>
+    <string name="debug">Hibakeresés</string>
+    <string name="extensions">Bővítmények</string>
+    <string name="extensions_description">Töltsön le és kezeljen további funkciókat a Dragon Launcherhez.</string>
+    <string name="install">Telepítés</string>
+    <string name="permissions">Jogosultságok</string>
+    <string name="no_extensions_found">A rendszerleíró adatbázisban nem található kiterjesztés.</string>
+    <string name="extension_manual_install_title">Kézi telepítés</string>
+    <string name="extension_manual_install_desc">Ha nincs telepítő kiterjesztésed, töltsd le az APK-fájlt, majd az alábbiak közül válaszd ki a telepítéshez.</string>
+    <string name="select_apk">APK kiválasztása</string>
+    <string name="system_default">Rendszer alapértelmezés</string>
+    <string name="version">Verzió</string>
 </resources>
