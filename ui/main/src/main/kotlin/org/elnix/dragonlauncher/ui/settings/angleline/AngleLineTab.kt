@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.components.AnimatedFab
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
@@ -43,7 +44,6 @@ import io.github.elnix90.shared.ui.dragon.generic.SingleSelectConnectedButtonRow
 import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.model.enumsui.select.AngleObject
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.Angle

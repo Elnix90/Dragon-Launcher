@@ -53,6 +53,7 @@ import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.core.objects.ColorSettingObject
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.components.AnimatedFab
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.base.modifiers.conditional
@@ -67,7 +68,6 @@ import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
 import io.github.elnix90.shared.ui.dragon.model.ExpandableSectionState
 import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Amoled
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Custom

@@ -61,6 +61,7 @@ import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.runtime.asMutableStateNull
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.components.AnimatedFab
 import io.github.elnix90.shared.ui.base.components.RowWithScrollIndicator
@@ -78,7 +79,6 @@ import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache

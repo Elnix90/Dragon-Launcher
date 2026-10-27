@@ -21,9 +21,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback

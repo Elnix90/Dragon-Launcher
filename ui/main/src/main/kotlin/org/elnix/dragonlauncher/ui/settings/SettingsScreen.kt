@@ -92,6 +92,7 @@ import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.search.SearchResult
 import io.github.elnix90.runtime.search.SettingsSearchIndex
 import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.components.BoxedIcon
 import io.github.elnix90.shared.ui.base.components.Spacer
@@ -107,7 +108,6 @@ import kotlinx.coroutines.withContext
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSelectionMode
 import my.nanihadesuka.compose.ScrollbarSettings
-import org.elnix.dragonlauncher.animation.bouncySpec
 import org.elnix.dragonlauncher.base.Constants.URLs.CODEBERG_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DISCORD_INVITE_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DRAGON_WEBSITE
