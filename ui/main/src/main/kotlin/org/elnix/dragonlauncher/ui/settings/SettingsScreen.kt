@@ -225,7 +225,7 @@ fun SettingsScreen(
 
 					val forceAppLanguageSelector by DebugSettingsStore.forceAppLanguageSelector.asState()
 					SettingsItem(
-						title = stringResource(R.string.language),
+						title = R.string.language,
 						icon = R.drawable.web,
 						onClick = {
 							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
@@ -248,7 +248,7 @@ fun SettingsScreen(
 					)
 
 					SettingsItem(
-						title = stringResource(R.string.android_settings),
+						title = R.string.android_settings,
 						icon = R.drawable.settings_alert
 					) {
 						val packageName = ctx.packageName
@@ -325,34 +325,34 @@ fun SettingsScreen(
 					}
 
 					SettingsItem(
-						title = stringResource(R.string.source_code),
-						icon = R.drawable.code,
+						title = R.string.source_code,
 						description = null,
+						icon = R.drawable.code,
 						github(GITHUB_REPO_LINK),
 						gitlab(GITLAB_REPO_LINK),
 						codeberg(CODEBERG_REPO_LINK)
 					) { uriHandler.openUri(GITHUB_REPO_LINK) }
 
 					SplitSettingsItem(
-						title = stringResource(R.string.changelogs),
+						title = R.string.changelogs,
+						description = R.string.see_changelogs,
 						icon = R.drawable.source_notes,
-						description = stringResource(R.string.see_changelogs),
 						openInNew("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/$versionCode.txt"),
 						firstHalfEnabled = true,
 						firstHalfOnClick = { navigator.navigate(NavigationRoute.Changelogs) }
 					)
 
 					SettingsItem(
-						title = stringResource(R.string.check_for_update),
+						title = R.string.check_for_update,
+						description = R.string.check_for_updates_github,
 						icon = R.drawable.reset,
-						description = stringResource(R.string.check_for_updates_github),
 						openInNew(GITHUB_REPO_RELEASES_LINK)
 					) { uriHandler.openUri(GITHUB_REPO_RELEASES_LINK) }
 
 					SettingsItem(
-						title = stringResource(R.string.report_a_bug),
+						title = R.string.report_a_bug,
+						description = R.string.open_an_issue_on_github,
 						icon = R.drawable.report,
-						description = stringResource(R.string.open_an_issue_on_github),
 						openInNew(GITHUB_REPO_ISSUES_LINK)
 					) { uriHandler.openUri(GITHUB_REPO_ISSUES_LINK) }
 				}
@@ -686,6 +686,12 @@ fun SettingsScreen(
 								result = result,
 								onClick = {
 									val screen = result.screenRoute as? NavigationRoute ?: return@SearchResultRow
+
+									if (screen == NavigationRoute.Settings) {
+										// This screen, close the search
+										showBottomSearch = false
+										viewModel.textFieldState.clearText()
+									}
 									navigator.navigate(screen)
 								}
 							)

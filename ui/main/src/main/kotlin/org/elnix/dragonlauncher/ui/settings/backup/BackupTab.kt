@@ -41,7 +41,9 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
+import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -147,16 +149,19 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 				}
 			}
 
-			SettingsItem(
-				title = stringResource(R.string.backup_location),
-				description = backupPath ?: stringResource(R.string.backup_location_desc),
-				icon = R.drawable.folder_open,
-				enabled = autoBackupEnabled,
-				onClick = { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
+			TextWithDescription(
+				text = stringResource(R.string.backup_location),
+				description = backupPath ?: stringResource(R.string.backup_location_unset),
+				modifier = Modifier.dragonSettingGroup()
 			)
+			DragonButton(
+				onClick = { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
+			) {
+				Text(stringResource(R.string.backup_location_desc))
+			}
 
 			SettingsItem(
-				title = stringResource(R.string.open_backup_file),
+				title = R.string.open_backup_file,
 				icon = R.drawable.open_in_new,
 				enabled = autoBackupEnabled && backupPath != null,
 				onClick = {
@@ -190,7 +195,7 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 			}
 
 			SettingsItem(
-				title = stringResource(R.string.trigger_backup),
+				title = R.string.trigger_backup,
 				icon = R.drawable.reset,
 				enabled = autoBackupEnabled && backupPath != null && !hasTriggeredManualAutoBackup,
 				onClick = {

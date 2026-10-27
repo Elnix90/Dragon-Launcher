@@ -390,8 +390,8 @@ fun HoldToActivateTab(
 					}
 
 					SettingsItem(
-						title = stringResource(R.string.edit_hold_to_activate_elements),
-						description = stringResource(R.string.edit_hold_to_activate_elements_desc),
+						title = R.string.edit_hold_to_activate_elements,
+						description = R.string.edit_hold_to_activate_elements_desc,
 						icon = R.drawable.edit_rounded
 					) { showHoldSettingsOrderDialog = true }
 					Setting(HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance)
@@ -654,8 +654,8 @@ fun HoldToActivateTab(
 							}
 
 							SettingsItem(
-								title = stringResource(R.string.edit_hold_to_activate_elements),
-								description = stringResource(R.string.edit_hold_to_activate_elements_desc),
+								title = R.string.edit_hold_to_activate_elements,
+								description = R.string.edit_hold_to_activate_elements_desc,
 								icon = R.drawable.edit_rounded
 							) { showHoldSettingsOrderDialog = true }
 							Setting(HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance)

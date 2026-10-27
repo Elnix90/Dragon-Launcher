@@ -1,5 +1,7 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -10,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.annotations.SettingEntry
 import io.github.elnix90.shared.ui.base.components.BoxedIcon
 import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
@@ -17,12 +20,12 @@ import org.elnix.dragonlauncher.base.model.models.SocialLink
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 
-@Deprecated("replace the string with an int for both the title and description, and annotate with @SettingEntry")
+@SettingEntry
 @Composable
 fun DragonGroupScope.SettingsItem(
-	title: String,
-	icon: Int,
-	description: String? = null,
+	@StringRes title: Int,
+	@StringRes description: Int? = null,
+	@DrawableRes icon: Int,
 	vararg trailingIcons: SocialLink,
 	enabled: Boolean = true,
 	onClick: () -> Unit
@@ -43,8 +46,8 @@ fun DragonGroupScope.SettingsItem(
 		BoxedIcon(icon, enabled)
 
 		TextWithDescription(
-			text = title,
-			description = description,
+			text = stringResource(title),
+			description = description?.let { stringResource(it) },
 			modifier = Modifier.weight(1f),
 			enabled = enabled
 		)
@@ -57,12 +60,12 @@ fun DragonGroupScope.SettingsItem(
 	}
 }
 
-@Deprecated("replace the string with an int for both the title and description, and annotate with @SettingEntry")
+@SettingEntry
 @Composable
 fun DragonGroupScope.SplitSettingsItem(
-	title: String,
-	icon: Int,
-	description: String? = null,
+	@StringRes title: Int,
+	@StringRes description: Int? = null,
+	@DrawableRes icon: Int,
 	vararg trailingIcons: SocialLink,
 	firstHalfOnClick: () -> Unit,
 	firstHalfEnabled: Boolean = true
@@ -88,8 +91,8 @@ fun DragonGroupScope.SplitSettingsItem(
 			BoxedIcon(icon, firstHalfEnabled)
 
 			TextWithDescription(
-				text = title,
-				description = description,
+				text = stringResource(title),
+				description = description?.let { stringResource(it) },
 				modifier = Modifier.weight(1f),
 				enabled = firstHalfEnabled
 			)
@@ -118,7 +121,7 @@ fun DragonGroupScope.RouteItem(
 ) {
 	val navigator = LocalNavigator.current
 	SettingsItem(
-		title = stringResource(route.resId),
+		title = route.resId,
 		enabled = enabled,
 		icon = route.icon
 	) {
@@ -134,7 +137,7 @@ fun DragonGroupScope.RouteItem(
 ) {
 	val navigator = LocalNavigator.current
 	SplitSettingsItem(
-		title = stringResource(route.resId),
+		title = route.resId,
 		trailingIcons = trailingIcons,
 		icon = route.icon,
 		firstHalfEnabled = enabled,

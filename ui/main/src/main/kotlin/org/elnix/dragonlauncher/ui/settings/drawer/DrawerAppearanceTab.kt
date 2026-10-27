@@ -72,7 +72,7 @@ fun DrawerAppearanceTab(drawerViewModel: DrawerViewModel = activityViewModel()) 
 	) {
 		DragonSettingsGroup {
 			SettingsItem(
-				title = stringResource(R.string.toolbars_order),
+				title = R.string.toolbars_order,
 				icon = R.drawable._123
 			) { showToolbarsOrderDialog = true }
 
@@ -105,7 +105,7 @@ fun DrawerAppearanceTab(drawerViewModel: DrawerViewModel = activityViewModel()) 
 			Setting(DrawerSettingsStore.categoryColor, enabled = useCategory)
 			Setting(DrawerSettingsStore.openableCategories, enabled = useCategory)
 			SettingsItem(
-				title = stringResource(R.string.disabled_system_categories),
+				title = R.string.disabled_system_categories,
 				icon = R.drawable.filter_alt,
 				enabled = useCategory
 			) { showDisabledCategoriesDialog = true }

@@ -5,8 +5,6 @@ package org.elnix.dragonlauncher.ui.settings.wallpaper
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
@@ -26,13 +24,13 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import io.github.elnix90.annotations.SettingEntry
 import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.generic.ActionSelector
 import io.github.elnix90.ui.Setting
+import io.github.elnix90.ui.SettingAction
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.WallpaperHelper
 import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
@@ -117,7 +115,32 @@ fun WallpaperTab() {
 		onReset = null,
 		resetText = null
 	) {
-		SetWallpaperButton()
+		SettingAction(
+			title = R.string.set_wallpaper,
+			description = R.string.set_wallpaper,
+			icon = R.drawable.wallpaper
+		) {
+			DragonSettingsGroup(R.string.custom_wallpaper) {
+				val selectImage = stringResource(R.string.select_image)
+				DragonButton(
+					onClick = {
+						val intent = Intent(Intent.ACTION_SET_WALLPAPER)
+						ctx.startActivity(
+							Intent.createChooser(intent, selectImage)
+						)
+					}
+				) {
+					Icon(
+						painter = painterResource(this@SettingAction.icon!!),
+						contentDescription = null
+					)
+					Text(
+						text = stringResource(this@SettingAction.title),
+						textAlign = TextAlign.Center
+					)
+				}
+			}
+		}
 
 		DragonSettingsGroup(R.string.plain_wallpaper) {
 			this.DragonButton(
@@ -162,35 +185,5 @@ fun WallpaperTab() {
 			onSelected = ::applyWallpaper,
 			onDismiss = { showTargetDialog = false }
 		)
-	}
-}
-
-@SettingEntry
-@Composable
-fun SetWallpaperButton(
-	@StringRes title: Int = R.string.set_wallpaper,
-	@StringRes description: Int = R.string.set_wallpaper,
-	@DrawableRes icon: Int = R.drawable.wallpaper
-) {
-	val ctx = LocalContext.current
-	val selectImage = stringResource(R.string.select_image)
-	DragonSettingsGroup(R.string.custom_wallpaper) {
-		DragonButton(
-			onClick = {
-				val intent = Intent(Intent.ACTION_SET_WALLPAPER)
-				ctx.startActivity(
-					Intent.createChooser(intent, selectImage)
-				)
-			}
-		) {
-			Icon(
-				painter = painterResource(icon),
-				contentDescription = null
-			)
-			Text(
-				text = stringResource(title),
-				textAlign = TextAlign.Center
-			)
-		}
 	}
 }

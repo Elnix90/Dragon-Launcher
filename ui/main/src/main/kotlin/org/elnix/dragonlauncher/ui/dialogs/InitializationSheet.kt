@@ -44,10 +44,10 @@ fun InitializationSheet(
 
 		DragonSettingsGroup(R.string.auto_import_apps) {
 			SettingsItem(
-				title = stringResource(R.string.usage_access),
+				title = R.string.usage_access,
 				icon = R.drawable.analytics,
 				enabled = !hasPermission,
-				description = stringResource(if (!hasPermission) R.string.usage_permission_required else R.string.permission_granted)
+				description = if (!hasPermission) R.string.usage_permission_required else R.string.permission_granted
 			) { ctx.permissionsManager.requestPermission(PermissionGroup.UsageStat) }
 
 			val howMany by initializationViewModel.howMany.asState()

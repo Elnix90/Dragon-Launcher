@@ -1153,4 +1153,5 @@
 	<string name="search_settings">Search settings</string>
 	<string name="n_settings_found">%1$d settings found</string>
 	<string name="clear">Clear</string>
+	<string name="backup_location_unset">Backup location unset</string>
 </resources>

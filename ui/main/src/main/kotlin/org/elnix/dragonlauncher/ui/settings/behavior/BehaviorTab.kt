@@ -106,7 +106,7 @@ fun BehaviorTab(
 				) { viewModel.setDraggingMode(it) }
 
 				SettingsItem(
-					title = stringResource(R.string.configure_dragging_mode),
+					title = R.string.configure_dragging_mode,
 					icon = R.drawable.settings,
 					enabled = globalDraggingMode is GlobalDraggingMode.Fixed
 				) {
@@ -138,13 +138,13 @@ fun BehaviorTab(
 
 			DragonSettingsGroup(R.string.security) {
 				SettingsItem(
-					title = stringResource(R.string.lock_method),
+					title = R.string.lock_method,
 					description =
 						when (lockMethod) {
-							None -> stringResource(R.string.lock_none)
-							Pin -> stringResource(R.string.lock_pin)
-							Device -> stringResource(R.string.lock_device_unlock)
-							Pattern -> stringResource(R.string.pattern)
+							None -> R.string.lock_none
+							Pin -> R.string.lock_pin
+							Device -> R.string.lock_device_unlock
+							Pattern -> R.string.pattern
 						},
 					icon = R.drawable.lock
 				) { showLockMethodPicker = true }
