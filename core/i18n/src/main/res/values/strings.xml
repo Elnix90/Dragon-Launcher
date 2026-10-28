@@ -1161,4 +1161,6 @@
 	<string name="website">Website</string>
 	<string name="telegram">Telegram</string>
 	<string name="discord">Discord</string>
+	<string name="theme">Theme</string>
+	<string name="theme_desc">Pick your preffered theme for the app</string>
 </resources>

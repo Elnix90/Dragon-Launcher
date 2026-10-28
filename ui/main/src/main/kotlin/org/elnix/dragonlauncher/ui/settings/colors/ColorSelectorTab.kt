@@ -14,13 +14,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,6 +64,7 @@ import io.github.elnix90.shared.ui.dragon.expandable.ExpandableSection
 import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
 import io.github.elnix90.shared.ui.dragon.model.ExpandableSectionState
 import io.github.elnix90.ui.Setting
+import io.github.elnix90.ui.SettingAction
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes.Amoled
@@ -293,117 +291,124 @@ fun ColorSelectorTab() {
 			}
 		}
 	) {
-		Row(
-			modifier =
-				Modifier
-					.fillMaxWidth()
-					.height(IntrinsicSize.Max)
-					.background(
-						color = MaterialTheme.colorScheme.surface,
-						shape = MaterialTheme.shapes.large
-					).padding(12.dp),
-			horizontalArrangement = Arrangement.SpaceEvenly
+		SettingAction(
+			title = R.string.theme,
+			description = R.string.theme_desc,
+			icon = R.drawable.opacity
 		) {
-			DefaultThemes.entries.filter { it != Amoled }.forEach {
-				val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
-
-				Column(
+			DragonSettingsGroup(title) {
+				Row(
 					modifier =
 						Modifier
-							.weight(1f)
-							.fillMaxHeight()
-							.clip(MaterialTheme.shapes.large)
-							.conditional(selected) {
-								background(MaterialTheme.colorScheme.surfaceDim)
-							}.clickable {
-								scope.launch {
-									ColorModesSettingsStore.defaultTheme.set(ctx, it)
-								}
-							}.padding(5.dp),
-					horizontalAlignment = Alignment.CenterHorizontally
+							.dragonSettingGroup(),
+					horizontalArrangement = Arrangement.SpaceEvenly
 				) {
-					val background =
-						when (it) {
-							Amoled -> {
-								null
-							}
+					DefaultThemes.entries.filter { it != Amoled }.forEach {
+						val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
 
-							Dark -> {
-								Color.DarkGray
-							}
+						Column(
+							modifier =
+								Modifier
+									.weight(1f)
+									.fillMaxHeight()
+									.clip(MaterialTheme.shapes.large)
+									.conditional(selected) {
+										background(MaterialTheme.colorScheme.surfaceDim)
+									}.clickable {
+										scope.launch {
+											ColorModesSettingsStore.defaultTheme.set(ctx, it)
+										}
+									}.padding(5.dp),
+							horizontalAlignment = Alignment.CenterHorizontally
+						) {
+							val background =
+								when (it) {
+									Amoled -> {
+										null
+									}
 
-							Light -> {
-								Color.White
-							}
-
-							System -> {
-								Brush.horizontalGradient(
-									colors =
-										listOf(
-											Color.White,
+									Dark -> {
+										if (defaultTheme == Amoled) {
 											Color.Black
+										} else {
+											Color.DarkGray
+										}
+									}
+
+									Light -> {
+										Color.White
+									}
+
+									System -> {
+										Brush.horizontalGradient(
+											colors =
+												listOf(
+													Color.White,
+													Color.Black
+												)
 										)
-								)
+									}
+
+									Custom -> {
+										Brush.linearGradient(
+											colors =
+												listOf(
+													Color.Red,
+													Color.Yellow,
+													Color.Green,
+													Color.Cyan,
+													Color.Blue,
+													Color.Magenta
+												)
+										)
+									}
+								}
+
+							// I like this simple animation I made, I think I've changed my mind about animations
+							val shapeCorners by animateIntAsState(
+								targetValue = if (selected) 12 else 50,
+								animationSpec = bouncySpec()
+							)
+
+							val scale by animateFloatAsState(
+								targetValue = if (selected) 1.2f else 1f,
+								animationSpec = bouncySpec()
+							)
+
+							val boxShape = RoundedCornerShape(shapeCorners)
+
+							if (background != null) {
+								Box((Modifier.scale(scale))) {
+									Box(
+										modifier =
+											Modifier
+												.size(40.dp)
+												.clip(boxShape)
+												.then(
+													when (background) {
+														is Color -> Modifier.background(background)
+														is Brush -> Modifier.background(background)
+														else -> Modifier
+													}
+												).border(
+													1.dp,
+													MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+													boxShape
+												)
+									)
+								}
 							}
 
-							Custom -> {
-								Brush.linearGradient(
-									colors =
-										listOf(
-											Color.Red,
-											Color.Yellow,
-											Color.Green,
-											Color.Cyan,
-											Color.Blue,
-											Color.Magenta
-										)
-								)
-							}
-						}
+							Spacer(5.dp)
 
-					// I like this simple animation I made, I think I've changed my mind about animations
-					val shapeCorners by animateIntAsState(
-						targetValue = if (selected) 12 else 50,
-						animationSpec = bouncySpec()
-					)
-
-					val scale by animateFloatAsState(
-						targetValue = if (selected) 1.2f else 1f,
-						animationSpec = bouncySpec()
-					)
-
-					val boxShape = RoundedCornerShape(shapeCorners)
-
-					if (background != null) {
-						Box((Modifier.scale(scale))) {
-							Box(
-								modifier =
-									Modifier
-										.size(40.dp)
-										.clip(boxShape)
-										.then(
-											when (background) {
-												is Color -> Modifier.background(background)
-												is Brush -> Modifier.background(background)
-												else -> Modifier
-											}
-										).border(
-											1.dp,
-											MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-											boxShape
-										)
+							Text(
+								text = stringResource(it.resId),
+								color = MaterialTheme.colorScheme.onSurface,
+								style = MaterialTheme.typography.labelSmall,
+								textAlign = TextAlign.Center
 							)
 						}
 					}
-
-					Spacer(5.dp)
-
-					Text(
-						text = stringResource(it.resId),
-						color = MaterialTheme.colorScheme.onSurface,
-						style = MaterialTheme.typography.labelSmall,
-						textAlign = TextAlign.Center
-					)
 				}
 			}
 		}
@@ -425,7 +430,7 @@ fun ColorSelectorTab() {
 			}
 
 			AnimatedVisibility(defaultTheme != Custom) {
-				Setting(ColorModesSettingsStore.dynamicColors)
+				Setting(ColorModesSettingsStore.dynamicColors, enabled = defaultTheme != Amoled)
 			}
 
 			AnimatedVisibility(colorTestMode) {
