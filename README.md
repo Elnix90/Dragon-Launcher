@@ -43,7 +43,7 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 
 ### The main Idea of this launcher is to launch your apps via gestures.
 
-* You can customize your list of fast access apps easily in the settings
+* You can customize your list of fast access apps in the settings
 * Use the app drawer to pick an app and browse apps
 ---
 
