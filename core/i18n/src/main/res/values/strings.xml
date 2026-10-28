@@ -1154,4 +1154,11 @@
 	<string name="n_settings_found">%1$d settings found</string>
 	<string name="clear">Clear</string>
 	<string name="backup_location_unset">Backup location unset</string>
+	<string name="github">Github</string>
+	<string name="weblate">Weblate</string>
+	<string name="mail">Mail</string>
+	<string name="reddit">Reddit</string>
+	<string name="website">Website</string>
+	<string name="telegram">Telegram</string>
+	<string name="discord">Discord</string>
 </resources>

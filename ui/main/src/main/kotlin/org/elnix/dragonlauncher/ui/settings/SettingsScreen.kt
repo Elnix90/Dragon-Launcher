@@ -8,6 +8,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
@@ -30,7 +31,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,7 +40,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroup
@@ -51,12 +50,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -82,9 +83,11 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import io.github.elnix90.annotations.SettingEntry
 import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.core.util.clearAllData
 import io.github.elnix90.runtime.asMutableState
@@ -98,6 +101,7 @@ import io.github.elnix90.shared.ui.base.components.BoxedIcon
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
+import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
 import io.github.elnix90.shared.ui.dragon.components.DragonModalBottomSheet
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
@@ -120,6 +124,7 @@ import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_RELEASES_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITLAB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.MAILTO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.REDDIT_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.TELEGRAM_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.WEBLATE_LINK
 import org.elnix.dragonlauncher.base.model.models.SocialLink
 import org.elnix.dragonlauncher.base.model.models.buyMeACoffee
@@ -167,7 +172,11 @@ fun SettingsScreen(
 	val ctx = LocalContext.current
 	val uriHandler = LocalUriHandler.current
 	val navigator = LocalNavigator.current
+	val windowInfo = LocalWindowInfo.current
+	val focusManager = LocalFocusManager.current
+
 	val scope = rememberCoroutineScope()
+	val focusRequester = remember { FocusRequester() }
 
 	val versionCode = ctx.getVersionCode()
 	val versionName = ctx.getVersionNumber()
@@ -274,10 +283,12 @@ fun SettingsScreen(
 						horizontalArrangement = Arrangement.SpaceEvenly,
 						verticalAlignment = Alignment.CenterVertically
 					) {
+						@SettingEntry
 						fun ButtonGroupScope.ic(
-							@DrawableRes ic: Int,
+							@DrawableRes icon: Int,
+							@StringRes title: Int,
 							link: String,
-							`is`: MutableInteractionSource
+							interactionSource: MutableInteractionSource
 						) {
 							customItem(
 								buttonGroupContent = {
@@ -285,16 +296,16 @@ fun SettingsScreen(
 										modifier =
 											Modifier
 												.weight(1f)
-												.animateWidth(`is`)
+												.animateWidth(interactionSource)
 												.fillMaxHeight()
 												.clip(MaterialTheme.shapes.extraLarge)
-												.clickable(interactionSource = `is`) { uriHandler.openUri(link) }
+												.clickable(interactionSource = interactionSource) { uriHandler.openUri(link) }
 												.padding(vertical = 8.dp),
 										contentAlignment = Alignment.Center
 									) {
 										Icon(
-											painter = painterResource(ic),
-											contentDescription = null,
+											painter = painterResource(icon),
+											contentDescription = stringResource(title),
 											tint = Color.Unspecified,
 											modifier = Modifier.size(32.dp)
 										)
@@ -310,17 +321,18 @@ fun SettingsScreen(
 								R.drawable.github_invertocat_black
 							}
 
-						val interactionSources = remember { List(6) { MutableInteractionSource() } }
+						val interactionSources = remember { List(7) { MutableInteractionSource() } }
 						ButtonGroup(
 							overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
 							horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
 						) {
-							ic(githubIcon, GITHUB_REPO_LINK, interactionSources[0])
-							ic(R.drawable.discord_symbol_blurple, DISCORD_INVITE_LINK, interactionSources[1])
-							ic(R.drawable.reddit_icon_fullcolor, REDDIT_LINK, interactionSources[2])
-							ic(R.mipmap.dragon_launcher_foreground, DRAGON_WEBSITE, interactionSources[3])
-							ic(R.drawable.weblate_icon, WEBLATE_LINK, interactionSources[4])
-							ic(R.drawable.protonmail_icon, MAILTO_LINK, interactionSources[5])
+							ic(githubIcon, R.string.github, GITHUB_REPO_LINK, interactionSources[0])
+							ic(R.drawable.discord_symbol_blurple, R.string.discord, DISCORD_INVITE_LINK, interactionSources[1])
+							ic(R.drawable.reddit_icon_fullcolor, R.string.reddit, REDDIT_LINK, interactionSources[2])
+							ic(R.mipmap.dragon_launcher_foreground, R.string.website, DRAGON_WEBSITE, interactionSources[3])
+							ic(R.drawable.weblate_icon, R.string.weblate, WEBLATE_LINK, interactionSources[4])
+							ic(R.drawable.protonmail_icon, R.string.mail, MAILTO_LINK, interactionSources[5])
+							ic(R.drawable.telegram, R.string.telegram, TELEGRAM_LINK, interactionSources[6])
 						}
 					}
 
@@ -576,7 +588,91 @@ fun SettingsScreen(
 				Spacer(100.dp)
 			}
 
-			BottomSearchBar(Modifier.align(Alignment.BottomCenter), viewModel.textFieldState) { showBottomSearch = true }
+			val oneFourthOfHeight = windowInfo.containerSize.height / 4f
+			val yTranslationSearchbar = remember { Animatable(0f) }
+
+			fun onOpen() {
+				scope.launch {
+					yTranslationSearchbar.snapTo(0f)
+				}
+				focusManager.clearFocus(true)
+				showBottomSearch = true
+			}
+
+			val searchbarDragState = rememberDraggableState { dragAmount ->
+				scope.launch {
+					// reminder: dragging up gives a negative value
+					val newValue = yTranslationSearchbar.value + dragAmount
+					val upLimit = -oneFourthOfHeight
+
+					val finalValue = if (newValue < 0) {
+						newValue.coerceAtLeast(upLimit)
+					} else {
+						newValue
+					}
+
+					yTranslationSearchbar.snapTo(finalValue)
+				}
+			}
+
+			val progress by remember {
+				derivedStateOf {
+					if (yTranslationSearchbar.value <= 0) {
+						(yTranslationSearchbar.value.absoluteValue / oneFourthOfHeight).coerceIn(0f, 1f)
+					} else {
+						0f // means we're dragging down
+					}
+				}
+			}
+
+			val searchbarWidth by animateFloatAsState(
+				targetValue = lerp(0.85f, 0.95f, progress),
+				animationSpec = bouncySpec()
+			)
+
+			TextField(
+				state = viewModel.textFieldState,
+				modifier = Modifier
+					.align(Alignment.BottomCenter)
+					.fillMaxWidth(searchbarWidth)
+					.navigationBarsPadding()
+					.padding(5.dp)
+					.draggable(
+						state = searchbarDragState,
+						orientation = Orientation.Vertical,
+						onDragStopped = {
+							val targetValue = yTranslationSearchbar.value
+
+							if (targetValue <= -oneFourthOfHeight / 2) {
+								onOpen()
+							}
+
+							scope.launch {
+								yTranslationSearchbar.animateTo(0f, bouncySpec())
+							}
+						}
+					).onFocusChanged {
+						if (it.isFocused) {
+							onOpen()
+						}
+					}.graphicsLayer {
+						translationY = yTranslationSearchbar.value
+					},
+				colors = AppObjectsColors.outlinedTextFieldColors(),
+				placeholder = {
+					Text(stringResource(R.string.search_settings))
+				},
+				leadingIcon = {
+					Icon(
+						painter = painterResource(R.drawable.search),
+						contentDescription = null
+					)
+				},
+				// Needed for the text field to be vertically scrollable, see its doc
+				// I spend too much time on that shit :(
+				lineLimits = TextFieldLineLimits.SingleLine,
+				shape = FloatingToolbarDefaults.ContainerShape
+			)
 		}
 	}
 
@@ -585,10 +681,6 @@ fun SettingsScreen(
 	}
 
 	if (showBottomSearch) {
-		val ctx = LocalContext.current
-		val focusManager = LocalFocusManager.current
-		val focusRequester = remember { FocusRequester() }
-
 		var isFirstGet by remember { mutableStateOf(true) }
 		LaunchedEffect(Unit) {
 			focusRequester.requestFocus()
@@ -633,10 +725,14 @@ fun SettingsScreen(
 						contentDescription = stringResource(R.string.clear),
 						modifier = Modifier
 							.clip(CircleShape)
-							.clickable(
-								enabled = viewModel.textFieldState.text.isNotEmpty()
-							) {
-								viewModel.textFieldState.clearText()
+							.clickable {
+								if (viewModel.textFieldState.text.isNotEmpty()) {
+									viewModel.textFieldState.clearText()
+								} else {
+									showBottomSearch = false
+									viewModel.textFieldState.clearText()
+									focusManager.clearFocus(true)
+								}
 							}.padding(5.dp)
 					)
 				},
@@ -663,6 +759,8 @@ fun SettingsScreen(
 			Spacer(5.dp)
 			LazyColumnScrollbar(lazyListState, settings = scrollBarSettings) {
 				DragonSettingsGroup {
+					var isGloballyExpanded by remember { mutableStateOf(false) }
+
 					LazyColumn(
 						state = lazyListState,
 						verticalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
@@ -670,11 +768,21 @@ fun SettingsScreen(
 					) {
 						if (isDebugModeEnabled) {
 							item {
-								Text(
-									text = stringResource(R.string.n_settings_found, results.size),
-									style = MaterialTheme.typography.bodyLargeEmphasized,
-									modifier = Modifier.dragonSettingGroup()
-								)
+								Row(
+									verticalAlignment = Alignment.CenterVertically,
+									horizontalArrangement = Arrangement.SpaceBetween,
+									modifier = Modifier
+										.dragonSettingGroup()
+								) {
+									Text(
+										text = stringResource(R.string.n_settings_found, results.size),
+										style = MaterialTheme.typography.bodyLargeEmphasized
+									)
+									DragonIconButton(
+										icon = R.drawable.arrow_drop_down,
+										contentDescription = R.string.more
+									) { isFirstGet = !isGloballyExpanded }
+								}
 							}
 						}
 
@@ -684,6 +792,8 @@ fun SettingsScreen(
 						) { result ->
 							SearchResultRow(
 								result = result,
+								isDebugModeEnabled = isDebugModeEnabled,
+								isGloballyExpanded = isGloballyExpanded,
 								onClick = {
 									val screen = result.screenRoute as? NavigationRoute ?: return@SearchResultRow
 
@@ -723,118 +833,62 @@ private fun TextRow(
 @Composable
 private fun DragonGroupScope.SearchResultRow(
 	result: SearchResult,
+	isDebugModeEnabled: Boolean,
+	isGloballyExpanded: Boolean,
 	onClick: () -> Unit
 ) {
-	Row(
-		modifier =
-			Modifier
-				.dragonSettingGroup {
-					clickable(onClick = onClick)
-				},
-		verticalAlignment = Alignment.CenterVertically,
-		horizontalArrangement = Arrangement.spacedBy(16.dp)
-	) {
-		result.icon?.let { icon ->
-			BoxedIcon(icon)
-		}
+	var expanded by remember { mutableStateOf(false) }
 
-		TextWithDescription(
-			text = result.title,
-			description = result.description,
-			modifier = Modifier.weight(1f)
-		)
-		if (result.screenRoute is NavigationRoute) {
-			Icon(
-				painter = painterResource(R.drawable.open_in_new),
-				contentDescription = null
-			)
-		}
-	}
-}
-
-@Composable
-private fun BottomSearchBar(
-	modifier: Modifier = Modifier,
-	textFieldState: TextFieldState,
-	onOpen: () -> Unit
-) {
-	val windowInfo = LocalWindowInfo.current
-	val scope = rememberCoroutineScope()
-	val oneFourthOfHeight = windowInfo.containerSize.height / 4f
-	val yTranslationSearchbar = remember { Animatable(0f) }
-
-	val searchbarDragState = rememberDraggableState { dragAmount ->
-		scope.launch {
-			// reminder: dragging up gives a negative value
-			val newValue = yTranslationSearchbar.value + dragAmount
-			val upLimit = -oneFourthOfHeight
-
-			val finalValue = if (newValue < 0) {
-				newValue.coerceAtLeast(upLimit)
-			} else {
-				newValue
-			}
-
-			yTranslationSearchbar.snapTo(finalValue)
-		}
-	}
-
-	val progress by remember {
-		derivedStateOf {
-			if (yTranslationSearchbar.value <= 0) {
-				(yTranslationSearchbar.value.absoluteValue / oneFourthOfHeight).coerceIn(0f, 1f)
-			} else {
-				0f // means we're dragging down
-			}
-		}
-	}
-
-	val searchbarWidth by animateFloatAsState(
-		targetValue = lerp(0.85f, 0.95f, progress),
-		animationSpec = bouncySpec()
-	)
-
-	TextField(
-		state = textFieldState,
-		modifier = modifier
-			.fillMaxWidth(searchbarWidth)
-			.navigationBarsPadding()
-			.padding(5.dp)
-			.imePadding()
-			.draggable(
-				state = searchbarDragState,
-				orientation = Orientation.Vertical,
-				onDragStopped = {
-					val targetValue = yTranslationSearchbar.value
-
-					if (targetValue <= -oneFourthOfHeight / 2) {
-						onOpen()
-					}
-
-					scope.launch {
-						yTranslationSearchbar.animateTo(0f, bouncySpec())
-					}
-				}
-			).onFocusChanged {
-				if (it.isFocused) {
-					onOpen()
-				}
-			}.graphicsLayer {
-				translationY = yTranslationSearchbar.value
+	Column(
+		Modifier
+			.dragonSettingGroup {
+				clickable(onClick = onClick)
 			},
-		colors = AppObjectsColors.outlinedTextFieldColors(),
-		placeholder = {
-			Text(stringResource(R.string.search_settings))
-		},
-		leadingIcon = {
-			Icon(
-				painter = painterResource(R.drawable.search),
-				contentDescription = null
+		verticalArrangement = Arrangement.spacedBy(12.dp)
+	) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(16.dp)
+		) {
+			result.icon?.let { icon ->
+				BoxedIcon(icon)
+			}
+
+			TextWithDescription(
+				text = result.title,
+				description = result.description,
+				modifier = Modifier.weight(1f)
 			)
-		},
-		// Needed for the text field to be vertically scrollable, see its doc
-		// I spend too much time on that shit :(
-		lineLimits = TextFieldLineLimits.SingleLine,
-		shape = FloatingToolbarDefaults.ContainerShape
-	)
+
+			if (result.screenRoute is NavigationRoute) {
+				Icon(
+					painter = painterResource(R.drawable.open_in_new),
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.secondary
+				)
+			}
+
+			if (isDebugModeEnabled || isGloballyExpanded) {
+				DragonIconButton(
+					icon = R.drawable.arrow_drop_down,
+					contentDescription = R.string.more
+				) { expanded = !expanded }
+			}
+		}
+
+		AnimatedVisibility(expanded) {
+			Column(
+				verticalArrangement = Arrangement.spacedBy(5.dp)
+			) {
+				CompositionLocalProvider(
+					LocalTextStyle provides MaterialTheme.typography.labelSmallEmphasized.copy(fontFamily = FontFamily.Monospace)
+				) {
+					Text(result.screenRoute.toString())
+					Text(result.screenFqName)
+					Text(result.key)
+					Text("Score: ${result.score}")
+				}
+			}
+		}
+	}
 }

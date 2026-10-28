@@ -126,6 +126,7 @@ object Constants {
 		const val DISCORD_INVITE_LINK: String = "https://discord.gg/6UyuP8EBWS"
 		const val REDDIT_LINK: String = "https://www.reddit.com/r/dragonlauncher/"
 		const val MAILTO_LINK: String = "mailto:elnix91@proton.me"
+		const val TELEGRAM_LINK: String = "https://t.me/elnix90"
 		const val DRAGON_WEBSITE: String = "https://dragonlauncher.lthb.fr/"
 		const val URL_SHIZUKU_SITE: String = "https://shizuku.rikka.app"
 		const val WEBLATE_LINK: String = "https://hosted.weblate.org/engage/dragon-launcher/"
