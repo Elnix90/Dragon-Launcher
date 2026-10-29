@@ -1163,4 +1163,6 @@
 	<string name="discord">Discord</string>
 	<string name="theme">Theme</string>
 	<string name="theme_desc">Pick your preffered theme for the app</string>
+	<string name="lock_orientation">Lock orientation</string>
+	<string name="lock_orientation_desc">Lock the launcher orientation to portrait mode</string>
 </resources>

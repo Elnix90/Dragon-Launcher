@@ -8,6 +8,7 @@ import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -376,6 +377,15 @@ class MainActivity :
 								WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 						} else {
 							controller.show(WindowInsetsCompat.Type.systemBars())
+						}
+					}
+
+					val lockOrientation by BehaviorSettingsStore.lockOrientation.asState()
+					LaunchedEffect(lockOrientation) {
+						requestedOrientation = if (lockOrientation) {
+							ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+						} else {
+							ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 						}
 					}
 

@@ -51,6 +51,15 @@ object BehaviorSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val lockOrientation =
+		boolean(
+			title = R.string.lock_orientation,
+			description = R.string.lock_orientation_desc,
+			icon = R.drawable.screen_rotation,
+			default = false
+		)
+
+	@SettingKey
 	val leftPadding =
 		int(
 			default = 60,
