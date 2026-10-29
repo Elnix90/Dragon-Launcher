@@ -7,6 +7,8 @@ import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.base.asState
+import org.elnix.dragonlauncher.base.utils.VersionsUtils
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getBuildType
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
@@ -15,6 +17,10 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
 @Composable
 fun GoogleLockingWarningDialog() {
+	val ctx = LocalContext.current
+	val buildType = ctx.getBuildType()
+	if (buildType == VersionsUtils.BuildType.playstore) return
+
 	// Show warning in settings
 	val showGoogleLockDownWarning by DebugSettingsStore.showGoogleLockDownWarning.asState()
 	if (!showGoogleLockDownWarning) return

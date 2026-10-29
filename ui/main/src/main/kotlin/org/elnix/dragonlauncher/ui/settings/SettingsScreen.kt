@@ -135,6 +135,8 @@ import org.elnix.dragonlauncher.base.model.models.openInNew
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils.closeApp
+import org.elnix.dragonlauncher.base.utils.VersionsUtils
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getBuildType
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionNumber
 import org.elnix.dragonlauncher.i18n.R
@@ -209,7 +211,7 @@ fun SettingsScreen(
 					.verticalScroll(rememberScrollState())
 			) {
 				val showGoogleLockDownWarning by DebugSettingsStore.showGoogleLockDownWarning.asState()
-				if (GoogleWarningManager.showWarning() && showGoogleLockDownWarning) {
+				if (GoogleWarningManager.showWarning() && showGoogleLockDownWarning && ctx.getBuildType() != VersionsUtils.BuildType.playstore) {
 					GoogleWarningReminder()
 				}
 
