@@ -57,7 +57,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
 					create("playstore") {
 						isMinifyEnabled = true
 						isShrinkResources = true
-						versionNameSuffix = " ($CODE_NAME)"
+						versionNameSuffix = " ($CODE_NAME)-playstore"
 						proguardFiles(
 							getDefaultProguardFile("proguard-android-optimize.txt"),
 							"proguard-rules.pro"

@@ -19,6 +19,10 @@ description = "Build beta APK"
 run = "./gradlew assembleRelease"
 description = "Build release APK"
 
+[tasks.build-playstore]
+run = "./gradlew assemblePlaystore"
+description = "Build playstore APK"
+
 [tasks.install-debug]
 run = "./gradlew installDebug"
 description = "Build + install debug on device"
@@ -30,6 +34,10 @@ description = "Build + install beta on device"
 [tasks.install-release]
 run = "./gradlew installRelease"
 description = "Build + install release on device"
+
+[tasks.install-playstore]
+run = "./gradlew installPlaystore"
+description = "Build + install playstore on device"
 
 [tasks.test]
 run = "./gradlew testDebugUnitTest"

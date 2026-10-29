@@ -54,6 +54,10 @@ extensions.configure<ApplicationExtension> {
 				signingConfig = signingConfigs.getByName("release")
 			}
 
+			getByName("playstore") {
+				signingConfig = signingConfigs.getByName("release")
+			}
+
 			getByName("beta") {
 				signingConfig = signingConfigs.getByName("release")
 			}
