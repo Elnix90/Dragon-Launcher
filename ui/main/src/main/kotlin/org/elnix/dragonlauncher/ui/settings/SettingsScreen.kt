@@ -114,6 +114,7 @@ import my.nanihadesuka.compose.ScrollbarSelectionMode
 import my.nanihadesuka.compose.ScrollbarSettings
 import org.elnix.dragonlauncher.base.Constants.URLs.CODEBERG_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DISCORD_INVITE_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.DOCUMENTATION_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DRAGON_WEBSITE
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_BUY_ME_A_COFFEE
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
@@ -346,6 +347,13 @@ fun SettingsScreen(
 						gitlab(GITLAB_REPO_LINK),
 						codeberg(CODEBERG_REPO_LINK)
 					) { uriHandler.openUri(GITHUB_REPO_LINK) }
+
+					SettingsItem(
+						title = R.string.documentation,
+						description = R.string.documentation_help,
+						icon = R.drawable.unknown_document,
+						openInNew(DOCUMENTATION_LINK)
+					) { uriHandler.openUri(DOCUMENTATION_LINK) }
 
 					SplitSettingsItem(
 						title = R.string.changelogs,

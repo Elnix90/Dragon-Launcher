@@ -1165,4 +1165,6 @@
 	<string name="theme_desc">Pick your preffered theme for the app</string>
 	<string name="lock_orientation">Lock orientation</string>
 	<string name="lock_orientation_desc">Lock the launcher orientation to portrait mode</string>
+	<string name="documentation">Documentation</string>
+	<string name="documentation_help">Currently the doc isn\'t really complete, it would be great it you could help developping it!</string>
 </resources>

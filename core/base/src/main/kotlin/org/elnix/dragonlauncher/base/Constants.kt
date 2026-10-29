@@ -128,6 +128,7 @@ object Constants {
 		const val MAILTO_LINK: String = "mailto:elnix91@proton.me"
 		const val TELEGRAM_LINK: String = "https://t.me/elnix90"
 		const val DRAGON_WEBSITE: String = "https://dragonlauncher.lthb.fr/"
+		const val DOCUMENTATION_LINK: String = "https://elnix90.github.io/Dragon-Launcher/"
 		const val URL_SHIZUKU_SITE: String = "https://shizuku.rikka.app"
 		const val WEBLATE_LINK: String = "https://hosted.weblate.org/engage/dragon-launcher/"
 	}
