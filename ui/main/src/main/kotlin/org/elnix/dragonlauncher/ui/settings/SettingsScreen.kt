@@ -87,7 +87,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import io.github.elnix90.annotations.SettingEntry
 import io.github.elnix90.annotations.SettingScreen
 import io.github.elnix90.core.util.clearAllData
 import io.github.elnix90.runtime.asMutableState
@@ -286,7 +285,6 @@ fun SettingsScreen(
 						horizontalArrangement = Arrangement.SpaceEvenly,
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						@SettingEntry
 						fun ButtonGroupScope.ic(
 							@DrawableRes icon: Int,
 							@StringRes title: Int,
