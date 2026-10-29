@@ -162,7 +162,7 @@ sealed class Action {
 	data class OpenDragonLauncherSettings(
 		val route: NavigationRoute = NavigationRoute.PointsSettings
 	) : Action() {
-		override val drawableId: Int = R.mipmap.dragon_launcher_foreground
+		override val drawableId: Int = R.drawable.dragon_launcher_foreground
 		override val resId: Int = R.string.dragon_launcher_settings
 
 		companion object {

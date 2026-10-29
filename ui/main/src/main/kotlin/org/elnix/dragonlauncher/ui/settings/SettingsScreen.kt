@@ -332,7 +332,7 @@ fun SettingsScreen(
 							ic(githubIcon, R.string.github, GITHUB_REPO_LINK, interactionSources[0])
 							ic(R.drawable.discord_symbol_blurple, R.string.discord, DISCORD_INVITE_LINK, interactionSources[1])
 							ic(R.drawable.reddit_icon_fullcolor, R.string.reddit, REDDIT_LINK, interactionSources[2])
-							ic(R.mipmap.dragon_launcher_foreground, R.string.website, DRAGON_WEBSITE, interactionSources[3])
+							ic(R.drawable.dragon_launcher_foreground, R.string.website, DRAGON_WEBSITE, interactionSources[3])
 							ic(R.drawable.weblate_icon, R.string.weblate, WEBLATE_LINK, interactionSources[4])
 							ic(R.drawable.protonmail_icon, R.string.mail, MAILTO_LINK, interactionSources[5])
 							ic(R.drawable.telegram, R.string.telegram, TELEGRAM_LINK, interactionSources[6])
@@ -502,7 +502,7 @@ fun SettingsScreen(
 										.padding(20.dp)
 							) {
 								Image(
-									painter = painterResource(R.mipmap.dragon_launcher_foreground),
+									painter = painterResource(R.drawable.dragon_launcher_foreground),
 									contentDescription = stringResource(R.string.app_name),
 									modifier = Modifier.fillMaxSize()
 								)

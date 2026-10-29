@@ -75,7 +75,7 @@ fun WelcomePageIntro(
 		Spacer()
 
 		Image(
-			painter = painterResource(R.mipmap.dragon_launcher_foreground),
+			painter = painterResource(R.drawable.dragon_launcher_foreground),
 			contentDescription = stringResource(R.string.app_name),
 			modifier = Modifier.size(260.dp)
 		)
