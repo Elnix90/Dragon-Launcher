@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} &middot; {% endif %}{{ site.title }}</title>
+  {% if site.description %}<meta name="description" content="{{ site.description }}">{% endif %}
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    <nav class="site-links">
+      <a href="https://github.com/Elnix90/Dragon-Launcher">GitHub</a>
+      <a href="https://f-droid.org/en/packages/org.elnix.dragonlauncher/">F-Droid</a>
+      <a href="https://discord.gg/6UyuP8EBWS">Discord</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" aria-label="Site navigation">
+      <ul>
+        {% assign current = page.url %}
+        {% if current == '/index.html' %}{% assign current = '/' %}{% endif %}
+        {% for item in site.data.nav %}
+        <li>
+          <a href="{{ item.url | relative_url }}"{% if current == item.url %} class="active" aria-current="page"{% endif %}>{{ item.title }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <main class="content">
+      {{ content }}
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>
+      <a href="https://github.com/Elnix90/Dragon-Launcher">Source code</a> &middot;
+      <a href="{{ '/privacy-policy.html' | relative_url }}">Privacy policy</a> &middot;
+      <a href="mailto:elnix91@proton.me">elnix91@proton.me</a>
+    </p>
+    <p>Dragon Launcher is free and open source software.</p>
+  </footer>
+</body>
+</html>

@@ -1,3 +1,7 @@
+---
+title: Getting Started
+---
+
 # Getting Started
 
 This section covers everything you need to install and set up Dragon Launcher for the first time.

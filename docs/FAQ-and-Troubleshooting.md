@@ -1,3 +1,7 @@
+---
+title: FAQ and Troubleshooting
+---
+
 # FAQ and Troubleshooting
 
 Common questions and solutions.

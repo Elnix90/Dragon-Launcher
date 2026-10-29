@@ -142,6 +142,8 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 
 ## Privacy & security
 
+Full privacy policy: <https://elnix90.github.io/Dragon-Launcher/privacy-policy.html>
+
 * **No** data collection
 * Dragon Launcher has no access to the internet -> it cannot steal your data
 * Uses Accessibility permissions (optionally) to:

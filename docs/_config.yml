@@ -1,0 +1,18 @@
+title: Dragon Launcher
+description: Documentation and privacy policy for Dragon Launcher, a gesture-based Android launcher for Android.
+url: https://elnix90.github.io
+baseurl: /Dragon-Launcher
+
+markdown: kramdown
+kramdown:
+  input: GFM
+
+# Pages are built from the GitHub Pages defaults; no theme, custom layout only.
+exclude:
+  - README.md
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default

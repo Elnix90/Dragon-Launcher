@@ -1,3 +1,7 @@
+---
+title: Advanced
+---
+
 # Advanced
 
 Advanced features for power users.

@@ -1,3 +1,7 @@
+---
+title: Appearance and Theming
+---
+
 # Appearance and Theming
 
 Make Dragon Launcher look the way you want.

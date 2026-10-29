@@ -1,3 +1,7 @@
+---
+title: Accessibility and Permissions
+---
+
 # Accessibility and Permissions
 
 Understanding the special permissions Dragon Launcher may ask for and how to grant them.

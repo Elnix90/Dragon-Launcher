@@ -1,3 +1,7 @@
+---
+title: Security
+---
+
 # Security
 
 Protect your launcher settings and actions.

@@ -1,3 +1,7 @@
+---
+title: Widgets
+---
+
 # Widgets
 
 Add Android widgets and floating apps to your home screen and nests.

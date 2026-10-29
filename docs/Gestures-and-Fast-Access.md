@@ -1,3 +1,7 @@
+---
+title: Gestures and Fast Access
+---
+
 # Gestures and Fast Access
 
 The core of Dragon Launcher: launch apps by dragging toward points placed on the home screen.

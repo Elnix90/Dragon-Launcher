@@ -1,3 +1,7 @@
+---
+title: Wellbeing
+---
+
 # Wellbeing
 
 Digital wellbeing features to help you manage your screen time.

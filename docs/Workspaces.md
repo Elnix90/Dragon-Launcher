@@ -1,3 +1,7 @@
+---
+title: Workspaces
+---
+
 # Workspaces
 
 Workspaces group your apps into separate views shown in the drawer.

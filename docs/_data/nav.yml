@@ -1,0 +1,34 @@
+# Sidebar navigation. To add a page: create the .md file in this folder,
+# then add one entry here (title + url, url is "/FileName.html").
+- title: Home
+  url: /
+- title: Getting Started
+  url: /Getting-Started.html
+- title: Gestures and Fast Access
+  url: /Gestures-and-Fast-Access.html
+- title: Enable Live Nest for a Point
+  url: /Enable-live-nest-for-a-point.html
+- title: App Drawer
+  url: /App-Drawer.html
+- title: Workspaces
+  url: /Workspaces.html
+- title: Appearance and Theming
+  url: /Appearance-and-Theming.html
+- title: Widgets
+  url: /Widgets.html
+- title: Wellbeing
+  url: /Wellbeing.html
+- title: Backup and Data
+  url: /Backup-and-Data.html
+- title: Security
+  url: /Security.html
+- title: Accessibility and Permissions
+  url: /Accessibility-and-Permissions.html
+- title: Advanced
+  url: /Advanced.html
+- title: Debug Mode
+  url: /Debug-Mode.html
+- title: FAQ and Troubleshooting
+  url: /FAQ-and-Troubleshooting.html
+- title: Privacy Policy
+  url: /privacy-policy.html

@@ -1,3 +1,7 @@
+---
+title: Backup and Data
+---
+
 # Backup and Data
 
 Dragon Launcher stores all data locally. These pages explain how to keep it safe.

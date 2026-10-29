@@ -1,3 +1,7 @@
+---
+title: App Drawer
+---
+
 # App Drawer
 
 The app drawer is where you browse, search, and launch every installed app.

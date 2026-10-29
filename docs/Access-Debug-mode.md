@@ -1,3 +1,7 @@
+---
+title: How to Enable Debug Mode in Dragon Launcher
+---
+
 # How to Enable Debug Mode in Dragon Launcher
 
 Dragon Launcher includes a hidden **Debug Mode** for advanced users and testers.  
