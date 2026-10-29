@@ -1,0 +1,11 @@
+4.6.0 (Tardigrade)
+2026-10-29
+[NEW]
+* Settings SEARCH!
+* Redraw app icon and use different icons for different build flavors
+* Adaptative layout - can rotate app
+* Predictive back
+[IMPROVED]
+* Global ui tweaks and refinements
+* Charging animation customization
+* Documentation now available via click in-app
