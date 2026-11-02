@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.shared.base.SettingFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.Signatures.DRAGON_LAUNCHER_SIGNATURE_HASH
+import org.elnix.dragonlauncher.base.Constants.Signatures.PLAYSTORE_SIGNATURE_HASH
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Device
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pattern
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pin
@@ -37,7 +38,9 @@ class SecurityViewModel
 		val useAnyways: SettingFlow<Boolean> = SettingFlow(false)
 
 		init {
-			signatureMatched.value = application.checkSignature(DRAGON_LAUNCHER_SIGNATURE_HASH)
+			val matchesFdroid = application.checkSignature(DRAGON_LAUNCHER_SIGNATURE_HASH)
+			val matchesPlaystore = application.checkSignature(PLAYSTORE_SIGNATURE_HASH)
+			signatureMatched.value = matchesPlaystore || matchesFdroid
 			viewModelInitialized()
 		}
 

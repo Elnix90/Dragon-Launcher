@@ -269,7 +269,12 @@ fun Context.vibrate(milliseconds: Long) {
 	vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
 }
 
-fun Context.checkSignature(expectedHash: String): Boolean {
+fun Context.checkSignature(expectedHash: String): Boolean = getCurrentSignatures().any { signature ->
+	val hash = hashSignature(signature)
+	hash.equals(expectedHash, ignoreCase = true)
+}
+
+fun Context.getCurrentSignatures(): List<ByteArray> {
 	return try {
 		val packageInfo =
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -286,25 +291,19 @@ fun Context.checkSignature(expectedHash: String): Boolean {
 				)
 			}
 
-		val signatures =
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-				packageInfo.signingInfo?.signingCertificateHistory ?: return false
-			} else {
-				@Suppress("DEPRECATION")
-				packageInfo.signatures ?: return false
-			}
-
-		signatures.any { signature ->
-			val hash = hashSignature(signature.toByteArray())
-			hash.equals(expectedHash, ignoreCase = true)
-		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+			packageInfo.signingInfo?.signingCertificateHistory ?: return emptyList()
+		} else {
+			@Suppress("DEPRECATION")
+			packageInfo.signatures ?: return emptyList()
+		}.map { it.toByteArray() }
 	} catch (e: Exception) {
 		logE(SECURITY_SERVICE, e) { "Failed to get signatures" }
-		false
+		emptyList()
 	}
 }
 
-private fun hashSignature(signatureBytes: ByteArray): String {
+fun hashSignature(signatureBytes: ByteArray): String {
 	val digest = MessageDigest.getInstance("SHA-256")
 	val hashBytes = digest.digest(signatureBytes)
 	return hashBytes.joinToString("") { "%02x".format(it) }

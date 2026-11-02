@@ -6,15 +6,20 @@ import android.provider.Settings
 import android.system.Os.kill
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -38,18 +43,23 @@ import io.github.elnix90.shared.ui.base.animation.rememberAnimatedIcon
 import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
+import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import io.github.elnix90.shared.ui.dragon.expandable.ExpandableSection
 import io.github.elnix90.shared.ui.dragon.expandable.rememberExpandableSection
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import io.github.elnix90.ui.Setting
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.BuildType
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getBuildType
 import org.elnix.dragonlauncher.base.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.getCurrentSignatures
+import org.elnix.dragonlauncher.ktx.hashSignature
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.AllStores
@@ -371,6 +381,22 @@ fun DebugTab(
 			}
 		}
 
+		DragonSettingsGroup(R.string.signatures) {
+			CompositionLocalProvider(
+				LocalTextStyle provides MaterialTheme.typography.labelMediumEmphasized.copy(
+					fontFamily = FontFamily.Monospace
+				)
+			) {
+				Signature(Constants.Signatures.DRAGON_LAUNCHER_SIGNATURE_HASH, "Expected")
+
+				val signatures = ctx.getCurrentSignatures()
+				signatures.forEachIndexed { idx, chunk ->
+					val hash = hashSignature(chunk)
+					Signature(hash, "N°${idx + 1}")
+				}
+			}
+		}
+
 		DragonSettingsGroup(R.string.risky) {
 			DragonButton(
 				onClick = {
@@ -412,5 +438,45 @@ fun DebugTab(
 
 	if (showOverlayPermissionDialog) {
 		OverlayPermissionDialog { showOverlayPermissionDialog = false }
+	}
+}
+
+@Composable
+private fun DragonGroupScope.Signature(
+	hash: String,
+	leftText: String? = null
+) {
+	val ctx = LocalContext.current
+
+	Row(
+		modifier = Modifier.dragonSettingGroup {
+			clickable { ctx.copyToClipboard(hash) }
+		},
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(5.dp)
+	) {
+		leftText?.let {
+			Text(
+				text = leftText,
+				modifier = Modifier.weight(1f)
+			)
+		}
+
+		CompositionLocalProvider(
+			LocalTextStyle provides MaterialTheme.typography.labelMediumEmphasized.copy(
+				fontFamily = FontFamily.Monospace
+			)
+		) {
+			val upper = hash.uppercase()
+			val hashSize = hash.length
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				modifier = Modifier.weight(2f)
+			) {
+				upper.chunked(hashSize / 4).forEach {
+					Text(it.chunked(2).joinToString(":"))
+				}
+			}
+		}
 	}
 }

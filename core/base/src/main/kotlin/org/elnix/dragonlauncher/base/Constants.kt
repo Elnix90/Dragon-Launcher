@@ -103,6 +103,7 @@ object Constants {
 
 	object Signatures {
 		const val DRAGON_LAUNCHER_SIGNATURE_HASH: String = "63068d94e01eeae50efcb2a0c43dfa8ac503a421cdeaf353d45b69ab933c0a06"
+		const val PLAYSTORE_SIGNATURE_HASH: String = "ffd055ae0b7c648528bfc15e938da8bbf0cc2a18fb01d8ece9bd1c968e497e79"
 	}
 
 	object PackageNames {
