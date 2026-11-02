@@ -1,0 +1,5 @@
+4.6.1 (Tardigrade)
+2026-11-02
+[NEW]
+* option to only be fullscreen in main tab and drawer
+* Multiple signatures support (playstore)
