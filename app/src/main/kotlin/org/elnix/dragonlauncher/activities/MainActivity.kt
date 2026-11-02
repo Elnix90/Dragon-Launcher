@@ -53,7 +53,6 @@ import org.elnix.dragonlauncher.receiver.FontReceiver
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.ui.MainAppUi
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -352,7 +351,6 @@ class MainActivity :
 					}
 
 					val keepScreenOn by BehaviorSettingsStore.keepScreenOn.asState()
-					val fullscreen by UiSettingsStore.fullScreen.asState()
 
 					val offScreenTimeout by BehaviorSettingsStore.offScreenTimeout.asState()
 					LaunchedEffect(offScreenTimeout) {
@@ -360,23 +358,12 @@ class MainActivity :
 					}
 
 					val window = this@MainActivity.window
-					val controller = WindowInsetsControllerCompat(window, window.decorView)
 
 					LaunchedEffect(keepScreenOn) {
 						if (keepScreenOn) {
 							window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 						} else {
 							window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-						}
-					}
-
-					LaunchedEffect(Unit, fullscreen) {
-						if (fullscreen) {
-							controller.hide(WindowInsetsCompat.Type.systemBars())
-							controller.systemBarsBehavior =
-								WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-						} else {
-							controller.show(WindowInsetsCompat.Type.systemBars())
 						}
 					}
 

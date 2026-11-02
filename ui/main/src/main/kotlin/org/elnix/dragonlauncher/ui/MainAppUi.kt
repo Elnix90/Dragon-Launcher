@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -27,9 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.registerReceiver
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -182,6 +186,25 @@ fun MainAppUi(
 	// Forced to use a state here, to make compose react to the changes, especially the hole events handles
 	val currentRoute: NavKey by produceState<NavKey>(initialValue = NavigationRoute.Main, backStack.lastOrNull()) {
 		value = backStack.lastOrNull() ?: NavigationRoute.Main
+	}
+
+	val view = LocalView.current
+	val window = (view.context as Activity).window
+	val controller = WindowInsetsControllerCompat(window, window.decorView)
+
+	val fullscreen by UiSettingsStore.fullScreen.asState()
+	val fullScreenOnlyInMainAndDrawer by UiSettingsStore.fullScreenOnlyInMainAndDrawer.asState()
+
+	LaunchedEffect(fullscreen, fullScreenOnlyInMainAndDrawer, currentRoute) {
+		val inDrawerOrMain = currentRoute == NavigationRoute.Main || currentRoute == NavigationRoute.Drawer
+
+		if ((fullscreen && !fullScreenOnlyInMainAndDrawer) || (fullScreenOnlyInMainAndDrawer && inDrawerOrMain)) {
+			controller.hide(WindowInsetsCompat.Type.systemBars())
+			controller.systemBarsBehavior =
+				WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+		} else {
+			controller.show(WindowInsetsCompat.Type.systemBars())
+		}
 	}
 
 	val isLocked by securityViewModel.isLocked.asState()

@@ -104,6 +104,15 @@ object UiSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val fullScreenOnlyInMainAndDrawer =
+		boolean(
+			title = R.string.fullscreen_only_in_main_and_drawer,
+			description = R.string.fullscreen_only_in_main_and_drawer_desc,
+			icon = R.drawable.fullscreen,
+			default = false
+		)
+
+	@SettingKey
 	val showPointPreviewCenterStartPosition =
 		boolean(
 			title = R.string.show_app_icon_start_drag_position,

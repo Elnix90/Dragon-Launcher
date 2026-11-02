@@ -52,6 +52,9 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 	) {
 		DragonSettingsGroup(R.string.common_settings) {
 			Setting(UiSettingsStore.fullScreen)
+			val fullscreen by UiSettingsStore.fullScreen.asState()
+			Setting(UiSettingsStore.fullScreenOnlyInMainAndDrawer, enabled = fullscreen)
+
 			RouteItem(NavigationRoute.ChargingAnimation)
 		}
 
