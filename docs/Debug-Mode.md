@@ -17,5 +17,4 @@ Planned topics:
 - Logging and the log viewer
 - Force language selector
 - Auto-raise on system launcher
-- Extension signature bypass
 - Debug options in the debug tab

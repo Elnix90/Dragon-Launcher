@@ -7,7 +7,6 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
@@ -49,7 +48,6 @@ import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
-import org.elnix.dragonlauncher.receiver.FontReceiver
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
@@ -270,8 +268,6 @@ class MainActivity :
 		}
 	}
 
-	private val fontsReceiver = FontReceiver()
-
 	@SuppressLint("SourceLockedOrientationActivity")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		val startTime = System.currentTimeMillis()
@@ -283,20 +279,6 @@ class MainActivity :
 
 		super.onCreate(savedInstanceState)
 		logI(TAG) { "MainActivity.onCreate started, hash=${System.identityHashCode(this)}" }
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			// Register fonts update receiver (extensions send org.elnix.dragonlauncher.ACTION_FONTS_RESULT)
-			try {
-				registerReceiver(
-					fontsReceiver,
-					IntentFilter("org.elnix.dragonlauncher.ACTION_FONTS_RESULT"),
-					RECEIVER_EXPORTED
-				)
-				logI(TAG) { "FontsReceiver registered!" }
-			} catch (e: Exception) {
-				logE(TAG, e) { "Failed to register fontsReceiver" }
-			}
-		}
 
 		appWidgetHost.startListening()
 
@@ -434,10 +416,6 @@ class MainActivity :
 
 	override fun onDestroy() {
 		super.onDestroy()
-		try {
-			unregisterReceiver(fontsReceiver)
-		} catch (_: Exception) {
-		}
 		window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 		// Widgets

@@ -13,14 +13,8 @@
     <string name="app_display">Affichage de l’application</string>
     <string name="color_selector">Sélecteur de couleurs</string>
     <string name="debug">Débogage</string>
-    <string name="extensions">Extensions</string>
-    <string name="extensions_description">Téléchargez et gérez des fonctionnalités supplémentaires pour Dragon Launcher.</string>
     <string name="install">Installer</string>
     <string name="permissions">Permissions</string>
-    <string name="no_extensions_found">Aucune extension trouvée dans le registre.</string>
-    <string name="extension_manual_install_title">Installation Manuelle</string>
-    <string name="extension_manual_install_desc">Si vous n\'avez pas d\'extension d\'installation, téléchargez l\'APK et sélectionnez-le ci-dessous pour l\'installer.</string>
-    <string name="select_apk">Sélectionner l\'APK</string>
     <string name="system_default">Par défaut système</string>
     <string name="export_cancelled">Exportation annulée</string>
     <string name="backup">Sauvegarde</string>
@@ -586,19 +580,9 @@
     <string name="copied_to_clipboard">Copié dans le presse-papier !</string>
     <string name="usage_access">Accès aux statistiques d\'utilisation</string>
     <string name="font_manage_help">Gérez vos polices ici. Vous pouvez importer vos propres fichiers TTF/OTF ou en télécharger depuis le catalogue Google Fonts.</string>
-    <string name="font_catalog">Catalogue</string>
     <string name="font_import">Importer</string>
     <string name="font_installed_fonts">Polices installées</string>
-    <string name="font_download_all_started">Lancement du téléchargement de toutes les polices. Vérifiez vos notifications.</string>
     <string name="font_confirm_delete">Confirmer (%1$d)</string>
-    <string name="font_search_placeholder">Rechercher des polices…</string>
-    <string name="font_downloading">Téléchargement de %1$s…</string>
-    <string name="font_cat_all">TOUT</string>
-    <string name="font_cat_serif">SERIF</string>
-    <string name="font_cat_sans_serif">SANS-SERIF</string>
-    <string name="font_cat_monospace">MONOSPACE</string>
-    <string name="font_cat_display">DISPLAY</string>
-    <string name="font_cat_handwriting">HANDWRITING</string>
     <string name="search_widgets">Rechercher des widgets…</string>
     <string name="precision_mode_active">Mode Précision</string>
     <string name="backup_location">Emplacement de sauvegarde</string>
@@ -809,8 +793,6 @@
     <string name="show_set_default_launcher_banner_desc">Si c\'est désactivé, elle ne sera plus visible</string>
     <string name="show_fps">Afficher les FPS</string>
     <string name="show_fps_desc">Affiche le nombre d\'images par secondes, en haut, par dessus tout</string>
-    <string name="disable_extension_signature_check">Désactiver la vérification automatique de la signature des extensions</string>
-    <string name="disable_extension_signature_check_desc">Autorise les extensions qui ne sont pas signées avec la clé officielle</string>
 
 
     <string name="recently_used_apps_count_desc">Combien d\'applications récentes sont affichées dans le tiroir d\'apps</string>
@@ -895,7 +877,7 @@
     <string name="create_category">Créer une nouvelle catégorie</string>
     <string name="category_name">Nom de la catégorie</string>
     <string name="disabled_system_categories">Catégories système désactivées</string>
-    <string name="yoann_desc">Extensions, performances, widgets</string>
+    <string name="yoann_desc">Performances, widgets</string>
     <string name="lucky_desc">Bien être numérique &amp; reminders</string>
     <string name="accessibility">Accessibilité</string>
     <string name="add_apps">Ajouter des apps</string>

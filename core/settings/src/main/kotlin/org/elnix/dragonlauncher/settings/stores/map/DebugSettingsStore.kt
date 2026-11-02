@@ -113,15 +113,6 @@ object DebugSettingsStore : MapSettingsStore() {
 			default = true
 		)
 
-	@SettingKey
-	val disableExtensionSignatureCheck =
-		boolean(
-			title = R.string.disable_extension_signature_check,
-			description = R.string.disable_extension_signature_check_desc,
-			icon = R.drawable.vpn_key,
-			default = false
-		)
-
 	/**
 	 * Whether to disable the warning in the settings, for example when you're not on stock Android (meaning you already escaped google's hell)
 	 */

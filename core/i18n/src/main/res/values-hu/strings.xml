@@ -14,14 +14,8 @@
     <string name="app_display_desc">Az alkalmazás általános megjelenésével kapcsolatos beállítások módosítása az indítóprogram keretében, a színekkel nem kapcsolatos</string>
     <string name="color_selector">Színválasztó</string>
     <string name="debug">Hibakeresés</string>
-    <string name="extensions">Bővítmények</string>
-    <string name="extensions_description">Töltsön le és kezeljen további funkciókat a Dragon Launcherhez.</string>
     <string name="install">Telepítés</string>
     <string name="permissions">Jogosultságok</string>
-    <string name="no_extensions_found">A rendszerleíró adatbázisban nem található kiterjesztés.</string>
-    <string name="extension_manual_install_title">Kézi telepítés</string>
-    <string name="extension_manual_install_desc">Ha nincs telepítő kiterjesztésed, töltsd le az APK-fájlt, majd az alábbiak közül válaszd ki a telepítéshez.</string>
-    <string name="select_apk">APK kiválasztása</string>
     <string name="system_default">Rendszer alapértelmezés</string>
     <string name="version">Verzió</string>
 </resources>

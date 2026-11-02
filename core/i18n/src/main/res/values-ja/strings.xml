@@ -268,33 +268,17 @@
     <string name="app_info_is_private_profile">isPrivate = %1$s</string>
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
     <string name="appearance">外観</string>
-    <string name="extensions">拡張機能</string>
-    <string name="extensions_description">Dragon Launcherの追加機能をダウンロードして管理します。</string>
     <string name="install">インストール</string>
     <string name="permissions">権限</string>
-    <string name="no_extensions_found">レジストリに拡張機能が見つかりませんでした。</string>
-    <string name="extension_manual_install_title">手動インストール</string>
-    <string name="extension_manual_install_desc">インストールできる拡張機能がない場合、APKファイルをダウンロードして下のボタンを選択することでインストールできます。</string>
-    <string name="select_apk">APKファイルを選択</string>
     <string name="backup">バックアップ</string>
     <string name="preview_scale_factor">プレビューの表示スケール</string>
     <string name="preview_scale_factor_desc">サブネストのプレビューを表示する際、どの程度プレビューを縮小するか</string>
     <string name="width_actions_settings">ドロワーアクション設定</string>
     <string name="font_selector">フォントセレクター</string>
     <string name="font_manage_help">フォントを管理します。TTF/OTFファイルをインポートするか、Google Fontsからダウンロードすることができます。</string>
-    <string name="font_catalog">カタログ</string>
     <string name="font_import">インポート</string>
     <string name="font_installed_fonts">インストールされたフォント</string>
-    <string name="font_download_all_started">全フォントのダウンロードを開始しました。通知をご確認ください。</string>
     <string name="font_confirm_delete">確認 (%1$d)</string>
-    <string name="font_search_placeholder">フォント検索…</string>
-    <string name="font_downloading">%1$sをダウンロード中…</string>
-    <string name="font_cat_all">全て</string>
-    <string name="font_cat_serif">明朝体</string>
-    <string name="font_cat_sans_serif">ゴシック体</string>
-    <string name="font_cat_monospace">等幅フォント</string>
-    <string name="font_cat_display">ディスプレイ</string>
-    <string name="font_cat_handwriting">手書き体</string>
     <string name="search_widgets">ウィジェットを検索…</string>
     <string name="search_shortcuts">ショートカットを検索…</string>
     <string name="precision_mode_active">精密モード</string>
@@ -811,8 +795,6 @@
     <string name="filter_tag">フィルタータグ</string>
     <string name="enable_logging">ログを有効化</string>
     <string name="enable_logging.desc">全てのログをアプリストレージに保存し、コピーまたはエクスポートできるようにする</string>
-    <string name="disable_extension_signature_check">拡張機能の署名チェックを無効化</string>
-    <string name="disable_extension_signature_check_desc">公式キーで署名されていない拡張機能を許可する</string>
 
 
     <string name="files_log_level">ファイルのログレベル</string>
@@ -953,7 +935,7 @@
     <string name="open_backup_file">バックアップファイルを開く</string>
     <string name="show_reselect_backup_banner">バックアップの再選択バナーを表示する</string>
     <string name="select_stores">ストアを選択</string>
-    <string name="yoann_desc">拡張機能, パフォーマンス, ウィジェット</string>
+    <string name="yoann_desc">パフォーマンス, ウィジェット</string>
     <string name="lucky_desc">Digital Wellbeing, リマインダー</string>
     <string name="federico_desc">ライブネスト機能, 翻訳</string>
     <string name="version">バージョン</string>

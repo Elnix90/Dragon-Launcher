@@ -13,5 +13,4 @@ keystore.p12
 .env2
 .kotlin
 crash.txt
-extensions-registry.json
 mise.local.toml

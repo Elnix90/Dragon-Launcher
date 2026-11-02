@@ -1,7 +1,4 @@
 import com.android.build.api.dsl.ApplicationExtension
-import java.io.InputStream
-import java.io.OutputStream
-import java.net.URI
 import java.util.Properties
 
 plugins {
@@ -150,46 +147,10 @@ tasks.matching { it.name.startsWith("explodeAssetSource") }.configureEach {
 	dependsOn("copyChangelogsToAssets")
 }
 
-// Download the extensions registry from GitHub
-tasks.register("downloadExtensionsRegistry") {
-	description = "Downloads the extensions registry JSON from GitHub"
-
-	// Only download extensions registry on release builds
-	val isReleaseVariant = gradle.startParameter.taskRequests.any {
-		it.args.any { arg -> arg.contains("Release", ignoreCase = true) }
-	}
-	if (!isReleaseVariant) return@register
-
-	outputs.upToDateWhen { false } // Ignore cache for this task
-	val registryUrl = "https://raw.githubusercontent.com/Elnix90/Dragon-Launcher-Extensions/main/extensions-registry.json"
-	val outputFile = file("src/main/assets/extensions-registry.json")
-
-	inputs.property("url", registryUrl)
-	outputs.file(outputFile)
-
-	doLast {
-		println("Downloading extensions registry from $registryUrl...")
-		outputFile.parentFile.mkdirs()
-		try {
-			URI(registryUrl).toURL().openStream().use { input: InputStream ->
-				outputFile.outputStream().use { output: OutputStream ->
-					input.copyTo(output)
-				}
-			}
-		} catch (e: Exception) {
-			println("WARNING: Failed to download extensions registry: ${e.message}")
-			// Create an empty registry if download fails to avoid runtime errors
-			if (!outputFile.exists()) {
-				outputFile.writeText("{\"extensions\": []}")
-			}
-		}
-	}
-}
-
 // Use preBuild tasks instead of merge* (they exist in AGP)
 if (!gradle.startParameter.taskRequests.any { it.args.contains("buildHealth") }) {
 	tasks.named("preBuild") {
-		dependsOn("copyChangelogsToAssets", "downloadExtensionsRegistry")
+		dependsOn("copyChangelogsToAssets")
 	}
 } else {
 	println("Gradle in using build health, not running preBuild")

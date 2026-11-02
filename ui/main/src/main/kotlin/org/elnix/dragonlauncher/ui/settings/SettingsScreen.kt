@@ -117,7 +117,6 @@ import org.elnix.dragonlauncher.base.Constants.URLs.DOCUMENTATION_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DRAGON_WEBSITE
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_BUY_ME_A_COFFEE
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
-import org.elnix.dragonlauncher.base.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_ISSUES_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_RELEASES_LINK
@@ -253,11 +252,6 @@ fun SettingsScreen(
 				}
 
 				DragonSettingsGroup(R.string.advanced) {
-					RouteItem(
-						route = NavigationRoute.Extensions,
-						github(EXTENSIONS_GITHUB_REPO_LINK)
-					)
-
 					SettingsItem(
 						title = R.string.android_settings,
 						icon = R.drawable.settings_alert

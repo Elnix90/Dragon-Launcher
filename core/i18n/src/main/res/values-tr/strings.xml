@@ -2,16 +2,13 @@
 <resources>
     <string name="reset_default_settings">Fabrika ayarlarına dön</string>
     <string name="appearance">Görünüş</string>
-    <string name="extensions">Eklentiler</string>
     <string name="cancel">İptal Et</string>
     <string name="help">Yardım</string>
     <string name="settings">Ayarlar</string>
     <string name="ok">Tamam</string>
     <string name="permissions">İzinler</string>
-    <string name="no_extensions_found">Kayıtlı eklenti bulunamadı.</string>
     <string name="install">İndir</string>
     <string name="export_cancelled">Dışarı aktarım iptal edildi</string>
-    <string name="select_apk">APK\'yı Seçin</string>
     <string name="appearance_tab_text">Görünüş ayarlarını değiştirin</string>
     <string name="do_not_remind_me_again">Bana tekrar hatırlatma</string>
     <string name="fullscreen_app">Tam Ekran Uygulama</string>
@@ -62,9 +59,6 @@
     <string name="accessibility_service_description">DragonLauncher\'ın bildirim paneli, hızlı ayarlar paneli, son uygulamaları açması ve şu anki aktiviteyi kontrol etmesine izin verir. (Xiaomi kullanıcıları hareketle gezinme ayarından vazgeçmeden DragonLauncher\'ı varsayılan başlatıcı olarak ayarlayamazlar.)</string>
     <string name="app_display_desc">Cihaz çapında uygulama görünüşüne ilişkin ayarları değiştir, başlatıcı manasında, renkle ilişkili olarak değil</string>
     <string name="debug">Hata Ayıklama</string>
-    <string name="extensions_description">Dragon Launcher\'a ilişkin ekstra özellikleri yükle ve yönet.</string>
-    <string name="extension_manual_install_title">Manuel Yükleme</string>
-    <string name="extension_manual_install_desc">Yükleme genişletme paketine sahip değilsen, APK\'sını indir ve onu aşağıdan seçerek yükle.</string>
     <string name="backup_restore_text">Uygulamanın aksiyonlarını ve ayarlarını yedekle veya geri getir, otomatik yedeklemeler her uygulama açılışında / durdurulmasında / çıkılmasında otomatik olarak tetikleniyor yada aşağıdaki \"Tetikle\" butonuna basarak</string>
     <string name="export_settings">Ayarları Dışa Aktar</string>
     <string name="import_settings">Ayarları İçe Aktar</string>
@@ -113,19 +107,9 @@
     <string name="close_app_drawer">Çekmeceyi Kapat</string>
     <string name="font_selector">Font Seçici</string>
     <string name="font_manage_help">Fontları buradan yönet. Kendi sahip olduğun TTF/OTF dosyalarından içe aktarabilir veya Google Fonts Kataloğundan indirebilirsin.</string>
-    <string name="font_catalog">Katalog</string>
     <string name="font_import">İçe Aktar</string>
     <string name="font_installed_fonts">Yüklenmiş Fontlar</string>
-    <string name="font_download_all_started">Tüm fontların yüklemesi başlatılıyor. Bildirimleri kontrol et.</string>
     <string name="font_confirm_delete">Onayla(%1$d)</string>
-    <string name="font_search_placeholder">Fontları ara…</string>
-    <string name="font_downloading">İndiriliyor %1$s…</string>
-    <string name="font_cat_all">TÜMÜ</string>
-    <string name="font_cat_serif">SERIF</string>
-    <string name="font_cat_sans_serif">SANS-SERIF</string>
-    <string name="font_cat_monospace">MONOSPACE</string>
-    <string name="font_cat_display">DISPLAY</string>
-    <string name="font_cat_handwriting">HANDWRITING</string>
     <string name="toggle_kb">Klavyeyi Aç/Kapat</string>
     <string name="behavior">Davranış</string>
     <string name="workspaces">Çalışma Alanları</string>

@@ -119,7 +119,7 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 
 | Permission                                          | Type                | Why it is used                                                                                                                      |
 |-----------------------------------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `android.permission.POST_NOTIFICATIONS`             | Runtime             | Notifications from the app, e.g. Wellbeing app timers and break reminders. Also uses to display the download progress of the fonts  |
+| `android.permission.POST_NOTIFICATIONS`             | Runtime             | Notifications from the app, e.g. Wellbeing app timers and break reminders.                                                                                    |
 | `android.permission.QUERY_ALL_PACKAGES`             | Install             | List every installed app to power the app drawer, app/app-shortcut/widget pickers and icons.                                        |
 | `android.permission.ACCESS_NETWORK_STATE`           | Install             | Show network connectivity (Wi-Fi / mobile data) in the status bar.                                                                  |
 | `android.permission.READ_BASIC_PHONE_STATE`         | Install (app op)    | Basic phone state only, to display the mobile data / hotspot type in the status bar.                                                |
@@ -127,7 +127,6 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 | `android.permission.SET_WALLPAPER`                  | Install             | Set the home screen wallpaper from the launcher.                                                                                    |
 | `android.permission.RECEIVE_BOOT_COMPLETED`         | Install             | Restore the launcher and restart services after the device reboots.                                                                 |
 | `android.permission.EXPAND_STATUS_BAR`              | Install (signature) | Expand the notification shade / quick settings from a swipe action.                                                                 |
-| `android.permission.REQUEST_INSTALL_PACKAGES`       | Special access      | Install APK files opened through a launcher action.                                                                                 |
 | `android.permission.REQUEST_DELETE_PACKAGES`        | Install             | Offer to uninstall an app from the launcher (the system asks for confirmation).                                                     |
 | `android.permission.BIND_APPWIDGET`                 | Install             | Bind widgets to the home screen.                                                                                                    |
 | `com.android.alarm.permission.SET_ALARM`            | Install             | Start the system alarm-clock flow from an action.                                                                                   |

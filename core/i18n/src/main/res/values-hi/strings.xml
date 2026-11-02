@@ -13,14 +13,8 @@
     <string name="app_display">ऐप डिस्प्ले</string>
     <string name="color_selector">रंग चयनकर्ता</string>
     <string name="debug">डीबग</string>
-    <string name="extensions">एक्सटेंशन</string>
-    <string name="extensions_description">ड्रैगन लॉन्चर के लिए अतिरिक्त सुविधाओं को डाउनलोड और प्रबंधित करें।</string>
     <string name="install">पदासीन करना</string>
     <string name="permissions">अनुमतियां</string>
-    <string name="no_extensions_found">रजिस्ट्री में कोई एक्सटेंशन नहीं मिला.</string>
-    <string name="extension_manual_install_title">मैनुअल स्थापना</string>
-    <string name="extension_manual_install_desc">यदि आपके पास इंस्टॉलेशन एक्सटेंशन नहीं है, तो एपीके डाउनलोड करें और इंस्टॉल करने के लिए नीचे इसे चुनें।</string>
-    <string name="select_apk">APK चुनें</string>
     <string name="system_default">सिस्टम डिफ़ॉल्ट</string>
     <string name="export_cancelled">निर्यात रद्द कर दिया गया</string>
     <string name="backup_restore_text">बैकअप या सेटिंग्स और अनुप्रयोग की क्रियाओं को पुनर्स्थापित करें, स्वचालित बैकअप स्वचालित रूप से प्रत्येक एप्लिकेशन लॉन्च पर चालू कर रहे हैं / रोकें/छोड़ें या नीचे \"ट्रिगर\" बटन दबाकर</string>

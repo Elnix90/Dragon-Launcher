@@ -16,14 +16,8 @@
 	<string name="app_display_desc">Change settings related to global app appearance, in the context of the launcher, not color related</string>
 	<string name="color_selector">Color selector</string>
 	<string name="debug">Debug</string>
-	<string name="extensions">Extensions</string>
-	<string name="extensions_description">Download and manage additional features for Dragon Launcher.</string>
 	<string name="install">Install</string>
 	<string name="permissions">Permissions</string>
-	<string name="no_extensions_found">No extensions found in registry.</string>
-	<string name="extension_manual_install_title">Manual Installation</string>
-	<string name="extension_manual_install_desc">If you don\'t have an installation extension, download the APK and select it below to install.</string>
-	<string name="select_apk">Select APK</string>
 	<string name="system_default">System Default</string>
 	<string name="version">Version</string>
 	<string name="export_cancelled">Export Cancelled</string>
@@ -88,20 +82,10 @@
 	<string name="close_app_drawer">Close Drawer</string>
 	<string name="font_selector">Font Selector</string>
 	<string name="font_manage_help">Manage fonts here. You can import your own TTF/OTF files or download from the Google Fonts catalog.</string>
-	<string name="font_catalog">Catalog</string>
 	<string name="font_import">Import</string>
 	<string name="font_installed_fonts">Installed Fonts</string>
-	<string name="font_download_all_started">Starting all fonts download. Check notifications.</string>
 	<string name="font_confirm_delete">Confirm (%1$d)</string>
-	<string name="font_search_placeholder">Search fonts…</string>
-	<string name="font_downloading">Downloading %1$s…</string>
 
-	<string name="font_cat_all">ALL</string>
-	<string name="font_cat_serif">SERIF</string>
-	<string name="font_cat_sans_serif">SANS-SERIF</string>
-	<string name="font_cat_monospace">MONOSPACE</string>
-	<string name="font_cat_display">DISPLAY</string>
-	<string name="font_cat_handwriting">HANDWRITING</string>
 	<string name="toggle_kb">Toggle Keyboard</string>
 	<string name="behavior">Behavior</string>
 	<string name="workspaces">Workspaces</string>
@@ -647,7 +631,7 @@
 	<string name="select_all">Select All</string>
 	<string name="invert">Invert</string>
 	<string name="advanced">Advanced</string>
-	<string name="yoann_desc">Extensions, performances, widgets</string>
+	<string name="yoann_desc">Performances, widgets</string>
 	<string name="lucky_desc">Digital wellbeing &amp; reminders</string>
 	<string name="federico_desc">Live nests features &amp; translations</string>
 	<string name="copied_to_clipboard">Copied to clipboard!</string>
@@ -873,8 +857,6 @@
 	<string name="filter_tag">Filter tag</string>
 	<string name="enable_logging">Enable logging</string>
 	<string name="enable_logging.desc">Store all logs in app storage, and can be copied or exported</string>
-	<string name="disable_extension_signature_check">Disable extension signature check</string>
-	<string name="disable_extension_signature_check_desc">Allow extensions not signed with the official key</string>
 	<string name="files_log_level">Files log level</string>
 	<string name="snackbar_log_level">snackbar_log_level</string>
 	<string name="snackbar_log_level_desc" translatable="false">e</string>

@@ -125,7 +125,6 @@ import org.elnix.dragonlauncher.ui.settings.drawer.DrawerActionsTab
 import org.elnix.dragonlauncher.ui.settings.drawer.DrawerAppearanceTab
 import org.elnix.dragonlauncher.ui.settings.drawer.DrawerBehaviorTab
 import org.elnix.dragonlauncher.ui.settings.drawer.DrawerTab
-import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
 import org.elnix.dragonlauncher.ui.settings.fonts.FontTab
 import org.elnix.dragonlauncher.ui.settings.hold.HoldToActivateTab
 import org.elnix.dragonlauncher.ui.settings.hold.HoldToActivateTabViewModel
@@ -451,7 +450,6 @@ fun MainAppUi(
 							entry<NavigationRoute.DrawerBehavior>(metadata = horizontalMetadata) { DrawerBehaviorTab() }
 							entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab() }
 							entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen() }
-							entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab() }
 
 							entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab() }
 							entry<NavigationRoute.DigitalPauseScreen>(metadata = horizontalMetadata) {

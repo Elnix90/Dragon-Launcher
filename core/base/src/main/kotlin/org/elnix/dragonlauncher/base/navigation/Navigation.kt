@@ -226,13 +226,6 @@ sealed class NavigationRoute : NavKey {
 	}
 
 	@Serializable
-	@SerialName("Extensions")
-	data object Extensions : NavigationRoute() {
-		override val resId: Int = R.string.extensions
-		override val icon: Int = R.drawable.extension
-	}
-
-	@Serializable
 	@SerialName("Debug")
 	data object Debug : NavigationRoute() {
 		override val resId: Int = R.string.debug
@@ -340,7 +333,6 @@ sealed class NavigationRoute : NavKey {
 				Backup,
 				Wellbeing,
 				Changelogs,
-				Extensions,
 				Debug,
 				Logs,
 				Permissions,

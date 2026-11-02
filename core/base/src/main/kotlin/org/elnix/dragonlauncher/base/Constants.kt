@@ -123,7 +123,6 @@ object Constants {
 		const val CODEBERG_REPO_LINK: String = "https://codeberg.org/Elnix90/Dragon-Launcher"
 		const val GITHUB_REPO_RELEASES_LINK: String = "$GITHUB_REPO_LINK/releases/latest"
 		const val GITHUB_REPO_ISSUES_LINK: String = "$GITHUB_REPO_LINK/issues/new"
-		const val EXTENSIONS_GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher-Extensions"
 		const val DISCORD_INVITE_LINK: String = "https://discord.gg/6UyuP8EBWS"
 		const val REDDIT_LINK: String = "https://www.reddit.com/r/dragonlauncher/"
 		const val MAILTO_LINK: String = "mailto:elnix91@proton.me"
@@ -156,11 +155,5 @@ object Constants {
 	object Drawer {
 		const val DRAWER_DRAG_DOWN_THRESHOLD: Int = 50
 		const val DRAWER_MAX_DRAG_DOWN: Int = 70
-	}
-
-	object Extensions {
-		//        const val INTERNET_PROXY_EXTENSION_PGK = "org.elnix.dragonlauncher.proxy"
-//        const val AUTO_UPDATE_EXTENSION_PKG = "org.elnix.dragonlauncher.autoupdate"
-		const val FONT_EXTENSION_PKG: String = "org.elnix.dragonlauncher.fonts"
 	}
 }

@@ -55,7 +55,6 @@ import io.github.elnix90.shared.ui.dragon.text.DialogTitle
 import io.github.elnix90.shared.ui.dragon.text.TextWithDescription
 import io.github.elnix90.ui.Setting
 import org.elnix.dragonlauncher.LOGS_TAG
-import org.elnix.dragonlauncher.base.loadExtensionRegistry
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.createShareableFile
@@ -68,7 +67,6 @@ import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.DragonLogViewModel
-import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
@@ -104,12 +102,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 	val codeName = ctx.getCodeName()
 	val versionCode = ctx.getVersionNumber()
 
-	// Build extension list by parsing the registry JSON directly (robust to field names)
-	val finalExtensionText by produceState(initialValue = "No extensions installed", refreshTrigger) {
-		value = buildExtensionText(ctx)
-	}
-
-	val deviceDetails = remember(finalExtensionText) {
+	val deviceDetails = remember {
 		buildString {
 			appendLine(" DEVICE DETAILS ")
 			appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
@@ -133,9 +126,6 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 			}
 			appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
 			appendLine("App version: $versionNumber ($codeName) ($versionCode)")
-
-			appendLine("\n EXTENSIONS ")
-			appendLine(finalExtensionText)
 
 			appendLine("\n PERMISSIONS ")
 			try {
@@ -347,23 +337,4 @@ private fun exportLogFile(
 	} catch (e: Exception) {
 		logE(LOGS_TAG, e) { "Failed to share log file" }
 	}
-}
-
-private suspend fun buildExtensionText(ctx: Context): String {
-	val extensions = loadExtensionRegistry(ctx) ?: return "No extensions installed"
-	val lines =
-		extensions.mapNotNull { extension ->
-			if (ExtensionManager.isExtensionInstalled(ctx, extension.packageName)) {
-				val versionStr =
-					try {
-						ctx.packageManager.getPackageInfo(extension.packageName, 0).versionName ?: "unknown"
-					} catch (_: Exception) {
-						"unknown"
-					}
-				"${extension.name} ($versionStr)"
-			} else {
-				null
-			}
-		}
-	return if (lines.isEmpty()) "No extensions installed" else lines.joinToString("\n")
 }

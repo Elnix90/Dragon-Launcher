@@ -11,10 +11,6 @@
 
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
-    <uses-permission
-        android:name="android.permission.REQUEST_INSTALL_PACKAGES"
-        tools:ignore="RequestInstallPackagesPolicy" />
-
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
     <uses-permission
@@ -55,33 +51,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
-    <!-- Extension Security: Launcher defines the permissions -->
-    <permission
-        android:name="org.elnix.dragonlauncher.permission.READ_SETTINGS"
-        android:protectionLevel="normal" />
-
-    <permission
-        android:name="org.elnix.dragonlauncher.permission.WRITE_SETTINGS"
-        android:protectionLevel="normal" />
-
-    <uses-permission android:name="org.elnix.dragonlauncher.permission.READ_SETTINGS" />
-
-    <uses-permission android:name="org.elnix.dragonlauncher.permission.WRITE_SETTINGS" />
-
-    <permission
-        android:name="org.elnix.dragonlauncher.permission.ACCESS_FONTS"
-        android:protectionLevel="normal" />
-
-    <uses-permission android:name="org.elnix.dragonlauncher.permission.ACCESS_FONTS" />
-
-
-    <queries>
-        <!-- To allow Dragon Launcher to find the font extensions provider -->
-        <provider android:authorities="org.elnix.dragonlauncher.fonts.provider" />
-        <!-- To allow Dragon Launcher to find the font extensions by its package -->
-        <package android:name="org.elnix.dragonlauncher.fonts" />
-    </queries>
 
     <application
         android:name=".DragonLauncherApplication"
@@ -181,14 +150,5 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/system_control_accessibility" />
         </service>
-
-        <receiver
-            android:name=".receiver.FontReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver">
-            <intent-filter android:priority="999">
-                <action android:name="org.elnix.dragonlauncher.ACTION_FONTS_RESULT" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>
