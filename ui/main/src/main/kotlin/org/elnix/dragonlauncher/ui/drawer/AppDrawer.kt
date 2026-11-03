@@ -505,18 +505,21 @@ fun AppDrawerScreen(
 
 			val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
 
-			LaunchedEffect(haveToLaunchFirstApp, apps) {
-				val autoLaunch =
-					drawerSettings.autoOpenSingleMatch &&
-						apps.size == 1 &&
-						searchQuery.isNotEmpty() &&
-						!(
-							drawerSettings.disableAutoLaunchWhenFirstCharIs.isNotEmpty() &&
-								searchQuery.first() == drawerSettings.disableAutoLaunchWhenFirstCharIs.first()
+			LaunchedEffect(haveToLaunchFirstApp, apps, searchQuery) {
+				val launchTarget =
+					if (haveToLaunchFirstApp) {
+						apps.firstOrNull()
+					} else {
+						drawerViewModel.resolveAutoLaunchTarget(
+							query = searchQuery,
+							results = apps,
+							autoOpenSingleMatch = drawerSettings.autoOpenSingleMatch,
+							disableAutoLaunchWhenFirstCharIs = drawerSettings.disableAutoLaunchWhenFirstCharIs
 						)
+					}
 
-				if ((haveToLaunchFirstApp || autoLaunch) && apps.isNotEmpty()) {
-					onLaunchAction(apps.first().action)
+				if (launchTarget != null) {
+					onLaunchAction(launchTarget.action)
 				}
 			}
 

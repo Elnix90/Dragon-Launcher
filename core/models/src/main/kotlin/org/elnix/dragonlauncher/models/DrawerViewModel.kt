@@ -18,11 +18,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.StringNormalizer
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.AutoLaunchResolver
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
@@ -50,8 +52,10 @@ class DrawerViewModel
 		private val iconPackManager: IconPackManager,
 		private val packageManagerCompat: PackageManagerCompat,
 		val appOverrideManager: AppOverridesManager,
-		val workspaceManager: WorkspacesManager
+		val workspaceManager: WorkspacesManager,
+		stringNormalizer: StringNormalizer
 	) : ViewModel() {
+		private val autoLaunchResolver = AutoLaunchResolver(stringNormalizer)
 		var drawerHomeHandler: MutableState<(() -> Unit)?> = mutableStateOf(null)
 
 		val allApps: StateFlow<List<Application>> =
@@ -105,6 +109,20 @@ class DrawerViewModel
 					SharingStarted.Eagerly,
 					emptyList()
 				)
+
+		fun resolveAutoLaunchTarget(
+			query: String,
+			results: List<Application>,
+			autoOpenSingleMatch: Boolean,
+			disableAutoLaunchWhenFirstCharIs: String
+		): Application? =
+			autoLaunchResolver.resolve(
+				query = query,
+				results = results,
+				autoOpenSingleMatch = autoOpenSingleMatch,
+				disableAutoLaunchWhenFirstCharIs = disableAutoLaunchWhenFirstCharIs,
+				labelOf = { it.label }
+			)
 
 		fun reloadApps(): Job =
 			viewModelScope.launch {

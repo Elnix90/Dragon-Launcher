@@ -46,4 +46,6 @@ dependencies {
 	implementation(project(":core:i18n"))
 
 	implementation(project(":core:permissions"))
+
+	testImplementation(libs.junit)
 }
