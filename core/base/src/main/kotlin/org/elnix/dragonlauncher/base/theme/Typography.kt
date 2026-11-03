@@ -2,15 +2,33 @@ package org.elnix.dragonlauncher.base.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import org.elnix.dragonlauncher.i18n.R
+
+val GoogleSansFlex = FontFamily(
+	Font(
+		resId = R.font.google_sans_flex,
+		variationSettings = FontVariation.Settings(
+			FontVariation.Setting("ROND", 100f),
+			FontVariation.weight(FontWeight.Bold.weight),
+			FontVariation.width(110f)
+		)
+	)
+)
+
+val JetBrainsMono = FontFamily(
+	Font(R.font.jetbrains_mono)
+)
 
 val Typography: Typography =
 	Typography(
 		bodyLarge =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 16.sp,
 				lineHeight = 24.sp,
@@ -18,7 +36,7 @@ val Typography: Typography =
 			),
 		titleLarge =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 22.sp,
 				lineHeight = 28.sp,
@@ -26,7 +44,7 @@ val Typography: Typography =
 			),
 		labelSmall =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Medium,
 				fontSize = 11.sp,
 				lineHeight = 16.sp,
@@ -34,7 +52,7 @@ val Typography: Typography =
 			),
 		displayLarge =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 57.sp,
 				lineHeight = 64.sp,
@@ -42,7 +60,7 @@ val Typography: Typography =
 			),
 		displayMedium =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 45.sp,
 				lineHeight = 52.sp,
@@ -50,7 +68,7 @@ val Typography: Typography =
 			),
 		displaySmall =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 36.sp,
 				lineHeight = 44.sp,
@@ -58,7 +76,7 @@ val Typography: Typography =
 			),
 		headlineLarge =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 32.sp,
 				lineHeight = 40.sp,
@@ -66,7 +84,7 @@ val Typography: Typography =
 			),
 		headlineMedium =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 28.sp,
 				lineHeight = 36.sp,
@@ -74,7 +92,7 @@ val Typography: Typography =
 			),
 		headlineSmall =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 24.sp,
 				lineHeight = 32.sp,
@@ -82,7 +100,7 @@ val Typography: Typography =
 			),
 		titleMedium =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Medium,
 				fontSize = 16.sp,
 				lineHeight = 24.sp,
@@ -90,7 +108,7 @@ val Typography: Typography =
 			),
 		titleSmall =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Medium,
 				fontSize = 14.sp,
 				lineHeight = 20.sp,
@@ -98,7 +116,7 @@ val Typography: Typography =
 			),
 		bodyMedium =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 14.sp,
 				lineHeight = 20.sp,
@@ -106,7 +124,7 @@ val Typography: Typography =
 			),
 		bodySmall =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Normal,
 				fontSize = 12.sp,
 				lineHeight = 16.sp,
@@ -114,7 +132,7 @@ val Typography: Typography =
 			),
 		labelLarge =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Medium,
 				fontSize = 14.sp,
 				lineHeight = 20.sp,
@@ -122,7 +140,7 @@ val Typography: Typography =
 			),
 		labelMedium =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Medium,
 				fontSize = 12.sp,
 				lineHeight = 16.sp,
@@ -130,7 +148,7 @@ val Typography: Typography =
 			),
 		displayLargeEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 57.sp,
 				lineHeight = 64.sp,
@@ -138,7 +156,7 @@ val Typography: Typography =
 			),
 		displayMediumEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 45.sp,
 				lineHeight = 52.sp,
@@ -146,7 +164,7 @@ val Typography: Typography =
 			),
 		displaySmallEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 36.sp,
 				lineHeight = 44.sp,
@@ -154,7 +172,7 @@ val Typography: Typography =
 			),
 		headlineLargeEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 32.sp,
 				lineHeight = 40.sp,
@@ -162,7 +180,7 @@ val Typography: Typography =
 			),
 		headlineMediumEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 28.sp,
 				lineHeight = 36.sp,
@@ -170,7 +188,7 @@ val Typography: Typography =
 			),
 		headlineSmallEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 24.sp,
 				lineHeight = 32.sp,
@@ -178,7 +196,7 @@ val Typography: Typography =
 			),
 		titleLargeEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 22.sp,
 				lineHeight = 28.sp,
@@ -186,7 +204,7 @@ val Typography: Typography =
 			),
 		titleMediumEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 16.sp,
 				lineHeight = 24.sp,
@@ -194,7 +212,7 @@ val Typography: Typography =
 			),
 		titleSmallEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 14.sp,
 				lineHeight = 20.sp,
@@ -202,7 +220,7 @@ val Typography: Typography =
 			),
 		bodyLargeEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 16.sp,
 				lineHeight = 24.sp,
@@ -210,7 +228,7 @@ val Typography: Typography =
 			),
 		bodyMediumEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 14.sp,
 				lineHeight = 20.sp,
@@ -218,7 +236,7 @@ val Typography: Typography =
 			),
 		bodySmallEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 12.sp,
 				lineHeight = 16.sp,
@@ -226,7 +244,7 @@ val Typography: Typography =
 			),
 		labelLargeEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 14.sp,
 				lineHeight = 20.sp,
@@ -234,7 +252,7 @@ val Typography: Typography =
 			),
 		labelMediumEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 12.sp,
 				lineHeight = 16.sp,
@@ -242,7 +260,7 @@ val Typography: Typography =
 			),
 		labelSmallEmphasized =
 			TextStyle(
-				fontFamily = FontFamily.Default,
+				fontFamily = GoogleSansFlex,
 				fontWeight = FontWeight.Bold,
 				fontSize = 11.sp,
 				lineHeight = 16.sp,

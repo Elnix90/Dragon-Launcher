@@ -11,23 +11,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +48,7 @@ import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.theme.AppObjectsColors
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.base.remember.rememberInteractionSource
+import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonIconButton
 import io.github.elnix90.shared.ui.dragon.components.DragonSettingsGroup
 import kotlinx.coroutines.launch
@@ -66,7 +62,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 import java.io.FileOutputStream
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall", "WrongConstant")
 @SettingScreen(NavigationRoute.Fonts::class)
 @Composable
@@ -83,7 +78,15 @@ fun FontTab() {
 
 	val availableFonts =
 		remember(refreshTrigger) {
-			val base = listOf("Default", "Serif", "SansSerif", "Monospace", "Cursive")
+			val base = listOf(
+				"System",
+				"Default",
+				"Serif",
+				"SansSerif",
+				"Cursive",
+				"Monospace",
+				"JetBrains Mono"
+			)
 			val extFonts =
 				try {
 					val extDir = File(ctx.getExternalFilesDir(null), "fonts")
@@ -147,70 +150,56 @@ fun FontTab() {
 							.fillMaxWidth()
 							.padding(horizontal = 16.dp)
 				) {
-					val interactionSources = List(4) { rememberInteractionSource() }
-
 					AnimatedContent(isDeleteMode) {
-						ButtonGroup(
-							overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
-							modifier = Modifier.fillMaxWidth(),
-							horizontalArrangement = Arrangement.spacedBy(8.dp)
-						) {
-							if (!it) {
-								customItem(
-									buttonGroupContent = {
-										OutlinedButton(
-											onClick = {
-												filePickerLauncher.launch(
-													arrayOf(
-														"font/ttf",
-														"font/otf",
-														"application/x-font-ttf",
-														"application/x-font-otf",
-														"application/octet-stream"
-													)
-												)
-											},
-											interactionSource = interactionSources[0],
-											modifier =
-												Modifier
-													.weight(3f)
-													.animateWidth(interactionSources[0]),
-											shapes = ButtonDefaults.shapes()
-										) {
-											Icon(
-												painter = painterResource(R.drawable.add),
-												contentDescription = null,
-												modifier = Modifier.size(16.dp)
+						if (!it) {
+							Row(
+								verticalAlignment = Alignment.CenterVertically,
+								horizontalArrangement = Arrangement.spacedBy(12.dp)
+							) {
+								DragonButton(
+									onClick = {
+										filePickerLauncher.launch(
+											arrayOf(
+												"font/ttf",
+												"font/otf",
+												"application/x-font-ttf",
+												"application/x-font-otf",
+												"application/octet-stream"
 											)
-											Spacer(6.dp)
-											Text(
-												stringResource(R.string.font_import),
-												fontSize = 12.sp,
-												maxLines = 1
-											)
-										}
+										)
 									},
-									menuContent = {}
-								)
+									modifier = Modifier.weight(3f)
+								) {
+									Icon(
+										painter = painterResource(R.drawable.add),
+										contentDescription = null,
+										modifier = Modifier.size(16.dp)
+									)
+									Spacer(6.dp)
+									Text(
+										stringResource(R.string.font_import),
+										fontSize = 12.sp,
+										maxLines = 1
+									)
+								}
 
+								DragonIconButton(
+									icon = R.drawable.delete_forever,
+									contentDescription = R.string.delete,
+									modifier = Modifier.weight(1f)
+								) { isDeleteMode = true }
+							}
+						} else {
+							val interactionSources = List(2) { rememberInteractionSource() }
+
+							ButtonGroup(
+								overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
+								modifier = Modifier.fillMaxWidth(),
+								horizontalArrangement = Arrangement.spacedBy(8.dp)
+							) {
 								customItem(
 									buttonGroupContent = {
-										DragonIconButton(
-											icon = R.drawable.delete_forever,
-											contentDescription = R.string.delete,
-											interactionSource = interactionSources[1],
-											modifier =
-												Modifier
-													.weight(1f)
-													.animateWidth(interactionSources[1])
-										) { isDeleteMode = true }
-									},
-									menuContent = {}
-								)
-							} else {
-								customItem(
-									buttonGroupContent = {
-										Button(
+										DragonButton(
 											onClick = {
 												if (selectedFontsToDelete.isNotEmpty()) {
 													scope.launch {
@@ -237,18 +226,12 @@ fun FontTab() {
 													isDeleteMode = false
 												}
 											},
-											interactionSource = interactionSources[2],
+											isCancel = true,
+											interactionSource = interactionSources[0],
 											modifier =
 												Modifier
 													.weight(4f)
-													.animateWidth(interactionSources[2]),
-											contentPadding =
-												PaddingValues(
-													horizontal = 8.dp,
-													vertical = 8.dp
-												),
-											shapes = ButtonDefaults.shapes(),
-											colors = AppObjectsColors.cancelButtonColors()
+													.animateWidth(interactionSources[0])
 										) {
 											Icon(
 												painter = painterResource(R.drawable.check),
@@ -275,11 +258,11 @@ fun FontTab() {
 												isDeleteMode = false
 												selectedFontsToDelete.clear()
 											},
-											interactionSource = interactionSources[3],
+											interactionSource = interactionSources[1],
 											modifier =
 												Modifier
 													.weight(1f)
-													.animateWidth(interactionSources[3]),
+													.animateWidth(interactionSources[1]),
 											colors = AppObjectsColors.cancelIconButtonColors(),
 											shapes = IconButtonDefaults.shapes()
 										) {

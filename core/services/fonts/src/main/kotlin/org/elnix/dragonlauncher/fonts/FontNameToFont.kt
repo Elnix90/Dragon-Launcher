@@ -3,6 +3,8 @@ package org.elnix.dragonlauncher.fonts
 import android.content.Context
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import org.elnix.dragonlauncher.base.theme.GoogleSansFlex
+import org.elnix.dragonlauncher.base.theme.JetBrainsMono
 import java.io.File
 
 fun fontNameToFont(name: String, ctx: Context? = null): FontFamily {
@@ -15,7 +17,9 @@ fun fontNameToFont(name: String, ctx: Context? = null): FontFamily {
 			"SansSerif" -> FontFamily.SansSerif
 			"Monospace" -> FontFamily.Monospace
 			"Cursive" -> FontFamily.Cursive
-			"Default" -> FontFamily.Default
+			"System" -> FontFamily.Default
+			"Default" -> GoogleSansFlex
+			"JetBrains Mono" -> JetBrainsMono
 			else -> null
 		}
 	if (base != null) return base
