@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.theme.JetBrainsMono
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getBuildType
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getCodeName
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
@@ -28,7 +28,7 @@ fun BaseVersionChip(
 		text = text,
 		color = contentColorFor(color),
 		style = MaterialTheme.typography.labelMediumEmphasized,
-		fontFamily = FontFamily.Monospace,
+		fontFamily = JetBrainsMono,
 		modifier =
 			Modifier
 				.wrapContentSize()
