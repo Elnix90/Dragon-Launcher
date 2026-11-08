@@ -1,9 +1,11 @@
 package org.elnix.dragonlauncher.ui.welcome
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
@@ -17,11 +19,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,10 +32,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.components.Spacer
+import io.github.elnix90.shared.ui.base.modifiers.conditional
+import io.github.elnix90.shared.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.base.Constants.URLs.DISCORD_INVITE_LINK
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.showToast
 
 @OptIn(ExperimentalGridApi::class)
 @Composable
@@ -77,21 +82,24 @@ private fun TutorialEntry(
 	imageMaxSize: Dp = 150.dp,
 	onCLick: (() -> Unit)? = null
 ) {
-	val ctx = LocalContext.current
+	val interactionSource = rememberInteractionSource()
+	val isPressed by interactionSource.collectIsPressedAsState()
+
+	val scale by animateFloatAsState(if (isPressed) 0.97f else 1f, bouncySpec(), label = "scale")
+
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = Modifier
 			.fillMaxSize()
+			.scale(scale)
 			.clip(MaterialTheme.shapes.extraLarge)
 			.background(backgroundColor)
-			.padding(top = 20.dp)
-			.clickable {
-				if (onCLick == null) {
-					ctx.showToast(ctx.getString(R.string.finish_setup_first))
-				} else {
-					onCLick()
-				}
-			}
+			.conditional(onCLick) {
+				clickable(
+					interactionSource = interactionSource,
+					onClick = it
+				)
+			}.padding(top = 20.dp)
 	) {
 		Box(
 			contentAlignment = Alignment.Center,
@@ -123,5 +131,7 @@ private fun TutorialEntry(
 @Composable
 @Preview
 private fun WelcomePageTutorialPreview() {
-	WelcomePageTutorial()
+	WelcomePagerHeader {
+		WelcomePageTutorial()
+	}
 }

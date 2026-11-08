@@ -51,9 +51,9 @@
 	<string name="test_colors">Test Colors</string>
 	<string name="exit_test_mode">Exit Test Mode</string>
 	<string name="exit_test_mode_message">Do you want to save your color changes or discard them?</string>
-	<string name="dark_theme">Dark Theme</string>
-	<string name="amoled_theme">AMOLED Theme</string>
-	<string name="system_theme">System Theme</string>
+	<string name="dark_theme">Dark</string>
+	<string name="amoled_theme">AMOLED</string>
+	<string name="system_theme">System</string>
 	<string name="about">About</string>
 	<string name="check_for_update">Check for updates</string>
 	<string name="source_code">Source code</string>
@@ -381,7 +381,7 @@
 	<string name="icons_spacing_horizontal">icons Spacing horizontal</string>
 	<string name="depth">Depth</string>
 	<string name="depth_desc">How many sub nests are drawn at max</string>
-	<string name="custom_theme">Custom Theme</string>
+	<string name="custom_theme">Custom</string>
 	<string name="dynamic_colors">Dynamic Colors</string>
 	<string name="dynamic_colors_desc">Use android dynamic colors to provide you a dynamic colors scheme</string>
 	<string name="use_pure_black_background">Use pure black background</string>
@@ -957,7 +957,7 @@
 	<string name="copy_to_clipboard">Copy to clipboard</string>
 	<string name="import_from_clipboard">Import from clipboard</string>
 	<string name="duplicate">Duplicate</string>
-	<string name="flashbang_theme">Flashbang theme</string>
+	<string name="flashbang_theme">Flashbang</string>
 	<string name="line">Line</string>
 	<string name="angle">Angle</string>
 	<string name="start">Start</string>
@@ -1028,7 +1028,8 @@
 	<string name="pulsing_radius_desc">The amount of breathing/pulsing the hold to activate arc moves</string>
 	<string name="pulsing_duration">Pulsing Duration</string>
 	<string name="pulsing_duration_desc">How long it takes for 1 pulse</string>
-	<string name="start_your_journey">Start your journey</string>
+	<string name="start_your">START YOUR</string>
+	<string name="journey">JOURNEY</string>
 	<string name="customize_hold_settings">Customize hold settings</string>
 	<string name="customize_angle_line">Customize angle line</string>
 	<string name="share_your_config_in_the_discord">Share your config in the discord!</string>
