@@ -479,7 +479,6 @@
     <string name="category_grid_cells_desc">Bir kategorinin sıra/sütununda uygulama sayıları</string>
     <string name="multi_select_count">%d seçildi</string>
     <string name="place_app_where">Nereye koymak istiyorsun</string>
-
     <string name="multi_select_drawer_hint">💡Aynı anda birden fazla uygulama seçmek için bir uygulamaya uzun tıkla</string>
     <string name="deselect_all">Tümünün seçimini kaldır</string>
     <string name="reminder_mode_description">Aktifken, her X dakikada durdurulmuş bir uygulamada olduğunun hatırlatmasını alırsın.</string>
@@ -554,4 +553,19 @@
     <string name="keep_screen_on_desc">Ekranı kapatıp kilitlemeyin, Dragon odaklandığında her zaman açık tutun</string>
     <string name="points_settings">Nokta Ayarları</string>
     <string name="default_point_live_nest_defaults">Canlı Ağ varsayılanları</string>
+    <string name="multi_select_left_text">sol</string>
+    <string name="default_hold_and_run_delay">Basılı tutma &amp; Çalıştırma gecikmesi (ms)</string>
+    <string name="default_hold_and_run_delay_summary">Bir noktada Basılı tut &amp; Çalıştır aktifleştirdiğinde uygulanan gecikme (\"Basılı tut &amp; Çalıştır\"a bas).</string>
+    <string name="show_status_bar_desc">Durum çubuğunu göster, eğer aktif değilse hiçbir şey gösterilmez</string>
+    <string name="logs">Günlükler</string>
+    <string name="settings_json">Ayarlar JSON</string>
+    <string name="app_info_name">isim = %1$s</string>
+    <string name="no_apps">Uygulama Yok</string>
+    <string name="show_debug_infos_desc">Hata ayıklama bilgisini global olarak göster</string>
+    <string name="show_debug_infos_settings_desc">Hata ayıklama bilgisini ayarlar içinde göster</string>
+    <string name="show_debug_infos_widgets">Hata ayıklama bilgilerini widgets sayfasında göster</string>
+    <string name="show_debug_infos_workspace">Hata ayıklama bilgilerini çalışma alanı sayfasında göster</string>
+    <string name="show_debug_infos_workspace_desc">Hata ayıklama bilgilerini çalışma alanında göster</string>
+    <string name="has_initialized">Başlatıldı mı</string>
+    <string name="use_accessibility_instead_of_context">İçerik yerine erişebilirliği kullan</string>
 </resources>
