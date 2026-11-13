@@ -509,6 +509,8 @@
 	<string name="show_recently_used_apps">Show recently used apps</string>
 	<string name="show_recently_used_apps_desc">Display recently used apps at the top of the app drawer</string>
 	<string name="recently_used_apps_count">Number of recent apps</string>
+	<string name="recently_used_apps_color">Recent apps background color</string>
+	<string name="recently_used_apps_color_desc">The color of the bow behin</string>
 	<string name="show_category_name">Show Category name</string>
 	<string name="show_category_name_desc">Display the name of the category below it</string>
 	<string name="set_category">Set category</string>

@@ -47,6 +47,7 @@ data class DrawerSettings(
 	val showSearchBar: Boolean,
 	val showRecentlyUsedApps: Boolean,
 	val recentlyUsedAppsCount: Int,
+	val recentlyUsedAppsColor: Color,
 	val autoShowKeyboard: Boolean,
 	val toolbarsOrder: List<DrawerToolbar>,
 	val disabledSystemCategories: List<String>,
@@ -94,6 +95,7 @@ fun ProvideDrawerSettings(
 	val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
 	val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
 	val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
+	val recentlyUsedAppsColor by DrawerSettingsStore.recentlyUsedAppsColor.asState()
 	val autoShowKeyboard by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
 	val toolbarsOrder by DrawerSettingsStore.toolbarsOrder.asState()
 	val disabledSystemCategories by DrawerSettingsStore.disabledSystemCategories.asState()
@@ -136,6 +138,7 @@ fun ProvideDrawerSettings(
 				showSearchBar = showSearchBar,
 				showRecentlyUsedApps = showRecentlyUsedApps,
 				recentlyUsedAppsCount = recentlyUsedAppsCount,
+				recentlyUsedAppsColor = recentlyUsedAppsColor,
 				autoShowKeyboard = autoShowKeyboard,
 				toolbarsOrder = toolbarsOrder,
 				disabledSystemCategories = disabledSystemCategories,

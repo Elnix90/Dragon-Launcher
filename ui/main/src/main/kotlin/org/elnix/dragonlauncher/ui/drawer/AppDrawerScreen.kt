@@ -48,6 +48,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -85,6 +86,7 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.ToggleKb
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar.RecentlyUsed
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar.SearchBar
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar.Spacer
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
@@ -100,6 +102,7 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.DrawerSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
@@ -578,31 +581,12 @@ fun AppDrawerScreen(
 								recentAppsHeightPx = it.size.height
 							}
 					) {
-						Box(
-							modifier =
-								Modifier
-									.fillMaxWidth()
-									.padding(5.dp)
-									.clip(MaterialTheme.shapes.large)
-									.background(MaterialTheme.colorScheme.surface)
-						) {
-							// The recent apps DO NOT use the category otherwise it ends up filling out all the space
-							CompositionLocalProvider(
-								LocalDrawerSettings provides
-									LocalDrawerSettings.current.copy(
-										useCategory = false
-									)
-							) {
-								AppGrid(
-									apps = recentApps,
-									fillMaxSize = false,
-									longPressPopup = true,
-									onReload = drawerViewModel::reloadApps
-								) {
-									onLaunchAction(it.action)
-								}
-							}
-						}
+						RecentlyUsedApps(
+							recentApps = recentApps,
+							drawerSettings = drawerSettings,
+							onReloadApps = drawerViewModel::reloadApps,
+							onLaunchAction = onLaunchAction
+						)
 					}
 				}
 
@@ -687,5 +671,37 @@ private fun BoxScope.DrawerActions(
 						interactionSource = null
 					) { launchDrawerAction(rightDrawerAction) }
 		)
+	}
+}
+
+@Composable
+private fun RecentlyUsedApps(
+	recentApps: List<Application>,
+	drawerSettings: DrawerSettings,
+	onReloadApps: () -> Unit,
+	onLaunchAction: (Action) -> Unit
+) {
+	Box(
+		modifier =
+			Modifier
+				.fillMaxWidth()
+				.clip(MaterialTheme.shapes.large)
+				.background(drawerSettings.recentlyUsedAppsColor.takeIf { it.isSpecified } ?: MaterialTheme.colorScheme.surface)
+				.padding(5.dp)
+	) {
+		// The recent apps DO NOT use the category otherwise it ends up filling out all the space
+		CompositionLocalProvider(
+			LocalDrawerSettings provides
+				LocalDrawerSettings.current.copy(
+					useCategory = false
+				)
+		) {
+			AppGrid(
+				apps = recentApps,
+				fillMaxSize = false,
+				longPressPopup = true,
+				onReload = onReloadApps
+			) { onLaunchAction(it.action) }
+		}
 	}
 }

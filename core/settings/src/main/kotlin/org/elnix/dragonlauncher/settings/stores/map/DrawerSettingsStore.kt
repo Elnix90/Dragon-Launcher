@@ -300,6 +300,15 @@ object DrawerSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val recentlyUsedAppsColor =
+		color(
+			default = Color.Unspecified,
+			title = R.string.recently_used_apps_color,
+			description = R.string.recently_used_apps_color_desc,
+			icon = R.drawable.colorize
+		)
+
+	@SettingKey
 	val recentlyUsedPackages =
 		stringList(
 			default = emptyList(),

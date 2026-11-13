@@ -91,10 +91,8 @@ fun DrawerAppearanceTab(drawerViewModel: DrawerViewModel = activityViewModel()) 
 
 		DragonSettingsGroup(R.string.recently_used_apps) {
 			Setting(DrawerSettingsStore.showRecentlyUsedApps)
-
-			AnimatedVisibility(showRecentlyUsed) {
-				Setting(DrawerSettingsStore.recentlyUsedAppsCount)
-			}
+			Setting(DrawerSettingsStore.recentlyUsedAppsCount, enabled = showRecentlyUsed)
+			Setting(DrawerSettingsStore.recentlyUsedAppsColor, enabled = showRecentlyUsed)
 		}
 
 		DragonSettingsGroup(R.string.category_settings) {
