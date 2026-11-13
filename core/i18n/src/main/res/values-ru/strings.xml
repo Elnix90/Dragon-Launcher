@@ -144,7 +144,7 @@
     <string name="apply_wallpaper_to">Применить обои к</string>
     <string name="main_screen">Главный экран</string>
     <string name="drawer_screen">Экран Меню приложений</string>
-    <string name="notifications">Уведомления</string>
+    <string name="notifications">Уведомление</string>
     <string name="drawer_action_clear">Очистить</string>
     <string name="drawer_action_search_web">Искать в интернете</string>
     <string name="drawer_action_open_first_app">Открыть первое приложение</string>
@@ -899,12 +899,12 @@
     <string name="edit_shapes">Изменить фигуры</string>
     <string name="edit_default_point">Изменить точку по умолчанию</string>
     <string name="spacer_mode">Режим разделителя</string>
-    <string name="reset_backup_tab">Сбросить все настройки резервного копирования?</string>
-    <string name="reset_angle_tab">Сбросить линию угла?</string>
-    <string name="reset_app_display_tab">Сбросить все настройки интерфейса? Некоторые скрытые настройки тоже могут сброситься.</string>
-    <string name="reset_behavior_tab">Сбросить все настройки поведения?</string>
-    <string name="reset_colors_tab">Сбросить все цвета?</string>
-    <string name="reset_hold_tab">Сбросить настройки удержания?</string>
+    <string name="reset_backup_tab">Вы уверены что хотите сбросить все резервные настройки?</string>
+    <string name="reset_angle_tab">Вы уверены что хотите сбросить линию угла?</string>
+    <string name="reset_app_display_tab">Вы уверены что хотите сбросить все настройки интерфейса? Некоторые скрытые настройки тоже могут сброситься.</string>
+    <string name="reset_behavior_tab">Вы уверены что хотите сбросить все настройки поведения?</string>
+    <string name="reset_colors_tab">Вы уверены что хотите сбросить все цвета?</string>
+    <string name="reset_hold_tab">Вы уверены что хотите сбросить настройки удержания?</string>
     <string name="reset_icon_packs_tab">Сбросить значки?</string>
     <string name="reset_status_bar">Сбросить все настройки строки состояния?</string>
     <string name="reset_widgets_tab">Сбросить все виджеты?</string>
@@ -1101,4 +1101,33 @@
     <string name="special">Специальное</string>
     <string name="snap_point_angle_lines_start_angle">Начальный угол линий привязки</string>
     <string name="snap_point_angle_lines_start_angle_desc">Угол, под которым начинается петля (для регулировки вращения)</string>
+    <string name="search_settings">Настройки поиска</string>
+    <string name="clear">Очистить</string>
+    <string name="github">Github</string>
+    <string name="mail">Почта</string>
+    <string name="reddit">Reddit</string>
+    <string name="website">Сайт</string>
+    <string name="telegram">Telegram</string>
+    <string name="discord">Discord</string>
+    <string name="theme">Тема</string>
+    <string name="theme_desc">Выберите предпочтительную тему для приложения</string>
+    <string name="lock_orientation">Заблокировать ориентацию</string>
+    <string name="lock_orientation_desc">Заблокировать ориентацию лаунчера в портретный режим</string>
+    <string name="documentation">Документация</string>
+    <string name="documentation_help">Сейчас документ не очень-то и готов, будет замечательно если вы поможете нам в его разработке!</string>
+    <string name="signatures">Подписи</string>
+    <string name="fullscreen_only_in_main_and_drawer">Полноэкранный режим только в главном меню и drawer</string>
+    <plurals name="fullscreen_only_in_main_and_drawer_desc">
+        <item quantity="one">Настройки не в полноэкранном режиме, но главный экран и drawer в полноэкранном</item>
+    </plurals>
+    <string name="multi_select_left_text">Лево</string>
+    <string name="app_info_is_system">isSystem = %1$s</string>
+    <string name="app_info_is_work_profile">isWork = %1$s</string>
+    <string name="app_info_is_private_profile">isPrivate = %1$s</string>
+    <string name="app_info_is_launchable">isLaunchable = %1$s</string>
+    <string name="snackbar_log_level">snackbar_log_level</string>
+    <string name="snapping">Snapping</string>
+    <string name="n_settings_found">%1$d настройки найдены</string>
+    <string name="backup_location_unset">Местоположение восстановления не выставлено</string>
+    <string name="weblate">Weblate</string>
 </resources>
