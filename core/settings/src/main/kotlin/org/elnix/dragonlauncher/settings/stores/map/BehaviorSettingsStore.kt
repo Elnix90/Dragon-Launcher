@@ -188,7 +188,7 @@ object BehaviorSettingsStore : MapSettingsStore() {
 			title = R.string.open_root_nest_each_time,
 			description = R.string.open_root_nest_each_time_desc,
 			icon = R.drawable.nest_icon,
-			default = false
+			default = true
 		)
 
 	/**
