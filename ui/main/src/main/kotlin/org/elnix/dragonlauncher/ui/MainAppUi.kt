@@ -644,7 +644,7 @@ fun MainAppUi(
 							showLeaveEmptyNotice = false
 						) {
 							if (it.command.trim().isNotEmpty()) {
-								shizukuViewModel.shizukuService.runShisukuCommandNotEmpty(it)
+								shizukuViewModel.shizukuService.runShizukuCommandNotEmpty(it)
 							}
 						}
 					}

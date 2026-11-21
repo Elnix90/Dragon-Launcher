@@ -429,7 +429,7 @@ internal class SwipeServiceImpl(
 		if (command.command.trim().isEmpty()) {
 			showShizukuCommandPrompter.value = command
 		} else {
-			shizukuService.runShisukuCommandNotEmpty(command)
+			shizukuService.runShizukuCommandNotEmpty(command)
 		}
 	}
 
@@ -564,7 +564,8 @@ internal class SwipeServiceImpl(
 							} else {
 								action.command.commandEnable
 							},
-						toast = action.toast == true
+						toast = action.toast,
+						silent = action.silent
 					)
 				)
 			}
@@ -578,7 +579,8 @@ internal class SwipeServiceImpl(
 							} else {
 								action.command.commandEnable
 							},
-						toast = action.toast == true
+						toast = action.toast,
+						silent = action.silent
 					)
 				)
 			}
@@ -592,7 +594,8 @@ internal class SwipeServiceImpl(
 							} else {
 								action.command.commandEnable
 							},
-						toast = action.toast == true
+						toast = action.toast,
+						silent = action.silent
 					)
 				)
 			}

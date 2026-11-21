@@ -205,7 +205,8 @@ sealed class Action {
 	@SerialName("ToggleWifi")
 	data class ToggleWifi(
 		val command: WifiADBCommands = WifiADBCommands.Svc,
-		val toast: Boolean? = false
+		val toast: Boolean? = false,
+		val silent: Boolean = true
 	) : Action() {
 		override val drawableId: Int = R.drawable.wifi
 		override val resId: Int = R.string.toggle_wifi
@@ -220,7 +221,8 @@ sealed class Action {
 	@SerialName("ToggleBluetooth")
 	data class ToggleBluetooth(
 		val command: BluetoothADBCommands = BluetoothADBCommands.Cmd,
-		val toast: Boolean? = false
+		val toast: Boolean? = false,
+		val silent: Boolean = true
 	) : Action() {
 		override val drawableId: Int = R.drawable.bluetooth
 		override val resId: Int = R.string.toggle_bluetooth
@@ -235,7 +237,8 @@ sealed class Action {
 	@SerialName("ToggleData")
 	data class ToggleData(
 		val command: DataADBCommands = DataADBCommands.Svc,
-		val toast: Boolean? = false
+		val toast: Boolean? = false,
+		val silent: Boolean = true
 	) : Action() {
 		override val drawableId: Int = R.drawable.cellular_icon
 		override val resId: Int = R.string.toggle_mobile_data
@@ -250,7 +253,8 @@ sealed class Action {
 	@SerialName("RunAdbCommand")
 	data class RunAdbCommand(
 		val command: String,
-		val toast: Boolean? = false
+		val toast: Boolean? = false,
+		val silent: Boolean = true
 	) : Action() {
 		override val drawableId: Int = R.drawable.adb_icon
 		override val resId: Int = R.string.adb_command

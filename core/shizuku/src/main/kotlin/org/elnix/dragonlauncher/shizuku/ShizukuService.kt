@@ -26,13 +26,11 @@ interface ShizukuService {
 
 	fun requestShizukuPermission()
 
-	fun executeShizukuCommand(command: String)
-
 	fun setUnavailable()
 
 	fun dismissUnavailableDialog()
 
-	fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand)
+	fun runShizukuCommandNotEmpty(command: Action.RunAdbCommand)
 }
 
 internal class ShizukuServiceImpl(
@@ -56,12 +54,14 @@ internal class ShizukuServiceImpl(
 
 	override fun requestShizukuPermission(): Unit = shizukuPermissionHandler.requestPermission()
 
-	override fun executeShizukuCommand(command: String) {
+	private fun executeShizukuCommand(command: String, silent: Boolean) {
 		scope.launch {
 			shellCommandExecutor
 				.runShizuku(command)
 				.collect { outputLine ->
-					outputValue.value = outputLine
+					if (!silent) {
+						outputValue.value = outputLine
+					}
 				}
 		}
 	}
@@ -74,7 +74,7 @@ internal class ShizukuServiceImpl(
 		_showUnavailable.value = false
 	}
 
-	override fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand) {
+	override fun runShizukuCommandNotEmpty(command: Action.RunAdbCommand) {
 		if (!Shizuku.pingBinder()) {
 			logD(SHIZUKU_TAG) { "Shizuku is not running, opening it..." }
 			setUnavailable()
@@ -90,7 +90,7 @@ internal class ShizukuServiceImpl(
 			if (command.toast == true) {
 				ctx.showToast("Running: $command")
 			}
-			executeShizukuCommand(command.command)
+			executeShizukuCommand(command.command, command.silent)
 		}
 	}
 }
