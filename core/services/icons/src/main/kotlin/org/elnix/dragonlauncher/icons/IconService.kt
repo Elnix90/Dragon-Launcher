@@ -553,7 +553,9 @@ class IconService internal constructor(
 					if (pointCustomIcon != null) {
 						pointCustomIcon.getProperties().takeIf { it.isNotEmpty } ?: point.iconProperties
 					} else {
-						appCustomIcon?.getProperties()?.takeIf { it.isNotEmpty } ?: appProperties
+						point.iconProperties?.takeIf { it.isNotEmpty }
+							?: appCustomIcon?.getProperties()?.takeIf { it.isNotEmpty }
+							?: appProperties
 					}
 				).takeIf { it?.isNotEmpty == true }
 
