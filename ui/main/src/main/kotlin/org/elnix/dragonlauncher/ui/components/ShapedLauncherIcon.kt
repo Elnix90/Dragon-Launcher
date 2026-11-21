@@ -79,7 +79,6 @@ fun ShapedLauncherIcon(
 
 	val icon = icon()
 	val drawerSettings = LocalDrawerSettings.current
-	val shape = drawerSettings.iconShape.resolveShape()
 
 	var currentIcon by remember(icon) {
 		mutableStateOf(
@@ -90,10 +89,11 @@ fun ShapedLauncherIcon(
 			}
 		)
 	}
+	val shape = (currentIcon?.properties?.shape ?: drawerSettings.iconShape).resolveShape()
 
 	val iconSettings = drawerSettings.iconSettings
 
-	var currentBitmap by remember {
+	var currentBitmap by remember(currentIcon, iconSettings, sizePxInt) {
 		mutableStateOf(currentIcon?.getCachedBitmap(sizePxInt, iconSettings))
 	}
 
