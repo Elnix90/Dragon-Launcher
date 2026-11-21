@@ -10,21 +10,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.shared.ui.base.asState
+import org.elnix.dragonlauncher.base.cache.PointStableCache
+import org.elnix.dragonlauncher.base.cache.StablePointValues
+import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
+import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.px
+import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
@@ -40,8 +53,49 @@ fun PointPreviewCanvas(
 	pointsViewModel: PointsViewModel = activityViewModel(),
 	onClick: ((SelectedUnselectedViewMode) -> Unit)? = null
 ) {
+	val density = LocalDensity.current
+
 	val pointsService = pointsViewModel.pointsService
 	val defaultPoint by pointsService.defaultPoint.asState()
+	val iconsViewModel: IconsViewModel = activityViewModel()
+	val iconSettings by iconsViewModel.iconSettings.collectAsState()
+	val sizePx = with(density) { editPoint.getSize(defaultPoint, false).toPx() }
+	val innerPaddingPx = with(density) { editPoint.getInnerPadding(defaultPoint, false).toPx() }
+	val borderRadii = (sizePx / 2f + innerPaddingPx).coerceAtLeast(0f)
+	val baseValues =
+		StablePointValues(
+			sizePx = sizePx.coerceAtLeast(1f),
+			innerPaddingPx = innerPaddingPx,
+			borderRadii = borderRadii,
+			iconSize = Size(borderRadii * 2f, borderRadii * 2f),
+			imageBitmap = null,
+			iconShape = null,
+			badgeBitmap = PointStableCache[editPoint.id]?.badgeBitmap
+		)
+	var previewValues by remember(editPoint, defaultPoint, density) { mutableStateOf(baseValues) }
+
+	LaunchedEffect(editPoint, defaultPoint, density, iconSettings) {
+		previewValues = baseValues
+		val iconSizePx = sizePx.toInt() * 2
+		val icon =
+			iconsViewModel.getPointIconOnce(
+				editPoint,
+				iconSizePx,
+				editPoint.customIcon,
+				editPoint.iconProperties
+			)
+		val staticIcon =
+			when (icon) {
+				is DynamicLauncherIcon -> icon.getIcon(System.currentTimeMillis())
+				is StaticLauncherIcon -> icon
+				else -> null
+			}
+		previewValues =
+			baseValues.copy(
+				imageBitmap = staticIcon?.render(iconSizePx, iconSettings)?.asImageBitmap(),
+				iconShape = staticIcon?.properties?.shape
+			)
+	}
 
 	val height =
 		when (editPoint.action) {
@@ -106,14 +160,16 @@ fun PointPreviewCanvas(
 				depth = Int.MAX_VALUE,
 				center = leftCenter,
 				selected = false,
-				drawParams = drawParams
+				drawParams = drawParams,
+				stableValues = previewValues
 			)
 			this.PointIcon(
 				point = editPoint,
 				depth = Int.MAX_VALUE,
 				center = rightCenter,
 				selected = true,
-				drawParams = drawParams
+				drawParams = drawParams,
+				stableValues = previewValues
 			)
 		}
 

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
+import org.elnix.dragonlauncher.base.cache.StablePointValues
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.rect
@@ -25,13 +26,14 @@ fun DrawScope.PointBg(
 	depth: Int,
 	selected: Boolean,
 	center: Offset,
-	drawParams: DrawParams
+	drawParams: DrawParams,
+	stableValues: StablePointValues? = null
 ) {
 	val extraColors = drawParams.extraColors
 	val colorScheme = drawParams.colorScheme
 	val defaultPoint = drawParams.pointsService.defaultPoint.value
 
-	val cached = PointStableCache[point.id]
+	val cached = stableValues ?: PointStableCache[point.id]
 	if (cached == null) {
 		missingPoint(drawParams, center)
 		return
