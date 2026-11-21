@@ -63,6 +63,7 @@ androidx-test = "1.7.0"
 robolectric = "4.17"
 
 dependency-analysis = "3.19.2"
+leakcanary = "2.14"
 
 # Those are my libraries, you can find them on my GitHub
 logging = "1.0.3"
@@ -148,6 +149,7 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 androidx-palette = { group = "androidx.palette", name = "palette", version.ref = "androidx-palette" }
 compose-lock = { group = "io.github.elnix90.lock", name = "compose-lock", version.ref = "compose-lock" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
