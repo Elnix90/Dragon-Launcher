@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,15 +33,16 @@ import org.elnix.dragonlauncher.i18n.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T : ADBCommands> AdbCommandPickerDialog(
+fun <T : ADBCommands> AdbCommandPickerSheet(
 	label: String,
 	options: List<T>,
 	selected: () -> T,
 	onDismiss: () -> Unit,
-	onSelected: (T, Boolean) -> Unit
+	onSelected: (T, Boolean, Boolean) -> Unit
 ) {
 	var selected by remember { mutableStateOf(selected()) }
 	var toast by remember { mutableStateOf(false) }
+	var silent by remember { mutableStateOf(false) }
 
 	DragonModalBottomSheet(
 		onDismissRequest = onDismiss,
@@ -56,7 +58,7 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
 						Modifier
 							.dragonSettingGroup {
 								clickable {
-									onSelected(selected, toast)
+									onSelected(selected, toast, silent)
 								}
 							},
 					horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -71,7 +73,7 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
 							fontFamily = FontFamily.Monospace,
 							modifier =
 								Modifier
-									.clip(MaterialTheme.shapes.medium)
+									.clip(MaterialTheme.shapes.small)
 									.background(MaterialTheme.colorScheme.surfaceVariant)
 									.border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium)
 									.padding(5.dp)
@@ -87,24 +89,42 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
 
 		Spacer(10.dp)
 
-		val interactionSource = rememberInteractionSource()
+		val interactionSource = remember { List(2) { MutableInteractionSource() } }
 
 		DragonSettingsGroup {
 			Row(
 				modifier =
 					Modifier
 						.dragonSettingGroup {
-							clickable(interactionSource = interactionSource) { toast = !toast }
+							clickable(interactionSource = interactionSource[0]) { toast = !toast }
+								.padding(10.dp)
 						},
 				horizontalArrangement = Arrangement.spacedBy(5.dp)
 			) {
-				Text(stringResource(R.string.show_toast))
 				Checkbox(
 					checked = toast,
 					onCheckedChange = null,
-					interactionSource = interactionSource
+					interactionSource = interactionSource[0]
 				)
+				Text(stringResource(R.string.show_toast))
+			}
+			Row(
+				modifier =
+					Modifier
+						.dragonSettingGroup {
+							clickable(interactionSource = interactionSource[1]) { silent = !silent }
+								.padding(10.dp)
+						},
+				horizontalArrangement = Arrangement.spacedBy(5.dp)
+			) {
+				Checkbox(
+					checked = silent,
+					onCheckedChange = null,
+					interactionSource = interactionSource[1]
+				)
+				Text(stringResource(R.string.silent))
 			}
 		}
+		Spacer(20.dp)
 	}
 }

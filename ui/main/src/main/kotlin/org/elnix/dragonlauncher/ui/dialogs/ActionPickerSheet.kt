@@ -237,37 +237,37 @@ fun ActionPickerSheet(
 	}
 
 	if (showWifiCommandInput) {
-		AdbCommandPickerDialog(
+		AdbCommandPickerSheet(
 			label = "${stringResource(R.string.pick_a)} WIFI ${stringResource(R.string.command)}",
 			options = WifiADBCommands.entries,
 			selected = { WifiADBCommands.Svc },
 			onDismiss = { showWifiCommandInput = false }
-		) { command, toast ->
-			onActionPicked(Action.ToggleWifi(command, toast))
+		) { command, toast, silent ->
+			onActionPicked(Action.ToggleWifi(command, toast, silent))
 			showWifiCommandInput = false
 		}
 	}
 
 	if (showBluetoothCommandInput) {
-		AdbCommandPickerDialog(
+		AdbCommandPickerSheet(
 			label = "${stringResource(R.string.pick_a)} BLUETOOTH ${stringResource(R.string.command)}",
 			options = BluetoothADBCommands.entries,
 			selected = { BluetoothADBCommands.Cmd },
 			onDismiss = { showBluetoothCommandInput = false }
-		) { command, toast ->
-			onActionPicked(Action.ToggleBluetooth(command, toast))
+		) { command, toast, silent ->
+			onActionPicked(Action.ToggleBluetooth(command, toast, silent))
 			showBluetoothCommandInput = false
 		}
 	}
 
 	if (showDataCommandInput) {
-		AdbCommandPickerDialog(
+		AdbCommandPickerSheet(
 			label = "${stringResource(R.string.pick_a)} DATA ${stringResource(R.string.command)}",
 			options = DataADBCommands.entries,
 			selected = { DataADBCommands.Svc },
 			onDismiss = { showDataCommandInput = false }
-		) { command, toast ->
-			onActionPicked(Action.ToggleData(command, toast))
+		) { command, toast, silent ->
+			onActionPicked(Action.ToggleData(command, toast, silent))
 			showDataCommandInput = false
 		}
 	}

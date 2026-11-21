@@ -1151,4 +1151,5 @@
     <string name="fullscreen_only_in_main_and_drawer_desc">The settings aren\'t fullscreen, but the main screen and the drawer is</string>
 		<string name="start_your">START YOUR</string>
 		<string name="journey">JOURNEY</string>
+    <string name="silent">Silent</string>
 </resources>
