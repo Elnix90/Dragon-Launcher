@@ -78,7 +78,7 @@ private const val PULL_THRESHOLD_DP = 100
 private const val PULL_SOFT_CAP_DP = 320
 
 /** Sheet height visible at rest, in dp. */
-private const val SHEET_PEEK_DP = 24
+private const val SHEET_PEEK_DP = 50
 
 private const val EXIT_DURATION_MS = 400
 
