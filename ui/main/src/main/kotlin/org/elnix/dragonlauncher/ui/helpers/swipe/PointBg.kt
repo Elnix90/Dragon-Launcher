@@ -86,10 +86,11 @@ fun DrawScope.PointBg(
 		val sizePx = cached.sizePx
 
 		val size = Size.rect(sizePx)
+		val iconShape = cached.iconShape ?: drawParams.iconShape
 		val iconPath =
 			DrawPathCache.getOrCompute(
-				Pair(drawParams.iconShape, size)
-			) { toPath(drawParams.iconShape.resolveShape(), size) }
+				Pair(iconShape, size)
+			) { toPath(iconShape.resolveShape(), size) }
 
 		withTransform(
 			{
