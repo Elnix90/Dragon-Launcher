@@ -48,9 +48,9 @@
     <string name="test_colors">சோதனை நிறங்கள்</string>
     <string name="exit_test_mode">சோதனை பயன்முறையிலிருந்து வெளியேறு</string>
     <string name="exit_test_mode_message">உங்கள் வண்ண மாற்றங்களைச் சேமிக்க விரும்புகிறீர்களா அல்லது அவற்றை நிராகரிக்க விரும்புகிறீர்களா?</string>
-    <string name="dark_theme">இருண்ட கருப்பொருள்</string>
-    <string name="amoled_theme">AMOLED கருப்பொருள்</string>
-    <string name="system_theme">கணினி கருப்பொருள்</string>
+    <string name="dark_theme">இருண்ட</string>
+    <string name="amoled_theme">AMOLED</string>
+    <string name="system_theme">கணினி</string>
     <string name="about">பற்றி</string>
     <string name="check_for_update">புதுப்பிப்புகளை சரிபார்க்கவும்</string>
     <string name="source_code">மூலக் குறியீடு</string>
@@ -349,7 +349,7 @@
     <string name="icons_spacing_horizontal">சின்னங்கள் கிடைமட்ட இடைவெளி</string>
     <string name="depth">ஆழம்</string>
     <string name="depth_desc">அதிகபட்சமாக எத்தனை துணைக் கூடுகள் வரையப்படுகின்றன</string>
-    <string name="custom_theme">விருப்ப கருப்பொருள்</string>
+    <string name="custom_theme">விருப்ப</string>
     <string name="dynamic_colors">மாறும் நிறங்கள்</string>
     <string name="dynamic_colors_desc">உங்களுக்கு மாறும் வண்ணத் திட்டத்தை வழங்க ஆண்ட்ராய்டு மாறும் வண்ணங்களைப் பயன்படுத்தவும்</string>
     <string name="use_pure_black_background">தூய்மையான கருப்பு பின்னணியைப் பயன்படுத்தவும்</string>

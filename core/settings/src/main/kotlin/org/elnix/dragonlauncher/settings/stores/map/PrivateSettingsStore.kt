@@ -20,18 +20,6 @@ object PrivateSettingsStore : MapSettingsStore(backupable = false) {
 		default = false
 	)
 
-	/**
-	 * That's the original setting key, only old users will have this one set to true
-	 * and therefore, they'll see the message in the welcome screen
-	 */
-	@SettingKey
-	val hasSeenWelcome = boolean(
-		title = R.string.has_seen_welcome_old,
-		description = R.string.has_seen_welcome_old_desc,
-		icon = R.drawable.timer,
-		default = false
-	)
-
 	@SettingKey
 	val hasInitialized =
 		boolean(

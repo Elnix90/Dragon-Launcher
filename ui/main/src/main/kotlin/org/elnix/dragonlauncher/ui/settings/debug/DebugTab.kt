@@ -40,7 +40,6 @@ import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.theme.AppObjectsColors
 import io.github.elnix90.shared.ui.base.animation.Icon
 import io.github.elnix90.shared.ui.base.animation.rememberAnimatedIcon
-import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.components.Spacer
 import io.github.elnix90.shared.ui.dragon.components.DragonButton
 import io.github.elnix90.shared.ui.dragon.components.DragonGroupScope
@@ -54,21 +53,17 @@ import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils
-import org.elnix.dragonlauncher.base.utils.VersionsUtils.BuildType
-import org.elnix.dragonlauncher.base.utils.VersionsUtils.getBuildType
 import org.elnix.dragonlauncher.base.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCurrentSignatures
 import org.elnix.dragonlauncher.ktx.hashSignature
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService
 import org.elnix.dragonlauncher.timer.OverlayReminderService
-import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dialogs.OverlayPermissionDialog
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -76,10 +71,7 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
 @SettingScreen(NavigationRoute.Debug::class)
 @Composable
-fun DebugTab(
-	viewModel: DebugTabViewModel,
-	securityViewModel: SecurityViewModel = activityViewModel()
-) {
+fun DebugTab(viewModel: DebugTabViewModel) {
 	val ctx = LocalContext.current
 	val focusManager = LocalFocusManager.current
 
@@ -122,11 +114,6 @@ fun DebugTab(
 			}
 
 			Setting(PrivateSettingsStore.hasSeenWelcomeScreen)
-			val signatureMatched by securityViewModel.signatureMatched.asState()
-			// The old has seen welcome toggle, only show when in signed debug version (only I should be able to have it)
-			if (ctx.getBuildType() == BuildType.debug && signatureMatched) {
-				Setting(PrivateSettingsStore.hasSeenWelcome)
-			}
 
 			Setting(DebugSettingsStore.forceAppLanguageSelector)
 			Setting(PrivateSettingsStore.hideBetaVersionWarning)
