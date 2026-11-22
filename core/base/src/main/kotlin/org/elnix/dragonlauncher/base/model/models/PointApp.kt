@@ -45,7 +45,7 @@ data class PointApp(
 	 */
 	override var cachedNormalizerResult: Pair<String, String>? = null
 
-	override suspend fun loadIcon(themed: Boolean, tint: Int?): Nothing? = null
+	override suspend fun loadIcon(themed: Boolean, tint: Int?, foregroundScale: Float?, backgroundScale: Float?): Nothing? = null
 
 	override fun getStoreDetails(ctx: Context): StoreLink? = null
 }

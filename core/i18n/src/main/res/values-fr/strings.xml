@@ -46,9 +46,9 @@
     <string name="test_colors">Tester les couleurs</string>
     <string name="exit_test_mode">Quitter le mode test</string>
     <string name="exit_test_mode_message">Voulez-vous enregistrer vos modifications de couleur ou les annuler ?</string>
-    <string name="dark_theme">Thème sombre</string>
-    <string name="amoled_theme">Thème AMOLED</string>
-    <string name="system_theme">Thème du système</string>
+    <string name="dark_theme">Sombre</string>
+    <string name="amoled_theme">AMOLED</string>
+    <string name="system_theme">Système</string>
     <string name="about">À propos</string>
     <string name="check_for_update">Vérifiez les mises à jour</string>
     <string name="source_code">Code source</string>
@@ -353,7 +353,7 @@
     <string name="icons_spacing_horizontal">icônes Espacement horizontal</string>
     <string name="depth">Profondeur</string>
     <string name="depth_desc">Combien de sous-nids sont dessinés au maximum</string>
-    <string name="custom_theme">Thème personnalisé</string>
+    <string name="custom_theme">Personnalisé</string>
     <string name="dynamic_colors">Couleurs dynamiques</string>
     <string name="dynamic_colors_desc">Utilisez des couleurs dynamiques Android pour vous offrir un schéma de couleurs dynamique</string>
     <string name="use_pure_black_background">Utilisez un fond noir pur</string>
@@ -811,6 +811,8 @@
     <string name="icons_tint">La teinte appliquée au icônes</string>
     <string name="only_tint_icon_packs">Teindre seulement les packs d\'icône</string>
     <string name="only_tint_icon_packs_desc">Les icônes teinds qui ne proviennent pas de packs d\'icons penvent être moches si ils n\'ont pas de fond transparent</string>
+    <string name="only_scale_icon_packs">Mettre à l\'échelle uniquement les packs d\'icônes</string>
+    <string name="only_scale_icon_packs_desc">Conserver l\'échelle normale des icônes. Désactivez pour appliquer ces échelles aussi aux icônes système et autres.</string>
     <string name="use_icon_tint">Utiliser la teinte des icônes</string>
     <string name="use_icon_tint_desc">Activer ou pas la teinte</string>
     <string name="no_profile_found">Aucun profile de ce type trouvé dans le téléphone</string>
@@ -844,7 +846,7 @@
     <string name="copy_to_clipboard">Copier dans le presse papier</string>
     <string name="import_from_clipboard">Importer depuis le presse papier</string>
     <string name="duplicate">Dupliquer</string>
-    <string name="flashbang_theme">Theme Flashbang</string>
+    <string name="flashbang_theme">Flashbang</string>
     <string name="line">Ligne</string>
     <string name="angle">Angle</string>
     <string name="start">Départ</string>
@@ -866,6 +868,10 @@
     <string name="render_foreground_desc">Afficher ou pas la partie avant des icônes</string>
     <string name="render_background">Afficher l\'arrière</string>
     <string name="render_background_desc">Afficher ou pas la partie arrière des icônes</string>
+    <string name="foreground_scale">Échelle de l\'avant</string>
+    <string name="foreground_scale_desc">Mettre à l\'échelle l\'avant de 0,1× à 3,0×.</string>
+    <string name="background_scale">Échelle de l\'arrière</string>
+    <string name="background_scale_desc">Mettre à l\'échelle l\'arrière de 0,1× à 3,0×.</string>
     <string name="icons_settings">Paramètres des icônes</string>
     <string name="drawer_label_color">Couleur du texte</string>
     <string name="drawer_label_color_desc">La couleur du texte des noms d\'apps dans le tiroir. Par défaut utilise la couleur onBackground</string>

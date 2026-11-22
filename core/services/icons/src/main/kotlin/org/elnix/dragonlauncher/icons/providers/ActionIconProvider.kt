@@ -19,7 +19,8 @@ import org.elnix.dragonlauncher.base.theme.ExtraColors
  */
 internal class ActionIconProvider(
 	private val ctx: Context,
-	private val extraColors: ExtraColors
+	private val extraColors: ExtraColors,
+	private val foregroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		when (action) {
@@ -47,7 +48,7 @@ internal class ActionIconProvider(
 		val foregroundLayer =
 			StaticIconLayer(
 				icon = drawable,
-				scale = 1f,
+				scale = foregroundScale ?: 1f,
 				tint = action.actionColor(extraColors).toArgb()
 			)
 

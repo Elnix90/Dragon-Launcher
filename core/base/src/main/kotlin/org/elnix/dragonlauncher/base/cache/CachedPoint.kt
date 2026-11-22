@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.TextLayoutResult
 import org.elnix.dragonlauncher.base.DragonCache
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 
 /**
  * Density-dependent drawing values cached per point.
@@ -19,6 +20,7 @@ import org.elnix.dragonlauncher.base.DragonCache
  * @property borderRadii effective radius of the border circle
  * @property iconSize size of the icon bounding box derived from [borderRadii]
  * @property imageBitmap the rendered icon bitmap, or null if the point has no icon
+ * @property iconShape per-icon shape override, or null to use the global icon shape
  */
 data class StablePointValues(
 	val sizePx: Float,
@@ -26,6 +28,7 @@ data class StablePointValues(
 	val borderRadii: Float,
 	val iconSize: Size,
 	val imageBitmap: ImageBitmap?,
+	val iconShape: IconShape?,
 	val badgeBitmap: ImageBitmap?
 )
 

@@ -48,9 +48,9 @@
     <string name="test_colors">اختبار الألوان</string>
     <string name="exit_test_mode">الخروج من وضع الاختبار</string>
     <string name="exit_test_mode_message">هل تريد حفظ تغييرات الألوان أم تجاهلها؟</string>
-    <string name="dark_theme">المظهر الداكن</string>
-    <string name="amoled_theme">مظهر AMOLED</string>
-    <string name="system_theme">مظهر النظام</string>
+    <string name="dark_theme">الداكن</string>
+    <string name="amoled_theme">AMOLED</string>
+    <string name="system_theme">النظام</string>
     <string name="about">حول</string>
     <string name="check_for_update">التحقق من وجود تحديثات</string>
     <string name="source_code">الكود المصدري</string>
@@ -431,7 +431,7 @@
     <string name="icons_spacing_horizontal">تباعد الأيقونات الأفقي</string>
     <string name="depth">العمق</string>
     <string name="depth_desc">كم عدد الأعشاش الفرعية التي يتم رسمها كحد أقصى</string>
-    <string name="custom_theme">سمة مخصصة</string>
+    <string name="custom_theme">مخصصة</string>
     <string name="dynamic_colors">ألوان ديناميكية</string>
     <string name="dynamic_colors_desc">استخدام ألوان أندرويد الديناميكية لتوفير نظام ألوان متغير</string>
     <string name="use_pure_black_background">استخدام خلفية سوداء خالصة</string>

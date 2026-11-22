@@ -26,6 +26,7 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.withTranslation
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
+import org.elnix.dragonlauncher.base.cache.StablePointValues
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
@@ -89,7 +90,8 @@ fun DrawScope.PointIcon(
 	depth: Int,
 	center: Offset,
 	selected: Boolean,
-	drawParams: DrawParams
+	drawParams: DrawParams,
+	stableValues: StablePointValues? = null
 ) {
 	require(depth > 0)
 
@@ -124,7 +126,8 @@ fun DrawScope.PointIcon(
 			depth = depth,
 			selected = selected,
 			center = center,
-			drawParams = drawParams
+			drawParams = drawParams,
+			stableValues = stableValues
 		)
 	}
 }

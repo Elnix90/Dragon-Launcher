@@ -8,7 +8,9 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomTextIcon
 
 internal class CustomTextIconProvider(
-	private val customIcon: CustomTextIcon
+	private val customIcon: CustomTextIcon,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(
 		action: Action,
@@ -18,11 +20,13 @@ internal class CustomTextIconProvider(
 			foregroundLayer =
 				TextLayer(
 					text = customIcon.text,
-					tint = customIcon.color
+					tint = customIcon.color,
+					scale = foregroundScale ?: 1f
 				),
 			backgroundLayer =
 				ColorLayer(
-					tint = customIcon.color
+					tint = customIcon.color,
+					scale = backgroundScale ?: 1f
 				)
 		)
 }

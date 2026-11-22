@@ -5,6 +5,7 @@ import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.color
+import io.github.elnix90.core.objects.float
 import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
@@ -45,6 +46,15 @@ object IconsSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val onlyScaleIconPacks =
+		boolean(
+			title = R.string.only_scale_icon_packs,
+			description = R.string.only_scale_icon_packs_desc,
+			icon = R.drawable.apps,
+			default = true
+		)
+
+	@SettingKey
 	val renderForeground =
 		boolean(
 			title = R.string.render_foreground,
@@ -60,6 +70,26 @@ object IconsSettingsStore : MapSettingsStore() {
 			description = R.string.render_background_desc,
 			icon = R.drawable.wallpaper,
 			default = true
+		)
+
+	@SettingKey
+	val foregroundScale =
+		float(
+			title = R.string.foreground_scale,
+			description = R.string.foreground_scale_desc,
+			icon = R.drawable.wallpaper,
+			default = 1.5f,
+			allowedRange = 0.1f..3f
+		)
+
+	@SettingKey
+	val backgroundScale =
+		float(
+			title = R.string.background_scale,
+			description = R.string.background_scale_desc,
+			icon = R.drawable.wallpaper,
+			default = foregroundScale.default,
+			allowedRange = 0.1f..3f
 		)
 
 	@SettingKey

@@ -1,15 +1,11 @@
 package org.elnix.dragonlauncher.ui.welcome
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.github.elnix90.annotations.SettingScreen
@@ -26,104 +22,81 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.permissionsManager
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
-import org.elnix.dragonlauncher.ui.wellbeing.FloatingParticles
+import org.elnix.dragonlauncher.ui.settings.colors.AppThemePicker
 
 @SettingScreen(NavigationRoute.Welcome::class)
 @Composable
-fun WelcomePageSettings(
-	onEnterSettings: () -> Unit
-) {
+fun WelcomePageSettings() {
 	val ctx = LocalContext.current
 
-	Box {
-		FloatingParticles()
+	WelcomePagerHeader {
+		DragonSettingsGroup(
+			title = R.string.set_default_launcher,
+			icon = R.drawable.rocket_launch
+		) {
+			val isDefaultLauncher by rememberIsDefaultLauncher()
 
-		WelcomePagerHeader {
-			Spacer()
-
-			DragonSettingsGroup(
-				title = R.string.set_default_launcher,
-				icon = R.drawable.rocket_launch
+			DragonButton(
+				enabled = !isDefaultLauncher,
+				onClick = {
+					ctx.permissionsManager.requestPermission(PermissionGroup.DefaultLauncher)
+				}
 			) {
-				val isDefaultLauncher by rememberIsDefaultLauncher()
-
-				DragonButton(
-					enabled = !isDefaultLauncher,
-					onClick = {
-						ctx.permissionsManager.requestPermission(PermissionGroup.DefaultLauncher)
+				Text(
+					text = if (isDefaultLauncher) {
+						stringResource(R.string.already_default_launcher)
+					} else {
+						stringResource(R.string.open_default_launcher_settings)
 					}
-				) {
-					Text(
-						text = if (isDefaultLauncher) {
-							stringResource(R.string.already_default_launcher)
+				)
+			}
+		}
+
+		Spacer(60.dp)
+
+		DragonSettingsGroup(
+			title = R.string.backup,
+			icon = R.drawable.cloud_upload
+		) {
+			val scope = rememberCoroutineScope()
+
+			Setting(BackupSettingsStore.autoBackupEnabled) {
+				// If the user disabled the backup, also remove the uri
+				if (!it) {
+					scope.launch {
+						BackupSettingsStore.autoBackupUri.reset(ctx)
+					}
+				}
+			}
+
+			val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
+			val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
+			val autoBackupUri = autoBackupUriString?.toUri()
+
+			val autoBackupLauncher = rememberAutoBackupLauncher()
+
+			DragonButton(
+				enabled = autoBackupEnabled,
+				onClick = {
+					autoBackupLauncher.launch("dragonlauncher-auto-backup.json")
+				}
+			) {
+				Text(
+					text =
+						if (autoBackupUri != null) {
+							stringResource(R.string.choose_a_auto_backup_file)
 						} else {
 							stringResource(R.string.open_default_launcher_settings)
 						}
-					)
-				}
+				)
 			}
-
-			Spacer(60.dp)
-
-			DragonSettingsGroup(
-				title = R.string.backup,
-				icon = R.drawable.cloud_upload
-			) {
-				val scope = rememberCoroutineScope()
-
-				Setting(BackupSettingsStore.autoBackupEnabled) {
-					// If the user disabled the backup, also remove the uri
-					if (!it) {
-						scope.launch {
-							BackupSettingsStore.autoBackupUri.reset(ctx)
-						}
-					}
-				}
-
-				val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
-				val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
-				val autoBackupUri = autoBackupUriString?.toUri()
-
-				val autoBackupLauncher = rememberAutoBackupLauncher()
-
-				DragonButton(
-					enabled = autoBackupEnabled,
-					onClick = {
-						autoBackupLauncher.launch("dragonlauncher-auto-backup.json")
-					}
-				) {
-					Text(
-						text =
-							if (autoBackupUri != null) {
-								stringResource(R.string.choose_a_auto_backup_file)
-							} else {
-								stringResource(R.string.open_default_launcher_settings)
-							}
-					)
-				}
-			}
-
-			Spacer(60.dp)
-			DragonSettingsGroup(
-				title = R.string.start_your_journey,
-				icon = R.drawable.check
-			) {
-				DragonButton(
-					onClick = onEnterSettings
-				) {
-					Text(stringResource(R.string.customize_apps))
-				}
-			}
-
-			Spacer()
-
-			Text(
-				text = stringResource(R.string.swipe_up_to_start_using_directly),
-				color = MaterialTheme.colorScheme.onBackground.copy(0.5f),
-				textDecoration = TextDecoration.Underline,
-				textAlign = TextAlign.Center
-			)
 		}
+
+		Spacer(60.dp)
+
+		val defaultTheme by ColorModesSettingsStore.defaultTheme.asStateNull()
+		AppThemePicker(R.string.theme, defaultTheme)
 	}
 }

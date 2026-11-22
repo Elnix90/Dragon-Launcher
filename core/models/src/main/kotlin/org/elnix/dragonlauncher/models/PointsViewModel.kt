@@ -251,6 +251,7 @@ class PointsViewModel
 					borderRadii = borderRadii,
 					iconSize = Size(borderRadii * 2f, borderRadii * 2f),
 					imageBitmap = imageBitmap,
+					iconShape = (icon as? StaticLauncherIcon)?.properties?.shape,
 					badgeBitmap = badgeBitmap
 				)
 			}

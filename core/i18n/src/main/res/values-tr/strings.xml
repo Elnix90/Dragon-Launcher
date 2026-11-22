@@ -87,9 +87,9 @@
     <string name="test_colors">Test Renkleri</string>
     <string name="exit_test_mode">Test Modundan Çık</string>
     <string name="exit_test_mode_message">Renk değişimlerini saklamak mı atmak mı istiyorsun?</string>
-    <string name="dark_theme">Karanlık Tema</string>
-    <string name="amoled_theme">AMOLED Tema</string>
-    <string name="system_theme">Sistem Teması</string>
+    <string name="dark_theme">Karanlık</string>
+    <string name="amoled_theme">AMOLED</string>
+    <string name="system_theme">Sistem</string>
     <string name="close">Kapat</string>
     <string name="dragging_distance_selection">Sürükleme Uzaklığı Seçimi</string>
     <string name="cancel_zone">Alan Sürüklemeyi İptal Etme</string>
@@ -394,7 +394,7 @@
     <string name="icons_spacing_horizontal">İkonlar arası çapraz boşluk</string>
     <string name="depth">Derinlik</string>
     <string name="depth_desc">En fazla kaç alt yuva çizilir/gösterilir</string>
-    <string name="custom_theme">Özel Tema</string>
+    <string name="custom_theme">Özel</string>
     <string name="dynamic_colors">Dinamik Renkler</string>
     <string name="dynamic_colors_desc">Dinamik renk şeması sağlamak için Android\'in dinamik renklerini kullan</string>
     <string name="use_pure_black_background">Saf siyah arka plan kullan</string>

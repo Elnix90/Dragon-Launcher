@@ -10,5 +10,8 @@ data class IconSettings(
 	val adaptify: Boolean = false,
 	val onlyTintIconPacks: Boolean = true,
 	val renderForeground: Boolean = true,
-	val renderBackground: Boolean = true
+	val renderBackground: Boolean = true,
+	val foregroundScale: Float,
+	val backgroundScale: Float,
+	val onlyScaleIconPacks: Boolean = true
 )

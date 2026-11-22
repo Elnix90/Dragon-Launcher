@@ -56,9 +56,9 @@
     <string name="test_colors">色をテスト</string>
     <string name="exit_test_mode">テストモードを終了</string>
     <string name="exit_test_mode_message">色の変更を保存しますか、それとも破棄しますか？</string>
-    <string name="dark_theme">ダークテーマ</string>
-    <string name="amoled_theme">AMOLEDテーマ</string>
-    <string name="system_theme">システムテーマ</string>
+    <string name="dark_theme">ダーク</string>
+    <string name="amoled_theme">AMOLED</string>
+    <string name="system_theme">システム</string>
     <string name="about">アプリに関して</string>
     <string name="check_for_update">最新情報の確認</string>
     <string name="source_code">ソースコード</string>
@@ -416,7 +416,7 @@
     <string name="icons_spacing_horizontal">アプリ間の横のスペース</string>
     <string name="depth">深さ</string>
     <string name="depth_desc">最大でどれくらいのサブネストを描画するか</string>
-    <string name="custom_theme">カスタムテーマ</string>
+    <string name="custom_theme">カスタム</string>
     <string name="dynamic_colors">ダイナミックカラー</string>
     <string name="dynamic_colors_desc">ダイナミックカラーの設定にAndroidのダイナミックカラーを使用する</string>
     <string name="use_pure_black_background">純粋な黒を背景に使用する</string>
@@ -815,6 +815,8 @@
     <string name="icons_tint">アイコンに適用される色合い</string>
     <string name="only_tint_icon_packs">アイコンパックに対してのみ色合いを適用</string>
     <string name="only_tint_icon_packs_desc">アイコンパックのないアプリアイコンの色合い変更は、透明レイヤーがない場合、見栄えが悪くなることがあります</string>
+    <string name="only_scale_icon_packs">アイコンパックのみを拡大縮小</string>
+    <string name="only_scale_icon_packs_desc">通常のアイコンのスケールを維持します。オフにするとシステムなど他のアイコンにも適用します。</string>
     <string name="use_icon_tint">アイコンの色合いを使用</string>
     <string name="use_icon_tint_desc">アイコンの色合いを有効にするか</string>
     <string name="no_profile_found">スマホにプロファイルが見つかりませんでした</string>
@@ -892,7 +894,7 @@
     <string name="copy_to_clipboard">クリップボードにコピー</string>
     <string name="import_from_clipboard">クリップボードからインポート</string>
     <string name="duplicate">複製</string>
-    <string name="flashbang_theme">閃 光 テ ー マ</string>
+    <string name="flashbang_theme">閃光</string>
     <string name="line">ライン</string>
     <string name="angle">角度</string>
     <string name="start">開始</string>
@@ -915,6 +917,10 @@
     <string name="render_foreground_desc">アイコンの前景を描画するか</string>
     <string name="render_background">背景を描画</string>
     <string name="render_background_desc">アイコンの背景を描画するか</string>
+    <string name="foreground_scale">前景スケール</string>
+    <string name="foreground_scale_desc">前景レイヤーを0.1倍から3.0倍に拡大します。</string>
+    <string name="background_scale">背景スケール</string>
+    <string name="background_scale_desc">背景レイヤーを0.1倍から3.0倍に拡大します。</string>
     <string name="icons_settings">アイコン設定</string>
     <string name="drawer_label_color">ラベル色</string>
     <string name="drawer_label_color_desc">ドロワー内のアプリ名の色。デフォルトでは「背景上の文字色」が使用されます</string>
@@ -989,7 +995,6 @@
     <string name="pulsing_radius_desc">ホールドが脈動する際の大きさ</string>
     <string name="pulsing_duration">脈動タイム</string>
     <string name="pulsing_duration_desc">1回の脈動あたりの所要時間 (ミリ秒)</string>
-    <string name="start_your_journey">旅を始めよう</string>
     <string name="customize_hold_settings">ホールド設定のカスタマイズ</string>
     <string name="customize_angle_line">角度線のカスタマイズ</string>
     <string name="share_your_config_in_the_discord">Discordで設定を共有しましょう！</string>

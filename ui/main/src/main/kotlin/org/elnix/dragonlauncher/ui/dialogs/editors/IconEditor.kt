@@ -117,7 +117,7 @@ private fun IconEditorImpl(
 	var previewIcon by remember(application) { mutableStateOf<LauncherIcon?>(null) }
 	val previewSizePx = with(LocalDensity.current) { iconSize.toPx() }.toInt()
 
-	LaunchedEffect(editIcon, editProperties) {
+	LaunchedEffect(application, editIcon, editProperties, previewSizePx) {
 		previewIcon = resolvePreview(previewSizePx, editIcon, editProperties)
 	}
 

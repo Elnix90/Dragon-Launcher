@@ -20,7 +20,9 @@ internal class ShortcutIconProvider(
 	private val ctx: Context,
 	private val shortcutRepository: AppShortcutRepository,
 	private val themed: Boolean,
-	private val tint: Int?
+	private val tint: Int?,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		if (action !is Action.LaunchShortcut) return null
@@ -48,11 +50,11 @@ internal class ShortcutIconProvider(
 				return StaticLauncherIcon(
 					foregroundLayer =
 						StaticIconLayer(
-							scale = 1f,
+							scale = foregroundScale ?: 1f,
 							icon = icon.monochrome!!,
 							tint = tint
 						),
-					backgroundLayer = ColorLayer()
+					backgroundLayer = ColorLayer(scale = backgroundScale ?: 1f)
 				)
 			}
 			return StaticLauncherIcon(
@@ -60,7 +62,7 @@ internal class ShortcutIconProvider(
 					icon.foreground?.let {
 						StaticIconLayer(
 							icon = it,
-							scale = 1.5f,
+							scale = foregroundScale ?: 1.5f,
 							tint = tint
 						)
 					} ?: TransparentLayer,
@@ -68,7 +70,7 @@ internal class ShortcutIconProvider(
 					icon.background?.let {
 						StaticIconLayer(
 							icon = it,
-							scale = 1.5f,
+							scale = backgroundScale ?: 1.5f,
 							tint = tint
 						)
 					} ?: TransparentLayer
@@ -78,7 +80,7 @@ internal class ShortcutIconProvider(
 			foregroundLayer =
 				StaticIconLayer(
 					icon = icon,
-					scale = 1f,
+					scale = foregroundScale ?: 1f,
 					tint = tint
 				),
 			backgroundLayer = TransparentLayer

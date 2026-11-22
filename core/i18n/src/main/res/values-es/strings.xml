@@ -45,9 +45,9 @@
     <string name="test_colors">Probar Colores</string>
     <string name="exit_test_mode">Salir del Modo de Prueba</string>
     <string name="exit_test_mode_message">¿Quieres guardar tus cambios de color o descartarlos?</string>
-    <string name="dark_theme">Tema oscuro</string>
-    <string name="amoled_theme">Tema AMOLED</string>
-    <string name="system_theme">Tema del Sistema</string>
+    <string name="dark_theme">Oscuro</string>
+    <string name="amoled_theme">AMOLED</string>
+    <string name="system_theme">Sistema</string>
     <string name="about">Acerca de</string>
     <string name="check_for_update">Comprueba las actualizaciones</string>
     <string name="source_code">Código fuente</string>
@@ -342,7 +342,7 @@
     <string name="icons_spacing_horizontal">iconos Espaciado horizontal</string>
     <string name="depth">Profundidad</string>
     <string name="depth_desc">¿Cuántos sub‐nidos se dibujan al máximo?</string>
-    <string name="custom_theme">Tema personalizado</string>
+    <string name="custom_theme">Personalizado</string>
     <string name="dynamic_colors">Colores dinámicos</string>
     <string name="dynamic_colors_desc">Utilice colores dinámicos de Android para proporcionarle una combinación de colores dinámicos</string>
     <string name="use_pure_black_background">Utilice fondo negro puro</string>

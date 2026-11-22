@@ -46,9 +46,9 @@
     <string name="test_colors">Проверить цвета</string>
     <string name="exit_test_mode">Выйти из режима проверки</string>
     <string name="exit_test_mode_message">Сохранить изменения цветов или отменить их?</string>
-    <string name="dark_theme">Тёмная тема</string>
-    <string name="amoled_theme">Тема AMOLED</string>
-    <string name="system_theme">Системная тема</string>
+    <string name="dark_theme">Тёмная</string>
+    <string name="amoled_theme">AMOLED</string>
+    <string name="system_theme">Системная</string>
     <string name="about">О приложении</string>
     <string name="check_for_update">Проверить обновления</string>
     <string name="source_code">Исходный код</string>
@@ -366,7 +366,7 @@
     <string name="icons_spacing_horizontal">Интервал значков по горизонтали</string>
     <string name="depth">Глубина</string>
     <string name="depth_desc">Максимальное число отображаемых уровней вложенных гнёзд</string>
-    <string name="custom_theme">Своя тема</string>
+    <string name="custom_theme">Своя</string>
     <string name="dynamic_colors">Динамические цвета</string>
     <string name="dynamic_colors_desc">Использовать динамические цвета Android для цветовой схемы</string>
     <string name="use_pure_black_background">Чисто чёрный фон</string>
@@ -838,6 +838,8 @@
     <string name="icons_tint">Оттенок, применяемый к значкам</string>
     <string name="only_tint_icon_packs">Окрашивать только наборы значков</string>
     <string name="only_tint_icon_packs_desc">Окрашенные значки без набора могут выглядеть некрасиво, если у них нет прозрачного слоя</string>
+    <string name="only_scale_icon_packs">Масштабировать только паки значков</string>
+    <string name="only_scale_icon_packs_desc">Сохранить исходный масштаб обычных значков. Отключите, чтобы применить масштаб также к системным и другим значкам.</string>
     <string name="use_icon_tint">Окрашивать значки</string>
     <string name="use_icon_tint_desc">Включить ли оттенок значков</string>
     <string name="no_profile_found">На телефоне не найдено профилей</string>
@@ -918,7 +920,7 @@
     <string name="copy_to_clipboard">Копировать в буфер обмена</string>
     <string name="import_from_clipboard">Импорт из буфера обмена</string>
     <string name="duplicate">Дублировать</string>
-    <string name="flashbang_theme">Тема «Светошумовая»</string>
+    <string name="flashbang_theme">Светошумовая</string>
     <string name="line">Линия</string>
     <string name="angle">Угол</string>
     <string name="start">Начало</string>
@@ -944,6 +946,10 @@
     <string name="render_foreground_desc">Отрисовывать ли передний слой значков</string>
     <string name="render_background">Отрисовывать фон</string>
     <string name="render_background_desc">Отрисовывать ли фоновый слой значков</string>
+    <string name="foreground_scale">Масштаб переднего слоя</string>
+    <string name="foreground_scale_desc">Масштаб переднего слоя от 0,1× до 3,0×.</string>
+    <string name="background_scale">Масштаб фонового слоя</string>
+    <string name="background_scale_desc">Масштаб фонового слоя от 0,1× до 3,0×.</string>
     <string name="icons_settings">Настройки значков</string>
     <string name="drawer_label_color">Цвет названий</string>
     <string name="drawer_label_color_desc">Цвет названий приложений в меню. По умолчанию - цвет onBackground</string>
@@ -989,7 +995,6 @@
     <string name="pulsing_radius_desc">Амплитуда «дыхания» дуги удержания</string>
     <string name="pulsing_duration">Длительность пульсации</string>
     <string name="pulsing_duration_desc">Сколько длится один импульс</string>
-    <string name="start_your_journey">Начните своё путешествие</string>
     <string name="customize_hold_settings">Настроить удержание</string>
     <string name="customize_angle_line">Настроить линию угла</string>
     <string name="share_your_config_in_the_discord">Поделитесь своей конфигурацией в Discord!</string>

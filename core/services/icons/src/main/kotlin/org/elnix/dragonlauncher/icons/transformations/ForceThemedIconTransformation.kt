@@ -6,11 +6,13 @@ import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
 
-internal class ForceThemedIconTransformation : LauncherIconTransformation {
+internal class ForceThemedIconTransformation(
+	private val backgroundScale: Float?
+) : LauncherIconTransformation {
 	override suspend fun transform(icon: StaticLauncherIcon): StaticLauncherIcon =
 		StaticLauncherIcon(
 			foregroundLayer = asThemed(icon.foregroundLayer),
-			backgroundLayer = ColorLayer(0)
+			backgroundLayer = ColorLayer(0, scale = backgroundScale ?: 1f)
 		)
 
 	private fun asThemed(layer: LauncherIconLayer): LauncherIconLayer =

@@ -34,7 +34,7 @@ class IconsViewModel
 			iconSettingsRepository.settings.stateIn(
 				viewModelScope,
 				SharingStarted.Eagerly,
-				IconSettings()
+				iconSettingsRepository.defaultSettings
 			)
 
 		fun getIconPickerVM(application: Application): IconPickerVM =

@@ -79,7 +79,6 @@ fun ShapedLauncherIcon(
 
 	val icon = icon()
 	val drawerSettings = LocalDrawerSettings.current
-	val shape = drawerSettings.iconShape.resolveShape()
 
 	var currentIcon by remember(icon) {
 		mutableStateOf(
@@ -90,10 +89,11 @@ fun ShapedLauncherIcon(
 			}
 		)
 	}
+	val shape = (currentIcon?.properties?.shape ?: drawerSettings.iconShape).resolveShape()
 
 	val iconSettings = drawerSettings.iconSettings
 
-	var currentBitmap by remember {
+	var currentBitmap by remember(currentIcon, iconSettings, sizePxInt) {
 		mutableStateOf(currentIcon?.getCachedBitmap(sizePxInt, iconSettings))
 	}
 
@@ -159,7 +159,8 @@ fun ShapedLauncherIcon(
 							text = fg.text,
 							style =
 								MaterialTheme.typography.headlineSmall.copy(
-									fontSize = 20.sp * (size / 48.dp)
+									fontSize = 20.sp * (size / 48.dp) *
+										fg.scale
 								),
 							color = Color(fg.tint ?: 0)
 						)
@@ -170,7 +171,7 @@ fun ShapedLauncherIcon(
 							painter = painterResource(fg.icon),
 							contentDescription = null,
 							tint = Color(fg.tint ?: 0),
-							modifier = Modifier.size(size / 2f)
+							modifier = Modifier.size(size * fg.scale / 2f)
 						)
 					}
 

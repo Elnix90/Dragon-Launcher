@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -194,50 +194,6 @@ fun ColorSelectorTab() {
 
 	val ctx = LocalContext.current
 
-	val soundPool =
-		remember {
-			SoundPool
-				.Builder()
-				.setMaxStreams(1)
-				.setAudioAttributes(
-					AudioAttributes
-						.Builder()
-						.setUsage(AudioAttributes.USAGE_MEDIA)
-						.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-						.build()
-				).build()
-		}
-	var flashbangLSoundLoaded by remember { mutableStateOf(false) }
-	val flashbangSoundId = remember { soundPool.load(ctx, R.raw.flashbang, 1) }
-
-	DisposableEffect(Unit) {
-		soundPool.setOnLoadCompleteListener { _, sampleId, status ->
-			if (status == 0) {
-				if (sampleId == flashbangSoundId) flashbangLSoundLoaded = true
-			}
-		}
-
-		onDispose { soundPool.release() }
-	}
-
-	LaunchedEffect(defaultTheme) {
-		if (defaultTheme == Light) {
-			val audioManager =
-				ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-			val maxVolume =
-				audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-
-			audioManager.setStreamVolume(
-				AudioManager.STREAM_MUSIC,
-				maxVolume / 2,
-				0
-			)
-
-			soundPool.play(flashbangSoundId, 1f, 1f, 1, 0, 1f)
-		}
-	}
-
 	SettingsScaffold(
 		title = stringResource(R.string.color_selector),
 		helpText = stringResource(R.string.color_selector_text),
@@ -296,121 +252,7 @@ fun ColorSelectorTab() {
 			description = R.string.theme_desc,
 			icon = R.drawable.opacity
 		) {
-			DragonSettingsGroup(title) {
-				Row(
-					modifier =
-						Modifier
-							.dragonSettingGroup(),
-					horizontalArrangement = Arrangement.SpaceEvenly
-				) {
-					DefaultThemes.entries.filter { it != Amoled }.forEach {
-						val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
-
-						Column(
-							modifier =
-								Modifier
-									.weight(1f)
-									.fillMaxHeight()
-									.clip(MaterialTheme.shapes.large)
-									.conditional(selected) {
-										background(MaterialTheme.colorScheme.surfaceDim)
-									}.clickable {
-										scope.launch {
-											ColorModesSettingsStore.defaultTheme.set(ctx, it)
-										}
-									}.padding(5.dp),
-							horizontalAlignment = Alignment.CenterHorizontally
-						) {
-							val background =
-								when (it) {
-									Amoled -> {
-										null
-									}
-
-									Dark -> {
-										if (defaultTheme == Amoled) {
-											Color.Black
-										} else {
-											Color.DarkGray
-										}
-									}
-
-									Light -> {
-										Color.White
-									}
-
-									System -> {
-										Brush.horizontalGradient(
-											colors =
-												listOf(
-													Color.White,
-													Color.Black
-												)
-										)
-									}
-
-									Custom -> {
-										Brush.linearGradient(
-											colors =
-												listOf(
-													Color.Red,
-													Color.Yellow,
-													Color.Green,
-													Color.Cyan,
-													Color.Blue,
-													Color.Magenta
-												)
-										)
-									}
-								}
-
-							// I like this simple animation I made, I think I've changed my mind about animations
-							val shapeCorners by animateIntAsState(
-								targetValue = if (selected) 12 else 50,
-								animationSpec = bouncySpec()
-							)
-
-							val scale by animateFloatAsState(
-								targetValue = if (selected) 1.2f else 1f,
-								animationSpec = bouncySpec()
-							)
-
-							val boxShape = RoundedCornerShape(shapeCorners)
-
-							if (background != null) {
-								Box((Modifier.scale(scale))) {
-									Box(
-										modifier =
-											Modifier
-												.size(40.dp)
-												.clip(boxShape)
-												.then(
-													when (background) {
-														is Color -> Modifier.background(background)
-														is Brush -> Modifier.background(background)
-														else -> Modifier
-													}
-												).border(
-													1.dp,
-													MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-													boxShape
-												)
-									)
-								}
-							}
-
-							Spacer(5.dp)
-
-							Text(
-								text = stringResource(it.resId),
-								color = MaterialTheme.colorScheme.onSurface,
-								style = MaterialTheme.typography.labelSmall,
-								textAlign = TextAlign.Center
-							)
-						}
-					}
-				}
-			}
+			AppThemePicker(title, defaultTheme)
 		}
 
 		DragonSettingsGroup(R.string.special_options) {
@@ -709,4 +551,171 @@ private fun RowScope.PaletteColor(color: Color) {
 				.fillMaxSize()
 				.background(color)
 	)
+}
+
+@Composable
+fun AppThemePicker(
+	@StringRes title: Int,
+	defaultTheme: DefaultThemes?
+) {
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+
+	val soundPool =
+		remember {
+			SoundPool
+				.Builder()
+				.setMaxStreams(1)
+				.setAudioAttributes(
+					AudioAttributes
+						.Builder()
+						.setUsage(AudioAttributes.USAGE_MEDIA)
+						.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+						.build()
+				).build()
+		}
+
+	var flashBangSoundLoaded by remember { mutableStateOf(false) }
+	val flashBangSoundId = remember { soundPool.load(ctx, R.raw.flashbang, 1) }
+
+	DisposableEffect(Unit) {
+		soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+			if (status == 0) {
+				if (sampleId == flashBangSoundId) flashBangSoundLoaded = true
+			}
+		}
+
+		onDispose { soundPool.release() }
+	}
+
+	LaunchedEffect(defaultTheme) {
+		if (defaultTheme == Light) {
+			val audioManager =
+				ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+			val maxVolume =
+				audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+
+			audioManager.setStreamVolume(
+				AudioManager.STREAM_MUSIC,
+				maxVolume / 2,
+				0
+			)
+
+			soundPool.play(flashBangSoundId, 1f, 1f, 1, 0, 1f)
+		}
+	}
+
+	DragonSettingsGroup(title) {
+		Row(
+			modifier = Modifier.dragonSettingGroup(),
+			horizontalArrangement = Arrangement.SpaceEvenly
+		) {
+			DefaultThemes.entries.filter { it != Amoled }.forEach {
+				val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
+
+				Column(
+					modifier =
+						Modifier
+							.weight(1f)
+							.clip(MaterialTheme.shapes.large)
+							.conditional(selected) {
+								background(MaterialTheme.colorScheme.surfaceDim)
+							}.clickable {
+								scope.launch {
+									ColorModesSettingsStore.defaultTheme.set(ctx, it)
+								}
+							}.padding(5.dp),
+					horizontalAlignment = Alignment.CenterHorizontally
+				) {
+					val background =
+						when (it) {
+							Amoled -> {
+								null
+							}
+
+							Dark -> {
+								if (defaultTheme == Amoled) {
+									Color.Black
+								} else {
+									Color.DarkGray
+								}
+							}
+
+							Light -> {
+								Color.White
+							}
+
+							System -> {
+								Brush.horizontalGradient(
+									colors =
+										listOf(
+											Color.White,
+											Color.Black
+										)
+								)
+							}
+
+							Custom -> {
+								Brush.linearGradient(
+									colors =
+										listOf(
+											Color.Red,
+											Color.Yellow,
+											Color.Green,
+											Color.Cyan,
+											Color.Blue,
+											Color.Magenta
+										)
+								)
+							}
+						}
+
+					// I like this simple animation I made, I think I've changed my mind about animations
+					val shapeCorners by animateIntAsState(
+						targetValue = if (selected) 12 else 50,
+						animationSpec = bouncySpec()
+					)
+
+					val scale by animateFloatAsState(
+						targetValue = if (selected) 1.2f else 1f,
+						animationSpec = bouncySpec()
+					)
+
+					val boxShape = RoundedCornerShape(shapeCorners)
+
+					if (background != null) {
+						Box((Modifier.scale(scale))) {
+							Box(
+								modifier =
+									Modifier
+										.size(40.dp)
+										.clip(boxShape)
+										.then(
+											when (background) {
+												is Color -> Modifier.background(background)
+												is Brush -> Modifier.background(background)
+												else -> Modifier
+											}
+										).border(
+											1.dp,
+											MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+											boxShape
+										)
+							)
+						}
+					}
+
+					Spacer(5.dp)
+
+					Text(
+						text = stringResource(it.resId),
+						color = MaterialTheme.colorScheme.onSurface,
+						style = MaterialTheme.typography.labelSmall,
+						textAlign = TextAlign.Center
+					)
+				}
+			}
+		}
+	}
 }
