@@ -189,7 +189,8 @@ private fun DrawScope.angleObject(
 			lineStrokeWidth = angleLineCustomObject.stroke,
 			glow = angleLineCustomObject.glow,
 			erase = angleLineCustomObject.eraseBackground,
-			eraseColor = eraseColor
+			eraseColor = eraseColor,
+			cacheGlow = false
 		)
 	}
 }

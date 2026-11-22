@@ -165,7 +165,8 @@ fun HoldToActivateArc(
 							lineStrokeWidth = customObject.stroke,
 							glow = customObject.glow,
 							erase = false,
-							eraseColor = null
+							eraseColor = null,
+							cacheGlow = false
 						)
 					}
 

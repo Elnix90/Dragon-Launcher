@@ -43,7 +43,8 @@ fun DrawScope.customObject(
 			lineStrokeWidth = customObject.stroke,
 			glow = customObject.glow,
 			erase = customObject.eraseBackground,
-			eraseColor = eraseColor
+			eraseColor = eraseColor,
+			cacheGlow = false
 		)
 	}
 }
