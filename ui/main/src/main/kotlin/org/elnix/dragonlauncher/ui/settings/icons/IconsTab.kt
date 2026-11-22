@@ -93,9 +93,16 @@ fun IconsTab(
 		// because of the icons in top content
 		Spacer(30.dp)
 
-		DragonSettingsGroup(R.string.colors_and_icons) {
-			Setting(IconsSettingsStore.useIconTint)
+		val renderForeground by IconsSettingsStore.renderForeground.asState()
+		val renderBackground by IconsSettingsStore.renderBackground.asState()
 
+		DragonSettingsGroup(R.string.render) {
+			Setting(IconsSettingsStore.renderForeground)
+			Setting(IconsSettingsStore.renderBackground)
+		}
+
+		DragonSettingsGroup(R.string.tint) {
+			Setting(IconsSettingsStore.useIconTint)
 			val useIconTint by IconsSettingsStore.useIconTint.asState()
 			Setting(IconsSettingsStore.onlyTintIconPack, enabled = useIconTint) {
 				iconsViewModel.reinstallAllIconPacks()
@@ -103,53 +110,54 @@ fun IconsTab(
 			Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
 				iconsViewModel.reinstallAllIconPacks()
 			}
+		}
+		DragonSettingsGroup(R.string.scale) {
+			Setting(IconsSettingsStore.onlyScaleIconPacks)
+			Setting(IconsSettingsStore.foregroundScale, enabled = renderForeground)
+			Setting(IconsSettingsStore.backgroundScale, enabled = renderBackground)
+		}
 
-			Setting(IconsSettingsStore.renderForeground)
-			Setting(IconsSettingsStore.renderBackground)
-
+		DragonSettingsGroup(R.string.special_options) {
 			Setting(IconsSettingsStore.themedIcons)
-
 			val themedIcons by IconsSettingsStore.themedIcons.asState()
 			Setting(IconsSettingsStore.forceThemed, enabled = themedIcons)
-
 			Setting(IconsSettingsStore.adaptify)
-
 			DrawerIconShapePicker()
 		}
 
-		Row(
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.spacedBy(16.dp),
-			modifier = Modifier.padding(vertical = 8.dp)
-		) {
-			Text(
-				text = stringResource(R.string.icon_packs_found, packs.size),
-				style = MaterialTheme.typography.bodyLargeEmphasized
-			)
+		DragonSettingsGroup(R.string.icon_packs) {
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(16.dp),
+				modifier = Modifier.dragonSettingGroup()
+			) {
+				var isLoading by remember { mutableStateOf(false) }
 
-			var isLoading by remember { mutableStateOf(false) }
+				LaunchedEffect(isLoading) {
+					delay(2000.milliseconds)
+					isLoading = false
+				}
 
-			LaunchedEffect(isLoading) {
-				delay(2000.milliseconds)
-				isLoading = false
-			}
-
-			AnimatedContent(isLoading) {
-				if (it) {
-					LoadingIndicator()
-				} else {
-					DragonIconButton(
-						icon = R.drawable.refresh,
-						contentDescription = R.string.reload
-					) {
-						isLoading = true
-						iconsViewModel.updateIconPacks()
+				AnimatedContent(isLoading) {
+					if (it) {
+						LoadingIndicator()
+					} else {
+						DragonIconButton(
+							icon = R.drawable.refresh,
+							contentDescription = R.string.reload
+						) {
+							isLoading = true
+							iconsViewModel.updateIconPacks()
+						}
 					}
 				}
-			}
-		}
 
-		DragonSettingsGroup(R.string.icon_packs) {
+				Text(
+					text = stringResource(R.string.icon_packs_found, packs.size),
+					style = MaterialTheme.typography.bodyLargeEmphasized
+				)
+			}
+
 			packs.forEach { pack ->
 				val packPkg = pack.packageName
 				val packAction = Action.LaunchApp(packPkg, Profile.dummy())

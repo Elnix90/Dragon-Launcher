@@ -13,7 +13,8 @@ import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 
 internal class LegacyToAdaptiveTransformation(
-	private val foregroundScale: Float = 0.7f,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?,
 	private val backgroundColor: Int = 1
 ) : LauncherIconTransformation {
 	override suspend fun transform(icon: StaticLauncherIcon): StaticLauncherIcon {
@@ -21,8 +22,8 @@ internal class LegacyToAdaptiveTransformation(
 
 		val bgColor = if (backgroundColor == 1) extractColor(icon.foregroundLayer) else backgroundColor
 		return StaticLauncherIcon(
-			foregroundLayer = scale(icon.foregroundLayer, foregroundScale),
-			backgroundLayer = ColorLayer(bgColor)
+			foregroundLayer = scale(icon.foregroundLayer, foregroundScale ?: 0.7f),
+			backgroundLayer = ColorLayer(bgColor, scale = backgroundScale ?: 1f)
 		)
 	}
 

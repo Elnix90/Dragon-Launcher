@@ -27,7 +27,9 @@ import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 internal class ActivityIconProvider(
 	private val ctx: Context,
 	private val themed: Boolean,
-	private val tint: Int?
+	private val tint: Int?,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		if (action !is Action.LaunchActivity) return null
@@ -41,10 +43,10 @@ internal class ActivityIconProvider(
 					foregroundLayer =
 						StaticIconLayer(
 							icon = icon.monochrome!!,
-							scale = 1f,
+							scale = foregroundScale ?: 1f,
 							tint = tint
 						),
-					backgroundLayer = ColorLayer()
+					backgroundLayer = ColorLayer(scale = backgroundScale ?: 1f)
 				)
 			}
 			return StaticLauncherIcon(
@@ -52,7 +54,7 @@ internal class ActivityIconProvider(
 					icon.foreground?.let {
 						StaticIconLayer(
 							icon = it,
-							scale = 1.5f,
+							scale = foregroundScale ?: 1.5f,
 							tint = tint
 						)
 					} ?: TransparentLayer,
@@ -60,7 +62,7 @@ internal class ActivityIconProvider(
 					icon.background?.let {
 						StaticIconLayer(
 							icon = it,
-							scale = 1.5f,
+							scale = backgroundScale ?: 1.5f,
 							tint = tint
 						)
 					} ?: TransparentLayer
@@ -71,7 +73,7 @@ internal class ActivityIconProvider(
 			foregroundLayer =
 				StaticIconLayer(
 					icon = icon,
-					scale = 1f,
+					scale = foregroundScale ?: 1f,
 					tint = tint
 				),
 			backgroundLayer = TransparentLayer

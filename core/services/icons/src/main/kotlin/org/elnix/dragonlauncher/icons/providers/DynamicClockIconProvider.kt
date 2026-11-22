@@ -15,7 +15,9 @@ internal class DynamicClockIconProvider(
 	private val ctx: Context,
 	private val appRepository: AppRepository,
 	private val themed: Boolean,
-	private val tint: Int?
+	private val tint: Int?,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? =
 		withContext(Dispatchers.IO) {
@@ -88,7 +90,9 @@ internal class DynamicClockIconProvider(
 			return@withContext icon.toLauncherIcon(
 				themed = themed,
 				tint = tint,
-				clock = clockConfig
+				clock = clockConfig,
+				foregroundScale = foregroundScale ?: 1.5f,
+				backgroundScale = backgroundScale ?: 1.5f
 			)
 		}
 }

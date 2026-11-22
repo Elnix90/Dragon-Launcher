@@ -876,6 +876,8 @@
     <string name="icons_tint">The tint that is applied to icons</string>
     <string name="only_tint_icon_packs">Only tint Icon Packs</string>
     <string name="only_tint_icon_packs_desc">Tinted app icons with no packs can be ugly if they don\'t have a transparent layer</string>
+    <string name="only_scale_icon_packs">Only scale icon packs</string>
+    <string name="only_scale_icon_packs_desc">Keep normal icon scales unchanged. Turn off to apply these scales to system and other icons too.</string>
     <string name="use_icon_tint">Use Icon tint</string>
     <string name="use_icon_tint_desc">Whether or not to enable icon tinting</string>
     <string name="no_profile_found">No profile found in phone</string>
@@ -981,6 +983,10 @@
     <string name="render_foreground_desc">Whether or not to render the foreground layer of the icons</string>
     <string name="render_background">Render Background</string>
     <string name="render_background_desc">Whether or not to render the background layer of the icons</string>
+    <string name="foreground_scale">Foreground scale</string>
+    <string name="foreground_scale_desc">Scale the foreground layer from 0.1× to 3.0×.</string>
+    <string name="background_scale">Background scale</string>
+    <string name="background_scale_desc">Scale the background layer from 0.1× to 3.0×.</string>
     <string name="icons_settings">Icons Settings</string>
     <string name="drawer_label_color">Label color</string>
     <string name="drawer_label_color_desc">The color of the app names in the drawer. defaults to the onBackground color</string>
@@ -1152,4 +1158,5 @@
 		<string name="start_your">START YOUR</string>
 		<string name="journey">JOURNEY</string>
     <string name="silent">Silent</string>
+	<string name="render">Render</string>
 </resources>

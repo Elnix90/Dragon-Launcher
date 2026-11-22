@@ -10,6 +10,13 @@ import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 class IconSettingsRepository(
 	ctx: Context
 ) {
+	val defaultSettings =
+		IconSettings(
+			foregroundScale = IconsSettingsStore.foregroundScale.default,
+			backgroundScale = IconsSettingsStore.backgroundScale.default,
+			onlyScaleIconPacks = IconsSettingsStore.onlyScaleIconPacks.default
+		)
+
 	private val selectedIconPack: Flow<String> = IconsSettingsStore.selectedIconPack.flow(ctx)
 	private val useIconTint: Flow<Boolean> = IconsSettingsStore.useIconTint.flow(ctx)
 	private val iconTint: Flow<Color> = IconsSettingsStore.iconsTint.flow(ctx)
@@ -18,6 +25,9 @@ class IconSettingsRepository(
 
 	private val renderForeground: Flow<Boolean> = IconsSettingsStore.renderForeground.flow(ctx)
 	private val renderBackground: Flow<Boolean> = IconsSettingsStore.renderBackground.flow(ctx)
+	private val foregroundScale: Flow<Float> = IconsSettingsStore.foregroundScale.flow(ctx)
+	private val backgroundScale: Flow<Float> = IconsSettingsStore.backgroundScale.flow(ctx)
+	private val onlyScaleIconPacks: Flow<Boolean> = IconsSettingsStore.onlyScaleIconPacks.flow(ctx)
 	private val forceThemed: Flow<Boolean> = IconsSettingsStore.forceThemed.flow(ctx)
 	private val adaptify: Flow<Boolean> = IconsSettingsStore.adaptify.flow(ctx)
 
@@ -39,7 +49,10 @@ class IconSettingsRepository(
 			adaptify,
 			onlyTintIconPack,
 			renderForeground,
-			renderBackground
+			renderBackground,
+			foregroundScale,
+			backgroundScale,
+			onlyScaleIconPacks
 		) { flows ->
 			IconSettings(
 				iconPack = flows[0] as String?,
@@ -49,7 +62,10 @@ class IconSettingsRepository(
 				adaptify = flows[4] as Boolean,
 				onlyTintIconPacks = flows[5] as Boolean,
 				renderForeground = flows[6] as Boolean,
-				renderBackground = flows[7] as Boolean
+				renderBackground = flows[7] as Boolean,
+				foregroundScale = flows[8] as Float,
+				backgroundScale = flows[9] as Float,
+				onlyScaleIconPacks = flows[10] as Boolean
 			)
 		}
 }

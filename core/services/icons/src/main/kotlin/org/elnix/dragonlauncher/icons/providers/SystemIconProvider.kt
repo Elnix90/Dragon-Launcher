@@ -7,13 +7,15 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 internal class SystemIconProvider(
 	private val appRepository: AppRepository,
 	private val themedIcons: Boolean,
-	private val tint: Int?
+	private val tint: Int?,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		return when (action) {
 			is Action.LaunchApp -> {
 				val application = appRepository.fromAction(action) ?: return null
-				application.loadIcon(themedIcons, tint)
+				application.loadIcon(themedIcons, tint, foregroundScale, backgroundScale)
 			}
 
 			else -> {

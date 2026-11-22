@@ -51,12 +51,19 @@ data class SystemApp(
 
 	override val installTime: Long = 0L
 
-	override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? {
+	override suspend fun loadIcon(
+		themed: Boolean,
+		tint: Int?,
+		foregroundScale: Float?,
+		backgroundScale: Float?
+	): LauncherIcon? {
 		return try {
 			val icon =
 				withContext(Dispatchers.IO) {
 					applicationInfo.loadIcon(ctx.packageManager)
 				} ?: return null
+			val adaptiveForegroundScale = foregroundScale ?: 1.5f
+			val adaptiveBackgroundScale = backgroundScale ?: 1.5f
 
 			when (icon) {
 				is AdaptiveIconDrawable -> {
@@ -64,7 +71,7 @@ data class SystemApp(
 						StaticLauncherIcon(
 							foregroundLayer =
 								StaticIconLayer(
-									scale = 1.5f,
+									scale = adaptiveForegroundScale,
 									icon = icon.monochrome!!,
 									tint = tint
 								),
@@ -76,7 +83,7 @@ data class SystemApp(
 								icon.foreground?.let {
 									StaticIconLayer(
 										icon = it,
-										scale = 1.5f,
+										scale = adaptiveForegroundScale,
 										tint = tint
 									)
 								} ?: TransparentLayer,
@@ -84,7 +91,7 @@ data class SystemApp(
 								icon.background?.let {
 									StaticIconLayer(
 										icon = it,
-										scale = 1.5f,
+										scale = adaptiveBackgroundScale,
 										tint = tint
 									)
 								} ?: TransparentLayer
@@ -97,7 +104,7 @@ data class SystemApp(
 						foregroundLayer =
 							StaticIconLayer(
 								icon = icon,
-								scale = 1f,
+								scale = foregroundScale ?: 1f,
 								tint = tint
 							),
 						backgroundLayer = TransparentLayer

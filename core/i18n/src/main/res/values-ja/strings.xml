@@ -815,6 +815,8 @@
     <string name="icons_tint">アイコンに適用される色合い</string>
     <string name="only_tint_icon_packs">アイコンパックに対してのみ色合いを適用</string>
     <string name="only_tint_icon_packs_desc">アイコンパックのないアプリアイコンの色合い変更は、透明レイヤーがない場合、見栄えが悪くなることがあります</string>
+    <string name="only_scale_icon_packs">アイコンパックのみを拡大縮小</string>
+    <string name="only_scale_icon_packs_desc">通常のアイコンのスケールを維持します。オフにするとシステムなど他のアイコンにも適用します。</string>
     <string name="use_icon_tint">アイコンの色合いを使用</string>
     <string name="use_icon_tint_desc">アイコンの色合いを有効にするか</string>
     <string name="no_profile_found">スマホにプロファイルが見つかりませんでした</string>
@@ -915,6 +917,10 @@
     <string name="render_foreground_desc">アイコンの前景を描画するか</string>
     <string name="render_background">背景を描画</string>
     <string name="render_background_desc">アイコンの背景を描画するか</string>
+    <string name="foreground_scale">前景スケール</string>
+    <string name="foreground_scale_desc">前景レイヤーを0.1倍から3.0倍に拡大します。</string>
+    <string name="background_scale">背景スケール</string>
+    <string name="background_scale_desc">背景レイヤーを0.1倍から3.0倍に拡大します。</string>
     <string name="icons_settings">アイコン設定</string>
     <string name="drawer_label_color">ラベル色</string>
     <string name="drawer_label_color_desc">ドロワー内のアプリ名の色。デフォルトでは「背景上の文字色」が使用されます</string>

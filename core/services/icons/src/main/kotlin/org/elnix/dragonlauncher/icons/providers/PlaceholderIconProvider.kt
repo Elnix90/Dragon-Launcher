@@ -7,12 +7,14 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 
 internal class PlaceholderIconProvider(
 	private val ctx: Context,
-	private val appRepository: AppRepository
+	private val appRepository: AppRepository,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		if (action !is Action.LaunchApp) return null
 
 		val application = appRepository.fromAction(action) ?: return null
-		return application.getPlaceholderIcon(ctx)
+		return application.getPlaceholderIcon(ctx, foregroundScale, backgroundScale)
 	}
 }

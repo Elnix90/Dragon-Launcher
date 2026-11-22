@@ -156,7 +156,9 @@ data class StaticLauncherIcon(
 				val paint = Paint()
 				paint.color = layer.tint
 				propertyPaint?.colorFilter?.let { paint.colorFilter = it }
-				canvas.drawRect(Rect(0, 0, canvas.width, canvas.height), paint)
+				canvas.withScale(layer.scale, layer.scale, canvas.width / 2f, canvas.height / 2f) {
+					canvas.drawRect(Rect(0, 0, canvas.width, canvas.height), paint)
+				}
 			}
 
 			is StaticIconLayer -> {

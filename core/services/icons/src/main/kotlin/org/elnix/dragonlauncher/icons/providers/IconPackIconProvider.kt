@@ -20,7 +20,9 @@ internal class IconPackIconProvider(
 	private val iconPack: IconPack,
 	private val tint: Int?,
 	private val iconPackManager: IconPackManager,
-	private val allowThemed: Boolean
+	private val allowThemed: Boolean,
+	private val foregroundScale: Float,
+	private val backgroundScale: Float
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		if (action !is Action.LaunchApp) return null
@@ -33,7 +35,9 @@ internal class IconPackIconProvider(
 			packageName = application.packageName,
 			activityName = componentName.className,
 			tint = tint,
-			allowThemed = allowThemed
+			allowThemed = allowThemed,
+			foregroundScale = foregroundScale,
+			backgroundScale = backgroundScale
 		)
 			?: run {
 				logD(ICONS_TAG) { "Generating new icon for ${application.packageName} with tint=t$tint" }
@@ -50,7 +54,9 @@ internal class IconPackIconProvider(
 								)
 							ai?.getIcon(ctx.resources.displayMetrics.densityDpi)
 						} ?: return null,
-					size = size
+					size = size,
+					foregroundScale = foregroundScale,
+					backgroundScale = backgroundScale
 				)
 			}
 	}

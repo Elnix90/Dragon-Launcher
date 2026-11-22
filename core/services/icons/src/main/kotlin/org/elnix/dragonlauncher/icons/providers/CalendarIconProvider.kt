@@ -14,7 +14,9 @@ internal class CalendarIconProvider(
 	private val ctx: Context,
 	private val appRepository: AppRepository,
 	private val themed: Boolean,
-	private val tint: Int?
+	private val tint: Int?,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? =
 		withContext(Dispatchers.IO) {
@@ -58,7 +60,9 @@ internal class CalendarIconProvider(
 				resources = resources,
 				resourceIds = drawableIds,
 				isThemed = themed,
-				tint = tint
+				tint = tint,
+				foregroundScale = foregroundScale,
+				backgroundScale = backgroundScale
 			)
 		}
 }

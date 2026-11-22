@@ -14,7 +14,9 @@ internal class CompatIconProvider(
 	private val appRepository: AppRepository,
 	private val ctx: Context,
 	private val themed: Boolean = false,
-	private val tint: Int?
+	private val tint: Int?,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		if (action !is Action.LaunchApp) return null
@@ -33,12 +35,17 @@ internal class CompatIconProvider(
 				val resources =
 					try {
 						ctx.packageManager.getResourcesForApplication(activityInfo.packageName)
-					} catch (e: PackageManager.NameNotFoundException) {
+					} catch (_: PackageManager.NameNotFoundException) {
 						return@withContext null
 					}
 				AdaptiveIconDrawableCompat.from(resources, iconRes)
 			} ?: return null
 
-		return icon.toLauncherIcon(themed = themed, tint = tint)
+		return icon.toLauncherIcon(
+			themed = themed,
+			tint = tint,
+			foregroundScale = foregroundScale ?: 1.5f,
+			backgroundScale = backgroundScale ?: 1.5f
+		)
 	}
 }

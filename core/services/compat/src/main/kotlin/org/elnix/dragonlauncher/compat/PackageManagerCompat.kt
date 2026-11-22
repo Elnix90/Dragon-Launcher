@@ -115,11 +115,21 @@ internal class PackageManagerCompatImpl(
 		userManager.userProfiles.forEach { userHandle ->
 			try {
 				val activities = launcherApps.getActivityList(null, userHandle) ?: emptyList()
-				activities.forEach { activity ->
-					val key = "${activity.componentName.packageName}_${userHandle.hashCode()}"
-					if (!seenKeys.contains(key)) {
-						result.add(activity)
-						seenKeys.add(key)
+				activities.groupBy { it.componentName.packageName }.forEach { (packageName, packageActivities) ->
+					val key = "${packageName}_${userHandle.hashCode()}"
+					if (seenKeys.add(key)) {
+						// Prefer the app's default launcher alias over arbitrary shortcuts/aliases.
+						val resolvedActivity =
+							launcherApps.resolveActivity(
+								Intent(Intent.ACTION_MAIN)
+									.addCategory(Intent.CATEGORY_LAUNCHER)
+									.setPackage(packageName),
+								userHandle
+							)
+						result.add(
+							resolvedActivity?.takeIf { it.componentName.packageName == packageName }
+								?: packageActivities.first()
+						)
 					}
 				}
 			} catch (e: Exception) {

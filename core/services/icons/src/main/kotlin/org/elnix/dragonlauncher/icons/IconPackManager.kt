@@ -38,6 +38,8 @@ import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
 import org.elnix.dragonlauncher.icons.loaders.AppFilterIconPackInstaller
 import org.elnix.dragonlauncher.icons.loaders.GrayscaleMapIconPackInstaller
+import org.elnix.dragonlauncher.icons.loaders.ICON_PACK_IMPORTER_VERSION
+import org.elnix.dragonlauncher.icons.loaders.IconPackInstaller
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import kotlin.math.roundToInt
 
@@ -64,21 +66,34 @@ class IconPackManager(
 		updateIconPacksMutex.lock()
 		val installers =
 			listOf(
-				AppFilterIconPackInstaller(ctx, appDatabase),
-				GrayscaleMapIconPackInstaller(ctx, appDatabase)
+				GrayscaleMapIconPackInstaller(ctx, appDatabase),
+				AppFilterIconPackInstaller(ctx, appDatabase)
 			)
-		val installedPacks = mutableListOf<IconPack>()
+		val packsByPackage = linkedMapOf<String, MutableList<Pair<IconPackInstaller, IconPack>>>()
 		for (installer in installers) {
-			val iconPacks = installer.getInstalledIconPacks()
-			for (pack in iconPacks) {
-				if (forceReinstall || !installer.isInstalledAndUpToDate(pack)) {
-					installer.install(pack)
-					iconsHaveBeenUpdated = true
-				} else {
-					logD(ICONS_TAG) { "Icon pack ${pack.packageName} is up to date" }
-				}
+			for (pack in installer.getInstalledIconPacks()) {
+				packsByPackage.getOrPut(pack.packageName) { mutableListOf() }.add(installer to pack)
 			}
-			installedPacks.addAll(iconPacks)
+		}
+		val installedPacks = mutableListOf<IconPack>()
+		for (sources in packsByPackage.values) {
+			val pack = sources.first().second
+			val needsInstall =
+				forceReinstall ||
+					sources.any { (installer, sourcePack) -> !installer.isInstalledAndUpToDate(sourcePack) }
+
+			if (needsInstall) {
+				appDatabase.withTransaction {
+					sources.forEachIndexed { index, (installer, sourcePack) ->
+						installer.install(sourcePack, clearExisting = index == 0)
+					}
+					appDatabase.iconDao().updateImporterVersion(pack.packageName, ICON_PACK_IMPORTER_VERSION)
+				}
+				iconsHaveBeenUpdated = true
+			} else {
+				logD(ICONS_TAG) { "Icon pack ${pack.packageName} is up to date" }
+			}
+			installedPacks.add(pack)
 		}
 		uninstallAllIconPacksExcept(installedPacks)
 		updateIconPacksMutex.unlock()
@@ -98,7 +113,9 @@ class IconPackManager(
 		packageName: String,
 		activityName: String?,
 		tint: Int?,
-		allowThemed: Boolean = true
+		allowThemed: Boolean,
+		foregroundScale: Float,
+		backgroundScale: Float
 	): LauncherIcon? =
 		withContext(Dispatchers.IO) {
 			val res =
@@ -113,18 +130,17 @@ class IconPackManager(
 			val icon =
 				iconDao.getIcon(packageName, activity, iconPack)?.let { iconPackAppIcon(it) }
 					?: return@withContext null
-
 			when (icon) {
 				is CalendarIcon -> {
-					return@withContext getIconPackCalendarIcon(icon, res, tint, allowThemed)
+					return@withContext getIconPackCalendarIcon(icon, res, tint, allowThemed, foregroundScale, backgroundScale)
 				}
 
 				is AppIcon -> {
-					return@withContext getIconPackStaticIcon(icon, res, tint, allowThemed)
+					return@withContext getIconPackStaticIcon(icon, res, tint, allowThemed, foregroundScale, backgroundScale)
 				}
 
 				is ClockIcon -> {
-					return@withContext getIconPackClockIcon(icon, res, tint, allowThemed)
+					return@withContext getIconPackClockIcon(icon, res, tint, allowThemed, foregroundScale, backgroundScale)
 				}
 			}
 		}
@@ -133,7 +149,9 @@ class IconPackManager(
 		iconPack: String,
 		icon: IconPackAppIcon,
 		tint: Int?,
-		allowThemed: Boolean
+		allowThemed: Boolean,
+		foregroundScale: Float,
+		backgroundScale: Float
 	): LauncherIcon? =
 		withContext(Dispatchers.IO) {
 			val res =
@@ -145,15 +163,15 @@ class IconPackManager(
 				}
 			when (icon) {
 				is CalendarIcon -> {
-					return@withContext getIconPackCalendarIcon(icon, res, tint, allowThemed)
+					return@withContext getIconPackCalendarIcon(icon, res, tint, allowThemed, foregroundScale, backgroundScale)
 				}
 
 				is AppIcon -> {
-					return@withContext getIconPackStaticIcon(icon, res, tint, allowThemed)
+					return@withContext getIconPackStaticIcon(icon, res, tint, allowThemed, foregroundScale, backgroundScale)
 				}
 
 				is ClockIcon -> {
-					return@withContext getIconPackClockIcon(icon, res, tint, allowThemed)
+					return@withContext getIconPackClockIcon(icon, res, tint, allowThemed, foregroundScale, backgroundScale)
 				}
 			}
 		}
@@ -164,13 +182,15 @@ class IconPackManager(
 		iconPack: String,
 		baseIcon: Drawable,
 		tint: Int?,
-		size: Int
+		size: Int,
+		foregroundScale: Float,
+		backgroundScale: Float
 	): LauncherIcon? =
 		withContext(Dispatchers.IO) {
 			val back = getIconBack(iconPack)
 			val upon = getIconUpon(iconPack)
 			val mask = getIconMask(iconPack)
-			val scale = getPackScale(iconPack)
+			val scale = getPackScale(iconPack) * foregroundScale
 
 			if (back == null && upon == null && mask == null) {
 				return@withContext null
@@ -187,16 +207,18 @@ class IconPackManager(
 			var inBounds: Rect
 			var outBounds: Rect
 
+			fun scaledBounds(layerScale: Float) =
+				Rect(
+					(bitmap.width * (1 - layerScale) * 0.5).roundToInt(),
+					(bitmap.height * (1 - layerScale) * 0.5).roundToInt(),
+					(bitmap.width - bitmap.width * (1 - layerScale) * 0.5).roundToInt(),
+					(bitmap.height - bitmap.height * (1 - layerScale) * 0.5).roundToInt()
+				)
+
 			val icon = baseIcon.toBitmap(width = size, height = size)
 
 			inBounds = Rect(0, 0, icon.width, icon.height)
-			outBounds =
-				Rect(
-					(bitmap.width * (1 - scale) * 0.5).roundToInt(),
-					(bitmap.height * (1 - scale) * 0.5).roundToInt(),
-					(bitmap.width - bitmap.width * (1 - scale) * 0.5).roundToInt(),
-					(bitmap.height - bitmap.height * (1 - scale) * 0.5).roundToInt()
-				)
+			outBounds = scaledBounds(scale)
 			canvas.drawBitmap(icon, inBounds, outBounds, paint)
 
 			val pm = ctx.packageManager
@@ -222,7 +244,7 @@ class IconPackManager(
 						}
 					val maskBmp = maskDrawable.toBitmap(size, size)
 					inBounds = Rect(0, 0, maskBmp.width, maskBmp.height)
-					outBounds = Rect(0, 0, bitmap.width, bitmap.height)
+					outBounds = scaledBounds(foregroundScale)
 					canvas.drawBitmap(maskBmp, inBounds, outBounds, paint)
 				}
 			}
@@ -237,7 +259,7 @@ class IconPackManager(
 						}
 					val maskBmp = maskDrawable.toBitmap(size, size)
 					inBounds = Rect(0, 0, maskBmp.width, maskBmp.height)
-					outBounds = Rect(0, 0, bitmap.width, bitmap.height)
+					outBounds = scaledBounds(foregroundScale)
 					canvas.drawBitmap(maskBmp, inBounds, outBounds, paint)
 				}
 			}
@@ -252,7 +274,7 @@ class IconPackManager(
 						}
 					val maskBmp = maskDrawable.toBitmap(size, size)
 					inBounds = Rect(0, 0, maskBmp.width, maskBmp.height)
-					outBounds = Rect(0, 0, bitmap.width, bitmap.height)
+					outBounds = scaledBounds(backgroundScale)
 					canvas.drawBitmap(maskBmp, inBounds, outBounds, paint)
 				}
 			}
@@ -303,7 +325,9 @@ class IconPackManager(
 		icon: AppIcon,
 		resources: Resources,
 		tint: Int?,
-		allowThemed: Boolean
+		allowThemed: Boolean,
+		foregroundScale: Float,
+		backgroundScale: Float
 	): LauncherIcon? {
 		val resId =
 			resources.getIdentifier(icon.drawable, "drawable", icon.iconPack).takeIf { it != 0 }
@@ -311,7 +335,12 @@ class IconPackManager(
 
 		val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, resId)
 		if (adaptiveIconCompat != null) {
-			return adaptiveIconCompat.toLauncherIcon(themed = allowThemed && icon.themed, tint = icon.tint ?: tint)
+			return adaptiveIconCompat.toLauncherIcon(
+				themed = allowThemed && icon.themed,
+				tint = icon.tint ?: tint,
+				foregroundScale = foregroundScale,
+				backgroundScale = backgroundScale
+			)
 		}
 		val drawable =
 			try {
@@ -327,7 +356,7 @@ class IconPackManager(
 						foregroundLayer =
 							StaticIconLayer(
 								icon = drawable.monochrome!!,
-								scale = 1.5f,
+								scale = foregroundScale,
 								tint = icon.tint ?: tint
 							),
 						backgroundLayer = TransparentLayer
@@ -337,7 +366,7 @@ class IconPackManager(
 						foregroundLayer =
 							StaticIconLayer(
 								icon = drawable.foreground,
-								scale = 1.5f,
+								scale = foregroundScale,
 								tint = icon.tint ?: tint
 							),
 						backgroundLayer = TransparentLayer
@@ -350,7 +379,7 @@ class IconPackManager(
 					foregroundLayer =
 						StaticIconLayer(
 							icon = drawable,
-							scale = 0.65f,
+							scale = foregroundScale,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
@@ -363,7 +392,7 @@ class IconPackManager(
 						drawable.foreground?.let {
 							StaticIconLayer(
 								icon = it,
-								scale = 1.5f,
+								scale = foregroundScale,
 								tint = icon.tint ?: tint
 							)
 						} ?: TransparentLayer,
@@ -371,7 +400,7 @@ class IconPackManager(
 						drawable.background?.let {
 							StaticIconLayer(
 								icon = it,
-								scale = 1.5f,
+								scale = backgroundScale,
 								tint = icon.tint ?: tint
 							)
 						} ?: TransparentLayer
@@ -383,7 +412,7 @@ class IconPackManager(
 					foregroundLayer =
 						StaticIconLayer(
 							icon = drawable,
-							scale = 1f,
+							scale = foregroundScale,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
@@ -397,7 +426,9 @@ class IconPackManager(
 		icon: CalendarIcon,
 		resources: Resources,
 		tint: Int?,
-		allowThemed: Boolean
+		allowThemed: Boolean,
+		foregroundScale: Float,
+		backgroundScale: Float
 	): LauncherIcon? {
 		val drawableIds =
 			icon.drawables
@@ -411,13 +442,17 @@ class IconPackManager(
 			return ThemedDynamicCalendarIcon(
 				resources = resources,
 				resourceIds = drawableIds,
-				tint = icon.tint ?: tint
+				tint = icon.tint ?: tint,
+				foregroundScale = foregroundScale,
+				backgroundScale = backgroundScale
 			)
 		}
 		return DynamicCalendarIcon(
 			resources = resources,
 			resourceIds = drawableIds,
-			tint = icon.tint ?: tint
+			tint = icon.tint ?: tint,
+			foregroundScale = foregroundScale,
+			backgroundScale = backgroundScale
 		)
 	}
 
@@ -426,7 +461,9 @@ class IconPackManager(
 		icon: ClockIcon,
 		resources: Resources,
 		tint: Int?,
-		allowThemed: Boolean
+		allowThemed: Boolean,
+		foregroundScale: Float,
+		backgroundScale: Float
 	): LauncherIcon? {
 		val drawableId =
 			try {
@@ -437,7 +474,13 @@ class IconPackManager(
 			}
 		val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, drawableId)
 		if (adaptiveIconCompat != null) {
-			return adaptiveIconCompat.toLauncherIcon(themed = icon.themed && allowThemed, tint = icon.tint ?: tint, clock = icon.config)
+			return adaptiveIconCompat.toLauncherIcon(
+				themed = icon.themed && allowThemed,
+				tint = icon.tint ?: tint,
+				clock = icon.config,
+				foregroundScale = foregroundScale,
+				backgroundScale = backgroundScale
+			)
 		}
 		val drawable =
 			try {
@@ -477,7 +520,7 @@ class IconPackManager(
 							defaultMinute = icon.config.defaultMinute,
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
-							scale = 1.5f,
+							scale = foregroundScale,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
@@ -492,7 +535,7 @@ class IconPackManager(
 							defaultMinute = icon.config.defaultMinute,
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
-							scale = 1f,
+							scale = foregroundScale,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
@@ -507,13 +550,13 @@ class IconPackManager(
 							defaultMinute = icon.config.defaultMinute,
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
-							scale = 1.5f,
+							scale = foregroundScale,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer =
 						StaticIconLayer(
 							icon = background!!,
-							scale = 1.5f,
+							scale = backgroundScale,
 							tint = icon.tint ?: tint
 						)
 				)
@@ -527,7 +570,7 @@ class IconPackManager(
 							defaultMinute = icon.config.defaultMinute,
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
-							scale = 1f,
+							scale = foregroundScale,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer

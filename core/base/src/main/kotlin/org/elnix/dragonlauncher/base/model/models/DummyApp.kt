@@ -39,7 +39,7 @@ class DummyApp : Application() {
 	 */
 	override var cachedNormalizerResult: Pair<String, String>? = null
 
-	override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? = null
+	override suspend fun loadIcon(themed: Boolean, tint: Int?, foregroundScale: Float?, backgroundScale: Float?): LauncherIcon? = null
 
 	override fun getStoreDetails(ctx: Context): StoreLink? = null
 }
