@@ -121,6 +121,10 @@ class IconService internal constructor(
 		)
 
 	private var settingsTint: Int? = null
+	private var iconPackForegroundScale = iconSettingsRepository.defaultSettings.foregroundScale
+	private var iconPackBackgroundScale = iconSettingsRepository.defaultSettings.backgroundScale
+	private var otherForegroundScale: Float? = null
+	private var otherBackgroundScale: Float? = null
 
 	init {
 		requestIconPackListUpdate()
@@ -152,6 +156,10 @@ class IconService internal constructor(
 				extraColors
 			) { settings, colors ->
 				settingsTint = settings.iconsTint?.toArgb()
+				iconPackForegroundScale = settings.foregroundScale
+				iconPackBackgroundScale = settings.backgroundScale
+				otherForegroundScale = settings.foregroundScale.takeUnless { settings.onlyScaleIconPacks }
+				otherBackgroundScale = settings.backgroundScale.takeUnless { settings.onlyScaleIconPacks }
 				Pair(settings, colors)
 			}.collectLatest { (settings, extraColors) ->
 				iconPacksUpdated.collectLatest {
@@ -164,7 +172,8 @@ class IconService internal constructor(
 					providers.add(
 						ActionIconProvider(
 							ctx = ctx,
-							extraColors = extraColors
+							extraColors = extraColors,
+							foregroundScale = otherForegroundScale
 						)
 					)
 
@@ -173,7 +182,9 @@ class IconService internal constructor(
 							ctx,
 							shortcutRepository,
 							themed = settings.themedIcons,
-							tint = tint()
+							tint = tint(),
+							foregroundScale = otherForegroundScale,
+							backgroundScale = otherBackgroundScale
 						)
 					)
 
@@ -181,7 +192,9 @@ class IconService internal constructor(
 						ActivityIconProvider(
 							ctx = ctx,
 							themed = settings.themedIcons,
-							tint = tint()
+							tint = tint(),
+							foregroundScale = otherForegroundScale,
+							backgroundScale = otherBackgroundScale
 						)
 					)
 
@@ -195,7 +208,9 @@ class IconService internal constructor(
 									iconPack = pack,
 									tint = settings.iconsTint?.toArgb(),
 									iconPackManager = iconPackManager,
-									allowThemed = settings.themedIcons
+									allowThemed = settings.themedIcons,
+									foregroundScale = iconPackForegroundScale,
+									backgroundScale = iconPackBackgroundScale
 								)
 							)
 						} else {
@@ -208,7 +223,9 @@ class IconService internal constructor(
 							ctx = ctx,
 							appRepository = appRepository,
 							themed = settings.themedIcons,
-							tint = tint()
+							tint = tint(),
+							foregroundScale = otherForegroundScale,
+							backgroundScale = otherBackgroundScale
 						)
 					)
 
@@ -217,7 +234,9 @@ class IconService internal constructor(
 							ctx = ctx,
 							appRepository = appRepository,
 							themed = settings.themedIcons,
-							tint = tint()
+							tint = tint(),
+							foregroundScale = otherForegroundScale,
+							backgroundScale = otherBackgroundScale
 						)
 					)
 					if (!isAtLeastApiLevel(33)) {
@@ -226,7 +245,9 @@ class IconService internal constructor(
 								appRepository = appRepository,
 								ctx = ctx,
 								themed = settings.themedIcons,
-								tint = tint()
+								tint = tint(),
+								foregroundScale = otherForegroundScale,
+								backgroundScale = otherBackgroundScale
 							)
 						)
 					}
@@ -234,7 +255,9 @@ class IconService internal constructor(
 						SystemIconProvider(
 							appRepository = appRepository,
 							themedIcons = settings.themedIcons,
-							tint = tint()
+							tint = tint(),
+							foregroundScale = otherForegroundScale,
+							backgroundScale = otherBackgroundScale
 						)
 					)
 
@@ -242,22 +265,33 @@ class IconService internal constructor(
 						if (settings.themedIcons) {
 							ThemedPlaceholderIconProvider(
 								appRepository = appRepository,
-								ctx = ctx
+								ctx = ctx,
+								foregroundScale = otherForegroundScale,
+								backgroundScale = otherBackgroundScale
 							)
 						} else {
 							PlaceholderIconProvider(
 								ctx = ctx,
-								appRepository = appRepository
+								appRepository = appRepository,
+								foregroundScale = otherForegroundScale,
+								backgroundScale = otherBackgroundScale
 							)
 						}
 					providers.add(fallbackProvider)
 
 					val transformations = mutableListOf<LauncherIconTransformation>()
 
-					if (settings.adaptify) transformations.add(LegacyToAdaptiveTransformation())
+					if (settings.adaptify) {
+						transformations.add(
+							LegacyToAdaptiveTransformation(
+								foregroundScale = otherForegroundScale,
+								backgroundScale = otherBackgroundScale
+							)
+						)
+					}
 					if (settings.themedIcons && settings.forceThemed) {
 						transformations.add(
-							ForceThemedIconTransformation()
+							ForceThemedIconTransformation(otherBackgroundScale)
 						)
 					}
 
@@ -687,7 +721,9 @@ class IconService internal constructor(
 				SystemIconProvider(
 					appRepository = appRepository,
 					themedIcons = false,
-					tint = customIcon.getProperties().tint?.toArgb() ?: settingsTint
+					tint = customIcon.getProperties().tint?.toArgb() ?: settingsTint,
+					foregroundScale = otherForegroundScale,
+					backgroundScale = otherBackgroundScale
 				)
 			)
 		}
@@ -696,7 +732,9 @@ class IconService internal constructor(
 				CustomIconPackIconProvider(
 					customIcon = customIcon,
 					tint = customIcon.getProperties().tint?.toArgb() ?: settingsTint,
-					iconPackManager = iconPackManager
+					iconPackManager = iconPackManager,
+					foregroundScale = iconPackForegroundScale,
+					backgroundScale = iconPackBackgroundScale
 				)
 			)
 		}
@@ -705,7 +743,13 @@ class IconService internal constructor(
 			return iconProviders.value.lastOrNull()?.let { listOf(it) } ?: emptyList()
 		}
 		if (customIcon is CustomTextIcon) {
-			return listOf(CustomTextIconProvider(customIcon))
+			return listOf(
+				CustomTextIconProvider(
+					customIcon = customIcon,
+					foregroundScale = otherForegroundScale,
+					backgroundScale = otherBackgroundScale
+				)
+			)
 		}
 		return emptyList()
 	}
@@ -716,13 +760,14 @@ class IconService internal constructor(
 			return listOf(
 				LegacyToAdaptiveTransformation(
 					foregroundScale = customIcon.fgScale,
+					backgroundScale = otherBackgroundScale,
 					backgroundColor = customIcon.bgColor
 				)
 			)
 		}
 		if (customIcon is ForceThemedIcon) {
 			return listOf(
-				ForceThemedIconTransformation()
+				ForceThemedIconTransformation(otherBackgroundScale)
 			)
 		}
 		if (customIcon is UnmodifiedSystemDefaultIcon) {
@@ -874,20 +919,23 @@ class IconService internal constructor(
 
 	suspend fun searchCustomIcons(query: String, iconPack: IconPack?): List<CustomIconWithPreview> {
 		val transformations = this.transformations.first()
-		val tint: Color? = iconSettings.first().iconsTint
+		val settings = iconSettings.first()
+		val tint: Color? = settings.iconsTint
 		val tintArgb = tint?.toArgb()
+		val foregroundScale = settings.foregroundScale
+		val backgroundScale = settings.backgroundScale
 		return iconPackManager.searchIconPackIcon(query, iconPack).flatMap {
 			val themedIcon =
 				if (it.themed) {
 					iconPackManager
-						.getIcon(it.iconPack, it, tintArgb, true)
+						.getIcon(it.iconPack, it, tintArgb, true, foregroundScale, backgroundScale)
 						?.transform(transformations)
 				} else {
 					null
 				}
 			val unthemedIcon =
 				iconPackManager
-					.getIcon(it.iconPack, it, tintArgb, false)
+					.getIcon(it.iconPack, it, tintArgb, false, foregroundScale, backgroundScale)
 					?.transform(transformations)
 
 			buildList {

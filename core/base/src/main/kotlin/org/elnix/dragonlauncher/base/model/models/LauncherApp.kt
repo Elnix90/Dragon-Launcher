@@ -52,13 +52,17 @@ data class LauncherApp(
 
 	override suspend fun loadIcon(
 		themed: Boolean,
-		tint: Int?
+		tint: Int?,
+		foregroundScale: Float?,
+		backgroundScale: Float?
 	): LauncherIcon? {
 		return try {
 			val icon =
 				withContext(Dispatchers.IO) {
 					launcherActivityInfo.getIcon(0)
 				} ?: return null
+			val adaptiveForegroundScale = foregroundScale ?: 1.5f
+			val adaptiveBackgroundScale = backgroundScale ?: 1.5f
 
 			when (icon) {
 				is AdaptiveIconDrawable -> {
@@ -68,7 +72,7 @@ data class LauncherApp(
 								StaticIconLayer(
 									icon = icon.monochrome!!,
 									tint = tint,
-									scale = 1.5f
+									scale = adaptiveForegroundScale
 								),
 							backgroundLayer = TransparentLayer
 						)
@@ -78,7 +82,7 @@ data class LauncherApp(
 								icon.foreground?.let {
 									StaticIconLayer(
 										icon = it,
-										scale = 1.5f,
+										scale = adaptiveForegroundScale,
 										tint = tint
 									)
 								} ?: TransparentLayer,
@@ -86,7 +90,7 @@ data class LauncherApp(
 								icon.background?.let {
 									StaticIconLayer(
 										icon = it,
-										scale = 1.5f,
+										scale = adaptiveBackgroundScale,
 										tint = tint
 									)
 								} ?: TransparentLayer
@@ -99,7 +103,7 @@ data class LauncherApp(
 						foregroundLayer =
 							StaticIconLayer(
 								icon = icon,
-								scale = 1f,
+								scale = foregroundScale ?: 1f,
 								tint = tint
 							),
 						backgroundLayer = TransparentLayer

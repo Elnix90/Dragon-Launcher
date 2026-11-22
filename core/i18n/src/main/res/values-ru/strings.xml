@@ -838,6 +838,8 @@
     <string name="icons_tint">Оттенок, применяемый к значкам</string>
     <string name="only_tint_icon_packs">Окрашивать только наборы значков</string>
     <string name="only_tint_icon_packs_desc">Окрашенные значки без набора могут выглядеть некрасиво, если у них нет прозрачного слоя</string>
+    <string name="only_scale_icon_packs">Масштабировать только паки значков</string>
+    <string name="only_scale_icon_packs_desc">Сохранить исходный масштаб обычных значков. Отключите, чтобы применить масштаб также к системным и другим значкам.</string>
     <string name="use_icon_tint">Окрашивать значки</string>
     <string name="use_icon_tint_desc">Включить ли оттенок значков</string>
     <string name="no_profile_found">На телефоне не найдено профилей</string>
@@ -944,6 +946,10 @@
     <string name="render_foreground_desc">Отрисовывать ли передний слой значков</string>
     <string name="render_background">Отрисовывать фон</string>
     <string name="render_background_desc">Отрисовывать ли фоновый слой значков</string>
+    <string name="foreground_scale">Масштаб переднего слоя</string>
+    <string name="foreground_scale_desc">Масштаб переднего слоя от 0,1× до 3,0×.</string>
+    <string name="background_scale">Масштаб фонового слоя</string>
+    <string name="background_scale_desc">Масштаб фонового слоя от 0,1× до 3,0×.</string>
     <string name="icons_settings">Настройки значков</string>
     <string name="drawer_label_color">Цвет названий</string>
     <string name="drawer_label_color_desc">Цвет названий приложений в меню. По умолчанию - цвет onBackground</string>

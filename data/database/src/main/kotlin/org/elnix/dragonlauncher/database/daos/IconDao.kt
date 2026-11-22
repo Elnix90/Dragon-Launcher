@@ -15,7 +15,7 @@ interface IconDao {
 	suspend fun insertAll(icons: List<IconEntity>)
 
 	@Query(
-		"SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND iconPack = :iconPack AND type IN ('app', 'calendar', 'clock') ORDER BY type DESC LIMIT 1"
+		"SELECT * FROM Icons WHERE packageName = :packageName AND (activityName = :activityName OR activityName IS NULL) AND iconPack = :iconPack AND type IN ('app', 'calendar', 'clock') ORDER BY (activityName = :activityName) DESC, type DESC LIMIT 1"
 	)
 	suspend fun getIcon(packageName: String, activityName: String?, iconPack: String): IconEntity?
 
@@ -63,6 +63,9 @@ interface IconDao {
 
 	@Query("SELECT scale FROM IconPack WHERE packageName = :pack")
 	suspend fun getScale(pack: String): Float?
+
+	@Query("UPDATE IconPack SET importerVersion = :version WHERE packageName = :pack")
+	suspend fun updateImporterVersion(pack: String, version: Int)
 
 	@Query("DELETE FROM Icons WHERE iconPack NOT IN (:keep)")
 	suspend fun deleteIconsNotIn(keep: List<String>)

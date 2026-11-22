@@ -89,7 +89,12 @@ abstract class Application : Comparable<Application> {
 		CacheKey(this)
 	}
 
-	abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
+	abstract suspend fun loadIcon(
+		themed: Boolean,
+		tint: Int?,
+		foregroundScale: Float?,
+		backgroundScale: Float?
+	): LauncherIcon?
 
 	fun launch(ctx: Context, options: Bundle?): Boolean {
 		val launcherApps = ctx.getSystemService<LauncherApps>()!!
@@ -113,15 +118,19 @@ abstract class Application : Comparable<Application> {
 		return true
 	}
 
-	fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon =
+	fun getPlaceholderIcon(
+		ctx: Context,
+		foregroundScale: Float?,
+		backgroundScale: Float?
+	): StaticLauncherIcon =
 		StaticLauncherIcon(
 			foregroundLayer =
 				StaticIconLayer(
 					icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
-					scale = 0.65f,
+					scale = foregroundScale ?: 0.65f,
 					tint = 0xff3dda84.toInt()
 				),
-			backgroundLayer = ColorLayer(0xff3dda84.toInt())
+			backgroundLayer = ColorLayer(0xff3dda84.toInt(), scale = backgroundScale ?: 1f)
 		)
 
 	abstract fun getStoreDetails(ctx: Context): StoreLink?

@@ -132,7 +132,9 @@ internal data class AdaptiveIconDrawableCompat(
 internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
 	themed: Boolean,
 	tint: Int?,
-	clock: ClockIconConfig? = null
+	clock: ClockIconConfig? = null,
+	foregroundScale: Float,
+	backgroundScale: Float
 ): StaticLauncherIcon {
 	val clockForeground = (if (themed) monochrome else foreground) as? LayerDrawable
 	if (clock != null && clockForeground != null) {
@@ -158,7 +160,7 @@ internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
 						defaultMinute = clock.defaultMinute,
 						defaultSecond = clock.defaultSecond,
 						sublayers = clockLayers,
-						scale = 1.5f,
+						scale = foregroundScale,
 						tint = tint
 					),
 				backgroundLayer = TransparentLayer
@@ -171,13 +173,13 @@ internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
 					defaultMinute = clock.defaultMinute,
 					defaultSecond = clock.defaultSecond,
 					sublayers = clockLayers,
-					scale = 1.5f,
+					scale = foregroundScale,
 					tint = tint
 				),
 			backgroundLayer =
 				StaticIconLayer(
 					icon = this.background,
-					scale = 1.5f,
+					scale = backgroundScale,
 					tint = null
 				)
 		)
@@ -187,7 +189,7 @@ internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
 		return StaticLauncherIcon(
 			foregroundLayer =
 				StaticIconLayer(
-					scale = 1.5f,
+					scale = foregroundScale,
 					icon = this.monochrome,
 					tint = tint
 				),
@@ -197,13 +199,13 @@ internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
 		return StaticLauncherIcon(
 			foregroundLayer =
 				StaticIconLayer(
-					scale = 1.5f,
+					scale = foregroundScale,
 					icon = this.foreground,
 					tint = tint
 				),
 			backgroundLayer =
 				StaticIconLayer(
-					scale = 1.5f,
+					scale = backgroundScale,
 					icon = this.background,
 					tint = null
 				)

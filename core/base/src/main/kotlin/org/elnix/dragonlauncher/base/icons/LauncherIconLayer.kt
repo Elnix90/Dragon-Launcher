@@ -8,7 +8,8 @@ sealed interface LauncherIconLayer {
 }
 
 data class ColorLayer(
-	override val tint: Int = 0
+	override val tint: Int = 0,
+	val scale: Float = 1f
 ) : LauncherIconLayer
 
 data class StaticIconLayer(
@@ -28,12 +29,14 @@ data class ClockLayer(
 
 data class TextLayer(
 	val text: String,
-	override val tint: Int? = null
+	override val tint: Int? = null,
+	val scale: Float = 1f
 ) : LauncherIconLayer
 
 data class VectorLayer(
 	@param:DrawableRes val icon: Int,
-	override val tint: Int? = null
+	override val tint: Int? = null,
+	val scale: Float = 1f
 ) : LauncherIconLayer
 
 object TransparentLayer : LauncherIconLayer {

@@ -15,13 +15,15 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 
 internal class ThemedPlaceholderIconProvider(
 	private val appRepository: AppRepository,
-	private val ctx: Context
+	private val ctx: Context,
+	private val foregroundScale: Float?,
+	private val backgroundScale: Float?
 ) : IconProvider {
 	override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 		if (action !is Action.LaunchApp) return null
 
 		val application = appRepository.fromAction(action) ?: return null
-		val icon = application.getPlaceholderIcon(ctx)
+		val icon = application.getPlaceholderIcon(ctx, foregroundScale, backgroundScale)
 
 		return StaticLauncherIcon(
 			foregroundLayer = asThemed(icon.foregroundLayer),

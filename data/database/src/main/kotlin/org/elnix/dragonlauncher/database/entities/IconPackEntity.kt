@@ -9,5 +9,6 @@ data class IconPackEntity(
 	@PrimaryKey val packageName: String,
 	val version: String,
 	var scale: Float = 1f,
-	val themed: Boolean = false
+	val themed: Boolean = false,
+	val importerVersion: Int = 0
 )
