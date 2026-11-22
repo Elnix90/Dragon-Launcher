@@ -546,16 +546,16 @@ class IconService internal constructor(
 			val pointCustomIcon = point.customIcon
 			val customIcon = pointCustomIcon ?: appCustomIcon
 
-			// Mirror the icon that is actually in effect: a point icon carries the point's own
-			// properties, an icon inherited from the app carries the app's.
+			// Point-level edits override properties attached to either the point or its inherited app icon.
+			val inheritedProperties =
+				if (pointCustomIcon != null) {
+					pointCustomIcon.getProperties().takeIf { it.isNotEmpty }
+				} else {
+					appCustomIcon?.getProperties()?.takeIf { it.isNotEmpty } ?: appProperties
+				}
 			val effectiveProperties =
-				(
-					if (pointCustomIcon != null) {
-						pointCustomIcon.getProperties().takeIf { it.isNotEmpty } ?: point.iconProperties
-					} else {
-						appCustomIcon?.getProperties()?.takeIf { it.isNotEmpty } ?: appProperties
-					}
-				).takeIf { it?.isNotEmpty == true }
+				(point.iconProperties?.takeIf { it.isNotEmpty } ?: inheritedProperties)
+					.takeIf { it?.isNotEmpty == true }
 
 			val cacheKey =
 				CacheKey(

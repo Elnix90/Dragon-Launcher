@@ -25,6 +25,34 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalPointPreviewTitleOptions
 
+/** Stable render inputs for a cached nest preview; excludes context, services, and text measurement. */
+internal data class NestPreviewStyleKey(
+	val extraColors: ExtraColors,
+	val colorScheme: ColorScheme,
+	val iconShape: IconShape,
+	val maxNestsDepth: Int,
+	val maxTopBarDepth: Int,
+	val isDefaultEditing: Boolean,
+	val isTopPoint: Boolean,
+	val appIconOverlayScale: Float,
+	val eraseColor: Color,
+	val preventDrawingSubNests: Boolean,
+	val pointSettingsDisplay: Boolean,
+	val hideShapes: Boolean,
+	val skipSelected: Boolean,
+	val showCurrentPoint: Boolean,
+	val showAllPointsInCurrentShape: Boolean,
+	val showAllPointsInCurrentNest: Boolean,
+	val showPointPreviewCenterStartPosition: Boolean,
+	val nestDebugOverlay: Boolean,
+	val showCancelZone: Boolean,
+	val showShape: Boolean,
+	val showAllShapesInNest: Boolean,
+	val globalDraggingMode: GlobalDraggingMode,
+	val showOnlyQuestionMarkIcons: Boolean,
+	val fontScale: Float
+)
+
 /**
  * Aggregated drawing parameters derived from [PointsViewModel] and other reactive sources.
  *
@@ -61,8 +89,38 @@ data class DrawParams(
 	val showAllShapesInNest: Boolean,
 	val textMeasurer: TextMeasurer,
 	val globalDraggingMode: GlobalDraggingMode,
-	val showOnlyQuestionMarkIcons: Boolean
-)
+	val showOnlyQuestionMarkIcons: Boolean,
+	val renderingNestPreview: Boolean = false
+) {
+	internal val nestPreviewStyleKey by lazy(LazyThreadSafetyMode.NONE) {
+		NestPreviewStyleKey(
+			extraColors = extraColors,
+			colorScheme = colorScheme,
+			iconShape = iconShape,
+			maxNestsDepth = maxNestsDepth,
+			maxTopBarDepth = maxTopBarDepth,
+			isDefaultEditing = isDefaultEditing,
+			isTopPoint = isTopPoint,
+			appIconOverlayScale = appIconOverlayScale,
+			eraseColor = eraseColor,
+			preventDrawingSubNests = preventDrawingSubNests,
+			pointSettingsDisplay = pointSettingsDisplay,
+			hideShapes = hideShapes,
+			skipSelected = skipSelected,
+			showCurrentPoint = showCurrentPoint,
+			showAllPointsInCurrentShape = showAllPointsInCurrentShape,
+			showAllPointsInCurrentNest = showAllPointsInCurrentNest,
+			showPointPreviewCenterStartPosition = showPointPreviewCenterStartPosition,
+			nestDebugOverlay = nestDebugOverlay,
+			showCancelZone = showCancelZone,
+			showShape = showShape,
+			showAllShapesInNest = showAllShapesInNest,
+			globalDraggingMode = globalDraggingMode,
+			showOnlyQuestionMarkIcons = showOnlyQuestionMarkIcons,
+			fontScale = ctx.resources.configuration.fontScale
+		)
+	}
+}
 
 /**
  * Creates a [DrawParams] reactively observing the current [PointsViewModel] state.

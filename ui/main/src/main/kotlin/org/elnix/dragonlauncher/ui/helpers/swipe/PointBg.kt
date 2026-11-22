@@ -1,15 +1,24 @@
 package org.elnix.dragonlauncher.ui.helpers.swipe
 
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.graphics.RectF
+import android.util.LruCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.withClip
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -19,6 +28,7 @@ import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import kotlin.math.roundToInt
 
+/** Draws a point's border, glow, icon, and badge. */
 @Suppress("FunctionName")
 fun DrawScope.PointBg(
 	point: Point,
@@ -90,6 +100,15 @@ fun DrawScope.PointBg(
 			DrawPathCache.getOrCompute(
 				Pair(drawParams.iconShape, size)
 			) { toPath(drawParams.iconShape.resolveShape(), size) }
+		val iconWithBadge =
+			PointIconBitmapCache.get(
+				path = iconPath,
+				sizePx = sizePx,
+				icon = iconBitmap,
+				badge = badgeBitmap,
+				badgeColor = colorScheme.tertiary,
+				badgeTint = colorScheme.onTertiary
+			)
 
 		withTransform(
 			{
@@ -107,44 +126,7 @@ fun DrawScope.PointBg(
 				)
 			}
 		) {
-			clipPath(iconPath) {
-				drawImage(
-					image = iconBitmap,
-					dstSize = IntSize.rect(sizePx.roundToInt())
-				)
-			}
-
-			if (badgeBitmap != null) {
-				val badgeDiameter = sizePx / 3f
-				val badgeRadius = badgeDiameter / 2f
-
-				val badgeCenter = Offset.rect(sizePx - badgeRadius)
-
-				drawCircle(
-					color = colorScheme.tertiary,
-					radius = badgeRadius,
-					center = badgeCenter
-				)
-
-				val scale = badgeDiameter / badgeBitmap.width
-				val scaledWidth = badgeBitmap.width * scale
-				val scaledHeight = badgeBitmap.height * scale
-
-				drawImage(
-					image = badgeBitmap,
-					dstOffset =
-						IntOffset(
-							x = (badgeCenter.x - scaledWidth / 2f).roundToInt(),
-							y = (badgeCenter.y - scaledHeight / 2f).roundToInt()
-						),
-					dstSize =
-						IntSize(
-							width = scaledWidth.roundToInt(),
-							height = scaledHeight.roundToInt()
-						),
-					colorFilter = ColorFilter.tint(colorScheme.onTertiary)
-				)
-			}
+			drawImage(iconWithBadge)
 		}
 	} else {
 		unavailableAction(point, drawParams, center)
@@ -157,5 +139,63 @@ fun DrawScope.PointBg(
 			iconSize = iconSize,
 			point = point
 		)
+	}
+}
+
+private data class PointIconBitmapKey(
+	val path: Path,
+	val sizePx: Float,
+	val icon: ImageBitmap,
+	val badge: ImageBitmap?,
+	val badgeColor: androidx.compose.ui.graphics.Color,
+	val badgeTint: androidx.compose.ui.graphics.Color
+)
+
+/** Bounds cached point icon and badge composites to 12 MiB. */
+private object PointIconBitmapCache : LruCache<PointIconBitmapKey, ImageBitmap>(12 * 1024 * 1024) {
+	override fun sizeOf(key: PointIconBitmapKey, value: ImageBitmap): Int =
+		(value.width.toLong() * value.height * 4).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+
+	fun get(
+		path: Path,
+		sizePx: Float,
+		icon: ImageBitmap,
+		badge: ImageBitmap?,
+		badgeColor: androidx.compose.ui.graphics.Color,
+		badgeTint: androidx.compose.ui.graphics.Color
+	): ImageBitmap {
+		val key = PointIconBitmapKey(path, sizePx, icon, badge, badgeColor, badgeTint)
+		return this[key] ?: run {
+			val size = sizePx.roundToInt().coerceAtLeast(1)
+			val bitmap = createBitmap(size, size)
+			val canvas = android.graphics.Canvas(bitmap)
+			val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+			val dst = RectF(0f, 0f, size.toFloat(), size.toFloat())
+
+			canvas.withClip(path.asAndroidPath()) {
+				drawBitmap(icon.asAndroidBitmap(), null, dst, paint)
+			}
+
+			if (badge != null && badge.width > 0) {
+				val diameter = sizePx / 3f
+				val radius = diameter / 2f
+				val cx = sizePx - radius
+				val cy = cx
+				canvas.drawCircle(cx, cy, radius, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = badgeColor.toArgb() })
+
+				val scale = diameter / badge.width
+				val width = badge.width * scale
+				val height = badge.height * scale
+				paint.colorFilter = PorterDuffColorFilter(badgeTint.toArgb(), PorterDuff.Mode.SRC_IN)
+				canvas.drawBitmap(
+					badge.asAndroidBitmap(),
+					null,
+					RectF(cx - width / 2f, cy - height / 2f, cx + width / 2f, cy + height / 2f),
+					paint
+				)
+			}
+
+			bitmap.asImageBitmap().also { put(key, it) }
+		}
 	}
 }

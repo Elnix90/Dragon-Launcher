@@ -4,6 +4,7 @@ package org.elnix.dragonlauncher.ui.helpers.customobjects
 
 import android.graphics.BlurMaskFilter
 import android.graphics.Paint
+import android.util.LruCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
+import androidx.core.graphics.createBitmap
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
@@ -170,11 +173,49 @@ private inline fun DrawScope.glow(
 ) {
 	val glowRadius = glow?.radius.toPxOrNull(this) ?: return
 	val glowColor = glow.color ?: color
-	val nativePath = path.asAndroidPath()
+	val cached = PathGlowCache.get(path, glowColor, glowRadius)
+	drawImage(cached.image, topLeft = cached.offset)
+}
 
-	drawIntoCanvas { canvas ->
-		val paint = customGlowPaint(glowColor, glowRadius)
-		canvas.nativeCanvas.drawPath(nativePath, paint)
+private data class PathGlowKey(
+	val path: Path,
+	val color: Color,
+	val radius: Float
+)
+
+private data class CachedPathGlow(
+	val image: androidx.compose.ui.graphics.ImageBitmap,
+	val offset: Offset
+)
+
+/** Bounds cached path-glow bitmaps to 12 MiB. */
+private object PathGlowCache : LruCache<PathGlowKey, CachedPathGlow>(12 * 1024 * 1024) {
+	override fun sizeOf(key: PathGlowKey, value: CachedPathGlow): Int =
+		(value.image.width.toLong() * value.image.height * 4).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+
+	fun get(path: Path, color: Color, radius: Float): CachedPathGlow {
+		val key = PathGlowKey(path, color, radius)
+		return this[key] ?: run {
+			val bounds = path.getBounds()
+			val padding = kotlin.math.ceil(radius * 3f)
+			val width = kotlin.math
+				.ceil(bounds.width + padding * 2)
+				.toInt()
+				.coerceAtLeast(1)
+			val height = kotlin.math
+				.ceil(bounds.height + padding * 2)
+				.toInt()
+				.coerceAtLeast(1)
+			val bitmap = createBitmap(width, height)
+			val canvas = android.graphics.Canvas(bitmap)
+			canvas.translate(padding - bounds.left, padding - bounds.top)
+			canvas.drawPath(path.asAndroidPath(), customGlowPaint(color, radius))
+
+			CachedPathGlow(
+				image = bitmap.asImageBitmap(),
+				offset = Offset(bounds.left - padding, bounds.top - padding)
+			).also { put(key, it) }
+		}
 	}
 }
 

@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -19,15 +22,19 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.asState
 import io.github.elnix90.shared.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.GlobalDraggingMode
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
@@ -45,7 +52,11 @@ import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.PointerLocation
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
+import org.elnix.dragonlauncher.ui.helpers.swipe.DrawParams
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
+import org.elnix.dragonlauncher.ui.helpers.swipe.drawNestLayer
+import org.elnix.dragonlauncher.ui.helpers.swipe.getNestPreviewPicture
+import org.elnix.dragonlauncher.ui.helpers.swipe.nestPreviewExtent
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
 import org.elnix.dragonlauncher.ui.remembers.angle360
@@ -74,6 +85,7 @@ fun MainScreenOverlay(
 
 	val defaultPoint by pointsService.defaultPoint.asState()
 	val defaultNest by pointsService.defaultNest.asState()
+	val defaultShape by pointsService.defaultIntersectionShape.asState()
 
 	val lineObject by swipeService.lineObject.asState()
 	val angleObject by swipeService.angleObject.asState()
@@ -145,18 +157,19 @@ fun MainScreenOverlay(
 	}
 
 	/*
-	 * This prevents the animated offset to always coming from the center, but start animating from the current pos
+	 * This prevents the animated offset to always come from the center, but start animating from the current pos
 	 * Which should be always non-null id a point is selected.
 	 *
 	 * it snaps either when the root nest is on no point, or when the highest live lest is at its center (the hovered point is the host)
 	 */
-	LaunchedEffect(current) {
-		if (!animationWhenSnapping) return@LaunchedEffect
-		if (!isDragging) return@LaunchedEffect
+	if (animationWhenSnapping) {
+		LaunchedEffect(current) {
+			if (!isDragging) return@LaunchedEffect
 
-		if (hoveredPoint == null || (isAnyLiveNestActive && hoveredPoint == highestController.hostPoint)) {
-			// The highest controller canter may be null when the user is not dragging
-			animatedCurrent.snapTo(current - (highestController.liveNestCenter ?: start))
+			if (hoveredPoint == null || (isAnyLiveNestActive && hoveredPoint == highestController.hostPoint)) {
+				// Use the active ring center, or the gesture start for the root ring.
+				animatedCurrent.snapTo(current - (highestController.liveNestCenter ?: start))
+			}
 		}
 	}
 
@@ -223,7 +236,6 @@ fun MainScreenOverlay(
 		}
 	}
 
-	// TODO
 	LaunchedEffect(isDragging) {
 		liveNestControllersStack.forEach { it.clearAfterLaunch() }
 		holdAndRun.clear()
@@ -274,12 +286,11 @@ fun MainScreenOverlay(
 			skipSelected = false
 		)
 
-	/*
-	 * These 2 vales are there to force the drawn overlay to be re-drawn,
-	 * in order to keep a sync between the icons and the states.
-	 */
-	val iconsTrigger by PointStableCache.cacheTrigger.asState()
-	val selectedPointsIds by pointsService.selectedPointsIds.asState()
+	/** Invalidates cached artwork when point images or selections change. */
+	val iconsTrigger = PointStableCache.cacheTrigger.asState()
+	val shapePathsTrigger = NestIntersectionShapesPathCache.cacheTrigger.asState()
+	val selectedPointsIds = pointsService.selectedPointsIds.asState()
+	val pointsVersion by pointsService.recomposeTrigger.asState()
 
 	Box(Modifier.fillMaxSize()) {
 		DebugZone(debugInfo) {
@@ -319,6 +330,7 @@ fun MainScreenOverlay(
 					val nest = pointsService.findNestById(controller.nestedNestId!!)
 
 					val liveNestCenter = controller.liveNestCenter!!
+					val liveNestCenterState = rememberUpdatedState(liveNestCenter)
 					val liveNestHitResult = controller.nestedHitResult
 					val liveNestSelectedPoint = liveNestHitResult?.selectedPoint
 
@@ -433,55 +445,8 @@ fun MainScreenOverlay(
 						)
 					}
 
-					if (lineBeforeNests) {
-						Canvas(
-							modifier =
-								Modifier
-									.fillMaxSize()
-									.graphicsLayer {
-										alpha = liveNestOpacity
-										compositingStrategy = CompositingStrategy.Offscreen
-									}
-						) {
-							lineDrawing()
-						}
-					}
-
-					// Main canvas, uses drawWithCache to improve drawing performances
-					Canvas(
-						modifier =
-							Modifier
-								.fillMaxSize()
-								.graphicsLayer {
-									alpha = liveNestOpacity
-									compositingStrategy = CompositingStrategy.Offscreen
-								}.drawWithCache {
-									onDrawBehind {
-										/*
-										 * Do not remove those lines!!!
-										 * THEY ARE CRITICAL for the launcher UI rendering logic.
-										 * They force the cache to update its visual state with the backend (the SwipeService)
-										 */
-										iconsTrigger
-										selectedPointsIds
-
-										NestOverlay(
-											center = liveNestCenter,
-											nest = nest,
-											depth = 1,
-											drawParams = drawParams,
-											selectedAll = false,
-											lockedPoint = if (isHighestController) null else controller.hostPoint
-										)
-									}
-								}
-					) {
-						if (!lineBeforeNests) {
-							lineDrawing()
-						}
-
-						if (!nestDebugOverlay) return@Canvas
-
+					fun DrawScope.drawDebugLines() {
+						if (!nestDebugOverlay) return
 						val pos = controller.recentPositions
 						pos.forEach {
 							drawCircle(
@@ -491,7 +456,7 @@ fun MainScreenOverlay(
 							)
 						}
 
-						if (pos.size < 4) return@Canvas
+						if (pos.size < 4) return
 
 						val mid = pos.size / 2
 
@@ -513,6 +478,72 @@ fun MainScreenOverlay(
 							strokeWidth = 2f
 						)
 					}
+
+					/** Frozen ring lines are redrawn only when their inputs change. */
+					val lineModifier =
+						remember(
+							liveNestCenter,
+							effectiveCurrentPos,
+							sweepAngle,
+							effectiveSweepAngle,
+							rgbLine,
+							extraColors.angleLine,
+							order,
+							lineObject,
+							angleObject,
+							startObject,
+							endObject,
+							showLineObjectPreview,
+							showAngleLineObjectPreview,
+							showStartObjectPreview,
+							showEndObjectPreview,
+							pickedRememberShapeAngle,
+							pickedRememberRotationAngle,
+							pickedRememberShapeStart,
+							pickedRememberRotationStart,
+							pickedRememberShapeEnd,
+							pickedRememberRotationEnd
+						) {
+							Modifier.drawWithCache {
+								onDrawBehind { lineDrawing() }
+							}
+						}
+
+					val canvasModifier =
+						Modifier
+							.fillMaxSize()
+							.graphicsLayer {
+								alpha = liveNestOpacity
+								compositingStrategy = CompositingStrategy.Offscreen
+							}
+
+					Box(canvasModifier) {
+						if (lineBeforeNests) {
+							Canvas(Modifier.fillMaxSize().then(lineModifier)) {}
+						}
+
+						LiveNestPointsCanvas(
+							center = liveNestCenterState,
+							nest = nest,
+							defaultPoint = defaultPoint,
+							defaultNest = defaultNest,
+							defaultShape = defaultShape,
+							drawParams = drawParams,
+							lockedPoint = if (isHighestController) null else controller.hostPoint,
+							iconsTrigger = iconsTrigger,
+							shapePathsTrigger = shapePathsTrigger,
+							pointsVersion = pointsVersion,
+							selectedPointsIds = selectedPointsIds,
+							drawSelectedPoint = isHighestController,
+							centerIsStable = idx == 0 || controller.hostPoint?.getLiveNestSnapsToFingerPosition(defaultPoint, false) == true
+						)
+
+						if (!lineBeforeNests || nestDebugOverlay) {
+							Canvas(Modifier.fillMaxSize().then(if (lineBeforeNests) Modifier else lineModifier)) {
+								drawDebugLines()
+							}
+						}
+					}
 				} else {
 					break
 				}
@@ -525,6 +556,116 @@ fun MainScreenOverlay(
 	val cycleStageActive = displayPoint != null && displayPoint.action != hoveredPoint.action
 
 	PointPreviewTitle(displayPoint, useActionIcon = cycleStageActive)
+}
+
+/** Draws a cached nest picture on the screen-sized canvas. */
+@Composable
+private fun LiveNestPointsCanvas(
+	center: State<Offset>,
+	nest: Nest,
+	defaultPoint: Point,
+	defaultNest: Nest,
+	defaultShape: IntersectionShape,
+	drawParams: DrawParams,
+	lockedPoint: Point?,
+	iconsTrigger: State<Int>,
+	shapePathsTrigger: State<Int>,
+	pointsVersion: Int,
+	selectedPointsIds: State<List<Int>>,
+	drawSelectedPoint: Boolean,
+	centerIsStable: Boolean
+) {
+	val density = LocalDensity.current
+	val points = drawParams.pointsService.getPointsForNest(nest.id)
+	val extent = remember(nest, points, defaultPoint, defaultNest, defaultShape, drawParams, density, pointsVersion) {
+		nestPreviewExtent(nest, points, defaultPoint, defaultNest, defaultShape, density)
+	}
+	val diameter = (extent * 2f).toInt().coerceAtLeast(1)
+	val hasSelection = remember(selectedPointsIds, lockedPoint) {
+		derivedStateOf { selectedPointsIds.value.isNotEmpty() || lockedPoint != null }
+	}
+	val selectedPointsInNest = remember(selectedPointsIds, lockedPoint, nest.id, drawParams.pointsService) {
+		derivedStateOf {
+			buildList {
+				selectedPointsIds.value.forEach { id ->
+					if (drawParams.pointsService.findPointById(id)?.nestId == nest.id) add(id)
+				}
+				lockedPoint?.takeIf { it.nestId == nest.id }?.id?.let { if (it !in this) add(it) }
+			}
+		}
+	}
+	val selectedShapesInNest = remember(selectedPointsInNest, drawParams.pointsService) {
+		derivedStateOf {
+			buildSet {
+				selectedPointsInNest.value.forEach { id ->
+					drawParams.pointsService
+						.findPointById(id)
+						?.shapeId
+						?.let(::add)
+				}
+			}
+		}
+	}
+	val canvasModifier = remember(
+		nest,
+		defaultPoint,
+		defaultNest,
+		defaultShape,
+		drawParams,
+		lockedPoint,
+		iconsTrigger,
+		shapePathsTrigger,
+		pointsVersion,
+		center,
+		hasSelection,
+		selectedPointsInNest,
+		selectedShapesInNest,
+		drawSelectedPoint,
+		diameter
+	) {
+		Modifier
+			.fillMaxSize()
+			.graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+			.drawWithCache {
+				iconsTrigger.value
+				shapePathsTrigger.value
+				val staticPoints = if (drawSelectedPoint) emptyList() else selectedPointsInNest.value
+				val preview =
+					getNestPreviewPicture(
+						nest = nest,
+						depth = 1,
+						selected = false,
+						drawParams = if (drawSelectedPoint) drawParams.copy(skipSelected = true) else drawParams,
+						width = diameter,
+						height = diameter,
+						density = density,
+						layoutDirection = layoutDirection,
+						selectedPointIds = staticPoints,
+						selectedShapeIds = selectedShapesInNest.value,
+						hasSelectedPoints = hasSelection.value
+					)
+				onDrawBehind {
+					val liveCenter = center.value
+					drawNestLayer(preview, liveCenter, centerIsStable)
+					if (drawSelectedPoint) {
+						val ids = selectedPointsIds.value
+						NestOverlay(
+							center = liveCenter,
+							nest = nest,
+							depth = 1,
+							drawParams = drawParams,
+							selectedPointsOverride = ids,
+							hasSelectionOverride = ids.isNotEmpty(),
+							selectedOnly = true,
+							drawShapes = false,
+							drawCancelZone = false,
+							drawCenter = false
+						)
+					}
+				}
+			}
+	}
+	Canvas(canvasModifier) {}
 }
 
 fun defaultHapticFeedback(): CustomHapticFeedback =
