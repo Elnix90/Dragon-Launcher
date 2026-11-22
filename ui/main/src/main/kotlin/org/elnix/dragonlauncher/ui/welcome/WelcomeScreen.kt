@@ -400,6 +400,7 @@ private fun StartSheet(
 				fontFamily = family,
 				overflow = TextOverflow.Visible,
 				textAlign = TextAlign.Center,
+				maxLines = 1,
 				fontSize = 50.sp,
 				lineHeight = 68.sp,
 				color = textColor
@@ -411,6 +412,7 @@ private fun StartSheet(
 				fontSize = 70.sp,
 				lineHeight = 80.sp,
 				overflow = TextOverflow.Visible,
+				maxLines = 1,
 				textAlign = TextAlign.Center,
 				color = textColor
 			)
