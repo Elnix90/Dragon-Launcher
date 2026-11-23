@@ -32,6 +32,7 @@ data class DrawerSettings(
 	val iconShape: IconShape,
 	val iconSettings: IconSettings,
 	val autoAskToUnlockProfile: Boolean,
+	val swipeBetweenWorkspaces: Boolean,
 	val autoOpenSingleMatch: Boolean,
 	val disableAutoLaunchWhenFirstCharIs: String,
 	val tapEmptySpaceAction: DrawerActions,
@@ -81,6 +82,7 @@ fun ProvideDrawerSettings(
 	val iconShape by DrawerSettingsStore.iconShape.asState()
 	val iconSettings by iconsViewModel.iconSettings.collectAsState()
 	val autoAskToUnlockProfile by DrawerSettingsStore.autoAskToUnlockProfile.asState()
+	val swipeBetweenWorkspaces by DrawerSettingsStore.swipeBetweenWorkspaces.asState()
 	val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
 	val disableAutoLaunchWhenFirstCharIs by DrawerSettingsStore.disableAutoLaunchWhenFirstCharIs.asState()
 	val tapEmptySpaceAction by DrawerSettingsStore.tapEmptySpaceAction.asState()
@@ -125,6 +127,7 @@ fun ProvideDrawerSettings(
 				iconShape = iconShape,
 				iconSettings = iconSettings,
 				autoAskToUnlockProfile = autoAskToUnlockProfile,
+				swipeBetweenWorkspaces = swipeBetweenWorkspaces,
 				autoOpenSingleMatch = autoOpenSingleMatch,
 				disableAutoLaunchWhenFirstCharIs = disableAutoLaunchWhenFirstCharIs,
 				tapEmptySpaceAction = tapEmptySpaceAction,

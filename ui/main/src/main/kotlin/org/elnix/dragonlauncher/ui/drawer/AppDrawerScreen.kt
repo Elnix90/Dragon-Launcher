@@ -481,7 +481,8 @@ fun AppDrawerScreen(
 						start = if (leftDrawerAction.notDisabled) leftDrawerWidth else 0.dp,
 						end = if (rightDrawerAction.notDisabled) rightDrawerWidth else 0.dp
 					),
-			state = pagerState
+			state = pagerState,
+			userScrollEnabled = drawerSettings.swipeBetweenWorkspaces
 		) { pageIndex ->
 
 			val workspace = activeWorkspaces[pageIndex]

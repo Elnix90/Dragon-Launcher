@@ -106,6 +106,15 @@ object DrawerSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val swipeBetweenWorkspaces =
+		boolean(
+			title = R.string.swipe_between_workspaces,
+			description = R.string.swipe_between_workspaces_desc,
+			icon = R.drawable.workspaces,
+			default = true
+		)
+
+	@SettingKey
 	val gridSize =
 		int(
 			title = R.string.grid_size,
