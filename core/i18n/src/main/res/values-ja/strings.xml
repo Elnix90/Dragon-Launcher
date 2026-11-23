@@ -83,7 +83,7 @@
     <string name="drawer_actions">ドロワー操作</string>
     <string name="close_app_drawer">ドロワーを閉じる</string>
     <string name="toggle_kb">キーボードを切り替え</string>
-    <string name="behavior">行動</string>
+    <string name="behavior">動作</string>
     <string name="workspaces">ワークスペース</string>
     <string name="workspace_help">ここでは異なるアプリのワークスペースをカスタマイズでき、追加・編集・削除やアプリのバインドも可能です</string>
     <string name="create_workspace">ワークスペースを作成</string>
@@ -275,7 +275,7 @@
     <string name="preview_scale_factor_desc">サブネストのプレビューを表示する際、どの程度プレビューを縮小するか</string>
     <string name="width_actions_settings">ドロワーアクション設定</string>
     <string name="font_selector">フォントセレクター</string>
-    <string name="font_manage_help">フォントを管理します。TTF/OTFファイルをインポートするか、Google Fontsからダウンロードすることができます。</string>
+    <string name="font_manage_help">フォントを管理します。TTF/OTFファイルをインポートすることができます。</string>
     <string name="font_import">インポート</string>
     <string name="font_installed_fonts">インストールされたフォント</string>
     <string name="font_confirm_delete">確認 (%1$d)</string>
@@ -461,8 +461,6 @@
     <string name="on_tertiary_fixed_color">固定三次色上の文字色</string>
     <string name="on_tertiary_fixed_variant_color">固定三次色バリアント上の文字色</string>
     <string name="custom_colors">カスタムカラー</string>
-
-
     <string name="use_categories">カテゴリ分けを使用</string>
     <string name="use_categories_desc">ドロワー上でアプリに定義されたカテゴリを利用してグループ分けする</string>
     <string name="show_app_icons_in_drawer">ドロワー上にアイコンを表示する</string>
@@ -502,8 +500,8 @@
     <string name="show_status_bar_desc">ステータスバーを表示 (無効であれば何も表示しない)</string>
     <string name="disable_haptic_globally">全体で触覚フィードバックを無効化</string>
     <string name="disable_haptic_globally_desc">(あなたが嫌いな場合) ポイント選択時に触覚フィードバックが発生しないようにします</string>
-    <string name="app_info_cache_key">Cache key = %1$s</string>
-    <string name="app_info_installer_package">Installer package key = %1$s</string>
+    <string name="app_info_cache_key">キャッシュキー = %1$s</string>
+    <string name="app_info_installer_package">インストーラパッケージキー = %1$s</string>
     <string name="no_apps">アプリなし</string>
     <string name="activate_debug_mode">デバッグモードを有効化</string>
     <string name="activate_debug_mode_desc">アプリ全体でデバッグモードを有効化する</string>
@@ -524,14 +522,14 @@
     <string name="store_reset">ストアのリセット</string>
     <string name="debug_infos">デバッグ情報</string>
     <string name="super_warning_mode">スーパー警告モード</string>
-    <string name="super_warning_mode_desc">間違ったPINを打ち込んだ時に独特な警告を行う</string>
+    <string name="super_warning_mode_desc">パスワードを間違えた時に独特な警告を行う</string>
     <string name="super_warning_mode_sound">スーパー警告モード + サウンド</string>
     <string name="super_warning_mode_sound_desc">サウンドを追加</string>
     <string name="alarm_sound">アラーム音</string>
     <string name="metal_pipes_sound">金属パイプ音</string>
-    <string name="metal_pipes_sound_desc">間違ったPINを打ち込むと金属パイプ音を再生する</string>
+    <string name="metal_pipes_sound_desc">パスワードを間違えるとうるさい金属パイプ音を再生する</string>
     <string name="vibrate_on_error">振動させる</string>
-    <string name="vibrate_on_error_desc">PINを間違えると振動し続ける</string>
+    <string name="vibrate_on_error_desc">パスワードを間違えると振動し続ける</string>
     <string name="drawer_pull_down_settings">プルダウン設定</string>
     <string name="pull_down_animations">プルダウンアニメーション</string>
     <string name="pull_down_animations_desc">ドロワーを引き下げるアニメーションの有効無効を切り替える</string>
@@ -795,8 +793,6 @@
     <string name="filter_tag">フィルタータグ</string>
     <string name="enable_logging">ログを有効化</string>
     <string name="enable_logging.desc">全てのログをアプリストレージに保存し、コピーまたはエクスポートできるようにする</string>
-
-
     <string name="files_log_level">ファイルのログレベル</string>
     <string name="snackbar_log_level">スナックバーのログレベル</string>
     <string name="recently_used_apps_count_desc">ドロワーに表示する最近のアプリの量</string>
@@ -878,10 +874,10 @@
     <string name="reset_backup_tab">本当に全てのバックアップ設定をリセットしますか？</string>
     <string name="reset_angle_tab">本当に全ての角度設定をリセットしますか？</string>
     <string name="reset_app_display_tab">本当に全てのUI関連の設定をリセットしますか？一部の隠し設定もリセットされる可能性があります。</string>
-    <string name="reset_behavior_tab">本当に全ての行動設定をリセットしますか？</string>
+    <string name="reset_behavior_tab">本当に全ての動作設定をリセットしますか？</string>
     <string name="reset_colors_tab">本当に全ての色設定をリセットしますか？</string>
     <string name="reset_hold_tab">本当に全てのホールド設定をリセットしますか？</string>
-    <string name="reset_icon_packs_tab">本当に全てのアイコンをリセットしますか？</string>
+    <string name="reset_icon_packs_tab">本当に全てのアイコン設定をリセットしますか？</string>
     <string name="reset_status_bar">本当に全てのステータスバー設定をリセットしますか？</string>
     <string name="reset_widgets_tab">本当に全てのウィジェットをリセットしますか？</string>
     <string name="reset_drawer">本当に全てのドロワー設定をリセットしますか？</string>
@@ -1015,8 +1011,8 @@
     <string name="app_icon_overlay_scale">アプリアイコンのオーバーレイサイズ</string>
     <string name="encouragement_grass">草原へ手を伸ばしてみましょう🌿</string>
     <string name="place_app_where">配置する場所を選択</string>
-    <string name="permission_notifications_title">通知へのアクセス</string>
-    <string name="permission_notifications_desc">Dragon Launcherに通知の取得を許可することで、通知をステータスバーに表示できるようになります。</string>
+    <string name="permission_notifications_title">通知の送信</string>
+    <string name="permission_notifications_desc">Dragon Launcherに通知の送信を許可する</string>
     <string name="permission_app_shortcuts_title">アプリショートカット</string>
     <string name="permission_app_shortcuts_desc">Dragon Launcherにショートカットの取得を許可することで、ドロワーや検索時に表示されるようになります。</string>
     <string name="permission_accessibility_title">アクセシビリティサービス</string>
@@ -1074,4 +1070,75 @@
     <string name="drawer_align_bottom_desc">アイコンは下から並んでいます。閉じるためのスクロールは反転していません</string>
     <string name="reminder_mode_notification">時間が終了すると、Dragonから通知が届きます！</string>
     <string name="reminder_mode_overlay">PiPオーバーレイが表示され、終わりにする時間だと通知されます！</string>
+    <string name="launch_activity_color">「アクティビティを開く」の色</string>
+    <string name="reminder_mode_description">有効時、停止されるアプリを使用している際に定期的にリマインダーが表示されます。</string>
+    <string name="multi_select_left_text">残り</string>
+    <string name="launch_activity">アクティビティを開く</string>
+    <string name="no_activities_found">利用可能なアクティビティがありません</string>
+    <string name="recently_used_apps_color">最近使用したアプリの背景色</string>
+    <string name="recently_used_apps_color_desc">背景の色</string>
+    <string name="permission_notifications_access_title">通知の確認、返信、管理</string>
+    <string name="permission_notifications_access_desc">Dragon Launcherに通知の表示、返信、管理を許可することで、通知をステータスバーに表示することができるようになります。</string>
+    <string name="start_your_journey">旅を始めよう</string>
+    <string name="global_dragging_mode_setup_help">選択した現在のポイントプレビューモードの設定を変更する。</string>
+    <string name="are_you_sure_to_delete_the_nest">本当にネスト「%1$s」を消去しますか？</string>
+    <string name="delete_all_related_points">関連するポイントをすべて削除しますか？このネストを開くポイントと、ネスト内のすべてのポイントを削除します</string>
+    <string name="point_reset_options">ポイント削除設定</string>
+    <string name="reset_nests">ネストをリセット</string>
+    <string name="reset_points">ポイントをリセット</string>
+    <string name="reset_default_point">デフォルトのポイント設定をリセット</string>
+    <string name="reset_default_nest">デフォルトのネスト設定をリセット</string>
+    <string name="reset_default_shape">デフォルトの形状設定をリセット</string>
+    <string name="show_only_question_mark_icons">はてなアイコンのみを表示する</string>
+    <string name="show_only_question_mark_icons_desc">あなたがはてなマークをたくさん見たい変人なら、これを有効にしてください</string>
+    <string name="weird">奇妙</string>
+    <string name="charging_animation_help">充電中に表示されるアニメーションの表示を設定します</string>
+    <string name="charging_animation_reset">本当に充電アニメーションの設定をリセットしますか？</string>
+    <string name="charging_animation_color">アニメーション色の変更</string>
+    <string name="charging_animation_size_multiplier">サイズ倍率</string>
+    <string name="charging_animation_size_multiplier_desc">バブル自体の大きさ</string>
+    <string name="charging_animation_amount_multiplier">表示数倍率</string>
+    <string name="charging_animation_amount_multiplier_desc">高いほどたくさんのバブルが表示されます</string>
+    <string name="charging_animation_warning_not_charging">💡スマホを充電してアニメーションを表示</string>
+    <string name="see_changelogs">最初のバージョンからの変更ログを表示</string>
+    <string name="contribute_in_translations">翻訳に貢献 (日本語訳もぜひ！)</string>
+    <string name="drawer_preview">ドロワーのプレビュー</string>
+    <string name="drawer_appearance">ドロワーの見た目</string>
+    <string name="drawer_behavior">ドロワーの動作</string>
+    <string name="drawer_appearance_help">ドロワーの見た目を設定します</string>
+    <string name="drawer_behavior_help">ドロワーの動作を設定します</string>
+    <string name="drawer_actions_help">ドロワー内での操作について設定します</string>
+    <string name="search_activities">アクティビティを検索</string>
+    <string name="adb">ADB</string>
+    <string name="apps">アプリ</string>
+    <string name="nests">ネスト</string>
+    <string name="show_special_actions_in_picker">特殊なアクションを表示</string>
+    <string name="show_special_actions_in_picker_desc">いくつかの、限られた人向けのアクションを表示します</string>
+    <string name="special">特殊</string>
+    <string name="snap_point_angle_lines_start_angle">ポイント角度線開始角度をスナップ</string>
+    <string name="snap_point_angle_lines_start_angle_desc">ループの開始角度 (回転を調整するため)</string>
+    <string name="snapping">スナップ</string>
+    <string name="search_settings">設定を検索</string>
+    <string name="n_settings_found">%1$d個の設定が見つかりました</string>
+    <string name="clear">クリア</string>
+    <string name="backup_location_unset">バックアップ先をリセット</string>
+    <string name="github">Github</string>
+    <string name="weblate">Weblate</string>
+    <string name="mail">メール</string>
+    <string name="reddit">Reddit</string>
+    <string name="website">ウェブサイト</string>
+    <string name="telegram">Telegram</string>
+    <string name="discord">Discord</string>
+    <string name="theme">テーマ</string>
+    <string name="theme_desc">アプリのテーマを選択してください</string>
+    <string name="lock_orientation">向きを固定</string>
+    <string name="lock_orientation_desc">ランチャーの向きを縦画面に固定する</string>
+    <string name="documentation">ドキュメント</string>
+    <string name="documentation_help">現状、このドキュメントはまだ完成していません。ぜひ開発にご協力いただけると大変助かります！</string>
+    <string name="signatures">署名</string>
+    <string name="fullscreen_only_in_main_and_drawer">メイン画面とドロワー画面のみ</string>
+    <string name="fullscreen_only_in_main_and_drawer_desc">設定画面ではフルスクリーンにならないようにする</string>
+    <string name="start_your">開始する</string>
+    <string name="journey">旅を</string>
+    <string name="silent">サイレント</string>
 </resources>
