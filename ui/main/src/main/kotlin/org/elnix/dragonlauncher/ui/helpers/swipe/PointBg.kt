@@ -22,6 +22,7 @@ import androidx.core.graphics.withClip
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.cache.StablePointValues
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.rect
@@ -75,7 +76,8 @@ fun DrawScope.PointBg(
 				lineStrokeWidth = borderStroke,
 				glow = glow,
 				erase = true,
-				eraseColor = drawParams.eraseColor
+				eraseColor = drawParams.eraseColor,
+				cacheKey = borderIconShape to iconSize
 			)
 
 			drawPath(
@@ -101,10 +103,11 @@ fun DrawScope.PointBg(
 		val iconShape = cached.iconShape ?: drawParams.iconShape
 		val iconPath =
 			DrawPathCache.getOrCompute(
-				Pair(drawParams.iconShape, size)
-			) { toPath(drawParams.iconShape.resolveShape(), size) }
+				Pair(iconShape, size)
+			) { toPath(iconShape.resolveShape(), size) }
 		val iconWithBadge =
 			PointIconBitmapCache.get(
+				shape = iconShape,
 				path = iconPath,
 				sizePx = sizePx,
 				icon = iconBitmap,
@@ -146,7 +149,7 @@ fun DrawScope.PointBg(
 }
 
 private data class PointIconBitmapKey(
-	val path: Path,
+	val shape: IconShape,
 	val sizePx: Float,
 	val icon: ImageBitmap,
 	val badge: ImageBitmap?,
@@ -160,6 +163,7 @@ private object PointIconBitmapCache : LruCache<PointIconBitmapKey, ImageBitmap>(
 		(value.width.toLong() * value.height * 4).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
 
 	fun get(
+		shape: IconShape,
 		path: Path,
 		sizePx: Float,
 		icon: ImageBitmap,
@@ -167,7 +171,7 @@ private object PointIconBitmapCache : LruCache<PointIconBitmapKey, ImageBitmap>(
 		badgeColor: androidx.compose.ui.graphics.Color,
 		badgeTint: androidx.compose.ui.graphics.Color
 	): ImageBitmap {
-		val key = PointIconBitmapKey(path, sizePx, icon, badge, badgeColor, badgeTint)
+		val key = PointIconBitmapKey(shape, sizePx, icon, badge, badgeColor, badgeTint)
 		return this[key] ?: run {
 			val size = sizePx.roundToInt().coerceAtLeast(1)
 			val bitmap = createBitmap(size, size)

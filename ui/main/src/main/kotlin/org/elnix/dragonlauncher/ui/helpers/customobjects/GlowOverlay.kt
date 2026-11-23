@@ -133,9 +133,10 @@ fun DrawScope.drawPathGlow(
 	glow: CustomGlow?,
 	erase: Boolean,
 	eraseColor: Color?,
+	cacheKey: Any? = null,
 	cacheGlow: Boolean = true
 ) {
-	glow(glow, path, color, cacheGlow)
+	glow(glow, path, color, cacheKey, cacheGlow)
 	if (erase) erasePath(path, lineStrokeWidth, eraseColor)
 	path(lineStrokeWidth, path, color)
 }
@@ -171,12 +172,13 @@ private inline fun DrawScope.glow(
 	glow: CustomGlow?,
 	path: Path,
 	color: Color,
+	cacheKey: Any?,
 	cacheGlow: Boolean
 ) {
 	val glowRadius = glow?.radius.toPxOrNull(this) ?: return
 	val glowColor = glow.color ?: color
-	if (cacheGlow) {
-		val cached = PathGlowCache.get(path, glowColor, glowRadius)
+	if (cacheGlow && cacheKey != null && PathGlowCache.fits(path, glowRadius)) {
+		val cached = PathGlowCache.get(cacheKey, path, glowColor, glowRadius)
 		drawImage(cached.image, topLeft = cached.offset)
 	} else {
 		drawIntoCanvas { canvas ->
@@ -186,7 +188,7 @@ private inline fun DrawScope.glow(
 }
 
 private data class PathGlowKey(
-	val path: Path,
+	val geometry: Any,
 	val color: Color,
 	val radius: Float
 )
@@ -196,13 +198,30 @@ private data class CachedPathGlow(
 	val offset: Offset
 )
 
-/** Bounds cached path-glow bitmaps to 12 MiB. */
-private object PathGlowCache : LruCache<PathGlowKey, CachedPathGlow>(12 * 1024 * 1024) {
+private const val PATH_GLOW_CACHE_MAX_BYTES = 12 * 1024 * 1024
+
+/** Bounded cache keyed by stable geometry values; animated and oversized paths bypass it. */
+private object PathGlowCache : LruCache<PathGlowKey, CachedPathGlow>(PATH_GLOW_CACHE_MAX_BYTES) {
 	override fun sizeOf(key: PathGlowKey, value: CachedPathGlow): Int =
 		(value.image.width.toLong() * value.image.height * 4).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
 
-	fun get(path: Path, color: Color, radius: Float): CachedPathGlow {
-		val key = PathGlowKey(path, color, radius)
+	fun fits(path: Path, radius: Float): Boolean {
+		val bounds = path.getBounds()
+		val padding = kotlin.math.ceil(radius * 3f)
+		val width = kotlin.math
+			.ceil(bounds.width + padding * 2)
+			.toLong()
+			.coerceAtLeast(1L)
+		val height = kotlin.math
+			.ceil(bounds.height + padding * 2)
+			.toLong()
+			.coerceAtLeast(1L)
+		val maxPixels = PATH_GLOW_CACHE_MAX_BYTES / 4L
+		return height <= maxPixels && width <= maxPixels / height
+	}
+
+	fun get(geometry: Any, path: Path, color: Color, radius: Float): CachedPathGlow {
+		val key = PathGlowKey(geometry, color, radius)
 		return this[key] ?: run {
 			val bounds = path.getBounds()
 			val padding = kotlin.math.ceil(radius * 3f)

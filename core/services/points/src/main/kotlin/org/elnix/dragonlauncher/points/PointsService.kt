@@ -230,7 +230,7 @@ interface PointsService {
 	 * Same as [computeClosest] but ignores the given [ignoredPointId].
 	 */
 	fun computeClosestExcept(
-		ignoredPointId: Array<Int>?,
+		ignoredPointId: Set<Int>?,
 		normalizedPos: Offset,
 		nestId: Int
 	): Point?
@@ -745,10 +745,11 @@ internal class PointsServiceImpl(
 	}
 
 	override fun computeClosestExcept(
-		ignoredPointId: Array<Int>?,
+		ignoredPointId: Set<Int>?,
 		normalizedPos: Offset,
 		nestId: Int
 	): Point? {
+		val ignoredPointId = ignoredPointId?.toSet()
 		val pointsInNest = getPointsForNest(nestId)
 		val pointsInNestFiltered =
 			if (pointsInNest.size <= 256 || ignoredPointId == null) {

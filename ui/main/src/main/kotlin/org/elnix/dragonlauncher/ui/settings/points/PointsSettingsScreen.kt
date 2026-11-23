@@ -662,7 +662,7 @@ fun PointsSettingsScreen(
 											val tr = pan.toTr()
 											val bestPExcept =
 												pointsService.computeClosestExcept(
-													ignoredPointId = selectedPointsIds.toTypedArray(),
+													ignoredPointId = selectedPointsIds.toSet(),
 													normalizedPos = tr.normalizedOffset,
 													nestId = nestId
 												) ?: return@detectTransformGesturesWithStartAndEnd

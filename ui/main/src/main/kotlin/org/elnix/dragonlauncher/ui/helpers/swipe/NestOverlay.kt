@@ -98,6 +98,7 @@ fun DrawScope.NestOverlay(
 	val selectedPointsIds =
 		selectedPointsOverride
 			?: if (drawParams.renderingNestPreview) emptyList() else drawParams.pointsService.getSelectedPoints(lockedPoint)
+	val selectedPointIds = selectedPointsIds.toHashSet()
 	val hasSelectedPoints = hasSelectionOverride ?: selectedPointsIds.isNotEmpty()
 	val selectedShapes =
 		if (depth == 1 && !isSettingDisplay && drawParams.globalDraggingMode !is GlobalDraggingMode.Fixed && hasSelectedPoints) {
@@ -174,8 +175,9 @@ fun DrawScope.NestOverlay(
 	val skipSelectedIds =
 		if (drawParams.skipSelected && depth == 1) {
 			drawParams.pointsService.selectedPointsIds.value
+				.toHashSet()
 		} else {
-			emptyList()
+			emptySet()
 		}
 	val showAllNestPoints = nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest, drawParams.isDefaultEditing)
 	val showAllShapePoints = nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentShape, drawParams.isDefaultEditing)
@@ -225,23 +227,16 @@ fun DrawScope.NestOverlay(
 			val id = point.id
 			if (id in skipSelectedIds) continue
 			if (!drawAllPoints &&
-				!((drawParams.showCurrentPoint && id in selectedPointsIds) || (drawShapePoints && point.shapeId in selectedShapes))
+				!((drawParams.showCurrentPoint && id in selectedPointIds) || (drawShapePoints && point.shapeId in selectedShapes))
 			) {
 				continue
 			}
 			drawPoint(point)
 		}
 	} else if (drawParams.showCurrentPoint) {
-		for (index in selectedPointsIds.indices) {
-			val id = selectedPointsIds[index]
-			var duplicate = false
-			for (previous in 0 until index) {
-				if (selectedPointsIds[previous] == id) {
-					duplicate = true
-					break
-				}
-			}
-			if (duplicate || id in skipSelectedIds) continue
+		val seenIds = mutableSetOf<Int>()
+		for (id in selectedPointsIds) {
+			if (!seenIds.add(id) || id in skipSelectedIds) continue
 			val point = drawParams.pointsService.findPointById(id) ?: continue
 			if (point.nestId == nest.id) drawPoint(point)
 		}

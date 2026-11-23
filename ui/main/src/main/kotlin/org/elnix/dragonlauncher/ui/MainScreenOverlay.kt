@@ -479,7 +479,7 @@ fun MainScreenOverlay(
 						)
 					}
 
-					/** Frozen ring lines are redrawn only when their inputs change. */
+					/** Every value captured by lineDrawing is keyed, so frozen lines redraw only when their inputs change. */
 					val lineModifier =
 						remember(
 							liveNestCenter,
