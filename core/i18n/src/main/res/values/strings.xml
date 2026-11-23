@@ -990,6 +990,8 @@
     <string name="icons_settings">Icons Settings</string>
     <string name="drawer_label_color">Label color</string>
     <string name="drawer_label_color_desc">The color of the app names in the drawer. defaults to the onBackground color</string>
+    <string name="drawer_label_shadow">App label shadow</string>
+    <string name="drawer_label_shadow_desc">Add a shadow to app names to improve readability over wallpapers</string>
     <string name="points_screens_transparency">Points screens transparency</string>
     <string name="points_screens_transparency_desc">The transparency of all screens that display points of swipe related stuff, so that you can see your wallpaper through and better customize</string>
     <string name="search_all_workspaces_when_first_char_is">Search all Workspaces when first char is:</string>
