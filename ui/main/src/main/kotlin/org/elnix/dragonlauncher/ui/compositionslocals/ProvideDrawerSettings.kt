@@ -24,6 +24,7 @@ data class DrawerSettings(
 	val gridSize: Int,
 	val showAppIconsInDrawer: Boolean,
 	val showAppLabelsInDrawer: Boolean,
+	val showAppLabelShadow: Boolean,
 	val labelTextColor: Color,
 	val iconsSpacingVertical: Dp,
 	val iconsSpacingHorizontal: Dp,
@@ -72,6 +73,7 @@ fun ProvideDrawerSettings(
 	val gridSize by DrawerSettingsStore.gridSize.asState()
 	val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
 	val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelsInDrawer.asState()
+	val showAppLabelShadow by DrawerSettingsStore.showAppLabelShadow.asState()
 	val labelTextColor by DrawerSettingsStore.labelTextColor.asState()
 	val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
 	val iconsSpacingHorizontal by DrawerSettingsStore.iconsSpacingHorizontal.asState()
@@ -115,6 +117,7 @@ fun ProvideDrawerSettings(
 				gridSize = gridSize,
 				showAppIconsInDrawer = showAppIconsInDrawer,
 				showAppLabelsInDrawer = showAppLabelsInDrawer,
+				showAppLabelShadow = showAppLabelShadow,
 				labelTextColor = labelTextColor,
 				iconsSpacingVertical = iconsSpacingVertical,
 				iconsSpacingHorizontal = iconsSpacingHorizontal,

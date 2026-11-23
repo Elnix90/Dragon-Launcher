@@ -78,7 +78,8 @@ fun DrawerAppearanceTab(drawerViewModel: DrawerViewModel = activityViewModel()) 
 
 			Setting(DrawerSettingsStore.showAppIconsInDrawer)
 			Setting(DrawerSettingsStore.showAppLabelsInDrawer)
-			Setting(DrawerSettingsStore.labelTextColor)
+			Setting(DrawerSettingsStore.labelTextColor, enabled = drawerSettings.showAppLabelsInDrawer)
+			Setting(DrawerSettingsStore.showAppLabelShadow, enabled = drawerSettings.showAppLabelsInDrawer)
 			Setting(DrawerSettingsStore.drawerAlign) {
 				when (it) {
 					Top -> stringResource(R.string.drawer_align_top_desc)

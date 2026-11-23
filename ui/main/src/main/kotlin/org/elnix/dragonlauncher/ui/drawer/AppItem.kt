@@ -16,6 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.shared.ui.base.components.Spacer
@@ -25,6 +29,7 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.ktx.specifiedOrNull
 import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.compositionslocals.DrawerSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressPopup
 
@@ -83,7 +88,7 @@ fun AppItemHorizontal(
 				Text(
 					text = app.label,
 					color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
-					style = MaterialTheme.typography.labelSmall,
+					style = shadowStyle(drawerSettings),
 					maxLines = 1,
 					overflow = TextOverflow.Ellipsis
 				)
@@ -148,7 +153,7 @@ fun AppItemGrid(
 				Text(
 					text = app.label,
 					color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
-					style = MaterialTheme.typography.labelSmall,
+					style = shadowStyle(drawerSettings),
 					maxLines = 1,
 					overflow = TextOverflow.Ellipsis
 				)
@@ -166,3 +171,8 @@ fun AppItemGrid(
 		}
 	}
 }
+
+@Composable
+private fun shadowStyle(drawerSettings: DrawerSettings): TextStyle = MaterialTheme.typography.labelSmall.copy(
+	shadow = if (drawerSettings.showAppLabelShadow) Shadow(Color.Black.copy(alpha = 0.75f), Offset(0f, 1f), 3f) else null
+)

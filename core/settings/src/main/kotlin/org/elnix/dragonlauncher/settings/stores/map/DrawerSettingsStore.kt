@@ -79,6 +79,15 @@ object DrawerSettingsStore : MapSettingsStore() {
 		)
 
 	@SettingKey
+	val showAppLabelShadow =
+		boolean(
+			title = R.string.drawer_label_shadow,
+			description = R.string.drawer_label_shadow_desc,
+			icon = R.drawable.text_fields_alt,
+			default = false
+		)
+
+	@SettingKey
 	val autoShowKeyboardOnDrawer =
 		boolean(
 			title = R.string.auto_show_keyboard,
