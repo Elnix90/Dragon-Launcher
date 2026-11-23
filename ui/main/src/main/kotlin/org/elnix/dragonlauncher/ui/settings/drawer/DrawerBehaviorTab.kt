@@ -27,6 +27,7 @@ fun DrawerBehaviorTab() {
 			Setting(DrawerSettingsStore.autoOpenSingleMatch)
 			Setting(DrawerSettingsStore.disableAutoLaunchWhenFirstCharIs, enabled = autoOpenSingleMatch, singleChar = true)
 			Setting(DrawerSettingsStore.searchAllWorkspacesOnlyWhenFirstCharIs, singleChar = true)
+			Setting(DrawerSettingsStore.swipeBetweenWorkspaces)
 			Setting(DrawerSettingsStore.autoShowKeyboardOnDrawer)
 			Setting(DrawerSettingsStore.autoAskToUnlockProfile)
 			Setting(DrawerSettingsStore.imePadding)
