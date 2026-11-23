@@ -217,7 +217,7 @@ fun DrawScope.NestOverlay(
 			depth = depth,
 			point = point,
 			center = pointOffset,
-			selected = selectedAll || (id in selectedPointsIds),
+			selected = selectedAll || (id in selectedPointIds),
 			drawParams = drawParams
 		)
 	}

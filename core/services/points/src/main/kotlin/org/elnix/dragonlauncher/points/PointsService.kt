@@ -749,7 +749,6 @@ internal class PointsServiceImpl(
 		normalizedPos: Offset,
 		nestId: Int
 	): Point? {
-		val ignoredPointId = ignoredPointId?.toSet()
 		val pointsInNest = getPointsForNest(nestId)
 		val pointsInNestFiltered =
 			if (pointsInNest.size <= 256 || ignoredPointId == null) {

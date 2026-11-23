@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.helpers.swipe
 
+import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -180,7 +181,7 @@ private object PointIconBitmapCache : LruCache<PointIconBitmapKey, ImageBitmap>(
 			val dst = RectF(0f, 0f, size.toFloat(), size.toFloat())
 
 			canvas.withClip(path.asAndroidPath()) {
-				drawBitmap(icon.asAndroidBitmap(), null, dst, paint)
+				drawBitmap(icon.toSoftwareBitmap(), null, dst, paint)
 			}
 
 			if (badge != null && badge.width > 0) {
@@ -195,7 +196,7 @@ private object PointIconBitmapCache : LruCache<PointIconBitmapKey, ImageBitmap>(
 				val height = badge.height * scale
 				paint.colorFilter = PorterDuffColorFilter(badgeTint.toArgb(), PorterDuff.Mode.SRC_IN)
 				canvas.drawBitmap(
-					badge.asAndroidBitmap(),
+					badge.toSoftwareBitmap(),
 					null,
 					RectF(cx - width / 2f, cy - height / 2f, cx + width / 2f, cy + height / 2f),
 					paint
@@ -205,4 +206,10 @@ private object PointIconBitmapCache : LruCache<PointIconBitmapKey, ImageBitmap>(
 			bitmap.asImageBitmap().also { put(key, it) }
 		}
 	}
+}
+
+/** Hardware bitmaps can't be drawn into a software [android.graphics.Canvas], so they are copied first. */
+private fun ImageBitmap.toSoftwareBitmap(): Bitmap {
+	val bitmap = asAndroidBitmap()
+	return if (bitmap.config == Bitmap.Config.HARDWARE) bitmap.copy(Bitmap.Config.ARGB_8888, false) else bitmap
 }
