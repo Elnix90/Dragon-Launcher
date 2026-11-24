@@ -17,7 +17,14 @@ abstract class DragonCache<K, V>(
 	 * @param newSize The new maximum entry count.
 	 */
 	fun updateMaxCacheSize(newSize: Int) {
-		maxSize = newSize
+		synchronized(items) {
+			maxSize = newSize.coerceAtLeast(0)
+			val iterator = items.entries.iterator()
+			while (items.size > maxSize && iterator.hasNext()) {
+				iterator.next()
+				iterator.remove()
+			}
+		}
 	}
 
 	private val items =

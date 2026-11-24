@@ -47,7 +47,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -126,6 +130,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.helpers.swipe.backgroundCenteredSquareGrid
+import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
 import org.elnix.dragonlauncher.ui.settings.points.PointsSettingsViewModel.TransformedOffset
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -201,6 +206,18 @@ fun PointsSettingsScreen(
 	val nestId by nestsNavigationService.currentNestId.collectAsState()
 	val currentNest = pointsService.findNestById(nestId)
 	val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest, false) }
+	val eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
+	val draggedPointDrawParams =
+		rememberDrawParams(
+			eraseColor = eraseColor,
+			isDefaultEditing = false,
+			allowShowPointCenter = false,
+			pointSettingsDisplay = true,
+			showCancelZone = false,
+			hideShapes = false,
+			skipSelected = false,
+			isTopPoint = false
+		)
 
 	val center by viewModel.center.asState()
 	val manipulationSystem = viewModel.manipulationSystem
@@ -237,7 +254,7 @@ fun PointsSettingsScreen(
 	val selectedPointTempOffset = viewModel.selectedPointTempOffset
 
 	val recomposeTrigger by pointsService.recomposeTrigger.asState()
-	LaunchedEffect(recomposeTrigger) {
+	LaunchedEffect(recomposeTrigger, selectedPointsIds) {
 		// First Delete all the keys that aren't selected anymore
 		selectedPointTempOffset.keys.forEach { key ->
 			if (key !in selectedPointsIds) {
@@ -496,7 +513,6 @@ fun PointsSettingsScreen(
 						}
 					}
 
-					val eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
 					NestOverlay(
 						center = center,
 						nest = currentNest,
@@ -536,11 +552,11 @@ fun PointsSettingsScreen(
 
 					// Animated Selected points
 					selectedPointTempOffset.forEach { (id, tempPos) ->
-						val point = pointsService.findPointById(id) ?: return@forEach
-
+						if (id !in selectedPointsIds) return@forEach
 						val shapeId = tempPos.shapeId.value
-						val tr = tempPos.offset.value.toTr()
-						val pointOffset = tr.transformedOffset
+						val pointOffset = tempPos.offset.value
+							.toTr()
+							.transformedOffset
 
 						if (LocalNestDebugOverlay.current) {
 							Canvas(Modifier.fillMaxSize()) {
@@ -560,43 +576,6 @@ fun PointsSettingsScreen(
 								)
 							}
 						}
-//
-//                        val pointSize = point.getSize(defaultPoint).px
-//                        val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize, defaultPoint)
-
-						PointIcon(
-							center = pointOffset,
-							point = point,
-							selected = true,
-							pointSettingsDisplay = true,
-							eraseColor = eraseColor
-//                            customText = customText
-						)
-
-						val liveTargetId = point.liveNestTargetNestId ?: return@forEach
-
-						// Don't draw if the action is opening the same nest it is displaying
-						if (point.action is Action.OpenNest && (point.action as Action.OpenNest).nestId == liveTargetId) return@forEach
-
-						val nestedNest = pointsService.findNestById(liveTargetId)
-//                        val nestScale = point.liveNestScale ?: Point.defaultLiveNestScale
-//                        val scaledNest = nestedNest scaledBy nestScale
-
-						NestOverlay(
-							modifier = Modifier.graphicsLayer { alpha = 0.4f },
-							center = pointOffset,
-							nest = nestedNest,
-							eraseColor = eraseColor
-						)
-					}
-
-					val hoveredPointRadialGradientProgress by animateFloatAsState(if (ableToLaunchHoverAction) 1f else 0f)
-
-					if (closestHoveredTempOffset != null && ableToLaunchHoverAction && hoveredPointRadialGradientProgress > 0f) {
-						GlowOverlay(
-							center = closestHoveredTempOffset!!,
-							progress = hoveredPointRadialGradientProgress
-						)
 					}
 				}
 			}
@@ -683,7 +662,7 @@ fun PointsSettingsScreen(
 											val tr = pan.toTr()
 											val bestPExcept =
 												pointsService.computeClosestExcept(
-													ignoredPointId = selectedPointsIds.toTypedArray(),
+													ignoredPointId = selectedPointsIds.toSet(),
 													normalizedPos = tr.normalizedOffset,
 													nestId = nestId
 												) ?: return@detectTransformGesturesWithStartAndEnd
@@ -874,6 +853,62 @@ fun PointsSettingsScreen(
 						)
 					}
 			)
+			if (selectedPointsIds.isNotEmpty()) {
+				Canvas(
+					Modifier
+						.fillMaxSize()
+						.graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+				) {
+					selectedPointsIds.forEach { id ->
+						val point = pointsService.findPointById(id) ?: return@forEach
+						if (point.nestId != nestId) return@forEach
+						val pointCenter = selectedPointTempOffset[id]?.offset?.value ?: point.computePosition()
+						withTransform({
+							scale(viewModel.zoom.value, viewModel.zoom.value, pivot = pointCenter)
+							rotate(viewModel.angle.value, pivot = pointCenter)
+						}) {
+							this.PointIcon(
+								point = point,
+								depth = 1,
+								center = pointCenter,
+								selected = true,
+								drawParams = draggedPointDrawParams
+							)
+						}
+					}
+				}
+
+				Canvas(Modifier.fillMaxSize().graphicsLayer { alpha = 0.4f }) {
+					selectedPointsIds.forEach { id ->
+						val point = pointsService.findPointById(id) ?: return@forEach
+						if (point.nestId != nestId) return@forEach
+						val liveTargetId = point.liveNestTargetNestId ?: return@forEach
+						val openNest = point.action as? Action.OpenNest
+						if (openNest?.nestId == liveTargetId) return@forEach
+						val nestedNest = pointsService.findNestById(liveTargetId)
+						val pointCenter = selectedPointTempOffset[id]?.offset?.value ?: point.computePosition()
+						withTransform({
+							scale(viewModel.zoom.value, viewModel.zoom.value, pivot = pointCenter)
+							rotate(viewModel.angle.value, pivot = pointCenter)
+						}) {
+							this.NestOverlay(
+								nest = nestedNest,
+								depth = 1,
+								center = pointCenter,
+								drawParams = draggedPointDrawParams
+							)
+						}
+					}
+				}
+			}
+
+			val hoveredPointRadialGradientProgress by animateFloatAsState(if (ableToLaunchHoverAction) 1f else 0f)
+			if (closestHoveredTempOffset != null && ableToLaunchHoverAction && hoveredPointRadialGradientProgress > 0f) {
+				GlowOverlay(
+					center = closestHoveredTempOffset!!,
+					progress = hoveredPointRadialGradientProgress
+				)
+			}
 		}
 	}
 

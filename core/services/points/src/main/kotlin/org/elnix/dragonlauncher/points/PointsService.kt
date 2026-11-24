@@ -204,9 +204,8 @@ interface PointsService {
 	fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset
 
 	fun getPointsForNest(
-		nestId: Int,
-		skipSelected: Boolean
-	): Points
+		nestId: Int
+	): Collection<Point>
 
 	fun getSelectedShapeIds(
 		nestId: Int,
@@ -231,7 +230,7 @@ interface PointsService {
 	 * Same as [computeClosest] but ignores the given [ignoredPointId].
 	 */
 	fun computeClosestExcept(
-		ignoredPointId: Array<Int>?,
+		ignoredPointId: Set<Int>?,
 		normalizedPos: Offset,
 		nestId: Int
 	): Point?
@@ -333,13 +332,11 @@ internal class PointsServiceImpl(
 				selectedPointsIds.value = currentSelectedIds + (newSel.id)
 			}
 		}
-		recompose()
 	}
 
 	override fun deselect(id: Int) {
 		if (id !in selectedPointsIds.value) return
 		selectedPointsIds.value -= id
-		recompose()
 	}
 
 	override fun selectAll(nestId: Int) {
@@ -348,12 +345,10 @@ internal class PointsServiceImpl(
 				.filterValues { it.nestId == nestId }
 				.keys
 				.toList()
-		recompose()
 	}
 
 	override fun deselectAll() {
 		selectedPointsIds.value = emptyList()
-		recompose()
 	}
 
 	override fun invertSelection(nestId: Int) {
@@ -361,7 +356,6 @@ internal class PointsServiceImpl(
 			.filterValues { it.nestId == nestId }
 			.keys
 			.toList() - selectedPointsIds.value.toSet()
-		recompose()
 	}
 
 	override fun selectOnyOne(id: Int?) {
@@ -387,7 +381,6 @@ internal class PointsServiceImpl(
 				selectedPointsIds.value = listOf(newSel.id)
 			}
 		}
-		recompose()
 	}
 
 	init {
@@ -714,7 +707,7 @@ internal class PointsServiceImpl(
 	}
 
 	private var grid: MutableMap<GridCase, MutablePoints> = mutableMapOf()
-	private var nestGrid: MutableMap<Int, MutablePoints> = mutableMapOf()
+	private var nestGrid: Map<Int, List<Point>> = emptyMap()
 	private var furthestPointGrid: MutableMap<Int, Point?> = mutableMapOf()
 
 	private var lastTarget: Offset = Offset.Zero
@@ -738,14 +731,11 @@ internal class PointsServiceImpl(
 				cellKey(point.getPos())
 			}
 
-		nestGrid =
-			points.groupByTo(mutableMapOf()) { point ->
-				point.nestId
-			}
+		val pointsByNest = points.groupBy { it.nestId }
+		nestGrid = pointsByNest
 
 		furthestPointGrid =
-			points
-				.groupBy { it.nestId }
+			pointsByNest
 				.mapValues { (_, nestPoints) ->
 					nestPoints.maxByOrNull { it.getPos().getDistanceSquared() }
 				}.toMutableMap()
@@ -755,21 +745,44 @@ internal class PointsServiceImpl(
 	}
 
 	override fun computeClosestExcept(
-		ignoredPointId: Array<Int>?,
+		ignoredPointId: Set<Int>?,
 		normalizedPos: Offset,
 		nestId: Int
 	): Point? {
+		val pointsInNest = getPointsForNest(nestId)
 		val pointsInNestFiltered =
-			getPointsForNest(nestId = nestId, skipSelected = false)
-				.filterValues { (ignoredPointId == null || it.id !in ignoredPointId) }
+			if (pointsInNest.size <= 256 || ignoredPointId == null) {
+				pointsInNest
+			} else {
+				pointsInNest.filterNot { it.id in ignoredPointId }
+			}
 
-		return when (pointsInNestFiltered.size) {
-			0 -> {
+		return when {
+			pointsInNest.size <= 256 -> {
+				// shortcut: scan small nests directly to avoid allocating grid candidates.
+				var closest: Point? = null
+				var closestDistance = Float.POSITIVE_INFINITY
+				for (point in pointsInNest) {
+					if (ignoredPointId?.contains(point.id) == true) continue
+
+					val pos = point.getPos()
+					val dx = normalizedPos.x - pos.x
+					val dy = normalizedPos.y - pos.y
+					val distance = dx * dx + dy * dy
+					if (distance < closestDistance) {
+						closest = point
+						closestDistance = distance
+					}
+				}
+				closest
+			}
+
+			pointsInNestFiltered.isEmpty() -> {
 				null
 			}
 
-			1 -> {
-				pointsInNestFiltered.values.first()
+			pointsInNestFiltered.size == 1 -> {
+				pointsInNestFiltered.first()
 			}
 
 			else -> {
@@ -789,11 +802,11 @@ internal class PointsServiceImpl(
 						for (dy in -expandRadius..expandRadius) {
 							grid[Pair(targetCell.first + dx, targetCell.second + dy)]
 								?.let { points ->
-									val filteredPointsByNest =
-										points.filter {
-											it.nestId == nestId && (ignoredPointId == null || it.id !in ignoredPointId)
+									for (point in points) {
+										if (point.nestId == nestId && (ignoredPointId == null || point.id !in ignoredPointId)) {
+											candidates.add(point)
 										}
-									candidates.addAll(filteredPointsByNest)
+									}
 								}
 						}
 					}
@@ -889,15 +902,8 @@ internal class PointsServiceImpl(
 	}
 
 	override fun getPointsForNest(
-		nestId: Int,
-		skipSelected: Boolean
-	): Points {
-		val pointsInTheNest: MutablePoints = nestGrid[nestId] ?: return emptyMap()
-		if (!skipSelected) return pointsInTheNest.associateBy { it.id }
-		return pointsInTheNest
-			.filterNotTo(mutableSetOf()) { it.id in selectedPointsIds.value }
-			.associateBy { it.id }
-	}
+		nestId: Int
+	): Collection<Point> = nestGrid[nestId] ?: emptyList()
 
 	override fun getSelectedPoints(lockedPoint: Point?): List<Int> =
 		if (lockedPoint != null) {
