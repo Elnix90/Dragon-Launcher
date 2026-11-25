@@ -67,7 +67,8 @@ fun DrawScope.IntersectionShape(
 				lineStrokeWidth = shape.getBorderStroke(defaultShape, isDefaultEditing),
 				glow = shape.getGlow(defaultShape, isDefaultEditing),
 				erase = false,
-				eraseColor = eraseColor
+				eraseColor = eraseColor,
+				cacheKey = shape.getShape(defaultShape, isDefaultEditing) to size
 			)
 		}
 	}

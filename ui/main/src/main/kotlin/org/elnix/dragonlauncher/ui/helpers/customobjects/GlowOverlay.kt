@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -26,6 +27,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
+import androidx.core.graphics.createBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
@@ -129,9 +133,10 @@ fun DrawScope.drawPathGlow(
 	lineStrokeWidth: Dp,
 	glow: CustomGlow?,
 	erase: Boolean,
-	eraseColor: Color?
+	eraseColor: Color?,
+	cacheKey: Any? = null
 ) {
-	glow(glow, path, color)
+	glow(glow, path, color, cacheKey)
 	if (erase) erasePath(path, lineStrokeWidth, eraseColor)
 	path(lineStrokeWidth, path, color)
 }
@@ -166,15 +171,77 @@ inline fun DrawScope.erasePath(
 private inline fun DrawScope.glow(
 	glow: CustomGlow?,
 	path: Path,
-	color: Color
+	color: Color,
+	cacheKey: Any?
 ) {
 	val glowRadius = glow?.radius.toPxOrNull(this) ?: return
 	val glowColor = glow.color ?: color
-	val nativePath = path.asAndroidPath()
+	val cached = cacheKey?.let { PathGlowCache.get(it, path, glowColor, glowRadius) }
+	if (cached != null) {
+		drawImage(cached.image, topLeft = cached.offset)
+	} else {
+		drawIntoCanvas { canvas ->
+			val paint = customGlowPaint(glowColor, glowRadius)
+			canvas.nativeCanvas.drawPath(path.asAndroidPath(), paint)
+		}
+	}
+}
 
-	drawIntoCanvas { canvas ->
-		val paint = customGlowPaint(glowColor, glowRadius)
-		canvas.nativeCanvas.drawPath(nativePath, paint)
+private data class PathGlowKey(
+	val geometry: Any,
+	val color: Color,
+	val radius: Float
+)
+
+private data class CachedPathGlow(
+	val image: androidx.compose.ui.graphics.ImageBitmap,
+	val offset: Offset
+)
+
+private const val PATH_GLOW_CACHE_MAX_BYTES = 64 * 1024 * 1024
+private const val PATH_GLOW_CACHE_MAX_ENTRY_BYTES = 24 * 1024 * 1024
+
+/** Reuses static point/shape glow rasterizations; dynamic paths are uncached. */
+private object PathGlowCache :
+	DragonCache<PathGlowKey, CachedPathGlow>(
+		initialMaxSize = PATH_GLOW_CACHE_MAX_BYTES,
+		sizeOf = { _, value ->
+			(value.image.width.toLong() * value.image.height * 4).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+		}
+	) {
+	fun get(geometry: Any, path: Path, color: Color, radius: Float): CachedPathGlow? {
+		val key = PathGlowKey(geometry, color, radius)
+		get(key)?.let { return it }
+
+		val bounds = path.getBounds()
+		val padding = kotlin.math.ceil(radius.toDouble() * 3)
+		val width = kotlin.math
+			.ceil(bounds.width.toDouble() + padding * 2)
+			.toLong()
+			.coerceAtLeast(1L)
+		val height = kotlin.math
+			.ceil(bounds.height.toDouble() + padding * 2)
+			.toLong()
+			.coerceAtLeast(1L)
+		val maxPixels = PATH_GLOW_CACHE_MAX_ENTRY_BYTES / 4L
+		if (height > maxPixels || width > maxPixels / height) return null
+
+		return getOrCompute(key) {
+			val bitmap = createBitmap(width.toInt(), height.toInt())
+			val canvas = android.graphics.Canvas(bitmap)
+			canvas.translate(padding.toFloat() - bounds.left, padding.toFloat() - bounds.top)
+			canvas.drawPath(path.asAndroidPath(), customGlowPaint(color, radius))
+			CachedPathGlow(
+				image = bitmap.asImageBitmap(),
+				offset = Offset(bounds.left - padding.toFloat(), bounds.top - padding.toFloat())
+			)
+		}
+	}
+}
+
+internal suspend fun prewarmPathGlows(paths: List<Pair<Any, Path>>, color: Color, radius: Float) {
+	withContext(Dispatchers.Default) {
+		paths.forEach { (geometry, path) -> PathGlowCache.get(geometry, path, color, radius) }
 	}
 }
 

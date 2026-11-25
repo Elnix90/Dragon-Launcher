@@ -65,7 +65,8 @@ fun DrawScope.PointBg(
 				lineStrokeWidth = borderStroke,
 				glow = glow,
 				erase = true,
-				eraseColor = drawParams.eraseColor
+				eraseColor = drawParams.eraseColor,
+				cacheKey = borderIconShape to iconSize
 			)
 
 			drawPath(
