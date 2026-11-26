@@ -4,7 +4,6 @@ package org.elnix.dragonlauncher.ui.helpers.customobjects
 
 import android.graphics.BlurMaskFilter
 import android.graphics.Paint
-import android.util.LruCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +28,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
 import androidx.core.graphics.createBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
@@ -177,8 +178,8 @@ private inline fun DrawScope.glow(
 ) {
 	val glowRadius = glow?.radius.toPxOrNull(this) ?: return
 	val glowColor = glow.color ?: color
-	if (cacheGlow && cacheKey != null && PathGlowCache.fits(path, glowRadius)) {
-		val cached = PathGlowCache.get(cacheKey, path, glowColor, glowRadius)
+	val cached = if (cacheGlow) cacheKey?.let { PathGlowCache.get(it, path, glowColor, glowRadius) } else null
+	if (cached != null) {
 		drawImage(cached.image, topLeft = cached.offset)
 	} else {
 		drawIntoCanvas { canvas ->
@@ -198,51 +199,50 @@ private data class CachedPathGlow(
 	val offset: Offset
 )
 
-private const val PATH_GLOW_CACHE_MAX_BYTES = 12 * 1024 * 1024
+private const val PATH_GLOW_CACHE_MAX_BYTES = 64 * 1024 * 1024
+private const val PATH_GLOW_CACHE_MAX_ENTRY_BYTES = 24 * 1024 * 1024
 
-/** Bounded cache keyed by stable geometry values; animated and oversized paths bypass it. */
-private object PathGlowCache : LruCache<PathGlowKey, CachedPathGlow>(PATH_GLOW_CACHE_MAX_BYTES) {
-	override fun sizeOf(key: PathGlowKey, value: CachedPathGlow): Int =
-		(value.image.width.toLong() * value.image.height * 4).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+/** Reuses static point/shape glow rasterizations; dynamic paths are uncached. */
+private object PathGlowCache :
+	DragonCache<PathGlowKey, CachedPathGlow>(
+		initialMaxSize = PATH_GLOW_CACHE_MAX_BYTES,
+		sizeOf = { _, value ->
+			(value.image.width.toLong() * value.image.height * 4).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+		}
+	) {
+	fun get(geometry: Any, path: Path, color: Color, radius: Float): CachedPathGlow? {
+		val key = PathGlowKey(geometry, color, radius)
+		get(key)?.let { return it }
 
-	fun fits(path: Path, radius: Float): Boolean {
 		val bounds = path.getBounds()
-		val padding = kotlin.math.ceil(radius * 3f)
+		val padding = kotlin.math.ceil(radius.toDouble() * 3)
 		val width = kotlin.math
-			.ceil(bounds.width + padding * 2)
+			.ceil(bounds.width.toDouble() + padding * 2)
 			.toLong()
 			.coerceAtLeast(1L)
 		val height = kotlin.math
-			.ceil(bounds.height + padding * 2)
+			.ceil(bounds.height.toDouble() + padding * 2)
 			.toLong()
 			.coerceAtLeast(1L)
-		val maxPixels = PATH_GLOW_CACHE_MAX_BYTES / 4L
-		return height <= maxPixels && width <= maxPixels / height
-	}
+		val maxPixels = PATH_GLOW_CACHE_MAX_ENTRY_BYTES / 4L
+		if (height > maxPixels || width > maxPixels / height) return null
 
-	fun get(geometry: Any, path: Path, color: Color, radius: Float): CachedPathGlow {
-		val key = PathGlowKey(geometry, color, radius)
-		return this[key] ?: run {
-			val bounds = path.getBounds()
-			val padding = kotlin.math.ceil(radius * 3f)
-			val width = kotlin.math
-				.ceil(bounds.width + padding * 2)
-				.toInt()
-				.coerceAtLeast(1)
-			val height = kotlin.math
-				.ceil(bounds.height + padding * 2)
-				.toInt()
-				.coerceAtLeast(1)
-			val bitmap = createBitmap(width, height)
+		return getOrCompute(key) {
+			val bitmap = createBitmap(width.toInt(), height.toInt())
 			val canvas = android.graphics.Canvas(bitmap)
-			canvas.translate(padding - bounds.left, padding - bounds.top)
+			canvas.translate(padding.toFloat() - bounds.left, padding.toFloat() - bounds.top)
 			canvas.drawPath(path.asAndroidPath(), customGlowPaint(color, radius))
-
 			CachedPathGlow(
 				image = bitmap.asImageBitmap(),
-				offset = Offset(bounds.left - padding, bounds.top - padding)
-			).also { put(key, it) }
+				offset = Offset(bounds.left - padding.toFloat(), bounds.top - padding.toFloat())
+			)
 		}
+	}
+}
+
+internal suspend fun prewarmPathGlows(paths: List<Pair<Any, Path>>, color: Color, radius: Float) {
+	withContext(Dispatchers.Default) {
+		paths.forEach { (geometry, path) -> PathGlowCache.get(geometry, path, color, radius) }
 	}
 }
 

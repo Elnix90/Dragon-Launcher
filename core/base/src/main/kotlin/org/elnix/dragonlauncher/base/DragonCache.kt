@@ -1,46 +1,32 @@
 package org.elnix.dragonlauncher.base
 
 import io.github.elnix90.shared.base.SettingFlow
-import java.util.Collections
 
+/** LRU cache bounded by [initialMaxSize] units; entries count as one unit unless [sizeOf] is supplied. */
 abstract class DragonCache<K, V>(
-	initialMaxSize: Int
+	initialMaxSize: Int,
+	private val sizeOf: (K, V) -> Int = { _, _ -> 1 }
 ) {
-	private var maxSize = initialMaxSize
+	private var maxSize = initialMaxSize.coerceAtLeast(0)
+	private var currentSize = 0L
 
 	val cacheTrigger: SettingFlow<Int> = SettingFlow(0)
 
 	/**
-	 * Updates the maximum number of cached entries.
-	 * Call this whenever the number of points changes to keep the cache sized to the working set.
+	 * Updates the maximum cached size, in [sizeOf] units (entries by default).
 	 *
-	 * @param newSize The new maximum entry count.
+	 * @param newSize The new maximum size.
 	 */
 	fun updateMaxCacheSize(newSize: Int) {
 		synchronized(items) {
 			maxSize = newSize.coerceAtLeast(0)
-			val iterator = items.entries.iterator()
-			while (items.size > maxSize && iterator.hasNext()) {
-				iterator.next()
-				iterator.remove()
-			}
+			trimToSize()
 		}
 	}
 
-	private val items =
-		Collections.synchronizedMap(
-			object : LinkedHashMap<K, V>(
-				maxSize,
-				0.75f,
-				true
-			) {
-				override fun removeEldestEntry(
-					eldest: MutableMap.MutableEntry<K, V>
-				) = size > maxSize
-			}
-		)
+	private val items = LinkedHashMap<K, V>(16, 0.75f, true)
 
-	operator fun get(key: K): V? = items[key]
+	operator fun get(key: K): V? = synchronized(items) { items[key] }
 
 	/**
 	 * Get or compute, used in the [org.elnix.dragonlauncher.base.util.ImageUtils] object, to directly compute [V] when it is not in the cache.
@@ -53,29 +39,64 @@ abstract class DragonCache<K, V>(
 	fun getOrCompute(
 		key: K,
 		compute: () -> V
-	): V =
-		items.getOrPut(key) {
+	): V {
+		synchronized(items) { items[key]?.let { return it } }
+
+		val value = compute()
+		synchronized(items) {
+			items[key]?.let { return it }
+			put(key, value)
 			cacheTrigger.update { it + 1 }
-			compute()
 		}
+		return value
+	}
 
 	/** Compute simply a new object, don't return it */
 	fun compute(key: K, compute: () -> V) {
-		cacheTrigger.update { it + 1 }
-		items[key] = compute()
+		val value = compute()
+		synchronized(items) {
+			put(key, value)
+			cacheTrigger.update { it + 1 }
+		}
 	}
 
 	fun evict(key: K) {
-		items.remove(key)
+		synchronized(items) {
+			if (items.containsKey(key)) {
+				currentSize -= weight(key, items.getValue(key))
+				items.remove(key)
+			}
+		}
 	}
 
 	fun evictAll() {
-		items.clear()
+		synchronized(items) {
+			items.clear()
+			currentSize = 0L
+		}
 	}
 
 	/**
 	 * The current number of entries held in the cache.
 	 * Useful for debugging or logging cache pressure.
 	 */
-	val size: Int get() = items.size
+	val size: Int get() = synchronized(items) { items.size }
+
+	private fun put(key: K, value: V) {
+		if (items.containsKey(key)) currentSize -= weight(key, items.getValue(key))
+		items[key] = value
+		currentSize += weight(key, value)
+		trimToSize()
+	}
+
+	private fun trimToSize() {
+		val iterator = items.entries.iterator()
+		while (currentSize > maxSize && iterator.hasNext()) {
+			val entry = iterator.next()
+			currentSize -= weight(entry.key, entry.value)
+			iterator.remove()
+		}
+	}
+
+	private fun weight(key: K, value: V): Long = sizeOf(key, value).coerceAtLeast(1).toLong()
 }

@@ -125,6 +125,7 @@ import org.elnix.dragonlauncher.ui.dialogs.editors.PointEditor
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
+import org.elnix.dragonlauncher.ui.helpers.customobjects.prewarmPathGlows
 import org.elnix.dragonlauncher.ui.helpers.detectTransformGesturesWithStartAndEnd
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
@@ -206,6 +207,18 @@ fun PointsSettingsScreen(
 	val nestId by nestsNavigationService.currentNestId.collectAsState()
 	val currentNest = pointsService.findNestById(nestId)
 	val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest, false) }
+	val shapePathsTrigger by NestIntersectionShapesPathCache.cacheTrigger.asState()
+	LaunchedEffect(shapes, defaultIntersectionShape, shapePathsTrigger, primaryColor, density.density) {
+		val paths =
+			shapes.mapNotNull { shape ->
+				val path = NestIntersectionShapesPathCache[shape] ?: return@mapNotNull null
+				val size = shape.getSize(density.density, defaultIntersectionShape, false)
+				(shape.getShape(defaultIntersectionShape, false) to size) to path
+			}
+		if (paths.size == shapes.size) {
+			prewarmPathGlows(paths, primaryColor, with(density) { 30.dp.toPx() })
+		}
+	}
 	val eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
 	val draggedPointDrawParams =
 		rememberDrawParams(
