@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -387,6 +388,10 @@ private fun StartSheet(
 			)
 		)
 	}
+	val startText = stringResource(R.string.start_your)
+	val journeyText = stringResource(R.string.journey)
+	val startAutoSize = remember { TextAutoSize.StepBased(24.sp, 50.sp, 1.sp) }
+	val journeyAutoSize = remember { TextAutoSize.StepBased(24.sp, 70.sp, 1.sp) }
 
 	val safeBottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding()
 	val shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
@@ -413,6 +418,7 @@ private fun StartSheet(
 
 		Column(
 			modifier = Modifier
+				.fillMaxWidth()
 				.height(150.dp)
 				.graphicsLayer {
 					scaleX = scale
@@ -421,25 +427,35 @@ private fun StartSheet(
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
 			Text(
-				text = stringResource(R.string.start_your),
+				text = startText,
+				modifier = Modifier
+					.fillMaxWidth()
+					.weight(1f),
 				style = MaterialTheme.typography.displayLarge,
 				fontFamily = family,
 				overflow = TextOverflow.Visible,
+				softWrap = false,
 				textAlign = TextAlign.Center,
 				maxLines = 1,
 				fontSize = 50.sp,
 				lineHeight = 68.sp,
+				autoSize = startAutoSize,
 				color = textColor
 			)
 			Text(
-				text = stringResource(R.string.journey),
+				text = journeyText,
+				modifier = Modifier
+					.fillMaxWidth()
+					.weight(1f),
 				style = MaterialTheme.typography.displayLarge,
 				fontFamily = family,
 				fontSize = 70.sp,
 				lineHeight = 80.sp,
 				overflow = TextOverflow.Visible,
+				softWrap = false,
 				maxLines = 1,
 				textAlign = TextAlign.Center,
+				autoSize = journeyAutoSize,
 				color = textColor
 			)
 		}
