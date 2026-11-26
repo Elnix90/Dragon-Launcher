@@ -8,6 +8,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -30,11 +32,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -54,8 +58,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.hridayan.shapeindicators.ShapeIndicatorColumn
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
+import io.github.elnix90.shared.ui.animation.bouncySpec
 import io.github.elnix90.shared.ui.base.animation.slideInHorizontalBouncy
 import io.github.elnix90.shared.ui.base.animation.slideOutHorizontalBouncy
 import io.github.elnix90.shared.ui.base.components.Spacer
@@ -76,6 +82,9 @@ private const val PULL_THRESHOLD_DP = 100
 
 /** Log damping scale: the displayed pull eases toward 2x the threshold instead of stopping hard. */
 private const val PULL_SOFT_CAP_DP = 320
+
+/** Distance below the arm threshold before a pull disarms, to avoid threshold chatter. */
+private const val PULL_DISARM_HYSTERESIS_DP = 16
 
 /** Sheet height visible at rest, in dp. */
 private const val SHEET_PEEK_DP = 50
@@ -98,6 +107,7 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
 	val capPx = with(density) { PULL_SOFT_CAP_DP.dp.toPx() }
 	val peekPx = with(density) { SHEET_PEEK_DP.dp.toPx() }
 	val cancelTickFloorPx = with(density) { 8.dp.toPx() }
+	val disarmThresholdPx = thresholdPx - with(density) { PULL_DISARM_HYSTERESIS_DP.dp.toPx() }
 
 	LaunchedEffect(Unit) {
 		delay(2.seconds)
@@ -126,23 +136,39 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
 
 	val travel by animateFloatAsState(
 		targetValue = if (viewModel.canceling) 0f else viewModel.pullTarget,
-		animationSpec = spring(
-			dampingRatio = if (viewModel.canceling) 0.55f else 1f,
-			stiffness = if (viewModel.canceling) Spring.StiffnessMediumLow else Spring.StiffnessHigh
-		),
+		animationSpec =
+			if (viewModel.canceling) {
+				spring(dampingRatio = 1f, stiffness = Spring.StiffnessMediumLow)
+			} else {
+				snap()
+			},
 		label = "pullTravel"
 	)
+	val currentTravel = rememberUpdatedState(travel)
 
 	// log damping: eases off instead of hitting a wall
 	val displayOffset = travel / (1f + travel / capPx)
 	val thresholdDisplay = thresholdPx / (1f + thresholdPx / capPx)
 	val pullProgress = (displayOffset / thresholdDisplay).coerceIn(0f, 1f)
 	val excess = ((displayOffset - thresholdDisplay) / (capPx - thresholdDisplay)).coerceIn(0f, 1f)
-	val armed = travel >= thresholdPx
+	var armed by remember { mutableStateOf(false) }
+
+	LaunchedEffect(travel) {
+		armed = if (armed) travel >= disarmThresholdPx else travel >= thresholdPx
+	}
+	val isLastPageSettled =
+		pagerState.currentPage == PAGES_NUMBER - 1 && pagerState.currentPageOffsetFraction == 0f
+	LaunchedEffect(isLastPageSettled) {
+		if (!isLastPageSettled) {
+			viewModel.pullTarget = 0f
+			viewModel.canceling = false
+			armed = false
+		}
+	}
+	val currentArmed = rememberUpdatedState(armed)
 
 	LaunchedEffect(armed) {
-		if (viewModel.hapticReady) haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-		viewModel.hapticReady = true
+		if (armed) haptic.performHapticFeedback(HapticFeedbackType.Confirm)
 	}
 
 	val bgAlpha = 1f - 0.5f * pullProgress - 0.5f * excess
@@ -166,7 +192,7 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
 	}
 
 	fun cancelPull() {
-		if (travel > cancelTickFloorPx) haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+		if (currentTravel.value > cancelTickFloorPx) haptic.performHapticFeedback(HapticFeedbackType.Confirm)
 		viewModel.canceling = true
 	}
 
@@ -186,17 +212,18 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
 								pagerState.currentPageOffsetFraction == 0f
 						if (!eligible) return Offset.Zero
 
+						val displayedTravel = if (viewModel.canceling) currentTravel.value else viewModel.pullTarget
 						viewModel.canceling = false
 						// rebase on the displayed value so a re-grab mid spring-back stays continuous
-						viewModel.pullTarget = (travel - available.y).coerceAtLeast(0f)
+						viewModel.pullTarget = (displayedTravel - available.y).coerceAtLeast(0f)
 						return Offset(0f, available.y)
 					}
-
 					// finger down drains the pull first, the rest scrolls the pager
-					if (available.y > 0f && travel > 0f) {
+					val displayedTravel = if (viewModel.canceling) currentTravel.value else viewModel.pullTarget
+					if (available.y > 0f && displayedTravel > 0f) {
 						viewModel.canceling = false
-						val consumed = minOf(available.y, travel)
-						viewModel.pullTarget = (travel - consumed).coerceAtLeast(0f)
+						val consumed = minOf(available.y, displayedTravel)
+						viewModel.pullTarget = (displayedTravel - consumed).coerceAtLeast(0f)
 						return Offset(0f, consumed)
 					}
 
@@ -205,10 +232,10 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
 
 				override suspend fun onPreFling(available: Velocity): Velocity {
 					if (viewModel.launching) return available
-					if (viewModel.canceling || travel <= 0f) return Velocity.Zero
+					if (viewModel.canceling || currentTravel.value <= 0f) return Velocity.Zero
 
 					// shortcut: release is decided on travel alone; add a velocity guard only if accidental exits show up
-					if (travel >= thresholdPx) launchWelcomeExit() else cancelPull()
+					if (currentArmed.value || currentTravel.value >= thresholdPx) launchWelcomeExit() else cancelPull()
 
 					// consume the fling so momentum can't continue the gesture
 					return available
@@ -336,8 +363,6 @@ private fun StartSheet(
 	peekPx: Float,
 	screenHeightPx: Float
 ) {
-	val popSpring = spring<Float>(dampingRatio = 0.55f, stiffness = Spring.StiffnessMediumLow)
-
 	val cardColor by animateColorAsState(
 		if (armed) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainer,
 		spring(dampingRatio = 0.55f, stiffness = Spring.StiffnessMediumLow)
@@ -346,9 +371,9 @@ private fun StartSheet(
 		if (armed) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurface,
 		spring(dampingRatio = 0.55f, stiffness = Spring.StiffnessMediumLow)
 	)
-	val weight by animateFloatAsState(if (armed) 1000f else 650f, popSpring, label = "weight")
-	val width by animateFloatAsState(if (armed) 125f else 100f, popSpring, label = "width")
-	val scale by animateFloatAsState(if (armed) 1.05f else 1f, popSpring, label = "scale")
+	val weight by animateFloatAsState(if (armed) 1000f else 650f, bouncySpec(), label = "weight")
+	val width by animateFloatAsState(if (armed) 125f else 100f, bouncySpec(), label = "width")
+	val scale by animateFloatAsState(if (armed) 1.05f else 1f, bouncySpec(), label = "scale")
 
 	val family = remember(weight, width) {
 		FontFamily(
@@ -373,8 +398,7 @@ private fun StartSheet(
 				// hidden until the page arrives, peeking at rest, flush when pulled, off the top on launch
 				val restY = size.height - peekPx * pageProgress
 				translationY = restY * (1f - pullProgress) - exitAnim.value * (screenHeightPx + size.height)
-			}.clip(shape)
-			.background(cardColor)
+			}.background(cardColor, shape)
 			.padding(horizontal = 24.dp)
 			.padding(top = 8.dp)
 			.padding(bottom = safeBottom + 24.dp),
@@ -388,10 +412,12 @@ private fun StartSheet(
 		)
 
 		Column(
-			modifier = Modifier.graphicsLayer {
-				scaleX = scale
-				scaleY = scale
-			},
+			modifier = Modifier
+				.height(150.dp)
+				.graphicsLayer {
+					scaleX = scale
+					scaleY = scale
+				},
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
 			Text(

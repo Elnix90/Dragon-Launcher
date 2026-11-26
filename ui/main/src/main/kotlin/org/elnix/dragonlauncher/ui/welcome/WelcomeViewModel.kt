@@ -35,7 +35,6 @@ class WelcomeViewModel
 		var showScrollIndicator by mutableStateOf(false)
 		var showScrollIndicatorTwo by mutableStateOf(false)
 		var showShapesScrollBar by mutableStateOf(false)
-		var hapticReady = false
 		val exitAnim = Animatable(0f)
 
 		fun setAsSeen() {
