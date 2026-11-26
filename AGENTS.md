@@ -36,6 +36,15 @@ Follow existing module boundaries and local patterns. The version catalog is `gr
 
 - Debug and Beta use separate application IDs and separate app data. Confirm which Dragon Launcher variant is active before device validation; installing Debug does not update Beta.
 
+## Adding a small setting
+
+- First inspect the relevant settings store, settings screen, and runtime consumer; keep the change within their existing module boundaries.
+- Add a typed `@SettingKey` to the existing `@SettingsStore`, with a default that preserves current behavior. Set backup behavior deliberately and avoid changing existing keys or serialized formats.
+- Add the user-facing title and description to `core/i18n/src/main/res/values/strings.xml`.
+- If you need a new icon that isn't already present in  the codebase, get one appropriate from https://fonts.google.com/icons with the style "Material symbols (new) - Rounded" and store it in `core/i18n/src/main/res/drawable`
+- Show it with the existing `Setting(SettingsStore.key)` component in the relevant screen. If the setting affects runtime behavior, connect it to the existing consumer (using the current composition-local/provider pattern where applicable); a visible toggle alone is not complete.
+- Run `mise format` and the focused tests or Debug build appropriate to the change. Never build Release or Play Store variants.
+
 ## Documentation and contribution rules
 
 - [CONTRIBUTING.MD](CONTRIBUTING.MD)

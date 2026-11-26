@@ -134,9 +134,10 @@ fun DrawScope.drawPathGlow(
 	glow: CustomGlow?,
 	erase: Boolean,
 	eraseColor: Color?,
-	cacheKey: Any? = null
+	cacheKey: Any? = null,
+	cacheGlow: Boolean = true
 ) {
-	glow(glow, path, color, cacheKey)
+	glow(glow, path, color, cacheKey, cacheGlow)
 	if (erase) erasePath(path, lineStrokeWidth, eraseColor)
 	path(lineStrokeWidth, path, color)
 }
@@ -172,17 +173,17 @@ private inline fun DrawScope.glow(
 	glow: CustomGlow?,
 	path: Path,
 	color: Color,
-	cacheKey: Any?
+	cacheKey: Any?,
+	cacheGlow: Boolean
 ) {
 	val glowRadius = glow?.radius.toPxOrNull(this) ?: return
 	val glowColor = glow.color ?: color
-	val cached = cacheKey?.let { PathGlowCache.get(it, path, glowColor, glowRadius) }
+	val cached = if (cacheGlow) cacheKey?.let { PathGlowCache.get(it, path, glowColor, glowRadius) } else null
 	if (cached != null) {
 		drawImage(cached.image, topLeft = cached.offset)
 	} else {
 		drawIntoCanvas { canvas ->
-			val paint = customGlowPaint(glowColor, glowRadius)
-			canvas.nativeCanvas.drawPath(path.asAndroidPath(), paint)
+			canvas.nativeCanvas.drawPath(path.asAndroidPath(), customGlowPaint(glowColor, glowRadius))
 		}
 	}
 }

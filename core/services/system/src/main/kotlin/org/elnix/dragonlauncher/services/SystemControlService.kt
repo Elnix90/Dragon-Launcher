@@ -122,15 +122,9 @@ class SystemControlService : AccessibilityService() {
 
 		val info =
 			AccessibilityServiceInfo().apply {
-				eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
-					AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
+				eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
 
 				feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
-
-				flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS or
-					AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
-					AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
-					AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE
 				notificationTimeout = 50
 			}
 		serviceInfo = info
