@@ -386,8 +386,12 @@ fun MainScreenOverlay(
 									.toInt()
 							}
 
-							useSnappedAngleOrRealAngle && liveNestSelectedPoint != null -> {
-								liveNestSelectedPoint.getPos().angleDeg().toInt()
+							linePreviewSnapToAction && useSnappedAngleOrRealAngle && liveNestSelectedPoint != null -> {
+								if (animationWhenSnapping) {
+									animatedCurrent.value.angleDeg().toInt()
+								} else {
+									liveNestSelectedPoint.getPos().angleDeg().toInt()
+								}
 							}
 
 							else -> {
