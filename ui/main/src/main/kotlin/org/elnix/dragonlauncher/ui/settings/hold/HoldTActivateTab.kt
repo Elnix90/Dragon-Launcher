@@ -61,6 +61,7 @@ import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.swipe.SwipeService
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.Preset
 import org.elnix.dragonlauncher.ui.components.PresetRow
@@ -113,8 +114,6 @@ fun HoldToActivateTab(
 	swipeViewModel: SwipeViewModel = activityViewModel()
 ) {
 	val ctx = LocalContext.current
-	val extraColors = LocalExtraColors.current
-
 	val scope = rememberCoroutineScope()
 
 	val swipeService = swipeViewModel.swipeService
@@ -270,136 +269,19 @@ fun HoldToActivateTab(
 				}
 
 				PresetRow(
-					presets = listOf(
-						HoldPreset("Default"),
-						HoldPreset(
-							name = "Elnix",
-							customObject = CustomObject(
-								stroke = 4.5.dp,
-								color = null,
-								glow = CustomGlow(radius = 12.dp, color = null),
-								shape = IconShape.Random,
-								size = 75.0.dp,
-								rotation = -1,
-								mirror = false,
-								eraseBackground = false,
-								alignsWithDragAngle = false
-							),
-							holdDelayBeforeStartingLongClickSettings = 300,
-							longCLickSettingsDuration = 500,
-							holdToActivateSettingsTolerance = 10.0.dp,
-							showToleranceOnMainScreen = false,
-							rotationsPerSecond = 0.50f,
-							holdRgbLoading = false,
-							pulsingRadius = 2.0f,
-							pulsingDuration = 500,
-							color = Color(0xFFB902FF)
-						),
-						HoldPreset(
-							name = "Yo",
-							customObject = CustomObject(
-								stroke = 4.5.dp,
-								color = null,
-								glow = CustomGlow(radius = 12.dp, color = null),
-								shape = IconShape.Random,
-								size = 75.0.dp,
-								rotation = -1,
-								mirror = false,
-								eraseBackground = false,
-								alignsWithDragAngle = false
-							),
-							holdDelayBeforeStartingLongClickSettings = 300,
-							longCLickSettingsDuration = 500,
-							holdToActivateSettingsTolerance = 10.0.dp,
-							showToleranceOnMainScreen = false,
-							rotationsPerSecond = 0.50f,
-							holdRgbLoading = false,
-							pulsingRadius = 2.0f,
-							pulsingDuration = 500,
-							color = Color(0xFFB902FF)
-						)
-					),
-					get = {
-						HoldPreset(
-							name = "new",
-							customObject = swipeService.holdObject.value,
-							holdDelayBeforeStartingLongClickSettings = holdDelayBeforeStartingLongClickSettings,
-							longCLickSettingsDuration = longCLickSettingsDuration,
-							holdToActivateSettingsTolerance = holdToActivateSettingsTolerance,
-							showToleranceOnMainScreen = showToleranceOnMainScreen,
-							rotationsPerSecond = rotationsPerSecond,
-							holdRgbLoading = rgbLoading,
-							pulsingRadius = pulsingRadius,
-							pulsingDuration = pulsingDuration,
-							color = extraColors.holdToActivate
-						)
-					},
-					set = { preset ->
-						scope.launch {
-							swipeService.holdObject.value = preset.customObject
-							HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.set(
-								ctx,
-								preset.holdDelayBeforeStartingLongClickSettings
-							)
-							HoldToActivateArcSettingsStore.longCLickSettingsDuration.set(ctx, preset.longCLickSettingsDuration)
-							HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.set(ctx, preset.holdToActivateSettingsTolerance)
-							HoldToActivateArcSettingsStore.showToleranceOnMainScreen.set(ctx, preset.showToleranceOnMainScreen)
-							HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, preset.rotationsPerSecond)
-							HoldToActivateArcSettingsStore.holdRgbLoading.set(ctx, preset.holdRgbLoading)
-							HoldToActivateArcSettingsStore.pulsingRadius.set(ctx, preset.pulsingRadius)
-							HoldToActivateArcSettingsStore.pulsingRDuration.set(ctx, preset.pulsingDuration)
-						}
-					}
+					swipeService,
+					holdDelayBeforeStartingLongClickSettings,
+					longCLickSettingsDuration,
+					holdToActivateSettingsTolerance,
+					showToleranceOnMainScreen,
+					rotationsPerSecond,
+					rgbLoading,
+					pulsingRadius,
+					pulsingDuration
 				)
 
-				EditCustomObjectBlock(
-					title = R.string.object_properties,
-					editObject = holdObject,
-					default = defaultHoldCustomObject,
-					properties =
-						CustomObjectBlockProperties(
-							allowAlignCustomization = false,
-							allowEraseBackgroundCustomization = false
-						)
-				) { swipeService.holdObject.value = it }
-
-				DragonSettingsGroup(R.string.configuration) {
-					Setting(HoldToActivateArcSettingsStore.longCLickSettingsDuration)
-					Setting(HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings)
-					Setting(HoldToActivateArcSettingsStore.rotationsPerSecond)
-					DragonButton(
-						onClick = {
-							scope.launch {
-								/**
-								 * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
-								 */
-								val magicNumber = 1000f / longCLickSettingsDuration
-								HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, magicNumber)
-							}
-						}
-					) {
-						Icon(
-							painter = painterResource(R.drawable.flash_auto),
-							contentDescription = null
-						)
-						Spacer(5.dp)
-						Text(
-							text = stringResource(R.string.automatic_magic_number),
-							style = MaterialTheme.typography.labelMediumEmphasized
-						)
-					}
-
-					SettingsItem(
-						title = R.string.edit_hold_to_activate_elements,
-						description = R.string.edit_hold_to_activate_elements_desc,
-						icon = R.drawable.edit_rounded
-					) { showHoldSettingsOrderDialog = true }
-					Setting(HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance)
-					Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
-					Setting(HoldToActivateArcSettingsStore.pulsingRadius)
-					Setting(HoldToActivateArcSettingsStore.pulsingRDuration)
-					Setting(HoldToActivateArcSettingsStore.holdRgbLoading)
-					Setting(ColorSettingsStore.holdToActivateColor)
+				EditBlock(holdObject, swipeService, longCLickSettingsDuration) {
+					showHoldSettingsOrderDialog = !showHoldSettingsOrderDialog
 				}
 			}
 		} else {
@@ -534,136 +416,19 @@ fun HoldToActivateTab(
 							.fillMaxSize()
 					) {
 						PresetRow(
-							presets = listOf(
-								HoldPreset("Default"),
-								HoldPreset(
-									name = "Elnix",
-									customObject = CustomObject(
-										stroke = 4.5.dp,
-										color = null,
-										glow = CustomGlow(radius = 12.dp, color = null),
-										shape = IconShape.Random,
-										size = 75.0.dp,
-										rotation = -1,
-										mirror = false,
-										eraseBackground = false,
-										alignsWithDragAngle = false
-									),
-									holdDelayBeforeStartingLongClickSettings = 300,
-									longCLickSettingsDuration = 500,
-									holdToActivateSettingsTolerance = 10.0.dp,
-									showToleranceOnMainScreen = false,
-									rotationsPerSecond = 0.50f,
-									holdRgbLoading = false,
-									pulsingRadius = 2.0f,
-									pulsingDuration = 500,
-									color = Color(0xFFB902FF)
-								),
-								HoldPreset(
-									name = "Yo",
-									customObject = CustomObject(
-										stroke = 4.5.dp,
-										color = null,
-										glow = CustomGlow(radius = 12.dp, color = null),
-										shape = IconShape.Random,
-										size = 75.0.dp,
-										rotation = -1,
-										mirror = false,
-										eraseBackground = false,
-										alignsWithDragAngle = false
-									),
-									holdDelayBeforeStartingLongClickSettings = 300,
-									longCLickSettingsDuration = 500,
-									holdToActivateSettingsTolerance = 10.0.dp,
-									showToleranceOnMainScreen = false,
-									rotationsPerSecond = 0.50f,
-									holdRgbLoading = false,
-									pulsingRadius = 2.0f,
-									pulsingDuration = 500,
-									color = Color(0xFFB902FF)
-								)
-							),
-							get = {
-								HoldPreset(
-									name = "new",
-									customObject = swipeService.holdObject.value,
-									holdDelayBeforeStartingLongClickSettings = holdDelayBeforeStartingLongClickSettings,
-									longCLickSettingsDuration = longCLickSettingsDuration,
-									holdToActivateSettingsTolerance = holdToActivateSettingsTolerance,
-									showToleranceOnMainScreen = showToleranceOnMainScreen,
-									rotationsPerSecond = rotationsPerSecond,
-									holdRgbLoading = rgbLoading,
-									pulsingRadius = pulsingRadius,
-									pulsingDuration = pulsingDuration,
-									color = extraColors.holdToActivate
-								)
-							},
-							set = { preset ->
-								scope.launch {
-									swipeService.holdObject.value = preset.customObject
-									HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.set(
-										ctx,
-										preset.holdDelayBeforeStartingLongClickSettings
-									)
-									HoldToActivateArcSettingsStore.longCLickSettingsDuration.set(ctx, preset.longCLickSettingsDuration)
-									HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.set(ctx, preset.holdToActivateSettingsTolerance)
-									HoldToActivateArcSettingsStore.showToleranceOnMainScreen.set(ctx, preset.showToleranceOnMainScreen)
-									HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, preset.rotationsPerSecond)
-									HoldToActivateArcSettingsStore.holdRgbLoading.set(ctx, preset.holdRgbLoading)
-									HoldToActivateArcSettingsStore.pulsingRadius.set(ctx, preset.pulsingRadius)
-									HoldToActivateArcSettingsStore.pulsingRDuration.set(ctx, preset.pulsingDuration)
-								}
-							}
+							swipeService,
+							holdDelayBeforeStartingLongClickSettings,
+							longCLickSettingsDuration,
+							holdToActivateSettingsTolerance,
+							showToleranceOnMainScreen,
+							rotationsPerSecond,
+							rgbLoading,
+							pulsingRadius,
+							pulsingDuration
 						)
 
-						EditCustomObjectBlock(
-							title = R.string.object_properties,
-							editObject = holdObject,
-							default = defaultHoldCustomObject,
-							properties =
-								CustomObjectBlockProperties(
-									allowAlignCustomization = false,
-									allowEraseBackgroundCustomization = false
-								)
-						) { swipeService.holdObject.value = it }
-
-						DragonSettingsGroup(R.string.configuration) {
-							Setting(HoldToActivateArcSettingsStore.longCLickSettingsDuration)
-							Setting(HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings)
-							Setting(HoldToActivateArcSettingsStore.rotationsPerSecond)
-							DragonButton(
-								onClick = {
-									scope.launch {
-										/**
-										 * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
-										 */
-										val magicNumber = 1000f / longCLickSettingsDuration
-										HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, magicNumber)
-									}
-								}
-							) {
-								Icon(
-									painter = painterResource(R.drawable.flash_auto),
-									contentDescription = null
-								)
-								Spacer(5.dp)
-								Text(
-									text = stringResource(R.string.automatic_magic_number),
-									style = MaterialTheme.typography.labelMediumEmphasized
-								)
-							}
-
-							SettingsItem(
-								title = R.string.edit_hold_to_activate_elements,
-								description = R.string.edit_hold_to_activate_elements_desc,
-								icon = R.drawable.edit_rounded
-							) { showHoldSettingsOrderDialog = true }
-							Setting(HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance)
-							Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
-							Setting(HoldToActivateArcSettingsStore.pulsingRadius)
-							Setting(HoldToActivateArcSettingsStore.pulsingRDuration)
-							Setting(HoldToActivateArcSettingsStore.holdRgbLoading)
-							Setting(ColorSettingsStore.holdToActivateColor)
+						EditBlock(holdObject, swipeService, longCLickSettingsDuration) {
+							showHoldSettingsOrderDialog = !showHoldSettingsOrderDialog
 						}
 					}
 				}
@@ -674,4 +439,190 @@ fun HoldToActivateTab(
 	if (showHoldSettingsOrderDialog) {
 		HoldSettingsOrderSheet { showHoldSettingsOrderDialog = false }
 	}
+}
+
+@Composable
+private fun EditBlock(
+	holdObject: CustomObject,
+	swipeService: SwipeService,
+	longCLickSettingsDuration: Int,
+	onEditHoltElements: () -> Unit
+) {
+	val ctx = LocalContext.current
+	val scope = rememberCoroutineScope()
+
+	EditCustomObjectBlock(
+		title = R.string.object_properties,
+		editObject = holdObject,
+		default = defaultHoldCustomObject,
+		properties =
+			CustomObjectBlockProperties(
+				allowAlignCustomization = false,
+				allowEraseBackgroundCustomization = false
+			)
+	) { swipeService.holdObject.value = it }
+
+	DragonSettingsGroup(R.string.configuration) {
+		Setting(HoldToActivateArcSettingsStore.longCLickSettingsDuration)
+		Setting(HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings)
+		Setting(HoldToActivateArcSettingsStore.rotationsPerSecond)
+		DragonButton(
+			onClick = {
+				scope.launch {
+					/**
+					 * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
+					 */
+					val magicNumber = 1000f / longCLickSettingsDuration
+					HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, magicNumber)
+				}
+			}
+		) {
+			Icon(
+				painter = painterResource(R.drawable.flash_auto),
+				contentDescription = null
+			)
+			Spacer(5.dp)
+			Text(
+				text = stringResource(R.string.automatic_magic_number),
+				style = MaterialTheme.typography.labelMediumEmphasized
+			)
+		}
+
+		SettingsItem(
+			title = R.string.edit_hold_to_activate_elements,
+			description = R.string.edit_hold_to_activate_elements_desc,
+			icon = R.drawable.edit_rounded,
+			onClick = onEditHoltElements
+		)
+		Setting(HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance)
+		Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
+		Setting(HoldToActivateArcSettingsStore.pulsingRadius)
+		Setting(HoldToActivateArcSettingsStore.pulsingRDuration)
+		Setting(HoldToActivateArcSettingsStore.holdRgbLoading)
+		Setting(ColorSettingsStore.holdToActivateColor)
+	}
+}
+
+@Composable
+private fun PresetRow(
+	swipeService: SwipeService,
+	holdDelayBeforeStartingLongClickSettings: Int,
+	longCLickSettingsDuration: Int,
+	holdToActivateSettingsTolerance: Dp,
+	showToleranceOnMainScreen: Boolean,
+	rotationsPerSecond: Float,
+	rgbLoading: Boolean,
+	pulsingRadius: Float,
+	pulsingDuration: Int
+) {
+	val ctx = LocalContext.current
+	val extraColors = LocalExtraColors.current
+
+	val scope = rememberCoroutineScope()
+
+	PresetRow(
+		presets = listOf(
+			HoldPreset("Default"),
+			HoldPreset(
+				name = "Elnix",
+				customObject = CustomObject(
+					stroke = 4.5.dp,
+					color = null,
+					glow = CustomGlow(radius = 12.dp, color = null),
+					shape = IconShape.Random,
+					size = 75.0.dp,
+					rotation = -1,
+					mirror = false,
+					eraseBackground = false,
+					alignsWithDragAngle = false
+				),
+				holdDelayBeforeStartingLongClickSettings = 300,
+				longCLickSettingsDuration = 500,
+				holdToActivateSettingsTolerance = 10.0.dp,
+				showToleranceOnMainScreen = false,
+				rotationsPerSecond = 0.50f,
+				holdRgbLoading = false,
+				pulsingRadius = 2.0f,
+				pulsingDuration = 500,
+				color = Color(0xFFB902FF)
+			),
+			HoldPreset(
+				name = "Yo",
+				customObject = CustomObject(
+					stroke = 4.dp,
+					color = null,
+					glow = CustomGlow(radius = 12.dp, color = null),
+					shape = IconShape.Hexagon,
+					size = 70.dp,
+					rotation = 270,
+					mirror = false,
+					eraseBackground = false,
+					alignsWithDragAngle = false
+				),
+				holdDelayBeforeStartingLongClickSettings = 500,
+				longCLickSettingsDuration = 1000,
+				holdToActivateSettingsTolerance = 10.0.dp,
+				showToleranceOnMainScreen = false,
+				rotationsPerSecond = 0f,
+				holdRgbLoading = false,
+				pulsingRadius = 0.90296054f,
+				pulsingDuration = 150,
+				color = Color(0xFFE2A800)
+			),
+			HoldPreset(
+				name = "Alyon",
+				customObject = CustomObject(
+					stroke = (-1).dp,
+					color = Color(0x00D2E3E4),
+					glow = CustomGlow(radius = 200.dp, color = Color(0xFFD2E3E4)),
+					shape = IconShape.Circle,
+					size = 0.1.dp,
+					rotation = 0,
+					mirror = false,
+					eraseBackground = false,
+					alignsWithDragAngle = false
+				),
+				holdDelayBeforeStartingLongClickSettings = 0,
+				longCLickSettingsDuration = 5000,
+				holdToActivateSettingsTolerance = 83.dp,
+				showToleranceOnMainScreen = false,
+				rotationsPerSecond = 5f,
+				holdRgbLoading = false,
+				pulsingRadius = 0.68947905f,
+				pulsingDuration = 1,
+				color = Color(0xFFD2E3E4)
+			)
+		),
+		get = {
+			HoldPreset(
+				name = "new",
+				customObject = swipeService.holdObject.value,
+				holdDelayBeforeStartingLongClickSettings = holdDelayBeforeStartingLongClickSettings,
+				longCLickSettingsDuration = longCLickSettingsDuration,
+				holdToActivateSettingsTolerance = holdToActivateSettingsTolerance,
+				showToleranceOnMainScreen = showToleranceOnMainScreen,
+				rotationsPerSecond = rotationsPerSecond,
+				holdRgbLoading = rgbLoading,
+				pulsingRadius = pulsingRadius,
+				pulsingDuration = pulsingDuration,
+				color = extraColors.holdToActivate
+			)
+		},
+		set = { preset ->
+			scope.launch {
+				swipeService.holdObject.value = preset.customObject
+				HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.set(
+					ctx,
+					preset.holdDelayBeforeStartingLongClickSettings
+				)
+				HoldToActivateArcSettingsStore.longCLickSettingsDuration.set(ctx, preset.longCLickSettingsDuration)
+				HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.set(ctx, preset.holdToActivateSettingsTolerance)
+				HoldToActivateArcSettingsStore.showToleranceOnMainScreen.set(ctx, preset.showToleranceOnMainScreen)
+				HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, preset.rotationsPerSecond)
+				HoldToActivateArcSettingsStore.holdRgbLoading.set(ctx, preset.holdRgbLoading)
+				HoldToActivateArcSettingsStore.pulsingRadius.set(ctx, preset.pulsingRadius)
+				HoldToActivateArcSettingsStore.pulsingRDuration.set(ctx, preset.pulsingDuration)
+			}
+		}
+	)
 }
