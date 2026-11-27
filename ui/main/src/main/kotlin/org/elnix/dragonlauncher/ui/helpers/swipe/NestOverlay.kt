@@ -180,7 +180,7 @@ fun DrawScope.NestOverlay(
 			emptySet()
 		}
 	val showAllNestPoints = nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest, drawParams.isDefaultEditing)
-	val showAllShapePoints = nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentShape, drawParams.isDefaultEditing)
+	val showAllShapePoints = nest.getShowAllPointsInCurrentShape(defaultNest, drawParams.showAllPointsInCurrentShape, drawParams.isDefaultEditing)
 	val drawAllPoints =
 		!selectedOnly && (
 			depth > 1 || isSettingDisplay || drawParams.globalDraggingMode is GlobalDraggingMode.Fixed ||
