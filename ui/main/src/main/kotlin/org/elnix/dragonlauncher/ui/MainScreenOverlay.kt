@@ -624,6 +624,7 @@ private fun LiveNestPointsCanvas(
 		hasSelection,
 		selectedPointsInNest,
 		selectedShapesInNest,
+		selectedPointsIds.value,
 		drawSelectedPoint,
 		diameter
 	) {

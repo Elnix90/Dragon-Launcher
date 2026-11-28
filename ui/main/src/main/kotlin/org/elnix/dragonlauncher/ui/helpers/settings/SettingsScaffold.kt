@@ -2,6 +2,8 @@ package org.elnix.dragonlauncher.ui.helpers.settings
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -63,6 +65,7 @@ fun SettingsScaffold(
 	scrollState: ScrollState? = null,
 	topContent: @Composable (ColumnScope.() -> Unit)? = null,
 	bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
+	overlayContent: (@Composable BoxScope.() -> Unit)? = null,
 	specialSettingsTitleContent: @Composable (() -> Unit)? = null,
 	lazyContent: (LazyListScope.() -> Unit)? = null,
 	content: @Composable (ColumnScope.() -> Unit)? = null
@@ -249,6 +252,7 @@ fun SettingsScaffold(
 				}
 			}
 		}
+		overlayContent?.invoke(this)
 	}
 
 	if (showHelpDialog) {

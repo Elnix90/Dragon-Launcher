@@ -1162,5 +1162,25 @@
 		<string name="start_your">START YOUR</string>
 		<string name="journey">JOURNEY</string>
     <string name="silent">Silent</string>
-	<string name="render">Render</string>
+		<string name="render">Render</string>
+		<string name="point_details">Point details</string>
+    <string name="point_details_general">General</string>
+    <string name="point_details_appearance">Appearance</string>
+    <string name="point_details_behavior">Behavior</string>
+    <string name="point_details_id">Point ID</string>
+    <string name="point_details_nest_id">Nest</string>
+    <string name="point_details_shape_id">Shape</string>
+    <string name="point_details_free_position">Free position</string>
+    <string name="point_details_offset">Stored offset</string>
+    <string name="point_details_position">Resolved position</string>
+    <string name="point_details_cycle_stage">Stage %1$d (%2$d ms)</string>
+    <string name="point_detail_action">Action</string>
+    <string name="point_detail_action_data">Action data</string>
+    <string name="point_detail_custom_icon">Custom icon</string>
+    <string name="point_detail_icon_properties">Icon properties</string>
+    <string name="point_detail_border_shape">Border shape</string>
+    <string name="point_detail_selected_border_shape">Selected border shape</string>
+    <string name="point_detail_glow">Glow</string>
+    <string name="point_detail_selected_glow">Selected glow</string>
+    <string name="point_detail_stage_haptic">Stage haptic feedback</string>
 </resources>

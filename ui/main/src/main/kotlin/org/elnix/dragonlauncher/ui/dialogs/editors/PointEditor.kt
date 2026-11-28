@@ -88,6 +88,7 @@ fun PointEditor(
 	var expandedFeaturePanel: PointFeaturePanel? by remember { mutableStateOf(null) }
 	var showLiveNestNestPicker by remember { mutableStateOf(false) }
 	var showHoldAndRunActionDialog by remember { mutableStateOf(false) }
+	var showPointDetails by remember { mutableStateOf(false) }
 
 	var editingCycleStageActionIndex by remember { mutableStateOf<Int?>(null) }
 	var editingCycleStageHapticIndex by remember { mutableStateOf<Int?>(null) }
@@ -105,17 +106,24 @@ fun PointEditor(
 			verticalArrangement = Arrangement.spacedBy(5.dp),
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
-			DialogTitle(
-				text = stringResource(if (!isDefaultEditing) R.string.edit_point else R.string.edit_default_point),
-				resetEnabled = editPoint.isNotDefault
-			) {
-				editPoint =
-					Point(
-						offset = editPoint.offset,
-						nestId = editPoint.nestId,
-						action = editPoint.action,
-						id = editPoint.id
-					)
+			Row {
+				DialogTitle(
+					text = stringResource(if (!isDefaultEditing) R.string.edit_point else R.string.edit_default_point),
+					resetEnabled = editPoint.isNotDefault,
+					modifier = Modifier.weight(1f)
+				) {
+					editPoint =
+						Point(
+							offset = editPoint.offset,
+							nestId = editPoint.nestId,
+							action = editPoint.action,
+							id = editPoint.id
+						)
+				}
+				DragonIconButton(
+					icon = R.drawable.help,
+					contentDescription = R.string.help
+				) { showPointDetails = true }
 			}
 
 			DragonSettingsGroup {
@@ -1173,5 +1181,15 @@ fun PointEditor(
 				showLiveNestNestPicker = false
 			}
 		) { showLiveNestNestPicker = false }
+	}
+
+	if (showPointDetails) {
+		PointDetailDialog(
+			point = editPoint,
+			defaultPoint = defaultPoint,
+			isDefaultEditing = isDefaultEditing,
+			pointsViewModel = pointsViewModel,
+			onDismissRequest = { showPointDetails = false }
+		)
 	}
 }

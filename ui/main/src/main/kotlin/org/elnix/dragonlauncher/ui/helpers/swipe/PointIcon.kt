@@ -143,6 +143,7 @@ internal data class NestPreviewKey(
 	val pointCacheVersion: Int,
 	val shapeCacheVersion: Int,
 	val selectedPointIds: List<Int>,
+	val skippedPointIds: Set<Int>,
 	val selectedShapeIds: Set<Int>,
 	val hasSelectedPoints: Boolean,
 	val pointCount: Int,
@@ -265,6 +266,12 @@ internal fun getNestPreviewPicture(
 			pointCacheVersion = PointStableCache.cacheTrigger.value,
 			shapeCacheVersion = NestIntersectionShapesPathCache.cacheTrigger.value,
 			selectedPointIds = selectedPointIds.orEmpty().toList(),
+			skippedPointIds =
+				if (drawParams.skipSelected && depth == 1) {
+					pointsService.selectedPointsIds.value.toSet()
+				} else {
+					emptySet()
+				},
 			selectedShapeIds = selectedShapeIds.orEmpty().toSet(),
 			hasSelectedPoints = hasSelectedPoints ?: false,
 			pointCount = points.size,
