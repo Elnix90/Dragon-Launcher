@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.base.theme.GoogleSansFlex
 import org.elnix.dragonlauncher.base.theme.JetBrainsMono
 import java.io.File
 
-fun fontNameToFont(name: String, ctx: Context? = null): FontFamily {
+fun fontNameToFont(name: String, ctx: Context): FontFamily {
 	if (name.isBlank()) return FontFamily.Default
 
 	val cleanName = name.substringBefore(" (")
@@ -23,22 +23,22 @@ fun fontNameToFont(name: String, ctx: Context? = null): FontFamily {
 			else -> null
 		}
 	if (base != null) return base
-	if (ctx != null) {
-		try {
-			val extDir = File(ctx.getExternalFilesDir(null), "fonts")
-			val ttf = File(extDir, "$cleanName.ttf")
-			val otf = File(extDir, "$cleanName.otf")
-			val fontFile =
-				when {
-					ttf.exists() -> ttf
-					otf.exists() -> otf
-					else -> null
-				}
-			if (fontFile != null) {
-				return FontFamily(Font(fontFile))
+	try {
+		val extDir = File(ctx.getExternalFilesDir(null), "fonts")
+		val ttf = File(extDir, "$cleanName.ttf")
+		val otf = File(extDir, "$cleanName.otf")
+		val fontFile =
+			when {
+				ttf.exists() -> ttf
+				otf.exists() -> otf
+				else -> null
 			}
-		} catch (_: Exception) {
+		return if (fontFile != null) {
+			FontFamily(Font(fontFile))
+		} else {
+			GoogleSansFlex
 		}
+	} catch (_: Exception) {
+		return GoogleSansFlex
 	}
-	return FontFamily.Default
 }
