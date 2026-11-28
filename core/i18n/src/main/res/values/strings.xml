@@ -837,6 +837,16 @@
     <string name="icon_picker_filter_all_packs">All icon packs</string>
     <string name="icon_picker_default_icon">Default</string>
     <string name="icon_picker_suggestions">Suggestions</string>
+    <string name="icon_picker_info_app_package">App package:</string>
+    <string name="icon_picker_info_app_component">App component:</string>
+    <string name="icon_picker_info_icon_name">Icon:</string>
+    <string name="icon_picker_info_icon_type">Icon type:</string>
+    <string name="icon_picker_info_pack_package">Icon pack package:</string>
+    <string name="icon_picker_info_themed">Themed variant:</string>
+    <string name="icon_picker_info_extras">Extra data:</string>
+    <string name="icon_picker_info_legacy_scale">Foreground scale:</string>
+    <string name="icon_picker_info_legacy_background">Background color:</string>
+    <string name="icon_picker_info_customizations">Customizations:</string>
     <string name="top_padding_desc">How large the safe zone at top is</string>
     <string name="bottom_padding_desc">How large the safe zone at the bottom is</string>
     <string name="left_padding_desc">How large the safe zone on the left is</string>
