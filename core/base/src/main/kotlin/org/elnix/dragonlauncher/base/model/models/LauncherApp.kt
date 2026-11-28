@@ -61,8 +61,8 @@ data class LauncherApp(
 				withContext(Dispatchers.IO) {
 					launcherActivityInfo.getIcon(0)
 				} ?: return null
-			val adaptiveForegroundScale = foregroundScale ?: 1.5f
-			val adaptiveBackgroundScale = backgroundScale ?: 1.5f
+			val adaptiveForegroundScale = (foregroundScale ?: 1f) * 1.5f
+			val adaptiveBackgroundScale = (backgroundScale ?: 1f) * 1.5f
 
 			when (icon) {
 				is AdaptiveIconDrawable -> {

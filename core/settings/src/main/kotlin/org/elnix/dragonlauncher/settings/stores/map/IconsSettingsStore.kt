@@ -78,7 +78,7 @@ object IconsSettingsStore : MapSettingsStore() {
 			title = R.string.foreground_scale,
 			description = R.string.foreground_scale_desc,
 			icon = R.drawable.wallpaper,
-			default = 1.5f,
+			default = 1f,
 			allowedRange = 0.1f..3f
 		)
 
@@ -88,7 +88,7 @@ object IconsSettingsStore : MapSettingsStore() {
 			title = R.string.background_scale,
 			description = R.string.background_scale_desc,
 			icon = R.drawable.wallpaper,
-			default = foregroundScale.default,
+			default = 1f,
 			allowedRange = 0.1f..3f
 		)
 

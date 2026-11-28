@@ -333,13 +333,15 @@ class IconPackManager(
 			resources.getIdentifier(icon.drawable, "drawable", icon.iconPack).takeIf { it != 0 }
 				?: return null
 
+		val adaptiveForegroundScale = foregroundScale * 1.5f
+		val adaptiveBackgroundScale = backgroundScale * 1.5f
 		val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, resId)
 		if (adaptiveIconCompat != null) {
 			return adaptiveIconCompat.toLauncherIcon(
 				themed = allowThemed && icon.themed,
 				tint = icon.tint ?: tint,
-				foregroundScale = foregroundScale,
-				backgroundScale = backgroundScale
+				foregroundScale = adaptiveForegroundScale,
+				backgroundScale = adaptiveBackgroundScale
 			)
 		}
 		val drawable =
@@ -356,7 +358,7 @@ class IconPackManager(
 						foregroundLayer =
 							StaticIconLayer(
 								icon = drawable.monochrome!!,
-								scale = foregroundScale,
+								scale = adaptiveForegroundScale,
 								tint = icon.tint ?: tint
 							),
 						backgroundLayer = TransparentLayer
@@ -366,7 +368,7 @@ class IconPackManager(
 						foregroundLayer =
 							StaticIconLayer(
 								icon = drawable.foreground,
-								scale = foregroundScale,
+								scale = adaptiveForegroundScale,
 								tint = icon.tint ?: tint
 							),
 						backgroundLayer = TransparentLayer
@@ -379,7 +381,7 @@ class IconPackManager(
 					foregroundLayer =
 						StaticIconLayer(
 							icon = drawable,
-							scale = foregroundScale,
+							scale = foregroundScale * 0.65f,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
@@ -392,7 +394,7 @@ class IconPackManager(
 						drawable.foreground?.let {
 							StaticIconLayer(
 								icon = it,
-								scale = foregroundScale,
+								scale = adaptiveForegroundScale,
 								tint = icon.tint ?: tint
 							)
 						} ?: TransparentLayer,
@@ -400,7 +402,7 @@ class IconPackManager(
 						drawable.background?.let {
 							StaticIconLayer(
 								icon = it,
-								scale = backgroundScale,
+								scale = adaptiveBackgroundScale,
 								tint = icon.tint ?: tint
 							)
 						} ?: TransparentLayer
@@ -478,8 +480,8 @@ class IconPackManager(
 				themed = icon.themed && allowThemed,
 				tint = icon.tint ?: tint,
 				clock = icon.config,
-				foregroundScale = foregroundScale,
-				backgroundScale = backgroundScale
+				foregroundScale = foregroundScale * 1.5f,
+				backgroundScale = backgroundScale * 1.5f
 			)
 		}
 		val drawable =
@@ -520,7 +522,7 @@ class IconPackManager(
 							defaultMinute = icon.config.defaultMinute,
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
-							scale = foregroundScale,
+							scale = foregroundScale * 1.5f,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer = TransparentLayer
@@ -550,13 +552,13 @@ class IconPackManager(
 							defaultMinute = icon.config.defaultMinute,
 							defaultSecond = icon.config.defaultSecond,
 							sublayers = layers,
-							scale = foregroundScale,
+							scale = foregroundScale * 1.5f,
 							tint = icon.tint ?: tint
 						),
 					backgroundLayer =
 						StaticIconLayer(
 							icon = background!!,
-							scale = backgroundScale,
+							scale = backgroundScale * 1.5f,
 							tint = icon.tint ?: tint
 						)
 				)

@@ -91,8 +91,8 @@ internal class DynamicClockIconProvider(
 				themed = themed,
 				tint = tint,
 				clock = clockConfig,
-				foregroundScale = foregroundScale ?: 1.5f,
-				backgroundScale = backgroundScale ?: 1.5f
+				foregroundScale = (foregroundScale ?: 1f) * 1.5f,
+				backgroundScale = (backgroundScale ?: 1f) * 1.5f
 			)
 		}
 }
