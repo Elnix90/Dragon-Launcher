@@ -9,9 +9,9 @@ internal const val MIN_SDK = 26
 internal const val TARGET_SDK = 37
 
 /**
- * Version code, will be used in the Gradle build to add it to the version name, but only at build time to avoid fdroid failures
+ * Version code, will be used in the Gradle build to add it to the version name, but only at build time to avoid F-Droid failures
  */
-internal const val CODE_NAME = "Tardigrade"
+internal const val CODE_NAME = "Têtard"
 internal val JAVA_VERSION: JavaVersion = JavaVersion.VERSION_21
 
 internal const val KOTLIN_METADATA_VERSION = "2.3.0-Beta1"

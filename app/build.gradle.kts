@@ -1,3 +1,4 @@
+
 import com.android.build.api.dsl.ApplicationExtension
 import java.util.Properties
 
@@ -21,8 +22,8 @@ extensions.configure<ApplicationExtension> {
 
 	defaultConfig {
 		applicationId = "org.elnix.dragonlauncher"
-		versionName = "4.6.1"
-		versionCode = 76
+		versionName = "4.7.0"
+		versionCode = 77
 	}
 
 	val hasSigningConfig =

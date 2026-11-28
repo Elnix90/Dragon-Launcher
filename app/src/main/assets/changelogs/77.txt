@@ -1,0 +1,15 @@
+4.7.0 (Têtard)
+2026-11-28
+[NEW]
+* New font
+* Can scale icons as you want
+* New presets for the hold and action line
+[FIXED]
+* Fixed issues organized on
+* bullet points like this
+* Lot of icons options
+[IMPROVED]
+* Heavy lag/ram optimizations
+* Drawer search engine
+* Welcome screen UI
+* Global UI enhancements
