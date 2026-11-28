@@ -59,7 +59,7 @@ object HoldToActivateArcSettingsStore : MapSettingsStore() {
 			description = R.string.rotation_per_second_desc,
 			icon = R.drawable.trhee_d_rotation,
 			default = 0f,
-			allowedRange = 0f..5f
+			allowedRange = 0f..10f
 		)
 
 	@SettingKey
