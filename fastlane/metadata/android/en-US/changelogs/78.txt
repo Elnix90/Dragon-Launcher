@@ -1,0 +1,4 @@
+4.7.1 (Têtard)
+2026-11-28
+[FIXED]
+* Wrong icon scale
