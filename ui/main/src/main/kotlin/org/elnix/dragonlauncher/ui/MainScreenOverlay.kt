@@ -624,7 +624,6 @@ private fun LiveNestPointsCanvas(
 		hasSelection,
 		selectedPointsInNest,
 		selectedShapesInNest,
-		selectedPointsIds.value,
 		drawSelectedPoint,
 		diameter
 	) {
@@ -640,7 +639,7 @@ private fun LiveNestPointsCanvas(
 						nest = nest,
 						depth = 1,
 						selected = false,
-						drawParams = if (drawSelectedPoint) drawParams.copy(skipSelected = true) else drawParams,
+						drawParams = drawParams,
 						width = diameter,
 						height = diameter,
 						density = density,
