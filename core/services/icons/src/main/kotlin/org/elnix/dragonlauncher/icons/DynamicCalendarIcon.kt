@@ -42,8 +42,8 @@ internal class DynamicCalendarIcon(
 				adaptiveIcon?.toLauncherIcon(
 					themed = isThemed,
 					tint = tint,
-					foregroundScale = foregroundScale ?: 1.5f,
-					backgroundScale = backgroundScale ?: 1.5f
+					foregroundScale = (foregroundScale ?: 1f) * 1.5f,
+					backgroundScale = (backgroundScale ?: 1f) * 1.5f
 				)
 					?: (
 						try {
@@ -57,8 +57,8 @@ internal class DynamicCalendarIcon(
 										).toLauncherIcon(
 											themed = isThemed,
 											tint = tint,
-											foregroundScale = foregroundScale ?: 1.5f,
-											backgroundScale = backgroundScale ?: 1.5f
+											foregroundScale = (foregroundScale ?: 1f) * 1.5f,
+											backgroundScale = (backgroundScale ?: 1f) * 1.5f
 										)
 								}
 

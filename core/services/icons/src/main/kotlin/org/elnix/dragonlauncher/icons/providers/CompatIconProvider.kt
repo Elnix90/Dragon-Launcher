@@ -44,8 +44,8 @@ internal class CompatIconProvider(
 		return icon.toLauncherIcon(
 			themed = themed,
 			tint = tint,
-			foregroundScale = foregroundScale ?: 1.5f,
-			backgroundScale = backgroundScale ?: 1.5f
+			foregroundScale = (foregroundScale ?: 1f) * 1.5f,
+			backgroundScale = (backgroundScale ?: 1f) * 1.5f
 		)
 	}
 }

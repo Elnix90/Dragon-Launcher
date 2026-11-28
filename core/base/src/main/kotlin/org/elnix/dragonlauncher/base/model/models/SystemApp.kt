@@ -62,8 +62,8 @@ data class SystemApp(
 				withContext(Dispatchers.IO) {
 					applicationInfo.loadIcon(ctx.packageManager)
 				} ?: return null
-			val adaptiveForegroundScale = foregroundScale ?: 1.5f
-			val adaptiveBackgroundScale = backgroundScale ?: 1.5f
+			val adaptiveForegroundScale = (foregroundScale ?: 1f) * 1.5f
+			val adaptiveBackgroundScale = (backgroundScale ?: 1f) * 1.5f
 
 			when (icon) {
 				is AdaptiveIconDrawable -> {

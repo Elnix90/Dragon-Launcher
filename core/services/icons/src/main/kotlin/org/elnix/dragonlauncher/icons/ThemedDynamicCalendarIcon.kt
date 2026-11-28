@@ -37,8 +37,8 @@ internal class ThemedDynamicCalendarIcon(
 					adaptiveIconCompat.toLauncherIcon(
 						themed = true,
 						tint = tint,
-						foregroundScale = foregroundScale,
-						backgroundScale = backgroundScale
+						foregroundScale = foregroundScale * 1.5f,
+						backgroundScale = backgroundScale * 1.5f
 					)
 				for (transformation in transformations) {
 					icon = transformation.transform(icon)
@@ -49,7 +49,7 @@ internal class ThemedDynamicCalendarIcon(
 			val drawable =
 				try {
 					ResourcesCompat.getDrawable(resources, resId, null)
-				} catch (e: Resources.NotFoundException) {
+				} catch (_: Resources.NotFoundException) {
 					null
 				} ?: return@withContext StaticLauncherIcon(
 					foregroundLayer =
@@ -68,7 +68,7 @@ internal class ThemedDynamicCalendarIcon(
 							foregroundLayer =
 								StaticIconLayer(
 									icon = drawable.foreground,
-									scale = foregroundScale,
+									scale = foregroundScale * 1.5f,
 									tint = tint
 								),
 							backgroundLayer = TransparentLayer
@@ -80,7 +80,7 @@ internal class ThemedDynamicCalendarIcon(
 							foregroundLayer =
 								StaticIconLayer(
 									icon = drawable,
-									scale = foregroundScale,
+									scale = foregroundScale * 0.65f,
 									tint = tint
 								),
 							backgroundLayer = TransparentLayer

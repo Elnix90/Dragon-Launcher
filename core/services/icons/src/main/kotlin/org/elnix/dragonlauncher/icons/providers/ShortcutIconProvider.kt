@@ -62,7 +62,7 @@ internal class ShortcutIconProvider(
 					icon.foreground?.let {
 						StaticIconLayer(
 							icon = it,
-							scale = foregroundScale ?: 1.5f,
+							scale = (foregroundScale ?: 1f) * 1.5f,
 							tint = tint
 						)
 					} ?: TransparentLayer,
@@ -70,7 +70,7 @@ internal class ShortcutIconProvider(
 					icon.background?.let {
 						StaticIconLayer(
 							icon = it,
-							scale = backgroundScale ?: 1.5f,
+							scale = (backgroundScale ?: 1f) * 1.5f,
 							tint = tint
 						)
 					} ?: TransparentLayer

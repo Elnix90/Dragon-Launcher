@@ -127,7 +127,7 @@ abstract class Application : Comparable<Application> {
 			foregroundLayer =
 				StaticIconLayer(
 					icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
-					scale = foregroundScale ?: 0.65f,
+					scale = (foregroundScale ?: 1f) * 0.65f,
 					tint = 0xff3dda84.toInt()
 				),
 			backgroundLayer = ColorLayer(0xff3dda84.toInt(), scale = backgroundScale ?: 1f)

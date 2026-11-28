@@ -284,7 +284,8 @@ class IconService internal constructor(
 					if (settings.adaptify) {
 						transformations.add(
 							LegacyToAdaptiveTransformation(
-								foregroundScale = otherForegroundScale,
+								baseForegroundScale = 0.7f,
+								foregroundScaleFactor = otherForegroundScale,
 								backgroundScale = otherBackgroundScale
 							)
 						)
@@ -759,7 +760,8 @@ class IconService internal constructor(
 		if (customIcon is AdaptifiedLegacyIcon) {
 			return listOf(
 				LegacyToAdaptiveTransformation(
-					foregroundScale = customIcon.fgScale,
+					baseForegroundScale = customIcon.fgScale,
+					foregroundScaleFactor = otherForegroundScale,
 					backgroundScale = otherBackgroundScale,
 					backgroundColor = customIcon.bgColor
 				)
