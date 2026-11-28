@@ -49,12 +49,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
@@ -265,6 +265,7 @@ fun PointsSettingsScreen(
 	fun Point.computePosition(): Offset = manipulationSystem.undoBoth(this.getPos())
 
 	val selectedPointTempOffset = viewModel.selectedPointTempOffset
+	var canvasOriginInRoot by remember { mutableStateOf(Offset.Zero) }
 
 	val recomposeTrigger by pointsService.recomposeTrigger.asState()
 	LaunchedEffect(recomposeTrigger, selectedPointsIds) {
@@ -457,12 +458,63 @@ fun PointsSettingsScreen(
 					}
 				}
 			}
+		},
+		overlayContent = {
+			if (selectedPointsIds.isNotEmpty() && draggingMode == DraggingMode.Point) {
+				Canvas(
+					Modifier
+						.fillMaxSize()
+						.graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+				) {
+					selectedPointsIds.forEach { id ->
+						val point = pointsService.findPointById(id) ?: return@forEach
+						if (point.nestId != nestId) return@forEach
+						val pointCenter = canvasOriginInRoot + (selectedPointTempOffset[id]?.offset?.value ?: point.computePosition())
+						withTransform({
+							scale(viewModel.zoom.value, viewModel.zoom.value, pivot = pointCenter)
+							rotate(viewModel.angle.value, pivot = pointCenter)
+						}) {
+							this.PointIcon(
+								point = point,
+								depth = 1,
+								center = pointCenter,
+								selected = true,
+								drawParams = draggedPointDrawParams
+							)
+						}
+					}
+				}
+
+				Canvas(Modifier.fillMaxSize().graphicsLayer { alpha = 0.4f }) {
+					selectedPointsIds.forEach { id ->
+						val point = pointsService.findPointById(id) ?: return@forEach
+						if (point.nestId != nestId) return@forEach
+						val liveTargetId = point.liveNestTargetNestId ?: return@forEach
+						val openNest = point.action as? Action.OpenNest
+						if (openNest?.nestId == liveTargetId) return@forEach
+						val nestedNest = pointsService.findNestById(liveTargetId)
+						val pointCenter = canvasOriginInRoot + (selectedPointTempOffset[id]?.offset?.value ?: point.computePosition())
+						withTransform({
+							scale(viewModel.zoom.value, viewModel.zoom.value, pivot = pointCenter)
+							rotate(viewModel.angle.value, pivot = pointCenter)
+						}) {
+							this.NestOverlay(
+								nest = nestedNest,
+								depth = 1,
+								center = pointCenter,
+								drawParams = draggedPointDrawParams
+							)
+						}
+					}
+				}
+			}
 		}
 	) {
 		Box(
 			modifier =
 				Modifier
 					.fillMaxSize()
+					.onGloballyPositioned { canvasOriginInRoot = it.positionInRoot() }
 					.onSizeChanged { size ->
 						// Updates the center and available width variables, that depends on the phone size and orientation.
 						// Computes the larger size between width and height to ensure all points belongs to the hittable zone
@@ -866,7 +918,7 @@ fun PointsSettingsScreen(
 						)
 					}
 			)
-			if (selectedPointsIds.isNotEmpty()) {
+			if (selectedPointsIds.isNotEmpty() && draggingMode != DraggingMode.Point) {
 				Canvas(
 					Modifier
 						.fillMaxSize()
