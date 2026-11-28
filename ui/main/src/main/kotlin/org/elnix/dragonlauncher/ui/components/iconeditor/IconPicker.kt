@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.ui.components.iconeditor
 
 import android.content.pm.PackageManager
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,10 +51,20 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.shared.theme.AppObjectsColors
+import io.github.elnix90.shared.ui.dragon.components.DragonDropDownMenu
 import io.github.elnix90.shared.ui.dragon.text.SettingsWithTitle
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.getProperties
+import org.elnix.dragonlauncher.base.model.serializables.CustomIconPackIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomTextIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomThemedIcon
+import org.elnix.dragonlauncher.base.model.serializables.DefaultPlaceholderIcon
+import org.elnix.dragonlauncher.base.model.serializables.ForceThemedIcon
+import org.elnix.dragonlauncher.base.model.serializables.UnmodifiedSystemDefaultIcon
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.icons.CustomIconWithPreview
 import org.elnix.dragonlauncher.icons.IconPack
@@ -154,7 +164,7 @@ fun IconPicker(
 				item {
 					IconPreview(item = defaultIcon, iconSize = iconSize, onClick = {
 						onSelect(null)
-					})
+					}, application = application)
 				}
 			}
 
@@ -166,7 +176,8 @@ fun IconPicker(
 					IconPreview(
 						it,
 						iconSize,
-						onClick = { onSelect(it.customIcon) }
+						onClick = { onSelect(it.customIcon) },
+						application = application
 					)
 				}
 			}
@@ -276,7 +287,8 @@ fun IconPicker(
 				IconPreview(
 					it,
 					iconSize,
-					onClick = { onSelect(it.customIcon) }
+					onClick = { onSelect(it.customIcon) },
+					application = application
 				)
 			}
 
@@ -302,8 +314,96 @@ fun IconPicker(
 fun IconPreview(
 	item: CustomIconWithPreview?,
 	iconSize: Dp,
-	onClick: () -> Unit
+	onClick: () -> Unit,
+	application: Application
 ) {
+	val ctx = LocalContext.current
+	var expanded by remember { mutableStateOf(false) }
+	val iconPack = item?.customIcon as? CustomIconPackIcon
+	val iconPackPackage = iconPack?.iconPackPackage
+	val iconPackIcon =
+		remember(iconPackPackage) {
+			try {
+				iconPackPackage?.let { ctx.packageManager.getApplicationIcon(it) }
+			} catch (_: PackageManager.NameNotFoundException) {
+				null
+			}
+		}
+	val iconPackName =
+		remember(iconPackPackage) {
+			try {
+				iconPackPackage?.let {
+					ctx.packageManager
+						.getApplicationInfo(it, 0)
+						.loadLabel(ctx.packageManager)
+						.toString()
+				}
+			} catch (_: PackageManager.NameNotFoundException) {
+				null
+			}
+		} ?: iconPackPackage
+
+	val iconProperties = item?.customIcon?.getProperties()
+	val details =
+		buildList {
+			add(stringResource(R.string.icon_picker_info_app_package) to application.packageName)
+			add(stringResource(R.string.icon_picker_info_app_component) to application.componentName.flattenToShortString())
+			when (val customIcon = item?.customIcon) {
+				is CustomIconPackIcon -> {
+					add(stringResource(R.string.icon_picker_info_icon_name) to (customIcon.drawable ?: customIcon.extras ?: "—"))
+					add(stringResource(R.string.icon_picker_info_icon_type) to customIcon.packType)
+					add(stringResource(R.string.icon_picker_info_pack_package) to customIcon.iconPackPackage)
+					add(stringResource(R.string.icon_picker_info_themed) to customIcon.allowThemed.toString())
+					customIcon.extras?.let { add(stringResource(R.string.icon_picker_info_extras) to it) }
+				}
+
+				is CustomThemedIcon -> {
+					add(stringResource(R.string.icon_picker_info_icon_name) to customIcon.iconPackageName)
+					add(stringResource(R.string.icon_picker_info_icon_type) to "Themed")
+				}
+
+				is CustomTextIcon -> {
+					add(stringResource(R.string.icon_picker_info_icon_name) to customIcon.text)
+					add(stringResource(R.string.icon_picker_info_icon_type) to "Text")
+				}
+
+				is AdaptifiedLegacyIcon -> {
+					add(stringResource(R.string.icon_picker_info_icon_type) to "Adaptified legacy")
+					add(stringResource(R.string.icon_picker_info_legacy_scale) to customIcon.fgScale.toString())
+					add(stringResource(R.string.icon_picker_info_legacy_background) to customIcon.bgColor.toString())
+				}
+
+				is ForceThemedIcon -> {
+					add(stringResource(R.string.icon_picker_info_icon_type) to "Forced themed")
+				}
+
+				is UnmodifiedSystemDefaultIcon -> {
+					add(stringResource(R.string.icon_picker_info_icon_type) to "System default")
+				}
+
+				is DefaultPlaceholderIcon -> {
+					add(stringResource(R.string.icon_picker_info_icon_type) to "Default placeholder")
+				}
+
+				null -> {
+					add(stringResource(R.string.icon_picker_info_icon_type) to "Current app icon")
+				}
+			}
+
+			if (iconProperties?.isNotEmpty == true) {
+				val values =
+					buildList {
+						iconProperties.tint?.let { add("tint=$it") }
+						iconProperties.opacity?.let { add("opacity=$it") }
+						iconProperties.shape?.let { add("shape=$it") }
+						iconProperties.rotationDeg?.let { add("rotation=$it°") }
+						iconProperties.scaleX?.let { add("scaleX=$it") }
+						iconProperties.scaleY?.let { add("scaleY=$it") }
+					}.joinToString()
+				add(stringResource(R.string.icon_picker_info_customizations, values) to values)
+			}
+		}
+
 	Box(
 		contentAlignment = Alignment.Center
 	) {
@@ -312,7 +412,50 @@ fun IconPreview(
 			icon = { item?.preview },
 			modifier = Modifier
 				.clip(MaterialTheme.shapes.medium)
-				.clickable(onClick = onClick)
+				.combinedClickable(
+					onClick = onClick,
+					onLongClick = { expanded = true }
+				)
 		)
+
+		DragonDropDownMenu(
+			expanded = expanded,
+			onDismissRequest = { expanded = false }
+		) {
+			DropdownMenuGroup(
+				shapes = MenuDefaults.groupShapes()
+			) {
+				if (iconPackPackage != null) {
+					DropdownMenuItem(
+						onClick = { ctx.copyToClipboard(iconPackPackage) },
+						shape = MenuDefaults.middleItemShape,
+						text = { Text(iconPackName ?: iconPackPackage) },
+						leadingIcon = {
+							AsyncImage(
+								model = iconPackIcon,
+								contentDescription = null,
+								modifier = Modifier.size(24.dp)
+							)
+						}
+					)
+				}
+
+				details.forEachIndexed { index, (text, value) ->
+					DropdownMenuItem(
+						onClick = { ctx.copyToClipboard(value) },
+						shape =
+							if (index == details.lastIndex) {
+								MenuDefaults.trailingItemShape
+							} else {
+								MenuDefaults.middleItemShape
+							},
+						text = { Text(text, style = MaterialTheme.typography.bodyMedium) },
+						supportingText = {
+							Text(value, style = MaterialTheme.typography.bodySmallEmphasized)
+						}
+					)
+				}
+			}
+		}
 	}
 }
