@@ -146,7 +146,7 @@
     <string name="reselect_auto_backup_file">自動バックアップファイルを再選択してください</string>
     <string name="transparency">透明性</string>
     <string name="save">保存</string>
-    <string name="drawer_enter_key_action">引き出しの入力キーアクション</string>
+    <string name="drawer_enter_key_action">キーボードのEnterキー押下アクション</string>
     <string name="icon_packs">アイコンパック</string>
     <string name="icon_pack_help">アプリのアイコンをカスタマイズするためにアイコンパックを選択してください。まずはストアからアイコンパックをインストールしてください。</string>
     <string name="use_original_app_icon">オリジナルのアプリアイコンを使用する</string>
@@ -974,7 +974,7 @@
     <string name="fine_grained">詳細情報</string>
     <string name="long_click_to_access_settings">長押しして設定にアクセス</string>
     <string name="swipe_up_to_start_using_directly">スクロールしてDragon Launcherを開始</string>
-    <string name="click_search_icon_action">クリックサーチアイコンアクション</string>
+    <string name="click_search_icon_action">検索ボタンのアクション</string>
     <string name="custom_colors_desc">それぞれのアクションに用いられる色</string>
     <string name="category_cells_desc">ドロワー一列あたりのカテゴリ数</string>
     <string name="category_grid_cells">カテゴリグリッドセル</string>
@@ -1012,7 +1012,7 @@
     <string name="encouragement_grass">草原へ手を伸ばしてみましょう🌿</string>
     <string name="place_app_where">配置する場所を選択</string>
     <string name="permission_notifications_title">通知の送信</string>
-    <string name="permission_notifications_desc">Dragon Launcherに通知の送信を許可する</string>
+    <string name="permission_notifications_desc">Dragon Launcherに通知の送信を許可することで、一部機能からの通知を受け取れるようになります</string>
     <string name="permission_app_shortcuts_title">アプリショートカット</string>
     <string name="permission_app_shortcuts_desc">Dragon Launcherにショートカットの取得を許可することで、ドロワーや検索時に表示されるようになります。</string>
     <string name="permission_accessibility_title">アクセシビリティサービス</string>
